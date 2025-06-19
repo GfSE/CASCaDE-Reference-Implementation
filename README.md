@@ -6,7 +6,8 @@ Information in different formats and from diverse sources are transformed and in
 A publicly available reference implementation shall validate the concepts of the standard as developed by the CASCaDE submission team.
 Validation is successful, if real-world data is ingested and the information needs of all users in the product lifecycle are met.
 Users and software vendors are given the opportunity to influence the project to assure their ideas and needs are met.
-A joint effort on fundamental features (where differentiation isn't possible anyways) avoids duplicate work and assures interoperability.
+A joint effort on fundamental features (where differentiation isn't possible anyways) avoids duplicate work, 
+improves quality and assures interoperability.
 
 The reference implementation addresses the following aspects:
 - Check data format and constraints according to the 'Product Information Graph' (PIG) to assure data quality. 
