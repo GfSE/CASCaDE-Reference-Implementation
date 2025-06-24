@@ -1,7 +1,7 @@
 # CASCaDE-Reference-Implementation
 
 [CASCaDE](https://cascade.gfse.org) is a project to standardize collaboration in systems engineering with respect to data format and ontology.
-A Request for [Proposal (RFP)](https://www.omg.org/cgi-bin/doc?mantis/24-12-03.pdf) has been accepted by OMG in 2024.
+A Request for [Proposal (RFP)](https://www.omg.org/cgi-bin/doc?mantis/24-12-03.pdf) has been accepted by OMG in December 2024.
 Information in different formats and from diverse sources are transformed and integrated to a common knowledge graph.
 
 A publicly available reference implementation shall validate the concepts of the standard as developed by the CASCaDE submission team.
@@ -11,12 +11,13 @@ A joint effort on fundamental features (where differentiation isn't possible any
 improves quality and assures interoperability.
 
 The reference implementation addresses the following aspects:
-- Check data format and constraints according to the [Product Information Graph (PIG)](https://cascade.gfse.org/results/Latest%20Metamodel/) 
+- Check data format and constraints according to the [Product Information Graph (PIG) meta-model](https://cascade.gfse.org/results/Latest%20Metamodel/) 
 to assure data quality. 
 - Persistently store and retrieve PIG data using the standardized API (to be defined).
 - View and edit PIG data in a web-browser.
 - Transform input data with the formats ReqIF, SysML v1 and v2, STEP and FMI/SSP. Other input formats may follow.
 - Integrate input data with different formats to an interwoven knowledge graph.
+- Provide a set of standard queries ('competency questions') that work for all data complying with the meta-model.
 - Create output data with the formats RDF/Turtle, JSON-LD and XHTML.
 
 Major requirements must be satisfied:
