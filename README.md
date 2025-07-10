@@ -21,6 +21,6 @@ to assure data quality.
 - Create output data with the formats RDF/Turtle, JSON-LD and XHTML.
 
 Major requirements must be satisfied:
-- Separate of syntax and semantics: The software must not be changed, if the ontology is further developed. 
+- Separation of syntax and semantics: The software must not be changed, if the ontology is further developed. 
 - Comply with web-technology and avoid propriatory formats.
 - Extend the software using a documented, if possible standardized plug-in mechanism.
