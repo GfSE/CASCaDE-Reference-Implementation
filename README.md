@@ -17,12 +17,11 @@ to assure data quality.
 - View and edit PIG data in a web-browser.
 - Transform input data with the formats ReqIF, SysML v1 and v2, STEP and FMI/SSP. Other input formats may follow.
 - Integrate input data with different formats to an interwoven knowledge graph.
-- Provide a set of standard queries ('competency questions') that work for all data complying with the meta-model.
 - Create output data with the formats RDF/Turtle, JSON-LD and XHTML.
+- Provide a set of *standard queries* ('competency questions') that work for all data complying with the meta-model.
 - Bring the data into a standardized form to facilitate machine learning and AI applications.
 
 Major requirements (capabilities and characteristics) must be satisfied:
 - Separate syntax and semantics: The software must not be changed, if the ontology is further developed. 
 - Comply with *web-technology* and avoid propriatory formats.
 - Extend the software using a documented, if possible standardized plug-in mechanism.
-- Provide *standard queries* for all data complying with the meta-model.
