@@ -19,8 +19,10 @@ to assure data quality.
 - Integrate input data with different formats to an interwoven knowledge graph.
 - Provide a set of standard queries ('competency questions') that work for all data complying with the meta-model.
 - Create output data with the formats RDF/Turtle, JSON-LD and XHTML.
+- Bring the data into a standardized form to facilitate machine learning and AI applications.
 
-Major requirements must be satisfied:
-- Separation of syntax and semantics: The software must not be changed, if the ontology is further developed. 
-- Comply with web-technology and avoid propriatory formats.
+Major requirements (capabilities and characteristics) must be satisfied:
+- Separate syntax and semantics: The software must not be changed, if the ontology is further developed. 
+- Comply with *web-technology* and avoid propriatory formats.
 - Extend the software using a documented, if possible standardized plug-in mechanism.
+- Provide *standard queries* for all data complying with the meta-model.
