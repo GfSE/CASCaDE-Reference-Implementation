@@ -5,7 +5,7 @@
 *   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
 */
 
-interface IConfigurationItem {
+export interface IConfigurationItem {
     id: string;
     revision: string;
     modified: Date;
