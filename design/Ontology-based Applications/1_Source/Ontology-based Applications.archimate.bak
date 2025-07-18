@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archimate:model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:archimate="http://www.archimatetool.com/archimate" name="Ontology-based Applications" id="id-daf1fc73e49a4b18b0305cf394e1eed9" version="5.0.0">
+  <folder name="Strategy" id="id-0dd7f3d350bb402ab697083bf0e5955c" type="strategy"/>
+  <folder name="Business" id="id-7570b73661024620907b1ceced4fbb72" type="business">
+    <element xsi:type="archimate:BusinessRole" name="Ontologist" id="id-e46cf33dba2b4f088ec617cd23344dc1">
+      <documentation>Responsible for defining the application ontology, i.e. the concepts and terms with their relationships within a given application domain, such as library management in this example or systems engineering in another.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessFunction" name="Edit Application Ontology" id="id-4ce51ed000274d6bb00eaef0412e5e4a">
+      <documentation>Edit (create and maintain) the application ontology.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessFunction" name="Edit Application Data" id="id-9f9bc434882a4418a28500cc1d38e916">
+      <documentation>Edit (create and maintain) the application data.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessRole" name="Data Steward" id="id-df98ec4e0818464f9e74c6a82fb8cd4e">
+      <documentation>Responsible for defining the application data using the classes of the application ontology. In a different domain the Data Steward may be a Systems Engineer using a dedicated authoring tool.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessFunction" name="Use Application Data" id="id-c93b7c0a36874f2ba48047df3b5f34b9">
+      <documentation>Use (query and check) the application data.</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessRole" name="User" id="id-10d869aef78c4b0e8213ea8b364511da">
+      <documentation>Responsible for using (querying and even checking) the application data.</documentation>
+    </element>
+  </folder>
+  <folder name="Application" id="id-f09782c932dd495da41018067847083f" type="application">
+    <element xsi:type="archimate:ApplicationComponent" name="PIG Editor" id="id-98c642d92ebc48969b5a440887ccb1ff">
+      <documentation>A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. In this case, the PIG Editor is used both for defining the application ontology and the application data.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Classes for Ontology [JSON-LD]" id="id-c9fa68c1bfc449558cf431c9c8a9b55c">
+      <documentation>A set of classes allowing to define an ontology. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Classes for Application [JSON-LD]" id="id-852e3b29b0f242d2bc8e8ddda7d076ee">
+      <documentation>A set of classes allowing to manage application data. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Application Ontology [JSON-LD]" id="id-82d925d89f5a4bfc9da93a338d9badac">
+      <documentation>Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Application Data [JSON-LD]" id="id-ad6609324578417f867c2e0471be1c54">
+      <documentation>Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Application Data [Turtle]" id="id-2ab7af85586b4c26b3d605e26f99e11c">
+      <documentation>Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Triple-Store" id="id-5f892d898e0f4c518143a72b9a4b1cc9">
+      <documentation>A standard database for knowledge graphs, e.g. Apache Fuseki.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Application Data [RDF]" id="id-eff21101fdf7483aa17d298c1558f1bb">
+      <documentation>Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel, so that standard queries can be used.</documentation>
+    </element>
+  </folder>
+  <folder name="Technology &amp; Physical" id="id-819f5ef9c12f4ef2aacaf0c30a203444" type="technology"/>
+  <folder name="Motivation" id="id-1b3e3680594945d782778093d87a622a" type="motivation"/>
+  <folder name="Implementation &amp; Migration" id="id-a09abd91c0c047468faa6a0c8cbce3a8" type="implementation_migration"/>
+  <folder name="Other" id="id-d67feb9c16d5497db9ba59c7fcbc25cf" type="other"/>
+  <folder name="Relations" id="id-7fd6bc25702d404488a8f7e50370836f" type="relations">
+    <element xsi:type="archimate:AccessRelationship" id="id-639f850723ea41f482572664db7c27e8" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-c9fa68c1bfc449558cf431c9c8a9b55c" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-2ae804591c944504ae63061ccea68767" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-852e3b29b0f242d2bc8e8ddda7d076ee"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-242f76c827934354ab60272722959c54" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-852e3b29b0f242d2bc8e8ddda7d076ee" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-bc56e0a491874f329ebae089771f26df" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-82d925d89f5a4bfc9da93a338d9badac" accessType="3"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-f047bff787b840458b18a7b64b4cd33b" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-ad6609324578417f867c2e0471be1c54" accessType="3"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-0ed32d29d7464f608cda5b25877cb329" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-2ab7af85586b4c26b3d605e26f99e11c"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-a218d9f5880d445aa6d69c1de16d3830" source="id-5f892d898e0f4c518143a72b9a4b1cc9" target="id-2ab7af85586b4c26b3d605e26f99e11c" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-7205cc13cdd74817a9d074a313e479d8" source="id-5f892d898e0f4c518143a72b9a4b1cc9" target="id-eff21101fdf7483aa17d298c1558f1bb" accessType="3"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-4094e4e6940641deb15588c0d233b730" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-4ce51ed000274d6bb00eaef0412e5e4a"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-214cc8c32c964fbdbc30b4d4d2922870" source="id-e46cf33dba2b4f088ec617cd23344dc1" target="id-4ce51ed000274d6bb00eaef0412e5e4a"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-745fa70e0ee846699ee13b24a1caf6cb" source="id-98c642d92ebc48969b5a440887ccb1ff" target="id-9f9bc434882a4418a28500cc1d38e916"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-b7acb13d371c4970b37fe08bd10d011a" source="id-df98ec4e0818464f9e74c6a82fb8cd4e" target="id-9f9bc434882a4418a28500cc1d38e916"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-46ee7261c92f4037bbf168c29d809a4a" source="id-5f892d898e0f4c518143a72b9a4b1cc9" target="id-c93b7c0a36874f2ba48047df3b5f34b9"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-2f50b6529ab3464fa935aa1c8ff812ce" source="id-10d869aef78c4b0e8213ea8b364511da" target="id-c93b7c0a36874f2ba48047df3b5f34b9"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-857f6341e6bb4576b45332ef7015b43c" source="id-4ce51ed000274d6bb00eaef0412e5e4a" target="id-9f9bc434882a4418a28500cc1d38e916"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-aab296ab8d354a31986ccb5b8c02ae9b" source="id-9f9bc434882a4418a28500cc1d38e916" target="id-c93b7c0a36874f2ba48047df3b5f34b9"/>
+  </folder>
+  <folder name="Views" id="id-73874aa7ad544bbba8034d4348d44e9d" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Application Usage" id="id-b8bb462b82264ebbb2b499354c12d4bf" viewpoint="application_usage">
+      <child xsi:type="archimate:Group" id="id-3f76edebc1034b0abb9ceec35071e37c" name="3. Data Use" textAlignment="1">
+        <bounds x="780" y="24" width="372" height="432"/>
+      </child>
+      <child xsi:type="archimate:Group" id="id-9a66b3765f474b34bac0045de75882bd" name="2. Data Management" textAlignment="1">
+        <bounds x="396" y="24" width="372" height="432"/>
+      </child>
+      <child xsi:type="archimate:Group" id="id-b7587fac5ed54bd0bb27f9305390342b" name="1. Ontology Definition" textAlignment="1">
+        <bounds x="12" y="24" width="372" height="432"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-86f873d24e6f4e4a9300ba6b211d3e29" archimateElement="id-98c642d92ebc48969b5a440887ccb1ff">
+        <bounds x="203" y="240" width="168" height="107"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-4e73cabb179d4de58328eb31ec5a8361" source="id-86f873d24e6f4e4a9300ba6b211d3e29" target="id-85e1def3920f496eb0b05b844d96eb86" archimateRelationship="id-639f850723ea41f482572664db7c27e8"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-0ee20eb042e54472b3c274bf5398c5ea" source="id-86f873d24e6f4e4a9300ba6b211d3e29" target="id-9bd731459d274edb9fe469362c51ed37" archimateRelationship="id-2ae804591c944504ae63061ccea68767"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-cec98a87e4d74b3da0fc3728116a4a3b" source="id-86f873d24e6f4e4a9300ba6b211d3e29" target="id-08c31970ea3e4454a96374377dad7f4e" archimateRelationship="id-bc56e0a491874f329ebae089771f26df"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-0e52c26479aa40d8ad5338acaa019b90" source="id-86f873d24e6f4e4a9300ba6b211d3e29" target="id-e5bc025694f449cc835d9f7011e599a3" archimateRelationship="id-4094e4e6940641deb15588c0d233b730"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-31d0655f408743d5b0a6ca9799c16b06" archimateElement="id-98c642d92ebc48969b5a440887ccb1ff">
+        <bounds x="587" y="241" width="169" height="106"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-70bde5acebd445ea83262066ede47eff" source="id-31d0655f408743d5b0a6ca9799c16b06" target="id-9bd731459d274edb9fe469362c51ed37" archimateRelationship="id-242f76c827934354ab60272722959c54"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-f000422abaf547ebb0d95a11fb7825d4" source="id-31d0655f408743d5b0a6ca9799c16b06" target="id-076bf863e2b242dfa289163bf265c496" archimateRelationship="id-f047bff787b840458b18a7b64b4cd33b"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-c705d7eec46e4b4695eb88698ee1264e" source="id-31d0655f408743d5b0a6ca9799c16b06" target="id-b410fd2cd35b41ccbc6c575e5ac43915" archimateRelationship="id-0ed32d29d7464f608cda5b25877cb329"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-0be96293ba4843c8b50cbbac4531003b" source="id-31d0655f408743d5b0a6ca9799c16b06" target="id-415e131340ed4452a4fa598162f45f80" archimateRelationship="id-745fa70e0ee846699ee13b24a1caf6cb"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-85e1def3920f496eb0b05b844d96eb86" targetConnections="id-4e73cabb179d4de58328eb31ec5a8361" archimateElement="id-c9fa68c1bfc449558cf431c9c8a9b55c">
+        <bounds x="34" y="266" width="120" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-9bd731459d274edb9fe469362c51ed37" targetConnections="id-0ee20eb042e54472b3c274bf5398c5ea id-70bde5acebd445ea83262066ede47eff" archimateElement="id-852e3b29b0f242d2bc8e8ddda7d076ee">
+        <bounds x="419" y="266" width="120" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-08c31970ea3e4454a96374377dad7f4e" targetConnections="id-cec98a87e4d74b3da0fc3728116a4a3b" archimateElement="id-82d925d89f5a4bfc9da93a338d9badac">
+        <bounds x="232" y="384" width="109" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-076bf863e2b242dfa289163bf265c496" targetConnections="id-f000422abaf547ebb0d95a11fb7825d4" archimateElement="id-ad6609324578417f867c2e0471be1c54">
+        <bounds x="618" y="384" width="108" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-b410fd2cd35b41ccbc6c575e5ac43915" targetConnections="id-c705d7eec46e4b4695eb88698ee1264e id-9db6492cc6b74046b3cc7b66dce71f50" archimateElement="id-2ab7af85586b4c26b3d605e26f99e11c">
+        <bounds x="803" y="266" width="120" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-128f907843264c40a51e2187a9c02338" archimateElement="id-5f892d898e0f4c518143a72b9a4b1cc9">
+        <bounds x="971" y="241" width="169" height="106"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-9db6492cc6b74046b3cc7b66dce71f50" source="id-128f907843264c40a51e2187a9c02338" target="id-b410fd2cd35b41ccbc6c575e5ac43915" archimateRelationship="id-a218d9f5880d445aa6d69c1de16d3830"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-730e012d00fa4b908654217098dc53e2" source="id-128f907843264c40a51e2187a9c02338" target="id-af73f7fa083d49f6a938f8413d8d87a6" archimateRelationship="id-7205cc13cdd74817a9d074a313e479d8"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-ec34abb47b284daea7686e220a444247" source="id-128f907843264c40a51e2187a9c02338" target="id-3ee06b26e2da434e8035b53d920def12" archimateRelationship="id-46ee7261c92f4037bbf168c29d809a4a"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-af73f7fa083d49f6a938f8413d8d87a6" targetConnections="id-730e012d00fa4b908654217098dc53e2" archimateElement="id-eff21101fdf7483aa17d298c1558f1bb">
+        <bounds x="996" y="384" width="120" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-dd65473eaad2461598d8c7c2b82500a2" archimateElement="id-e46cf33dba2b4f088ec617cd23344dc1">
+        <bounds x="227" y="60" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-237cb20ce4e741e79147ef70a23bbe08" source="id-dd65473eaad2461598d8c7c2b82500a2" target="id-e5bc025694f449cc835d9f7011e599a3" archimateRelationship="id-214cc8c32c964fbdbc30b4d4d2922870"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-e5bc025694f449cc835d9f7011e599a3" targetConnections="id-0e52c26479aa40d8ad5338acaa019b90 id-237cb20ce4e741e79147ef70a23bbe08" archimateElement="id-4ce51ed000274d6bb00eaef0412e5e4a">
+        <bounds x="227" y="154" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-4f3f0b6970224829abc1658cbd3b7210" source="id-e5bc025694f449cc835d9f7011e599a3" target="id-415e131340ed4452a4fa598162f45f80" archimateRelationship="id-857f6341e6bb4576b45332ef7015b43c"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-415e131340ed4452a4fa598162f45f80" targetConnections="id-0be96293ba4843c8b50cbbac4531003b id-49682fdd9f6d4292914493f5e9b3c0a6 id-4f3f0b6970224829abc1658cbd3b7210" archimateElement="id-9f9bc434882a4418a28500cc1d38e916">
+        <bounds x="612" y="154" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-b05d3dbf61da4db2842c5ea53d03b43b" source="id-415e131340ed4452a4fa598162f45f80" target="id-3ee06b26e2da434e8035b53d920def12" archimateRelationship="id-aab296ab8d354a31986ccb5b8c02ae9b"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-93c308365f9044539796c949b9f19fea" archimateElement="id-df98ec4e0818464f9e74c6a82fb8cd4e">
+        <bounds x="612" y="60" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-49682fdd9f6d4292914493f5e9b3c0a6" source="id-93c308365f9044539796c949b9f19fea" target="id-415e131340ed4452a4fa598162f45f80" archimateRelationship="id-b7acb13d371c4970b37fe08bd10d011a"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-3ee06b26e2da434e8035b53d920def12" targetConnections="id-ec34abb47b284daea7686e220a444247 id-b352860236f74501a0a4326327431235 id-b05d3dbf61da4db2842c5ea53d03b43b" archimateElement="id-c93b7c0a36874f2ba48047df3b5f34b9">
+        <bounds x="996" y="154" width="120" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-654b74b495074d0aa06d0bfac5aa3fac" archimateElement="id-10d869aef78c4b0e8213ea8b364511da">
+        <bounds x="996" y="60" width="120" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-b352860236f74501a0a4326327431235" source="id-654b74b495074d0aa06d0bfac5aa3fac" target="id-3ee06b26e2da434e8035b53d920def12" archimateRelationship="id-2f50b6529ab3464fa935aa1c8ff812ce"/>
+      </child>
+      <documentation>A process for ontology-based applications is shown:&#xD;
+1. The application ontology is edited using the PIG classes for ontologies. For example the terms (concepts) for *library*, *book* and *author* plus their relationships *owned-by* and *written-by* are defined.&#xD;
+2. The application data is edited using the classes for application as generated from the application ontology. For example, libraries, books and authors are defined with their relationships.&#xD;
+3. The application data is stored in a graph database, a so-called Triple-Store. For example, the users can query the data to list all libraries owning a given book or to list all authors found in a given library. The latter is a *graph search* which is particularly performant when graph databases are used.&#xD;
+&#xD;
+The process is shown using the ArchiMate notation. Business-related elements are yellow and IT-application-related elements are blue. The BPMN notation would show a lane per role *Ontologist*, *Data Steward* and *User* at the top and the business functions shown underneath as process steps within.&#xD;
+&#xD;
+All data conforms to the *Product Information Graph* (PIG) metamodel, either in JSON-LD or Turtle format.&#xD;
+&#xD;
+If you like, have a look at the demonstration:&#xD;
+&#xD;
+| Step | Libraries (Example ) | Develop your own example |&#xD;
+| --- | --- | --- |&#xD;
+| 1 | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif&quot;) with loaded classes for building an ontology and some terms. You can add terms of the library domain. | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/data/Classes-for-Ontology.specif&quot;) with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
+| 2 | [Library Ontology as HTML](https://cascade.gfse.org/examples/libraries/Library-Ontology%20(Example).html)&lt;br/>[Classes for Libraries](https://cascade.gfse.org/examples/libraries/data/Classes-for-Libraries.specif) to laod in the editor. | Export SpecIF Class Definitions (third option) to load in the next step. |&#xD;
+| 3 | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).specif&quot;) with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | [Editor](https://specif.de/apps-alpha/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
+| 4 | [Library Data as HTML](https://cascade.gfse.org/examples/libraries/Libraries%20(Example).html)&lt;br/>[Library Data as Turtle](https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).ttl) to load in the next step. | Export your application data  (Turtle) to load in the next step. |&#xD;
+| 5 | Load library data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). | Load your application data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). |&#xD;
+&#xD;
+Please note: The demonstration uses the SpecIF tools until the PIG tools are available. If you like the approach, support our implementation team validating the [CASCaDE standard in preparation](https://cascade.gfse.org)!</documentation>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="_READ_ME_" id="id-dcbace0b91dc4fa7a672c8c66c874b54">
+      <child xsi:type="archimate:Note" id="id-6e74996755d244fea1bf0de8457f4385" textAlignment="1" fillColor="#f6f6d8">
+        <bounds x="12" y="12" width="685" height="721"/>
+        <content>Properties that follow are used by the &quot;Customizable Report&quot;
+
+There are two types of properties: &quot;model wide&quot; or &quot;view only&quot;. &quot;model wide&quot; properties affect the whole report where &quot;view only&quot; properties impact only the rendering of the view having them set.
+
+
+MODEL WIDE PROPERTIES
+
+Report:Model:Hide:Business
+	Set to &quot;true&quot; to hide the list of business concepts.
+Report:Model:Hide:Application
+	Set to &quot;true&quot; to hide the list of application concepts.
+Report:Model:Hide:Technology&amp;Physical
+	Set to &quot;true&quot; to hide the list of technlology and physical concepts.
+Report:Model:Hide:Motivation
+	Set to &quot;true&quot; to hide the list of motivation extension concepts
+Report:Model:Hide:Implementation&amp;Migration
+	Set to &quot;true&quot; to hide the list of implementation &amp; migration extension concepts.
+Report:Model:Hide:Other
+	Set to &quot;true&quot; to hide the list of connectors and groupings.
+Report:Model:Hide:Relations
+	Set to &quot;true&quot; to hide the list of relations. 
+Report:Model:Hide:Views
+	Set to &quot;true&quot; to hide the list of views.
+Report:Model:Hide:ViewNumbering
+	Set to &quot;true&quot; to hide numbering at the begining of view name (regexp '^[0-9.]* ').
+Report:Model:Cover:Background
+	URL or path to an image used on the cover (595 x 842).
+	If unset a default image is used. Set it to &quot;null&quot; to disable it.
+Report:Model:Header:Background
+	URL or path to an image used on page header (595 x 50).
+	If unset a default image is used. Set it to &quot;null&quot; to disable it.
+
+
+VIEW ONLY PROPERTIES
+
+Report:View:Detailed
+	Set to &quot;true&quot; to show a detailed list of elements.
+Report:View:Hide
+	Set to &quot;true&quot; to hide the view.
+Report:View:Hide:Diagram
+	Set to &quot;true&quot; to hide the diagram.&#xD;
+Report:View:Tag&#xD;
+	Use this property to tag a view (you can use this property multiple time). Tags can then be used to create a report containing only one specific tag. To do this add &quot;#tagname&quot; to the end of the report title (case insensitive). You can make a view visible for all tag using the special tag &quot;all&quot;.</content>
+      </child>
+      <property key="Report:View:Hide" value="true"/>
+      <property key="Report:View:Hide:Diagram" value="(unused. here only to reference it once in global properties list)"/>
+      <property key="Report:View:Detailed" value="(unused. here only to reference it once in global properties list)"/>
+      <property key="Report:Model:Cover:Background" value="(unused. here only to reference it once in global properties list)"/>
+      <property key="Report:Model:Header:Background" value="(unused. here only to reference it once in global properties list)"/>
+      <property key="Report:View:Tag" value="(unused. here only to reference it once in global properties list)"/>
+    </element>
+  </folder>
+  <property key="Report:Model:Hide:Business" value="false"/>
+  <property key="Report:Model:Hide:Application" value="false"/>
+  <property key="Report:Model:Hide:Technology&amp;Physical" value="false"/>
+  <property key="Report:Model:Hide:Motivation" value="false"/>
+  <property key="Report:Model:Hide:Implementation&amp;Migration" value="false"/>
+  <property key="Report:Model:Hide:Other" value="false"/>
+  <property key="Report:Model:Hide:Relations" value="false"/>
+  <property key="Report:Model:Hide:Views" value="false"/>
+  <property key="Report:Model:Hide:ViewNumbering" value="true"/>
+</archimate:model>

@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model xmlns="http://www.opengroup.org/xsd/archimate/3.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengroup.org/xsd/archimate/3.0/ http://www.opengroup.org/xsd/archimate/3.1/archimate3_Diagram.xsd" identifier="id-10cb846b2044403d916a860de36ea74f">
+  <name xml:lang="en">PIG App</name>
+  <properties>
+    <property propertyDefinitionRef="propid-7">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-8">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-9">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-10">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-11">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-12">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-13">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-14">
+      <value xml:lang="en">false</value>
+    </property>
+    <property propertyDefinitionRef="propid-15">
+      <value xml:lang="en">true</value>
+    </property>
+  </properties>
+  <elements>
+    <element identifier="id-e172fd9964fa43ad8d12dbd7d3ab7dae" xsi:type="ApplicationComponent">
+      <name xml:lang="en">PIG App</name>
+      <documentation xml:lang="en">A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. In this case, the PIG Editor is used both for defining the application ontology and the application data.&#xD;
+&#xD;
+The architecture includes a plugin mechanism to allow the deployment of new transformations or storage adapters without building and deploying a complete new image, for details see the [issue 'Design Plugin Mechanism'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/21).&#xD;
+&#xD;
+Details of the development, build, integration and deployment environment are discussed in [issue 'Select Development Environment and Programming Language'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/21).&#xD;
+&#xD;
+Further&#xD;
+- Permission Management</documentation>
+    </element>
+    <element identifier="id-c32ac19a7ade4b77afa0b492bd67cea4" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Knowledge Platform</name>
+      <documentation xml:lang="en">Consider to use a backend with:&#xD;
+- API4KP Knowledge Artifact Repository API&#xD;
+- API4KP Knowledge Asset Repository API</documentation>
+    </element>
+    <element identifier="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Controller</name>
+      <documentation xml:lang="en">The controller is the 'main' component and is in charge of managing the execution of requested services in reaction on user or server events. In the most easiest case ES promises are used and the scheduling is left to the event queuing of the execution environment. But certain services may require coordination or user feedback (via spinner or log message, for example). So it is the responsibility of the controller to enable and disable elements creating events to maintain the integrity of the app and the data.&#xD;
+&#xD;
+Is usually provided by the application framework. An option is to implement an event dispatcher controlled by a state-machine.</documentation>
+    </element>
+    <element identifier="id-bf130366bf9542b383059fbb1d8b72fe" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Storage Plugin KP</name>
+      <documentation xml:lang="en">Store a subgraph in or retrieve it from a knowledge platform.</documentation>
+    </element>
+    <element identifier="id-56c2550f04634283999aee998dbeef1a" xsi:type="DataObject">
+      <name xml:lang="en">Knowledge File</name>
+      <documentation xml:lang="en">A subgraph represented as RDF/Turtle or JSON-LD.</documentation>
+    </element>
+    <element identifier="id-e4f4afa89d664db9b1026b0f3d5774a1" xsi:type="ApplicationComponent">
+      <name xml:lang="en">File System</name>
+      <documentation xml:lang="en">Consider to use&#xD;
+- Windows/MacOS/Linux NFS&#xD;
+- Samba&#xD;
+- Git</documentation>
+    </element>
+    <element identifier="id-1d9dffeb40244e7ab7d7e121a57f9208" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Storage Plugin FS</name>
+      <documentation xml:lang="en">Store a subgraph in or retrieve it from a file system.</documentation>
+    </element>
+    <element identifier="id-08f30ef40bcf4dda90302daef5a76b51" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Storage Plugin Other</name>
+      <documentation xml:lang="en">Store a subgraph in or retrieve it from any other storage system as required.</documentation>
+    </element>
+    <element identifier="id-a3381ffbd2dd42c8a672a7c134cf4703" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Export Plugin</name>
+      <documentation xml:lang="en">Transforms a selected subgraph from the internal data format according to the PIG metamodel to a desired output format such as JSON-LD, RDF, GQL, HTML, DOCX or PDF.</documentation>
+    </element>
+    <element identifier="id-f291d80f73a5424897100e0b80694a0d" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Import Plugin</name>
+      <documentation xml:lang="en">Transforms a source data format such as ReqIF, XMI, STEP or FMI/SSP to the internal data format according to the PIG metamodel.</documentation>
+    </element>
+    <element identifier="id-0ba891ccef514f39954df0f3a398025c" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Integration Plugin</name>
+      <documentation xml:lang="en">Integrates a new subgraph with the existing graph, e.g. by combining nodes representing the 'same' artifact. Two artefacts are considered the same, if class and title are equal. A preliminary decision has been taken to keep the original nodes and to create an 'umbrella' node pointing to two or more nodes of the same artifact.</documentation>
+    </element>
+    <element identifier="id-b5b1c063fe5a4099891def22bf03c4c5" xsi:type="ApplicationComponent">
+      <name xml:lang="en">UI Plugin</name>
+      <documentation xml:lang="en">User Interface, such as &#xD;
+- viewer, &#xD;
+- editor by forms or diagramming.&#xD;
+&#xD;
+The user-interface is class-driven, i.e.the details of the entity, relationship or organizer classes with their respective property classes determine the UI. For example, an editing form for a class with three property classes will have 3 fields expecting input according to its dataype and range. Or a graphical editor for a UML interaction diagram will will present a tailored pallette with drawing rules for interaction diagrams.</documentation>
+    </element>
+    <element identifier="id-8c69d3bb010d4fe4ba7487020c8da50a" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Validation Plugin</name>
+      <documentation xml:lang="en">Validates a package or a collection of packages, with&#xD;
+- schema checking&#xD;
+- constraint/consistency checking.</documentation>
+    </element>
+    <element identifier="id-325386c71d6149099080a94d2374a203" xsi:type="ApplicationComponent">
+      <name xml:lang="en">Web-Server</name>
+    </element>
+    <element identifier="id-de2a0c4d32014e2bad914f6e07e01e07" xsi:type="DataObject">
+      <name xml:lang="en">Source Data</name>
+    </element>
+    <element identifier="id-49ce19aceed240fe98c63f87eee0ba79" xsi:type="DataObject">
+      <name xml:lang="en">Sink Data</name>
+    </element>
+  </elements>
+  <relationships>
+    <relationship identifier="id-2c63b54fcd6544928e9cfb615f70eb9c" source="id-c32ac19a7ade4b77afa0b492bd67cea4" target="id-bf130366bf9542b383059fbb1d8b72fe" xsi:type="Serving" />
+    <relationship identifier="id-b2ad6ff6cdea41588fc29ef8846121d3" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Composition" />
+    <relationship identifier="id-f5998ed26eb94f1c8b2e05c003de021a" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-bf130366bf9542b383059fbb1d8b72fe" xsi:type="Composition" />
+    <relationship identifier="id-b6a9db6f202d4f9b903740bceb2058c1" source="id-e4f4afa89d664db9b1026b0f3d5774a1" target="id-56c2550f04634283999aee998dbeef1a" xsi:type="Access" accessType="ReadWrite" />
+    <relationship identifier="id-e5c201cee6db4897ae52825388e023fc" source="id-e4f4afa89d664db9b1026b0f3d5774a1" target="id-1d9dffeb40244e7ab7d7e121a57f9208" xsi:type="Serving" />
+    <relationship identifier="id-c5ccb5005e3645a986a30794ee2976cf" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-1d9dffeb40244e7ab7d7e121a57f9208" xsi:type="Composition" />
+    <relationship identifier="id-d43a8d6b415f4c50b457bfe7dc2e630b" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-08f30ef40bcf4dda90302daef5a76b51" xsi:type="Composition" />
+    <relationship identifier="id-151526ce35ca4fad8230947f0751cff1" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-a3381ffbd2dd42c8a672a7c134cf4703" xsi:type="Composition" />
+    <relationship identifier="id-08e8774b069748cfb6ceb88c05077603" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-f291d80f73a5424897100e0b80694a0d" xsi:type="Composition" />
+    <relationship identifier="id-2ab3ec20bacf44aabf322bee44f6dd0a" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-0ba891ccef514f39954df0f3a398025c" xsi:type="Composition" />
+    <relationship identifier="id-2ddf2de491a5401c86760817d4b6ac4b" source="id-1d9dffeb40244e7ab7d7e121a57f9208" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-d7b99be27df14c77ba0e12ebdde2998a" source="id-bf130366bf9542b383059fbb1d8b72fe" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-17b2c6ed6bbc403dbee358a377a59848" source="id-08f30ef40bcf4dda90302daef5a76b51" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-d230ed3420ae45ffaa54a67c69723fbc" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-b5b1c063fe5a4099891def22bf03c4c5" xsi:type="Composition" />
+    <relationship identifier="id-b833275a708943acadc10b5fcd0508fd" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-8c69d3bb010d4fe4ba7487020c8da50a" xsi:type="Composition" />
+    <relationship identifier="id-d2f48c10ed1144c79245495695c1d5b7" source="id-8c69d3bb010d4fe4ba7487020c8da50a" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-5c40aef300d9441d995cc05cb72b1876" source="id-f291d80f73a5424897100e0b80694a0d" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-65de100b6cb1417dbb612c3562b69d18" source="id-0ba891ccef514f39954df0f3a398025c" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-5f38e80efc5a41c1980faf378029778b" source="id-b5b1c063fe5a4099891def22bf03c4c5" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-0aa32c789bd64b369e6dfca0a8688556" source="id-a3381ffbd2dd42c8a672a7c134cf4703" target="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Serving" />
+    <relationship identifier="id-62b4c3a0ba7040ac8aa5458741f69394" source="id-e4f4afa89d664db9b1026b0f3d5774a1" target="id-de2a0c4d32014e2bad914f6e07e01e07" xsi:type="Access" accessType="Write" />
+    <relationship identifier="id-0d5ad79061414ff1bcf4b50a112ff6b3" source="id-325386c71d6149099080a94d2374a203" target="id-de2a0c4d32014e2bad914f6e07e01e07" xsi:type="Access" accessType="Write" />
+    <relationship identifier="id-ad083467ce8e43888526f665e5b361b4" source="id-325386c71d6149099080a94d2374a203" target="id-f291d80f73a5424897100e0b80694a0d" xsi:type="Serving" />
+    <relationship identifier="id-363f32c9a7784af4b06989953dbd0c41" source="id-e4f4afa89d664db9b1026b0f3d5774a1" target="id-f291d80f73a5424897100e0b80694a0d" xsi:type="Serving" />
+    <relationship identifier="id-22d9465446694ef79b2e6456bd8c559d" source="id-325386c71d6149099080a94d2374a203" target="id-49ce19aceed240fe98c63f87eee0ba79" xsi:type="Access" accessType="Write" />
+    <relationship identifier="id-5b4d19e853bc47fcb0fb7c2220d7f78f" source="id-e4f4afa89d664db9b1026b0f3d5774a1" target="id-49ce19aceed240fe98c63f87eee0ba79" xsi:type="Access" accessType="Write" />
+    <relationship identifier="id-ac910cf5b3fd42ce80839d46c4f91886" source="id-325386c71d6149099080a94d2374a203" target="id-a3381ffbd2dd42c8a672a7c134cf4703" xsi:type="Serving" />
+    <relationship identifier="id-10dc6da6e40b418a8ccde63cf66aec2e" source="id-e4f4afa89d664db9b1026b0f3d5774a1" target="id-a3381ffbd2dd42c8a672a7c134cf4703" xsi:type="Serving" />
+  </relationships>
+  <organizations>
+    <item>
+      <label xml:lang="en">Application</label>
+      <item identifierRef="id-e172fd9964fa43ad8d12dbd7d3ab7dae" />
+      <item identifierRef="id-c32ac19a7ade4b77afa0b492bd67cea4" />
+      <item identifierRef="id-a1aee4360a184850b38072e53c12e9d8" />
+      <item identifierRef="id-bf130366bf9542b383059fbb1d8b72fe" />
+      <item identifierRef="id-56c2550f04634283999aee998dbeef1a" />
+      <item identifierRef="id-e4f4afa89d664db9b1026b0f3d5774a1" />
+      <item identifierRef="id-1d9dffeb40244e7ab7d7e121a57f9208" />
+      <item identifierRef="id-08f30ef40bcf4dda90302daef5a76b51" />
+      <item identifierRef="id-a3381ffbd2dd42c8a672a7c134cf4703" />
+      <item identifierRef="id-f291d80f73a5424897100e0b80694a0d" />
+      <item identifierRef="id-0ba891ccef514f39954df0f3a398025c" />
+      <item identifierRef="id-b5b1c063fe5a4099891def22bf03c4c5" />
+      <item identifierRef="id-8c69d3bb010d4fe4ba7487020c8da50a" />
+      <item identifierRef="id-325386c71d6149099080a94d2374a203" />
+      <item identifierRef="id-de2a0c4d32014e2bad914f6e07e01e07" />
+      <item identifierRef="id-49ce19aceed240fe98c63f87eee0ba79" />
+    </item>
+    <item>
+      <label xml:lang="en">Relations</label>
+      <item identifierRef="id-2c63b54fcd6544928e9cfb615f70eb9c" />
+      <item identifierRef="id-b2ad6ff6cdea41588fc29ef8846121d3" />
+      <item identifierRef="id-f5998ed26eb94f1c8b2e05c003de021a" />
+      <item identifierRef="id-b6a9db6f202d4f9b903740bceb2058c1" />
+      <item identifierRef="id-e5c201cee6db4897ae52825388e023fc" />
+      <item identifierRef="id-c5ccb5005e3645a986a30794ee2976cf" />
+      <item identifierRef="id-d43a8d6b415f4c50b457bfe7dc2e630b" />
+      <item identifierRef="id-151526ce35ca4fad8230947f0751cff1" />
+      <item identifierRef="id-08e8774b069748cfb6ceb88c05077603" />
+      <item identifierRef="id-2ab3ec20bacf44aabf322bee44f6dd0a" />
+      <item identifierRef="id-2ddf2de491a5401c86760817d4b6ac4b" />
+      <item identifierRef="id-d7b99be27df14c77ba0e12ebdde2998a" />
+      <item identifierRef="id-17b2c6ed6bbc403dbee358a377a59848" />
+      <item identifierRef="id-d230ed3420ae45ffaa54a67c69723fbc" />
+      <item identifierRef="id-b833275a708943acadc10b5fcd0508fd" />
+      <item identifierRef="id-d2f48c10ed1144c79245495695c1d5b7" />
+      <item identifierRef="id-5c40aef300d9441d995cc05cb72b1876" />
+      <item identifierRef="id-65de100b6cb1417dbb612c3562b69d18" />
+      <item identifierRef="id-5f38e80efc5a41c1980faf378029778b" />
+      <item identifierRef="id-0aa32c789bd64b369e6dfca0a8688556" />
+      <item identifierRef="id-62b4c3a0ba7040ac8aa5458741f69394" />
+      <item identifierRef="id-0d5ad79061414ff1bcf4b50a112ff6b3" />
+      <item identifierRef="id-ad083467ce8e43888526f665e5b361b4" />
+      <item identifierRef="id-363f32c9a7784af4b06989953dbd0c41" />
+      <item identifierRef="id-22d9465446694ef79b2e6456bd8c559d" />
+      <item identifierRef="id-5b4d19e853bc47fcb0fb7c2220d7f78f" />
+      <item identifierRef="id-ac910cf5b3fd42ce80839d46c4f91886" />
+      <item identifierRef="id-10dc6da6e40b418a8ccde63cf66aec2e" />
+    </item>
+    <item>
+      <label xml:lang="en">Views</label>
+      <item identifierRef="id-f73cd2ce3fb547f3a68dc93bec8f2bd8" />
+      <item identifierRef="id-1cafb05b01384aaf838df08a7c66579c" />
+    </item>
+  </organizations>
+  <propertyDefinitions>
+    <propertyDefinition identifier="propid-4" type="string">
+      <name>Report:Model:Cover:Background</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-5" type="string">
+      <name>Report:Model:Header:Background</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-8" type="string">
+      <name>Report:Model:Hide:Application</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-7" type="string">
+      <name>Report:Model:Hide:Business</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-11" type="string">
+      <name>Report:Model:Hide:Implementation&amp;Migration</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-10" type="string">
+      <name>Report:Model:Hide:Motivation</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-12" type="string">
+      <name>Report:Model:Hide:Other</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-13" type="string">
+      <name>Report:Model:Hide:Relations</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-9" type="string">
+      <name>Report:Model:Hide:Technology&amp;Physical</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-15" type="string">
+      <name>Report:Model:Hide:ViewNumbering</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-14" type="string">
+      <name>Report:Model:Hide:Views</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-3" type="string">
+      <name>Report:View:Detailed</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-1" type="string">
+      <name>Report:View:Hide</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-2" type="string">
+      <name>Report:View:Hide:Diagram</name>
+    </propertyDefinition>
+    <propertyDefinition identifier="propid-6" type="string">
+      <name>Report:View:Tag</name>
+    </propertyDefinition>
+  </propertyDefinitions>
+  <views>
+    <diagrams>
+      <view identifier="id-f73cd2ce3fb547f3a68dc93bec8f2bd8" xsi:type="Diagram" viewpoint="Application Structure">
+        <name xml:lang="en">Module Architecture</name>
+        <documentation xml:lang="en">The top-level module architecture of the PIG App embedded in its sytem context.</documentation>
+        <node identifier="id-d7f2525e752e415ca43adf371fdae6fb" elementRef="id-e172fd9964fa43ad8d12dbd7d3ab7dae" xsi:type="Element" x="228" y="24" w="613" h="304">
+          <style>
+            <fillColor r="181" g="255" b="255" a="100" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="14">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <node identifier="id-f27398f59f2b402f9248c1fa75ddf7e2" elementRef="id-a1aee4360a184850b38072e53c12e9d8" xsi:type="Element" x="240" y="216" w="589" h="37">
+            <style>
+              <fillColor r="0" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-9f7d1897299f4b7ca988d97ae2e36aea" elementRef="id-bf130366bf9542b383059fbb1d8b72fe" xsi:type="Element" x="445" y="276" w="109" h="38">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-c62b724cde534b0c88b31f993dbedba6" elementRef="id-1d9dffeb40244e7ab7d7e121a57f9208" xsi:type="Element" x="240" y="276" w="109" h="38">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-5ca24b27990a440eb83b195b788336ef" elementRef="id-08f30ef40bcf4dda90302daef5a76b51" xsi:type="Element" x="648" y="276" w="109" h="38">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-9b426f333959459398d3b242dbef31e2" elementRef="id-a3381ffbd2dd42c8a672a7c134cf4703" xsi:type="Element" x="720" y="132" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-640cf146ff884429a071523492f9fd7b" elementRef="id-f291d80f73a5424897100e0b80694a0d" xsi:type="Element" x="240" y="132" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-071f8041fae04026811b6bf7f9b2ebbf" elementRef="id-0ba891ccef514f39954df0f3a398025c" xsi:type="Element" x="480" y="132" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-919392e19e7148ddb6ad3cc93d6748a2" elementRef="id-b5b1c063fe5a4099891def22bf03c4c5" xsi:type="Element" x="600" y="60" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+          <node identifier="id-68a6326f3cc14c42a3e7b7737f35c6a8" elementRef="id-8c69d3bb010d4fe4ba7487020c8da50a" xsi:type="Element" x="360" y="132" w="108" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="100" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+        </node>
+        <node identifier="id-456388620c0a41ee912aed4fc8956dd4" elementRef="id-c32ac19a7ade4b77afa0b492bd67cea4" xsi:type="Element" x="396" y="354" w="205" h="106">
+          <style>
+            <fillColor r="181" g="255" b="255" a="75" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </node>
+        <node identifier="id-010fab8076444f289632a38ec6cd67cd" elementRef="id-e4f4afa89d664db9b1026b0f3d5774a1" xsi:type="Element" x="228" y="354" w="144" h="106">
+          <style>
+            <fillColor r="181" g="255" b="255" a="75" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <node identifier="id-1b06aec6681449a48990e753489d4759" elementRef="id-56c2550f04634283999aee998dbeef1a" xsi:type="Element" x="240" y="390" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="75" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+        </node>
+        <node identifier="id-ab09027acb544025b326ff20de0a787e" elementRef="id-325386c71d6149099080a94d2374a203" xsi:type="Element" x="12" y="48" w="145" h="106">
+          <style>
+            <fillColor r="181" g="255" b="255" a="75" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <node identifier="id-d31785949d6647a58746db3cecd01396" elementRef="id-de2a0c4d32014e2bad914f6e07e01e07" xsi:type="Element" x="24" y="84" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="75" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+        </node>
+        <node identifier="id-57f4316f391f405e9a4396893c83d562" elementRef="id-e4f4afa89d664db9b1026b0f3d5774a1" xsi:type="Element" x="12" y="168" w="145" h="106">
+          <style>
+            <fillColor r="181" g="255" b="255" a="75" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <node identifier="id-a55b8bb913b54e73a828ba032697c654" elementRef="id-de2a0c4d32014e2bad914f6e07e01e07" xsi:type="Element" x="24" y="204" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="75" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+        </node>
+        <node identifier="id-b1eba152655a4714adcf3c9903ee9e9f" elementRef="id-325386c71d6149099080a94d2374a203" xsi:type="Element" x="916" y="48" w="145" h="106">
+          <style>
+            <fillColor r="181" g="255" b="255" a="75" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <node identifier="id-4286bf8625fb465f989314a423fdb276" elementRef="id-49ce19aceed240fe98c63f87eee0ba79" xsi:type="Element" x="928" y="84" w="105" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="75" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+        </node>
+        <node identifier="id-fd9bce61e6ea4e60be00ee72eb7feee6" elementRef="id-e4f4afa89d664db9b1026b0f3d5774a1" xsi:type="Element" x="917" y="168" w="143" h="106">
+          <style>
+            <fillColor r="181" g="255" b="255" a="75" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <node identifier="id-3c6858bd937a4a26a3b3dfb3375d16de" elementRef="id-49ce19aceed240fe98c63f87eee0ba79" xsi:type="Element" x="929" y="204" w="109" h="55">
+            <style>
+              <fillColor r="181" g="255" b="255" a="75" />
+              <lineColor r="92" g="92" b="92" a="100" />
+              <font name="Segoe UI" size="9">
+                <color r="0" g="0" b="0" />
+              </font>
+            </style>
+          </node>
+        </node>
+        <node identifier="id-dd0527c77acd4ee7a6b6626973353ef9" xsi:type="Label" x="864" y="356" w="185" h="102">
+          <label xml:lang="en">The associations with solid line and  arrowhead denote a 'serves' relationship (from server to client). Direction of data flow is not implied and can occur in both directions.</label>
+          <style>
+            <fillColor r="255" g="255" b="255" a="100" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </node>
+        <connection identifier="id-080dd2fbe41246b6afdbf907ef24006e" relationshipRef="id-d7b99be27df14c77ba0e12ebdde2998a" xsi:type="Relationship" source="id-9f7d1897299f4b7ca988d97ae2e36aea" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-660f74d507454737a59e44b5f69dabe3" relationshipRef="id-2ddf2de491a5401c86760817d4b6ac4b" xsi:type="Relationship" source="id-c62b724cde534b0c88b31f993dbedba6" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-263330a0249e45dcb4a629edfe68bab9" relationshipRef="id-17b2c6ed6bbc403dbee358a377a59848" xsi:type="Relationship" source="id-5ca24b27990a440eb83b195b788336ef" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-78123d3ba7a446c88a43fc83e10345b7" relationshipRef="id-0aa32c789bd64b369e6dfca0a8688556" xsi:type="Relationship" source="id-9b426f333959459398d3b242dbef31e2" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-cdf52c1aafb0409caa314ff00539d62e" relationshipRef="id-5c40aef300d9441d995cc05cb72b1876" xsi:type="Relationship" source="id-640cf146ff884429a071523492f9fd7b" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-98b3cffba8b64b43a1d69563b4a9c4ee" relationshipRef="id-65de100b6cb1417dbb612c3562b69d18" xsi:type="Relationship" source="id-071f8041fae04026811b6bf7f9b2ebbf" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-148f865b9ee1464884158b1679859a5f" relationshipRef="id-5f38e80efc5a41c1980faf378029778b" xsi:type="Relationship" source="id-919392e19e7148ddb6ad3cc93d6748a2" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-5c2ff70646cd4facb783031a05773034" relationshipRef="id-d2f48c10ed1144c79245495695c1d5b7" xsi:type="Relationship" source="id-68a6326f3cc14c42a3e7b7737f35c6a8" target="id-f27398f59f2b402f9248c1fa75ddf7e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-9c9d942dc1dd46e18b7fc1b015d3843e" relationshipRef="id-2c63b54fcd6544928e9cfb615f70eb9c" xsi:type="Relationship" source="id-456388620c0a41ee912aed4fc8956dd4" target="id-9f7d1897299f4b7ca988d97ae2e36aea">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-b0a6ff7219bf4f969055cac210f4411d" relationshipRef="id-e5c201cee6db4897ae52825388e023fc" xsi:type="Relationship" source="id-010fab8076444f289632a38ec6cd67cd" target="id-c62b724cde534b0c88b31f993dbedba6">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-2ec939a4f2c94a73a78d62191c59af5a" relationshipRef="id-ad083467ce8e43888526f665e5b361b4" xsi:type="Relationship" source="id-ab09027acb544025b326ff20de0a787e" target="id-640cf146ff884429a071523492f9fd7b">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <bendpoint x="168" y="108" />
+          <bendpoint x="204" y="156" />
+        </connection>
+        <connection identifier="id-7b8b4e41011d448ca3964118ff2a3322" relationshipRef="id-363f32c9a7784af4b06989953dbd0c41" xsi:type="Relationship" source="id-57f4316f391f405e9a4396893c83d562" target="id-640cf146ff884429a071523492f9fd7b">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <bendpoint x="168" y="216" />
+          <bendpoint x="204" y="156" />
+        </connection>
+        <connection identifier="id-effda8955c9e4ea99a022fc9745335bb" relationshipRef="id-ac910cf5b3fd42ce80839d46c4f91886" xsi:type="Relationship" source="id-b1eba152655a4714adcf3c9903ee9e9f" target="id-9b426f333959459398d3b242dbef31e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <bendpoint x="906" y="108" />
+          <bendpoint x="861" y="156" />
+        </connection>
+        <connection identifier="id-3a2f0d3dd8bc49efa3acc70b99546821" relationshipRef="id-10dc6da6e40b418a8ccde63cf66aec2e" xsi:type="Relationship" source="id-fd9bce61e6ea4e60be00ee72eb7feee6" target="id-9b426f333959459398d3b242dbef31e2">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <bendpoint x="906" y="216" />
+          <bendpoint x="861" y="156" />
+        </connection>
+      </view>
+      <view identifier="id-1cafb05b01384aaf838df08a7c66579c" xsi:type="Diagram">
+        <name xml:lang="en">_READ_ME_</name>
+        <properties>
+          <property propertyDefinitionRef="propid-1">
+            <value xml:lang="en">true</value>
+          </property>
+          <property propertyDefinitionRef="propid-2">
+            <value xml:lang="en">(unused. here only to reference it once in global properties list)</value>
+          </property>
+          <property propertyDefinitionRef="propid-3">
+            <value xml:lang="en">(unused. here only to reference it once in global properties list)</value>
+          </property>
+          <property propertyDefinitionRef="propid-4">
+            <value xml:lang="en">(unused. here only to reference it once in global properties list)</value>
+          </property>
+          <property propertyDefinitionRef="propid-5">
+            <value xml:lang="en">(unused. here only to reference it once in global properties list)</value>
+          </property>
+          <property propertyDefinitionRef="propid-6">
+            <value xml:lang="en">(unused. here only to reference it once in global properties list)</value>
+          </property>
+        </properties>
+        <node identifier="id-eb46e551b0984bf6bbc91f6f8b6250f7" xsi:type="Label" x="12" y="12" w="685" h="721">
+          <label xml:lang="en">Properties that follow are used by the "Customizable Report"
+
+There are two types of properties: "model wide" or "view only". "model wide" properties affect the whole report where "view only" properties impact only the rendering of the view having them set.
+
+
+MODEL WIDE PROPERTIES
+
+Report:Model:Hide:Business
+	Set to "true" to hide the list of business concepts.
+Report:Model:Hide:Application
+	Set to "true" to hide the list of application concepts.
+Report:Model:Hide:Technology&amp;Physical
+	Set to "true" to hide the list of technlology and physical concepts.
+Report:Model:Hide:Motivation
+	Set to "true" to hide the list of motivation extension concepts
+Report:Model:Hide:Implementation&amp;Migration
+	Set to "true" to hide the list of implementation &amp; migration extension concepts.
+Report:Model:Hide:Other
+	Set to "true" to hide the list of connectors and groupings.
+Report:Model:Hide:Relations
+	Set to "true" to hide the list of relations. 
+Report:Model:Hide:Views
+	Set to "true" to hide the list of views.
+Report:Model:Hide:ViewNumbering
+	Set to "true" to hide numbering at the begining of view name (regexp '^[0-9.]* ').
+Report:Model:Cover:Background
+	URL or path to an image used on the cover (595 x 842).
+	If unset a default image is used. Set it to "null" to disable it.
+Report:Model:Header:Background
+	URL or path to an image used on page header (595 x 50).
+	If unset a default image is used. Set it to "null" to disable it.
+
+
+VIEW ONLY PROPERTIES
+
+Report:View:Detailed
+	Set to "true" to show a detailed list of elements.
+Report:View:Hide
+	Set to "true" to hide the view.
+Report:View:Hide:Diagram
+	Set to "true" to hide the diagram.&#xD;
+Report:View:Tag&#xD;
+	Use this property to tag a view (you can use this property multiple time). Tags can then be used to create a report containing only one specific tag. To do this add "#tagname" to the end of the report title (case insensitive). You can make a view visible for all tag using the special tag "all".</label>
+          <style>
+            <fillColor r="246" g="246" b="216" a="100" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </node>
+      </view>
+    </diagrams>
+  </views>
+</model>
