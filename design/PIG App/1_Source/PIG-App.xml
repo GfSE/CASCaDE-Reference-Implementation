@@ -37,9 +37,10 @@
 &#xD;
 The architecture includes a plugin mechanism to allow the deployment of new transformations or storage adapters without building and deploying a complete new image, for details see the [issue 'Design Plugin Mechanism'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/21).&#xD;
 &#xD;
-Details of the development, build, integration and deployment environment are discussed in [issue 'Select Development Environment and Programming Language'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/21).&#xD;
+Details of the development, build, integration and deployment environment are discussed in [issue 'Select Development Environment and Programming Language'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/14).&#xD;
 &#xD;
 Further&#xD;
+- Reporting Interface (e.g. Power-BI), server-side per API or client-side per file (export plugin).&#xD;
 - Permission Management</documentation>
     </element>
     <element identifier="id-c32ac19a7ade4b77afa0b492bd67cea4" xsi:type="ApplicationComponent">
