@@ -1,7 +1,7 @@
 # CASCaDE-Reference-Implementation
 
 [CASCaDE](https://cascade.gfse.org) is a project to standardize collaboration in systems engineering with respect to data format and ontology.
-A Request for [Proposal (RFP)](https://www.omg.org/cgi-bin/doc?mantis/24-12-03.pdf) has been accepted by OMG in December 2024.
+A [Request for Proposal (RFP)](https://www.omg.org/cgi-bin/doc?mantis/24-12-03.pdf) has been accepted by OMG in December 2024.
 Information in different formats and from diverse sources are transformed and integrated to a common knowledge graph.
 
 A publicly available reference implementation shall validate the concepts of the standard as developed by the CASCaDE submission team.
