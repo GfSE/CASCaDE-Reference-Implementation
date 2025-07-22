@@ -79,21 +79,26 @@ abstract class ConfigurationItem implements IConfigurationItem {
 }
 interface IElementClass extends IConfigurationItem {
     eligiblePropertyClass: TUuid[];  // constraint: must be UUIDs of PropertyClass objects
+    icon?: string;  // optional, default is undefined (no icon)
 }
 abstract class ElementClass extends ConfigurationItem implements IElementClass {
     eligiblePropertyClass: TUuid[];  // constraint: must be UUIDs of PropertyClass objects
+    icon?: string;
     constructor(itm: IElementClass) {
         super(itm);
         this.eligiblePropertyClass = itm.eligiblePropertyClass || [];
+        this.icon = itm.icon;
     }
     set(itm: IElementClass) {
         super.set(itm);
         this.eligiblePropertyClass = itm.eligiblePropertyClass || [];
+        this.icon = itm.icon;
     }
     get() {
         return {
             ...super.get(),
-            eligiblePropertyClass: this.eligiblePropertyClass
+            eligiblePropertyClass: this.eligiblePropertyClass,
+            icon: this.icon
         };
     }
 }
@@ -148,15 +153,16 @@ abstract class ModelElement extends Element implements IModelElement {
 // The classes to instantiate:
 export interface IPropertyClass extends IConfigurationItem {
     datatype: XsDataType;  // constraint: must be one of the XsDataType values
-    minCount?: number;  // optional, default is 0
-    maxCount?: number;  // optional, default is 1
-    maxLength?: number;  // optional, default is 0 (no limit)
-    minInclusive?: number;  // optional, default is 0 (no limit)
-    maxInclusive?: number;  // optional, default is 0 (no limit)
-    pattern?: string;  // optional, default is empty string (no pattern)
-    defaultValue?: any;  // optional, default is undefined (no default value)
+    minCount?: number;  // optional, default is 0 (not required), property is required if minCount>0
+    maxCount?: number;  // optional, default is 1 (single value), property is multivalued if maxCount>1
+    maxLength?: number;  // optional, default is 0 (no limit), for properties with datatype String
+    pattern?: string;  // optional, default is empty string (no pattern), for properties with datatype String
+    minInclusive?: number;  // optional, default is 0 (no limit), for properties with datatype Integer or Double
+    maxInclusive?: number;  // optional, default is 0 (no limit), for properties with datatype Integer or Double
+    defaultValue?: any;  // optional, default is undefined (no default value), maps to sh:defaultValue in SHACL
+    // Consider to call it 'value' instead of 'defaultValue' here, as it is formally the same as the value of a property
+
 /*  Proposal by GitHub Copilot:
-    isRequired?: boolean;  // optional, default is false
     isReadOnly?: boolean;  // optional, default is false
     isSearchable?: boolean;  // optional, default is false
     isFilterable?: boolean;  // optional, default is false
@@ -170,33 +176,33 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
     minCount?: number;
     maxCount?: number;
     maxLength?: number;
+    pattern?: string;
     minInclusive?: number;
     maxInclusive?: number;
-    pattern?: string;
     defaultValue?: any;
     constructor(itm: IPropertyClass) {
         super(itm);
         this.datatype = itm.datatype;
-        this.minCount = itm.minCount || 0;  // default is 0
-        this.maxCount = itm.maxCount || 1;  // default is 1
-        this.maxLength = itm.maxLength;  // default is undefined (no limit)
-        this.minInclusive = itm.minInclusive;  // default is undefined (no limit)
-        this.maxInclusive = itm.maxInclusive;  // default is undefined (no limit)
-        this.pattern = itm.pattern;  // default is undefined (no pattern)
-        this.defaultValue = itm.defaultValue;  // default is undefined (no default value)
+        this.minCount = itm.minCount || 0;
+        this.maxCount = itm.maxCount || 1;
+        this.maxLength = itm.maxLength;
+        this.pattern = itm.pattern;
+        this.minInclusive = itm.minInclusive;
+        this.maxInclusive = itm.maxInclusive;
+        this.defaultValue = itm.defaultValue;
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
     }
     set(itm: IPropertyClass):number {
         super.set(itm);
         this.datatype = itm.datatype;
-        this.minCount = itm.minCount || 0;  // default is 0
-        this.maxCount = itm.maxCount || 1;  // default is 1
-        this.maxLength = itm.maxLength;  // default is undefined (no limit)
-        this.minInclusive = itm.minInclusive;  // default is undefined (no limit)
-        this.maxInclusive = itm.maxInclusive;  // default is undefined (no limit)
-        this.pattern = itm.pattern;  // default is undefined (no pattern)
-        this.defaultValue = itm.defaultValue;  // default is undefined (no default value)
+        this.minCount = itm.minCount || 0;
+        this.maxCount = itm.maxCount || 1;
+        this.maxLength = itm.maxLength;
+        this.pattern = itm.pattern;
+        this.minInclusive = itm.minInclusive;
+        this.maxInclusive = itm.maxInclusive;
+        this.defaultValue = itm.defaultValue;
         return this.validate(itm);
     }
     get() {
@@ -206,9 +212,9 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
             minCount: this.minCount,
             maxCount: this.maxCount,
             maxLength: this.maxLength,
+            pattern: this.pattern,
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
-            pattern: this.pattern,
             defaultValue: this.defaultValue
        };
     }
