@@ -20,7 +20,7 @@ Initially, test-data should be small and cover relevant and typical aspects of t
   </folder>
   <folder name="Application" id="id-cbf67432f6114c379ba95a8834ae3937" type="application">
     <element xsi:type="archimate:ApplicationComponent" name="PIG App" id="id-e172fd9964fa43ad8d12dbd7d3ab7dae">
-      <documentation>A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. In this case, the PIG Editor is used both for defining the application ontology and the application data.&#xD;
+      <documentation>A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. &#xD;
 &#xD;
 The architecture includes a plugin mechanism to allow the deployment of new transformations or storage adapters without building and deploying a complete new image, for details see ['Design Plugin Mechanism'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/21).&#xD;
 &#xD;
@@ -449,7 +449,7 @@ Report:View:Tag&#xD;
       <documentation>A process to validate the conceptional and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
 &#xD;
 Subject to validation:&#xD;
-- Has the PIG metamodel enough expressive power to deal with real-world data?&#xD;
+- Has the [PIG metamodel](https://cascade.gfse.org/results/Latest%20Metamodel/) enough expressive power to deal with real-world data?&#xD;
 - Can the data be transformed between RDF/Turtle, JSON-LD and GQL without loss? In all directions and in a full round-trip?&#xD;
 - Are the transformation results consistent, complete, comprehensible and finally useful?&#xD;
 - Can the user's 'competency questions' be satisfactorily answered? </documentation>

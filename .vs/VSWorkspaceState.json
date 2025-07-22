@@ -1,6 +1,8 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\src"
   ],
+  "SelectedNode": "\\src\\pig-scaffold-od.ts",
   "PreviewInSolutionExplorer": false
 }
