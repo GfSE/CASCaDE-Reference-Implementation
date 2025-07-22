@@ -20,11 +20,11 @@ Initially, test-data should be small and cover relevant and typical aspects of t
   </folder>
   <folder name="Application" id="id-cbf67432f6114c379ba95a8834ae3937" type="application">
     <element xsi:type="archimate:ApplicationComponent" name="PIG App" id="id-e172fd9964fa43ad8d12dbd7d3ab7dae">
-      <documentation>A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. In this case, the PIG Editor is used both for defining the application ontology and the application data.&#xD;
+      <documentation>A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. &#xD;
 &#xD;
 The architecture includes a plugin mechanism to allow the deployment of new transformations or storage adapters without building and deploying a complete new image, for details see ['Design Plugin Mechanism'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/21).&#xD;
 &#xD;
-A major challenge is an optimal design of the programming class structure ('scaffold'), the representation in JSON-LD and RDF/Turtle according to the [PIG metamodel](https://cascade.gfse.org/results/Latest%20Metamodel/). Goal is to allow easy transformations between all representations. For details see [Optimize the 'magic triangle'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/22).&#xD;
+A major challenge is an optimal design of the programming class structure ('scaffold'), the representation in JSON-LD, RDF/Turtle and GQL according to the [PIG metamodel](https://cascade.gfse.org/results/Latest%20Metamodel/). Goal is to allow easy transformations between all representations. For details see [Optimize the 'magic tetrahedron'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/22).&#xD;
 &#xD;
 Details of the development, build, integration and deployment environment are discussed in ['Select Development Environment and Programming Language'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/14).&#xD;
 &#xD;
@@ -66,7 +66,8 @@ Is usually provided by the application framework. An option is to implement an e
 The following transformations are planned for validating the apprpach (the standard tp submit):&#xD;
 - [JSON-LD](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/27)&#xD;
 - [RDF/Turtle](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/28)&#xD;
-- [HTML](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/29)</documentation>
+- [HTML](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/29)&#xD;
+- [LOTAR](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/30)</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Import Plugin" id="id-f291d80f73a5424897100e0b80694a0d">
       <documentation>Transforms a source data format such as ReqIF, XMI, STEP or FMI/SSP to the internal data format according to the PIG metamodel. A full transformation of the source data may not be necessary for the given use-cases, so emphasis is put on the *relevant* entities and relationships of the source data.&#xD;
@@ -79,6 +80,7 @@ The following transformations are planned for validating the apprpach (the stand
 - [ReqIF](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/25)&#xD;
 - [SysML v1](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/26)&#xD;
 - [FMI/SSP](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/7)&#xD;
+- [LOTAR](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/6)&#xD;
 - ,,</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Integration Plugin" id="id-0ba891ccef514f39954df0f3a398025c">
@@ -174,7 +176,7 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
   <folder name="Views" id="id-c0b1cf8b9b244a5d87e2441e9fb0ac3b" type="diagrams">
     <element xsi:type="archimate:ArchimateDiagramModel" name="Module Architecture" id="id-f73cd2ce3fb547f3a68dc93bec8f2bd8" viewpoint="application_structure">
       <child xsi:type="archimate:DiagramObject" id="id-d7f2525e752e415ca43adf371fdae6fb" font="1|Segoe UI|14.25|0|WINDOWS|1|-19|0|0|0|400|0|0|0|0|3|2|1|34|Segoe UI" lineWidth="3" textAlignment="1" archimateElement="id-e172fd9964fa43ad8d12dbd7d3ab7dae">
-        <bounds x="228" y="24" width="613" height="304"/>
+        <bounds x="228" y="24" width="613" height="325"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-8be7e175194e4cd99126beed46508c5a" source="id-d7f2525e752e415ca43adf371fdae6fb" target="id-f27398f59f2b402f9248c1fa75ddf7e2" archimateRelationship="id-b2ad6ff6cdea41588fc29ef8846121d3"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-33b956fc4bd74a5296d46fe8466b9d19" source="id-d7f2525e752e415ca43adf371fdae6fb" target="id-9f7d1897299f4b7ca988d97ae2e36aea" archimateRelationship="id-f5998ed26eb94f1c8b2e05c003de021a"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-4741fcaa52b64552b1d64aa0696ab387" source="id-d7f2525e752e415ca43adf371fdae6fb" target="id-c62b724cde534b0c88b31f993dbedba6" archimateRelationship="id-c5ccb5005e3645a986a30794ee2976cf"/>
@@ -190,15 +192,15 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
           <bounds x="12" y="192" width="589" height="37"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-9f7d1897299f4b7ca988d97ae2e36aea" targetConnections="id-33b956fc4bd74a5296d46fe8466b9d19 id-9c9d942dc1dd46e18b7fc1b015d3843e" textPosition="1" archimateElement="id-bf130366bf9542b383059fbb1d8b72fe">
-          <bounds x="217" y="252" width="109" height="38"/>
+          <bounds x="217" y="252" width="109" height="55"/>
           <sourceConnection xsi:type="archimate:Connection" id="id-080dd2fbe41246b6afdbf907ef24006e" source="id-9f7d1897299f4b7ca988d97ae2e36aea" target="id-f27398f59f2b402f9248c1fa75ddf7e2" archimateRelationship="id-d7b99be27df14c77ba0e12ebdde2998a"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-c62b724cde534b0c88b31f993dbedba6" targetConnections="id-4741fcaa52b64552b1d64aa0696ab387 id-b0a6ff7219bf4f969055cac210f4411d" textPosition="1" archimateElement="id-1d9dffeb40244e7ab7d7e121a57f9208">
-          <bounds x="12" y="252" width="109" height="38"/>
+          <bounds x="12" y="252" width="109" height="55"/>
           <sourceConnection xsi:type="archimate:Connection" id="id-660f74d507454737a59e44b5f69dabe3" source="id-c62b724cde534b0c88b31f993dbedba6" target="id-f27398f59f2b402f9248c1fa75ddf7e2" archimateRelationship="id-2ddf2de491a5401c86760817d4b6ac4b"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-5ca24b27990a440eb83b195b788336ef" targetConnections="id-8df9618d8b1646c7aed48d003faa59d3" textPosition="1" archimateElement="id-08f30ef40bcf4dda90302daef5a76b51">
-          <bounds x="420" y="252" width="109" height="38"/>
+          <bounds x="420" y="252" width="109" height="55"/>
           <sourceConnection xsi:type="archimate:Connection" id="id-263330a0249e45dcb4a629edfe68bab9" source="id-5ca24b27990a440eb83b195b788336ef" target="id-f27398f59f2b402f9248c1fa75ddf7e2" archimateRelationship="id-17b2c6ed6bbc403dbee358a377a59848"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-9b426f333959459398d3b242dbef31e2" targetConnections="id-fa9832c1aad5494d86ef2aea6b3b8b9c id-effda8955c9e4ea99a022fc9745335bb id-3a2f0d3dd8bc49efa3acc70b99546821 id-ce657a4bed67491cb89a7149754d2a67" textPosition="1" archimateElement="id-a3381ffbd2dd42c8a672a7c134cf4703">
@@ -218,7 +220,7 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
           <sourceConnection xsi:type="archimate:Connection" id="id-148f865b9ee1464884158b1679859a5f" source="id-919392e19e7148ddb6ad3cc93d6748a2" target="id-f27398f59f2b402f9248c1fa75ddf7e2" archimateRelationship="id-5f38e80efc5a41c1980faf378029778b"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-68a6326f3cc14c42a3e7b7737f35c6a8" targetConnections="id-9147e27a627d4d53964e4db86c3848cf id-4f2b020d5421490ca898e701f8b52ce1" textPosition="1" archimateElement="id-8c69d3bb010d4fe4ba7487020c8da50a">
-          <bounds x="132" y="108" width="108" height="55"/>
+          <bounds x="132" y="108" width="109" height="55"/>
           <sourceConnection xsi:type="archimate:Connection" id="id-5c2ff70646cd4facb783031a05773034" source="id-68a6326f3cc14c42a3e7b7737f35c6a8" target="id-f27398f59f2b402f9248c1fa75ddf7e2" archimateRelationship="id-d2f48c10ed1144c79245495695c1d5b7"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-67c9fd015bf348bdb109a6b6c9305841" targetConnections="id-b29194ca36ca44aeb99d02990c226c7e id-f1cf5e6adb574190b7a9b93a5f7ea7a6" textPosition="1" archimateElement="id-d40d528698ce4da39aa545cb811f9ee4">
@@ -239,11 +241,11 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
         </child>
       </child>
       <child xsi:type="archimate:DiagramObject" id="id-456388620c0a41ee912aed4fc8956dd4" alpha="127" archimateElement="id-c32ac19a7ade4b77afa0b492bd67cea4">
-        <bounds x="396" y="354" width="205" height="106"/>
+        <bounds x="396" y="372" width="205" height="106"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-9c9d942dc1dd46e18b7fc1b015d3843e" source="id-456388620c0a41ee912aed4fc8956dd4" target="id-9f7d1897299f4b7ca988d97ae2e36aea" archimateRelationship="id-2c63b54fcd6544928e9cfb615f70eb9c"/>
       </child>
       <child xsi:type="archimate:DiagramObject" id="id-010fab8076444f289632a38ec6cd67cd" alpha="127" archimateElement="id-e4f4afa89d664db9b1026b0f3d5774a1">
-        <bounds x="228" y="354" width="144" height="106"/>
+        <bounds x="228" y="372" width="144" height="106"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-ca604cbfe253451d852f8e163f304a77" source="id-010fab8076444f289632a38ec6cd67cd" target="id-1b06aec6681449a48990e753489d4759" archimateRelationship="id-b6a9db6f202d4f9b903740bceb2058c1"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-b0a6ff7219bf4f969055cac210f4411d" source="id-010fab8076444f289632a38ec6cd67cd" target="id-c62b724cde534b0c88b31f993dbedba6" archimateRelationship="id-e5c201cee6db4897ae52825388e023fc"/>
         <child xsi:type="archimate:DiagramObject" id="id-1b06aec6681449a48990e753489d4759" targetConnections="id-ca604cbfe253451d852f8e163f304a77" textPosition="1" archimateElement="id-56c2550f04634283999aee998dbeef1a">
@@ -449,7 +451,7 @@ Report:View:Tag&#xD;
       <documentation>A process to validate the conceptional and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
 &#xD;
 Subject to validation:&#xD;
-- Has the PIG metamodel enough expressive power to deal with real-world data?&#xD;
+- Has the [PIG metamodel](https://cascade.gfse.org/results/Latest%20Metamodel/) enough expressive power to deal with real-world data?&#xD;
 - Can the data be transformed between RDF/Turtle, JSON-LD and GQL without loss? In all directions and in a full round-trip?&#xD;
 - Are the transformation results consistent, complete, comprehensible and finally useful?&#xD;
 - Can the user's 'competency questions' be satisfactorily answered? </documentation>
@@ -466,7 +468,7 @@ Subject to validation:&#xD;
   <property key="Report:Model:Hide:ViewNumbering" value="true"/>
   <purpose>This is the concept and design of the PIG App which is a PIG reference implementation used to validate the standard in preparation. &#xD;
 &#xD;
-The model gives an overview of the use-cases and the architecture, whereas further details are developed via [GitHub issues](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues). The planning is done with a [GitHub project](https://github.com/orgs/GfSE/projects/5/views/1). This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The PIG App will support a similar workflow (among others) for the source data formats chosen.&#xD;
+The model gives an overview of the use-cases and the architecture, whereas further details are developed via [GitHub issues](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues). The planning is done with a [GitHub project](https://github.com/orgs/GfSE/projects/5/views/1). &#xD;
 &#xD;
 [CASCaDE](https://cascade.gfse.org) is a project to standardize collaboration in systems engineering with respect to data format and ontology. A [Request for Proposal (RFP)](https://www.omg.org/cgi-bin/doc?mantis/24-12-03.pdf) has been accepted by OMG in December 2024. Information in different formats and from diverse sources are transformed and integrated to a common knowledge graph.&#xD;
 &#xD;
@@ -486,5 +488,7 @@ Major requirements (capabilities and characteristics) must be satisfied:&#xD;
 - Separate syntax and semantics: The software must not be changed, if the ontology is further developed. &#xD;
 - Comply with *web-technology* and avoid propriatory formats.&#xD;
 - Extend the software using a documented, if possible standardized plug-in mechanism.&#xD;
+&#xD;
+This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The PIG App will support a similar workflow (among others) for the source data formats chosen.&#xD;
 </purpose>
 </archimate:model>
