@@ -27,10 +27,10 @@ export enum XsDataType {
     Boolean = <any>'xs:boolean',
     Integer = <any>'xs:integer',
     Double = <any>'xs:double',
+    String = <any>'xs:string',
     AnyURI = <any>'xs:anyURI',
     DateTime = <any>'xs:dateTime',
     Duration = <any>'xs:duration',
-    String = <any>'xs:string',
     ComplexType = <any>'xs:complexType'
 }
 
@@ -44,6 +44,17 @@ interface IConfigurationItem {
     creator?: string;
     title: string;
     description?: string;
+
+/* Core Audit Attributes of IBM DOORS as proposed by Rüdiger Kaffenberger:
+These capture who, what, when, where, and how of data access or changes:
+- User ID: Identity of the user who performed the action
+- Timestamp: Exact date and time the action occurred
+- Operation Type: Action performed (e.g. SELECT, INSERT, UPDATE, DELETE)
+- Object Accessed: Table, view, or other database object involved -> im Metamodell die Properties
+- Before and After Values (for data changes): Helps track data modifications -> kann rudimentär auch von einem CM-Tool bereit gestellt werden.
+- Source IP / Hostname: Origin of the database connection -> besser die User-Id (Agent)
+- Application / Client Used: Tool or program accessing the database -> (Agent oder Client App)
+- Success/Failure Status: Indicates whether the operation succeeded or failed -> in unserem Fall wohl überflüssig. */
 }
 abstract class ConfigurationItem implements IConfigurationItem {
     id!: TUuid;
