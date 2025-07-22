@@ -1,154 +1,153 @@
-// --- Property Class with Validation ---
+﻿/** Product Information Graph (PIG) Scaffold - the basic object structure
+*   Dependencies: none
+*   Authors: chrissaenz@psg-inc.net, ..
+*   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+*/
+import { ElementClass, ModelElementClass, Element, ModelElement, ConfigurationItem, IConfigurationItem } from "./pig_scaffold_abstracts";
+
+// Defines a type for objects with string keys and any values
+type DynamicData = Record<string, any>; 
+
+export interface IPropertyClass {
+    datatype: string;
+    minCount: number;
+    maxCount: number;
+    maxLength: number;
+    minInclusive: number;
+    maxInclusive: number;
+    fractionDigits: number;
+    restriction: number;
+    defaultValue: number[];
+}
+export class PropertyClass extends ConfigurationItem {
+    datatype!: string;
+    minCount?: number;
+    maxCount?: number;
+    maxLength?: number;
+    minInclusive?: number;
+    maxInclusive?: number;
+    fractionDigits?: number;
+    restriction?: any;
+    defaultValue?: any[];
+
+    child?: PropertyClass | null;
+
+    constructor(itm: IConfigurationItem, iprop: IPropertyClass, child?:PropertyClass) {
+        super(itm);
+        this.setNew(iprop);
+
+        this.child = child;
+    }
+
+    setNew(iprop: IPropertyClass) {
+        this.datatype = iprop.datatype;
+        this.minCount = iprop.minCount;
+        this.maxCount = iprop.maxCount;
+        this.maxLength = iprop.maxLength;
+        this.minInclusive = iprop.minInclusive;
+        this.maxInclusive = iprop.maxInclusive;
+        this.fractionDigits = iprop.fractionDigits;
+        this.restriction = iprop.restriction;
+        this.defaultValue = iprop.defaultValue;
+    }
+
+    getAll() {
+        let configurationItem = this.get();
+        return {
+            configurationItem: configurationItem,
+            datatype: this.datatype,
+            minCount: this.minCount,
+            maxCount: this.maxCount,
+            maxLength: this.maxLength,
+            minInclusive: this.minInclusive,
+            maxInclusive: this.maxInclusive,
+            fractionDigits: this.fractionDigits,
+            restriction: this.restriction,
+            defaultValue: this.defaultValue
+        }
+    }
+}
+
+export class OrganizerClass extends ElementClass {
+    modelElementClasses?: ModelElementClass[];
+
+    constructor(itm: IConfigurationItem, propertyClasses?: PropertyClass[], modelElementClasses?:ModelElementClass[]) {
+        super(itm, propertyClasses);
+
+        this.modelElementClasses = modelElementClasses;
+    }
+}
+
+export class EntityClass extends ModelElementClass {
+    constructor(itm: IConfigurationItem, icon?: string) {
+        super(itm, icon);
+    }
+}
+
+export class RelationshipClass extends ModelElementClass {
+    // TODO: relationshipClass has pig*eligibleSubjectClass[0..*] and pig*eligibleObjectClass[0..*]
+    // both of those are references to the pig*ModelElementClass. Determine best way to handle this.
+    constructor(itm: IConfigurationItem, icon?: string) {
+        super(itm, icon);
+    }
+}
+
+export class Organizer extends Element {
+    child?: Organizer;
+    organizerClasses?: OrganizerClass[];
+    modelElements?: ModelElement[];
+
+    constructor(itm: IConfigurationItem, property: Property, child?:Organizer, organizerClasses?:OrganizerClass[], modelElements?: ModelElement[]) {
+        super(itm, property);
+
+        this.child = child;
+        this.organizerClasses = organizerClasses;
+        this.modelElements = modelElements;
+    }
+}
+
+export class Entity extends ModelElement {
+    entityClasses?: EntityClass[];
+
+    constructor(itm: IConfigurationItem, property: Property, entityClasses?:EntityClass[]) {
+        super(itm, property);
+
+        this.entityClasses = entityClasses;
+    }
+}
+
+export class Relationship extends ModelElement {
+    relationshipClasses?: RelationshipClass[];
+    // TODO: Relationship has pig*hasSubject[1] and pig*hasObject[1] both of those are references to
+    // the pig*ModelElement. Determine best way to handle this.
+
+    constructor(itm: IConfigurationItem, property: Property, relationshipClasses?:RelationshipClass[]) {
+        super(itm, property);
+
+        this.relationshipClasses = relationshipClasses;
+    }
+}
+
 export class Property {
-  constructor(
-    public name: string,
-    public value: any,
-    public dataType: string,
-    public maxLength?: number,
-    public required: boolean = false
-  ) {
-    this.validate();
-  }
+    data!: DynamicData;
+    child?: Property | null;
 
-  validate(): void {
-    if (this.required && this.value == null) {
-      throw new Error(`Property '${this.name}' is required.`);
+    constructor(data: DynamicData, child?:Property) {
+        this.data = data;
+
+        this.child = child;
     }
-    if (this.dataType === "xs:string" && this.maxLength !== undefined) {
-      if (typeof this.value !== "string") {
-        throw new TypeError(`Property '${this.name}' must be a string.`);
-      }
-      if (this.value.length > this.maxLength) {
-        throw new Error(`Property '${this.name}' exceeds max length of ${this.maxLength}.`);
-      }
+
+    get(key: string) {
+        return this.data[key];
     }
-  }
 
-  static fromDict(data: any): Property {
-    return new Property(data.name, data.value, data.dataType, data.maxLength, data.required);
-  }
-
-  toDict(): any {
-    return {
-      name: this.name,
-      value: this.value,
-      dataType: this.dataType,
-      maxLength: this.maxLength,
-      required: this.required
-    };
-  }
-}
-
-// --- Base PIG Element ---
-import { v4 as uuidv4 } from "uuid";
-
-export class PIGElement {
-  public id: string;
-  public properties: { [key: string]: Property } = {};
-  public createdAt: Date;
-  public updatedAt: Date;
-
-  constructor(public classType?: string, elementId?: string) {
-    this.id = elementId || \`PIG-\${uuidv4()}\`;
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
-  }
-
-  addProperty(prop: Property): void {
-    this.properties[prop.name] = prop;
-    this.updatedAt = new Date();
-  }
-
-  updateProperty(name: string, value: any): void {
-    if (this.properties[name]) {
-      this.properties[name].value = value;
-      this.properties[name].validate();
-      this.updatedAt = new Date();
+    getAll() {
+        return this.data;
     }
-  }
 
-  deleteProperty(name: string): void {
-    delete this.properties[name];
-    this.updatedAt = new Date();
-  }
-
-  static fromDict(data: any): PIGElement {
-    const element = new PIGElement(data.classType, data.id);
-    for (const name in data.properties) {
-      element.addProperty(Property.fromDict(data.properties[name]));
+    update(key: string, value: any) {
+        this.data[key] = value;
     }
-    return element;
-  }
-
-  toDict(): any {
-    return {
-      id: this.id,
-      classType: this.classType,
-      properties: Object.fromEntries(
-        Object.entries(this.properties).map(([k, v]) => [k, v.toDict()])
-      ),
-      createdAt: this.createdAt.toISOString(),
-      updatedAt: this.updatedAt.toISOString()
-    };
-  }
-}
-
-// --- Relationship Element with Class Constraints ---
-export class PIGRelationship {
-  public id: string;
-  public createdAt: Date;
-
-  constructor(
-    public subjectId: string,
-    public objectId: string,
-    public relType: string,
-    public allowedSubjectClasses: string[] = [],
-    public allowedObjectClasses: string[] = [],
-    relationshipId?: string
-  ) {
-    this.id = relationshipId || \`REL-\${uuidv4()}\`;
-    this.createdAt = new Date();
-  }
-
-  validateClasses(subjectClass: string, objectClass: string): void {
-    if (
-      this.allowedSubjectClasses.length &&
-      !this.allowedSubjectClasses.includes(subjectClass)
-    ) {
-      throw new Error(
-        \`Invalid subject class '\${subjectClass}' for relationship type '\${this.relType}'\`
-      );
-    }
-    if (
-      this.allowedObjectClasses.length &&
-      !this.allowedObjectClasses.includes(objectClass)
-    ) {
-      throw new Error(
-        \`Invalid object class '\${objectClass}' for relationship type '\${this.relType}'\`
-      );
-    }
-  }
-
-  static fromDict(data: any): PIGRelationship {
-    return new PIGRelationship(
-      data.subject,
-      data.object,
-      data.type,
-      data.allowedSubjectClasses,
-      data.allowedObjectClasses,
-      data.id
-    );
-  }
-
-  toDict(): any {
-    return {
-      id: this.id,
-      subject: this.subjectId,
-      object: this.objectId,
-      type: this.relType,
-      allowedSubjectClasses: this.allowedSubjectClasses,
-      allowedObjectClasses: this.allowedObjectClasses,
-      createdAt: this.createdAt.toISOString()
-    };
-  }
 }
