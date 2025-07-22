@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\OD\\Documents\\GitHub\\CASCaDE\\Reference-Implementation\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\OD\\Documents\\GitHub\\CASCaDE\\Reference-Implementation\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\OD\\Documents\\GitHub\\CASCaDE\\Reference-Implementation\\src\\pig-scaffold-od.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\pig-scaffold-od.ts||{0F2454B1-A556-402D-A7D0-1FDE7F99DEE0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -79,14 +79,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "README.md",
-              "DocumentMoniker": "C:\\Users\\OD\\Documents\\GitHub\\CASCaDE\\Reference-Implementation\\README.md",
-              "RelativeDocumentMoniker": "README.md",
-              "ToolTip": "C:\\Users\\OD\\Documents\\GitHub\\CASCaDE\\Reference-Implementation\\README.md",
-              "RelativeToolTip": "README.md",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
-              "WhenOpened": "2025-06-19T16:06:44.535Z",
+              "Title": "pig-scaffold-od.ts",
+              "DocumentMoniker": "C:\\Users\\OD\\Documents\\GitHub\\CASCaDE\\Reference-Implementation\\src\\pig-scaffold-od.ts",
+              "RelativeDocumentMoniker": "src\\pig-scaffold-od.ts",
+              "ToolTip": "C:\\Users\\OD\\Documents\\GitHub\\CASCaDE\\Reference-Implementation\\src\\pig-scaffold-od.ts",
+              "RelativeToolTip": "src\\pig-scaffold-od.ts",
+              "ViewState": "AgIAANwAAAAAAAAAAADwv/gAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003213|",
+              "WhenOpened": "2025-07-21T08:36:42.192Z",
               "EditorCaption": ""
             }
           ]

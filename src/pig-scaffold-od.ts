@@ -9,10 +9,11 @@
 *   - All names are always in singular form, even if they have multiple values.
 *   - The item type is checked in the constructors and setters of the classes, but it may be removed in production code.
 *   - Other objects are referenced by UUIDs (TUuid) to ensure cache updates are handled correctly.
-*     This means the code must resolve any reference by reading the object explicitly from the cache, when needed.
+*     This means the code must resolve any reference by reading the object explicitly from cache, when needed.
 */
 
 export type TUuid = string;  // this is not defined in the metamodel, yet.
+export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
 export enum PigItemType {
     PropertyClass = <any>'pig:PropertyClass',
     OrganizerClass = <any>'pig:OrganizerClass',
@@ -38,7 +39,8 @@ export enum XsDataType {
 // The abstract classes:
 interface IConfigurationItem {
     id: TUuid;
-    revision: string;
+    revision: TRevision;
+//  replaces?: TRevision[];  // optional, used to trace revisions of the same item, usually has one element, but can have two in case of a merge
     itemType: PigItemType;  // translates to @Type in JSON-LD
     modified: Date;
     creator?: string;
@@ -58,7 +60,7 @@ These capture who, what, when, where, and how of data access or changes:
 }
 abstract class ConfigurationItem implements IConfigurationItem {
     id!: TUuid;
-    revision!: string;
+    revision!: TRevision;
     readonly itemType!: PigItemType;
     modified!: Date;
     creator?: string;

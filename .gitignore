@@ -1,2 +1,4 @@
 # Visualstudio management files
 .vs
+# All backup files of all subfolders
+**/*.bak
