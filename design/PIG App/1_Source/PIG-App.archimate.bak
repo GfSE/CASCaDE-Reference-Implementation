@@ -38,7 +38,7 @@ Further aspects:&#xD;
 - API4KP Knowledge Asset Repository API</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Controller" id="id-a1aee4360a184850b38072e53c12e9d8">
-      <documentation>The controller is the 'main' component and is in charge of managing the execution of requested services in reaction on user or server events. In the most easiest case ES promises are used and the scheduling is left to the event queuing of the execution environment. But certain services may require coordination or user feedback (via spinner or log message, for example). So it is the responsibility of the controller to enable and disable elements creating events to maintain the integrity of the app and the data.&#xD;
+      <documentation>The controller is the 'main' component and is in charge of managing the execution of requested services in reaction on user or server events. In the easiest case ES promises are used and the scheduling is left to the event queuing of the execution environment. But certain services may require coordination or user feedback (via spinner or log message, for example). So it is the responsibility of the controller to enable and disable elements creating events to maintain the integrity of the app and the data.&#xD;
 &#xD;
 Is usually provided by the application framework. An option is to implement an event dispatcher controlled by a state-machine.</documentation>
     </element>
@@ -66,7 +66,8 @@ Is usually provided by the application framework. An option is to implement an e
 The following transformations are planned for validating the apprpach (the standard tp submit):&#xD;
 - [JSON-LD](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/27)&#xD;
 - [RDF/Turtle](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/28)&#xD;
-- [HTML](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/29)</documentation>
+- [HTML](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/29)&#xD;
+- [LOTAR](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/30)</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Import Plugin" id="id-f291d80f73a5424897100e0b80694a0d">
       <documentation>Transforms a source data format such as ReqIF, XMI, STEP or FMI/SSP to the internal data format according to the PIG metamodel. A full transformation of the source data may not be necessary for the given use-cases, so emphasis is put on the *relevant* entities and relationships of the source data.&#xD;
@@ -78,9 +79,10 @@ Transformations may use:&#xD;
 The following transformations are planned for validating the apprpach (the standard tp submit):&#xD;
 - [ReqIF](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/25)&#xD;
 - [SysML v1](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/26)&#xD;
+- [STEP](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/4)&#xD;
 - [FMI/SSP](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/7)&#xD;
 - [LOTAR](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/6)&#xD;
-- ,,</documentation>
+- ...</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Integration Plugin" id="id-0ba891ccef514f39954df0f3a398025c">
       <documentation>Integrates a new subgraph with the existing graph, e.g. by combining nodes representing the 'same' artifact. Two artefacts are considered the same, if class and title are equal. A preliminary decision has been taken to keep the original nodes and to create an 'umbrella' node pointing to two or more nodes of the same artifact.</documentation>
@@ -467,7 +469,7 @@ Subject to validation:&#xD;
   <property key="Report:Model:Hide:ViewNumbering" value="true"/>
   <purpose>This is the concept and design of the PIG App which is a PIG reference implementation used to validate the standard in preparation. &#xD;
 &#xD;
-The model gives an overview of the use-cases and the architecture, whereas further details are developed via [GitHub issues](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues). The planning is done with a [GitHub project](https://github.com/orgs/GfSE/projects/5/views/1). This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The PIG App will support a similar workflow (among others) for the source data formats chosen.&#xD;
+The model gives an overview of the use-cases and the architecture, whereas further details are developed via [GitHub issues](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues). The planning is done with a [GitHub project](https://github.com/orgs/GfSE/projects/5/views/1). &#xD;
 &#xD;
 [CASCaDE](https://cascade.gfse.org) is a project to standardize collaboration in systems engineering with respect to data format and ontology. A [Request for Proposal (RFP)](https://www.omg.org/cgi-bin/doc?mantis/24-12-03.pdf) has been accepted by OMG in December 2024. Information in different formats and from diverse sources are transformed and integrated to a common knowledge graph.&#xD;
 &#xD;
@@ -487,5 +489,7 @@ Major requirements (capabilities and characteristics) must be satisfied:&#xD;
 - Separate syntax and semantics: The software must not be changed, if the ontology is further developed. &#xD;
 - Comply with *web-technology* and avoid propriatory formats.&#xD;
 - Extend the software using a documented, if possible standardized plug-in mechanism.&#xD;
+&#xD;
+This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The PIG App will support a similar workflow (among others) for the source data formats chosen.&#xD;
 </purpose>
 </archimate:model>
