@@ -1,1 +1,0 @@
-The HTML version of this model is published <a href="../../docs/design/PIG-App">here</a>.
