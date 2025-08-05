@@ -38,10 +38,10 @@ export enum XsDataType {
 //////////////////////////////////////
 // The abstract classes:
 interface IConfigurationItem {
-    id: TUuid;
+    id: TUuid;  // translates to @id in JSON-LD
     revision: TRevision;
 //  replaces?: TRevision[];  // optional, used to trace revisions of the same item, usually has one element, but can have two in case of a merge
-    itemType: PigItemType;  // translates to @Type in JSON-LD
+    type: PigItemType;  // translates to @type in JSON-LD
     modified: Date;
     creator?: string;
     title: string;
@@ -61,7 +61,7 @@ These capture who, what, when, where, and how of data access or changes:
 abstract class ConfigurationItem implements IConfigurationItem {
     id!: TUuid;
     revision!: TRevision;
-    readonly itemType!: PigItemType;
+    readonly type!: PigItemType;
     modified!: Date;
     creator?: string;
     title!: string;
@@ -72,7 +72,7 @@ abstract class ConfigurationItem implements IConfigurationItem {
     set(itm: IConfigurationItem) {
         this.id = itm.id;
         this.revision = itm.revision;
-        // never set the itemType; it is set when instantiating the subclasses
+        // never set the type; it is set when instantiating the subclasses
         this.modified = itm.modified;
         this.creator = itm.creator;
         this.title = itm.title;
@@ -82,7 +82,7 @@ abstract class ConfigurationItem implements IConfigurationItem {
         return {
             id: this.id,
             revision: this.revision,
-            itemType: this.itemType,
+            type: this.type,
             modified: this.modified,
             creator: this.creator,
             title: this.title,
@@ -95,7 +95,7 @@ interface IElementClass extends IConfigurationItem {
     icon?: string;  // optional, default is undefined (no icon)
 }
 abstract class ElementClass extends ConfigurationItem implements IElementClass {
-    eligiblePropertyClass: TUuid[];  // constraint: must be UUIDs of PropertyClass objects
+    eligiblePropertyClass: TUuid[];
     icon?: string;
     constructor(itm: IElementClass) {
         super(itm);
@@ -165,17 +165,19 @@ abstract class ModelElement extends Element implements IModelElement {
 //////////////////////////////////////
 // The classes to instantiate:
 export interface IPropertyClass extends IConfigurationItem {
-    datatype: XsDataType;  // constraint: must be one of the XsDataType values
-    minCount?: number;  // optional, default is 0 (not required), property is required if minCount>0
-    maxCount?: number;  // optional, default is 1 (single value), property is multivalued if maxCount>1
-    maxLength?: number;  // optional, default is 0 (no limit), for properties with datatype String
-    pattern?: string;  // optional, default is empty string (no pattern), for properties with datatype String
+    datatype: XsDataType;   // constraint: must be one of the XsDataType values
+    minCount?: number;      // optional, default is 0 (not required), property is required if minCount>0
+    maxCount?: number;      // optional, default is 1 (single value), property is multivalued if maxCount>1
+    maxLength?: number;     // optional, default is 0 (no limit), for properties with datatype String
+    pattern?: string;       // optional, default is empty string (no pattern), for properties with datatype String
     minInclusive?: number;  // optional, default is 0 (no limit), for properties with datatype Integer or Double
     maxInclusive?: number;  // optional, default is 0 (no limit), for properties with datatype Integer or Double
-    defaultValue?: any;  // optional, default is undefined (no default value), maps to sh:defaultValue in SHACL
+    hasChild?: TUuid[];     // optional, constraint: must be UUIDs of objects of PropertyClass
+    defaultValue?: any;     // optional, default is undefined (no default value), maps to sh:defaultValue in SHACL,
+                            // constraint: must match the datatype and range defined by this PropertyClass
     // Consider to call it 'value' instead of 'defaultValue' here, as it is formally the same as the value of a property
 
-/*  Proposal by GitHub Copilot:
+/*  Proposed by GitHub Copilot:
     isReadOnly?: boolean;  // optional, default is false
     isSearchable?: boolean;  // optional, default is false
     isFilterable?: boolean;  // optional, default is false
@@ -184,7 +186,7 @@ export interface IPropertyClass extends IConfigurationItem {
 }
 export class PropertyClass extends ConfigurationItem implements IPropertyClass {
     // ToDo: ComplexType is not yet implemented
-    readonly itemType = PigItemType.PropertyClass;
+    readonly type = PigItemType.PropertyClass;
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
@@ -192,6 +194,7 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
     pattern?: string;
     minInclusive?: number;
     maxInclusive?: number;
+    hasChild?: TUuid[];
     defaultValue?: any;
     constructor(itm: IPropertyClass) {
         super(itm);
@@ -202,6 +205,7 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
         this.pattern = itm.pattern;
         this.minInclusive = itm.minInclusive;
         this.maxInclusive = itm.maxInclusive;
+        this.hasChild = itm.hasChild;
         this.defaultValue = itm.defaultValue;
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
@@ -215,6 +219,7 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
         this.pattern = itm.pattern;
         this.minInclusive = itm.minInclusive;
         this.maxInclusive = itm.maxInclusive;
+        this.hasChild = itm.hasChild;
         this.defaultValue = itm.defaultValue;
         return this.validate(itm);
     }
@@ -228,13 +233,14 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
             pattern: this.pattern,
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
+            hasChild: this.hasChild,
             defaultValue: this.defaultValue
        };
     }
     validate(itm: IPropertyClass) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType)
-            throw new Error(`Expected PropertyClass, but got ${itm.itemType}`);
+        if (itm.type !== this.type)
+            throw new Error(`Expected PropertyClass, but got ${itm.type}`);
         if (!Object.values(XsDataType).includes(itm.datatype))
             throw new Error(`Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`);
         // Return an error code in case of invalid data:
@@ -247,7 +253,7 @@ export interface IOrganizerClass extends IElementClass {
     eligibleModelElementClass: TUuid[];  // constraint: must be UUIDs of objects of ModelElementClass, thus of EntityClass or RelationshipClass
 }
 export class OrganizerClass extends ElementClass implements IOrganizerClass {
-    readonly itemType = PigItemType.OrganizerClass;
+    readonly type = PigItemType.OrganizerClass;
     eligibleModelElementClass: TUuid[];
     constructor(itm: IOrganizerClass) {
         super(itm);
@@ -268,8 +274,8 @@ export class OrganizerClass extends ElementClass implements IOrganizerClass {
     }
     validate(itm: IOrganizerClass) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType) {
-            throw new Error(`Expected OrganizerClass, but got ${itm.itemType}`);
+        if (itm.type !== this.type) {
+            throw new Error(`Expected OrganizerClass, but got ${itm.type}`);
         };
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
@@ -279,7 +285,7 @@ export class OrganizerClass extends ElementClass implements IOrganizerClass {
 export interface IEntityClass extends IModelElementClass {
 }
 export class EntityClass extends ModelElementClass implements IEntityClass {
-    readonly itemType = PigItemType.EntityClass;
+    readonly type = PigItemType.EntityClass;
     constructor(itm: IEntityClass) {
         super(itm);
         this.validate(itm);  // here we only terminate in case of a programming error.
@@ -294,8 +300,8 @@ export class EntityClass extends ModelElementClass implements IEntityClass {
     }
     validate(itm: IEntityClass) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType)
-            throw new Error(`Expected EntityClass, but got ${itm.itemType}`);
+        if (itm.type !== this.type)
+            throw new Error(`Expected EntityClass, but got ${itm.type}`);
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
         return 0;
@@ -307,7 +313,7 @@ export interface IRelationshipClass extends IModelElementClass {
     eligibleObjectClass?: TUuid[];  // constraint: must be UUIDs of objects of ModelElementClass, thus of EntityClass or RelationshipClass
 }
 export class RelationshipClass extends ModelElementClass implements IRelationshipClass {
-    readonly itemType = PigItemType.RelationshipClass;
+    readonly type = PigItemType.RelationshipClass;
     eligibleSubjectClass?: TUuid[];
     eligibleObjectClass?: TUuid[];
     constructor(itm: IRelationshipClass) {
@@ -332,8 +338,8 @@ export class RelationshipClass extends ModelElementClass implements IRelationshi
     }
     validate(itm: IRelationshipClass) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType) {
-            throw new Error(`Expected RelationshipClass, but got ${itm.itemType}`);
+        if (itm.type !== this.type) {
+            throw new Error(`Expected RelationshipClass, but got ${itm.type}`);
         };
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
@@ -341,80 +347,85 @@ export class RelationshipClass extends ModelElementClass implements IRelationshi
     }
 }
 export interface IProperty {
-    readonly itemType: PigItemType;
-    rdfType: TUuid;  // constraint: must be UUID of PropertyClass object
+    readonly type: PigItemType;
+    hasClass: TUuid;  // constraint: must be UUID of PropertyClass object
+    hasChild?: TUuid[];  // optional, constraint: must be UUIDs of objects of Property
     value: any;  // the value of the property, must match the datatype and range defined by the PropertyClass
 }
 export class Property implements IProperty {
     // ToDo: ComplexType is not yet implemented
-    readonly itemType = PigItemType.Property;
-    rdfType!: TUuid;
-    value!: any;  // the value of the property, must match the datatype and range defined by the PropertyClass
+    readonly type = PigItemType.Property;
+    hasClass!: TUuid;
+    hasChild?: TUuid[];
+    value!: any;  
     constructor(itm: IProperty) {
-        this.rdfType = itm.rdfType;
+        this.hasClass = itm.hasClass;
+        this.hasChild = itm.hasChild;
         this.value = itm.value;
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
     }
     set(itm: IProperty) {
-        this.rdfType = itm.rdfType;
+        this.hasClass = itm.hasClass;
+        this.hasChild = itm.hasChild;
         this.value = itm.value;
         return this.validate(itm);
     }
     get() {
         return {
-            itemType: this.itemType,
-            rdfType: this.rdfType,
+            type: this.type,
+            hasClass: this.hasClass,
+            hasChild: this.hasChild,
             value: this.value
         };
     }
     validate(itm: IProperty) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType)
-            throw new Error(`Expected Property, but got ${itm.itemType}`);
+        if (itm.type !== this.type)
+            throw new Error(`Expected Property, but got ${itm.type}`);
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
         return 0;
     }
 }
 export interface IOrganizer extends IElement {
-    rdfType: TUuid;  // constraint: must be UUID of OrganizerClass object
+    hasClass: TUuid;  // constraint: must be UUID of OrganizerClass object
     // Hierarchy elements must reference exactly one model element, but diagrams can reference ('show') one or more model elements:
     hasModelElement: TUuid[];  // constraint: must be UUIDs of objects of ModelElement, thus of Entity or Relationship
-    rdfSeq?: TUuid[];  // optional, constraint: must be UUIDs of objects of Organizer
+    hasChild?: TUuid[];  // optional, constraint: must be UUIDs of objects of Organizer
 }
 export class Organizer extends Element implements IOrganizer {
-    readonly itemType = PigItemType.Organizer;
-    rdfType!: TUuid;
+    readonly type = PigItemType.Organizer;
+    hasClass!: TUuid;
     hasModelElement!: TUuid[];
-    rdfSeq?: TUuid[];
+    hasChild?: TUuid[];
     constructor(itm: IOrganizer) {
         super(itm);
-        this.rdfType = itm.rdfType;
+        this.hasClass = itm.hasClass;
         this.hasModelElement = itm.hasModelElement;
-        this.rdfSeq = itm.rdfSeq;
+        this.hasChild = itm.hasChild;
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
     }
     set(itm: IOrganizer) {
         super.set(itm);
-        this.rdfType = itm.rdfType;
+        this.hasClass = itm.hasClass;
         this.hasModelElement = itm.hasModelElement;
-        this.rdfSeq = itm.rdfSeq;
+        this.hasChild = itm.hasChild;
         return this.validate(itm);
     }
     get() {
         return {
             ...super.get(),
-            rdfType: this.rdfType,
+            hasClass: this.hasClass,
             hasModelElement: this.hasModelElement,
-            rdfSeq: this.rdfSeq
+            hasChild: this.hasChild
         };
     }
     validate(itm: IOrganizer) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType) {
-            throw new Error(`Expected Organizer, but got ${itm.itemType}`);
+        if (itm.type !== this.type) {
+            throw new Error(`Expected Organizer, but got ${itm.type}`);
         };
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
@@ -424,7 +435,7 @@ export class Organizer extends Element implements IOrganizer {
 export interface IEntity extends IModelElement {
 }
 export class Entity extends ModelElement implements IEntity {
-    readonly itemType = PigItemType.Entity;
+    readonly type = PigItemType.Entity;
     constructor(itm: IEntity) {
         super(itm);
         this.validate(itm);  // here we only terminate in case of a programming error.
@@ -439,8 +450,8 @@ export class Entity extends ModelElement implements IEntity {
     }
     validate(itm: IEntity) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType)
-            throw new Error(`Expected Entity, but got ${itm.itemType}`);
+        if (itm.type !== this.type)
+            throw new Error(`Expected Entity, but got ${itm.type}`);
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
         return 0;
@@ -451,7 +462,7 @@ export interface IRelationship extends IModelElement {
     hasObject: TUuid;  // constraint: must be UUID of Entity or Relationship
 }
 export class Relationship extends ModelElement implements IRelationship {
-    readonly itemType = PigItemType.Relationship;
+    readonly type = PigItemType.Relationship;
     hasSubject!: TUuid;
     hasObject!: TUuid;
     constructor(itm: IRelationship) {
@@ -476,8 +487,8 @@ export class Relationship extends ModelElement implements IRelationship {
     }
     validate(itm: IRelationship) {
         // Terminate in case of a programming error:
-        if (itm.itemType !== this.itemType)
-            throw new Error(`Expected Relationship, but got ${itm.itemType}`);
+        if (itm.type !== this.type)
+            throw new Error(`Expected Relationship, but got ${itm.type}`);
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
         return 0;
