@@ -14,6 +14,9 @@
 
 export type TUuid = string;  // this is not defined in the metamodel, yet.
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
+export type TPigClass = PropertyClass | OrganizerClass | EntityClass | RelationshipClass;
+export type TPigInstance = Organizer | Entity | Relationship;
+export type TPigItem = TPigClass | TPigInstance;
 export enum PigItemType {
     PropertyClass = <any>'pig:PropertyClass',
     OrganizerClass = <any>'pig:OrganizerClass',
