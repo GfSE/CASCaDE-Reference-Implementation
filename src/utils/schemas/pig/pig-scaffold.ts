@@ -64,7 +64,7 @@ These capture who, what, when, where, and how of data access or changes:
 abstract class ConfigurationItem implements IConfigurationItem {
     id!: TUuid;
     revision!: TRevision;
-    readonly type!: PigItemType;
+    type!: PigItemType;
     modified!: Date;
     creator?: string;
     title!: string;
@@ -189,7 +189,7 @@ export interface IPropertyClass extends IConfigurationItem {
 }
 export class PropertyClass extends ConfigurationItem implements IPropertyClass {
     // ToDo: ComplexType is not yet implemented
-    readonly type = PigItemType.PropertyClass;
+    readonly type: PigItemType;
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
@@ -201,6 +201,7 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
     defaultValue?: any;
     constructor(itm: IPropertyClass) {
         super(itm);
+        this.type = PigItemType.PropertyClass;
         this.datatype = itm.datatype;
         this.minCount = itm.minCount || 0;
         this.maxCount = itm.maxCount || 1;
@@ -213,7 +214,7 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
     }
-    set(itm: IPropertyClass):number {
+    set(itm: IPropertyClass) {
         super.set(itm);
         this.datatype = itm.datatype;
         this.minCount = itm.minCount || 0;
@@ -224,7 +225,6 @@ export class PropertyClass extends ConfigurationItem implements IPropertyClass {
         this.maxInclusive = itm.maxInclusive;
         this.hasChild = itm.hasChild;
         this.defaultValue = itm.defaultValue;
-        return this.validate(itm);
     }
     get() {
         return {
@@ -256,10 +256,11 @@ export interface IOrganizerClass extends IElementClass {
     eligibleModelElementClass: TUuid[];  // constraint: must be UUIDs of objects of ModelElementClass, thus of EntityClass or RelationshipClass
 }
 export class OrganizerClass extends ElementClass implements IOrganizerClass {
-    readonly type = PigItemType.OrganizerClass;
+    readonly type: PigItemType;
     eligibleModelElementClass: TUuid[];
     constructor(itm: IOrganizerClass) {
         super(itm);
+        this.type = PigItemType.OrganizerClass;
         this.eligibleModelElementClass = itm.eligibleModelElementClass || [];
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
@@ -267,7 +268,6 @@ export class OrganizerClass extends ElementClass implements IOrganizerClass {
     set(itm: IOrganizerClass) {
         super.set(itm);
         this.eligibleModelElementClass = itm.eligibleModelElementClass || [];
-        return this.validate(itm);
     }
     get() {
         return {
@@ -288,15 +288,15 @@ export class OrganizerClass extends ElementClass implements IOrganizerClass {
 export interface IEntityClass extends IModelElementClass {
 }
 export class EntityClass extends ModelElementClass implements IEntityClass {
-    readonly type = PigItemType.EntityClass;
+    readonly type: PigItemType;
     constructor(itm: IEntityClass) {
         super(itm);
+        this.type = PigItemType.EntityClass;
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
     }
     set(itm: IEntityClass) {
         super.set(itm);
-        return this.validate(itm);
     }
     get() {
         return super.get()
@@ -316,11 +316,12 @@ export interface IRelationshipClass extends IModelElementClass {
     eligibleObjectClass?: TUuid[];  // constraint: must be UUIDs of objects of ModelElementClass, thus of EntityClass or RelationshipClass
 }
 export class RelationshipClass extends ModelElementClass implements IRelationshipClass {
-    readonly type = PigItemType.RelationshipClass;
+    readonly type: PigItemType;
     eligibleSubjectClass?: TUuid[];
     eligibleObjectClass?: TUuid[];
     constructor(itm: IRelationshipClass) {
         super(itm);
+        this.type = PigItemType.RelationshipClass;
         this.eligibleSubjectClass = itm.eligibleSubjectClass || []; 
         this.eligibleObjectClass = itm.eligibleObjectClass || [];
         this.validate(itm);  // here we only terminate in case of a programming error.
@@ -330,7 +331,6 @@ export class RelationshipClass extends ModelElementClass implements IRelationshi
         super.set(itm);
         this.eligibleSubjectClass = itm.eligibleSubjectClass || [];
         this.eligibleObjectClass = itm.eligibleObjectClass || [];
-        return this.validate(itm);
     }
     get() {
         return {
@@ -349,19 +349,21 @@ export class RelationshipClass extends ModelElementClass implements IRelationshi
         return 0;
     }
 }
+// Concrete Children Classes
 export interface IProperty {
-    readonly type: PigItemType;
+    type: PigItemType;
     hasClass: TUuid;  // constraint: must be UUID of PropertyClass object
     hasChild?: TUuid[];  // optional, constraint: must be UUIDs of objects of Property
     value: any;  // the value of the property, must match the datatype and range defined by the PropertyClass
 }
 export class Property implements IProperty {
     // ToDo: ComplexType is not yet implemented
-    readonly type = PigItemType.Property;
+    readonly type: PigItemType;
     hasClass!: TUuid;
     hasChild?: TUuid[];
     value!: any;  
     constructor(itm: IProperty) {
+        this.type = PigItemType.Property;
         this.hasClass = itm.hasClass;
         this.hasChild = itm.hasChild;
         this.value = itm.value;
@@ -372,7 +374,6 @@ export class Property implements IProperty {
         this.hasClass = itm.hasClass;
         this.hasChild = itm.hasChild;
         this.value = itm.value;
-        return this.validate(itm);
     }
     get() {
         return {
@@ -398,12 +399,13 @@ export interface IOrganizer extends IElement {
     hasChild?: TUuid[];  // optional, constraint: must be UUIDs of objects of Organizer
 }
 export class Organizer extends Element implements IOrganizer {
-    readonly type = PigItemType.Organizer;
+    readonly type: PigItemType;
     hasClass!: TUuid;
     hasModelElement!: TUuid[];
     hasChild?: TUuid[];
     constructor(itm: IOrganizer) {
         super(itm);
+        this.type = PigItemType.Organizer;
         this.hasClass = itm.hasClass;
         this.hasModelElement = itm.hasModelElement;
         this.hasChild = itm.hasChild;
@@ -415,7 +417,6 @@ export class Organizer extends Element implements IOrganizer {
         this.hasClass = itm.hasClass;
         this.hasModelElement = itm.hasModelElement;
         this.hasChild = itm.hasChild;
-        return this.validate(itm);
     }
     get() {
         return {
@@ -438,15 +439,15 @@ export class Organizer extends Element implements IOrganizer {
 export interface IEntity extends IModelElement {
 }
 export class Entity extends ModelElement implements IEntity {
-    readonly type = PigItemType.Entity;
+    readonly type: PigItemType;
     constructor(itm: IEntity) {
         super(itm);
+        this.type = PigItemType.Entity;
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
     }
     set(itm: IEntity) {
         super.set(itm);
-        return this.validate(itm);
     }
     get() {
         return super.get()
@@ -454,7 +455,7 @@ export class Entity extends ModelElement implements IEntity {
     validate(itm: IEntity) {
         // Terminate in case of a programming error:
         if (itm.type !== this.type)
-            throw new Error(`Expected Entity, but got ${itm.type}`);
+            // throw new Error(`Expected ${this.type}, but got ${itm.type}`);
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic
         return 0;
@@ -465,11 +466,12 @@ export interface IRelationship extends IModelElement {
     hasObject: TUuid;  // constraint: must be UUID of Entity or Relationship
 }
 export class Relationship extends ModelElement implements IRelationship {
-    readonly type = PigItemType.Relationship;
+    readonly type: PigItemType;
     hasSubject!: TUuid;
     hasObject!: TUuid;
     constructor(itm: IRelationship) {
         super(itm);
+        this.type = PigItemType.Relationship;
         this.hasSubject = itm.hasSubject;
         this.hasObject = itm.hasObject;
         this.validate(itm);  // here we only terminate in case of a programming error.
@@ -479,7 +481,6 @@ export class Relationship extends ModelElement implements IRelationship {
         super.set(itm);
         this.hasSubject = itm.hasSubject;
         this.hasObject = itm.hasObject;
-        return this.validate(itm);
     }
     get() {
         return {
