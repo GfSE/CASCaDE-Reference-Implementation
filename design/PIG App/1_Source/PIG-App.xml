@@ -129,7 +129,8 @@ Is usually provided by the application framework. An option is to implement an e
       <name xml:lang="en">Export Plugin</name>
       <documentation xml:lang="en">Transforms a selected subgraph from the internal data format according to the PIG metamodel to a desired output format.&#xD;
 &#xD;
-The following transformations are planned for validating the apprpach (the standard tp submit):&#xD;
+The following transformations are planned for validating the apprp&#xD;
+oach (the standard to submit):&#xD;
 - [JSON-LD](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/27)&#xD;
 - [RDF/Turtle](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/28)&#xD;
 - [HTML](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/29)&#xD;
@@ -143,7 +144,7 @@ Transformations may use:&#xD;
 - XSLT in case of XML source data&#xD;
 - Scripting&#xD;
 &#xD;
-The following transformations are planned for validating the apprpach (the standard tp submit):&#xD;
+The following transformations are planned for validating the approach (the standard tp submit):&#xD;
 - [ReqIF](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/25)&#xD;
 - [SysML v1](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/26)&#xD;
 - [STEP](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/4)&#xD;
@@ -174,9 +175,11 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
     </element>
     <element identifier="id-de2a0c4d32014e2bad914f6e07e01e07" xsi:type="DataObject">
       <name xml:lang="en">Source Data</name>
+      <documentation xml:lang="en">The most general term for data ingested by the PIG App from previous processing steps.</documentation>
     </element>
     <element identifier="id-49ce19aceed240fe98c63f87eee0ba79" xsi:type="DataObject">
       <name xml:lang="en">Sink Data</name>
+      <documentation xml:lang="en">The most general term for data produced by the PIG App for further processing.</documentation>
     </element>
     <element identifier="id-8c4227da3d8a4c73b28af7fecb62ef6d" xsi:type="ApplicationComponent">
       <name xml:lang="en">Triple-Store</name>
@@ -184,12 +187,15 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
     </element>
     <element identifier="id-f0597e550052421886cc58da4aa066a3" xsi:type="DataObject">
       <name xml:lang="en">Test Data [RDF]</name>
+      <documentation xml:lang="en">Test data in RDF/Turtle format to allow further processing and reasoning with tools of the RDF ecosystem.</documentation>
     </element>
     <element identifier="id-b326ca2624e14d44b7dd163ec30e7baf" xsi:type="DataObject">
       <name xml:lang="en">Test Data [Original]</name>
+      <documentation xml:lang="en">Test data in a format provided by an [[Original Authoring System]].</documentation>
     </element>
     <element identifier="id-ca7b8b22e0f844ae9970a2dc2b94c19f" xsi:type="ApplicationComponent">
       <name xml:lang="en">Original Authoring System</name>
+      <documentation xml:lang="en">A system to create and maintain information somewhere in the product lifecycle. For example IBM DOORS for requirements management or Dassault Cameo for systems engineering.</documentation>
     </element>
     <element identifier="id-d40d528698ce4da39aa545cb811f9ee4" xsi:type="ApplicationComponent">
       <name xml:lang="en">Ontology Plugin</name>
@@ -287,6 +293,12 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
     <relationship identifier="id-c02a1ddf5777414081da7d490690fa8a" source="id-8c4227da3d8a4c73b28af7fecb62ef6d" target="id-f0597e550052421886cc58da4aa066a3" xsi:type="Access" accessType="Read">
       <name xml:lang="en">reads</name>
     </relationship>
+    <relationship identifier="id-36258908ff15499487d2406ef116f923" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-de2a0c4d32014e2bad914f6e07e01e07" xsi:type="Access" accessType="Read">
+      <name xml:lang="en">reads</name>
+    </relationship>
+    <relationship identifier="id-b88f5fdc82b14fc68f6f0e907ad9de93" source="id-e172fd9964fa43ad8d12dbd7d3ab7dae" target="id-49ce19aceed240fe98c63f87eee0ba79" xsi:type="Access" accessType="Write">
+      <name xml:lang="en">writes</name>
+    </relationship>
   </relationships>
   <organizations>
     <item>
@@ -380,6 +392,8 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
       <item identifierRef="id-d746aad4f31f4f719019752f3654e0a7" />
       <item identifierRef="id-a454413267e7422dac1e263ce412a1f5" />
       <item identifierRef="id-c02a1ddf5777414081da7d490690fa8a" />
+      <item identifierRef="id-36258908ff15499487d2406ef116f923" />
+      <item identifierRef="id-b88f5fdc82b14fc68f6f0e907ad9de93" />
     </item>
     <item>
       <label xml:lang="en">Views</label>
@@ -889,7 +903,7 @@ Report:View:Tag&#xD;
         </node>
       </view>
       <view identifier="id-a806fdf5705d4e11924dcd2dbd0c958d" xsi:type="Diagram" viewpoint="Application Usage">
-        <name xml:lang="en">Validation Workflow</name>
+        <name xml:lang="en">Validation Process</name>
         <documentation xml:lang="en">A process to validate the conceptional and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
 &#xD;
 Subject to validation:&#xD;
