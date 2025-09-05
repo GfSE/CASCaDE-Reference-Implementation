@@ -6,7 +6,7 @@ name: Node.js CI
 on:
   push:
     branches:
-      - dev/**
+      - dev/17-implement-ci-pipeline
   pull_request:
     branches:
       - main
