@@ -39,10 +39,10 @@ jobs:
       id: pages
       uses: actions/configure-pages@v5
 
-    - name: Upload Artifacts
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./public
+    # - name: Upload Artifacts
+    #   uses: actions/upload-pages-artifact@v3
+    #   with:
+    #     path: ./public
 
   # Deploy web app to GitHub Pages
   deploy:
