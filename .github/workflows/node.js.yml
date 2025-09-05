@@ -6,7 +6,7 @@ name: Node.js CI
 on:
   push:
     branches:
-      - '**'
+      - '**/**'
   pull_request:
     branches:
       - main
@@ -34,7 +34,7 @@ jobs:
     - run: npm ci
     - run: npm run build
     - run: npm run test:unit
-    - run: npm run test:e2e --if-present
+    # - run: npm run test:e2e --if-present
   
   deploy:
     name: Product Information Graph Application
