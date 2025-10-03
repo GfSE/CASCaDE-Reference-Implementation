@@ -3,14 +3,7 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import Home from './components/Home.vue';
-
-@Options({
-  components: {
-    Home,
-  },
-})
+import { Vue } from 'vue-class-component';
 export default class App extends Vue {}
 </script>
 

@@ -1,37 +1,33 @@
 <template>
-  <div class="hello">
+  <div class="Home Page">
     <h1>{{ msg }}</h1>
     <p>
-      Landing page for {{this.$applicationName}} app. Perform simple import and export functions here.
+      Landing page for CASCaDE app. Perform simple import and export functions here.
     </p>
     <ul>
-        <li><button @click="$handleJsonImport">Import Json</button></li>
-        <li><button @click="$handleJsonExport">Export Json</button></li>
-        <li><button @click="$handleRDFExport">Export RDF</button></li>
+        <li v-for="(component, name) in globalComponents" :key="name">
+            <component :is="name"/>
+        </li>
     </ul>
-
-    <MyGlobalComponent/>
   </div>
 </template>
 
+
 <script lang="ts">
+import { inject } from 'vue';
 import { Options, Vue } from 'vue-class-component';
 
 @Options({
   props: {
     msg: String
   },
-  methods: {
-    jsonImport() {this.$handleJsonImport},
-    jsonExport() {this.$handleJsonExport},
-    rdfExport() {this.$handleRDFExport}
-  },
+  inject: ['globalComponents']
 })
 
 export default class Home extends Vue {}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
 h3 {
   margin: 40px 0 0;
