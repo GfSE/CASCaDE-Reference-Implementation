@@ -8,41 +8,106 @@
 *   - 
 */
 import * as PigScaffold from './pig-scaffold';
-export interface IContextItem {
-    tag: string; // e.g. a namespace tag, e.g. "pig:"
-    value: string; // e.g. a namespace value, e.g. "https://product-iformation-graph.gfse.org/"
-}
-export interface IPackageClass extends PigScaffold.IOrganizerClass {
-    context: IContextItem[];
+export interface IPackage extends PigScaffold.IOrganizer {
+    namespace: PigScaffold.INamespace[];
     graph: PigScaffold.TPigItem[];
 }
-export class PackageClass extends PigScaffold.OrganizerClass implements IPackageClass {
-    context: IContextItem[];
+export class Package extends PigScaffold.Organizer implements IPackage {
+    namespace: PigScaffold.INamespace[];
     graph: PigScaffold.TPigItem[];
-    constructor(itm: IPackageClass) {
+    constructor(itm: IPackage) {
         super(itm);
-        this.context = itm.context || [];
+        this.namespace = itm.namespace || [];
         this.graph = itm.graph || [];
         this.validate(itm);  // here we only terminate in case of a programming error.
         // Cannot return an error code, must call validate() separately upon creation.
     }
-    set(itm: IPackageClass) {
+    set(itm: IPackage) {
         super.set(itm);
-        this.context = itm.context || [];
+        this.namespace = itm.namespace || [];
         this.graph = itm.graph || [];
         return this.validate(itm);
     }
     get() {
         return {
             ...super.get(),
-            context: this.context,
+            namespace: this.namespace,
             graph: this.graph
-        } // as IPackageClass;
+        } // as IPackage;
     }
-    validate(itm: IPackageClass) {
+    validate(itm: IPackage) {
         // Terminate in case of a programming error:
         if (itm.type !== this.type) {
-            throw new Error(`Expected OrganizerClass, but got ${itm.type}`);
+            throw new Error(`Expected Organizer, but got ${itm.type}`);
+        };
+        // Return an error code in case of invalid data:
+        // ToDo: implement validation logic
+        return 0;
+    }
+}
+export interface IOutline extends PigScaffold.IOrganizer {
+    lists: PigScaffold.Element[];
+}
+export class Outline extends PigScaffold.Organizer implements IOutline {
+    lists: PigScaffold.Element[];
+    constructor(itm: IOutline) {
+        super(itm);
+        this.lists = itm.lists || [];
+        this.validate(itm);  // here we only terminate in case of a programming error.
+        // Cannot return an error code, must call validate() separately upon creation.
+    }
+    set(itm: IOutline) {
+        super.set(itm);
+        this.lists = itm.lists || [];
+        return this.validate(itm);
+    }
+    get() {
+        return {
+            ...super.get(),
+            lists: this.lists
+        } // as IDiagram;
+    }
+    validate(itm: IOutline) {
+        // Terminate in case of a programming error:
+        if (itm.type !== this.type) {
+            throw new Error(`Expected Organizer, but got ${itm.type}`);
+        };
+        // Return an error code in case of invalid data:
+        // ToDo: implement validation logic
+        return 0;
+    }
+}
+export interface IDiagram extends PigScaffold.IOrganizer {
+    shows: PigScaffold.Element[];
+    depicts: PigScaffold.Entity;
+}
+export class Diagram extends PigScaffold.Organizer implements IDiagram {
+    shows: PigScaffold.Element[];
+    depicts: PigScaffold.Entity;
+    constructor(itm: IDiagram) {
+        super(itm);
+        this.shows = itm.shows || [];
+        this.depicts = itm.depicts;
+        this.validate(itm);  // here we only terminate in case of a programming error.
+        // Cannot return an error code, must call validate() separately upon creation.
+    }
+    set(itm: IDiagram) {
+        super.set(itm);
+        this.shows = itm.shows || [];
+        this.depicts = itm.depicts;
+        return this.validate(itm);
+    }
+    get() {
+        return {
+            ...super.get(),
+            shows: this.shows,
+            depicts: this.depicts
+        } // as IDiagram;
+    }
+    validate(itm: IDiagram) {
+        // Terminate in case of a programming error:
+        if (itm.type !== this.type) {
+            throw new Error(`Expected Organizer, but got ${itm.type}`);
         };
         // Return an error code in case of invalid data:
         // ToDo: implement validation logic

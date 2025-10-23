@@ -37,6 +37,10 @@ export enum XsDataType {
     Duration = <any>'xs:duration',
     ComplexType = <any>'xs:complexType'
 }
+export interface INamespace {
+    tag: string; // e.g. a namespace tag, e.g. "pig:"
+    IRI: string; // e.g. a namespace value, e.g. "https://product-iformation-graph.gfse.org/"
+}
 
 //////////////////////////////////////
 // The abstract classes:
@@ -97,11 +101,11 @@ abstract class Identifiable implements IIdentifiable {
         };
     }
 }
-interface IElement extends IIdentifiable {
+export interface IElement extends IIdentifiable {
     eligibleProperty: TPigId[];  // constraint: must be UUIDs of Property
     icon?: string;  // optional, default is undefined (no icon)
 }
-abstract class Element extends Identifiable implements IElement {
+export abstract class Element extends Identifiable implements IElement {
     eligibleProperty: TPigId[];
     icon?: string;
     constructor(itm: IElement) {
