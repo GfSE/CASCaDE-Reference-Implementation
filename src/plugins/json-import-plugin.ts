@@ -12,10 +12,23 @@ const jsonImportPlugin: Plugin = {
 
         // global component
         app.component('JsonImportComponent', {
-            methods: {
-                handleClick() {console.log('Performing JSON Import!')}
+            data() {
+                return {
+                        dialog: false
+                    };
             },
-            template: "<v-btn color='primary' @click='handleClick()'>Import JSON</v-btn>"
+            template: " \
+            <v-btn color='primary' @click='dialog = true'>Import JSON</v-btn> \
+            <v-dialog v-model='dialog'> \
+                <v-card> \
+                    <v-card-title>Select Import Elements</v-card-title> \
+                    <v-card-text>TBD...</v-card-text> \
+                    <v-card-actions> \
+                        <v-btn color='red' @click='dialog = false'>Close</v-btn> \
+                    </v-card-actions> \
+                </v-card> \
+            </v-dialog> \
+            "
         });
     }
 }

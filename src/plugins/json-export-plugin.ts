@@ -12,10 +12,26 @@ const jsonExportPlugin: Plugin = {
 
         // global component
         app.component('JsonExportComponent', {
-            methods: {
-                handleClick() {console.log('Performing JSON Export!')}
+            // methods: {
+            //     handleClick() {console.log('Performing JSON Export!')}
+            // },
+            data() {
+                return {
+                        dialog: false
+                    };
             },
-            template: "<v-btn color='secondary' @click='handleClick()'>Export JSON</v-btn>"
+            template: " \
+            <v-btn color='secondary' @click='dialog = true'>Export JSON</v-btn> \
+            <v-dialog v-model='dialog'> \
+                <v-card> \
+                    <v-card-title>Select Export Elements</v-card-title> \
+                    <v-card-text>TBD...</v-card-text> \
+                    <v-card-actions> \
+                        <v-btn color='red' @click='dialog = false'>Close</v-btn> \
+                    </v-card-actions> \
+                </v-card> \
+            </v-dialog> \
+            "
         });
     }
 }

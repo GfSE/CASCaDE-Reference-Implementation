@@ -1,5 +1,13 @@
 <template>
-  <Home msg="CASCaDE Home Page"/>
+    <v-app>
+        <Navigation msg="CASCaRA"/>
+
+        <v-main>
+            <v-container fluid>
+              <router-view></router-view>
+            </v-container>
+        </v-main>
+    </v-app>
 </template>
 
 <script lang="ts">

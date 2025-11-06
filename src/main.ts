@@ -5,6 +5,8 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import '@mdi/font/css/materialdesignicons.css'
+import router from './router';
 
 const vuetify = createVuetify({
     components,
@@ -13,7 +15,7 @@ const vuetify = createVuetify({
 
 const app = createApp(App);
 
-app.use(vuetify)
+app.use(vuetify).use(router);
 
 const pluginFiles = require.context('./plugins', false, /\.ts$/);
 
@@ -27,8 +29,6 @@ pluginFiles.keys().forEach((filePath: string) => {
 });
 
 // provide all global components
-// TODO: make it so that you can filter components based on their names
-// const globalComponents = app._context.components;
 const exportComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Export")));
 const importComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Import")));
 
