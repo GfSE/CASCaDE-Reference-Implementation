@@ -12,10 +12,23 @@ const rdfExportPlugin: Plugin = {
 
         // global component
         app.component('RdfExportComponent', {
-            methods: {
-                handleClick() {console.log('Performing RDF Export!')}
+            data() {
+                return {
+                        dialog: false
+                    };
             },
-            template: "<button @click='handleClick()'>Export RDF</button>"
+            template: " \
+            <v-btn color='secondary' @click='dialog = true'>Export RDF</v-btn> \
+            <v-dialog v-model='dialog'> \
+                <v-card> \
+                    <v-card-title>Select Export Elements</v-card-title> \
+                    <v-card-text>TBD...</v-card-text> \
+                    <v-card-actions> \
+                        <v-btn color='red' @click='dialog = false'>Close</v-btn> \
+                    </v-card-actions> \
+                </v-card> \
+            </v-dialog> \
+            "
         });
     }
 }
