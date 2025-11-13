@@ -8,11 +8,115 @@
 *   - 
 */
 import * as PigScaffold from './pig-scaffold';
-export interface IPackage extends PigScaffold.IOrganizer {
+export enum PigInfraType {
+    Organizer = <any>'pig:Organizer', // is a PIG class
+    anOrganizer = <any>'pig:anOrganizer', // is a PIG instance/individual
+}
+interface IModelElement extends PigScaffold.IEntity {
+}
+abstract class ModelElement extends PigScaffold.Entity implements IModelElement {
+    constructor(itm: IModelElement) {
+        super(itm);
+    }
+    set(itm: IModelElement) {
+        super.set(itm);
+    }
+    get() {
+        return super.get();
+    }
+}
+interface IAModelElement extends PigScaffold.IAnEntity {
+}
+abstract class AModelElement extends PigScaffold.AnEntity implements IAModelElement {
+    constructor(itm: IAModelElement) {
+        super(itm);
+    }
+    set(itm: IAModelElement) {
+        super.set(itm);
+    }
+    get() {
+        return super.get();
+    }
+}
+export interface IOrganizer extends PigScaffold.IEntity {
+    // If the following is empty or undefined, any instantiated organizer is not constrained wrt the model element it references:
+    eligibleElement: PigScaffold.TPigId[];  // constraint: must be UUIDs of Element, thus of Entity, Relationship or Organizer
+}
+export class Organizer extends PigScaffold.Entity implements IOrganizer {
+    readonly type: PigScaffold.PigItemType;
+    eligibleElement: PigScaffold.TPigId[];
+    constructor(itm: IOrganizer) {
+        super(itm);
+        this.type = PigInfraType.Organizer;
+        this.eligibleElement = itm.eligibleElement || [];
+        this.validate(itm);  // here we only terminate in case of a programming error.
+        // Cannot return an error code, must call validate() separately upon creation.
+    }
+    set(itm: IOrganizer) {
+        super.set(itm);
+        this.eligibleElement = itm.eligibleElement || [];
+    }
+    get() {
+        return {
+            ...super.get(),
+            eligibleElement: this.eligibleElement
+        };
+    }
+    validate(itm: IOrganizer) {
+        // Terminate in case of a programming error:
+        if (itm.type !== this.type) {
+            throw new Error(`Expected Organizer, but got ${itm.type}`);
+        };
+        // Return an error code in case of invalid data:
+        // ToDo: implement validation logic
+        return 0;
+    }
+}
+export interface IAnOrganizer extends PigScaffold.IAnEntity {
+    hasClass: PigScaffold.TPigId;  // constraint: must be UUID of Organizer
+    // Hierarchy elements must reference exactly one model element, but diagrams can reference ('show') one or more model elements:
+    hasElement: PigScaffold.TPigId[];  // constraint: must be UUIDs of objects of AnElement, thus of AnEntity, ARelationship or AnOrganizer
+}
+export class AnOrganizer extends PigScaffold.AnEntity implements IAnOrganizer {
+    readonly type: PigItemType;
+    hasClass!: PigScaffold.TPigId;
+    hasElement!: PigScaffold.TPigId[];
+    constructor(itm: IAnOrganizer) {
+        super(itm);
+        this.type = PigItemType.anOrganizer;
+        this.hasClass = itm.hasClass;
+        this.hasElement = itm.hasElement;
+        this.validate(itm);  // here we only terminate in case of a programming error.
+        // Cannot return an error code, must call validate() separately upon creation.
+    }
+    set(itm: IAnOrganizer) {
+        super.set(itm);
+        this.hasClass = itm.hasClass;
+        this.hasElement = itm.hasElement;
+    }
+    get() {
+        return {
+            ...super.get(),
+            hasClass: this.hasClass,
+            hasElement: this.hasElement,
+        };
+    }
+    validate(itm: IAnOrganizer) {
+        // Terminate in case of a programming error:
+        if (itm.type !== this.type) {
+            throw new Error(`Expected AnOrganizer, but got ${itm.type}`);
+        };
+        // Return an error code in case of invalid data:
+        // ToDo: implement validation logic
+        return 0;
+    }
+}
+
+export interface IPackage extends IOrganizer {
     namespace: PigScaffold.INamespace[];
     graph: PigScaffold.TPigItem[];
 }
-export class Package extends PigScaffold.Organizer implements IPackage {
+export class Package extends Organizer implements IPackage {
     namespace: PigScaffold.INamespace[];
     graph: PigScaffold.TPigItem[];
     constructor(itm: IPackage) {
@@ -45,10 +149,10 @@ export class Package extends PigScaffold.Organizer implements IPackage {
         return 0;
     }
 }
-export interface IOutline extends PigScaffold.IOrganizer {
+export interface IOutline extends IOrganizer {
     lists: PigScaffold.Element[];
 }
-export class Outline extends PigScaffold.Organizer implements IOutline {
+export class Outline extends Organizer implements IOutline {
     lists: PigScaffold.Element[];
     constructor(itm: IOutline) {
         super(itm);
@@ -77,11 +181,11 @@ export class Outline extends PigScaffold.Organizer implements IOutline {
         return 0;
     }
 }
-export interface IDiagram extends PigScaffold.IOrganizer {
+export interface IDiagram extends IOrganizer {
     shows: PigScaffold.Element[];
     depicts: PigScaffold.Entity;
 }
-export class Diagram extends PigScaffold.Organizer implements IDiagram {
+export class Diagram extends Organizer implements IDiagram {
     shows: PigScaffold.Element[];
     depicts: PigScaffold.Entity;
     constructor(itm: IDiagram) {
