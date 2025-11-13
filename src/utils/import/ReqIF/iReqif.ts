@@ -15,9 +15,7 @@ export interface IXhr {
     response?: Object,
     responseType?: string
 }
-export interface IImportReqif {
-}
-export class ImportReqif implements IImportReqif {
+export class ImportReqif {
     validate(reqifDoc: XMLDocument): boolean {
         // ToDo: implement ReqIF validation here.
         return true;
