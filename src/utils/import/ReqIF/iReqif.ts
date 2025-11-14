@@ -8,7 +8,7 @@
 *   - 
 */
 
-import * as PigMetaclasses from '../../schemas/pig/pig-metaclasses';
+import * as PigMetaclasses from '../../schemas/pig/pig-scaffold';
 export interface IXhr {
     status: number,
     statusText: string,
