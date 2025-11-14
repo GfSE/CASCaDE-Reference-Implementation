@@ -138,14 +138,14 @@ export interface IAnElement extends IIdentifiable {
     priorRevision?: TRevision[];  // optional
     modified: Date;
     creator?: string;
-    hasProperty: AProperty[];
+    hasProperty: object[];  // a JSON object on input - ToDo: define the json schema for property values
 }
 export abstract class AnElement extends Identifiable implements IAnElement {
     revision!: TRevision;
     priorRevision?: TRevision[];
     modified!: Date;
     creator?: string;
-    hasProperty: AProperty[];
+    hasProperty: AProperty[]; // instantiated AProperty items
     constructor(itm: IAnElement) {
         super(itm);
         this.hasProperty = instantiateListItems(PigItemType.aProperty, itm.hasProperty) || [];
@@ -275,14 +275,14 @@ export class Entity extends Element implements IEntity {
 
 export interface IRelationship extends IElement {
     specializes?: TPigId;  // must be IRI of another Relationship
-    eligibleSource?: TPigElement[];  // model element IRIs (TPigElement is still class types, interpret as IDs in usage)
-    eligibleTarget?: TPigElement[];
+    eligibleSource?: TPigId[];  // must be Entity or Relationship IRIs
+    eligibleTarget?: TPigId[];  // must be Entity or Relationship IRIs
 }
 export class Relationship extends Element implements IRelationship {
     readonly itemType: PigItemTypeValue = PigItemType.Relationship;
     specializes?: TPigId;
-    eligibleSource?: TPigElement[];
-    eligibleTarget?: TPigElement[];
+    eligibleSource?: TPigId[];
+    eligibleTarget?: TPigId[];
     constructor(itm: IRelationship) {
         super(itm);
         this.specializes = itm.specializes;
@@ -313,12 +313,13 @@ export class Relationship extends Element implements IRelationship {
 }
 
 // For the instances/individuals, the 'payload':
-export interface IAProperty extends IIdentifiable {
+export interface IAProperty {
+    itemType: PigItemTypeValue = PigItemType.aProperty;
     hasClass: TPigId;  // must be IRI of an element of type Pig:Property
     aComposedProperty?: TPigId[];
     value: any;
 }
-export class AProperty extends Identifiable implements IAProperty {
+export class AProperty implements IAProperty {
     readonly itemType: PigItemTypeValue = PigItemType.aProperty;
     hasClass!: TPigId;
     aComposedProperty?: TPigId[];
