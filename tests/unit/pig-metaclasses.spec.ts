@@ -96,7 +96,7 @@ describe("PIG Metaclasses", () => {
 
             eligibleSource: ["o:entityClass_1"],
             eligibleTarget: ["o:entityClass_1"],
-            eligibleProperty: ["dcterms:title"]
+            eligibleProperty: ["dcterms:type"]
         };
         relationship_input = {
             id: "d:aRelationship_1",
@@ -146,7 +146,7 @@ describe("PIG Metaclasses", () => {
     test("Entity class setup", () => {
         let test_entity = new Entity(entityClass_input);
 
-        expect(test_entity.id).toBe('d:entityClass_1');
+        expect(test_entity.id).toBe('o:entityClass_1');
         expect(test_entity.title).toBe('Title of Entity Class 1');
         expect(test_entity.description).toBe('Description of o:entityClass_1');
 
@@ -170,4 +170,5 @@ describe("PIG Metaclasses", () => {
         expect(test_relationship.eligibleProperty).toStrictEqual(["dcterms:type"]);
     });
 
+    /* ToDo: ... more tests to come */
 });
