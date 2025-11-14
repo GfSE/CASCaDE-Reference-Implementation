@@ -314,7 +314,7 @@ export class Relationship extends Element implements IRelationship {
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty {
-    itemType: PigItemTypeValue = PigItemType.aProperty;
+    itemType: PigItemTypeValue;
     hasClass: TPigId;  // must be IRI of an element of type Pig:Property
     aComposedProperty?: TPigId[];
     value: any;
@@ -325,21 +325,18 @@ export class AProperty implements IAProperty {
     aComposedProperty?: TPigId[];
     value: any;
     constructor(itm: IAProperty) {
-        super(itm);
         this.hasClass = itm.hasClass;
         this.aComposedProperty = itm.aComposedProperty;
         this.value = itm.value;
         this.validate(itm);
     }
     set(itm: IAProperty) {
-        super.set(itm);
         this.hasClass = itm.hasClass;
         this.aComposedProperty = itm.aComposedProperty;
         this.value = itm.value;
     }
     get() {
         return {
-            ...super.get(),
             hasClass: this.hasClass,
             aComposedProperty: this.aComposedProperty,
             value: this.value
