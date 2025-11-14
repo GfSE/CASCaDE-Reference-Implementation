@@ -165,8 +165,8 @@ describe("PIG Metaclasses", () => {
         expect(test_relationship.description).toBe('Description of o:relationshipClass');
 
         expect(test_relationship.itemType).toBe(PigItemType.Relationship);
-        expect(test_relationship.eligibleTarget).toBe('o:entityClass_1');
-        expect(test_relationship.eligibleSource).toBe('o:entityClass_1');
+        expect(test_relationship.eligibleTarget).toStrictEqual(['o:entityClass_1']);
+        expect(test_relationship.eligibleSource).toStrictEqual(['o:entityClass_1']);
         expect(test_relationship.eligibleProperty).toStrictEqual(["dcterms:type"]);
     });
 
