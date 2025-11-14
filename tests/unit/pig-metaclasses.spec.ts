@@ -1,11 +1,11 @@
 /** Product Information Graph (PIG) Unit Tests - verification of the concrete classes in the PIG schema
-*   Dependencies: pig-scaffold
-*   Authors: chrissaenz@psg-inc.net, ..
+*   Dependencies: pig-metaclasses.ts
+*   Authors: chrissaenz@psg-inc.net, oskar.dungern@gfse.org
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 *   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
 *
 *   Design Decisions:
-*   - Testing and verification of the concrete children in the PIG scaffold 
+*   - Testing and verification of the concrete children in the PIG metaclasses, 
 *       will provide test coverage for the abstract classes they inherit from.
 */
 
@@ -13,7 +13,7 @@ import { IProperty, IAProperty, IEntity, IAnEntity, IRelationship, IARelationshi
 import { Property, AProperty, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
 import { XsDataType, PigItemType, PigItemTypeValue } from '../../src/utils/schemas/pig/pig-metaclasses';
 
-describe("PIG Scaffold", () => {
+describe("PIG Metaclasses", () => {
     let propertyClass_input: IProperty;
     let property_input: IAProperty;
     let entityClass_input: IEntity;
@@ -146,7 +146,7 @@ describe("PIG Scaffold", () => {
     test("Entity class setup", () => {
         let test_entity = new Entity(entityClass_input);
 
-        expect(test_entity.id).toBe('d:entity_1');
+        expect(test_entity.id).toBe('d:entityClass_1');
         expect(test_entity.title).toBe('Title of Entity Class 1');
         expect(test_entity.description).toBe('Description of o:entityClass_1');
 
@@ -160,7 +160,7 @@ describe("PIG Scaffold", () => {
         // either of them exists.
         let test_relationship = new Relationship(relationshipClass_input);
 
-        expect(test_relationship.id).toBe('o:relationship_1');
+        expect(test_relationship.id).toBe('o:relationshipClass');
         expect(test_relationship.title).toBe('Title of RelationshipClass');
         expect(test_relationship.description).toBe('Description of o:relationshipClass');
 
