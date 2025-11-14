@@ -59,7 +59,7 @@ export enum XsDataType {
 }
 export interface INamespace {
     tag: string; // e.g. a namespace tag, e.g. "pig:"
-    IRI: string; // e.g. a namespace value, e.g. "https://product-iformation-graph.gfse.org/"
+    IRI: string; // e.g. a namespace value, e.g. "https://product-information-graph.gfse.org/"
 }
 
 //////////////////////////////////////
@@ -148,7 +148,7 @@ export abstract class AnElement extends Identifiable implements IAnElement {
     hasProperty: AProperty[];
     constructor(itm: IAnElement) {
         super(itm);
-        this.hasProperty = intantiateListItems(PigItemType.aProperty, itm.hasProperty) || [];
+        this.hasProperty = instantiateListItems(PigItemType.aProperty, itm.hasProperty) || [];
     }
     set(itm: IAnElement) {
         super.set(itm);
@@ -156,7 +156,7 @@ export abstract class AnElement extends Identifiable implements IAnElement {
         this.priorRevision = itm.priorRevision;
         this.modified = itm.modified;
         this.creator = itm.creator;
-        this.hasProperty = intantiateListItems(PigItemType.aProperty, itm.hasProperty) || [];
+        this.hasProperty = instantiateListItems(PigItemType.aProperty, itm.hasProperty) || [];
     }
     get() {
         return {
@@ -454,7 +454,7 @@ export function isRelationship(obj: any): obj is Relationship {
 export function isARelationship(obj: any): obj is ARelationship {
     return !!obj && obj.itemType === PigItemType.aRelationship;
 }
-export function intantiateListItems(itemType: PigItemTypeValue, arr: any[]) {
+export function instantiateListItems(itemType: PigItemTypeValue, arr: any[]) {
     switch (itemType) {
         case PigItemType.aProperty: 
             return arr.map(i => new AProperty(i));

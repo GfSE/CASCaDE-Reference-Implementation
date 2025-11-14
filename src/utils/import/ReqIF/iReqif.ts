@@ -8,7 +8,7 @@
 *   - 
 */
 
-import * as PigClasses from './pig-scaffold';
+import * as PigMetaclasses from '../../schemas/pig/pig-metaclasses';
 export interface IXhr {
     status: number,
     statusText: string,
@@ -31,15 +31,15 @@ export class ImportReqif {
             options
         );
 
-        const reqifDoc = parse(xmlDoc);
+        //    const reqifDoc = parse(xmlDoc); --> add imoport of a XML parser.
 
-        var xhr:IXhr;
+    /*    var xhr:IXhr;
         if (this.validate(reqifDoc))
             xhr = { status: 0, statusText: "ReqIF data is valid", responseType: 'pig-package' };
         else
             return options.errInvalidReqif;
 
-    /*    // Transform ReqIF data provided as an XML string to SpecIF data.
+        // Transform ReqIF data provided as an XML string to SpecIF data.
         xhr.response = extractMetaData(xmlDoc.getElementsByTagName("REQ-IF-HEADER"));
         xhr.response.dataTypes = extractDatatypes(xmlDoc.getElementsByTagName("DATATYPES"));
         xhr.response.propertyClasses = extractPropertyClasses(xmlDoc.getElementsByTagName("SPEC-TYPES"));
@@ -51,6 +51,9 @@ export class ImportReqif {
         xhr.response.statements = extractStatements(xmlDoc.getElementsByTagName("SPEC-RELATIONS"));
         xhr.response.hierarchies = extractHierarchies(xmlDoc.getElementsByTagName("SPECIFICATIONS"));
     */
+        // Temporary:
+        let xhr:IXhr = { status: 999, statusText: "Transformation not yet implemented", responseType: 'pig-package' };
+
         xhr.response = xmlDoc;  // just return the XML document for now.
         console.info(xhr);
         return xhr;
