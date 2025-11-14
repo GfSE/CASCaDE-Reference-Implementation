@@ -15,18 +15,22 @@
 export type TPigId = string;  // an IRI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
 export type TPigClass = Property | Entity | Relationship;
-export type TPigInstance = AnEntity | ARelationship;
-export type TPigItem = TPigClass | TPigInstance;
+export type TPigElement = Entity | Relationship;
+export type TPigAnElement = AnEntity | ARelationship;
+export type TPigItem = TPigClass | TPigAnElement;
+
 export const PigItemType = {
     // PIG classes:
     Property: 'pig:Property',
-    Entity: 'pig:Entity', 
+    Entity: 'pig:Entity',
     Relationship: 'pig:Relationship',
     // PIG instances/individuals:
     aProperty: 'pig:aProperty',
     anEntity: 'pig:anEntity',
     aRelationship: 'pig:aRelationship'
-};
+} as const;
+export type PigItemTypeValue = typeof PigItemType[keyof typeof PigItemType];
+
 export enum XsDataType {
     Boolean = <any>'xs:boolean',
     Integer = <any>'xs:integer',
@@ -56,13 +60,15 @@ These capture who, what, when, where, and how of data access or changes:
 - Application / Client Used: Tool or program accessing the database -> (Agent oder Client App)
 - Success/Failure Status: Indicates whether the operation succeeded or failed -> in unserem Fall wohl überflüssig. */
 
-interface IIdentifiable {
+export interface IIdentifiable {
     id: TPigId;  // translates to @id in JSON-LD
+    type: PigItemTypeValue;
     title: string;
     description?: string;
 }
 abstract class Identifiable implements IIdentifiable {
     id!: TPigId;
+    type!: PigItemTypeValue;
     title!: string;
     description?: string;
     constructor(itm: IIdentifiable) {
@@ -70,23 +76,26 @@ abstract class Identifiable implements IIdentifiable {
     }
     set(itm: IIdentifiable) {
         this.id = itm.id;
+        // do not override this.type here — subclasses set their own readonly type
         this.title = itm.title;
         this.description = itm.description;
     }
     get() {
         return {
             id: this.id,
+            type: this.type,
             title: this.title,
             description: this.description
         };
     }
 }
+
 export interface IElement extends IIdentifiable {
-    eligibleProperty: Property[];  // constraint: must be UUIDs of Property
+    eligibleProperty: TPigId[];  // references by IRI
     icon?: string;  // optional, default is undefined (no icon)
 }
 export abstract class Element extends Identifiable implements IElement {
-    eligibleProperty: Property[];
+    eligibleProperty: TPigId[];
     icon?: string;
     constructor(itm: IElement) {
         super(itm);
@@ -106,19 +115,20 @@ export abstract class Element extends Identifiable implements IElement {
         };
     }
 }
-interface IAnElement extends IIdentifiable {
+
+export interface IAnElement extends IIdentifiable {
     revision: TRevision;
-    priorRevision?: TRevision[];  // optional, used to trace revisions of the same item, usually has one element, but can have two in case of a merge
+    priorRevision?: TRevision[];  // optional
     modified: Date;
     creator?: string;
-    hasProperty: AProperty[];  // constraint: must be UUIDs of AProperty
+    hasProperty: TPigId[];  // references by IRI
 }
-abstract class AnElement extends Identifiable implements IAnElement {
+export abstract class AnElement extends Identifiable implements IAnElement {
     revision!: TRevision;
-    priorRevision?: TRevision[]; // optional, used to trace revisions of the same item, usually has one element, but can have two in case of a merge
+    priorRevision?: TRevision[];
     modified!: Date;
     creator?: string;
-    hasProperty: AProperty[];  // constraint: must be UUIDs of AProperty
+    hasProperty: TPigId[];
     constructor(itm: IAnElement) {
         super(itm);
         this.hasProperty = itm.hasProperty || [];
@@ -144,29 +154,8 @@ abstract class AnElement extends Identifiable implements IAnElement {
 }
 
 //////////////////////////////////////
-// The classes to instantiate:
+// For the concrete classes:
 export interface IProperty extends IIdentifiable {
-    datatype: XsDataType;   // constraint: must be one of the XsDataType values
-    minCount?: number;      // optional, default is 0 (not required), property is required if minCount>0
-    maxCount?: number;      // optional, default is 1 (single value), property is multivalued if maxCount>1
-    maxLength?: number;     // optional, default is 0 (no limit), for properties with datatype String
-    pattern?: string;       // optional, default is empty string (no pattern), for properties with datatype String
-    minInclusive?: number;  // optional, default is 0 (no limit), for properties with datatype Integer or Double
-    maxInclusive?: number;  // optional, default is 0 (no limit), for properties with datatype Integer or Double
-    composedProperty?: Property[];     // optional, constraint: must be UUIDs of Property
-    defaultValue?: any;     // optional, default is undefined (no default value), maps to sh:defaultValue in SHACL,
-                            // constraint: must match the datatype and range defined by this Property
-    // Consider to call it 'value' instead of 'defaultValue' here, as it is formally the same as the value of a property
-
-/*  Proposed by GitHub Copilot:
-    isReadOnly?: boolean;  // optional, default is false
-    isSearchable?: boolean;  // optional, default is false
-    isFilterable?: boolean;  // optional, default is false
-    isSortable?: boolean;  // optional, default is false
-    isVisible?: boolean;  // optional, default is true */
-}
-export class Property extends Identifiable implements IProperty {
-    // ToDo: ComplexType is not yet implemented
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
@@ -174,7 +163,19 @@ export class Property extends Identifiable implements IProperty {
     pattern?: string;
     minInclusive?: number;
     maxInclusive?: number;
-    composedProperty?: Property[];
+    composedProperty?: TPigId[];
+    defaultValue?: any;
+}
+export class Property extends Identifiable implements IProperty {
+    readonly type: PigItemTypeValue = PigItemType.Property;
+    datatype: XsDataType;
+    minCount?: number;
+    maxCount?: number;
+    maxLength?: number;
+    pattern?: string;
+    minInclusive?: number;
+    maxInclusive?: number;
+    composedProperty?: TPigId[];
     defaultValue?: any;
     constructor(itm: IProperty) {
         super(itm);
@@ -187,8 +188,7 @@ export class Property extends Identifiable implements IProperty {
         this.maxInclusive = itm.maxInclusive;
         this.composedProperty = itm.composedProperty;
         this.defaultValue = itm.defaultValue;
-        this.validate(itm);  // here we only terminate in case of a programming error.
-        // Cannot return an error code, must call validate() separately upon creation.
+        this.validate(itm);
     }
     set(itm: IProperty) {
         super.set(itm);
@@ -214,154 +214,154 @@ export class Property extends Identifiable implements IProperty {
             maxInclusive: this.maxInclusive,
             composedProperty: this.composedProperty,
             defaultValue: this.defaultValue
-       };
+        };
     }
     validate(itm: IProperty) {
+        // if caller provided a type, ensure it matches expected
+        if ((itm as any).type && (itm as any).type !== this.type)
+            throw new Error(`Expected ${this.type}, but got ${(itm as any).type}`);
         if (!Object.values(XsDataType).includes(itm.datatype))
             throw new Error(`Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`);
-        // Return an error code in case of invalid data:
-        // ToDo: implement validation logic
         return 0;
     }
 }
+
 export interface IEntity extends IElement {
+    subClassOf?: TPigId;
 }
 export class Entity extends Element implements IEntity {
+    readonly type: PigItemTypeValue = PigItemType.Entity;
+    subClassOf?: TPigId;
     constructor(itm: IEntity) {
         super(itm);
-        this.validate(itm);  // here we only terminate in case of a programming error.
-        // Cannot return an error code, must call validate() separately upon creation.
+        this.subClassOf = itm.subClassOf;
+        this.validate(itm);
     }
     set(itm: IEntity) {
         super.set(itm);
+        this.subClassOf = itm.subClassOf;
     }
     get() {
-        return super.get();
+        return {
+            ...super.get(),
+            subClassOf: this.subClassOf
+        };
     }
-    validate(itm: IEntity) {
-        // Terminate in case of a programming error:
-//        if (itm.type !== this.type)
-//            throw new Error(`Expected Entity, but got ${itm.type}`);
-        // Return an error code in case of invalid data:
+    validate(_itm: IEntity) {
         // ToDo: implement validation logic
         return 0;
     }
 }
+
 export interface IRelationship extends IElement {
-    // If any of the following are empty or undefined, any instantiated relationship is not constrained wrt subject and/or object:
-    eligibleSource?: TPigId[];  // constraint: must be UUIDs of ModelElement, thus of Entity or Relationship
-    eligibleTarget?: TPigId[];  // constraint: must be UUIDs of ModelElement, thus of Entity or Relationship
+    subClassOf?: TPigId;
+    eligibleSource?: TPigElement[];  // model element IRIs (TPigElement is still class types, interpret as IDs in usage)
+    eligibleTarget?: TPigElement[];
 }
 export class Relationship extends Element implements IRelationship {
-    eligibleSource?: TPigId[];
-    eligibleTarget?: TPigId[];
+    readonly type: PigItemTypeValue = PigItemType.Relationship;
+    subClassOf?: TPigId;
+    eligibleSource?: TPigElement[];
+    eligibleTarget?: TPigElement[];
     constructor(itm: IRelationship) {
         super(itm);
-        this.validate(itm);  // here we only terminate in case of a programming error.
-        // Cannot return an error code, must call validate() separately upon creation.
+        this.subClassOf = itm.subClassOf;
         this.eligibleSource = itm.eligibleSource || [];
         this.eligibleTarget = itm.eligibleTarget || [];
+        this.validate(itm);
     }
     set(itm: IRelationship) {
         super.set(itm);
+        this.subClassOf = itm.subClassOf;
         this.eligibleSource = itm.eligibleSource || [];
         this.eligibleTarget = itm.eligibleTarget || [];
     }
     get() {
         return {
             ...super.get(),
+            subClassOf: this.subClassOf,
             eligibleSource: this.eligibleSource,
             eligibleTarget: this.eligibleTarget
         };
     }
-    validate(itm: IRelationship) {
-        // Terminate in case of a programming error:
-//        if (itm.type !== this.type)
-//            throw new Error(`Expected Relationship, but got ${itm.type}`);
-        // Return an error code in case of invalid data:
+    validate(_itm: IRelationship) {
         // ToDo: implement validation logic
         return 0;
     }
 }
-// Concrete Children Classes
-export interface IAProperty {
-    type: Property;
-    aComposedProperty?: AProperty[];  // optional, constraint: must be UUIDs of AProperty
-    value: any;  // the value of the property, must match the datatype and range defined by Property
+
+// For the instances/individuals, the 'payload':
+export interface IAProperty extends IIdentifiable {
+    hasClass: TPigId;
+    aComposedProperty?: TPigId[];
+    value: any;
 }
-export class AProperty implements IAProperty {
-    // ToDo: ComplexType is not yet implemented
-    readonly type: Property;
-    aComposedProperty?: AProperty[];
-    value: any;  
+export class AProperty extends Identifiable implements IAProperty {
+    readonly type: PigItemTypeValue = PigItemType.aProperty;
+    hasClass!: TPigId;
+    aComposedProperty?: TPigId[];
+    value: any;
     constructor(itm: IAProperty) {
-        this.validate(itm);  // here we only terminate in case of a programming error.
-        // Cannot return an error code, must call validate() separately upon creation.
-        this.type = itm.type;
+        super(itm);
+        this.hasClass = itm.hasClass;
         this.aComposedProperty = itm.aComposedProperty;
         this.value = itm.value;
+        this.validate(itm);
     }
     set(itm: IAProperty) {
+        super.set(itm);
+        this.hasClass = itm.hasClass;
         this.aComposedProperty = itm.aComposedProperty;
         this.value = itm.value;
     }
     get() {
         return {
-            type: this.type,
+            ...super.get(),
+            hasClass: this.hasClass,
             aComposedProperty: this.aComposedProperty,
             value: this.value
         };
     }
     validate(itm: IAProperty) {
-        // Terminate in case of a programming error:
-//        if (itm.type !== this.type)
-//            throw new Error(`Expected AProperty, but got ${itm.type}`);
-        // Return an error code in case of invalid data:
-        // ToDo: implement validation logic
+        if ((itm as any).type && (itm as any).type !== this.type)
+            throw new Error(`Expected ${this.type}, but got ${(itm as any).type}`);
         return 0;
     }
 }
+
 export interface IAnEntity extends IAnElement {
-    type: Entity;
+    // instance type marker
 }
 export class AnEntity extends AnElement implements IAnEntity {
-    readonly type: Entity;
+    readonly type: PigItemTypeValue = PigItemType.anEntity;
     constructor(itm: IAnEntity) {
         super(itm);
-        this.validate(itm);  // here we only terminate in case of a programming error.
-        // Cannot return an error code, must call validate() separately upon creation.
-        this.type = itm.type;
+        this.validate(itm);
     }
     set(itm: IAnEntity) {
         super.set(itm);
     }
     get() {
-        return super.get()
+        return super.get();
     }
-    validate(itm: IAnEntity) {
-        // Terminate in case of a programming error:
-//        if (itm.type !== this.type)
-//            throw new Error(`Expected AnEntity, but got ${itm.type}`);
-        // Return an error code in case of invalid data:
-        // ToDo: implement validation logic
+    validate(_itm: IAnEntity) {
         return 0;
     }
 }
+
 export interface IARelationship extends IAnElement {
-    hasSource: TPigId;  // constraint: must be UUID of AnEntity or ARelationship
-    hasTarget: TPigId;  // constraint: must be UUID of AnEntity or ARelationship
+    hasSource: TPigId;
+    hasTarget: TPigId;
 }
 export class ARelationship extends AnElement implements IARelationship {
-    readonly type: string;
+    readonly type: PigItemTypeValue = PigItemType.aRelationship;
     hasSource!: TPigId;
     hasTarget!: TPigId;
     constructor(itm: IARelationship) {
         super(itm);
-        this.type = PigItemType.aRelationship;
         this.hasSource = itm.hasSource;
         this.hasTarget = itm.hasTarget;
-        this.validate(itm);  // here we only terminate in case of a programming error.
-        // Cannot return an error code, must call validate() separately upon creation.
+        this.validate(itm);
     }
     set(itm: IARelationship) {
         super.set(itm);
@@ -376,11 +376,28 @@ export class ARelationship extends AnElement implements IARelationship {
         };
     }
     validate(itm: IARelationship) {
-        // Terminate in case of a programming error:
-//        if (itm.type !== this.type)
-//            throw new Error(`Expected ARelationship, but got ${itm.type}`);
-        // Return an error code in case of invalid data:
-        // ToDo: implement validation logic
+        if ((itm as any).type && (itm as any).type !== this.type)
+            throw new Error(`Expected ${this.type}, but got ${(itm as any).type}`);
         return 0;
     }
+}
+
+/* Simple runtime type-guards */
+export function isProperty(obj: any): obj is Property {
+    return !!obj && obj.type === PigItemType.Property;
+}
+export function isAProperty(obj: any): obj is AProperty {
+    return !!obj && obj.type === PigItemType.aProperty;
+}
+export function isEntity(obj: any): obj is Entity {
+    return !!obj && obj.type === PigItemType.Entity;
+}
+export function isAnEntity(obj: any): obj is AnEntity {
+    return !!obj && obj.type === PigItemType.anEntity;
+}
+export function isRelationship(obj: any): obj is Relationship {
+    return !!obj && obj.type === PigItemType.Relationship;
+}
+export function isARelationship(obj: any): obj is ARelationship {
+    return !!obj && obj.type === PigItemType.aRelationship;
 }

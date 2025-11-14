@@ -1,4 +1,8 @@
-﻿/** Product Information Graph (PIG) Infrastructure - standard object structure using the PIG
+﻿// THIS is WORK IN PROGRESS!
+// Questions: 
+// - Shall we create classes for Packages etc, or shall those be instances of the metaclasses?
+
+/** Product Information Graph (PIG) Infrastructure - standard object structure using the PIG
 *   Dependencies: pig-scaffold
 *   Authors: oskar.dungern@gfse.org, ..
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
