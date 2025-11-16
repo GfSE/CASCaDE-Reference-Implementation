@@ -22,7 +22,8 @@ export type TPigClass = Property | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
 export type TPigAnElement = AnEntity | ARelationship;
 export type TPigItem = TPigClass | TPigAnElement;
-export type stringHTML = string;  // a string containing HTML code
+export type stringHTML = string;  // contains HTML code
+export type tagIETF = string; // contains IETF language tag
 
 /*export const PigItemType = {
     // PIG classes:
@@ -61,6 +62,10 @@ export interface INamespace {
     tag: string; // e.g. a namespace tag, e.g. "pig:"
     IRI: string; // e.g. a namespace value, e.g. "https://product-information-graph.gfse.org/"
 }
+export interface ILanguageText {
+    text: string;
+    lang?: tagIETF;
+}
 
 //////////////////////////////////////
 // The abstract classes:
@@ -79,14 +84,14 @@ These capture who, what, when, where, and how of data access or changes:
 export interface IIdentifiable {
     id: TPigId;  // translates to @id in JSON-LD
     itemType: PigItemTypeValue;
-    title: string;
-    description?: string;
+    title: ILanguageText;
+    description?: ILanguageText;
 }
 abstract class Identifiable implements IIdentifiable {
     id!: TPigId;
     itemType!: PigItemTypeValue;
-    title!: string;
-    description?: string;
+    title!: ILanguageText;
+    description?: ILanguageText;
     constructor(itm: IIdentifiable) {
         this.set(itm);
     }
@@ -173,6 +178,7 @@ export abstract class AnElement extends Identifiable implements IAnElement {
 //////////////////////////////////////
 // For the concrete classes:
 export interface IProperty extends IIdentifiable {
+    //    specializes?: TPigId;  // must be IRI of another Property, translates to rdfs:subPropertyOf
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
@@ -185,6 +191,7 @@ export interface IProperty extends IIdentifiable {
 }
 export class Property extends Identifiable implements IProperty {
     readonly itemType: PigItemTypeValue = PigItemType.Property;
+//    specializes?: TPigId;
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
@@ -245,7 +252,7 @@ export class Property extends Identifiable implements IProperty {
 }
 
 export interface IEntity extends IElement {
-    specializes?: TPigId;  // must be IRI of another Entity
+    specializes?: TPigId;  // must be IRI of another Entity, translates to rdfs:subClassOf
 }
 export class Entity extends Element implements IEntity {
     readonly itemType: PigItemTypeValue = PigItemType.Entity;
@@ -274,7 +281,7 @@ export class Entity extends Element implements IEntity {
 }
 
 export interface IRelationship extends IElement {
-    specializes?: TPigId;  // must be IRI of another Relationship
+    specializes?: TPigId;  // must be IRI of another Relationship, translates to rdfs:subClassOf
     eligibleSource?: TPigId[];  // must be Entity or Relationship IRIs
     eligibleTarget?: TPigId[];  // must be Entity or Relationship IRIs
 }
@@ -315,7 +322,7 @@ export class Relationship extends Element implements IRelationship {
 // For the instances/individuals, the 'payload':
 export interface IAProperty {
     itemType: PigItemTypeValue;
-    hasClass: TPigId;  // must be IRI of an element of type Pig:Property
+    hasClass: TPigId;  // must be IRI of an element of type Pig:Property, translates to @type resp. rdf:type
     aComposedProperty?: TPigId[];
     value: any;
 }
@@ -356,7 +363,7 @@ export class AProperty implements IAProperty {
 }
 
 export interface IAnEntity extends IAnElement {
-    hasClass: TPigId;  // must be IRI of an element of type Pig:Entity
+    hasClass: TPigId;  // must be IRI of an element of type Pig:Entity, translates to @type resp. rdf:type
 }
 export class AnEntity extends AnElement implements IAnEntity {
     readonly itemType: PigItemTypeValue = PigItemType.anEntity;
@@ -390,7 +397,7 @@ export class AnEntity extends AnElement implements IAnEntity {
 }
 
 export interface IARelationship extends IAnElement {
-    hasClass: TPigId;  // must be IRI of an element of type Pig:Relationship
+    hasClass: TPigId;  // must be IRI of an element of type Pig:Relationship, translates to @type resp. rdf:type
     hasSource: TPigId;
     hasTarget: TPigId;
 }

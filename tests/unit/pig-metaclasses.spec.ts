@@ -28,8 +28,8 @@ describe("PIG Metaclasses", () => {
         propertyClass_input = {
             id: "dcterms:type",
             itemType: PigItemType.Property,
-            title: "The type or category",
-            description: "This is a class for a property named dcterms:type for use by anEntity or aRelationship",
+            title: {text:"The type or category", lang:"en"},
+            description: {text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" },
 
             datatype: XsDataType.String,
             minCount: 0,
@@ -47,8 +47,8 @@ describe("PIG Metaclasses", () => {
         entityClass_input = {
             id: "o:entityClass_1",
             itemType: PigItemType.Entity,
-            title: "Title of Entity Class 1",
-            description: "Description of o:entityClass_1",
+            title: { text: "Title of Entity Class 1", lang: "en" },
+            description: { text: "Description of o:entityClass_1", lang: "en" },
 
             eligibleProperty: ["dcterms:type"]
         };
@@ -59,8 +59,8 @@ describe("PIG Metaclasses", () => {
             itemType: PigItemType.Entity,
             modified: new Date(),
             creator: "test_user",
-            title: "Title of Entity 1",
-            description: "Description of d:entity_1",
+            title: { text: "Title of Entity 1", lang: "en" },
+            description: { text: "Description of d:entity_1", lang: "en" },
 
             hasClass: "o:entityClass_1",
             hasProperty: [{
@@ -76,8 +76,8 @@ describe("PIG Metaclasses", () => {
             itemType: PigItemType.Entity,
             modified: new Date(),
             creator: "test_user",
-            title: "Title of Entity 2",
-            description: "Description of d:entity_2",
+            title: { text: "Title of Entity 2", lang: "en" },
+            description: { text: "Description of d:entity_2", lang: "en" },
 
             hasClass: "o:entityClass_1",
             hasProperty: [{
@@ -91,8 +91,8 @@ describe("PIG Metaclasses", () => {
         relationshipClass_input = {
             id: "o:relationshipClass",
             itemType: PigItemType.Relationship,
-            title: "Title of RelationshipClass",
-            description: "Description of o:relationshipClass",
+            title: { text: "Title of RelationshipClass", lang: "en" },
+            description: { text: "Description of o:relationshipClass", lang: "en" },
 
             eligibleSource: ["o:entityClass_1"],
             eligibleTarget: ["o:entityClass_1"],
@@ -105,8 +105,8 @@ describe("PIG Metaclasses", () => {
             revision: "v1.0",
             modified: new Date(),
             creator: "test_user",
-            title: "Title of aRelationship_1",
-            description: "Description of aRelationship_1",
+            title: { text: "Title of aRelationship_1", lang: "en" },
+            description: { text: "Description of aRelationship_1", lang: "en" },
 
             hasSource: "d:anEntity_1",
             hasTarget: "d:anEntity_2",
@@ -122,52 +122,52 @@ describe("PIG Metaclasses", () => {
     test("Property class setup", () => {
         // NOTE: Property needs to reference PropertClass but there is no validation in either class to ensure that
         // either of them exists.
-        let test_propertyClass = new Property(propertyClass_input);
+        let test_PC = new Property(propertyClass_input);
 
-        expect(test_propertyClass.id).toBe("dcterms:type");
-        expect(test_propertyClass.title).toBe("The type or category");
-        expect(test_propertyClass.description).toBe("This is a class for a property named dcterms:type for use by anEntity or aRelationship");
+        expect(test_PC.id).toBe("dcterms:type");
+        expect(test_PC.title).toEqual({ text: "The type or category", lang: "en" });
+        expect(test_PC.description).toEqual({ text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" });
 
-        expect(test_propertyClass.itemType).toBe(PigItemType.Property);
-        expect(test_propertyClass.datatype).toBe(XsDataType.String);
-        expect(test_propertyClass.minCount).toBe(0);
-        expect(test_propertyClass.maxCount).toBe(1);
-        expect(test_propertyClass.maxLength).toBe(20);
-        expect(test_propertyClass.defaultValue).toBe("default_category");
+        expect(test_PC.itemType).toBe(PigItemType.Property);
+        expect(test_PC.datatype).toBe(XsDataType.String);
+        expect(test_PC.minCount).toBe(0);
+        expect(test_PC.maxCount).toBe(1);
+        expect(test_PC.maxLength).toBe(20);
+        expect(test_PC.defaultValue).toBe("default_category");
 
-        let test_property = new AProperty(property_input);
+        let test_P = new AProperty(property_input);
 
-        expect(test_property.itemType).toBe(PigItemType.aProperty);
-        expect(test_property.hasClass).toBe('dcterms:type');
-        expect(test_property.value).toBe("A category");  // usually a property belongs to a certain entity or relationship
+        expect(test_P.itemType).toBe(PigItemType.aProperty);
+        expect(test_P.hasClass).toBe('dcterms:type');
+        expect(test_P.value).toBe("A category");  // usually a property belongs to a certain entity or relationship
 
     });
 
     test("Entity class setup", () => {
-        let test_entity = new Entity(entityClass_input);
+        let test_EC = new Entity(entityClass_input);
 
-        expect(test_entity.id).toBe('o:entityClass_1');
-        expect(test_entity.title).toBe('Title of Entity Class 1');
-        expect(test_entity.description).toBe('Description of o:entityClass_1');
+        expect(test_EC.id).toBe('o:entityClass_1');
+        expect(test_EC.title).toEqual({ text: 'Title of Entity Class 1', lang: "en" });
+        expect(test_EC.description).toEqual({ text: 'Description of o:entityClass_1', lang: "en" });
 
-        expect(test_entity.itemType).toBe(PigItemType.Entity);
-        expect(test_entity.eligibleProperty).toStrictEqual(["dcterms:type"]);
+        expect(test_EC.itemType).toBe(PigItemType.Entity);
+        expect(test_EC.eligibleProperty).toStrictEqual(["dcterms:type"]);
 
     });
 
     test("Relationship class setup", () => {
         // NOTE: Relationship needs to reference two Entity objects but there is no validation in either class to ensure that
         // either of them exists.
-        let test_relationship = new Relationship(relationshipClass_input);
+        let test_RC = new Relationship(relationshipClass_input);
 
-        expect(test_relationship.id).toBe('o:relationshipClass');
-        expect(test_relationship.title).toBe('Title of RelationshipClass');
-        expect(test_relationship.description).toBe('Description of o:relationshipClass');
+        expect(test_RC.id).toBe('o:relationshipClass');
+        expect(test_RC.title).toEqual({ text: 'Title of RelationshipClass', lang: "en" });
+        expect(test_RC.description).toEqual({ text: 'Description of o:relationshipClass', lang: "en" });
 
-        expect(test_relationship.itemType).toBe(PigItemType.Relationship);
-        expect(test_relationship.eligibleTarget).toStrictEqual(['o:entityClass_1']);
-        expect(test_relationship.eligibleSource).toStrictEqual(['o:entityClass_1']);
-        expect(test_relationship.eligibleProperty).toStrictEqual(["dcterms:type"]);
+        expect(test_RC.itemType).toBe(PigItemType.Relationship);
+        expect(test_RC.eligibleTarget).toStrictEqual(['o:entityClass_1']);
+        expect(test_RC.eligibleSource).toStrictEqual(['o:entityClass_1']);
+        expect(test_RC.eligibleProperty).toStrictEqual(["dcterms:type"]);
     });
 
     /* ToDo: ... more tests to come */
