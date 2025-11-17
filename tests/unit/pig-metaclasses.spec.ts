@@ -135,7 +135,7 @@ describe("PIG Metaclasses", () => {
         expect(test_PC.defaultValue).toBe("default_category");
 
         // check the output:
-        let entityClass_output = test_PC.get();
+        let propertyClass_output = test_PC.get();
         expect(propertyClass_output).toEqual(Object.assign({ itemType: "pig:Property" }, propertyClass_input)); // itemType is added at object creation
 
     });
