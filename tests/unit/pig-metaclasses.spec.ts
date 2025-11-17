@@ -155,7 +155,7 @@ describe("PIG Metaclasses", () => {
 
         let entityClass_output = test_EC.get();
 
-        expect(entityClass_output).toStrictEqual(entityClass_input);
+        expect(entityClass_output).toEqual(Object.assign({itemType: "pig:Entity"}, entityClass_input));
 
     });
 
