@@ -153,6 +153,10 @@ describe("PIG Metaclasses", () => {
         expect(test_EC.itemType).toBe(PigItemType.Entity);
         expect(test_EC.eligibleProperty).toStrictEqual(["dcterms:type"]);
 
+        let entityClass_output = test_EC.get();
+
+        expect(entityClass_output).toStrictEqual(entityClass_input);
+
     });
 
     test("Relationship class setup", () => {

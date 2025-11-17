@@ -349,7 +349,7 @@ export class AProperty implements IAProperty {
             value: this.value
         };
     }
-    getHTML(options: any): stringHTML {
+    getHTML(options?: any): stringHTML {
         // ToDo: implement a HTML representation of the property value
         return '';
     }
@@ -383,7 +383,7 @@ export class AnEntity extends AnElement implements IAnEntity {
             hasClass: this.hasClass
         };
     }
-    getHTML(options:any): stringHTML {
+    getHTML(options?: any): stringHTML {
         // ToDo: implement a HTML representation of the entity including its properties
         return '';
     }
@@ -427,7 +427,7 @@ export class ARelationship extends AnElement implements IARelationship {
             hasTarget: this.hasTarget
         };
     }
-    getHTML(options: any): stringHTML {
+    getHTML(options?: any): stringHTML {
         // ToDo: implement a HTML representation of the relationship including its properties
         return '';
     }
