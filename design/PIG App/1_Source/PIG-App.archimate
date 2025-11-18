@@ -9,7 +9,7 @@
 Initially, test-data should be small and cover relevant and typical aspects of the domain to drive and validate the development of transformations. Later on, real or near-real project data 'from the field' with growing complexity should be supplied.</documentation>
     </element>
     <element xsi:type="archimate:BusinessProcess" name="Apply Competency Question" id="id-51595dd48dbc4b8681ee04eba09f5cf3">
-      <documentation>Once transformed to RDF/Turtle, still according to the PIG metamodel, user-defined competency questions shall be applied to the test-data. Those queries shall validate that the graph fulfills the information needs of the various user roles accessing the data. An important criterion is that the same (i.e. *standard*) queries yield the desired results with different data sets. Only then, normalization with repsect to syntax and semantics is successful. It is expected, however, that the competency questions, the queried, depend on the ontology with the the current set of *preferred terms*.</documentation>
+      <documentation>Once transformed to RDF/Turtle, still according to the PIG metamodel, user-defined competency questions shall be applied to the test-data. Those queries shall validate that the graph fulfills the information needs of the various user roles accessing the data. An important criterion is that the _same_ (i.e. standard) queries yield the desired results with data from different sources. Only then, normalization with repsect to syntax and semantics is successful. It is expected, however, that the competency questions (the queries) depend on the ontology with the the current set of *preferred terms*.</documentation>
     </element>
     <element xsi:type="archimate:BusinessObject" name="Business Use-Case" id="id-d44b441f59e24c06abcd5bf6b1bbb060">
       <documentation>A set of use-cases describing the user's need. Must be exemplary (concrete), relevant and representative.</documentation>
@@ -516,7 +516,7 @@ The reference implementation addresses the following aspects:&#xD;
 &#xD;
 Major requirements (capabilities and characteristics) must be satisfied:&#xD;
 - Separate syntax and semantics: The software must not be changed, if the ontology is further developed. &#xD;
-- Comply with *web-technology* and avoid propriatory formats.&#xD;
+- Comply with *web-technology* and avoid proprietary formats.&#xD;
 - Extend the software using a documented, if possible standardized plug-in mechanism.&#xD;
 &#xD;
 This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The PIG App will support a similar workflow (among others) for the source data formats chosen.&#xD;
