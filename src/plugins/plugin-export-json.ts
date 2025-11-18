@@ -1,6 +1,6 @@
 import { App, Plugin } from 'vue';
 
-const rdfExportPlugin: Plugin = {
+const pluginExportJson: Plugin = {
     install(app: App, options?) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
@@ -11,14 +11,17 @@ const rdfExportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('RdfExportComponent', {
+        app.component('ComponentExportJson', {
+            // methods: {
+            //     handleClick() {console.log('Performing JSON Export!')}
+            // },
             data() {
                 return {
                         dialog: false
                     };
             },
             template: " \
-            <v-btn color='secondary' @click='dialog = true'>Export RDF</v-btn> \
+            <v-btn color='secondary' @click='dialog = true'>Export JSON</v-btn> \
             <v-dialog v-model='dialog'> \
                 <v-card> \
                     <v-card-title>Select Export Elements</v-card-title> \
@@ -33,4 +36,4 @@ const rdfExportPlugin: Plugin = {
     }
 }
 
-export default rdfExportPlugin;
+export default pluginExportJson;

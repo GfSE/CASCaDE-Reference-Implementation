@@ -1,6 +1,6 @@
 import { App, Plugin } from 'vue';
 
-const jsonExportPlugin: Plugin = {
+const pluginImportReqif: Plugin = {
     install(app: App, options?) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
@@ -11,20 +11,17 @@ const jsonExportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('JsonExportComponent', {
-            // methods: {
-            //     handleClick() {console.log('Performing JSON Export!')}
-            // },
+        app.component('ComponentImportReqIF', {
             data() {
                 return {
                         dialog: false
                     };
             },
             template: " \
-            <v-btn color='secondary' @click='dialog = true'>Export JSON</v-btn> \
+            <v-btn color='primary' @click='dialog = true'>Import ReqIF</v-btn> \
             <v-dialog v-model='dialog'> \
                 <v-card> \
-                    <v-card-title>Select Export Elements</v-card-title> \
+                    <v-card-title>Select Import Elements</v-card-title> \
                     <v-card-text>TBD...</v-card-text> \
                     <v-card-actions> \
                         <v-btn color='red' @click='dialog = false'>Close</v-btn> \
@@ -36,4 +33,4 @@ const jsonExportPlugin: Plugin = {
     }
 }
 
-export default jsonExportPlugin;
+export default pluginImportReqif;

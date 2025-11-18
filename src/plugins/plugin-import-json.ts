@@ -1,6 +1,6 @@
 import { App, Plugin } from 'vue';
 
-const jsonImportPlugin: Plugin = {
+const pluginImportJson: Plugin = {
     install(app: App, options?) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
@@ -11,7 +11,7 @@ const jsonImportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('JsonImportComponent', {
+        app.component('ComponentImportJson', {
             data() {
                 return {
                         dialog: false
@@ -33,4 +33,4 @@ const jsonImportPlugin: Plugin = {
     }
 }
 
-export default jsonImportPlugin;
+export default pluginImportJson;
