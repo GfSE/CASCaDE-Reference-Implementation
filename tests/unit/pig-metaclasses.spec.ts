@@ -9,9 +9,9 @@
 *       will provide test coverage for the abstract classes they inherit from.
 */
 
+import { XsDataType, PigItemType, PigItemTypeValue } from '../../src/utils/schemas/pig/pig-metaclasses';
 import { IProperty, IAProperty, IEntity, IAnEntity, IRelationship, IARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
 import { Property, AProperty, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
-import { XsDataType, PigItemType, PigItemTypeValue } from '../../src/utils/schemas/pig/pig-metaclasses';
 
 describe("PIG Metaclasses", () => {
     let propertyClass_input: IProperty;
@@ -120,7 +120,7 @@ describe("PIG Metaclasses", () => {
     });
 
     test("Test class pig:Propery", () => {
-        let test_PC = new Property(propertyClass_input);
+        const test_PC = new Property(propertyClass_input);
 
         // check the attribute values:
         expect(test_PC.id).toBe("dcterms:type");
@@ -135,7 +135,7 @@ describe("PIG Metaclasses", () => {
         expect(test_PC.defaultValue).toBe("default_category");
 
         // check the output:
-        let propertyClass_output = test_PC.get();
+        const propertyClass_output = test_PC.get();
         expect(propertyClass_output).toEqual(Object.assign({ itemType: "pig:Property" }, propertyClass_input)); // itemType is added at object creation
 
     });
@@ -143,7 +143,7 @@ describe("PIG Metaclasses", () => {
     test("Test instance pig:aProperty", () => {
         // NOTE: aProperty needs to reference PropertClass but there is no validation in either class to ensure that
         // either of them exists.
-        let test_P = new AProperty(property_input);
+        const test_P = new AProperty(property_input);
 
         // check the attribute values:
         expect(test_P.itemType).toBe(PigItemType.aProperty);
@@ -153,7 +153,7 @@ describe("PIG Metaclasses", () => {
     });
 
     test("Test class pig:Entity", () => {
-        let test_EC = new Entity(entityClass_input);
+        const test_EC = new Entity(entityClass_input);
 
         // check the attribute values:
         expect(test_EC.id).toBe('o:entityClass_1');
@@ -164,17 +164,19 @@ describe("PIG Metaclasses", () => {
         expect(test_EC.eligibleProperty).toStrictEqual(["dcterms:type"]);
 
         // check the output:
-        let entityClass_output = test_EC.get();
+        const entityClass_output = test_EC.get();
         expect(entityClass_output).toEqual(Object.assign({ itemType: "pig:Entity" }, entityClass_input)); // itemType is added at object creation
 
     });
 
-    test("Test class pig:aRelationship", () => {
+    test("Test class pig:Relationship", () => {
         // NOTE: Relationship needs to reference two Entity objects but there is no validation in either class to ensure that
         // either of them exists.
-        let test_RC = new Relationship(relationshipClass_input);
+        const test_RC = new Relationship(relationshipClass_input);
 
         // check the attribute values:
+    //    expect(test_RC.validate(relationshipClass_input)).toBe(0);
+
         expect(test_RC.id).toBe('o:relationshipClass');
         expect(test_RC.title).toEqual({ text: 'Title of RelationshipClass', lang: "en" });
         expect(test_RC.description).toEqual({ text: 'Description of o:relationshipClass', lang: "en" });
@@ -184,9 +186,8 @@ describe("PIG Metaclasses", () => {
         expect(test_RC.eligibleSource).toStrictEqual(['o:entityClass_1']);
         expect(test_RC.eligibleProperty).toStrictEqual(["dcterms:type"]);
 
-
         // check the output:
-        let relationshipClass_output = test_RC.get();
+        const relationshipClass_output = test_RC.get();
         expect(relationshipClass_output).toEqual(Object.assign({ itemType: "pig:Relation" }, relationshipClass_input)); // itemType is added at object creation
 
     });

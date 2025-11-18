@@ -1,34 +1,31 @@
-﻿/** Product Information Graph (PIG) - ReqIF Import
+﻿/** Product Information Graph (PIG) - ReqIF to PIG Transformation
 *   Dependencies: none
 *   Authors: oskar.dungern@gfse.org, ..
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
 *   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
 *
 *   Design Decisions:
-*   - 
+*   - The transformation delivers a PIG package as an IXhr object with responseType 'pig-package'.
+*   - The response comes in an JSON-LD structure according to the PIG schema, namely: IPackage, IEntity, IRelationship, IProperty, ...  
+*   - It will be checked with schema and constrints before ingesting into a PIG store.
 */
 
-// import * as PigMetaclasses from '../../schemas/pig/pig-metaclasses'; --> needed later when implementing the transformation.
-export interface IXhr<T = unknown> {
-    status: number;
-    statusText: string;
-    response?: T; // z.B. Document, string, object, ...
-    responseType?: XMLHttpRequestResponseType; // '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text'
-    headers?: Record<string, string>;
-    ok?: boolean; // convenience: status in 200-299
-}
-export class ImportReqif {
-    private validate(reqifDoc: string): boolean {
+import { IXhr } from '../../lib/helper';
+import { IEntity, IRelationship, IProperty, IAnEntity, IARelationship } from '../../schemas/pig/pig-metaclasses';
+
+export class reqif2pig {
+    private validate(xml: Document): boolean {
         // ToDo: implement ReqIF validation here.
-        return true;
+        return xml.getElementsByTagName("REQ-IF-HEADER").length == 0
+            && xml.getElementsByTagName("REQ-IF-CONTENT").length == 0;
     }
     toPig(xml: string, options?: any): IXhr {
 
-        options = Object.assign(
+        const opts = Object.assign(
             {
-                propType: "ReqIF.Category",  // the type/category of a resource, e.g. folder or diagram.
+                propType: "dcterms:type",  // the type/category of a resource, e.g. folder or diagram.
                 prefixN: "N-",
-                errInvalidReqif: { ok: false, status: 899, statusText: "ReqIF data is invalid" } as IXhr
+                xhrInvalidReqif: { ok: false, status: 899, statusText: "ReqIF data is invalid" } as IXhr
             },
             options
         );
@@ -41,9 +38,9 @@ export class ImportReqif {
 
         /*    var xhr:IXhr;
             if (this.validate(reqifDoc))
-                xhr = { status: 0, statusText: "ReqIF data is valid", responseType: 'pig-package' };
+                xhr = { ok: true, status: 0, statusText: "ReqIF data is valid", responseType: 'pig-package' };
             else
-                return options.errInvalidReqif;
+                return opts.xhrInvalidReqif;
     
             // Transform ReqIF data provided as an XML string to SpecIF data.
             xhr.response = extractMetaData(xmlDoc.getElementsByTagName("REQ-IF-HEADER"));
@@ -58,7 +55,7 @@ export class ImportReqif {
             xhr.response.hierarchies = extractHierarchies(xmlDoc.getElementsByTagName("SPECIFICATIONS"));
         */
         // Temporary:
-        let xhr: IXhr = { status: 999, statusText: "Transformation not yet implemented", responseType: 'document' };
+        const xhr: IXhr = { status: 999, statusText: "Transformation not yet implemented", responseType: 'document' };
 
         xhr.response = reqifDoc;  // just return the XML document for now.
         console.info(xhr);
@@ -70,7 +67,7 @@ export class ImportReqif {
             if (typeof (input) !== 'string') {
                 // already a Document / XMLDocument
                 return { ok: true, status: 297, statusText: '', response: input, responseType: 'document' };
-            };
+            }
             // browser DOMParser
             const
                 parser = new DOMParser(),
@@ -78,7 +75,7 @@ export class ImportReqif {
             // basic parse error detection (works in major browsers)
             if (doc.getElementsByTagName('parsererror').length > 0) {
                 return { ok: false, status: 898, statusText: 'XML parse error: invalid XML document' };
-            };
+            }
             return { ok: true, status: 298, statusText: '', response: doc, responseType: 'document' };
         }
     }
