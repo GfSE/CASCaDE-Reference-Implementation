@@ -17,7 +17,8 @@ const app = createApp(App);
 
 app.use(vuetify).use(router);
 
-const pluginFiles = require.context('./plugins', false, /\.ts$/);
+// parameters: root, recursive, file to match
+const pluginFiles = require.context('./plugins', true, /\.ts$/);
 
 pluginFiles.keys().forEach((filePath: string) => {
   const plugin = pluginFiles(filePath).default; // Get the default export of the plugin
