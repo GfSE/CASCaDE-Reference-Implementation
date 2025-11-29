@@ -9,7 +9,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Dashboards: typeof import('./src/components/Dashboards.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Home: typeof import('./src/components/Home.vue')['default']
     Interfaces: typeof import('./src/components/Interfaces.vue')['default']
     Navigation: typeof import('./src/components/Navigation.vue')['default']

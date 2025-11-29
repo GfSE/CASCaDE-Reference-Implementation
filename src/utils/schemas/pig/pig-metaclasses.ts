@@ -49,14 +49,14 @@ export const PigItemType: Record<'Property' | 'Entity' | 'Relationship' | 'aProp
     aRelationship: 'pig:aRelationship'
 };
 export enum XsDataType {
-    Boolean = <any>'xs:boolean',
-    Integer = <any>'xs:integer',
-    Double = <any>'xs:double',
-    String = <any>'xs:string',
-    AnyURI = <any>'xs:anyURI',
-    DateTime = <any>'xs:dateTime',
-    Duration = <any>'xs:duration',
-    ComplexType = <any>'xs:complexType'
+    Boolean = 'xs:boolean',
+    Integer = 'xs:integer',
+    Double = 'xs:double',
+    String = 'xs:string',
+    AnyURI = 'xs:anyURI',
+    DateTime = 'xs:dateTime',
+    Duration = 'xs:duration',
+    ComplexType = 'xs:complexType'
 }
 export interface INamespace {
     tag: string; // e.g. a namespace tag, e.g. "pig:"
@@ -187,7 +187,7 @@ export interface IProperty extends IIdentifiable {
     minInclusive?: number;
     maxInclusive?: number;
     composedProperty?: TPigId[];
-    defaultValue?: any;
+    defaultValue?: string;
 }
 export class Property extends Identifiable implements IProperty {
     readonly itemType: PigItemTypeValue = PigItemType.Property;
@@ -200,7 +200,7 @@ export class Property extends Identifiable implements IProperty {
     minInclusive?: number;
     maxInclusive?: number;
     composedProperty?: TPigId[];
-    defaultValue?: any;
+    defaultValue?: string;
     constructor(itm: IProperty) {
         super(itm);
         this.datatype = itm.datatype;
@@ -242,8 +242,8 @@ export class Property extends Identifiable implements IProperty {
     }
     validate(itm: IProperty) {
         // if caller provided a itemType, ensure it matches expected
-        if (!(itm as any).itemType || (itm as any).itemType !== PigItemType.Property)
-            throw new Error(`Expected 'Property', but got ${(itm as any).itemType}`);
+        if (!itm.itemType || itm.itemType !== PigItemType.Property)
+            throw new Error(`Expected 'Property', but got ${itm.itemType}`);
         if (!Object.values(XsDataType).includes(itm.datatype))
             throw new Error(`Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`);
         // ToDo: implement further validation logic
@@ -273,8 +273,8 @@ export class Entity extends Element implements IEntity {
         };
     }
     validate(itm: IEntity) {
-        if (!(itm as any).itemType || (itm as any).itemType !== PigItemType.Entity)
-            throw new Error(`Expected 'Entity', but got ${(itm as any).itemType}`);
+        if (!itm.itemType || itm.itemType !== PigItemType.Entity)
+            throw new Error(`Expected 'Entity', but got ${itm.itemType}`);
         // ToDo: implement further validation logic
         return 0;
     }
@@ -312,8 +312,8 @@ export class Relationship extends Element implements IRelationship {
         };
     }
     validate(itm: IRelationship) {
-        if (!(itm as any).itemType || (itm as any).itemType !== PigItemType.Relationship)
-            throw new Error(`Expected 'Relationship', but got ${(itm as any).itemType}`);
+        if (!itm.itemType || itm.itemType !== PigItemType.Relationship)
+            throw new Error(`Expected 'Relationship', but got ${itm.itemType}`);
         // ToDo: implement further validation logic
         return 0;
     }
@@ -324,13 +324,13 @@ export interface IAProperty {
     itemType: PigItemTypeValue;
     hasClass: TPigId;  // must be IRI of an element of type Pig:Property, translates to @type resp. rdf:type
     aComposedProperty?: TPigId[];
-    value: any;
+    value: string;
 }
 export class AProperty implements IAProperty {
     readonly itemType: PigItemTypeValue = PigItemType.aProperty;
     hasClass!: TPigId;
     aComposedProperty?: TPigId[];
-    value: any;
+    value: string;
     constructor(itm: IAProperty) {
         this.hasClass = itm.hasClass;
         this.aComposedProperty = itm.aComposedProperty;
@@ -354,8 +354,8 @@ export class AProperty implements IAProperty {
         return '';
     }
     validate(itm: IAProperty) {
-        if (!(itm as any).itemType || (itm as any).itemType !== PigItemType.aProperty)
-            throw new Error(`Expected 'aProperty', but got ${(itm as any).itemType}`);
+        if (!itm.itemType || itm.itemType !== PigItemType.aProperty)
+            throw new Error(`Expected 'aProperty', but got ${itm.itemType}`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Property IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return 0;
@@ -388,8 +388,8 @@ export class AnEntity extends AnElement implements IAnEntity {
         return '';
     }
     validate(itm: IAnEntity) {
-        if (!(itm as any).itemType || (itm as any).itemType !== PigItemType.anEntity)
-            throw new Error(`Expected 'anEntity', but got ${(itm as any).itemType}`);
+        if (!itm.itemType || itm.itemType !== PigItemType.anEntity)
+            throw new Error(`Expected 'anEntity', but got ${itm.itemType}`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Entity IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return 0;
@@ -432,8 +432,8 @@ export class ARelationship extends AnElement implements IARelationship {
         return '';
     }
     validate(itm: IARelationship) {
-        if (!(itm as any).itemType || (itm as any).itemType !== PigItemType.aRelationship)
-            throw new Error(`Expected 'aRelationship', but got ${(itm as any).itemType}`);
+        if (!itm.itemType || itm.itemType !== PigItemType.aRelationship)
+            throw new Error(`Expected 'aRelationship', but got ${itm.itemType}`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Relationship IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return 0;
@@ -441,22 +441,19 @@ export class ARelationship extends AnElement implements IARelationship {
 }
 
 /* Simple runtime type-guards */
-export function isProperty(obj: any): obj is Property {
+export function isProperty(obj: Identifiable): obj is Property {
     return !!obj && obj.itemType === PigItemType.Property;
 }
-export function isAProperty(obj: any): obj is AProperty {
-    return !!obj && obj.itemType === PigItemType.aProperty;
-}
-export function isEntity(obj: any): obj is Entity {
+export function isEntity(obj: Identifiable): obj is Entity {
     return !!obj && obj.itemType === PigItemType.Entity;
 }
-export function isAnEntity(obj: any): obj is AnEntity {
+export function isAnEntity(obj: Identifiable): obj is AnEntity {
     return !!obj && obj.itemType === PigItemType.anEntity;
 }
-export function isRelationship(obj: any): obj is Relationship {
+export function isRelationship(obj: Identifiable): obj is Relationship {
     return !!obj && obj.itemType === PigItemType.Relationship;
 }
-export function isARelationship(obj: any): obj is ARelationship {
+export function isARelationship(obj: Identifiable): obj is ARelationship {
     return !!obj && obj.itemType === PigItemType.aRelationship;
 }
 export function instantiateListItems(itemType: PigItemTypeValue, arr: any[]) {
