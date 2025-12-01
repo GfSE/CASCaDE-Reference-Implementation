@@ -1,4 +1,4 @@
-﻿/** Product Information Graph (PIG) Scaffold - the basic object structure representing the PIG
+/** Product Information Graph (PIG) Scaffold - the basic object structure representing the PIG
 *   Dependencies: none
 *   Authors: oskar.dungern@gfse.org, ..
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
@@ -457,9 +457,11 @@ export function isARelationship(obj: Identifiable): obj is ARelationship {
     return !!obj && obj.itemType === PigItemType.aRelationship;
 }
 export function instantiateListItems(itemType: PigItemTypeValue, arr: any[]) {
+    // Instantiate an array of items from a raw array of JSON objects:
     switch (itemType) {
         case PigItemType.aProperty: 
             return arr.map(i => new AProperty(i));
+        // potentially other itemTypes ...
         default:
             console.error(`Unsupported item type for instantiation: ${itemType}`);  
     }
