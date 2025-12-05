@@ -1,4 +1,4 @@
-﻿/** Product Information Graph (PIG) - helper routines
+/** Product Information Graph (PIG) - helper routines
 *   Dependencies: none
 *   Authors: oskar.dungern@gfse.org, ..
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
@@ -21,9 +21,10 @@
 //   };
 export interface IXhr<T = unknown> {
     status: number;
-    statusText: string;
+    statusText?: string;
     response?: T; // z.B. Document, string, object, ...
     responseType?: XMLHttpRequestResponseType; // '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text'
     headers?: Record<string, string>;
     ok?: boolean; // convenience: status in 200-299
 }
+export const xhrOk:IXhr = { status: 0, ok: true };
