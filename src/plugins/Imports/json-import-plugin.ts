@@ -1,5 +1,5 @@
 import { App, Plugin } from 'vue';
-import JsonImportComponent from "./JsonImportPlugin.vue"
+import JsonImportComponent from "./JsonImportPlugin.vue";
 
 const jsonImportPlugin: Plugin = {
     install(app: App) {

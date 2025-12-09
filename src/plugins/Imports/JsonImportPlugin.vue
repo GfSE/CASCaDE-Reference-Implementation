@@ -1,7 +1,7 @@
 <template>
     <v-btn color='primary' @click='dialog = true'>Import REQIF</v-btn>
     <v-dialog v-model='dialog'>
-        <v-card class=w-50>
+        <v-card class='w-50'>
             <v-card-title>Select Import Elements</v-card-title>
             <v-card-actions>
                 <v-file-input

@@ -1,5 +1,5 @@
 import { App, Plugin } from 'vue';
-import RdfExportComponent from "./RdfExportPlugin.vue"
+import RdfExportComponent from "./RdfExportPlugin.vue";
 
 const rdfExportPlugin: Plugin = {
     install(app: App, options?) {

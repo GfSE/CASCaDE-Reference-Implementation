@@ -38,7 +38,7 @@ describe("PIG Metaclasses", () => {
             defaultValue: "default_category"
         }
         property_input = {
-            itemType: PigItemType.aProperty,
+        //    itemType: PigItemType.aProperty,
             hasClass: "dcterms:type",
             value: "A category"   // usually a property belongs to a certain entity or relationship
         }
