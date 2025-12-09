@@ -19,7 +19,7 @@ export class reqif2pig {
         return xml.getElementsByTagName("REQ-IF-HEADER").length == 0
             && xml.getElementsByTagName("REQ-IF-CONTENT").length == 0;
     }
-    toPig(xml: string, options?: any): IXhr {
+    toPig(xml: string[] | Document[], options?: any): IXhr {
 
         const opts = Object.assign(
             {
@@ -63,7 +63,7 @@ export class reqif2pig {
 
         // Parse an XML string and returns an XML Document;
         // proposed by: https://developer.mozilla.org/en-US/docs/Web/API/DOMParser/parsing_an_XML_string (through GitHub Copilot)
-        function parseXML(input: string | Document): IXhr {
+        function parseXML(input: string[] | Document[]): IXhr {
             if (typeof (input) !== 'string') {
                 // already a Document / XMLDocument
                 return { ok: true, status: 297, statusText: '', response: input, responseType: 'document' };

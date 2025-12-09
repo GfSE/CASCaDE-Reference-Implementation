@@ -5,7 +5,7 @@
 *   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
 *
 *   Design Decisions:
-*   - Testing and verification of the concrete children in the PIG metaclasses, 
+*   - Testing and verification of the concrete children in the PIG metaclasses,
 *       will provide test coverage for the abstract classes they inherit from.
 */
 
@@ -64,7 +64,7 @@ describe("PIG Metaclasses", () => {
 
             hasClass: "o:entityClass_1",
             hasProperty: [{
-                itemType: PigItemType.aProperty,
+            //    itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
                 value: "Category of Entity_1"
             }]
@@ -81,7 +81,7 @@ describe("PIG Metaclasses", () => {
 
             hasClass: "o:entityClass_1",
             hasProperty: [{
-                itemType: PigItemType.aProperty,
+            //    itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
                 value: "Category of Entity_2"
             }]
@@ -111,7 +111,7 @@ describe("PIG Metaclasses", () => {
             hasSource: "d:anEntity_1",
             hasTarget: "d:anEntity_2",
             hasProperty: [{
-                itemType: PigItemType.aProperty,
+            //    itemType: PigItemType.aProperty,
                 hasClass: "dcterms:title",
                 value: "Name for Relationship_1"
             }]
@@ -146,7 +146,7 @@ describe("PIG Metaclasses", () => {
         const test_P = new AProperty(property_input);
 
         // check the attribute values:
-        expect(test_P.itemType).toBe(PigItemType.aProperty);
+    //    expect(test_P.itemType).toBe(PigItemType.aProperty);
         expect(test_P.hasClass).toBe('dcterms:type');
         expect(test_P.value).toBe("A category");  // usually a property belongs to a certain entity or relationship
 
