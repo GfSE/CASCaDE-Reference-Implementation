@@ -28,15 +28,23 @@ describe("PIG Metaclasses", () => {
         propertyClass_input = {
             id: "dcterms:type",
             itemType: PigItemType.Property,
-            title: {text:"The type or category", lang:"en"},
-            description: {text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" },
+            title: { text: "The type or category", lang: "en" },
+            description: { text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" },
 
             datatype: XsDataType.String,
             minCount: 0,
             maxCount: 1,
             maxLength: 20,
             defaultValue: "default_category"
-        }
+        };
+        propertyClass_input_JSONLD = Object.assign(
+            {},
+            propertyClass_input,
+            {
+                ['@id']: "dcterms:type",
+                id: undefined
+            }
+        );
         property_input = {
             itemType: PigItemType.aProperty,
             hasClass: "dcterms:type",
@@ -141,9 +149,7 @@ describe("PIG Metaclasses", () => {
         expect(propertyClass_output).toEqual(propertyClass_input);
 
         const propertyClass_output_JSONLD = test_PC.getJSONLD();
-        propertyClass_output_JSONLD.id = propertyClass_output_JSONLD['@id'];
-        delete propertyClass_output_JSONLD['@id'];
-        expect(propertyClass_output_JSONLD).toEqual(propertyClass_input);
+        expect(propertyClass_output_JSONLD).toEqual(propertyClass_input_JSONLD);
 
     });
 
