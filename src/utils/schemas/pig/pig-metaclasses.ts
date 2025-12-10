@@ -90,28 +90,35 @@ These capture who, what, when, where, and how of data access or changes:
 - Application / Client Used: Tool or program accessing the database -> (Agent oder Client App)
 - Success/Failure Status: Indicates whether the operation succeeded or failed -> in unserem Fall wohl überflüssig. */
 
-interface IIdentifiable {
-    id: TPigId;  // translates to @id in JSON-LD
+interface IItemType {
     itemType: PigItemTypeValue;
+}
+interface IIdentifiable {
+    itemType: PigItemTypeValue;
+    id: TPigId;  // translates to @id in JSON-LD
     title: ILanguageText;
     description?: ILanguageText;
 }
 abstract class Identifiable implements IIdentifiable {
-    readonly id!: TPigId;
     readonly itemType!: PigItemTypeValue;
+    id!: TPigId;
     title!: ILanguageText;
     description?: ILanguageText;
-    constructor(itm: IIdentifiable) {
+    constructor(itm: IItemType) {
+        this.itemType = itm.itemType;
+    }
+    /*constructor(itm: IIdentifiable) {
         this.id = itm.id;
         this.itemType = itm.itemType;
         this.title = itm.title;
         this.description = itm.description;
-    }
+    }*/
     set(itm: IIdentifiable) {
-        if (itm.id !== this.id)
+        if (this.id && itm.id !== this.id)
             throw new Error(`Cannot change the id of an item (tried to change from ${this.id} to ${itm.id})`);
         if (itm.itemType !== this.itemType)
             throw new Error(`Cannot change the itemType of an item (tried to change from ${this.itemType} to ${itm.itemType})`);
+        this.id = itm.id;
         this.title = itm.title;
         this.description = itm.description;
     }
@@ -192,7 +199,6 @@ abstract class AnElement extends Identifiable implements IAnElement {
 //////////////////////////////////////
 // For the concrete classes:
 export interface IProperty extends IIdentifiable {
-    specializes?: TPigId;  // must be IRI of another Property, no cyclic references, translates to rdfs:subPropertyOf
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
@@ -204,7 +210,70 @@ export interface IProperty extends IIdentifiable {
     defaultValue?: string;
 }
 export class Property extends Identifiable implements IProperty {
-    readonly specializes?: TPigId;
+    datatype!: XsDataType;
+    minCount?: number;
+    maxCount?: number;
+    maxLength?: number;
+    pattern?: string;
+    minInclusive?: number;
+    maxInclusive?: number;
+    composedProperty?: TPigId[];
+    defaultValue?: string;
+    constructor() {
+        super({itemType:PigItemType.Property});
+    }
+    set(itm: IProperty) {
+        const xhr = this.validate(itm);
+        if (xhr.ok) {
+            super.set(itm);
+            this.datatype = itm.datatype;
+            this.minCount = itm.minCount || 0;
+            this.maxCount = itm.maxCount || 1;
+            this.maxLength = itm.maxLength;
+            this.pattern = itm.pattern;
+            this.minInclusive = itm.minInclusive;
+            this.maxInclusive = itm.maxInclusive;
+            this.composedProperty = itm.composedProperty;
+            this.defaultValue = itm.defaultValue;
+        }
+        return xhr;
+    }
+    setJSONLD(itm: any) {
+        itm.id = itm['@id'];
+    //    delete itm['@id'];
+        return this.set(itm);
+    }
+    get() {
+        return {
+            ...super.get(),
+            datatype: this.datatype,
+            minCount: this.minCount,
+            maxCount: this.maxCount,
+            maxLength: this.maxLength,
+            pattern: this.pattern,
+            minInclusive: this.minInclusive,
+            maxInclusive: this.maxInclusive,
+            composedProperty: this.composedProperty,
+            defaultValue: this.defaultValue
+        };
+    }
+    getJSONLD() {
+        let itm = this.get();
+        itm['@id'] = itm.id;
+        delete itm.id;
+        return itm;
+    }
+    validate(itm: IProperty) {
+        // if caller provided a itemType, ensure it matches expected
+        if (!itm.itemType || itm.itemType !== PigItemType.Property)
+            throw new Error(`Expected 'Property', but got ${itm.itemType}`);
+        if (!Object.values(XsDataType).includes(itm.datatype))
+            throw new Error(`Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`);
+        // ToDo: implement further validation logic
+        return xhrOk;
+    }
+}
+/* export class Property extends Identifiable implements IProperty {
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
@@ -216,7 +285,6 @@ export class Property extends Identifiable implements IProperty {
     defaultValue?: string;
     constructor(itm: IProperty) {
         super(itm);
-        this.specializes = itm.specializes;
         this.datatype = itm.datatype;
         this.minCount = itm.minCount || 0;
         this.maxCount = itm.maxCount || 1;
@@ -230,7 +298,6 @@ export class Property extends Identifiable implements IProperty {
     }
     set(itm: IProperty) {
         super.set(itm);
-        // do not allow changing 'specializes' after creation
         this.datatype = itm.datatype;
         this.minCount = itm.minCount || 0;
         this.maxCount = itm.maxCount || 1;
@@ -241,11 +308,9 @@ export class Property extends Identifiable implements IProperty {
         this.composedProperty = itm.composedProperty;
         this.defaultValue = itm.defaultValue;
         return this.validate();
-    }
     get() {
         return {
             ...super.get(),
-            specializes: this.specializes,
             datatype: this.datatype,
             minCount: this.minCount,
             maxCount: this.maxCount,
@@ -266,30 +331,25 @@ export class Property extends Identifiable implements IProperty {
         // ToDo: implement further validation logic
         return xhrOk;
     }
-}
+} */
 export interface IReference extends IIdentifiable {
-    specializes?: TPigId;  // must be IRI of another Reference, translates to rdfs:subPropertyOf
     range: TPigId[];  // must be IRI of an Entity or Relationship (class)
 }
 export class Reference extends Identifiable implements IReference {
-    readonly specializes?: TPigId;
     range: TPigId[];
     constructor(itm: IReference) {
         super(itm);
-        this.specializes = itm.specializes;
         this.range = itm.range;
         this.validate();
     }
     set(itm: IReference) {
         super.set(itm);
-        // do not allow changing 'specializes' after creation
         this.range = itm.range;
         return this.validate();
     }
     get() {
         return {
             ...super.get(),
-            specializes: this.specializes,
             range: this.range
         };
     }
@@ -307,7 +367,7 @@ export interface IEntity extends IElement {
     eligibleReference?: TPigId[];  // must hold Reference IRIs
 }
 export class Entity extends Element implements IEntity {
-    specializes?: TPigId;
+    readonly specializes?: TPigId;
     eligibleReference?: TPigId[];
     constructor(itm: IEntity) {
         super(itm);
@@ -317,7 +377,7 @@ export class Entity extends Element implements IEntity {
     }
     set(itm: IEntity) {
         super.set(itm);
-        this.specializes = itm.specializes;
+        // do not allow changing 'specializes' after creation
         this.eligibleReference = itm.eligibleReference || [];
         return this.validate();
     }
@@ -342,7 +402,7 @@ export interface IRelationship extends IElement {
     eligibleTarget?: TPigId[];  // must hold Reference IRIs
 }
 export class Relationship extends Element implements IRelationship {
-    specializes?: TPigId;
+    readonly specializes?: TPigId;
     eligibleSource?: TPigId[];
     eligibleTarget?: TPigId[];
     constructor(itm: IRelationship) {
@@ -354,7 +414,7 @@ export class Relationship extends Element implements IRelationship {
     }
     set(itm: IRelationship) {
         super.set(itm);
-        this.specializes = itm.specializes;
+        // do not allow changing 'specializes' after creation
         this.eligibleSource = itm.eligibleSource || [];
         this.eligibleTarget = itm.eligibleTarget || [];
         return this.validate();

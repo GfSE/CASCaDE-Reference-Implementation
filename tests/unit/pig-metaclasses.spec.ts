@@ -38,7 +38,7 @@ describe("PIG Metaclasses", () => {
             defaultValue: "default_category"
         }
         property_input = {
-        //    itemType: PigItemType.aProperty,
+            itemType: PigItemType.aProperty,
             hasClass: "dcterms:type",
             value: "A category"   // usually a property belongs to a certain entity or relationship
         }
@@ -56,7 +56,7 @@ describe("PIG Metaclasses", () => {
         entity1_input = {
             id: "d:anEntity_1",
             revision: "v1.0",
-            itemType: PigItemType.Entity,
+            itemType: PigItemType.anEntity,
             modified: new Date(),
             creator: "test_user",
             title: { text: "Title of Entity 1", lang: "en" },
@@ -64,7 +64,7 @@ describe("PIG Metaclasses", () => {
 
             hasClass: "o:entityClass_1",
             hasProperty: [{
-            //    itemType: PigItemType.aProperty,
+                itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
                 value: "Category of Entity_1"
             }]
@@ -73,7 +73,7 @@ describe("PIG Metaclasses", () => {
         entity2_input = {
             id: "d:anEntity_2",
             revision: "v1.0",
-            itemType: PigItemType.Entity,
+            itemType: PigItemType.anEntity,
             modified: new Date(),
             creator: "test_user",
             title: { text: "Title of Entity 2", lang: "en" },
@@ -81,7 +81,7 @@ describe("PIG Metaclasses", () => {
 
             hasClass: "o:entityClass_1",
             hasProperty: [{
-            //    itemType: PigItemType.aProperty,
+                itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
                 value: "Category of Entity_2"
             }]
@@ -100,7 +100,7 @@ describe("PIG Metaclasses", () => {
         };
         relationship_input = {
             id: "d:aRelationship_1",
-            itemType: PigItemType.Relationship,
+            itemType: PigItemType.aRelationship,
             hasClass: "o:relationshipClass",
             revision: "v1.0",
             modified: new Date(),
@@ -108,10 +108,10 @@ describe("PIG Metaclasses", () => {
             title: { text: "Title of aRelationship_1", lang: "en" },
             description: { text: "Description of aRelationship_1", lang: "en" },
 
-            hasSource: "d:anEntity_1",
-            hasTarget: "d:anEntity_2",
+            hasSource: { "itemType": "pig:aReference", "hasClass": "o:relates", "element": "d:anEntity_1" },
+            hasTarget: { "itemType": "pig:aReference", "hasClass": "o:relates", "element": "d:anEntity_2" },
             hasProperty: [{
-            //    itemType: PigItemType.aProperty,
+                itemType: PigItemType.aProperty,
                 hasClass: "dcterms:title",
                 value: "Name for Relationship_1"
             }]
@@ -119,10 +119,10 @@ describe("PIG Metaclasses", () => {
         
     });
 
-    test("Test class pig:Propery", () => {
-        const test_PC = new Property(propertyClass_input);
+    test("Test class pig:Property", () => {
+        const test_PC = new Property().set(propertyClass_input);
 
-        // check the attribute values:
+        // check the attribute values upon creation:
         expect(test_PC.id).toBe("dcterms:type");
         expect(test_PC.title).toEqual({ text: "The type or category", lang: "en" });
         expect(test_PC.description).toEqual({ text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" });
@@ -136,7 +136,7 @@ describe("PIG Metaclasses", () => {
 
         // check the output:
         const propertyClass_output = test_PC.get();
-        expect(propertyClass_output).toEqual(Object.assign({ itemType: "pig:Property" }, propertyClass_input)); // itemType is added at object creation
+        expect(propertyClass_output).toEqual(propertyClass_input); // itemType is added at object creation
 
     });
 
