@@ -15,6 +15,7 @@ import { Property, AProperty, Entity, AnEntity, Relationship, ARelationship } fr
 
 describe("PIG Metaclasses", () => {
     let propertyClass_input: IProperty;
+    let propertyClass_input_JSONLD: any;
     let property_input: IAProperty;
     let entityClass_input: IEntity;
     let entity1_input: IAnEntity;
