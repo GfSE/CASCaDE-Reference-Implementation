@@ -120,9 +120,11 @@ describe("PIG Metaclasses", () => {
     });
 
     test("Test class pig:Property", () => {
-        const test_PC = new Property().set(propertyClass_input);
+        const test_PC = new Property(),
+            xhr = test_PC.set(propertyClass_input);
 
         // check the attribute values upon creation:
+        expect(xhr.ok).toBe(true);
         expect(test_PC.id).toBe("dcterms:type");
         expect(test_PC.title).toEqual({ text: "The type or category", lang: "en" });
         expect(test_PC.description).toEqual({ text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" });
@@ -136,7 +138,12 @@ describe("PIG Metaclasses", () => {
 
         // check the output:
         const propertyClass_output = test_PC.get();
-        expect(propertyClass_output).toEqual(propertyClass_input); // itemType is added at object creation
+        expect(propertyClass_output).toEqual(propertyClass_input);
+
+        const propertyClass_output_JSONLD = test_PC.getJSONLD();
+        propertyClass_output_JSONLD.id = propertyClass_output_JSONLD['@id'];
+        delete propertyClass_output_JSONLD['@id'];
+        expect(propertyClass_output_JSONLD).toEqual(propertyClass_input);
 
     });
 

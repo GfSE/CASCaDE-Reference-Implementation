@@ -202,12 +202,12 @@ export interface IProperty extends IIdentifiable {
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
-    maxLength?: number;
-    pattern?: string;
-    minInclusive?: number;
-    maxInclusive?: number;
+    maxLength?: number;  // only used for string datatype
+    pattern?: string;  // a RegExp pattern, only used for string datatype
+    minInclusive?: number;  // only used for numeric datatypes
+    maxInclusive?: number;  // only used for numeric datatypes
     composedProperty?: TPigId[];  // must be IRI of another Property, no cyclic references
-    defaultValue?: string;
+    defaultValue?: string;   // in PIG, values of all datatypes are strings
 }
 export class Property extends Identifiable implements IProperty {
     datatype!: XsDataType;
@@ -258,10 +258,12 @@ export class Property extends Identifiable implements IProperty {
         };
     }
     getJSONLD() {
-        let itm = this.get();
-        itm['@id'] = itm.id;
+        const { id, ...rest } = this.get();
+        return { '@id': id, ...rest };
+    /*    const src = this.get();
+        const itm = { ...src, ['@id']: src.id };
         delete itm.id;
-        return itm;
+        return itm; */
     }
     validate(itm: IProperty) {
         // if caller provided a itemType, ensure it matches expected
