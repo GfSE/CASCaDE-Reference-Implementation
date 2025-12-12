@@ -25,6 +25,6 @@ export interface IXhr<T = unknown> {
     response?: T; // z.B. Document, string, object, ...
     responseType?: XMLHttpRequestResponseType; // '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text'
     headers?: Record<string, string>;
-    ok?: boolean; // convenience: status in 200-299
+    ok?: boolean; // convenience: status == 0 or in the range of 200-299
 }
 export const xhrOk:IXhr = { status: 0, ok: true };

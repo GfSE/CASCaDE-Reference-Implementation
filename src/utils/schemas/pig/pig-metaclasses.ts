@@ -16,9 +16,10 @@
 *     This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
 *   - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
 *     before the items are instantiated here.
+*   - programming errors result in exceptions, data errors in IXhr return values.
 */
 
-import { xhrOk } from "../../lib/helper";
+import { IXhr, xhrOk } from "../../lib/helper";
 
 export type TPigId = string;  // an IRI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
@@ -90,38 +91,54 @@ These capture who, what, when, where, and how of data access or changes:
 - Application / Client Used: Tool or program accessing the database -> (Agent oder Client App)
 - Success/Failure Status: Indicates whether the operation succeeded or failed -> in unserem Fall wohl überflüssig. */
 
-interface IIdentifiable {
-    id: TPigId;  // translates to @id in JSON-LD
+interface IItem {
     itemType: PigItemTypeValue;
+}
+abstract class Item implements IItem {
+    readonly itemType!: PigItemTypeValue;
+    protected lastStatus!: IXhr;
+    protected constructor(itm: IItem) {
+        this.itemType = itm.itemType;
+    }
+    status(): IXhr {
+        return this.lastStatus;
+    }
+}
+interface IIdentifiable extends IItem {
+    id: TPigId;  // translates to @id in JSON-LD
     title: ILanguageText;
     description?: ILanguageText;
 }
-abstract class Identifiable implements IIdentifiable {
-    readonly id!: TPigId;
-    readonly itemType!: PigItemTypeValue;
+abstract class Identifiable extends Item implements IIdentifiable {
+    id!: TPigId;
     title!: ILanguageText;
     description?: ILanguageText;
-    constructor(itm: IIdentifiable) {
+    protected constructor(itm: IItem) {
+        super(itm); // actual itemType set in concrete class
+    }
+    protected set(itm: IIdentifiable) {
+        // validated in concrete subclass before calling this;
+        // also lastStatus set in concrete subclass.
         this.id = itm.id;
-        this.itemType = itm.itemType;
         this.title = itm.title;
         this.description = itm.description;
+        // made chainable in concrete subclass
     }
-    set(itm: IIdentifiable) {
-        if (itm.id !== this.id)
-            throw new Error(`Cannot change the id of an item (tried to change from ${this.id} to ${itm.id})`);
-        if (itm.itemType !== this.itemType)
-            throw new Error(`Cannot change the itemType of an item (tried to change from ${this.itemType} to ${itm.itemType})`);
-        this.title = itm.title;
-        this.description = itm.description;
-    }
-    get() {
+    protected get() {
         return {
             id: this.id,
             itemType: this.itemType,
             title: this.title,
             description: this.description
         };
+    }
+    protected validate(itm: IIdentifiable) {
+        if (itm.itemType !== this.itemType)
+            throw new Error(`Cannot change the itemType of an item (tried to change from ${this.itemType} to ${itm.itemType})`);
+        if (this.id && itm.id !== this.id)
+            throw new Error(`Cannot change the id of an item (tried to change from ${this.id} to ${itm.id})`);
+        // ToDo: implement further validation logic
+        return xhrOk;
     }
 }
 
@@ -130,25 +147,29 @@ interface IElement extends IIdentifiable {
     icon?: string;  // optional, default is undefined (no icon)
 }
 abstract class Element extends Identifiable implements IElement {
-    eligibleProperty: TPigId[];
+    eligibleProperty!: TPigId[];
     icon?: string;
-    constructor(itm: IElement) {
-        super(itm);
-        this.eligibleProperty = itm.eligibleProperty || [];
-        this.icon = itm.icon;
+    protected constructor(itm: IItem) {
+        super(itm); // actual itemType set in concrete class
     }
-    set(itm: IElement) {
+    protected set(itm: IElement) {
+        // validated in concrete subclass before calling this;
+        // also lastStatus set in concrete subclass.
         super.set(itm);
         this.eligibleProperty = itm.eligibleProperty || [];
         this.icon = itm.icon;
+        // made chainable in concrete subclass
     }
-    get() {
+    protected get() {
         return {
             ...super.get(),
             eligibleProperty: this.eligibleProperty,
-        //    eligibleProperty: this.eligibleProperty.map(p=>p.get()),
             icon: this.icon
         };
+    }
+    protected validate(itm: IElement) {
+        // ToDo: implement further validation logic
+        return super.validate(itm);
     }
 }
 
@@ -164,20 +185,22 @@ abstract class AnElement extends Identifiable implements IAnElement {
     priorRevision?: TRevision[];
     modified!: Date;
     creator?: string;
-    hasProperty: AProperty[]; // instantiated AProperty items
-    constructor(itm: IAnElement) {
+    hasProperty!: AProperty[]; // instantiated AProperty items
+    protected constructor(itm: IItem) {
         super(itm);
-        this.hasProperty = itm.hasProperty ? itm.hasProperty.map(i => new AProperty(i)) : [];
     }
-    set(itm: IAnElement) {
+    protected set(itm: IAnElement) {
+        // validated in concrete subclass before calling this;
+        // also lastStatus set in concrete subclass.
         super.set(itm);
         this.revision = itm.revision;
         this.priorRevision = itm.priorRevision;
         this.modified = itm.modified;
         this.creator = itm.creator;
-        this.hasProperty = itm.hasProperty ? itm.hasProperty.map(i => new AProperty(i)) : [];
+        this.hasProperty = itm.hasProperty ? itm.hasProperty.map(i => new AProperty().set(i)) : [];
+        // made chainable in concrete subclass
     }
-    get() {
+    protected get() {
         return {
             ...super.get(),
             revision: this.revision,
@@ -187,25 +210,27 @@ abstract class AnElement extends Identifiable implements IAnElement {
             hasProperty: this.hasProperty.map(p => p.get())
         };
     }
+    protected validate(itm: IAnElement) {
+        // ToDo: implement further validation logic
+        return super.validate(itm);
+    }
 }
 
 //////////////////////////////////////
-// For the concrete classes:
+// The concrete classes:
 export interface IProperty extends IIdentifiable {
-    specializes?: TPigId;  // must be IRI of another Property, no cyclic references, translates to rdfs:subPropertyOf
     datatype: XsDataType;
     minCount?: number;
     maxCount?: number;
-    maxLength?: number;
-    pattern?: string;
-    minInclusive?: number;
-    maxInclusive?: number;
+    maxLength?: number;  // only used for string datatype
+    pattern?: string;  // a RegExp pattern, only used for string datatype
+    minInclusive?: number;  // only used for numeric datatypes
+    maxInclusive?: number;  // only used for numeric datatypes
     composedProperty?: TPigId[];  // must be IRI of another Property, no cyclic references
-    defaultValue?: string;
+    defaultValue?: string;   // in PIG, values of all datatypes are strings
 }
 export class Property extends Identifiable implements IProperty {
-    readonly specializes?: TPigId;
-    datatype: XsDataType;
+    datatype!: XsDataType;
     minCount?: number;
     maxCount?: number;
     maxLength?: number;
@@ -214,38 +239,33 @@ export class Property extends Identifiable implements IProperty {
     maxInclusive?: number;
     composedProperty?: TPigId[];
     defaultValue?: string;
-    constructor(itm: IProperty) {
-        super(itm);
-        this.specializes = itm.specializes;
-        this.datatype = itm.datatype;
-        this.minCount = itm.minCount || 0;
-        this.maxCount = itm.maxCount || 1;
-        this.maxLength = itm.maxLength;
-        this.pattern = itm.pattern;
-        this.minInclusive = itm.minInclusive;
-        this.maxInclusive = itm.maxInclusive;
-        this.composedProperty = itm.composedProperty;
-        this.defaultValue = itm.defaultValue;
-        this.validate();
+    constructor() {
+        super({itemType:PigItemType.Property});
     }
     set(itm: IProperty) {
-        super.set(itm);
-        // do not allow changing 'specializes' after creation
-        this.datatype = itm.datatype;
-        this.minCount = itm.minCount || 0;
-        this.maxCount = itm.maxCount || 1;
-        this.maxLength = itm.maxLength;
-        this.pattern = itm.pattern;
-        this.minInclusive = itm.minInclusive;
-        this.maxInclusive = itm.maxInclusive;
-        this.composedProperty = itm.composedProperty;
-        this.defaultValue = itm.defaultValue;
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            super.set(itm);
+            this.datatype = itm.datatype;
+            this.minCount = itm.minCount || 0;
+            this.maxCount = itm.maxCount || 1;
+            this.maxLength = itm.maxLength;
+            this.pattern = itm.pattern;
+            this.minInclusive = itm.minInclusive;
+            this.maxInclusive = itm.maxInclusive;
+            this.composedProperty = itm.composedProperty;
+            this.defaultValue = itm.defaultValue;
+        }
+        return this; // make chainable
+    }
+    setJSONLD(itm: any) {
+        itm.id = itm['@id'];
+        delete itm['@id'];
+        return this.set(itm);
     }
     get() {
         return {
             ...super.get(),
-            specializes: this.specializes,
             datatype: this.datatype,
             minCount: this.minCount,
             maxCount: this.maxCount,
@@ -257,48 +277,65 @@ export class Property extends Identifiable implements IProperty {
             defaultValue: this.defaultValue
         };
     }
-    validate() {
-        // if caller provided a itemType, ensure it matches expected
-        if (!this.itemType || this.itemType !== PigItemType.Property)
-            throw new Error(`Expected 'Property', but got ${this.itemType}`);
-        if (!Object.values(XsDataType).includes(this.datatype))
-            throw new Error(`Invalid datatype: ${this.datatype}. Must be one of the XsDataType values.`);
+    getJSONLD() {
+        const { id, ...rest } = this.get();
+        return { ['@id']: id, ...rest };
+    /*    const src = this.get();
+        const itm = { ...src, ['@id']: src.id };
+        delete itm.id;
+        return itm; */
+    }
+    getHTML() {
+        return '<div>not implemented yet</div>';
+    }
+    validate(itm: IProperty) {
+        if (!Object.values(XsDataType).includes(itm.datatype))
+            throw new Error(`Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`);
         // ToDo: implement further validation logic
-        return xhrOk;
+        return super.validate(itm);
     }
 }
 export interface IReference extends IIdentifiable {
-    specializes?: TPigId;  // must be IRI of another Reference, translates to rdfs:subPropertyOf
     range: TPigId[];  // must be IRI of an Entity or Relationship (class)
 }
 export class Reference extends Identifiable implements IReference {
-    readonly specializes?: TPigId;
-    range: TPigId[];
-    constructor(itm: IReference) {
-        super(itm);
-        this.specializes = itm.specializes;
-        this.range = itm.range;
-        this.validate();
+    range!: TPigId[];
+    constructor() {
+        super({ itemType: PigItemType.Reference });
     }
     set(itm: IReference) {
-        super.set(itm);
-        // do not allow changing 'specializes' after creation
-        this.range = itm.range;
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            super.set(itm);
+            this.range = itm.range;
+        }
+        return this;
+    }
+    setJSONLD(itm: any) {
+        itm.id = itm['@id'];
+        delete itm['@id'];
+        return this.set(itm);
     }
     get() {
         return {
             ...super.get(),
-            specializes: this.specializes,
             range: this.range
         };
     }
-    validate() {
-        // if caller provided a itemType, ensure it matches expected
-        if (!this.itemType || this.itemType !== PigItemType.Reference)
-            throw new Error(`Expected 'Reference', but got ${this.itemType}`);
+    getJSONLD() {
+        const { id, ...rest } = this.get();
+        return { ['@id']: id, ...rest };
+        /*    const src = this.get();
+            const itm = { ...src, ['@id']: src.id };
+            delete itm.id;
+            return itm; */
+    }
+    getHTML() {
+        return '<div>not implemented yet</div>';
+    }
+    validate(itm:IReference) {
         // ToDo: implement further validation logic
-        return xhrOk;
+        return super.validate(itm);
     }
 }
 
@@ -309,17 +346,17 @@ export interface IEntity extends IElement {
 export class Entity extends Element implements IEntity {
     specializes?: TPigId;
     eligibleReference?: TPigId[];
-    constructor(itm: IEntity) {
-        super(itm);
-        this.specializes = itm.specializes;
-        this.eligibleReference = itm.eligibleReference || [];
-        this.validate();
+    constructor() {
+        super({ itemType: PigItemType.Entity });
     }
     set(itm: IEntity) {
-        super.set(itm);
-        this.specializes = itm.specializes;
-        this.eligibleReference = itm.eligibleReference || [];
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            super.set(itm);
+            this.specializes = itm.specializes;
+            this.eligibleReference = itm.eligibleReference || [];
+        }
+        return this;  // make chainable
     }
     get() {
         return {
@@ -328,11 +365,13 @@ export class Entity extends Element implements IEntity {
             eligibleReference: this.eligibleReference
         };
     }
-    validate() {
-        if (!this.itemType || this.itemType !== PigItemType.Entity)
-            throw new Error(`Expected 'Entity', but got ${this.itemType}`);
+    validate(itm:IEntity) {
+        //    if (!itm.itemType || itm.itemType !== PigItemType.Entity)
+        //        throw new Error(`Expected '${PigItemType.Entity}', but got ${itm.itemType}`);
+        if (this.specializes && this.specializes !== itm.specializes)
+            throw new Error(`Cannot change the specialization of an Entity after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
         // ToDo: implement further validation logic
-        return xhrOk;
+        return super.validate(itm);
     }
 }
 
@@ -345,19 +384,18 @@ export class Relationship extends Element implements IRelationship {
     specializes?: TPigId;
     eligibleSource?: TPigId[];
     eligibleTarget?: TPigId[];
-    constructor(itm: IRelationship) {
-        super(itm);
-        this.specializes = itm.specializes;
-        this.eligibleSource = itm.eligibleSource || [];
-        this.eligibleTarget = itm.eligibleTarget || [];
-        this.validate();
+    constructor() {
+        super({ itemType: PigItemType.Relationship });
     }
     set(itm: IRelationship) {
-        super.set(itm);
-        this.specializes = itm.specializes;
-        this.eligibleSource = itm.eligibleSource || [];
-        this.eligibleTarget = itm.eligibleTarget || [];
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            super.set(itm);
+            this.specializes = itm.specializes;
+            this.eligibleSource = itm.eligibleSource || [];
+            this.eligibleTarget = itm.eligibleTarget || [];
+        }
+        return this;
     }
     get() {
         return {
@@ -367,39 +405,37 @@ export class Relationship extends Element implements IRelationship {
             eligibleTarget: this.eligibleTarget
         };
     }
-    validate() {
-        if (!this.itemType || this.itemType !== PigItemType.Relationship)
-            throw new Error(`Expected 'Relationship', but got ${this.itemType}`);
+    validate(itm: IRelationship) {
+    //    if (!itm.itemType || itm.itemType !== PigItemType.Relationship)
+    //        throw new Error(`Expected '${PigItemType.Relationship}', but got ${itm.itemType}`);
+        if (this.specializes && this.specializes !== itm.specializes)
+            throw new Error(`Cannot change the specialization of a Relationship after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
         // ToDo: implement further validation logic
-        return xhrOk;
+        return super.validate(itm);
     }
 }
 
 // For the instances/individuals, the 'payload':
-export interface IAProperty {
-    itemType: PigItemTypeValue;
+export interface IAProperty extends IItem {
     hasClass: TPigId;  // must be IRI of an element of type Pig:Property, translates to @type resp. rdf:type
+    value?: string;
     aComposedProperty?: TPigId[];
-    value: string;
 }
-export class AProperty implements IAProperty {
-    readonly itemType!: PigItemTypeValue;
+export class AProperty extends Item implements IAProperty {
     hasClass!: TPigId;
+    value?: string;
     aComposedProperty?: TPigId[];
-    value: string;
-    constructor(itm: IAProperty) {
-        this.itemType = PigItemType.aProperty;
-        this.hasClass = itm.hasClass;
-        this.aComposedProperty = itm.aComposedProperty;
-        this.value = itm.value;
-        this.validate();
+    constructor() {
+        super({ itemType: PigItemType.aProperty });
     }
     set(itm: IAProperty) {
-        // itemType is readonly
-        this.hasClass = itm.hasClass;
-        this.aComposedProperty = itm.aComposedProperty;
-        this.value = itm.value;
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            this.hasClass = itm.hasClass;
+            this.aComposedProperty = itm.aComposedProperty;
+            this.value = itm.value;
+        }
+        return this;
     }
     get() {
         return {
@@ -413,36 +449,33 @@ export class AProperty implements IAProperty {
         // ToDo: implement a HTML snippet with the property value
         return '';
     }
-    validate() {
-        if (!this.itemType || this.itemType !== PigItemType.aProperty)
-            throw new Error(`Expected 'aProperty', but got ${this.itemType}`);
-        if (!this.hasClass)
-            throw new Error(`Property instance must have a hasClass reference`);
+    validate(itm: IAProperty) {
+    //    if (!this.itemType || this.itemType !== PigItemType.aProperty)
+    //        throw new Error(`Expected 'aProperty', but got ${this.itemType}`);
+        if (!itm.hasClass)
+            throw new Error(`'${PigItemType.aProperty}' must have a hasClass reference`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Property IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return xhrOk;
     }
 }
-export interface IAReference {
-    itemType: PigItemTypeValue;
+export interface IAReference extends IItem {
     hasClass: TPigId;  // must be IRI of an element of type Pig:Reference, translates to @type resp. rdf:type
     element: TPigId;
 }
-export class AReference implements IAReference {
-    readonly itemType!: PigItemTypeValue;
+export class AReference extends Item implements IAReference {
     hasClass!: TPigId;
-    element: TPigId;
-    constructor(itm: IAReference) {
-        this.itemType = PigItemType.aReference;
-        this.hasClass = itm.hasClass;
-        this.element = itm.element;
-        this.validate();
+    element!: TPigId;
+    constructor() {
+        super({ itemType: PigItemType.aReference });
     }
     set(itm: IAReference) {
-        // itemType is readonly
-        this.hasClass = itm.hasClass;
-        this.element = itm.element;
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            this.hasClass = itm.hasClass;
+            this.element = itm.element;
+        }
+        return this;
     }
     get() {
         return {
@@ -455,11 +488,11 @@ export class AReference implements IAReference {
         // ToDo: implement a HTML snippet with a link to the referenced element
         return '';
     }
-    validate() {
-        if (!this.itemType || this.itemType !== PigItemType.aReference)
-            throw new Error(`Expected 'aReference', but got ${this.itemType}`);
-        if (!this.hasClass)
-            throw new Error(`Reference instance must have a hasClass reference`);
+    validate(itm: IAReference) {
+    //    if (!this.itemType || this.itemType !== PigItemType.aReference)
+    //        throw new Error(`Expected 'aReference', but got ${this.itemType}`);
+        if (!itm.hasClass)
+            throw new Error(`'${PigItemType.aReference}' must have a hasClass reference`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Reference IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return xhrOk;
@@ -471,19 +504,19 @@ export interface IAnEntity extends IAnElement {
     hasReference?: IAReference[];  // optional, must hold anEntity or aRelationship IRIs
 }
 export class AnEntity extends AnElement implements IAnEntity {
-    hasClass: TPigId;
-    hasReference: AReference[];
-    constructor(itm: IAnEntity) {
-        super(itm);
-        this.hasClass = itm.hasClass;
-        this.hasReference = itm.hasReference ? itm.hasReference.map(i => new AReference(i)) : [];
-        this.validate();
+    hasClass!: TPigId;
+    hasReference!: AReference[];
+    constructor() {
+        super({ itemType: PigItemType.anEntity });
     }
     set(itm: IAnEntity) {
-        super.set(itm);
-        this.hasClass = itm.hasClass;
-        this.hasReference = itm.hasReference ? itm.hasReference.map(i => new AReference(i)) : [];
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            super.set(itm);
+            this.hasClass = itm.hasClass;
+            this.hasReference = itm.hasReference ? itm.hasReference.map(i => new AReference().set(i)) : [];
+        }
+        return this;
     }
     get() {
         return {
@@ -496,14 +529,14 @@ export class AnEntity extends AnElement implements IAnEntity {
         // ToDo: implement a HTML representation of the entity including its properties
         return '';
     }
-    validate() {
-        if (!this.itemType || this.itemType !== PigItemType.anEntity)
-            throw new Error(`Expected 'anEntity', but got ${this.itemType}`);
-        if (!this.hasClass)
-            throw new Error(`'anEntity' must have a hasClass reference`);
+    validate(itm: IAnEntity) {
+    //    if (!this.itemType || this.itemType !== PigItemType.anEntity)
+    //        throw new Error(`Expected 'anEntity', but got ${this.itemType}`);
+        if (!itm.hasClass)
+            throw new Error(`'${PigItemType.anEntity}' must have a hasClass reference`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Entity IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return xhrOk;
+        return super.validate(itm);
     }
 }
 
@@ -513,22 +546,21 @@ export interface IARelationship extends IAnElement {
     hasTarget: IAReference;
 }
 export class ARelationship extends AnElement implements IARelationship {
-    hasClass: TPigId;
+    hasClass!: TPigId;
     hasSource!: AReference;
     hasTarget!: AReference;
-    constructor(itm: IARelationship) {
-        super(itm);
-        this.hasClass = itm.hasClass;
-        this.hasSource = new AReference(itm.hasSource);
-        this.hasTarget = new AReference(itm.hasTarget);
-        this.validate();
+    constructor() {
+        super({ itemType: PigItemType.aRelationship });
     }
     set(itm: IARelationship) {
-        super.set(itm);
-        this.hasClass = itm.hasClass;
-        this.hasSource = new AReference(itm.hasSource);
-        this.hasTarget = new AReference(itm.hasTarget);
-        return this.validate();
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus) {
+            super.set(itm);
+            this.hasClass = itm.hasClass;
+            this.hasSource = new AReference().set(itm.hasSource);
+            this.hasTarget = new AReference().set(itm.hasTarget);
+        }
+        return this;
     }
     get() {
         return {
@@ -542,14 +574,14 @@ export class ARelationship extends AnElement implements IARelationship {
         // ToDo: implement a HTML representation of the relationship including its properties
         return '';
     }
-    validate() {
-        if (!this.itemType || this.itemType !== PigItemType.aRelationship)
-            throw new Error(`Expected 'aRelationship', but got ${this.itemType}`);
-        if (!this.hasClass)
-            throw new Error(`'aRelationship' must have a hasClass reference`);
+    validate(itm: IARelationship) {
+    //    if (!this.itemType || this.itemType !== PigItemType.aRelationship)
+    //        throw new Error(`Expected 'aRelationship', but got ${this.itemType}`);
+        if (!itm.hasClass)
+            throw new Error(`'${PigItemType.aRelationship}' must have a hasClass reference`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Relationship IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return xhrOk;
+        return super.validate(itm);
     }
 }
 
