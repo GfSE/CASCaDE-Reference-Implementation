@@ -59,6 +59,7 @@ describe("PIG Metaclasses", () => {
             title: { text: "Title of Entity Class 1", lang: "en" },
             description: { text: "Description of o:Entity_1", lang: "en" },
 
+            eligibleReference: [],
             eligibleProperty: ["dcterms:type"]
         };
 
@@ -178,7 +179,7 @@ describe("PIG Metaclasses", () => {
 
         // check the output:
         const entityClass_output = test_EC.get();
-        expect(entityClass_output).toEqual(Object.assign({ itemType: "pig:Entity" }, entityClass_input)); // itemType is added at object creation
+        expect(entityClass_output).toEqual(entityClass_input);
 
     });
 
@@ -201,9 +202,24 @@ describe("PIG Metaclasses", () => {
 
         // check the output:
         const relationshipClass_output = test_RC.get();
-        expect(relationshipClass_output).toEqual(Object.assign({ itemType: "pig:Relation" }, relationshipClass_input)); // itemType is added at object creation
+        expect(relationshipClass_output).toEqual(relationshipClass_input);
 
     });
 
     /* ToDo: ... more tests to come */
+
+    /*
+        // Synchrone Ausnahme (Funktion oder Konstruktor)
+        test('throws when invalid input (sync)', () => {
+            const badInput = { <<fehlerhafte Struktur>> };
+        expect(() => {
+            // Beispiel: eine Methode, die synchron wirft
+            new Property().set(badInput as any);
+        }).toThrow(); // prüft nur, dass ein Fehler geworfen wird
+
+        // genauere Prüfung: Message, Regex oder Error-Konstruktor
+        expect(() => new Property().set(badInput as any)).toThrow('Expected');
+        expect(() => new Property().set(badInput as any)).toThrow(/Expected 'Property'/);
+        });
+    * /
 });
