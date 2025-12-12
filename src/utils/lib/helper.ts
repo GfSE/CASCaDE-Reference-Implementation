@@ -24,7 +24,7 @@ export interface IXhr<T = unknown> {
     statusText?: string;
     response?: T; // z.B. Document, string, object, ...
     responseType?: XMLHttpRequestResponseType; // '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text'
-    headers?: Record<string, string>;
+//    headers?: Record<string, string>;
     ok?: boolean; // convenience: status in 200-299
 }
 export const xhrOk: IXhr = { status: 0, ok: true };
@@ -174,10 +174,12 @@ export function renameJsonTags(
           }, {} as Record<string, string>)
         : { ...mapping };
 
+    // 1. handle leaf and null
     if (node === null || isLeaf(node)) {
         return node;
     }
 
+    // 2. handle array
     if (Array.isArray(node)) {
         if (mutate) {
             for (let i = 0; i < node.length; i++) {
@@ -193,7 +195,7 @@ export function renameJsonTags(
         return out;
     }
 
-    // object case
+    // 3. handle object
     const src = node as JsonObject;
     if (mutate) {
         for (const key of Object.keys(src)) {

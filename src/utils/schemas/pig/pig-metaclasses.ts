@@ -290,7 +290,8 @@ export class Property extends Identifiable implements IProperty {
     }
     validate(itm: IProperty) {
         if (!Object.values(XsDataType).includes(itm.datatype))
-            throw new Error(`Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`);
+            return { status: 699, statusText: `Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`, ok: false };
+
         // ToDo: implement further validation logic
         return super.validate(itm);
     }

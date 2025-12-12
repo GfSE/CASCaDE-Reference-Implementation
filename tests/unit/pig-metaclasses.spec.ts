@@ -150,15 +150,24 @@ describe("PIG Metaclasses", () => {
         expect(test_PC.maxLength).toBe(20);
         expect(test_PC.defaultValue).toBe("default_category");
 
-        // check the output:
+        // check the output as JSON:
         const propertyClass_output = test_PC.get();
         expect(propertyClass_output).toEqual(propertyClass_input);
 
+        // check the output as JSON-LD:
         const propertyClass_output_JSONLD = test_PC.getJSONLD();
         expect(propertyClass_output_JSONLD).toEqual(propertyClass_input_JSONLD);
 
+        // input JSON-LD to JSON conversion check:
         const test_PC_fromJSONLD = new Property().setJSONLD(propertyClass_input_JSONLD);
         expect(test_PC_fromJSONLD.get()).toEqual(propertyClass_input);
+
+        // ckeck with bad data type:
+        const bad_input = Object.assign({}, propertyClass_input, { datatype: "bad_type" as XsDataType });
+        const test_PC_bad = new Property().set(bad_input);
+        expect(test_PC_bad.status().ok).toBe(false);
+        //expect(test_PC_bad.status().statusText || '').toContain('Invalid datatype');
+        expect(test_PC_bad.status().statusText || '').toMatch(/invalid datatype/i);
     });
 
     test("Test instance pig:aProperty", () => {
