@@ -9,6 +9,7 @@
 *       will provide test coverage for the abstract classes they inherit from.
 */
 
+import { JsonObject, renameJsonTags, toJSONLD } from '../../src/utils/lib/helper';
 import { XsDataType, PigItemType, PigItemTypeValue } from '../../src/utils/schemas/pig/pig-metaclasses';
 import { IProperty, IAProperty, IEntity, IAnEntity, IRelationship, IARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
 import { Property, AProperty, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
@@ -38,14 +39,18 @@ describe("PIG Metaclasses", () => {
             maxLength: 20,
             defaultValue: "default_category"
         };
-        propertyClass_input_JSONLD = Object.assign(
+    /*    propertyClass_input_JSONLD = Object.assign(
             {},
             propertyClass_input,
             {
                 ['@id']: "dcterms:type",
                 id: undefined
             }
-        );
+        ); */
+        propertyClass_input_JSONLD = renameJsonTags(
+            propertyClass_input as unknown as JsonObject,
+            toJSONLD,
+        ) as unknown as IProperty;
         property_input = {
             itemType: PigItemType.aProperty,
             hasClass: "dcterms:type",
