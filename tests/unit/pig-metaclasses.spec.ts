@@ -210,7 +210,7 @@ describe("PIG Metaclasses", () => {
     test('throws when itemType is invalid', () => {
         expect(() => {
             // do not add a completly bad input to avoid a TS error:
-            new Property().set(Object.assign({}, relationshipClass_input, {itemType: 'bad'}));
+            new Property().set(Object.assign({}, propertyClass_input, {itemType: 'bad'}));
         }).toThrow(); // checks only that an exception is thrown
 
     /*    // more detailed checking: Message, Regex oder Error-Konstruktor
