@@ -209,7 +209,7 @@ describe("PIG Metaclasses", () => {
     // Synchronous Exception (Function or Constructor)
     test('throws when itemType is invalid', () => {
         expect(() => {
-            new Property().set(relationshipClass_input);
+            new Property().set(Object.assign({}, relationshipClass_input, {itemType: 'bad'}));
         }).toThrow(); // checks only that an exception is thrown
 
     /*    // more detailed checking: Message, Regex oder Error-Konstruktor
