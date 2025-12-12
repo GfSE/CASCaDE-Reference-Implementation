@@ -16,4 +16,4 @@ const reqifImportPlugin: Plugin = {
     }
 }
 
-export default jsonImportPlugin;
+export default reqifImportPlugin;
