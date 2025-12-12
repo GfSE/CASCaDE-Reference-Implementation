@@ -221,5 +221,5 @@ describe("PIG Metaclasses", () => {
         expect(() => new Property().set(badInput as any)).toThrow('Expected');
         expect(() => new Property().set(badInput as any)).toThrow(/Expected 'Property'/);
         });
-    * /
+    */
 });
