@@ -206,20 +206,18 @@ describe("PIG Metaclasses", () => {
 
     });
 
-    /* ToDo: ... more tests to come */
-
-    /*
-        // Synchrone Ausnahme (Funktion oder Konstruktor)
-        test('throws when invalid input (sync)', () => {
-            const badInput = { <<fehlerhafte Struktur>> };
+    // Synchronous Exception (Function or Constructor)
+    test('throws when itemType is invalid', () => {
         expect(() => {
-            // Beispiel: eine Methode, die synchron wirft
-            new Property().set(badInput as any);
-        }).toThrow(); // prüft nur, dass ein Fehler geworfen wird
+            new Property().set(relationshipClass_input);
+        }).toThrow(); // checks only that an exception is thrown
 
-        // genauere Prüfung: Message, Regex oder Error-Konstruktor
+    /*    // more detailed checking: Message, Regex oder Error-Konstruktor
         expect(() => new Property().set(badInput as any)).toThrow('Expected');
         expect(() => new Property().set(badInput as any)).toThrow(/Expected 'Property'/);
-        });
     */
+    });
+
+/* ToDo: ... more tests to come */
+
 });
