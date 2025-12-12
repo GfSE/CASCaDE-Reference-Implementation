@@ -157,6 +157,8 @@ describe("PIG Metaclasses", () => {
         const propertyClass_output_JSONLD = test_PC.getJSONLD();
         expect(propertyClass_output_JSONLD).toEqual(propertyClass_input_JSONLD);
 
+        const test_PC_fromJSONLD = new Property().setJSONLD(propertyClass_input_JSONLD);
+        expect(test_PC_fromJSONLD.get()).toEqual(propertyClass_input);
     });
 
     test("Test instance pig:aProperty", () => {
