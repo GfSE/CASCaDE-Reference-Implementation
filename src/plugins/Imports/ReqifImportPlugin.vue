@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='primary' @click='dialog = true'>Import REQIF</v-btn>
+    <v-btn color='primary' @click='dialog = true'>Import ReqIF</v-btn>
     <v-dialog v-model='dialog'>
         <v-card class='w-50'>
             <v-card-title>Select Import Files</v-card-title>
@@ -7,7 +7,7 @@
                 <v-file-input
                     v-model='selectedFiles'
                     accept='.reqif'
-                    label='REQIF Input'
+                    label='ReqIF Input'
                     prepend-icon='mdi-folder-open'
                     multiple
                 ></v-file-input>
@@ -43,7 +43,7 @@ import { reqif2pig } from '../../utils/import/ReqIF/reqif2pig';
   },
 })
 
-export default class JsonImportComponent extends Vue {}
+export default class ReqifImportComponent extends Vue {}
 </script>
 
 <style scoped></style>
