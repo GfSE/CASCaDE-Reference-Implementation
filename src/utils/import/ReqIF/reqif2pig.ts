@@ -1,4 +1,4 @@
-﻿/** Product Information Graph (PIG) - ReqIF to PIG Transformation
+/** Product Information Graph (PIG) - ReqIF to PIG Transformation
 *   Dependencies: none
 *   Authors: oskar.dungern@gfse.org, ..
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
@@ -10,7 +10,7 @@
 *   - It will be checked with schema and constrints before ingesting into a PIG store.
 */
 
-import { IXhr } from '../../lib/helper';
+import { IXhr } from '../../lib/helpers';
 import { IEntity, IRelationship, IProperty, IAnEntity, IARelationship } from '../../schemas/pig/pig-metaclasses';
 
 export class reqif2pig {

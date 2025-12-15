@@ -19,7 +19,9 @@
 *   - programming errors result in exceptions, data errors in IXhr return values.
 */
 
-import { IXhr, xhrOk } from "../../lib/helper";
+import { RE } from "../../lib/definitions";
+import { LIB } from "../../lib/helpers";
+import { IXhr, xhrOk, JsonValue, JsonObject } from "../../lib/helpers";
 
 export type TPigId = string;  // an IRI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
@@ -68,12 +70,18 @@ export enum XsDataType {
     Duration = 'xs:duration',
     ComplexType = 'xs:complexType'
 }
+// Type guard: checks whether a value is one of the XsDataType values
+function isXsDataType(value: unknown): value is XsDataType {
+    if (typeof value !== 'string') return false;
+    const norm = value.replace(/^xsd:/,'xs:');
+    return (Object.values(XsDataType) as string[]).includes(norm);
+}
 export interface INamespace {
     tag: string; // e.g. a namespace tag, e.g. "pig:"
     IRI: string; // e.g. a namespace value, e.g. "https://product-information-graph.gfse.org/"
 }
 export interface ILanguageText {
-    text: string;
+    value: string;
     lang?: tagIETF;
 }
 
@@ -106,22 +114,24 @@ abstract class Item implements IItem {
 }
 interface IIdentifiable extends IItem {
     id: TPigId;  // translates to @id in JSON-LD
-    title: ILanguageText;
-    description?: ILanguageText;
+    title: ILanguageText[];
+    description?: ILanguageText[];
 }
 abstract class Identifiable extends Item implements IIdentifiable {
     id!: TPigId;
-    title!: ILanguageText;
-    description?: ILanguageText;
+    title!: ILanguageText[];
+    description?: ILanguageText[];
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
     }
     protected set(itm: IIdentifiable) {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
+//        console.debug('Identifiable.set i: ', itm);
         this.id = itm.id;
-        this.title = itm.title;
-        this.description = itm.description;
+        this.title = normalizeMultiLanguageText(itm.title);
+        this.description = normalizeMultiLanguageText(itm.description);
+//        console.debug('Identifiable.set o: ', this);
         // made chainable in concrete subclass
     }
     protected get() {
@@ -132,11 +142,33 @@ abstract class Identifiable extends Item implements IIdentifiable {
             description: this.description
         };
     }
+    setJSONLD(itm: any) {
+        let norm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
+        // id extraction
+        norm = LIB.replaceIdObjects(norm);
+        this.set(norm);
+        return this; // make chainable
+    }
+    getJSONLD() {
+        const renamed = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
+        return makeIdObjects(renamed) as JsonObject;        
+    }
     protected validate(itm: IIdentifiable) {
         if (itm.itemType !== this.itemType)
             throw new Error(`Cannot change the itemType of an item (tried to change from ${this.itemType} to ${itm.itemType})`);
         if (this.id && itm.id !== this.id)
             throw new Error(`Cannot change the id of an item (tried to change from ${this.id} to ${itm.id})`);
+
+        // Ensure title is a multi-language text (array of ILanguageText)
+        const tRes = validateMultiLanguageText(itm.title, 'title');
+        if (!tRes.ok) return tRes;
+
+        // description is optional, but when present must be an array of ILanguageText
+        if (itm.description !== undefined) {
+            const dRes = validateMultiLanguageText(itm.description, 'description');
+            if (!dRes.ok) return dRes;
+        }
+
         // ToDo: implement further validation logic
         return xhrOk;
     }
@@ -219,7 +251,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 //////////////////////////////////////
 // The concrete classes:
 export interface IProperty extends IIdentifiable {
-    datatype: XsDataType;
+    datatype: string; // must be of XsDataType
     minCount?: number;
     maxCount?: number;
     maxLength?: number;  // only used for string datatype
@@ -230,7 +262,7 @@ export interface IProperty extends IIdentifiable {
     defaultValue?: string;   // in PIG, values of all datatypes are strings
 }
 export class Property extends Identifiable implements IProperty {
-    datatype!: XsDataType;
+    datatype!: string;
     minCount?: number;
     maxCount?: number;
     maxLength?: number;
@@ -244,9 +276,10 @@ export class Property extends Identifiable implements IProperty {
     }
     set(itm: IProperty) {
         this.lastStatus = this.validate(itm);
-        if (this.lastStatus) {
+        console.debug('Property.set: ', this.lastStatus);
+        if (this.lastStatus.ok) {
             super.set(itm);
-            this.datatype = itm.datatype;
+            this.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
             this.minCount = itm.minCount || 0;
             this.maxCount = itm.maxCount || 1;
             this.maxLength = itm.maxLength;
@@ -258,13 +291,8 @@ export class Property extends Identifiable implements IProperty {
         }
         return this; // make chainable
     }
-    setJSONLD(itm: any) {
-        itm.id = itm['@id'];
-        delete itm['@id'];
-        return this.set(itm);
-    }
     get() {
-        return {
+        return LIB.stripUndefined({
             ...super.get(),
             datatype: this.datatype,
             minCount: this.minCount,
@@ -275,21 +303,15 @@ export class Property extends Identifiable implements IProperty {
             maxInclusive: this.maxInclusive,
             composedProperty: this.composedProperty,
             defaultValue: this.defaultValue
-        };
-    }
-    getJSONLD() {
-        const { id, ...rest } = this.get();
-        return { ['@id']: id, ...rest };
-    /*    const src = this.get();
-        const itm = { ...src, ['@id']: src.id };
-        delete itm.id;
-        return itm; */
+        });
     }
     getHTML() {
         return '<div>not implemented yet</div>';
     }
     validate(itm: IProperty) {
-        if (!Object.values(XsDataType).includes(itm.datatype))
+    //    const xhr = validateIdString(itm.datatype);
+    //    if (!xhr.ok) return xhr;
+        if (!isXsDataType(itm.datatype))
             return { status: 699, statusText: `Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`, ok: false };
 
         // ToDo: implement further validation logic
@@ -312,24 +334,11 @@ export class Reference extends Identifiable implements IReference {
         }
         return this;
     }
-    setJSONLD(itm: any) {
-        itm.id = itm['@id'];
-        delete itm['@id'];
-        return this.set(itm);
-    }
     get() {
         return {
             ...super.get(),
             range: this.range
         };
-    }
-    getJSONLD() {
-        const { id, ...rest } = this.get();
-        return { ['@id']: id, ...rest };
-        /*    const src = this.get();
-            const itm = { ...src, ['@id']: src.id };
-            delete itm.id;
-            return itm; */
     }
     getHTML() {
         return '<div>not implemented yet</div>';
@@ -604,4 +613,147 @@ export function isRelationship(obj: Identifiable): obj is Relationship {
 }
 export function isARelationship(obj: Identifiable): obj is ARelationship {
     return !!obj && obj.itemType === PigItemType.aRelationship;
+}
+// -------- Helper functions --------
+
+// Extract an id string from common shapes:
+// - { id: 'xyz' } -> 'xyz'
+// - { '@id': 'xyz' } -> 'xyz'
+// - 'xyz' -> 'xyz'
+// Returns undefined when no usable id found.
+function extractId(obj: unknown): string | undefined {
+    if (obj === null || obj === undefined)
+        return undefined;
+//    if (typeof obj === 'string') return obj;
+    if (typeof obj === 'object') {
+        const o = obj as Record<string, unknown>;
+        if (typeof o.id === 'string' && o.id.trim().length>0)
+            return o.id;
+    //    if (typeof o['@id'] === 'string' && (o['@id'] as string).trim() !== '') return o['@id'] as string;
+    }
+    return undefined;
+}
+
+/**
+ * Validate that an input is an id-object or id-string.
+ * Returns xhrOk on success, else an IXhr error object.
+ * Accepts:
+ * - 'xyz'                -> ok
+ * - { id: 'xyz' }        -> ok
+ * - { '@id': 'xyz' }     -> ok
+ * Anything else -> error IXhr
+ */
+function validateIdObject(input: unknown, fieldName = 'id'): IXhr {
+    if (input === null || input === undefined) {
+        return { status: 400, statusText: `${fieldName} is missing`, ok: false };
+    }
+    // if (typeof input === 'string') {
+    //    return input.trim() === '' ? { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false } : xhrOk;
+    // }
+    if (typeof input === 'object') {
+        const id = extractId(input);
+        return id ? validateIdString(id, fieldName) : { status: 400, statusText: `${fieldName} is missing id`, ok: false };
+    }
+    return { status: 400, statusText: `${fieldName} has invalid type`, ok: false };
+}
+function validateIdString(input: unknown, fieldName = 'id'): IXhr {
+    if (typeof input === 'string') {
+        if (input.trim().length < 1) {
+            return { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false };
+        }
+        if (isValidIdString(input))
+            return xhrOk;
+    }
+    return { status: 400, statusText: `${fieldName} must be a string with a term having a namespace or an URI`, ok: false };
+}
+function isValidIdString(input: string): boolean {
+    return !!input && (RE.termWithNamespace.test(input) || RE.uri.test(input));
+}
+/**
+ * Replace top-level string values that are valid id-strings with id-objects.
+ * - Non-recursive (flat): only replaces direct properties of the provided object.
+ * - Uses existing `isValidIdString` to decide whether a string is an ID.
+ * - options.idKey: property name for the id-object (default '@id')
+ * - options.mutate: if true, modify the input object in-place; otherwise return a shallow copy
+ */
+function makeIdObjects(
+    obj: JsonObject,
+    options?: { idKey?: string; mutate?: boolean }
+): JsonObject {
+    const idKey = options?.idKey ?? '@id';
+    const mutate = !!options?.mutate;
+    const target: JsonObject = mutate ? obj : { ...obj };
+
+    for (const k of Object.keys(obj)) {
+        const v = obj[k];
+        // replace all id-strings except for the '@id' property itself:
+        if (k !== '@id' && typeof v === 'string' && isValidIdString(v)) {
+            // replace string by an id-object, using the configured idKey
+            target[k] = { [idKey]: v } as unknown as JsonValue;
+        } else if (!mutate) {
+            // ensure non-mutating mode copies non-id values
+            target[k] = v;
+        }
+    }
+
+    return target;
+}
+// Helper: normalize language tags/values ---
+function normalizeLanguageText(src: any): ILanguageText {
+    console.debug('normalizeLanguageText', src);
+    if (!src)
+        return { value: '' };
+    if (typeof src === 'object') {
+        return {
+            value: (src.value ?? '') as string,
+            lang: src.lang as tagIETF | undefined
+        };
+    }
+    if (typeof src === 'string')
+        return { value: src };
+    return { value: String(src) };
+}
+
+function normalizeMultiLanguageText(src: any): ILanguageText[] {
+    if (!src) return [];
+    if (Array.isArray(src)) return src.map(normalizeLanguageText);
+    return [normalizeLanguageText(src)];
+}
+/* Helper: validate that a value is an array of ILanguageText with the rule:
+   - if array length === 0 -> OK
+   - if array length === 1 -> 'lang' may be missing
+   - if array length > 1 -> each entry must have a string 'lang' and string 'value'
+   Returns IXhr (xhrOk on success, error IXhr on failure)
+*/
+function validateMultiLanguageText(arr: any, fieldName: string): IXhr {
+    console.debug('validateMultiLanguageText',arr,fieldName);
+    if (!Array.isArray(arr)) {
+        return { status: 698, statusText: `Invalid ${fieldName}: expected an array of language-tagged texts`, ok: false };
+    }
+    if (arr.length === 0) return xhrOk;
+    if (arr.length === 1) {
+        const e = arr[0];
+        if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
+            return { status: 698, statusText: `Invalid ${fieldName} entry: expected object with string 'value'`, ok: false };
+        }
+        // single entry: lang optional
+        if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
+            return { status: 698, statusText: `Invalid ${fieldName} entry: 'lang' must be a string when present`, ok: false };
+        }
+        return xhrOk;
+    }
+    // length > 1: every entry must have value:string and lang:string
+    for (let i = 0; i < arr.length; i++) {
+        const e = arr[i];
+        if (!e || typeof e !== 'object') {
+            return { status: 698, statusText: `Invalid ${fieldName} entry at index ${i}: expected object with 'value' and 'lang'`, ok: false };
+        }
+        if (typeof (e as any).value !== 'string') {
+            return { status: 698, statusText: `Invalid ${fieldName} entry at index ${i}: 'value' must be a string`, ok: false };
+        }
+        if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
+            return { status: 698, statusText: `Invalid ${fieldName} entry at index ${i}: 'lang' must be a non-empty string`, ok: false };
+        }
+    }
+    return xhrOk;
 }

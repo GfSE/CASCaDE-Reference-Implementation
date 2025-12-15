@@ -9,10 +9,11 @@
 *       will provide test coverage for the abstract classes they inherit from.
 */
 
-import { JsonObject, renameJsonTags, toJSONLD } from '../../src/utils/lib/helper';
-import { XsDataType, PigItemType, PigItemTypeValue } from '../../src/utils/schemas/pig/pig-metaclasses';
-import { IProperty, IAProperty, IEntity, IAnEntity, IRelationship, IARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
-import { Property, AProperty, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
+import { LIB } from '../../src/utils/lib/helpers';
+import { JsonObject } from '../../src/utils/lib/helpers';
+import { XsDataType, PigItemType, PigItemTypeValue,
+        IProperty, IAProperty, IEntity, IAnEntity, IRelationship, IARelationship,
+        Property, AProperty, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
 
 describe("PIG Metaclasses", () => {
     let propertyClass_input: IProperty;
@@ -30,8 +31,8 @@ describe("PIG Metaclasses", () => {
         propertyClass_input = {
             id: "dcterms:type",
             itemType: PigItemType.Property,
-            title: { text: "The type or category", lang: "en" },
-            description: { text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" },
+            title: [{ value: "The type or category", lang: "en" }],
+            description: [{ value: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" }],
 
             datatype: XsDataType.String,
             minCount: 0,
@@ -39,18 +40,19 @@ describe("PIG Metaclasses", () => {
             maxLength: 20,
             defaultValue: "default_category"
         };
-    /*    propertyClass_input_JSONLD = Object.assign(
-            {},
-            propertyClass_input,
-            {
-                ['@id']: "dcterms:type",
-                id: undefined
-            }
-        ); */
-        propertyClass_input_JSONLD = renameJsonTags(
-            propertyClass_input as unknown as JsonObject,
-            toJSONLD,
-        ) as unknown as IProperty;
+        propertyClass_input_JSONLD = {
+            ['@id']: "dcterms:type",
+            ['pig:itemType']: { ['@id']: PigItemType.Property },
+            ['dcterms:title']: [{ ['@value']: "The type or category", ['@language']: "en" }],
+            ['dcterms:description']: [{ ['@value']: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", ['@language']: "en" }],
+
+            ['sh:datatype']: { ['@id']: XsDataType.String },
+            ['sh:minCount']: 0,
+            ['sh:maxCount']: 1,
+            ['sh:maxLength']: 20,
+            ['sh:defaultValue']: "default_category"
+        };
+
         property_input = {
             itemType: PigItemType.aProperty,
             hasClass: "dcterms:type",
@@ -61,8 +63,8 @@ describe("PIG Metaclasses", () => {
         entityClass_input = {
             id: "o:Entity_1",
             itemType: PigItemType.Entity,
-            title: { text: "Title of Entity Class 1", lang: "en" },
-            description: { text: "Description of o:Entity_1", lang: "en" },
+            title: [{ value: "Title of Entity Class 1" }],  // if there is just one language, lang can be omitted
+            description: [{ value: "Description of o:Entity_1" }],
 
             eligibleReference: [],
             eligibleProperty: ["dcterms:type"]
@@ -74,8 +76,8 @@ describe("PIG Metaclasses", () => {
             itemType: PigItemType.anEntity,
             modified: new Date(),
             creator: "test_user",
-            title: { text: "Title of anEntity 1", lang: "en" },
-            description: { text: "Description of d:anEntity_1", lang: "en" },
+            title: [{ value: "Title of anEntity 1", lang: "en" }],
+            description: [{ value: "Description of d:anEntity_1", lang: "en" }],
 
             hasClass: "o:Entity_1",
             hasProperty: [{
@@ -91,8 +93,8 @@ describe("PIG Metaclasses", () => {
             itemType: PigItemType.anEntity,
             modified: new Date(),
             creator: "test_user",
-            title: { text: "Title of Entity 2", lang: "en" },
-            description: { text: "Description of d:anEntity_2", lang: "en" },
+            title: [{ value: "Title of Entity 2", lang: "en" }],
+            description: [{ value: "Description of d:anEntity_2", lang: "en" }],
 
             hasClass: "o:Entity_1",
             hasProperty: [{
@@ -106,8 +108,8 @@ describe("PIG Metaclasses", () => {
         relationshipClass_input = {
             id: "o:Relationship",
             itemType: PigItemType.Relationship,
-            title: { text: "Title of RelationshipClass", lang: "en" },
-            description: { text: "Description of o:Relationship", lang: "en" },
+            title: [{ value: "Title of RelationshipClass", lang: "en" }],
+            description: [{ value: "Description of o:Relationship", lang: "en" }],
 
             eligibleSource: ["o:Entity_1"],
             eligibleTarget: ["o:Entity_1"],
@@ -120,8 +122,8 @@ describe("PIG Metaclasses", () => {
             revision: "v1.0",
             modified: new Date(),
             creator: "test_user",
-            title: { text: "Title of d:aRelationship_1", lang: "en" },
-            description: { text: "Description of d:aRelationship_1", lang: "en" },
+            title: [{ value: "Title of d:aRelationship_1", lang: "en" }],
+            description: [{ value: "Description of d:aRelationship_1", lang: "en" }],
 
             hasSource: { "itemType": "pig:aReference", "hasClass": "o:relates", "element": "d:anEntity_1" },
             hasTarget: { "itemType": "pig:aReference", "hasClass": "o:relates", "element": "d:anEntity_2" },
@@ -140,8 +142,8 @@ describe("PIG Metaclasses", () => {
         // check the attribute values upon creation:
         expect(test_PC.status().ok).toBe(true);
         expect(test_PC.id).toBe("dcterms:type");
-        expect(test_PC.title).toEqual({ text: "The type or category", lang: "en" });
-        expect(test_PC.description).toEqual({ text: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" });
+        expect(test_PC.title).toEqual([{ value: "The type or category", lang: "en" }]);
+        expect(test_PC.description).toEqual([{ value: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" }]);
 
         expect(test_PC.itemType).toBe(PigItemType.Property);
         expect(test_PC.datatype).toBe(XsDataType.String);
@@ -152,6 +154,7 @@ describe("PIG Metaclasses", () => {
 
         // check the output as JSON:
         const propertyClass_output = test_PC.get();
+    //    console.debug('pig:Property output:', propertyClass_output);
         expect(propertyClass_output).toEqual(propertyClass_input);
 
         // check the output as JSON-LD:
@@ -187,8 +190,8 @@ describe("PIG Metaclasses", () => {
 
         // check the attribute values:
         expect(test_EC.id).toBe('o:Entity_1');
-        expect(test_EC.title).toEqual({ text: 'Title of Entity Class 1', lang: "en" });
-        expect(test_EC.description).toEqual({ text: 'Description of o:Entity_1', lang: "en" });
+        expect(test_EC.title).toEqual([{ value: 'Title of Entity Class 1' }]);
+        expect(test_EC.description).toEqual([{ value: 'Description of o:Entity_1' }]);
 
         expect(test_EC.itemType).toBe(PigItemType.Entity);
         expect(test_EC.eligibleProperty).toStrictEqual(["dcterms:type"]);
@@ -208,8 +211,8 @@ describe("PIG Metaclasses", () => {
     //    expect(test_RC.validate(relationshipClass_input)).toBe(0);
 
         expect(test_RC.id).toBe('o:Relationship');
-        expect(test_RC.title).toEqual({ text: 'Title of RelationshipClass', lang: "en" });
-        expect(test_RC.description).toEqual({ text: 'Description of o:Relationship', lang: "en" });
+        expect(test_RC.title).toEqual([{ value: 'Title of RelationshipClass', lang: "en" }]);
+        expect(test_RC.description).toEqual([{ value: 'Description of o:Relationship', lang: "en" }]);
 
         expect(test_RC.itemType).toBe(PigItemType.Relationship);
         expect(test_RC.eligibleTarget).toStrictEqual(['o:Entity_1']);

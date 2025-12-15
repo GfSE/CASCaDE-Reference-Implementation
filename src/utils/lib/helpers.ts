@@ -1,0 +1,482 @@
+/** Product Information Graph (PIG) - helper routines
+*   Dependencies: none
+*   Authors: oskar.dungern@gfse.org, ..
+*   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+*
+*   Design Decisions:
+*   - 
+*/
+
+// An xhr-like object to return the result of the import;
+// use it as follows (according to GitHub Copilot):
+// - XML Document:
+//   const xhrDoc: IXhr<Document> = { status: 200, statusText: 'OK', response: doc, responseType: 'document' };
+// - or JSON payload:
+//   type PigPackage = { /* ... */ };
+//   const xhrJson: IXhr<PigPackage> = { status: 200, statusText: 'OK', response: pigPackage, responseType: 'json' };
+// - or dynamically:
+//   if (xhr.responseType === 'document') {
+//      const doc = xhr.response as Document;
+//   };
+export interface IXhr<T = unknown> {
+    status: number;
+    statusText?: string;
+    response?: T; // z.B. Document, string, object, ...
+    responseType?: XMLHttpRequestResponseType; // '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text'
+//    headers?: Record<string, string>;
+    ok?: boolean; // convenience: status in 200-299
+}
+export const xhrOk: IXhr = { status: 0, ok: true };
+
+/**
+ * JSON helper types
+ */
+export type JsonPrimitive = string | number | boolean | null;
+export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+export interface JsonObject { [key: string]: JsonValue; }
+export type JsonArray = Array<JsonValue>
+
+function isLeaf(node: JsonValue): boolean {
+    return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
+}
+const TO_JSONLD: [string, string][] = [
+    ['context', '@context'],
+    ['id', '@id'],
+    ['hasClass', '@type'],
+    ['value', '@value'],
+    ['lang', '@language'],
+    ['datatype', 'sh:datatype'],
+    ['minCount', 'sh:minCount'],
+    ['maxCount', 'sh:maxCount'],
+    ['maxLength', 'sh:maxLength'],
+    ['defaultValue', 'sh:defaultValue'],
+    ['pattern', 'sh:pattern'],
+    ['itemType', 'pig:itemType'],
+    ['title', 'dcterms:title'],
+    ['description', 'dcterms:description']
+];
+const FROM_JSONLD: [string, string][] = TO_JSONLD.map(([a, b]) => [b, a] as [string, string]);
+
+/**
+ * Recursively iterates a JSON value and calls `cb` for each primitive (value).
+ * - objects: iterates keys
+ * - arrays: iterates indices
+ *
+ * `path` is an array of keys (string for object keys, number for array indices) from the root to the current value.
+ *
+ * This function does not mutate the input and returns nothing.
+ */
+export function iterateJson(
+    node: JsonValue,
+    cb: (value: JsonPrimitive, path: Array<string | number>, parent?: JsonObject | JsonArray, key?: string | number) => void,
+    path: Array<string | number> = []
+): void {
+    if (node === undefined || node === null)
+        return;
+    if (isLeaf(node)) {
+        cb(node as JsonPrimitive, path);
+        return;
+    }
+    if (Array.isArray(node)) {
+        for (let i = 0; i < node.length; i++) {
+            const item = node[i];
+            if (isLeaf(item)) {
+                cb(item as JsonPrimitive, [...path, i], node, i);
+            } else {
+                iterateJson(item, cb, [...path, i]);
+            }
+        }
+        return;
+    }
+    // object
+    for (const key of Object.keys(node)) {
+        const child = (node as JsonObject)[key];
+        if (isLeaf(child)) {
+            cb(child as JsonPrimitive, [...path, key], node as JsonObject, key);
+        } else {
+            iterateJson(child, cb, [...path, key]);
+        }
+    }
+}
+
+/**
+ * Maps all JSON primitives using the provided callback function.
+ * - If `mutate === true`, values are replaced in the original object (in-place).
+ * - Default: immutable — a new JSON object is returned.
+ *
+ * The callback receives (value, path) and must return a new JsonPrimitive value.
+ */
+export function mapJson(
+    node: JsonValue,
+    cb: (value: JsonPrimitive, path: Array<string | number>) => JsonPrimitive,
+    options?: { mutate?: boolean },
+    path: Array<string | number> = []
+): JsonValue {
+    const mutate = !!(options && options.mutate);
+
+    if (node === undefined || node === null)
+        return node;
+
+    if (isLeaf(node)) {
+        return cb(node as JsonPrimitive, path);
+    }
+
+    if (Array.isArray(node)) {
+        if (mutate) {
+            for (let i = 0; i < node.length; i++) {
+                const item = node[i];
+                if (isLeaf(item)) {
+                    node[i] = cb(item as JsonPrimitive, [...path, i]);
+                } else {
+                    node[i] = mapJson(item, cb, options, [...path, i]);
+                }
+            }
+            return node;
+        }
+        const out: JsonArray = [];
+        for (let i = 0; i < node.length; i++) {
+            const item = node[i];
+            out[i] = (isLeaf(item))
+                ? cb(item as JsonPrimitive, [...path, i])
+                : mapJson(item, cb, options, [...path, i]);
+        }
+        return out;
+    }
+
+    // object
+    if (mutate) {
+        const obj = node as JsonObject;
+        for (const key of Object.keys(obj)) {
+            const child = obj[key];
+            if (isLeaf(child)) {
+                obj[key] = cb(child as JsonPrimitive, [...path, key]);
+            } else {
+                obj[key] = mapJson(child, cb, options, [...path, key]);
+            }
+        }
+        return obj;
+    }
+
+    const outObj: JsonObject = {};
+    for (const key of Object.keys(node as JsonObject)) {
+        const child = (node as JsonObject)[key];
+        outObj[key] = (child === null || typeof child === 'string' || typeof child === 'number' || typeof child === 'boolean')
+            ? cb(child as JsonPrimitive, [...path, key])
+            : mapJson(child, cb, options, [...path, key]);
+    }
+    return outObj;
+}
+
+/* // Rename JSON object keys (tags) according to a mapping.
+// - mapping may be a Record<string,string> or Array<[string, string]>
+// - options.mutate: if true, mutate the original object in-place; default false (returns a new object)
+// - Only object keys are renamed; array elements and primitive values are preserved (but nested objects are processed)
+export const
+    toJSONLD: Array<[string, string]> = [
+            ['context', '@context'],
+            ['id', '@id'],
+            ['hasClass', '@type'],
+            ['value', '@value'],
+            ['lang', '@language'],
+            ['datatype', 'sh:datatype'],
+            ['minCount', 'sh:minCount'],
+            ['maxCount', 'sh:maxCount'],
+            ['maxLength', 'sh:maxLength'],
+            ['defaultValue', 'sh:defaultValue'],
+            ['pattern', 'sh:pattern'], 
+            ['itemType', 'pig:itemType'],
+            ['title', 'dcterms:title'],
+            ['description', 'dcterms:description']
+        ],
+    fromJSONLD: Array<[string, string]> = toJSONLD.map(([a, b]) => [b, a]);
+export function renameJsonTags(
+    node: JsonValue,
+    mapping: Record<string, string> | Array<[string, string]>,
+    options?: { mutate?: boolean }
+): JsonValue {
+    const mutate = !!(options && options.mutate);
+
+    // normalize mapping to a simple lookup object:
+    const mapObj: Record<string, string> = Array.isArray(mapping)
+        ? mapping.reduce((acc, pair) => {
+              if (Array.isArray(pair) && pair.length >= 2) acc[pair[0]] = pair[1];
+              return acc;
+          }, {} as Record<string, string>)
+        : { ...mapping };
+
+    // 1. handle leaf and null
+    if (node === undefined || node === null || isLeaf(node)) {
+        return node;
+    }
+
+    // 2. handle array
+    if (Array.isArray(node)) {
+        if (mutate) {
+            for (let i = 0; i < node.length; i++) {
+                const item = node[i];
+                node[i] = renameJsonTags(item, mapObj, options);
+            }
+            return node;
+        }
+        const out: JsonArray = [];
+        for (let i = 0; i < node.length; i++) {
+            out[i] = renameJsonTags(node[i], mapObj, options);
+        }
+        return out;
+    }
+
+    // 3. handle object
+    const src = node as JsonObject;
+    if (mutate) {
+        for (const key of Object.keys(src)) {
+            // unsafe: const mappedKey = mapObj.hasOwnProperty(key) ? mapObj[key] : key;
+            // es2022 safe: const mappedKey = Object.hasOwn(mapObj, key) ? mapObj[key] : key;
+            const mappedKey = Object.prototype.hasOwnProperty.call(mapObj, key) ? mapObj[key] : key;
+            const child = src[key];
+            const newValue = renameJsonTags(child, mapObj, options);
+            if (mappedKey !== key) {
+                // if target key already exists we overwrite — intentional but warn in console
+                if (Object.prototype.hasOwnProperty.call(src, mappedKey)) {
+                    // eslint-disable-next-line no-console
+                    console.warn(`renameJsonTags: overwriting key '${mappedKey}' while renaming '${key}'`);
+                }
+                src[mappedKey] = newValue;
+                delete src[key];
+            } else {
+                src[key] = newValue;
+            }
+        }
+        return src;
+    }
+
+    // console.debug('src',src);
+    const out: JsonObject = {};
+    for (const key of Object.keys(src)) {
+        // unsafe: const mappedKey = mapObj.hasOwnProperty(key) ? mapObj[key] : key;
+        // es2022 safe: const mappedKey = Object.hasOwn(mapObj, key) ? mapObj[key] : key;
+        const mappedKey = Object.prototype.hasOwnProperty.call(mapObj, key) ? mapObj[key] : key;
+        out[mappedKey] = renameJsonTags(src[key], mapObj, options);
+    }
+    return out;
+} */
+// LIB object with helper methods
+export const LIB = {
+    createRsp<T = unknown>(status: number, statusText?: string, response?: T, responseType?: XMLHttpRequestResponseType): IXhr<T> {
+        return {
+            status: status,
+            statusText: statusText,
+            response: response,
+            responseType: responseType,
+            ok: status >= 200 && status < 300 || status === 0
+        };
+    },
+
+    /**
+     * Rename JSON object keys (tags) according to a mapping.
+     * - mapping may be a Record<string,string> or Array<[string, string]>
+     * - options.mutate: if true, mutate the original object in-place; default false (returns a new object)
+     * - Only object keys are renamed; array elements and primitive values are preserved (but nested objects are processed)
+     * Usage: renameJsonTags(node, LIB.fromJSONLD)
+     */
+    toJSONLD: TO_JSONLD, // see above
+    fromJSONLD: FROM_JSONLD,
+    renameJsonTags(
+        node: JsonValue,
+        mapping: Record<string, string> | Array<[string, string]>,
+        options ?: { mutate?: boolean }
+    ): JsonValue {
+        const mutate = !!(options && options.mutate);
+
+        // normalize mapping to a simple lookup object:
+        const mapObj: Record<string, string> = Array.isArray(mapping)
+            ? mapping.reduce((acc, pair) => {
+                if (Array.isArray(pair) && pair.length >= 2) acc[pair[0]] = pair[1];
+                return acc;
+            }, {} as Record<string, string>)
+            : { ...mapping };
+
+        // 1. handle leaf and null
+        if (node === undefined || node === null || isLeaf(node)) {
+            return node;
+        }
+
+        // 2. handle array
+        if (Array.isArray(node)) {
+            if (mutate) {
+                for (let i = 0; i < node.length; i++) {
+                    const item = node[i];
+                    node[i] = LIB.renameJsonTags(item, mapObj, options);
+                }
+                return node;
+            }
+            const out: JsonArray = [];
+            for (let i = 0; i < node.length; i++) {
+                out[i] = LIB.renameJsonTags(node[i], mapObj, options);
+            }
+            return out;
+        }
+
+        // 3. handle object
+        const src = node as JsonObject;
+        if (mutate) {
+            for (const key of Object.keys(src)) {
+                // unsafe: const mappedKey = mapObj.hasOwnProperty(key) ? mapObj[key] : key;
+                // es2022 safe: const mappedKey = Object.hasOwn(mapObj, key) ? mapObj[key] : key;
+                const mappedKey = Object.prototype.hasOwnProperty.call(mapObj, key) ? mapObj[key] : key;
+                const child = src[key];
+                const newValue = LIB.renameJsonTags(child, mapObj, options);
+                if (mappedKey !== key) {
+                    // if target key already exists we overwrite — intentional but warn in console
+                    if (Object.prototype.hasOwnProperty.call(src, mappedKey)) {
+                        // eslint-disable-next-line no-console
+                        console.warn(`renameJsonTags: overwriting key '${mappedKey}' while renaming '${key}'`);
+                    }
+                    src[mappedKey] = newValue;
+                    delete src[key];
+                } else {
+                    src[key] = newValue;
+                }
+            }
+            return src;
+        }
+
+        // console.debug('src',src);
+        const out: JsonObject = {};
+        for (const key of Object.keys(src)) {
+            // unsafe: const mappedKey = mapObj.hasOwnProperty(key) ? mapObj[key] : key;
+            // es2022 safe: const mappedKey = Object.hasOwn(mapObj, key) ? mapObj[key] : key;
+            const mappedKey = Object.prototype.hasOwnProperty.call(mapObj, key) ? mapObj[key] : key;
+            out[mappedKey] = LIB.renameJsonTags(src[key], mapObj, options);
+        }
+        return out;
+    },
+    /**
+     * Convert a string to an enum member value.
+     * - Tries to match enum values first, then (optionally) enum keys (names).
+     * - Works for string and numeric enums.
+     *
+     * Options:
+     *  - caseInsensitive (default true)
+     *  - matchKey (default false)
+     *  - throwOnInvalid (default false)
+     *
+    stringToEnum<T extends Record<string, string | number>>(
+        value: string | null | undefined,
+        enumObj: T,
+        options?: { caseInsensitive?: boolean; matchKey?: boolean; throwOnInvalid?: boolean }
+    ): T[keyof T] | undefined {
+        const caseInsensitive = options?.caseInsensitive !== false;
+        const matchKey = options?.matchKey === true;
+        const throwOnInvalid = options?.throwOnInvalid === true;
+
+        if (value === null || value === undefined) {
+            if (throwOnInvalid) throw new Error('LIB.stringToEnum: value is null or undefined');
+            return undefined;
+        }
+
+        const normalize = (x: unknown) => {
+            if (typeof x === 'string' && caseInsensitive) return x.toLowerCase();
+            return String(x);
+        };
+
+        const needle = normalize(value);
+
+        // match enum values first
+        for (const key of Object.keys(enumObj)) {
+            const val = enumObj[key];
+            if (normalize(val) === needle) return val as T[keyof T];
+        }
+
+        // optionally match enum keys (names)
+        if (matchKey) {
+            for (const key of Object.keys(enumObj)) {
+                if (normalize(key) === needle) return enumObj[key] as T[keyof T];
+            }
+        }
+
+        if (throwOnInvalid) throw new Error(`LIB.stringToEnum: '${value}' is not a valid enum member`);
+        return undefined;
+    }, */
+    /**
+     * Replace id-objects (e.g. { id: "xyz" } or { "@id": "xyz" }) by the id string.
+     * - options.idKeys: array of keys to treat as id keys (default ['id','@id'])
+     * - options.mutate: if true mutate in-place, otherwise operate on a deep clone
+     */
+    replaceIdObjects(
+        node: JsonValue,
+        options ?: { idKeys?: string[]; mutate?: boolean }
+    ): JsonValue {
+        const idKeys = options?.idKeys ?? ['id', '@id'];
+        const mutate = !!options?.mutate;
+
+        // work on a clone when not mutating
+        const root: JsonValue = mutate ? node : JSON.parse(JSON.stringify(node));
+
+        function isIdObject(v: unknown): v is JsonObject {
+            if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+            const keys = Object.keys(v as JsonObject);
+            return keys.length === 1 && idKeys.includes(keys[0]) && typeof (v as any)[keys[0]] === 'string';
+        }
+
+        function walk(n: JsonValue): JsonValue {
+            if (n === null || n === undefined) return n;
+            if (isLeaf(n)) return n;
+            if (Array.isArray(n)) {
+                for (let i = 0; i < n.length; i++) {
+                    n[i] = walk(n[i]);
+                }
+                return n;
+            }
+            // object
+            const obj = n as JsonObject;
+            if (isIdObject(obj)) {
+                // replace whole object by its id string
+                const k = Object.keys(obj)[0];
+                return obj[k] as JsonPrimitive;
+            }
+            for (const k of Object.keys(obj)) {
+            //    obj[k] = walk(obj[k]);
+                const key = String(k);
+                const newVal = walk((obj as JsonObject)[key]);
+                (obj as JsonObject)[key] = newVal as JsonValue;
+            }
+            return obj;
+        }
+
+        return walk(root);
+    },
+    /**
+     * Build a simple id-object.
+     * - useJsonLd=false => { id: 'xyz' }
+     * - useJsonLd=true  => { '@id': 'xyz' }
+     *
+    function buildIdObject(id: string, useJsonLd = false): JsonObject {
+        return useJsonLd ? { ['@id']: id } : { id };
+    }
+    makeIdObject(str: string): JsonObject {
+            return { id: str };
+    },*/
+    /**
+     * Remove all undefined values from an object or array recursively.
+     * @param value
+     * @returns
+     */
+    stripUndefined(value: any): any {
+        if (value === undefined) return undefined;
+        if (value === null) return null;
+        if (Array.isArray(value)) {
+            return value.map(v => this.stripUndefined(v));
+        }
+        if (typeof value === 'object') {
+            const out: Record<string, any> = {};
+            for (const k of Object.keys(value)) {
+                const v = this.stripUndefined((value as Record<string, any>)[k]);
+                if (v !== undefined) out[k] = v;
+            }
+            return out;
+        }
+        return value;
+    }
+};
+
