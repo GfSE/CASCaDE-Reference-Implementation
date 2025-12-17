@@ -11,15 +11,15 @@
 // An xhr-like object to return the result of the import;
 // use it as follows (according to GitHub Copilot):
 // - XML Document:
-//   const xhrDoc: IXhr<Document> = { status: 200, statusText: 'OK', response: doc, responseType: 'document' };
+//   const rspDoc: IRsp<Document> = { status: 200, statusText: 'OK', response: doc, responseType: 'document' };
 // - or JSON payload:
 //   type PigPackage = { /* ... */ };
-//   const xhrJson: IXhr<PigPackage> = { status: 200, statusText: 'OK', response: pigPackage, responseType: 'json' };
+//   const rspJson: IRsp<PigPackage> = { status: 200, statusText: 'OK', response: pigPackage, responseType: 'json' };
 // - or dynamically:
-//   if (xhr.responseType === 'document') {
-//      const doc = xhr.response as Document;
+//   if (rsp.responseType === 'document') {
+//      const doc = rsp.response as Document;
 //   };
-export interface IXhr<T = unknown> {
+export interface IRsp<T = unknown> {
     status: number;
     statusText?: string;
     response?: T; // z.B. Document, string, object, ...
@@ -27,7 +27,7 @@ export interface IXhr<T = unknown> {
 //    headers?: Record<string, string>;
     ok?: boolean; // convenience: status in 200-299
 }
-export const xhrOk: IXhr = { status: 0, ok: true };
+export const rspOK: IRsp = { status: 0, ok: true };
 
 /**
  * JSON helper types
@@ -37,9 +37,6 @@ export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
 export interface JsonObject { [key: string]: JsonValue; }
 export type JsonArray = Array<JsonValue>
 
-function isLeaf(node: JsonValue): boolean {
-    return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
-}
 const TO_JSONLD: [string, string][] = [
     ['context', '@context'],
     ['id', '@id'],
@@ -53,6 +50,10 @@ const TO_JSONLD: [string, string][] = [
     ['defaultValue', 'sh:defaultValue'],
     ['pattern', 'sh:pattern'],
     ['itemType', 'pig:itemType'],
+    ['eligibleProperty', 'pig:eligibleProperty'],
+    ['eligibleReference', 'pig:eligibleReference'],
+    ['eligibleSource', 'pig:eligibleSource'],
+    ['eligibleTarget', 'pig:eligibleTarget'],
     ['title', 'dcterms:title'],
     ['description', 'dcterms:description']
 ];
@@ -74,14 +75,14 @@ export function iterateJson(
 ): void {
     if (node === undefined || node === null)
         return;
-    if (isLeaf(node)) {
+    if (LIB.isLeaf(node)) {
         cb(node as JsonPrimitive, path);
         return;
     }
     if (Array.isArray(node)) {
         for (let i = 0; i < node.length; i++) {
             const item = node[i];
-            if (isLeaf(item)) {
+            if (LIB.isLeaf(item)) {
                 cb(item as JsonPrimitive, [...path, i], node, i);
             } else {
                 iterateJson(item, cb, [...path, i]);
@@ -92,7 +93,7 @@ export function iterateJson(
     // object
     for (const key of Object.keys(node)) {
         const child = (node as JsonObject)[key];
-        if (isLeaf(child)) {
+        if (LIB.isLeaf(child)) {
             cb(child as JsonPrimitive, [...path, key], node as JsonObject, key);
         } else {
             iterateJson(child, cb, [...path, key]);
@@ -118,7 +119,7 @@ export function mapJson(
     if (node === undefined || node === null)
         return node;
 
-    if (isLeaf(node)) {
+    if (LIB.isLeaf(node)) {
         return cb(node as JsonPrimitive, path);
     }
 
@@ -126,7 +127,7 @@ export function mapJson(
         if (mutate) {
             for (let i = 0; i < node.length; i++) {
                 const item = node[i];
-                if (isLeaf(item)) {
+                if (LIB.isLeaf(item)) {
                     node[i] = cb(item as JsonPrimitive, [...path, i]);
                 } else {
                     node[i] = mapJson(item, cb, options, [...path, i]);
@@ -137,7 +138,7 @@ export function mapJson(
         const out: JsonArray = [];
         for (let i = 0; i < node.length; i++) {
             const item = node[i];
-            out[i] = (isLeaf(item))
+            out[i] = (LIB.isLeaf(item))
                 ? cb(item as JsonPrimitive, [...path, i])
                 : mapJson(item, cb, options, [...path, i]);
         }
@@ -149,7 +150,7 @@ export function mapJson(
         const obj = node as JsonObject;
         for (const key of Object.keys(obj)) {
             const child = obj[key];
-            if (isLeaf(child)) {
+            if (LIB.isLeaf(child)) {
                 obj[key] = cb(child as JsonPrimitive, [...path, key]);
             } else {
                 obj[key] = mapJson(child, cb, options, [...path, key]);
@@ -262,7 +263,7 @@ export function renameJsonTags(
 } */
 // LIB object with helper methods
 export const LIB = {
-    createRsp<T = unknown>(status: number, statusText?: string, response?: T, responseType?: XMLHttpRequestResponseType): IXhr<T> {
+    createRsp<T = unknown>(status: number, statusText?: string, response?: T, responseType?: XMLHttpRequestResponseType): IRsp<T> {
         return {
             status: status,
             statusText: statusText,
@@ -272,6 +273,9 @@ export const LIB = {
         };
     },
 
+    isLeaf(node: JsonValue): boolean {
+        return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
+    },
     /**
      * Rename JSON object keys (tags) according to a mapping.
      * - mapping may be a Record<string,string> or Array<[string, string]>
@@ -297,7 +301,7 @@ export const LIB = {
             : { ...mapping };
 
         // 1. handle leaf and null
-        if (node === undefined || node === null || isLeaf(node)) {
+        if (node === undefined || node === null || this.isLeaf(node)) {
             return node;
         }
 
@@ -399,65 +403,6 @@ export const LIB = {
         return undefined;
     }, */
     /**
-     * Replace id-objects (e.g. { id: "xyz" } or { "@id": "xyz" }) by the id string.
-     * - options.idKeys: array of keys to treat as id keys (default ['id','@id'])
-     * - options.mutate: if true mutate in-place, otherwise operate on a deep clone
-     */
-    replaceIdObjects(
-        node: JsonValue,
-        options ?: { idKeys?: string[]; mutate?: boolean }
-    ): JsonValue {
-        const idKeys = options?.idKeys ?? ['id', '@id'];
-        const mutate = !!options?.mutate;
-
-        // work on a clone when not mutating
-        const root: JsonValue = mutate ? node : JSON.parse(JSON.stringify(node));
-
-        function isIdObject(v: unknown): v is JsonObject {
-            if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
-            const keys = Object.keys(v as JsonObject);
-            return keys.length === 1 && idKeys.includes(keys[0]) && typeof (v as any)[keys[0]] === 'string';
-        }
-
-        function walk(n: JsonValue): JsonValue {
-            if (n === null || n === undefined) return n;
-            if (isLeaf(n)) return n;
-            if (Array.isArray(n)) {
-                for (let i = 0; i < n.length; i++) {
-                    n[i] = walk(n[i]);
-                }
-                return n;
-            }
-            // object
-            const obj = n as JsonObject;
-            if (isIdObject(obj)) {
-                // replace whole object by its id string
-                const k = Object.keys(obj)[0];
-                return obj[k] as JsonPrimitive;
-            }
-            for (const k of Object.keys(obj)) {
-            //    obj[k] = walk(obj[k]);
-                const key = String(k);
-                const newVal = walk((obj as JsonObject)[key]);
-                (obj as JsonObject)[key] = newVal as JsonValue;
-            }
-            return obj;
-        }
-
-        return walk(root);
-    },
-    /**
-     * Build a simple id-object.
-     * - useJsonLd=false => { id: 'xyz' }
-     * - useJsonLd=true  => { '@id': 'xyz' }
-     *
-    function buildIdObject(id: string, useJsonLd = false): JsonObject {
-        return useJsonLd ? { ['@id']: id } : { id };
-    }
-    makeIdObject(str: string): JsonObject {
-            return { id: str };
-    },*/
-    /**
      * Remove all undefined values from an object or array recursively.
      * @param value
      * @returns
@@ -477,6 +422,50 @@ export const LIB = {
             return out;
         }
         return value;
+    },
+    // Load text from Node file path, HTTP(S) URL or browser File/Blob
+    async readFileAsText(source: string | File | Blob): Promise<string> {
+        if (typeof source === 'string') {
+            // string can be a URL or a Node filesystem path
+            if (this.isHttpUrl(source)) {
+                // browser or Node fetch
+                const resp = await fetch(source);
+                if (!resp.ok) throw new Error(`Failed to fetch URL ${source}: ${resp.status} ${resp.statusText}`);
+                return await resp.text();
+            }
+            // assume Node path: dynamic import to avoid bundling 'fs' into browser build
+            if (this.isNodeEnv()) {
+                try {
+                    const { readFile } = await import('fs/promises');
+                    const data = await readFile(source, { encoding: 'utf8' }) as string;
+                    return data;
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    throw new Error(`Failed to read file '${source}' (Node): ${msg}`);
+                }
+            }
+            /*    if (isNodeEnv()) {
+                    const { readFile } = await import('fs/promises');
+                    return await readFile(source, { encoding: 'utf8' });
+                } */
+            throw new Error('String source provided but not an http(s) URL and not running in Node.');
+        }
+
+        // File or Blob (browser)
+        if (typeof (source as Blob).text === 'function') {
+            return await(source as Blob).text();
+        }
+
+        throw new Error('Unsupported source type for function readFileAsText');
+    },
+
+    isHttpUrl(s: string): boolean {
+            return /^https?:\/\//i.test(s);
+    },
+
+    isNodeEnv(): boolean {
+        const p = (globalThis as any).process;
+        return typeof p !== 'undefined' && !!(p.versions && p.versions.node);
     }
 };
 

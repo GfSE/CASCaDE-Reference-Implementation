@@ -6,22 +6,27 @@
 *
 *   Design Decisions:
 *   - The PIG classes contain *only* the elements in the metamodel; it could be generated from the metamodel.
-*   - abstract classes are not exported, only the concrete classes.
+*   - Abstract classes are not exported, only the concrete classes.
 *   - All names are always in singular form, even if they have multiple values.
-*   - The itemType is explicitly stored with each item to support searching (in the cache or database).
+*   - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
 *   - The 'AProperty' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
-*   - similarly, the 'AReference' instances are instantiated as part their parent objects 'AnEntity'.
-*   - both 'AProperty' and 'AReference' have no identifier and no revision history of their own.
+*   - Similarly, the 'AReference' instances are instantiated as part their parent objects 'AnEntity'.
+*   - Both 'AProperty' and 'AReference' have no identifier and no revision history of their own.
 *   - Other objects are referenced by IRIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
 *     This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
 *   - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
 *     before the items are instantiated here.
-*   - programming errors result in exceptions, data errors in IXhr return values.
+*   - References to other items are stored as simple strings (the IRIs) to avoid deep object graphs;
+*     those references are expanded to id objects only when serializing to JSON-LD.
+*   - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
+*   - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
+*   - The 'set' methods are chainable to allow concise code when creating new instances.
+*   - Programming errors result in exceptions, data errors in IRsp return values.
 */
 
 import { RE } from "../../lib/definitions";
 import { LIB } from "../../lib/helpers";
-import { IXhr, xhrOk, JsonValue, JsonObject } from "../../lib/helpers";
+import { IRsp, rspOK, JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
 
 export type TPigId = string;  // an IRI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
@@ -104,11 +109,11 @@ interface IItem {
 }
 abstract class Item implements IItem {
     readonly itemType!: PigItemTypeValue;
-    protected lastStatus!: IXhr;
+    protected lastStatus!: IRsp;
     protected constructor(itm: IItem) {
         this.itemType = itm.itemType;
     }
-    status(): IXhr {
+    status(): IRsp {
         return this.lastStatus;
     }
 }
@@ -145,12 +150,13 @@ abstract class Identifiable extends Item implements IIdentifiable {
     setJSONLD(itm: any) {
         let norm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
         // id extraction
-        norm = LIB.replaceIdObjects(norm);
+        norm = replaceIdObjects(norm);
         this.set(norm);
         return this; // make chainable
     }
     getJSONLD() {
         const renamed = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
+    //    console.debug('Identifiable.getJSONLD renamed: ', renamed);
         return makeIdObjects(renamed) as JsonObject;        
     }
     protected validate(itm: IIdentifiable) {
@@ -170,16 +176,16 @@ abstract class Identifiable extends Item implements IIdentifiable {
         }
 
         // ToDo: implement further validation logic
-        return xhrOk;
+        return rspOK;
     }
 }
 
 interface IElement extends IIdentifiable {
-    eligibleProperty: TPigId[];
+    eligibleProperty?: TPigId[];
     icon?: string;  // optional, default is undefined (no icon)
 }
 abstract class Element extends Identifiable implements IElement {
-    eligibleProperty!: TPigId[];
+    eligibleProperty?: TPigId[];
     icon?: string;
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
@@ -188,18 +194,22 @@ abstract class Element extends Identifiable implements IElement {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
         super.set(itm);
-        this.eligibleProperty = itm.eligibleProperty || [];
+        this.eligibleProperty = itm.eligibleProperty;
         this.icon = itm.icon;
         // made chainable in concrete subclass
     }
     protected get() {
         return {
             ...super.get(),
-            eligibleProperty: this.eligibleProperty,
+            eligibleProperty: Array.isArray(this.eligibleProperty) ? this.eligibleProperty : undefined,
             icon: this.icon
         };
     }
     protected validate(itm: IElement) {
+        // If eligibleProperty is not present, all properties are allowed;
+        // if present and empty, no properties are allowed:
+        const rsp = validateIdStringArray(itm.eligibleProperty, 'eligibleProperty', { canBeUndefined: true, minCount: 0 });
+        if (!rsp.ok) return rsp;
         // ToDo: implement further validation logic
         return super.validate(itm);
     }
@@ -276,7 +286,7 @@ export class Property extends Identifiable implements IProperty {
     }
     set(itm: IProperty) {
         this.lastStatus = this.validate(itm);
-        console.debug('Property.set: ', this.lastStatus);
+    //    console.debug('Property.set: ', this.lastStatus);
         if (this.lastStatus.ok) {
             super.set(itm);
             this.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
@@ -309,8 +319,9 @@ export class Property extends Identifiable implements IProperty {
         return '<div>not implemented yet</div>';
     }
     validate(itm: IProperty) {
-    //    const xhr = validateIdString(itm.datatype);
-    //    if (!xhr.ok) return xhr;
+        // id and itemType checked in superclass
+    //    const rsp = validateIdString(itm.datatype);
+    //    if (!rsp.ok) return rsp;
         if (!isXsDataType(itm.datatype))
             return { status: 699, statusText: `Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`, ok: false };
 
@@ -319,10 +330,10 @@ export class Property extends Identifiable implements IProperty {
     }
 }
 export interface IReference extends IIdentifiable {
-    range: TPigId[];  // must be IRI of an Entity or Relationship (class)
+    eligibleTarget: TPigId[]; // must be IRI of an Entity or Relationship (class)
 }
 export class Reference extends Identifiable implements IReference {
-    range!: TPigId[];
+    eligibleTarget!: TPigId[];
     constructor() {
         super({ itemType: PigItemType.Reference });
     }
@@ -330,21 +341,24 @@ export class Reference extends Identifiable implements IReference {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
             super.set(itm);
-            this.range = itm.range;
+            this.eligibleTarget = itm.eligibleTarget;
         }
         return this;
     }
     get() {
-        return {
+        return LIB.stripUndefined({
             ...super.get(),
-            range: this.range
-        };
+            eligibleTarget: this.eligibleTarget
+        });
     }
     getHTML() {
         return '<div>not implemented yet</div>';
     }
-    validate(itm:IReference) {
-        // ToDo: implement further validation logic
+    validate(itm: IReference) {
+        // id and itemType checked in superclass
+        // At metamodel level, simple id strings are listed:
+        const rsp = validateIdStringArray(itm.eligibleTarget, 'eligibleTarget');
+        if (!rsp.ok) return rsp;
         return super.validate(itm);
     }
 }
@@ -364,7 +378,7 @@ export class Entity extends Element implements IEntity {
         if (this.lastStatus) {
             super.set(itm);
             this.specializes = itm.specializes;
-            this.eligibleReference = itm.eligibleReference || [];
+            this.eligibleReference = itm.eligibleReference;
         }
         return this;  // make chainable
     }
@@ -372,14 +386,17 @@ export class Entity extends Element implements IEntity {
         return {
             ...super.get(),
             specializes: this.specializes,
-            eligibleReference: this.eligibleReference
+            eligibleReference: Array.isArray(this.eligibleReference) ? this.eligibleReference : undefined
         };
     }
     validate(itm:IEntity) {
-        //    if (!itm.itemType || itm.itemType !== PigItemType.Entity)
-        //        throw new Error(`Expected '${PigItemType.Entity}', but got ${itm.itemType}`);
+        // id and itemType checked in superclass
         if (this.specializes && this.specializes !== itm.specializes)
             throw new Error(`Cannot change the specialization of an Entity after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
+        // If eligibleReference is not present, all references are allowed;
+        // if present and empty, no references are allowed:
+        const rsp = validateIdStringArray(itm.eligibleReference, 'eligibleReference', { canBeUndefined: true, minCount: 0 });
+        if (!rsp.ok) return rsp;
         // ToDo: implement further validation logic
         return super.validate(itm);
     }
@@ -402,8 +419,8 @@ export class Relationship extends Element implements IRelationship {
         if (this.lastStatus) {
             super.set(itm);
             this.specializes = itm.specializes;
-            this.eligibleSource = itm.eligibleSource || [];
-            this.eligibleTarget = itm.eligibleTarget || [];
+            this.eligibleSource = itm.eligibleSource;
+            this.eligibleTarget = itm.eligibleTarget;
         }
         return this;
     }
@@ -411,15 +428,21 @@ export class Relationship extends Element implements IRelationship {
         return {
             ...super.get(),
             specializes: this.specializes,
-            eligibleSource: this.eligibleSource,
-            eligibleTarget: this.eligibleTarget
+            eligibleSource: Array.isArray(this.eligibleSource) ? this.eligibleSource : undefined,
+            eligibleTarget: Array.isArray(this.eligibleTarget) ? this.eligibleTarget : undefined
         };
     }
     validate(itm: IRelationship) {
-    //    if (!itm.itemType || itm.itemType !== PigItemType.Relationship)
-    //        throw new Error(`Expected '${PigItemType.Relationship}', but got ${itm.itemType}`);
+        // id and itemType checked in superclass
         if (this.specializes && this.specializes !== itm.specializes)
             throw new Error(`Cannot change the specialization of a Relationship after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
+
+        // If eligibleSource/eligibleTarget are not present, sources resp. targets of all classes are allowed;
+        // if present, at least one entry must be there, because a relationship without source or target makes no sense:
+        let rsp = validateIdStringArray(itm.eligibleSource, 'eligibleSource', { canBeUndefined: true, minCount: 1 });
+        if (!rsp.ok) return rsp;
+        rsp = validateIdStringArray(itm.eligibleTarget, 'eligibletarget', { canBeUndefined: true, minCount: 1 });
+        if (!rsp.ok) return rsp;
         // ToDo: implement further validation logic
         return super.validate(itm);
     }
@@ -460,13 +483,12 @@ export class AProperty extends Item implements IAProperty {
         return '';
     }
     validate(itm: IAProperty) {
-    //    if (!this.itemType || this.itemType !== PigItemType.aProperty)
-    //        throw new Error(`Expected 'aProperty', but got ${this.itemType}`);
+        // id and itemType checked in superclass
         if (!itm.hasClass)
             throw new Error(`'${PigItemType.aProperty}' must have a hasClass reference`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Property IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return xhrOk;
+        return rspOK;
     }
 }
 export interface IAReference extends IItem {
@@ -499,13 +521,12 @@ export class AReference extends Item implements IAReference {
         return '';
     }
     validate(itm: IAReference) {
-    //    if (!this.itemType || this.itemType !== PigItemType.aReference)
-    //        throw new Error(`Expected 'aReference', but got ${this.itemType}`);
+        // id and itemType checked in superclass
         if (!itm.hasClass)
             throw new Error(`'${PigItemType.aReference}' must have a hasClass reference`);
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Reference IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return xhrOk;
+        return rspOK;
     }
 }
 
@@ -540,8 +561,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         return '';
     }
     validate(itm: IAnEntity) {
-    //    if (!this.itemType || this.itemType !== PigItemType.anEntity)
-    //        throw new Error(`Expected 'anEntity', but got ${this.itemType}`);
+        // id and itemType checked in superclass
         if (!itm.hasClass)
             throw new Error(`'${PigItemType.anEntity}' must have a hasClass reference`);
         // ToDo: implement further validation logic
@@ -585,8 +605,7 @@ export class ARelationship extends AnElement implements IARelationship {
         return '';
     }
     validate(itm: IARelationship) {
-    //    if (!this.itemType || this.itemType !== PigItemType.aRelationship)
-    //        throw new Error(`Expected 'aRelationship', but got ${this.itemType}`);
+        // id and itemType checked in superclass
         if (!itm.hasClass)
             throw new Error(`'${PigItemType.aRelationship}' must have a hasClass reference`);
         // ToDo: implement further validation logic
@@ -636,19 +655,19 @@ function extractId(obj: unknown): string | undefined {
 
 /**
  * Validate that an input is an id-object or id-string.
- * Returns xhrOk on success, else an IXhr error object.
+ * Returns rspOK on success, else an IRsp error object.
  * Accepts:
  * - 'xyz'                -> ok
  * - { id: 'xyz' }        -> ok
  * - { '@id': 'xyz' }     -> ok
- * Anything else -> error IXhr
+ * Anything else -> error IRsp
  */
-function validateIdObject(input: unknown, fieldName = 'id'): IXhr {
+function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
     if (input === null || input === undefined) {
         return { status: 400, statusText: `${fieldName} is missing`, ok: false };
     }
     // if (typeof input === 'string') {
-    //    return input.trim() === '' ? { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false } : xhrOk;
+    //    return input.trim() === '' ? { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false } : rspOK;
     // }
     if (typeof input === 'object') {
         const id = extractId(input);
@@ -656,18 +675,154 @@ function validateIdObject(input: unknown, fieldName = 'id'): IXhr {
     }
     return { status: 400, statusText: `${fieldName} has invalid type`, ok: false };
 }
-function validateIdString(input: unknown, fieldName = 'id'): IXhr {
+function validateIdString(input: unknown, fieldName = 'id'): IRsp {
     if (typeof input === 'string') {
         if (input.trim().length < 1) {
             return { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false };
         }
         if (isValidIdString(input))
-            return xhrOk;
+            return rspOK;
     }
     return { status: 400, statusText: `${fieldName} must be a string with a term having a namespace or an URI`, ok: false };
 }
 function isValidIdString(input: string): boolean {
-    return !!input && (RE.termWithNamespace.test(input) || RE.uri.test(input));
+    return typeof(input) == 'string' && (RE.termWithNamespace.test(input) || RE.uri.test(input));
+}
+/**
+ * Validate that a value is a non-empty array whose elements are id-strings.
+ * - id-string: a string accepted by `isValidIdString`
+ * @param input  value to check
+ * @param fieldName  name used in error messages
+ * @returns IRsp (rspOK on success, error IRsp on failure)
+ */
+export function validateIdStringArray(
+    input: unknown,
+    fieldName = 'ids',
+    options?: { canBeUndefined?: boolean, minCount?: number }
+): IRsp {
+    const canBeUndefined = options?.canBeUndefined ?? false;
+    if (canBeUndefined && (input === null || input === undefined)) {
+        return rspOK;
+    }
+    if (!Array.isArray(input)) {
+        return { status: 400, statusText: `${fieldName} must be an array`, ok: false };
+    }
+
+    const minCount = options?.minCount ?? 1;
+    if (input.length < minCount ) {
+        return { status: 400, statusText: `${fieldName} must contain at least ${minCount} element(s)`, ok: false };
+    }
+
+    for (let i = 0; i < input.length; i++) {
+        if (!isValidIdString(input[i])) {
+            return { status: 400, statusText: `${fieldName}[${i}] must be a valid id string`, ok: false };
+        }
+    }
+
+    return rspOK;
+}
+/**
+ * Convert valid id-strings to id-objects.
+ * - Accepts any JsonValue (string/number/boolean/null/object/array).
+ * - Recursively processes arrays and objects (non-flat).
+ * - Skips converting the actual id property (default '@id').
+ * - options.idKey: output id key (default '@id')
+ * - options.mutate: if true modify in-place, otherwise return a new structure
+ */
+/**
+ * Validate that a value is a non-empty array whose elements are id-objects.
+ * - id-object = plain object (not array) with a single string property 'id' or '@id'
+ *   whose value matches `isValidIdString`.
+ * @param input  value to check
+ * @param fieldName  name used in error messages
+ * @returns IRsp (rspOK on success, error IRsp on failure)
+ */
+function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
+    if (!Array.isArray(input)) {
+        return { status: 400, statusText: `${fieldName} must be an array`, ok: false };
+    }
+    if (input.length === 0) {
+        return { status: 400, statusText: `${fieldName} must contain at least one element`, ok: false };
+    }
+
+    for (let i = 0; i < input.length; i++) {
+        const el = input[i];
+        if (el === null || el === undefined || typeof el !== 'object' || Array.isArray(el)) {
+            return { status: 400, statusText: `${fieldName}[${i}] must be an object with an 'id' or '@id' string`, ok: false };
+        }
+        const obj = el as Record<string, unknown>;
+        // prefer '@id' then 'id'
+        const candidate = Object.prototype.hasOwnProperty.call(obj, '@id') ? obj['@id'] : obj['id'];
+        if (typeof candidate !== 'string' || !isValidIdString(candidate)) {
+            return { status: 400, statusText: `${fieldName}[${i}] must contain a valid 'id' or '@id' string`, ok: false };
+        }
+        // enforce single-key id-objects uncomment the check below:
+        const keys = Object.keys(obj);
+        if (keys.length !== 1 || (keys[0] !== 'id' && keys[0] !== '@id')) {
+            return { status: 400, statusText: `${fieldName}[${i}] must be an id-object with a single 'id' or '@id' property`, ok: false };
+        }
+    }
+
+    return rspOK;
+} function makeIdObjects(
+    node: JsonValue,
+    options?: { idKey?: string; mutate?: boolean }
+): JsonValue {
+    const idKey = options?.idKey ?? '@id';
+    const mutate = !!options?.mutate;
+
+    // primitives
+    if (node === null || node === undefined) return node;
+    if (typeof node === 'string') {
+        return isValidIdString(node) ? ({ [idKey]: node } as JsonObject) : node;
+    }
+    if (typeof node === 'number' || typeof node === 'boolean') return node;
+
+    // array: map elements
+    if (Array.isArray(node)) {
+        if (mutate) {
+            for (let i = 0; i < node.length; i++) {
+                node[i] = makeIdObjects(node[i], options);
+            }
+            return node;
+        }
+        const outArr: JsonArray = [];
+        for (let i = 0; i < node.length; i++) {
+            outArr[i] = makeIdObjects(node[i], options);
+        }
+        return outArr;
+    }
+
+    // object: handle the idKey specially (do not convert its string value)
+    const obj = node as JsonObject;
+    if (mutate) {
+        for (const k of Object.keys(obj)) {
+            const v = obj[k];
+            if (k === idKey) {
+                // keep the actual id property unchanged
+                obj[k] = v;
+            } else if (typeof v === 'string' && isValidIdString(v)) {
+                obj[k] = { [idKey]: v } as unknown as JsonValue;
+            } else {
+                obj[k] = makeIdObjects(v, options);
+            }
+        }
+        return obj;
+    }
+
+    const out: JsonObject = {};
+    for (const k of Object.keys(obj)) {
+        const v = obj[k];
+        if (k === idKey) {
+            // preserve '@id' raw value
+            out[k] = v;
+        } else if (typeof v === 'string' && isValidIdString(v)) {
+            out[k] = { [idKey]: v } as unknown as JsonValue;
+        } else {
+            out[k] = makeIdObjects(v, options);
+        }
+    }
+    return out;
 }
 /**
  * Replace top-level string values that are valid id-strings with id-objects.
@@ -675,7 +830,7 @@ function isValidIdString(input: string): boolean {
  * - Uses existing `isValidIdString` to decide whether a string is an ID.
  * - options.idKey: property name for the id-object (default '@id')
  * - options.mutate: if true, modify the input object in-place; otherwise return a shallow copy
- */
+ *
 function makeIdObjects(
     obj: JsonObject,
     options?: { idKey?: string; mutate?: boolean }
@@ -687,7 +842,7 @@ function makeIdObjects(
     for (const k of Object.keys(obj)) {
         const v = obj[k];
         // replace all id-strings except for the '@id' property itself:
-        if (k !== '@id' && typeof v === 'string' && isValidIdString(v)) {
+        if (k !== idKey && typeof v === 'string' && isValidIdString(v)) {
             // replace string by an id-object, using the configured idKey
             target[k] = { [idKey]: v } as unknown as JsonValue;
         } else if (!mutate) {
@@ -697,10 +852,69 @@ function makeIdObjects(
     }
 
     return target;
+} */
+/**
+ * Replace id-objects (e.g. { id: "xyz" } or { "@id": "xyz" }) by the id string.
+ * - options.idKeys: array of keys to treat as id keys (default ['id','@id'])
+ * - options.mutate: if true mutate in-place, otherwise operate on a deep clone
+ */
+function replaceIdObjects(
+    node: JsonValue,
+    options ?: { idKeys?: string[]; mutate?: boolean }
+): JsonValue {
+    const idKeys = options?.idKeys ?? ['id', '@id'];
+    const mutate = !!options?.mutate;
+
+    // work on a clone when not mutating
+    const root: JsonValue = mutate ? node : JSON.parse(JSON.stringify(node));
+
+    function isIdObject(v: unknown): v is JsonObject {
+        if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+        const keys = Object.keys(v as JsonObject);
+        return keys.length === 1 && idKeys.includes(keys[0]) && typeof (v as any)[keys[0]] === 'string';
+    }
+
+    function walk(n: JsonValue): JsonValue {
+        if (n === null || n === undefined) return n;
+        if (LIB.isLeaf(n)) return n;
+        if (Array.isArray(n)) {
+            for (let i = 0; i < n.length; i++) {
+                n[i] = walk(n[i]);
+            }
+            return n;
+        }
+        // object
+        const obj = n as JsonObject;
+        if (isIdObject(obj)) {
+            // replace whole object by its id string
+            const k = Object.keys(obj)[0];
+            return obj[k] as JsonPrimitive;
+        }
+        for (const k of Object.keys(obj)) {
+            //    obj[k] = walk(obj[k]);
+            const key = String(k);
+            const newVal = walk((obj as JsonObject)[key]);
+            (obj as JsonObject)[key] = newVal as JsonValue;
+        }
+        return obj;
+    }
+
+    return walk(root);
 }
+/**
+ * Build a simple id-object.
+ * - useJsonLd=false => { id: 'xyz' }
+ * - useJsonLd=true  => { '@id': 'xyz' }
+ *
+function buildIdObject(id: string, useJsonLd = false): JsonObject {
+    return useJsonLd ? { ['@id']: id } : { id };
+}
+makeIdObject(str: string): JsonObject {
+        return { id: str };
+},*/
 // Helper: normalize language tags/values ---
 function normalizeLanguageText(src: any): ILanguageText {
-    console.debug('normalizeLanguageText', src);
+//    console.debug('normalizeLanguageText', src);
     if (!src)
         return { value: '' };
     if (typeof src === 'object') {
@@ -723,14 +937,14 @@ function normalizeMultiLanguageText(src: any): ILanguageText[] {
    - if array length === 0 -> OK
    - if array length === 1 -> 'lang' may be missing
    - if array length > 1 -> each entry must have a string 'lang' and string 'value'
-   Returns IXhr (xhrOk on success, error IXhr on failure)
+   Returns IRsp (rspOK on success, error IRsp on failure)
 */
-function validateMultiLanguageText(arr: any, fieldName: string): IXhr {
-    console.debug('validateMultiLanguageText',arr,fieldName);
+function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
+//    console.debug('validateMultiLanguageText',arr,fieldName);
     if (!Array.isArray(arr)) {
         return { status: 698, statusText: `Invalid ${fieldName}: expected an array of language-tagged texts`, ok: false };
     }
-    if (arr.length === 0) return xhrOk;
+    if (arr.length === 0) return rspOK;
     if (arr.length === 1) {
         const e = arr[0];
         if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
@@ -740,7 +954,7 @@ function validateMultiLanguageText(arr: any, fieldName: string): IXhr {
         if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
             return { status: 698, statusText: `Invalid ${fieldName} entry: 'lang' must be a string when present`, ok: false };
         }
-        return xhrOk;
+        return rspOK;
     }
     // length > 1: every entry must have value:string and lang:string
     for (let i = 0; i < arr.length; i++) {
@@ -755,5 +969,5 @@ function validateMultiLanguageText(arr: any, fieldName: string): IXhr {
             return { status: 698, statusText: `Invalid ${fieldName} entry at index ${i}: 'lang' must be a non-empty string`, ok: false };
         }
     }
-    return xhrOk;
+    return rspOK;
 }

@@ -12,13 +12,15 @@
 import { LIB } from '../../src/utils/lib/helpers';
 import { JsonObject } from '../../src/utils/lib/helpers';
 import { XsDataType, PigItemType, PigItemTypeValue,
-        IProperty, IAProperty, IEntity, IAnEntity, IRelationship, IARelationship,
-        Property, AProperty, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
+    IProperty, IAProperty, IReference, IEntity, IAnEntity, IRelationship, IARelationship,
+        Property, AProperty, Reference, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
 
 describe("PIG Metaclasses", () => {
     let propertyClass_input: IProperty;
     let propertyClass_input_JSONLD: any;
     let property_input: IAProperty;
+    let referenceClass_input: IReference;
+    let referenceClass_input_JSONLD: any;
     let entityClass_input: IEntity;
     let entity1_input: IAnEntity;
     let entity2_input: IAnEntity;
@@ -32,7 +34,7 @@ describe("PIG Metaclasses", () => {
             id: "dcterms:type",
             itemType: PigItemType.Property,
             title: [{ value: "The type or category", lang: "en" }],
-            description: [{ value: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" }],
+            description: [{ value: "This is a class for a property named dcterms:type used by anEntity or aRelationship", lang: "en" }],
 
             datatype: XsDataType.String,
             minCount: 0,
@@ -44,7 +46,7 @@ describe("PIG Metaclasses", () => {
             ['@id']: "dcterms:type",
             ['pig:itemType']: { ['@id']: PigItemType.Property },
             ['dcterms:title']: [{ ['@value']: "The type or category", ['@language']: "en" }],
-            ['dcterms:description']: [{ ['@value']: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", ['@language']: "en" }],
+            ['dcterms:description']: [{ ['@value']: "This is a class for a property named dcterms:type used by anEntity or aRelationship", ['@language']: "en" }],
 
             ['sh:datatype']: { ['@id']: XsDataType.String },
             ['sh:minCount']: 0,
@@ -52,12 +54,29 @@ describe("PIG Metaclasses", () => {
             ['sh:maxLength']: 20,
             ['sh:defaultValue']: "default_category"
         };
-
         property_input = {
             itemType: PigItemType.aProperty,
             hasClass: "dcterms:type",
             value: "A category"   // usually a property belongs to a certain entity or relationship
-        }
+        };
+
+        // Reference with class:
+        referenceClass_input = {
+            id: "pig:shows",
+            itemType: PigItemType.Reference,
+            title: [{ value: "shows", lang: "en" }],
+            description: [{ value: "This is a class for a reference used by anEntity", lang: "en" }],
+
+            eligibleTarget: ["o:Entity_1"]
+        };
+        referenceClass_input_JSONLD = {
+            ['@id']: "pig:shows",
+            ['pig:itemType']: { ['@id']: PigItemType.Reference },
+            ['dcterms:title']: [{ ['@value']: "shows", ['@language']: "en" }],
+            ['dcterms:description']: [{ ['@value']: "This is a class for a reference used by anEntity", ['@language']: "en" }],
+
+            ['pig:eligibleTarget']: [{ ['@id']: "o:Entity_1" }]
+        };
 
         // Entity with class:
         entityClass_input = {
@@ -86,7 +105,6 @@ describe("PIG Metaclasses", () => {
                 value: "Category of anEntity_1"
             }]
         };
-
         entity2_input = {
             id: "d:anEntity_2",
             revision: "v1.0",
@@ -143,7 +161,7 @@ describe("PIG Metaclasses", () => {
         expect(test_PC.status().ok).toBe(true);
         expect(test_PC.id).toBe("dcterms:type");
         expect(test_PC.title).toEqual([{ value: "The type or category", lang: "en" }]);
-        expect(test_PC.description).toEqual([{ value: "This is a class for a property named dcterms:type for use by anEntity or aRelationship", lang: "en" }]);
+        expect(test_PC.description).toEqual([{ value: "This is a class for a property named dcterms:type used by anEntity or aRelationship", lang: "en" }]);
 
         expect(test_PC.itemType).toBe(PigItemType.Property);
         expect(test_PC.datatype).toBe(XsDataType.String);
@@ -171,6 +189,36 @@ describe("PIG Metaclasses", () => {
         expect(test_PC_bad.status().ok).toBe(false);
         //expect(test_PC_bad.status().statusText || '').toContain('Invalid datatype');
         expect(test_PC_bad.status().statusText || '').toMatch(/invalid datatype/i);
+    });
+
+    test("Test class pig:Reference", () => {
+        const test_RfC = new Reference().set(referenceClass_input);
+        // console.debug('pig:Reference input:', referenceClass_input);
+        // console.debug('pig:Reference item:', test_RfC);
+
+        // check the attribute values upon creation:
+        //if (!test_RfC.status().ok)
+        //    console.error('status:', test_RfC.status());
+        expect(test_RfC.status().ok).toBe(true);
+        expect(test_RfC.id).toBe("pig:shows");
+        expect(test_RfC.title).toEqual([{ value: "shows", lang: "en" }]);
+        expect(test_RfC.description).toEqual([{ value: "This is a class for a reference used by anEntity", lang: "en" }]);
+
+        expect(test_RfC.itemType).toBe(PigItemType.Reference);
+        expect(test_RfC.eligibleTarget).toStrictEqual(['o:Entity_1']);
+
+        // check the output as JSON:
+        const refClass_output = test_RfC.get();
+        //    console.debug('pig:Reference output:', referenceClass_output);
+        expect(refClass_output).toEqual(referenceClass_input);
+
+        // check the output as JSON-LD:
+        const refClass_output_JSONLD = test_RfC.getJSONLD();
+        expect(refClass_output_JSONLD).toEqual(referenceClass_input_JSONLD);
+
+        // input JSON-LD to JSON conversion check:
+        const test_RfC_fromJSONLD = new Reference().setJSONLD(referenceClass_input_JSONLD);
+        expect(test_RfC_fromJSONLD.get()).toEqual(referenceClass_input);
     });
 
     test("Test instance pig:aProperty", () => {

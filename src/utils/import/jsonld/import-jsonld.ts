@@ -1,5 +1,5 @@
-import { LIB, IXhr, xhrOk } from "../../lib/helpers";
-import { JsonObject, JsonValue } from '../../lib/helpers';
+import { LIB, IRsp, rspOK } from "../../lib/helpers";
+//import { JsonObject, JsonValue } from '../../lib/helpers';
 import { Property, Reference, Entity, Relationship,
     AProperty, AReference, AnEntity, ARelationship, PigItemType,
     TPigItem } from '../../schemas/pig/pig-metaclasses';
@@ -15,9 +15,9 @@ import { Property, Reference, Entity, Relationship,
  * - URL:    await importJsonLd('https://example/.../doc.jsonld')
  * - Browser: await importJsonLd(fileInput.files[0])
  */
-export async function importJSONLD(source: string | File | Blob): Promise<IXhr> {
-    const text = await loadSourceText(source);
-    console.debug('importJSONLD: loaded text length', text.length);
+export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
+    const text = await LIB.readFileAsText(source);
+    console.info('importJSONLD: loaded text length', text.length);
 //    console.debug('importJSONLD: loaded text', text);
     let doc: any;
     try {
@@ -31,56 +31,8 @@ export async function importJSONLD(source: string | File | Blob): Promise<IXhr> 
 
 /* --- helpers --- */
 
-// Load text from Node file path, HTTP(S) URL or browser File/Blob
-async function loadSourceText(source: string | File | Blob): Promise<string> {
-    if (typeof source === 'string') {
-        // string can be a URL or a Node filesystem path
-        if (isHttpUrl(source)) {
-            // browser or Node fetch
-            const resp = await fetch(source);
-            if (!resp.ok) throw new Error(`Failed to fetch URL ${source}: ${resp.status} ${resp.statusText}`);
-            return await resp.text();
-        }
-        // assume Node path: dynamic import to avoid bundling 'fs' into browser build
-        if (isNode()) {
-            try {
-                const { readFile } = await import('fs/promises');
-                const data = await readFile(source, { encoding: 'utf8' }) as string;
-                return data;
-            } catch (e: unknown) {
-                const msg = e instanceof Error ? e.message : String(e);
-                throw new Error(`Failed to read file '${source}' (Node): ${msg}`);
-            }
-        }
-    /*    if (isNode()) {
-            const { readFile } = await import('fs/promises');
-            return await readFile(source, { encoding: 'utf8' });
-        } */
-        throw new Error('String source provided but not an http(s) URL and not running in Node.');
-    }
-
-    // File or Blob (browser)
-    if (typeof (source as Blob).text === 'function') {
-        return await (source as Blob).text();
-    }
-
-    throw new Error('Unsupported source type for function loadSourceText');
-}
-
-function isHttpUrl(s: string): boolean {
-    return /^https?:\/\//i.test(s);
-}
-
-function isNode(): boolean {
-    const p = (globalThis as any).process;
-    return typeof p !== 'undefined' && !!(p.versions && p.versions.node);
-}
-/* function isNode(): boolean {
-    return (typeof process !== 'undefined') && !!(process.versions && process.versions.node);
-} */
-
 // Instantiate objects from parsed JSON-LD document
-function instantiateFromDoc(doc: any): IXhr {
+function instantiateFromDoc(doc: any): IRsp {
     const created: TPigItem[] = [];
     const graph: any[] = Array.isArray(doc['@graph']) ? doc['@graph'] : (Array.isArray(doc.graph) ? doc.graph : []);
     // console.debug('importJSONLD: @graph', graph);
@@ -98,9 +50,10 @@ function instantiateFromDoc(doc: any): IXhr {
         const itype: any = elem['pig:itemType']['@id'] as any;
 
         // temporary filter to allow development step by step per itemType:
-        if (![PigItemType.Property].includes(itype))
+        if (![PigItemType.Property, PigItemType.Reference, PigItemType.Entity, PigItemType.Relationship,
+            PigItemType.anEntity].includes(itype))
             continue;
-        console.debug('importJSONLD: @graph renamed', elem, itype);
+     //   console.debug('importJSONLD: @graph renamed', elem, itype);
 
         let instance: any = null;
         try {
@@ -150,13 +103,13 @@ function instantiateFromDoc(doc: any): IXhr {
             created.push(obj); */
         }
     }
-    let res: IXhr;
+    let res: IRsp;
     if (created.length === graph.length) 
-        res = xhrOk;
+        res = rspOK;
     else
         res = LIB.createRsp(699, `Imported ${created.length} of ${graph.length} items from JSON-LD.`);
 
     res.response = created;
     res.responseType = 'json';
-    return res as IXhr<TPigItem[]>;
+    return res as IRsp<TPigItem[]>;
 }

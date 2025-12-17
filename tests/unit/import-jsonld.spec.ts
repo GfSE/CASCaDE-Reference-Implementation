@@ -1,68 +1,98 @@
-// import { writeFile, unlink } from 'fs/promises';
-// import * as os from 'os';
+import * as fs from 'fs';
 import * as path from 'path';
 import { importJSONLD } from '../../src/utils/import/jsonld/import-jsonld';
-import { TPigItem, Property } from '../../src/utils/schemas/pig/pig-metaclasses';
+import { TPigItem } from '../../src/utils/schemas/pig/pig-metaclasses';
 
 describe('importJSONLD (file system)', () => {
-    test('reads JSON-LD from file system and instantiates PIG classes', async () => {
-    /*  // 1a. create sample JSON-LD file:
-        const sample = {
-            "@context": {},
-            "@graph": [
-                {
-                    "@id": "dcterms:type",
-                    "itemType": "pig:Property", // ensure importer recognizes the type
-                    "title": { "text": "The type or category", "lang": "en" },
-                    "description": { "text": "This is a class for a property named dcterms:type", "lang": "en" },
-                    "datatype": "xs:string",
-                    "minCount": 0,
-                    "maxCount": 1,
-                    "maxLength": 20,
-                    "defaultValue": "default_category"
-                }
-            ]
-        };
+    // List of relative filenames (relative to this test file). Add more entries as needed.
+    const filenames = [
+        "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
+        "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
+        // add more test files here, e.g.
+        // "../data/JSON-LD/another-sample.pig.jsonld"
+    ];
+    let processedCount = 0;
 
-        const testFile = path.join(os.tmpdir(), `test-jsonld-${Date.now()}.jsonld`);
-        await writeFile(testFile, JSON.stringify(sample, null, 2), { encoding: 'utf8' }); */
+    // Create a separate Jest test for each filename.
+    // If a file is missing we use test.skip so CI/test run remains stable.
+    filenames.forEach((filenameRel) => {
+    //    console.debug('filenameRel', filenameRel);
+        const testFile = path.resolve(__dirname, filenameRel);
+        const testName = path.basename(testFile);
+        const runner = fs.existsSync(testFile) ? test : test.skip;
+    //    console.debug('testFile', testFile, testName, runner);
 
-        // 1b. use existing JSON-LD file:
-        // Replace the following path with the actual path/filename of your existing test JSON-LD file.
-        // Relative to this test file you can use __dirname:
-        const filename = "../data/JSON-LD/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
-            testFile = path.resolve(__dirname, filename);
-        console.debug('testFile',testFile);
+        runner(`imports ${testName} and instantiates PIG classes`, async () => {
+            // import and test
+            const rsp = await importJSONLD(testFile);
+            if (!rsp.ok)
+                console.warn('importJSONLD',rsp.status,rsp.statusText);
+            //expect(rsp.ok).toBe(true);
+            processedCount++;
 
-        // 2. import and test:
-    //    try {
-            const xhr = await importJSONLD(testFile);
-          //  console.debug(`importJSONLD:`, xhr);
-          //  console.debug(`importJSONLD:`, xhr.status, (xhr.response as TPigItem[]).map(i => i.get()));
-          //  expect(xhr.ok).toBe(true);
+            const instances = rsp.response as TPigItem[];
+            //    console.debug('instances', instances);
 
-            const instances = xhr.response as TPigItem[];
-            console.debug('instances', instances);
             // basic expectations
             expect(Array.isArray(instances)).toBe(true);
             expect(instances.length).toBeGreaterThan(0);
 
             instances.forEach((itm, index) => {
-                expect(itm.status().ok).toBe(true);  // valid instance)
-                // class check
-            //    expect(itm).toBeInstanceOf(Property);
-                // content checks
-            //    expect(inst.id).toBe('dcterms:type');
-            //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
+                console.info(`Instance ${index}:`, itm.status(), itm.getJSONLD()['@id']);
+                // each instantiated item must have a successful status
+                expect(itm.status().ok).toBe(true);
+                // additional per-item assertions can be added here
+                //    expect(itm).toBeInstanceOf(Property);
+                //    expect(inst.id).toBe('dcterms:type');
+                //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
+                //    expect(inst.datatype).toBe('xs:string');
+            });
+        });
+    });
+    test('Check the number of files processed', () => {
+        // Ensure that all files were processed:
+        expect(processedCount).toBe(filenames.length);
+    });
+
+/*    test('reads JSON-LD from multiple files and instantiates PIG classes', async () => {
+        let processedCount = 0;
+
+        for (const filenameRel of filenames) {
+            const testFile = path.resolve(__dirname, filenameRel);
+            if (!fs.existsSync(testFile)) {
+                // Skip missing test files but warn so missing data is visible in CI logs
+                // eslint-disable-next-line no-console
+                console.warn(`import-jsonld test: file not found, skipping: ${testFile}`);
+                continue;
+            }
+        //    console.debug('testFile', testFile);
+
+            // import and test
+            // awaits the importer for each file in sequence
+            const rsp = await importJSONLD(testFile);
+            const instances = rsp.response as TPigItem[];
+            console.debug('instances', instances);
+
+            // basic expectations
+            expect(Array.isArray(instances)).toBe(true);
+            expect(instances.length).toBeGreaterThan(0);
+
+            instances.forEach((itm, index) => {
+                // each instantiated item must have a successful status
+                expect(itm.status().ok).toBe(true);
+                // further per-item assertions can be added here
+                //    expect(itm).toBeInstanceOf(Property);
+                //    expect(inst.id).toBe('dcterms:type');
+                //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
                 //    expect(inst.datatype).toBe('xs:string');
                 console.debug(`Instance ${index}:`, itm);
             });
-    //    } catch {
-    //        console.error('Reading, importing or checking failed: '+filename);
-        //only for 1a:
-        //} finally {
-        //    // cleanup test file
-        //    await unlink(testFile).catch(() => { /* ignore cleanup errors */ });
-    //    }
-    });
+
+            processedCount++;
+        }
+
+        // Ensure that all files were processed:
+        expect(processedCount).toBe(filenames.length);
+    }); */
 });
+
