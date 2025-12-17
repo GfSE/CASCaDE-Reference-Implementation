@@ -41,6 +41,8 @@ const TO_JSONLD: [string, string][] = [
     ['context', '@context'],
     ['id', '@id'],
     ['hasClass', '@type'],
+    ['specializes', 'pig:specializes'],
+    ['icon', 'pig:icon'], 
     ['value', '@value'],
     ['lang', '@language'],
     ['datatype', 'sh:datatype'],

@@ -27,6 +27,10 @@
 import { RE } from "../../lib/definitions";
 import { LIB } from "../../lib/helpers";
 import { IRsp, rspOK, JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
+// use central Ajv instance from the Vue plugin:
+import { ajv } from '../../../plugins/ajv';
+// optional: import type for better TS typing where needed
+// import type Ajv from 'ajv';
 
 export type TPigId = string;  // an IRI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
@@ -119,12 +123,13 @@ abstract class Item implements IItem {
 }
 interface IIdentifiable extends IItem {
     id: TPigId;  // translates to @id in JSON-LD
-    title: ILanguageText[];
+    // Any one or both of the following must be present and have at least one item; see schemata:
+    title?: ILanguageText[];
     description?: ILanguageText[];
 }
 abstract class Identifiable extends Item implements IIdentifiable {
     id!: TPigId;
-    title!: ILanguageText[];
+    title?: ILanguageText[];
     description?: ILanguageText[];
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
@@ -389,7 +394,20 @@ export class Entity extends Element implements IEntity {
             eligibleReference: Array.isArray(this.eligibleReference) ? this.eligibleReference : undefined
         };
     }
-    validate(itm:IEntity) {
+    validate(itm: IEntity) {
+        console.debug('Entity.validate: ', itm);
+        // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        try {
+            const ok = validateEntitySchema(itm as unknown as object);
+            if (!ok) {
+                const msg = ajv.errorsText(validateEntitySchema.errors, { separator: '; ' });
+                return { status: 400, statusText: `Schema validation failed for IEntity: ${msg}`, ok: false };
+            }
+        } catch (err: any) {
+            return { status: 500, statusText: `Schema validator error: ${err?.message ?? String(err)}`, ok: false };
+        }
+
+        // runtime guards:
         // id and itemType checked in superclass
         if (this.specializes && this.specializes !== itm.specializes)
             throw new Error(`Cannot change the specialization of an Entity after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
@@ -971,3 +989,65 @@ function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
     }
     return rspOK;
 }
+const ENTITY_SCHEMA = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'https://gfse.org/schemas/pig/IEntity',
+    type: 'object',
+    properties: {
+        id: { $ref: '#/$defs/idString' },
+        itemType: {
+            type: 'string',
+            enum: ['pig:Entity'],
+            description: 'The PigItemType'
+        },
+        hasClass: { $ref: '#/$defs/idString' },
+        specializes: { $ref: '#/$defs/idString' },
+        eligibleReference: {
+            type: 'array',
+            items: { $ref: '#/$defs/idString' }
+        },
+        eligibleProperty: {
+            type: 'array',
+            items: { $ref: '#/$defs/idString' }
+        },
+        icon: { type: 'string' },
+        title: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        description: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        }
+    },
+    additionalProperties: false,
+    required: ['id', 'itemType'],
+    // One of 'hasClass' and 'specializes' must be there but not both:
+    oneOf: [
+        { required: ['hasClass'] },
+        { required: ['specializes'] }
+    ],
+    // One of 'title' and 'description' must be there, or both:
+    anyOf: [
+        { required: ['title'] },
+        { required: ['description'] }
+    ],
+    $defs: {
+        idString: {
+            type: 'string',
+            description: 'TPigId — term with namespace (prefix:local) or an URI',
+            pattern: '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$'
+        },
+        LanguageText: {
+            type: 'object',
+            required: ['value'],
+            additionalProperties: false,
+            properties: {
+                value: { type: 'string' },
+                lang: { type: 'string' }
+            }
+        }
+    }
+}; const validateEntitySchema = ajv.compile(ENTITY_SCHEMA);
