@@ -1,34 +1,36 @@
+// CAUTION: Provided by GitHub Copilot and not tested yet!
+
 /** This module implements a practical, programmatic Schematron-like validator for
-// ReqIF (XML) files. It is NOT a full Schematron engine; instead it evaluates a
-// selected set of rules (derived from the provided Schematron fragment) using
-// XPath queries on a namespace-aware DOM.
-//
-// Main behaviour:
-// - Parses the ReqIF XML and runs XPath checks (uses `xmldom` + `xpath`).
-// - Produces an array of `IReqifIssue` objects describing findings:
-//     { id?, location?, severity: 'error'|'warning'|'info', message }
-//
-// Implemented checks (maps to the Schematron rules):
-// - R1.1 / R1.2: simple counts (SPEC-OBJECT and DATATYPES) reported as 'info'.
-// - C1.*: presence of mandatory `LONG-NAME` on various definition elements.
-// - C2.1 / C2.2: enumeration constraints (MULTI-VALUED vs value count; enum references).
-// - C3.1 / C3.2 / C3.3: numeric ranges and string max-lengths for attribute values.
-// - C5.*: ID / IDREF correspondence checks across many Ref contexts.
-// - C6.*: XHTML checks (no use of class attribute, minimal checks for xhtml:object).
-//
-// Notes and usage:
-// - This validator is intended for integration in tooling / CI where a quick,
-//   readable list of issues is useful. It deliberately implements rules in JS/TS
-//   for readability and easy extension rather than invoking an XSLT-based
-//   Schematron processor.
-// - Extend or tighten XPath expressions and regexes where stronger validation is
-//   required (e.g. stricter URL validation, richer XHTML checks).
-// - Dependencies: `xmldom` and `xpath`. Example: `npm install xmldom xpath`.
-//
-// Example:
-//   import { validateReqIF } from './reqif-validator';
-//   const issues = validateReqIF(xmlString);
-//   issues.forEach(i => console.log(i.severity, i.message));
+*  ReqIF (XML) files. It is NOT a full Schematron engine; instead it evaluates a
+*  selected set of rules (derived from the provided Schematron fragment) using
+*  XPath queries on a namespace-aware DOM.
+* 
+*  Main behaviour:
+*  - Parses the ReqIF XML and runs XPath checks (uses `xmldom` + `xpath`).
+*  - Produces an array of `IReqifIssue` objects describing findings:
+*      { id?, location?, severity: 'error'|'warning'|'info', message }
+* 
+*  Implemented checks (maps to the Schematron rules):
+*  - R1.1 / R1.2: simple counts (SPEC-OBJECT and DATATYPES) reported as 'info'.
+*  - C1.*: presence of mandatory `LONG-NAME` on various definition elements.
+*  - C2.1 / C2.2: enumeration constraints (MULTI-VALUED vs value count; enum references).
+*  - C3.1 / C3.2 / C3.3: numeric ranges and string max-lengths for attribute values.
+*  - C5.*: ID / IDREF correspondence checks across many Ref contexts.
+*  - C6.*: XHTML checks (no use of class attribute, minimal checks for xhtml:object).
+* 
+*  Notes and usage:
+*  - This validator is intended for integration in tooling / CI where a quick,
+*    readable list of issues is useful. It deliberately implements rules in JS/TS
+*    for readability and easy extension rather than invoking an XSLT-based
+*    Schematron processor.
+*  - Extend or tighten XPath expressions and regexes where stronger validation is
+*    required (e.g. stricter URL validation, richer XHTML checks).
+*  - Dependencies: `xmldom` and `xpath`. Example: `npm install xmldom xpath`.
+* 
+*  Example:
+*    import { validateReqIF } from './reqif-validator';
+*    const issues = validateReqIF(xmlString);
+*    issues.forEach(i => console.log(i.severity, i.message));
 */
 
 import { DOMParser } from 'xmldom';
@@ -50,7 +52,6 @@ const select = xpath.useNamespaces(NS);
 
 function toString(node: Node | null): string {
     if (!node) return '';
-    // @ts-ignore xmldom has toString on nodes
     return (node as any).toString ? (node as any).toString() : node.nodeName;
 }
 
@@ -288,7 +289,6 @@ export function validateReqIF(xml: string): IReqifIssue[] {
 
         // C6.3 only width/height/type/data allowed
         const allowed = ['width', 'height', 'type', 'data'];
-        // @ts-ignore
         const attrs = (obj as Element).attributes;
         if (attrs) {
             const extra = [];

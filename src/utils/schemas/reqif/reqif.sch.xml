@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+Use the Constraint-Checker at your own risk. PROSTEP and HOOD rule all warranty claims out.
+
+Last Changed: 29.09.10
+-->
+
+
+<iso:schema xmlns="http://purl.oclc.org/dsdl/schematron" 
+	       xmlns:iso="http://purl.oclc.org/dsdl/schematron" 
+	       xmlns:sch="http://www.ascc.net/xml/schematron"
+	       queryBinding='xslt2'
+	       schemaVersion="ISO19757-3">
+   
+<iso:ns prefix="reqif" uri="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd"/>
+<iso:ns prefix="REQIF" uri="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd"/>
+<iso:ns prefix="xhtml" uri="http://www.w3.org/1999/xhtml"/>
+
+<iso:title>ReqIF 1.0 Validation </iso:title>
+
+<iso:phase name = "firstPhase" id="first_check">
+	<iso:active pattern="all.checks"> This phase will check all constraints </iso:active> 
+</iso:phase>
+
+<iso:pattern id="all.checks">	
+	<iso:rule context="reqif:REQ-IF">
+		<iso:let name="NrSpecObject" value="count(//reqif:SPEC-OBJECT)"/>
+		<iso:let name="NrDataTypes" value="count(//reqif:DATATYPES/*)"/>
+		<iso:report id="R1.1" test="true()">SpecObjects = <iso:value-of select="$NrSpecObject"/></iso:report>
+		<iso:report id="R1.2" test="true()">DataTypes = <iso:value-of select="$NrDataTypes"/></iso:report>
+	</iso:rule>
+	
+	<!--Constraints C1.1 bis c1.10 -->	
+	<iso:rule context="reqif:ENUM-VALUE">
+		<iso:assert id="C1.1" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-BOOLEAN">
+		<iso:assert id="C1.2" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-DATE">
+		<iso:assert id="C1.3" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-ENUMERATION">
+		<iso:assert id="C1.4" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-INTEGER">
+		<iso:assert id="C1.5" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-REAL">
+		<iso:assert id="C1.6" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-STRING">
+		<iso:assert id="C1.7" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-XHTML">
+		<iso:assert id="C1.8" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+	</iso:rule>	
+	
+	<iso:rule context="reqif:RELATION-GROUP">
+		<iso:assert id="C1.9" name="Existence of LONG-NAME" test="@LONG-NAME"> <iso:name/> is missing the mandatory attribute LONG-NAME.</iso:assert>
+		
+		</iso:rule>	
+	
+	<!--Constraints C2.1 bis C2.2 -->
+	
+	<iso:rule context="reqif:ATTRIBUTE-VALUE-ENUMERATION">
+		<iso:let name="AttrDefEnum" value="./reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-ENUMERATION-REF/text()"/>
+		<iso:let name="anzValues" value="count(./reqif:VALUES/*)"/>
+		<iso:let name="multiVal" value="//reqif:ATTRIBUTE-DEFINITION-ENUMERATION[@IDENTIFIER = $AttrDefEnum]/@MULTI-VALUED"/>
+		<iso:assert id="C2.1" name="Correct usage of the attribute MULTI-VALUED" test="($multiVal = 'true') or ($anzValues &lt;= 1)">ATTRIBUTE-VALUE-ENUMERATION can contain more than one element in the VALUE-SET, only if the MULTI-VALUED attribute of his ATTRIBUTE-DEFINITION-ENUMERATION is set to TRUE.</iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ENUM-VALUE-REF">
+		<iso:let name="EnumValueRef" value="text()"/>
+		<iso:let name="AttrDefEnum" value="../../reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-ENUMERATION-REF/text()"/>
+		<iso:let name="DataTypeDefEnum" value="//reqif:ATTRIBUTE-DEFINITION-ENUMERATION[@IDENTIFIER = $AttrDefEnum]/reqif:TYPE/reqif:DATATYPE-DEFINITION-ENUMERATION-REF/text()"/>
+		<iso:let name="NrEnumValue" value="count(//reqif:DATATYPE-DEFINITION-ENUMERATION[@IDENTIFIER = $DataTypeDefEnum]/reqif:SPECIFIED-VALUES/reqif:ENUM-VALUE[@IDENTIFIER = $EnumValueRef])"/>	
+		<iso:assert name="Correct value referencing of Enumerations." id="C2.2" test="$NrEnumValue = 1">ATTRIBUTE-VALUE-ENUMERATION is referencing to an attribute, which is not declared in the corresponding SPEC-OBJECT’s type.</iso:assert>
+	
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ENUM-VALUE[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.21" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing to a REQIF:ENUM-VALUE, but to <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<!--Constraints C3.1 bis C3.3 -->
+	<iso:rule context="reqif:ATTRIBUTE-VALUE-INTEGER">
+		<iso:let name="theValue" value="@THE-VALUE"/>
+		<iso:let name="AttrDefInt" value="./reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-INTEGER-REF/text()"/>	
+		<iso:let name="DataTypeDefInt" value="//reqif:ATTRIBUTE-DEFINITION-INTEGER[@IDENTIFIER = $AttrDefInt]/reqif:TYPE/reqif:DATATYPE-DEFINITION-INTEGER-REF/text()"/>		
+		<iso:let name="min" value="//reqif:DATATYPE-DEFINITION-INTEGER[@IDENTIFIER = $DataTypeDefInt]/@MIN"/>
+		<iso:let name="max" value="//reqif:DATATYPE-DEFINITION-INTEGER[@IDENTIFIER = $DataTypeDefInt]/@MAX"/>
+		<iso:assert id="C3.1" name="Compliance of the MIN and MAX definitions of the ATTRIBUTE-VALUE-INTEGER." test="not($min) or ($min cast as xs:integer &lt;= $theValue and $theValue &lt;= $max  cast as xs:integer)">This integer value (ATTRIBUTE-VALUE-INTEGER::THE-VALUE) is smaller than the MIN or greater than the MAX attribute of the corresponding DATATYPE-DEFINITION-INTEGER.(<iso:value-of select="$min"/> &lt;= <iso:value-of select="$theValue"/> &lt;= <iso:value-of select="$max"/>)</iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-VALUE-REAL">
+		<iso:let name="theValue" value="@THE-VALUE"/>
+		<iso:let name="AttrDefReal" value="./reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-REAL-REF/text()"/>	
+		<iso:let name="DataTypeDefReal" value="//reqif:ATTRIBUTE-DEFINITION-REAL[@IDENTIFIER = $AttrDefReal]/reqif:TYPE/reqif:DATATYPE-DEFINITION-REAL-REF/text()"/>		
+		<iso:let name="min" value="//reqif:DATATYPE-DEFINITION-REAL[@IDENTIFIER = $DataTypeDefReal]/@MIN"/>
+		<iso:let name="max" value="//reqif:DATATYPE-DEFINITION-REAL[@IDENTIFIER = $DataTypeDefReal]/@MAX"/>
+		<iso:assert id="C3.2" name="Compliance of the MIN and MAX definitions of the ATTRIBUTE-VALUE-REAL." test="not($min) or ($min cast as xs:double &lt;= $theValue and $theValue &lt;= $max cast as xs:double)">This real value (ATTRIBUTE-VALUE-REAL::THE-VALUE) is smaller than the MIN or greater than the MAX attribute of the corresponding DATATYPE-DEFINITION-REAL.(<iso:value-of select="$min"/> &lt;= <iso:value-of select="$theValue"/> &lt;= <iso:value-of select="$max"/>)</iso:assert>
+	</iso:rule>
+
+	<iso:rule context="reqif:ATTRIBUTE-VALUE-STRING">
+		<iso:let name="str_length" value="string-length(@THE-VALUE)"/>
+		<iso:let name="attr_def" value="./reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-STRING-REF"/>
+		<iso:let name="dattype_def" value="//reqif:ATTRIBUTE-DEFINITION-STRING[@IDENTIFIER = $attr_def]/reqif:TYPE/reqif:DATATYPE-DEFINITION-STRING-REF"/>
+		<iso:let name="max_length" value="//reqif:DATATYPE-DEFINITION-STRING[@IDENTIFIER = $dattype_def]/@MAX-LENGTH"/>
+		<iso:assert name="Compliance of the maximum length definition of the ATTRIBUTE-VALUE-STRING." id="C3.3" test="$str_length &lt;= $max_length">The length of this string value (<iso:value-of select="$attr_def"/>)(<iso:value-of select="$dattype_def"/>) (ATTRIBUTE-VALUE-STRING::THE-VALUE = <iso:value-of select="$str_length"/>) is greater than the length defined in the MAX-LENGTH attribute of his DATATYPE-DEFINITION-STRING = <iso:value-of select="$max_length"/>.</iso:assert>
+	</iso:rule>	
+	
+	<!--Constraints C4-
+	<iso:rule context="reqif:SPEC-RELATION">
+		<iso:let name="id" value="./@IDENTIFIER"/>
+		<iso:let name="nrRelGroups" value="count(//reqif:RELATION-GROUP//reqif:SPEC-RELATIONS[reqif:SPEC-RELATION-REF = $id])"/>
+		<iso:assert name="Containment of SPEC-Relations" id="C4" test="$nrRelGroups >= 1">The element REQIF:SPEC-RELATION is not being referenced from at least one REQIF:RELATION-GROUP, but from <iso:value-of select="$nrRelGroups"/></iso:assert>
+	</iso:rule>
+	-->
+	
+	<!--ID IDREF Referenzierungen. Manche sind woanderes definiert.-->
+	<iso:rule context="reqif:SPEC-OBJECT-TYPE-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.1" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:SPEC-OBJECT-TYPE, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:SPEC-RELATION-TYPE-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:SPEC-RELATION-TYPE[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.2" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:SPEC-RELATION-TYPE, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:SPECIFICATION-TYPE-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:SPECIFICATION-TYPE[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.3" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:SPECIFICATION-TYPE, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:RELATION-GROUP-TYPE-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:RELATION-GROUP-TYPE[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.4" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:RELATION-GROUP-TYPE, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:SPEC-RELATION-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:SPEC-RELATION[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.5" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:SPEC-RELATION, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:SPEC-OBJECT-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:SPEC-OBJECT[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.6" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:SPEC-OBJECT, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-ENUMERATION-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ATTRIBUTE-DEFINITION-ENUMERATION[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.7" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:ATTRIBUTE-DEFINITION-ENUMERATION, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-BOOLEAN-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ATTRIBUTE-DEFINITION-BOOLEAN[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.8" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:ATTRIBUTE-DEFINITION-BOOLEAN, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-DATE-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ATTRIBUTE-DEFINITION-DATE[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.9" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:ATTRIBUTE-DEFINITION-DATE, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-INTEGER-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ATTRIBUTE-DEFINITION-INTEGER[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.10" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:ATTRIBUTE-DEFINITION-INTEGER, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-REAL-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ATTRIBUTE-DEFINITION-REAL[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.11" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:ATTRIBUTE-DEFINITION-REAL, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-STRING-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ATTRIBUTE-DEFINITION-STRING[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.12" name="ID-IDREF must correspond." test="$element"><iso:name/>is not referencing a REQIF:ATTRIBUTE-DEFINITION-STRING, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:ATTRIBUTE-DEFINITION-XHTML-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:ATTRIBUTE-DEFINITION-XHTML[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.13" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:ATTRIBUTE-DEFINITION-XHTML, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:DATATYPE-DEFINITION-BOOLEAN-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:DATATYPE-DEFINITION-BOOLEAN[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.14" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:DATATYPE-DEFINITION-BOOLEAN, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:DATATYPE-DEFINITION-DATE-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:DATATYPE-DEFINITION-DATE[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.15" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:DATATYPE-DEFINITION-DATE, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:DATATYPE-DEFINITION-ENUMERATION-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:DATATYPE-DEFINITION-ENUMERATION[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.16" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:DATATYPE-DEFINITION-ENUMERATION, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:DATATYPE-DEFINITION-INTEGER-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:DATATYPE-DEFINITION-INTEGER[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.17" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:DATATYPE-DEFINITION-INTEGER, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:DATATYPE-DEFINITION-REAL-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:DATATYPE-DEFINITION-REAL[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.18" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:DATATYPE-DEFINITION-REAL, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:DATATYPE-DEFINITION-STRING-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:DATATYPE-DEFINITION-STRING[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.19" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:DATATYPE-DEFINITION-STRING, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:DATATYPE-DEFINITION-XHTML-REF">
+		<iso:let name="ref" value="normalize-space(.)"/>
+		<iso:let name="element" value="//reqif:DATATYPE-DEFINITION-XHTML[@IDENTIFIER = $ref]"/>
+		<iso:assert id="C5.20" name="ID-IDREF must correspond." test="$element"><iso:name/> is not referencing a REQIF:DATATYPE-DEFINITION-XHTML, but a <iso:value-of select="//*[@IDENTIFIER = $ref]/name()"/></iso:assert>
+	</iso:rule>
+	
+	<!--Constraints C6.1 bis C6.4 -->
+	
+	<iso:rule context="reqif:ATTRIBUTE-VALUE-XHTML">
+		<iso:let name="anzClass" value="count(.//@class)"/>
+		<iso:assert id="C6.1" name="The XHTML class attribute must not be used" test="$anzClass = 0">The class attribute of the XHTML Core Attribute Collection MUST NOT be used.</iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="xhtml:object">
+		<iso:let name="type2" value="./xhtml:object/@type"/>
+		<iso:let name="text2" value="normalize-space(./xhtml:object/text())"/>
+		<iso:let name="data2" value="./xhtml:object/@data"/>
+		<iso:assert id="C6.2" name="External object" test="(@type = 'image/png') or (($type2 = 'image/png') and ($text2 != '') and (ends-with($data2,'.png')))">For XHTML object elements that refer to an external object that is not an image with the MIME-Type image/png, an alternative image AND an alternative text MUST be provided</iso:assert>
+
+		<iso:assert id="C6.3" name="Only data, type, width and height are allowed as attributes for XHTML object element and type must be set to MIME-Type (if one exists)" test="count(@width|@height|@type|@data) = count (@*)">Definierte Attribute: <iso:value-of select="@*/name()"/>.</iso:assert>
+		
+	<!--	
+		
+		<iso:let name="regex" value="'(?:https?://(?:(?:(?:(?:(?:[a-zA-Z\d](?:(?:[a-zA-Z\d]|-)*[a-zA-Z\d])?)\.)*(?:[a-zA-Z](?:(?:[a-zA-Z\d]|-)*[a-zA-Z\d])?))|(?:(?:\d+)(?:\.(?:\d+)){3}))(?::(?:\d+))?)(?:/(?:(?:(?:(?:[a-zA-Z\d$\-_.+!*'(),]|(?:%[a-fA-F\d]{2}))|[;:@&=])*)(?:/(?:(?:(?:[a-zA-Z\d$\-_.+!*'(),]|(?:%[a-fA-F\d]{2}))|[;:@&=])*))*)(?:\?(?:(?:(?:[a-zA-Z\d$\-_.+!*'(),]|(?:%[a-fA-F\d]{2}))|[;:@&=])*))?)?)'"/>
+		
+		<iso:let name="regex" value="'(^|[ t\rn])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))'"/>
+	
+		<iso:let name="regex" value="'(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?'"/>
+	
+		<iso:let name="regex" value="'(((http|ftp|https):[/][/]|www.)([a-z]|[A-Z]|[0-9]|[/.]|[~])*)'"/>
+	
+		<iso:let name="regex" value="'([A-Z]*:\\[^/:\*\?&lt;>\|]+\.\w{2,6})|(\\{2}[^/:\*\?&lt;>\|]+\.\w{2,6})'"/>
+	
+	
+	
+	-->
+		<iso:let name="regex" value="'(((http|ftp|https):[/][/]|www.)?([a-z]|[A-Z]|[0-9]|[/.]|[~])*)'"/>
+		
+		<iso:assert id="C6.4" name="URL Test" test="not(@data) or matches(@data,$regex)">Malformed URL: <iso:value-of select="@data"/>.</iso:assert>
+		
+		<iso:assert id="C6.5" name="Data Test" test="@data">Data attribute must exist</iso:assert>
+		
+		<iso:assert id="C6.6" name="Data Test" test="@type">WARNING: Type attribute should exist</iso:assert>
+	
+	</iso:rule>
+	
+</iso:pattern>
+</iso:schema>
+
+
+
+
+<!-- Unused Constraints
+
+
+	<iso:rule context="reqif:SPEC-OBJECT">
+		<iso:let name="typeRef" value="./reqif:TYPE/reqif:SPEC-OBJECT-TYPE-REF"/>
+		<iso:let name="element" value="//*[@IDENTIFIER = $typeRef]/name()"/>
+		
+		<iso:assert id="??" name="ID-IDREF muss uebereinstimmen." test="$element = 'reqif:SPEC-OBJECT-TYPE'"><iso:name/> referenziert nicht ein reqif:SPEC-OBJECT-TYPE, sondern <iso:value-of select="$element"/></iso:assert>
+	</iso:rule>
+	
+	<iso:rule context="reqif:SPECIFICATION">
+		<iso:let name="typeRef" value="./reqif:TYPE/reqif:SPECIFICATION-TYPE-REF"/>
+		<iso:let name="element" value="//*[@IDENTIFIER = $typeRef]/name()"/>
+		
+		<iso:assert id="??" name="ID-IDREF muss uebereinstimmen." test="$element = 'reqif:SPECIFICATION-TYPE'"><iso:name/> referenziert nicht ein reqif:SPECIFICATION-TYPE, sondern <iso:value-of select="$element"/></iso:assert>
+	</iso:rule>
+	
+	<iso:let name="typeRef" value="./reqif:TYPE/reqif:RELATION-GROUP-TYPE-REF"/>
+		<iso:let name="element" value="//*[@IDENTIFIER = $typeRef]/name()"/>	
+		<iso:assert id="??" name="ID-IDREF muss uebereinstimmen." test="$element = 'reqif:RELATION-GROUP-TYPE'"><iso:name/> referenziert nicht ein reqif:RELATION-GROUP-TYPE, sondern <iso:value-of select="$element"/></iso:assert>
+	
+	
+	<iso:let name="typeRef" value="./reqif:TYPE/reqif:SPEC-RELATION-TYPE-REF"/>
+		<iso:let name="element" value="//*[@IDENTIFIER = $typeRef]/name()"/>	
+		<iso:assert id="??" name="ID-IDREF muss uebereinstimmen." test="$element = 'reqif:SPEC-RELATION-TYPE'"><iso:name/> referenziert nicht ein reqif:SPEC-RELATION-TYPE, sondern <iso:value-of select="$element"/></iso:assert>
+	
+	
+	<iso:rule context="reqif:SPEC-OBJECT">
+		<iso:let name = "objType" value="./reqif:TYPE/reqif:SPEC-OBJECT-TYPE-REF"/>
+		<iso:let name = "nrValues" value="count(./reqif:VALUES/*)"/>
+		<iso:let name = "nrDef" value="count(//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/*)"/>
+		
+		<iso:let name = "attrValueString" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-STRING/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-STRING-REF"/>
+		<iso:let name = "attrValueBool" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-BOOLEAN/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-BOOLEAN-REF"/>
+		<iso:let name = "attrValueEnum" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-ENUMERATION/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-ENUMERATION-REF"/>
+		<iso:let name = "attrValueInteger" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-INTEGER/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-INTEGER-REF"/>
+		<iso:let name = "attrValueReal" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-REAL/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-REAL-REF"/>
+		<iso:let name = "attrValueDate" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-DATE/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-DATE-REF"/>
+		<iso:let name = "attrValueXhtml" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-XHTML/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-XHTML-REF"/>
+		
+		<iso:let name = "attrDefString" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/reqif:ATTRIBUTE-DEFINITION-STRING/@IDENTIFIER"/>
+		<iso:let name = "attrDefBool" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/reqif:ATTRIBUTE-DEFINITION-BOOLEAN/@IDENTIFIER"/>
+		<iso:let name = "attrDefEnum" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/reqif:ATTRIBUTE-DEFINITION-ENUMERATION/@IDENTIFIER"/>
+		<iso:let name = "attrDefInteger" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/reqif:ATTRIBUTE-DEFINITION-INTEGER/@IDENTIFIER"/>
+		<iso:let name = "attrDefReal" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/reqif:ATTRIBUTE-DEFINITION-REAL/@IDENTIFIER"/>
+		<iso:let name = "attrDefDate" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/reqif:ATTRIBUTE-DEFINITION-DATE/@IDENTIFIER"/>
+		<iso:let name = "attrDefXhtml" value="//reqif:SPEC-OBJECT-TYPE[@IDENTIFIER = $objType]/reqif:SPEC-ATTRIBUTES/reqif:ATTRIBUTE-DEFINITION-XHTML/@IDENTIFIER"/>
+		
+		<iso:assert test="$attrValueString = $attrDefString or (not($attrValueString) and not($attrDefString))" > reqif:ATTRIBUTE-DEFINITION-STRING-REF != reqif:ATTRIBUTE-DEFINITION-STRING 
+			<iso:value-of select="$attrValueString"/> != <iso:value-of select="$attrDefString"/></iso:assert>
+		<iso:assert test="$attrValueBool = $attrDefBool or (not($attrValueBool) and not($attrDefBool))" > reqif:ATTRIBUTE-DEFINITION-Bool-REF != reqif:ATTRIBUTE-DEFINITION-Bool
+			<iso:value-of select="$attrValueBool"/> != <iso:value-of select="$attrDefBool"/></iso:assert>
+		<iso:assert test="$attrValueEnum = $attrDefEnum or (not($attrValueEnum) and not($attrDefEnum))" > reqif:ATTRIBUTE-DEFINITION-Enum-REF != reqif:ATTRIBUTE-DEFINITION-Enum
+			<iso:value-of select="$attrValueEnum"/> != <iso:value-of select="$attrDefEnum"/></iso:assert>
+		<iso:assert test="$attrValueInteger = $attrDefInteger or (not($attrValueInteger) and not($attrDefInteger))" > reqif:ATTRIBUTE-DEFINITION-Integer-REF != reqif:ATTRIBUTE-DEFINITION-Integer
+			<iso:value-of select="$attrValueInteger"/> != <iso:value-of select="$attrDefInteger"/></iso:assert>
+		<iso:assert test="$attrValueReal = $attrDefReal or (not($attrValueReal) and not($attrDefReal))" > reqif:ATTRIBUTE-DEFINITION-Real-REF != reqif:ATTRIBUTE-DEFINITION-Real
+			<iso:value-of select="$attrValueReal"/> != <iso:value-of select="$attrDefReal"/></iso:assert>
+		<iso:assert test="$attrValueDate = $attrDefDate or (not($attrValueDate) and not($attrDefDate))" > reqif:ATTRIBUTE-DEFINITION-Date-REF != reqif:ATTRIBUTE-DEFINITION-Date
+			<iso:value-of select="$attrValueDate"/> != <iso:value-of select="$attrDefDate"/></iso:assert>
+		<iso:assert test="$attrValueXhtml = $attrDefXhtml or (not($attrValueXhtml) and not($attrDefXhtml))" > reqif:ATTRIBUTE-DEFINITION-Xhtml-REF != reqif:ATTRIBUTE-DEFINITION-Xhtml
+			<iso:value-of select="$attrValueXhtml"/> != <iso:value-of select="$attrDefXhtml"/></iso:assert>
+		
+		
+		<iso:assert test="$nrValues = $nrDef"> The number of Values is NOT equal to the number of Definitions. <value-of select="$nrValues"/> != <value-of select="$nrDef"/>(Fehler 9, 11)</iso:assert>
+		
+		<iso:let name="id" value="./@IDENTIFIER"/>
+		<iso:let name="nrSpecifications" value="count(//reqif:SPECIFICATION//reqif:OBJECT[reqif:SPEC-OBJECT-REF = $id])"/>
+		<iso:assert test="1 >= $nrSpecifications"> The element reqif:SPEC-OBJECT is being referenced from mor than two reqif:SPECIFICATION. (Fehler 15)</iso:assert>
+		
+		<iso:let name="EnumValues" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-ENUMERATION/reqif:VALUES/reqif:ENUM-VALUE-REF"/>		
+		<iso:let name="AttrDefEnumRef" value="./reqif:VALUES/reqif:ATTRIBUTE-VALUE-ENUMERATION/reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-ENUMERATION-REF"/>
+		<iso:let name = "DataTypeDefRef" value="//reqif:ATTRIBUTE-DEFINITION-ENUMERATION[@IDENTIFIER = $AttrDefEnumRef]/reqif:TYPE/reqif:DATATYPE-DEFINITION-ENUMERATION-REF"/>		
+		<iso:let name="DatTypDefEnumID" value="//reqif:DATATYPE-DEFINITION-ENUMERATION[@IDENTIFIER = $DataTypeDefRef]/reqif:SPECIFIED-VALUES/reqif:ENUM-VALUE/@IDENTIFIER"/>
+		<iso:let name="allSet" value="$EnumValues | $DatTypDefEnumID"/>
+		
+		
+		<iso:assert test="count($allSet) = count($EnumValues)"> The ENUM-VALUE-REF of <name/> arte not the same as DATATYPE-DEFINITION-ENUMERATION specifies ! (Fehler 8) 
+			TEST( <value-of select="count($allSet)"/> == <value-of select="count($EnumValues)"/> ) </iso:assert>
+			
+		<iso:report test="true()"> The ENUM-VALUE-REF of <name/> arte not the same as DATATYPE-DEFINITION-ENUMERATION specifies ! (Fehler 8) 
+			TEST( <value-of select="count($allSet)"/> == <value-of select="count($EnumValues)"/> ) </iso:report>
+		
+		<iso:assert test="count($attrValueEnum) = 1 and count($attrDefEnum) = 1 and contains($attrValueEnum,$attrDefEnum)">
+			The ENUM-VALUE-REF with IDENTIFIER <iso:value-of select="$attrValueEnum"/> is refering to an ENUM-VALUE NOT contained in the ATTRIBUTE-DEFINITION-ENUMERATION with IDENTIFIER <iso:value-of select="$attrDefEnum"/> ! (Fehler 8) </iso:assert>
+		
+		
+	</iso:rule>
+
+
+	<iso:rule context="reqif:REQ-IF-HEADER">
+			<iso:assert test="reqif:TITLE"> The element "REQ-IF-TITLE" is missing in the element <iso:name/> (Fehler 5) </iso:assert>
+			<iso:assert test="count(reqif:COMMENT|reqif:CREATION-TIME|reqif:REQ-IF-TOOL-ID|reqif:REQ-IF-VERSION|reqif:SOURCE-TOOL-ID|reqif:TITLE) = count (*)">
+				There is an extra element in the contents of <iso:name/> (Fehler 6) </iso:assert> 
+			<iso:assert test="count(@DESC|@IDENTIFIER|@LAST-CHANGE|@LONG-NAME) = count (@*)">
+				There is an extra attribute in the contents of <iso:name/> (Fehler 2) </iso:assert>
+				
+			<iso:let name="id" value="normalize-space(./@IDENTIFIER)"/>
+			<iso:let name="nr_id" value="count(*[@IDENTIFIER = $id])"/>
+			<iso:assert test="$nr_id &lt; 1"> The IDENTIFIER <iso:value-of select="$id"/> is used more than once.</iso:assert>
+			<iso:assert test="false()"> The IDENTIFIER <iso:value-of select="$id"/> is not of type xsd:ID. (Fehler 1)</iso:assert> 
+	</iso:rule>
+
+	<iso:rule context="reqif:ATTRIBUTE-VALUE-ENUMERATION">
+		<iso:let name="attrDefRef" value="./reqif:DEFINITION/reqif:ATTRIBUTE-DEFINITION-ENUMERATION-REF"/>
+		<iso:let name="b" value="./reqif:VALUES/reqif:ENUM-VALUE-REF"/>
+		<iso:assert test="//reqif:DATATYPE-DEFINITION-ENUMERATION[@IDENTIFIER = $a]/reqif:SPECIFIED-VALUES/reqif:ENUM-VALUE[@IDENTIFIER = $b]">
+			The ENUM-VALUE-REF with IDENTIFIER <iso:value-of select="$b"/> is refering to an ENUM-VALUE NOT contained in the ATTRIBUTE-DEFINITION-ENUMERATION with IDENTIFIER <iso:value-of select="$a"/> ! (Fehler 8) </iso:assert>
+	</iso:rule>
+
+
+	<iso:rule context="reqif:CREATION-TIME">
+		<iso:assert test="normalize-space(.) castable as xsd:dateTime"> The text of <iso:name/> is not of type xsd:dateTime (Fehler 3)</iso:assert>
+	</iso:rule>
+
+	<iso:rule context="reqif:REQ-IF-TOOL-ID">
+		<iso:assert test="normalize-space(.)"> The text of <iso:name/> must not be empty (Fehler 4)</iso:assert>
+	</iso:rule>
+	
+	
+-->
