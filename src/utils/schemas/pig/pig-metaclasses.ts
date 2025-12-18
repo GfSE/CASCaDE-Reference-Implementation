@@ -28,7 +28,7 @@ import { RE } from "../../lib/definitions";
 import { LIB } from "../../lib/helpers";
 import { IRsp, rspOK, JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
 // use central Ajv instance from the Vue plugin:
-import { ajv } from '../../../plugins/ajv';
+import { SCH } from './pig-schemata';
 // optional: import type for better TS typing where needed
 // import type Ajv from 'ajv';
 
@@ -93,6 +93,9 @@ export interface ILanguageText {
     value: string;
     lang?: tagIETF;
 }
+export interface IText {
+    value: string;
+}
 
 //////////////////////////////////////
 // The abstract classes:
@@ -110,15 +113,28 @@ These capture who, what, when, where, and how of data access or changes:
 
 interface IItem {
     itemType: PigItemTypeValue;
+    hasClass?: TPigId;  // must be IRI of the item's respective class, translates to @type resp. rdf:type
 }
 abstract class Item implements IItem {
     readonly itemType!: PigItemTypeValue;
+    // All items may have a hasClass reference, some require it;
+    // concrete subclasses enforce that in their validate() methods:
+    hasClass?: TPigId;
     protected lastStatus!: IRsp;
     protected constructor(itm: IItem) {
         this.itemType = itm.itemType;
     }
     status(): IRsp {
         return this.lastStatus;
+    }
+    protected set(itm: IItem) {
+        this.hasClass = itm.hasClass;
+    }
+    protected get() {
+        return {
+            itemType: this.itemType,
+            hasClass: this.hasClass
+        };
     }
 }
 interface IIdentifiable extends IItem {
@@ -137,7 +153,8 @@ abstract class Identifiable extends Item implements IIdentifiable {
     protected set(itm: IIdentifiable) {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
-//        console.debug('Identifiable.set i: ', itm);
+        //        console.debug('Identifiable.set i: ', itm);
+        super.set(itm);
         this.id = itm.id;
         this.title = normalizeMultiLanguageText(itm.title);
         this.description = normalizeMultiLanguageText(itm.description);
@@ -146,16 +163,23 @@ abstract class Identifiable extends Item implements IIdentifiable {
     }
     protected get() {
         return {
+            ...super.get(),
             id: this.id,
-            itemType: this.itemType,
+//            itemType: this.itemType,
             title: this.title,
             description: this.description
         };
     }
-    setJSONLD(itm: any) {
+    // setJSONLD and getJSONLD are designed to do the conversion for all subclasses;
+    // access to other items in the package (or cache) is necessary in some cases such as Property (class):
+    setJSONLD(itm: any, cache?: TPigItem[]) {
         let norm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
+        // Replace all properties with tags still having a namespace by entries in hasProperty resp hasReference arrays,
+        // where the tag becomes the id:
+
         // id extraction
         norm = replaceIdObjects(norm);
+        // now set the normalized object:
         this.set(norm);
         return this; // make chainable
     }
@@ -187,11 +211,11 @@ abstract class Identifiable extends Item implements IIdentifiable {
 
 interface IElement extends IIdentifiable {
     eligibleProperty?: TPigId[];
-    icon?: string;  // optional, default is undefined (no icon)
+    icon?: IText;  // optional, default is undefined (no icon)
 }
 abstract class Element extends Identifiable implements IElement {
     eligibleProperty?: TPigId[];
-    icon?: string;
+    icon?: IText;
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
     }
@@ -265,6 +289,10 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
 //////////////////////////////////////
 // The concrete classes:
+export interface IEligibleValue {
+    id: TPigId;
+    title: ILanguageText[];
+}
 export interface IProperty extends IIdentifiable {
     datatype: string; // must be of XsDataType
     minCount?: number;
@@ -273,6 +301,7 @@ export interface IProperty extends IIdentifiable {
     pattern?: string;  // a RegExp pattern, only used for string datatype
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
+    eligibleValue?: IEligibleValue[]; // array of allowed values, datatype-dependent
     composedProperty?: TPigId[];  // must be IRI of another Property, no cyclic references
     defaultValue?: string;   // in PIG, values of all datatypes are strings
 }
@@ -284,6 +313,7 @@ export class Property extends Identifiable implements IProperty {
     pattern?: string;
     minInclusive?: number;
     maxInclusive?: number;
+    eligibleValue?: IEligibleValue[]; 
     composedProperty?: TPigId[];
     defaultValue?: string;
     constructor() {
@@ -301,6 +331,7 @@ export class Property extends Identifiable implements IProperty {
             this.pattern = itm.pattern;
             this.minInclusive = itm.minInclusive;
             this.maxInclusive = itm.maxInclusive;
+            this.eligibleValue = itm.eligibleValue;
             this.composedProperty = itm.composedProperty;
             this.defaultValue = itm.defaultValue;
         }
@@ -316,11 +347,12 @@ export class Property extends Identifiable implements IProperty {
             pattern: this.pattern,
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
+            eligibleValue: this.eligibleValue,
             composedProperty: this.composedProperty,
             defaultValue: this.defaultValue
         });
     }
-    getHTML() {
+    getHTML(options?: object): stringHTML {
         return '<div>not implemented yet</div>';
     }
     validate(itm: IProperty) {
@@ -356,7 +388,7 @@ export class Reference extends Identifiable implements IReference {
             eligibleTarget: this.eligibleTarget
         });
     }
-    getHTML() {
+    getHTML(options?: object): stringHTML {
         return '<div>not implemented yet</div>';
     }
     validate(itm: IReference) {
@@ -395,19 +427,19 @@ export class Entity extends Element implements IEntity {
         };
     }
     validate(itm: IEntity) {
-        console.debug('Entity.validate: ', itm);
+        // console.debug('Entity.validate: ', itm);
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         try {
-            const ok = validateEntitySchema(itm as unknown as object);
+            const ok = SCH.validateEntitySchema(itm as unknown as object);
             if (!ok) {
-                const msg = ajv.errorsText(validateEntitySchema.errors, { separator: '; ' });
-                return { status: 400, statusText: `Schema validation failed for IEntity: ${msg}`, ok: false };
+                const msg = SCH.getValidateEntityErrors();
+                return { status: 400, statusText: `Schema validation failed for Entity '${itm.id}': ${msg}`, ok: false };
             }
         } catch (err: any) {
             return { status: 500, statusText: `Schema validator error: ${err?.message ?? String(err)}`, ok: false };
         }
 
-        // runtime guards:
+        // Runtime guards:
         // id and itemType checked in superclass
         if (this.specializes && this.specializes !== itm.specializes)
             throw new Error(`Cannot change the specialization of an Entity after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
@@ -451,6 +483,18 @@ export class Relationship extends Element implements IRelationship {
         };
     }
     validate(itm: IRelationship) {
+        // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        try {
+            const ok = SCH.validateRelationshipSchema(itm as unknown as object);
+            if (!ok) {
+                const msg = SCH.getValidateRelationshipErrors();
+                return { status: 400, statusText: `Schema validation failed for Relationship '${itm.id}': ${msg}`, ok: false };
+            }
+        } catch (err: any) {
+            return { status: 500, statusText: `Schema validator error: ${err?.message ?? String(err)}`, ok: false };
+        }
+
+        // Runtime guards:
         // id and itemType checked in superclass
         if (this.specializes && this.specializes !== itm.specializes)
             throw new Error(`Cannot change the specialization of a Relationship after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
@@ -468,13 +512,13 @@ export class Relationship extends Element implements IRelationship {
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
-    hasClass: TPigId;  // must be IRI of an element of type Pig:Property, translates to @type resp. rdf:type
     value?: string;
+    id?: TPigId;  // must point to an element of eligibleValue in its Property class
     aComposedProperty?: TPigId[];
 }
 export class AProperty extends Item implements IAProperty {
-    hasClass!: TPigId;
     value?: string;
+    id?: TPigId;
     aComposedProperty?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.aProperty });
@@ -482,7 +526,7 @@ export class AProperty extends Item implements IAProperty {
     set(itm: IAProperty) {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
-            this.hasClass = itm.hasClass;
+            super.set(itm);
             this.aComposedProperty = itm.aComposedProperty;
             this.value = itm.value;
         }
@@ -490,15 +534,14 @@ export class AProperty extends Item implements IAProperty {
     }
     get() {
         return {
-            itemType: this.itemType,
-            hasClass: this.hasClass,
+            ...super.get(),
             aComposedProperty: this.aComposedProperty,
             value: this.value
         };
     }
     getHTML(options?: object): stringHTML {
         // ToDo: implement a HTML snippet with the property value
-        return '';
+        return '<div>not implemented yet</div>';
     }
     validate(itm: IAProperty) {
         // id and itemType checked in superclass
@@ -510,11 +553,9 @@ export class AProperty extends Item implements IAProperty {
     }
 }
 export interface IAReference extends IItem {
-    hasClass: TPigId;  // must be IRI of an element of type Pig:Reference, translates to @type resp. rdf:type
     element: TPigId;
 }
 export class AReference extends Item implements IAReference {
-    hasClass!: TPigId;
     element!: TPigId;
     constructor() {
         super({ itemType: PigItemType.aReference });
@@ -522,21 +563,20 @@ export class AReference extends Item implements IAReference {
     set(itm: IAReference) {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
-            this.hasClass = itm.hasClass;
+            super.set(itm);
             this.element = itm.element;
         }
         return this;
     }
     get() {
         return {
-            itemType: this.itemType,
-            hasClass: this.hasClass,
+            ...super.get(),
             element: this.element
         };
     }
     getHTML(options?: object): stringHTML {
         // ToDo: implement a HTML snippet with a link to the referenced element
-        return '';
+        return '<div>not implemented yet</div>';
     }
     validate(itm: IAReference) {
         // id and itemType checked in superclass
@@ -549,11 +589,9 @@ export class AReference extends Item implements IAReference {
 }
 
 export interface IAnEntity extends IAnElement {
-    hasClass: TPigId;  // must be IRI of an element of type Pig:Entity, translates to @type resp. rdf:type
     hasReference?: IAReference[];  // optional, must hold anEntity or aRelationship IRIs
 }
 export class AnEntity extends AnElement implements IAnEntity {
-    hasClass!: TPigId;
     hasReference!: AReference[];
     constructor() {
         super({ itemType: PigItemType.anEntity });
@@ -562,7 +600,6 @@ export class AnEntity extends AnElement implements IAnEntity {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
             super.set(itm);
-            this.hasClass = itm.hasClass;
             this.hasReference = itm.hasReference ? itm.hasReference.map(i => new AReference().set(i)) : [];
         }
         return this;
@@ -570,13 +607,12 @@ export class AnEntity extends AnElement implements IAnEntity {
     get() {
         return {
             ... super.get(),
-            hasClass: this.hasClass,
             hasReference: this.hasReference.map(r => r.get())
         };
     }
     getHTML(options?: object): stringHTML {
         // ToDo: implement a HTML representation of the entity including its properties
-        return '';
+        return '<div>not implemented yet</div>';
     }
     validate(itm: IAnEntity) {
         // id and itemType checked in superclass
@@ -589,12 +625,10 @@ export class AnEntity extends AnElement implements IAnEntity {
 }
 
 export interface IARelationship extends IAnElement {
-    hasClass: TPigId;  // must be IRI of an element of type Pig:Relationship, translates to @type resp. rdf:type
     hasSource: IAReference;
     hasTarget: IAReference;
 }
 export class ARelationship extends AnElement implements IARelationship {
-    hasClass!: TPigId;
     hasSource!: AReference;
     hasTarget!: AReference;
     constructor() {
@@ -604,7 +638,6 @@ export class ARelationship extends AnElement implements IARelationship {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
             super.set(itm);
-            this.hasClass = itm.hasClass;
             this.hasSource = new AReference().set(itm.hasSource);
             this.hasTarget = new AReference().set(itm.hasTarget);
         }
@@ -613,14 +646,13 @@ export class ARelationship extends AnElement implements IARelationship {
     get() {
         return {
             ...super.get(),
-            hasClass: this.hasClass,
             hasSource: this.hasSource,
             hasTarget: this.hasTarget
         };
     }
     getHTML(options?: object): stringHTML {
         // ToDo: implement a HTML representation of the relationship including its properties
-        return '';
+        return '<div>not implemented yet</div>';
     }
     validate(itm: IARelationship) {
         // id and itemType checked in superclass
@@ -843,35 +875,6 @@ function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
     return out;
 }
 /**
- * Replace top-level string values that are valid id-strings with id-objects.
- * - Non-recursive (flat): only replaces direct properties of the provided object.
- * - Uses existing `isValidIdString` to decide whether a string is an ID.
- * - options.idKey: property name for the id-object (default '@id')
- * - options.mutate: if true, modify the input object in-place; otherwise return a shallow copy
- *
-function makeIdObjects(
-    obj: JsonObject,
-    options?: { idKey?: string; mutate?: boolean }
-): JsonObject {
-    const idKey = options?.idKey ?? '@id';
-    const mutate = !!options?.mutate;
-    const target: JsonObject = mutate ? obj : { ...obj };
-
-    for (const k of Object.keys(obj)) {
-        const v = obj[k];
-        // replace all id-strings except for the '@id' property itself:
-        if (k !== idKey && typeof v === 'string' && isValidIdString(v)) {
-            // replace string by an id-object, using the configured idKey
-            target[k] = { [idKey]: v } as unknown as JsonValue;
-        } else if (!mutate) {
-            // ensure non-mutating mode copies non-id values
-            target[k] = v;
-        }
-    }
-
-    return target;
-} */
-/**
  * Replace id-objects (e.g. { id: "xyz" } or { "@id": "xyz" }) by the id string.
  * - options.idKeys: array of keys to treat as id keys (default ['id','@id'])
  * - options.mutate: if true mutate in-place, otherwise operate on a deep clone
@@ -919,17 +922,6 @@ function replaceIdObjects(
 
     return walk(root);
 }
-/**
- * Build a simple id-object.
- * - useJsonLd=false => { id: 'xyz' }
- * - useJsonLd=true  => { '@id': 'xyz' }
- *
-function buildIdObject(id: string, useJsonLd = false): JsonObject {
-    return useJsonLd ? { ['@id']: id } : { id };
-}
-makeIdObject(str: string): JsonObject {
-        return { id: str };
-},*/
 // Helper: normalize language tags/values ---
 function normalizeLanguageText(src: any): ILanguageText {
 //    console.debug('normalizeLanguageText', src);
@@ -989,65 +981,43 @@ function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
     }
     return rspOK;
 }
-const ENTITY_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IEntity',
-    type: 'object',
-    properties: {
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:Entity'],
-            description: 'The PigItemType'
-        },
-        hasClass: { $ref: '#/$defs/idString' },
-        specializes: { $ref: '#/$defs/idString' },
-        eligibleReference: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        },
-        eligibleProperty: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        },
-        icon: { type: 'string' },
-        title: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        }
-    },
-    additionalProperties: false,
-    required: ['id', 'itemType'],
-    // One of 'hasClass' and 'specializes' must be there but not both:
-    oneOf: [
-        { required: ['hasClass'] },
-        { required: ['specializes'] }
-    ],
-    // One of 'title' and 'description' must be there, or both:
-    anyOf: [
-        { required: ['title'] },
-        { required: ['description'] }
-    ],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$'
-        },
-        LanguageText: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: { type: 'string' },
-                lang: { type: 'string' }
-            }
+/**
+ * Replace top-level string values that are valid id-strings with id-objects.
+ * - Non-recursive (flat): only replaces direct properties of the provided object.
+ * - Uses existing `isValidIdString` to decide whether a string is an ID.
+ * - options.idKey: property name for the id-object (default '@id')
+ * - options.mutate: if true, modify the input object in-place; otherwise return a shallow copy
+ *
+function makeIdObjects(
+    obj: JsonObject,
+    options?: { idKey?: string; mutate?: boolean }
+): JsonObject {
+    const idKey = options?.idKey ?? '@id';
+    const mutate = !!options?.mutate;
+    const target: JsonObject = mutate ? obj : { ...obj };
+
+    for (const k of Object.keys(obj)) {
+        const v = obj[k];
+        // replace all id-strings except for the '@id' property itself:
+        if (k !== idKey && typeof v === 'string' && isValidIdString(v)) {
+            // replace string by an id-object, using the configured idKey
+            target[k] = { [idKey]: v } as unknown as JsonValue;
+        } else if (!mutate) {
+            // ensure non-mutating mode copies non-id values
+            target[k] = v;
         }
     }
-}; const validateEntitySchema = ajv.compile(ENTITY_SCHEMA);
+
+    return target;
+} */
+/**
+ * Build a simple id-object.
+ * - useJsonLd=false => { id: 'xyz' }
+ * - useJsonLd=true  => { '@id': 'xyz' }
+ *
+function buildIdObject(id: string, useJsonLd = false): JsonObject {
+    return useJsonLd ? { ['@id']: id } : { id };
+}
+makeIdObject(str: string): JsonObject {
+        return { id: str };
+},*/

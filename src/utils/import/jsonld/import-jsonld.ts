@@ -91,7 +91,7 @@ function instantiateFromDoc(doc: any): IRsp {
 
         if (instance) {
             try {
-                (instance as any).setJSONLD(elem);
+                (instance as any).setJSONLD(elem, created);
                 created.push(instance);
             } catch (err) {
                 // do not abort: keep partially populated instance for inspection

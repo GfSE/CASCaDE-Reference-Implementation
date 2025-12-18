@@ -85,6 +85,7 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "Title of Entity Class 1" }],  // if there is just one language, lang can be omitted
             description: [{ value: "Description of o:Entity_1" }],
 
+            icon: { value: "&#x2662;" },
             eligibleReference: [],
             eligibleProperty: ["dcterms:type"]
         };
@@ -179,7 +180,8 @@ describe("PIG Metaclasses", () => {
         const propertyClass_output_JSONLD = test_PC.getJSONLD();
         expect(propertyClass_output_JSONLD).toEqual(propertyClass_input_JSONLD);
 
-        // input JSON-LD to JSON conversion check:
+        // input JSON-LD to JSON conversion check;
+        // no access to other items is necessary in case of Property (class):
         const test_PC_fromJSONLD = new Property().setJSONLD(propertyClass_input_JSONLD);
         expect(test_PC_fromJSONLD.get()).toEqual(propertyClass_input);
 
@@ -216,7 +218,8 @@ describe("PIG Metaclasses", () => {
         const refClass_output_JSONLD = test_RfC.getJSONLD();
         expect(refClass_output_JSONLD).toEqual(referenceClass_input_JSONLD);
 
-        // input JSON-LD to JSON conversion check:
+        // input JSON-LD to JSON conversion check
+        // no access to other items is necessary in case of Reference (class):
         const test_RfC_fromJSONLD = new Reference().setJSONLD(referenceClass_input_JSONLD);
         expect(test_RfC_fromJSONLD.get()).toEqual(referenceClass_input);
     });
