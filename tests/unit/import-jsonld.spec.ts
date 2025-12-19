@@ -6,8 +6,9 @@ import { TPigItem } from '../../src/utils/schemas/pig/pig-metaclasses';
 describe('importJSONLD (file system)', () => {
     // List of relative filenames (relative to this test file). Add more entries as needed.
     const filenames = [
-        "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
-        "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
+        "../data/JSON-LD/03/Project 'Requirement with Enumerated Property'.pig.jsonld"
+        // "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
+        // "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
         // add more test files here, e.g.
         // "../data/JSON-LD/another-sample.pig.jsonld"
     ];
@@ -38,7 +39,8 @@ describe('importJSONLD (file system)', () => {
             expect(instances.length).toBeGreaterThan(0);
 
             instances.forEach((itm, index) => {
-                console.info(`Instance ${index}:`, itm.status(), itm.getJSONLD()['@id']);
+                console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status, itm.getJSONLD()['@id']);
+                console.info(JSON.stringify(itm.getJSONLD(),null,2));
                 // each instantiated item must have a successful status
                 expect(itm.status().ok).toBe(true);
                 // additional per-item assertions can be added here

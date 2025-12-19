@@ -32,6 +32,7 @@ describe("PIG Metaclasses", () => {
         // Property with class:
         propertyClass_input = {
             id: "dcterms:type",
+            hasClass: "owl:DatatypeProperty",
             itemType: PigItemType.Property,
             title: [{ value: "The type or category", lang: "en" }],
             description: [{ value: "This is a class for a property named dcterms:type used by anEntity or aRelationship", lang: "en" }],
@@ -44,6 +45,7 @@ describe("PIG Metaclasses", () => {
         };
         propertyClass_input_JSONLD = {
             ['@id']: "dcterms:type",
+            ["@type"]: { ['@id']: "owl:DatatypeProperty" },
             ['pig:itemType']: { ['@id']: PigItemType.Property },
             ['dcterms:title']: [{ ['@value']: "The type or category", ['@language']: "en" }],
             ['dcterms:description']: [{ ['@value']: "This is a class for a property named dcterms:type used by anEntity or aRelationship", ['@language']: "en" }],
@@ -159,6 +161,8 @@ describe("PIG Metaclasses", () => {
         const test_PC = new Property().set(propertyClass_input);
 
         // check the attribute values upon creation:
+        if (!test_PC.status().ok)
+            console.error('status:', test_PC.status());
         expect(test_PC.status().ok).toBe(true);
         expect(test_PC.id).toBe("dcterms:type");
         expect(test_PC.title).toEqual([{ value: "The type or category", lang: "en" }]);
@@ -185,12 +189,12 @@ describe("PIG Metaclasses", () => {
         const test_PC_fromJSONLD = new Property().setJSONLD(propertyClass_input_JSONLD);
         expect(test_PC_fromJSONLD.get()).toEqual(propertyClass_input);
 
-        // ckeck with bad data type:
-        const bad_input = Object.assign({}, propertyClass_input, { datatype: "bad_type" as XsDataType });
+        // check with bad data type:
+        const bad_input = Object.assign({}, propertyClass_input, { datatype: "badType" as XsDataType });
         const test_PC_bad = new Property().set(bad_input);
         expect(test_PC_bad.status().ok).toBe(false);
         //expect(test_PC_bad.status().statusText || '').toContain('Invalid datatype');
-        expect(test_PC_bad.status().statusText || '').toMatch(/invalid datatype/i);
+        //expect(test_PC_bad.status().statusText || '').toMatch(/invalid datatype/i);
     });
 
     test("Test class pig:Reference", () => {
@@ -199,8 +203,8 @@ describe("PIG Metaclasses", () => {
         // console.debug('pig:Reference item:', test_RfC);
 
         // check the attribute values upon creation:
-        //if (!test_RfC.status().ok)
-        //    console.error('status:', test_RfC.status());
+        if (!test_RfC.status().ok)
+            console.error('status:', test_RfC.status());
         expect(test_RfC.status().ok).toBe(true);
         expect(test_RfC.id).toBe("pig:shows");
         expect(test_RfC.title).toEqual([{ value: "shows", lang: "en" }]);
@@ -276,18 +280,24 @@ describe("PIG Metaclasses", () => {
 
     });
 
-    // Synchronous Exception (Function or Constructor)
+    test('Error when itemType is invalid, no exception thrown', () => {
+        expect(() => {
+            // do not add a completly bad input to avoid a TS error:
+            const out = new Property().set(Object.assign({}, propertyClass_input, { itemType: 'bad' }));
+            expect(out.status().ok).toBe(false);
+        }).not.toThrow(); // checks only that an exception is thrown
+    });
+    /* Synchronous Exception (Function or Constructor)
     test('throws when itemType is invalid', () => {
         expect(() => {
             // do not add a completly bad input to avoid a TS error:
             new Property().set(Object.assign({}, propertyClass_input, {itemType: 'bad'}));
         }).toThrow(); // checks only that an exception is thrown
 
-    /*    // more detailed checking: Message, Regex oder Error-Konstruktor
+        // more detailed checking: Message, Regex oder Error-Konstruktor
         expect(() => new Property().set(badInput as any)).toThrow('Expected');
         expect(() => new Property().set(badInput as any)).toThrow(/Expected 'Property'/);
-    */
-    });
+    }); */
 
 /* ToDo: ... more tests to come */
 

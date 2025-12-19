@@ -25,7 +25,7 @@
 */
 
 import { RE } from "../../lib/definitions";
-import { LIB } from "../../lib/helpers";
+import { LIB, logger } from "../../lib/helpers";
 import { IRsp, rspOK, JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
 // use central Ajv instance from the Vue plugin:
 import { SCH } from './pig-schemata';
@@ -80,14 +80,14 @@ export enum XsDataType {
     ComplexType = 'xs:complexType'
 }
 // Type guard: checks whether a value is one of the XsDataType values
-function isXsDataType(value: unknown): value is XsDataType {
+function isSupportedXsDataType(value: unknown): value is XsDataType {
     if (typeof value !== 'string') return false;
     const norm = value.replace(/^xsd:/,'xs:');
     return (Object.values(XsDataType) as string[]).includes(norm);
 }
 export interface INamespace {
     tag: string; // e.g. a namespace tag, e.g. "pig:"
-    IRI: string; // e.g. a namespace value, e.g. "https://product-information-graph.gfse.org/"
+    uri: string; // e.g. a namespace value, e.g. "https://product-information-graph.gfse.org/"
 }
 export interface ILanguageText {
     value: string;
@@ -136,15 +136,22 @@ abstract class Item implements IItem {
             hasClass: this.hasClass
         };
     }
+    protected validate(itm: IItem) {
+        if (itm.itemType !== this.itemType)
+            return { status: 400, statusText: `Cannot change the itemType (tried to change from ${this.itemType} to ${itm.itemType})`, ok: false };
+        return rspOK;
+    }
 }
 interface IIdentifiable extends IItem {
     id: TPigId;  // translates to @id in JSON-LD
+    specializes?: TPigId;  // must be IRI of a pig:item with equal itemType, no cyclic references, translates to rdfs:subClassOf
     // Any one or both of the following must be present and have at least one item; see schemata:
     title?: ILanguageText[];
     description?: ILanguageText[];
 }
 abstract class Identifiable extends Item implements IIdentifiable {
     id!: TPigId;
+    specializes?: TPigId;
     title?: ILanguageText[];
     description?: ILanguageText[];
     protected constructor(itm: IItem) {
@@ -153,19 +160,22 @@ abstract class Identifiable extends Item implements IIdentifiable {
     protected set(itm: IIdentifiable) {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
-        //        console.debug('Identifiable.set i: ', itm);
+        //        logger.debug('Identifiable.set i: ', itm);
         super.set(itm);
         this.id = itm.id;
-        this.title = normalizeMultiLanguageText(itm.title);
-        this.description = normalizeMultiLanguageText(itm.description);
-//        console.debug('Identifiable.set o: ', this);
+        this.specializes = itm.specializes;
+        this.title = itm.title;
+        this.description = itm.description;
+    //    this.title = normalizeMultiLanguageText(itm.title);
+    //    this.description = normalizeMultiLanguageText(itm.description);
+//        logger.debug('Identifiable.set o: ', this);
         // made chainable in concrete subclass
     }
     protected get() {
         return {
             ...super.get(),
             id: this.id,
-//            itemType: this.itemType,
+            specializes: this.specializes,
             title: this.title,
             description: this.description
         };
@@ -185,19 +195,21 @@ abstract class Identifiable extends Item implements IIdentifiable {
     }
     getJSONLD() {
         const renamed = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
-    //    console.debug('Identifiable.getJSONLD renamed: ', renamed);
+    //    logger.debug('Identifiable.getJSONLD renamed: ', renamed);
         return makeIdObjects(renamed) as JsonObject;        
     }
     protected validate(itm: IIdentifiable) {
-        if (itm.itemType !== this.itemType)
-            throw new Error(`Cannot change the itemType of an item (tried to change from ${this.itemType} to ${itm.itemType})`);
         if (this.id && itm.id !== this.id)
-            throw new Error(`Cannot change the id of an item (tried to change from ${this.id} to ${itm.id})`);
+            return { status: 400, statusText: `Cannot change the id of an item (tried to change from ${this.id} to ${itm.id})`, ok: false };
+        if (this.specializes && this.specializes !== itm.specializes)
+            return { status: 400, statusText: `Cannot change the specialization (tried to change from ${this.specializes} to ${itm.specializes})`, ok: false };
 
+        // Runtime guards:
         // Ensure title is a multi-language text (array of ILanguageText)
-        const tRes = validateMultiLanguageText(itm.title, 'title');
-        if (!tRes.ok) return tRes;
-
+        if (itm.title !== undefined) {
+            const tRes = validateMultiLanguageText(itm.title, 'title');
+            if (!tRes.ok) return tRes;
+        }
         // description is optional, but when present must be an array of ILanguageText
         if (itm.description !== undefined) {
             const dRes = validateMultiLanguageText(itm.description, 'description');
@@ -205,7 +217,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         }
 
         // ToDo: implement further validation logic
-        return rspOK;
+        return super.validate(itm);
     }
 }
 
@@ -321,7 +333,7 @@ export class Property extends Identifiable implements IProperty {
     }
     set(itm: IProperty) {
         this.lastStatus = this.validate(itm);
-    //    console.debug('Property.set: ', this.lastStatus);
+        // logger.debug('Property.set: '+ JSON.stringify(this.lastStatus));
         if (this.lastStatus.ok) {
             super.set(itm);
             this.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
@@ -356,11 +368,29 @@ export class Property extends Identifiable implements IProperty {
         return '<div>not implemented yet</div>';
     }
     validate(itm: IProperty) {
+        // normalize datatype:
+        itm.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
+
+        // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        try {
+            const ok = SCH.validatePropertySchema(itm as unknown as object);
+            if (!ok) {
+                const msg = SCH.getValidatePropertyErrors();
+                return { status: 400, statusText: `Schema validation failed for Property '${itm.id}': ${msg}`, ok: false };
+            }
+        } catch (err: any) {
+            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
+        }
+
+        // Runtime guards:
         // id and itemType checked in superclass
     //    const rsp = validateIdString(itm.datatype);
     //    if (!rsp.ok) return rsp;
-        if (!isXsDataType(itm.datatype))
-            return { status: 699, statusText: `Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`, ok: false };
+        // all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
+        // others shall be treated as strings (with a warning in the log):
+        if (!isSupportedXsDataType(itm.datatype))
+            logger.warn(`Property '${itm.id}' has unsupported datatype '${itm.datatype}'. It will be treated as 'xs:string'.`);
+//            return { status: 699, statusText: `Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`, ok: false }; */
 
         // ToDo: implement further validation logic
         return super.validate(itm);
@@ -401,11 +431,9 @@ export class Reference extends Identifiable implements IReference {
 }
 
 export interface IEntity extends IElement {
-    specializes?: TPigId;  // must be IRI of another Entity, no cyclic references, translates to rdfs:subClassOf
     eligibleReference?: TPigId[];  // must hold Reference IRIs
 }
 export class Entity extends Element implements IEntity {
-    specializes?: TPigId;
     eligibleReference?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.Entity });
@@ -414,7 +442,6 @@ export class Entity extends Element implements IEntity {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
             super.set(itm);
-            this.specializes = itm.specializes;
             this.eligibleReference = itm.eligibleReference;
         }
         return this;  // make chainable
@@ -422,12 +449,11 @@ export class Entity extends Element implements IEntity {
     get() {
         return {
             ...super.get(),
-            specializes: this.specializes,
             eligibleReference: Array.isArray(this.eligibleReference) ? this.eligibleReference : undefined
         };
     }
     validate(itm: IEntity) {
-        // console.debug('Entity.validate: ', itm);
+        // logger.debug('Entity.validate: ', itm);
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         try {
             const ok = SCH.validateEntitySchema(itm as unknown as object);
@@ -436,13 +462,13 @@ export class Entity extends Element implements IEntity {
                 return { status: 400, statusText: `Schema validation failed for Entity '${itm.id}': ${msg}`, ok: false };
             }
         } catch (err: any) {
-            return { status: 500, statusText: `Schema validator error: ${err?.message ?? String(err)}`, ok: false };
+            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
         }
 
         // Runtime guards:
         // id and itemType checked in superclass
-        if (this.specializes && this.specializes !== itm.specializes)
-            throw new Error(`Cannot change the specialization of an Entity after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
+        // check whether specializes is another Entity IRI is done in overall consistency check
+
         // If eligibleReference is not present, all references are allowed;
         // if present and empty, no references are allowed:
         const rsp = validateIdStringArray(itm.eligibleReference, 'eligibleReference', { canBeUndefined: true, minCount: 0 });
@@ -453,12 +479,10 @@ export class Entity extends Element implements IEntity {
 }
 
 export interface IRelationship extends IElement {
-    specializes?: TPigId;  // must be IRI of another Relationship, no cyclic references, translates to rdfs:subClassOf
     eligibleSource?: TPigId[];  // must hold Reference IRIs
     eligibleTarget?: TPigId[];  // must hold Reference IRIs
 }
 export class Relationship extends Element implements IRelationship {
-    specializes?: TPigId;
     eligibleSource?: TPigId[];
     eligibleTarget?: TPigId[];
     constructor() {
@@ -468,7 +492,6 @@ export class Relationship extends Element implements IRelationship {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
             super.set(itm);
-            this.specializes = itm.specializes;
             this.eligibleSource = itm.eligibleSource;
             this.eligibleTarget = itm.eligibleTarget;
         }
@@ -477,7 +500,6 @@ export class Relationship extends Element implements IRelationship {
     get() {
         return {
             ...super.get(),
-            specializes: this.specializes,
             eligibleSource: Array.isArray(this.eligibleSource) ? this.eligibleSource : undefined,
             eligibleTarget: Array.isArray(this.eligibleTarget) ? this.eligibleTarget : undefined
         };
@@ -491,13 +513,12 @@ export class Relationship extends Element implements IRelationship {
                 return { status: 400, statusText: `Schema validation failed for Relationship '${itm.id}': ${msg}`, ok: false };
             }
         } catch (err: any) {
-            return { status: 500, statusText: `Schema validator error: ${err?.message ?? String(err)}`, ok: false };
+            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
         }
 
         // Runtime guards:
         // id and itemType checked in superclass
-        if (this.specializes && this.specializes !== itm.specializes)
-            throw new Error(`Cannot change the specialization of a Relationship after creation (tried to change from ${this.specializes} to ${itm.specializes})`);
+        // check whether specializes is another Relationship IRI is done in overall consistency check
 
         // If eligibleSource/eligibleTarget are not present, sources resp. targets of all classes are allowed;
         // if present, at least one entry must be there, because a relationship without source or target makes no sense:
@@ -546,10 +567,10 @@ export class AProperty extends Item implements IAProperty {
     validate(itm: IAProperty) {
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            throw new Error(`'${PigItemType.aProperty}' must have a hasClass reference`);
+            return { status: 400, statusText: `'${PigItemType.aProperty}' must have a hasClass reference`, ok: false };
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Property IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return rspOK;
+        return super.validate(itm);
     }
 }
 export interface IAReference extends IItem {
@@ -581,10 +602,10 @@ export class AReference extends Item implements IAReference {
     validate(itm: IAReference) {
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            throw new Error(`'${PigItemType.aReference}' must have a hasClass reference`);
+            return { status: 400, statusText: `'${PigItemType.aReference}' must have a hasClass reference`, ok: false };
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Reference IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return rspOK;
+        return super.validate(itm);
     }
 }
 
@@ -617,7 +638,7 @@ export class AnEntity extends AnElement implements IAnEntity {
     validate(itm: IAnEntity) {
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            throw new Error(`'${PigItemType.anEntity}' must have a hasClass reference`);
+            return { status: 400, statusText: `'${PigItemType.anEntity}' must have a hasClass reference`, ok: false };
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Entity IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
@@ -657,7 +678,7 @@ export class ARelationship extends AnElement implements IARelationship {
     validate(itm: IARelationship) {
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            throw new Error(`'${PigItemType.aRelationship}' must have a hasClass reference`);
+            return { status: 400, statusText: `'${PigItemType.aRelationship}' must have a hasClass reference`, ok: false };
         // ToDo: implement further validation logic
         // - Check class reference; must be an existing Relationship IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
@@ -924,7 +945,7 @@ function replaceIdObjects(
 }
 // Helper: normalize language tags/values ---
 function normalizeLanguageText(src: any): ILanguageText {
-//    console.debug('normalizeLanguageText', src);
+//    logger.debug('normalizeLanguageText', src);
     if (!src)
         return { value: '' };
     if (typeof src === 'object') {
@@ -950,7 +971,7 @@ function normalizeMultiLanguageText(src: any): ILanguageText[] {
    Returns IRsp (rspOK on success, error IRsp on failure)
 */
 function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
-//    console.debug('validateMultiLanguageText',arr,fieldName);
+//    logger.debug('validateMultiLanguageText',arr,fieldName);
     if (!Array.isArray(arr)) {
         return { status: 698, statusText: `Invalid ${fieldName}: expected an array of language-tagged texts`, ok: false };
     }

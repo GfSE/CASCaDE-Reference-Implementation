@@ -72,7 +72,7 @@ export const LIB = {
             statusText: statusText,
             response: response,
             responseType: responseType,
-            ok: status >= 200 && status < 300 || status === 0
+            ok: status > 199 && status < 300 || status === 0
         };
     },
 
@@ -245,7 +245,7 @@ export const LIB = {
                     // if target key already exists we overwrite — intentional but warn in console
                     if (Object.prototype.hasOwnProperty.call(src, mappedKey)) {
                         // eslint-disable-next-line no-console
-                        console.warn(`renameJsonTags: overwriting key '${mappedKey}' while renaming '${key}'`);
+                        logger.warn(`renameJsonTags: overwriting key '${mappedKey}' while renaming '${key}'`);
                     }
                     src[mappedKey] = newValue;
                     delete src[key];
@@ -256,7 +256,7 @@ export const LIB = {
             return src;
         }
 
-        // console.debug('src',src);
+        // logger.debug('src',src);
         const out: JsonObject = {};
         for (const key of Object.keys(src)) {
             // unsafe: const mappedKey = mapObj.hasOwnProperty(key) ? mapObj[key] : key;
@@ -335,41 +335,50 @@ export const LIB = {
         return value;
     },
     // Load text from Node file path, HTTP(S) URL or browser File/Blob
-    async readFileAsText(source: string | File | Blob): Promise<string> {
+    async readFileAsText(source: string | File | Blob): Promise<IRsp<string>> {
         if (typeof source === 'string') {
             // string can be a URL or a Node filesystem path
             if (this.isHttpUrl(source)) {
                 // browser or Node fetch
-                const resp = await fetch(source);
-                if (!resp.ok) throw new Error(`Failed to fetch URL ${source}: ${resp.status} ${resp.statusText}`);
-                return await resp.text();
+                try {
+                    const resp = await fetch(source);
+                    if (!resp.ok) {
+                        return this.createRsp(resp.status, `Failed to fetch URL ${source}: ${resp.statusText}`);
+                    }
+                    const text = await resp.text();
+                    return this.createRsp(200, 'OK', text, 'text');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return this.createRsp(500, `Network error fetching ${source}: ${msg}`);
+                }
             }
             // assume Node path: dynamic import to avoid bundling 'fs' into browser build
             if (this.isNodeEnv()) {
                 try {
                     const { readFile } = await import('fs/promises');
                     const data = await readFile(source, { encoding: 'utf8' }) as string;
-                    return data;
+                    return this.createRsp(200, 'OK', data, 'text');
                 } catch (e: unknown) {
                     const msg = e instanceof Error ? e.message : String(e);
-                    throw new Error(`Failed to read file '${source}' (Node): ${msg}`);
+                    return this.createRsp(500, `Failed to read file '${source}' (Node): ${msg}`);
                 }
             }
-            /*    if (isNodeEnv()) {
-                    const { readFile } = await import('fs/promises');
-                    return await readFile(source, { encoding: 'utf8' });
-                } */
-            throw new Error('String source provided but not an http(s) URL and not running in Node.');
+            return this.createRsp(400, 'String source provided but not an http(s) URL and not running in Node.');
         }
 
         // File or Blob (browser)
         if (typeof (source as Blob).text === 'function') {
-            return await(source as Blob).text();
+            try {
+                const text = await (source as Blob).text();
+                return this.createRsp(200, 'OK', text, 'text');
+            } catch (e: unknown) {
+                const msg = e instanceof Error ? e.message : String(e);
+                return this.createRsp(500, `Failed to read Blob/File: ${msg}`);
+            }
         }
 
-        throw new Error('Unsupported source type for function readFileAsText');
+        return this.createRsp(400, 'Unsupported source type for function readFileAsText');
     },
-
     isHttpUrl(s: string): boolean {
             return /^https?:\/\//i.test(s);
     },
@@ -379,4 +388,10 @@ export const LIB = {
         return typeof p !== 'undefined' && !!(p.versions && p.versions.node);
     }
 };
-
+// ToDo: Suppress output in production builds --> implement log levels or filter
+export const logger = {
+    info: (msg: string) => console.info(msg),
+    warn: (msg: string) => console.warn(msg),
+    error: (msg: string) => console.error(msg),
+    debug: (msg: string) => console.debug(msg)
+};

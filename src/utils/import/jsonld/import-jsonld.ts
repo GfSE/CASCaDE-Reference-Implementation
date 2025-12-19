@@ -1,4 +1,4 @@
-import { LIB, IRsp, rspOK } from "../../lib/helpers";
+import { LIB, logger, IRsp, rspOK } from "../../lib/helpers";
 //import { JsonObject, JsonValue } from '../../lib/helpers';
 import { Property, Reference, Entity, Relationship,
     AProperty, AReference, AnEntity, ARelationship, PigItemType,
@@ -16,16 +16,20 @@ import { Property, Reference, Entity, Relationship,
  * - Browser: await importJsonLd(fileInput.files[0])
  */
 export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
-    const text = await LIB.readFileAsText(source);
-    console.info('importJSONLD: loaded text length', text.length);
-//    console.debug('importJSONLD: loaded text', text);
+    const rsp = await LIB.readFileAsText(source);
+    if (!rsp.ok)
+        return rsp;
+
+    const text = rsp.response as string;
+    logger.info('importJSONLD: loaded text length ' + text.length);
+//    logger.debug('importJSONLD: loaded text', text);
     let doc: any;
     try {
         doc = JSON.parse(text);
     } catch (err: any) {
-        throw new Error(`Failed to parse JSON-LD: ${err?.message ?? err}`);
+        return LIB.createRsp( 500, `Failed to parse JSON-LD: ${err?.message ?? err}`);
     }
-//    console.debug('importJSONLD: parsed ', doc);
+//    logger.debug('importJSONLD: parsed ', doc);
     return instantiateFromDoc(doc);
 }
 
@@ -35,14 +39,14 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
 function instantiateFromDoc(doc: any): IRsp {
     const created: TPigItem[] = [];
     const graph: any[] = Array.isArray(doc['@graph']) ? doc['@graph'] : (Array.isArray(doc.graph) ? doc.graph : []);
-    // console.debug('importJSONLD: @graph', graph);
+    // logger.debug('importJSONLD: @graph', graph);
     for (const elem of graph) {
     /*    // convert JSON-LD keys to internal keys (immutable)
         let obj = LIB.renameJsonTags(elem as JsonValue, LIB.fromJSONLD, { mutate: false }) as JsonObject;
         obj = LIB.replaceIdObjects(obj) as JsonObject; */
 
         if (!elem['pig:itemType'] || !elem['pig:itemType']['@id']) {
-            console.warn('importJSONLD: @graph element missing pig:itemType, skipping', elem);
+            logger.warn('importJSONLD: @graph element missing pig:itemType, skipping '+ elem.id);
             continue;
         }   
 
@@ -53,7 +57,7 @@ function instantiateFromDoc(doc: any): IRsp {
         if (![PigItemType.Property, PigItemType.Reference, PigItemType.Entity, PigItemType.Relationship,
             PigItemType.anEntity].includes(itype))
             continue;
-     //   console.debug('importJSONLD: @graph renamed', elem, itype);
+     //   logger.debug('importJSONLD: @graph renamed', elem, itype);
 
         let instance: any = null;
         try {
@@ -96,7 +100,7 @@ function instantiateFromDoc(doc: any): IRsp {
             } catch (err) {
                 // do not abort: keep partially populated instance for inspection
                 // eslint-disable-next-line no-console
-                console.warn(`Warning: failed to populate instance with itemType '${itype}': ${err}`);
+                logger.warn(`Warning: failed to populate instance with itemType '${itype}': ${err}`);
             }
     /*    } else {
             // fallback: push converted plain object
