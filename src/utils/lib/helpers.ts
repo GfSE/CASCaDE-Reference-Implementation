@@ -8,26 +8,7 @@
 *   - 
 */
 
-// An xhr-like object to return the result of the import;
-// use it as follows (according to GitHub Copilot):
-// - XML Document:
-//   const rspDoc: IRsp<Document> = { status: 200, statusText: 'OK', response: doc, responseType: 'document' };
-// - or JSON payload:
-//   type PigPackage = { /* ... */ };
-//   const rspJson: IRsp<PigPackage> = { status: 200, statusText: 'OK', response: pigPackage, responseType: 'json' };
-// - or dynamically:
-//   if (rsp.responseType === 'document') {
-//      const doc = rsp.response as Document;
-//   };
-export interface IRsp<T = unknown> {
-    status: number;
-    statusText?: string;
-    response?: T; // z.B. Document, string, object, ...
-    responseType?: XMLHttpRequestResponseType; // '' | 'arraybuffer' | 'blob' | 'document' | 'json' | 'text'
-//    headers?: Record<string, string>;
-    ok?: boolean; // convenience: status in 200-299
-}
-export const rspOK: IRsp = { status: 0, ok: true };
+import { IRsp, Rsp, Msg } from './messages';
 
 /**
  * JSON helper types
@@ -42,6 +23,8 @@ export type JsonArray = Array<JsonValue>
 const TO_JSONLD: [string, string][] = [
     ['context', '@context'],
     ['id', '@id'],
+    ['revision', 'pig:revision'],
+    ['priorRevision', 'pig:priorRevision'], 
     ['hasClass', '@type'],
     ['specializes', 'pig:specializes'],
     ['icon', 'pig:icon'], 
@@ -60,13 +43,16 @@ const TO_JSONLD: [string, string][] = [
     ['eligibleTarget', 'pig:eligibleTarget'],
     ['eligibleValue', 'pig:eligibleValue'], 
     ['title', 'dcterms:title'],
-    ['description', 'dcterms:description']
+    ['description', 'dcterms:description'],
+    ['created', 'dcterms:created'],
+    ['modified', 'dcterms:modified'],
+    ['creator', 'dcterms:creator']
 ];
 const FROM_JSONLD: [string, string][] = TO_JSONLD.map(([a, b]) => [b, a] as [string, string]);
 
 // LIB object with helper methods
 export const LIB = {
-    createRsp<T = unknown>(status: number, statusText?: string, response?: T, responseType?: XMLHttpRequestResponseType): IRsp<T> {
+/*    createRsp<T = unknown>(status: number, statusText?: string, response?: T, responseType?: XMLHttpRequestResponseType): IRsp<T> {
         return {
             status: status,
             statusText: statusText,
@@ -74,7 +60,7 @@ export const LIB = {
             responseType: responseType,
             ok: status > 199 && status < 300 || status === 0
         };
-    },
+    }, */
 
     isLeaf(node: JsonValue): boolean {
         return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
@@ -335,7 +321,7 @@ export const LIB = {
         return value;
     },
     // Load text from Node file path, HTTP(S) URL or browser File/Blob
-    async readFileAsText(source: string | File | Blob): Promise<IRsp<string>> {
+    async readFileAsText(source: string | File | Blob): Promise<IRsp<unknown>> {
         if (typeof source === 'string') {
             // string can be a URL or a Node filesystem path
             if (this.isHttpUrl(source)) {
@@ -343,13 +329,13 @@ export const LIB = {
                 try {
                     const resp = await fetch(source);
                     if (!resp.ok) {
-                        return this.createRsp(resp.status, `Failed to fetch URL ${source}: ${resp.statusText}`);
+                        return Msg.create(692, source, resp.statusText);
                     }
                     const text = await resp.text();
-                    return this.createRsp(200, 'OK', text, 'text');
+                    return Rsp.create(0, text, 'text');
                 } catch (e: unknown) {
                     const msg = e instanceof Error ? e.message : String(e);
-                    return this.createRsp(500, `Network error fetching ${source}: ${msg}`);
+                    return Msg.create(693, source, msg);
                 }
             }
             // assume Node path: dynamic import to avoid bundling 'fs' into browser build
@@ -357,27 +343,26 @@ export const LIB = {
                 try {
                     const { readFile } = await import('fs/promises');
                     const data = await readFile(source, { encoding: 'utf8' }) as string;
-                    return this.createRsp(200, 'OK', data, 'text');
+                    return Rsp.create(0, data, 'text');
                 } catch (e: unknown) {
                     const msg = e instanceof Error ? e.message : String(e);
-                    return this.createRsp(500, `Failed to read file '${source}' (Node): ${msg}`);
+                    return Msg.create(694, source, msg);
                 }
             }
-            return this.createRsp(400, 'String source provided but not an http(s) URL and not running in Node.');
+            return Msg.create(695);  // not an http(s) URL and not running in Node
         }
 
         // File or Blob (browser)
         if (typeof (source as Blob).text === 'function') {
             try {
                 const text = await (source as Blob).text();
-                return this.createRsp(200, 'OK', text, 'text');
+                return Rsp.create(0, text, 'text');
             } catch (e: unknown) {
                 const msg = e instanceof Error ? e.message : String(e);
-                return this.createRsp(500, `Failed to read Blob/File: ${msg}`);
+                return Msg.create(694, null, msg);
             }
         }
-
-        return this.createRsp(400, 'Unsupported source type for function readFileAsText');
+        return Msg.create(696); // unsupported source type
     },
     isHttpUrl(s: string): boolean {
             return /^https?:\/\//i.test(s);
@@ -388,10 +373,52 @@ export const LIB = {
         return typeof p !== 'undefined' && !!(p.versions && p.versions.node);
     }
 };
-// ToDo: Suppress output in production builds --> implement log levels or filter
+
+type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 export const logger = {
-    info: (msg: string) => console.info(msg),
-    warn: (msg: string) => console.warn(msg),
-    error: (msg: string) => console.error(msg),
-    debug: (msg: string) => console.debug(msg)
+    // Configure which log levels are enabled (default: all)
+    enabledLevels: new Set<LogLevel>(['info', 'warn', 'error', 'debug']),
+
+    /**
+     * Enable or disable specific log levels
+     * @param levels - Array of log levels to enable. Omit to enable all.
+     */
+    setLogLevels(levels?: LogLevel[]): void {
+        if (!levels || levels.length === 0) {
+            this.enabledLevels = new Set(['info', 'warn', 'error', 'debug']);
+        } else {
+            this.enabledLevels = new Set(levels);
+        }
+    },
+
+    /**
+     * Check if a log level is enabled
+     */
+    isEnabled(level: LogLevel): boolean {
+        return this.enabledLevels.has(level);
+    },
+
+    info: (...args: any[]) => {
+        if (logger.isEnabled('info')) console.info(...args);
+    },
+    warn: (...args: any[]) => {
+        if (logger.isEnabled('warn')) console.warn(...args);
+    },
+    error: (...args: any[]) => {
+        if (logger.isEnabled('error')) console.error(...args);
+    },
+    debug: (...args: any[]) => {
+        if (logger.isEnabled('debug')) console.debug(...args);
+    }
 };
+/* ToDo: Suppress output in production builds --> implement log levels or filter
+export const logger = {
+    info: (...args: any[]) => console.info(...args),
+    warn: (...args: any[]) => console.warn(...args),
+    error: (...args: any[]) => console.error(...args),
+    debug: (...args: any[]) => console.debug(...args)
+//    info: (msg: string) => console.info(msg),
+//    warn: (msg: string) => console.warn(msg),
+//    error: (msg: string) => console.error(msg),
+//    debug: (msg: string) => console.debug(msg)
+};*/

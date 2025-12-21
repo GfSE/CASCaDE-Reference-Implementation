@@ -17,8 +17,16 @@ const PROPERTY_SCHEMA = {
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
-        title: { type: 'array', minItems: 1, items: { $ref: '#/$defs/LanguageText' } },
-        description: { type: 'array', minItems: 1, items: { $ref: '#/$defs/LanguageText' } },
+        title: {
+            type: 'array',
+        //    minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        description: {
+            type: 'array',
+        //    minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
 //        datatype: { $ref: '#/$defs/xsDataType' },
         datatype: {
             type: 'string',
@@ -57,11 +65,22 @@ const PROPERTY_SCHEMA = {
         { required: ['hasClass'] },
         { required: ['specializes'] }
     ],
-    // One of 'title' and 'description' must be there, or both:
+    // One of 'title' and 'description' must be there with content, or both:
+    anyOf: [
+        {
+            required: ['title'],
+            properties: { title: { type: 'array', minItems: 1 } }
+        },
+        {
+            required: ['description'],
+            properties: { description: { type: 'array', minItems: 1 } }
+        }
+    ],
+    /* One of 'title' and 'description' must be there with content, or both:
     anyOf: [
         { required: ['title'] },
         { required: ['description'] }
-    ],
+    ], */
     $defs: {
         idString: {
             type: 'string',
@@ -79,7 +98,7 @@ const PROPERTY_SCHEMA = {
     /*    },
         xsDataType: {
             type: 'string',
-            description: 'XSD/XMLSchema datatype (xs: or xsd: prefix)',
+            description: 'XSD/XMLSchema datatype',
             enum: [
                 'xs:boolean',
                 'xs:integer',
@@ -89,14 +108,6 @@ const PROPERTY_SCHEMA = {
                 'xs:dateTime',
                 'xs:duration',
                 'xs:complexType',
-                'xsd:boolean',
-                'xsd:integer',
-                'xsd:double',
-                'xsd:string',
-                'xsd:anyURI',
-                'xsd:dateTime',
-                'xsd:duration',
-                'xsd:complexType'
             ] */
         }
     }
@@ -135,12 +146,12 @@ const ENTITY_SCHEMA = {
         },
         title: {
             type: 'array',
-            minItems: 1,
+        //    minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
         description: {
             type: 'array',
-            minItems: 1,
+        //    minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         }
     },
@@ -151,11 +162,22 @@ const ENTITY_SCHEMA = {
         { required: ['hasClass'] },
         { required: ['specializes'] }
     ],
-    // One of 'title' and 'description' must be there, or both:
+    // One of 'title' and 'description' must be there with content, or both:
+    anyOf: [
+        {
+            required: ['title'],
+            properties: { title: { type: 'array', minItems: 1 } }
+        },
+        {
+            required: ['description'],
+            properties: { description: { type: 'array', minItems: 1 } }
+        }
+    ],
+    /* One of 'title' and 'description' must be there with content, or both:
     anyOf: [
         { required: ['title'] },
         { required: ['description'] }
-    ],
+    ], */
     $defs: {
         idString: {
             type: 'string',
@@ -212,12 +234,12 @@ const RELATIONSHIP_SCHEMA = {
         },
         title: {
             type: 'array',
-            minItems: 1,
+        //    minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
         description: {
             type: 'array',
-            minItems: 1,
+        //    minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         }
     },
@@ -228,11 +250,22 @@ const RELATIONSHIP_SCHEMA = {
         { required: ['hasClass'] },
         { required: ['specializes'] }
     ],
-    // One of 'title' and 'description' must be there, or both:
+    // One of 'title' and 'description' must be there with content, or both:
+    anyOf: [
+        {
+            required: ['title'],
+            properties: { title: { type: 'array', minItems: 1 } }
+        },
+        {
+            required: ['description'],
+            properties: { description: { type: 'array', minItems: 1 } }
+        }
+    ],
+    /* One of 'title' and 'description' must be there with content, or both:
     anyOf: [
         { required: ['title'] },
         { required: ['description'] }
-    ],
+    ], */
     $defs: {
         idString: {
             type: 'string',

@@ -10,7 +10,7 @@
 *   - It will be checked with schema and constrints before ingesting into a PIG store.
 */
 
-import { IRsp } from '../../lib/helpers';
+import { IRsp } from '../../lib/messages';
 import { IEntity, IRelationship, IProperty, IAnEntity, IARelationship } from '../../schemas/pig/pig-metaclasses';
 
 export class reqif2pig {

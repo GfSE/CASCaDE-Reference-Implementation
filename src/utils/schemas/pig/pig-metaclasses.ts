@@ -12,11 +12,11 @@
 *   - The 'AProperty' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
 *   - Similarly, the 'AReference' instances are instantiated as part their parent objects 'AnEntity'.
 *   - Both 'AProperty' and 'AReference' have no identifier and no revision history of their own.
-*   - Other objects are referenced by IRIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
+*   - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
 *     This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
 *   - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
 *     before the items are instantiated here.
-*   - References to other items are stored as simple strings (the IRIs) to avoid deep object graphs;
+*   - References to other items are stored as simple strings (the URIs) to avoid deep object graphs;
 *     those references are expanded to id objects only when serializing to JSON-LD.
 *   - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
 *   - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
@@ -24,15 +24,16 @@
 *   - Programming errors result in exceptions, data errors in IRsp return values.
 */
 
+import { IRsp, rspOK, Msg, Rsp } from "../../lib/messages";
 import { RE } from "../../lib/definitions";
 import { LIB, logger } from "../../lib/helpers";
-import { IRsp, rspOK, JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
+import { JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
 // use central Ajv instance from the Vue plugin:
 import { SCH } from './pig-schemata';
 // optional: import type for better TS typing where needed
 // import type Ajv from 'ajv';
 
-export type TPigId = string;  // an IRI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
+export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
 export type TPigClass = Property | Reference | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
@@ -113,7 +114,7 @@ These capture who, what, when, where, and how of data access or changes:
 
 interface IItem {
     itemType: PigItemTypeValue;
-    hasClass?: TPigId;  // must be IRI of the item's respective class, translates to @type resp. rdf:type
+    hasClass?: TPigId;  // must be URI of the item's respective class, translates to @type resp. rdf:type
 }
 abstract class Item implements IItem {
     readonly itemType!: PigItemTypeValue;
@@ -138,13 +139,13 @@ abstract class Item implements IItem {
     }
     protected validate(itm: IItem) {
         if (itm.itemType !== this.itemType)
-            return { status: 400, statusText: `Cannot change the itemType (tried to change from ${this.itemType} to ${itm.itemType})`, ok: false };
+            return Msg.create(600, this.itemType, itm.itemType);
         return rspOK;
     }
 }
 interface IIdentifiable extends IItem {
     id: TPigId;  // translates to @id in JSON-LD
-    specializes?: TPigId;  // must be IRI of a pig:item with equal itemType, no cyclic references, translates to rdfs:subClassOf
+    specializes?: TPigId;  // must be URI of a pig:item with equal itemType, no cyclic references, translates to rdfs:subClassOf
     // Any one or both of the following must be present and have at least one item; see schemata:
     title?: ILanguageText[];
     description?: ILanguageText[];
@@ -166,8 +167,6 @@ abstract class Identifiable extends Item implements IIdentifiable {
         this.specializes = itm.specializes;
         this.title = itm.title;
         this.description = itm.description;
-    //    this.title = normalizeMultiLanguageText(itm.title);
-    //    this.description = normalizeMultiLanguageText(itm.description);
 //        logger.debug('Identifiable.set o: ', this);
         // made chainable in concrete subclass
     }
@@ -184,9 +183,6 @@ abstract class Identifiable extends Item implements IIdentifiable {
     // access to other items in the package (or cache) is necessary in some cases such as Property (class):
     setJSONLD(itm: any, cache?: TPigItem[]) {
         let norm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
-        // Replace all properties with tags still having a namespace by entries in hasProperty resp hasReference arrays,
-        // where the tag becomes the id:
-
         // id extraction
         norm = replaceIdObjects(norm);
         // now set the normalized object:
@@ -198,13 +194,20 @@ abstract class Identifiable extends Item implements IIdentifiable {
     //    logger.debug('Identifiable.getJSONLD renamed: ', renamed);
         return makeIdObjects(renamed) as JsonObject;        
     }
+    protected normalize(itm: IIdentifiable): IIdentifiable {
+        // Normalize to tolerate some variations in input:
+        itm.title = normalizeMultiLanguageText(itm.title);
+        itm.description = normalizeMultiLanguageText(itm.description);
+        return itm;
+    }
     protected validate(itm: IIdentifiable) {
         if (this.id && itm.id !== this.id)
-            return { status: 400, statusText: `Cannot change the id of an item (tried to change from ${this.id} to ${itm.id})`, ok: false };
-        if (this.specializes && this.specializes !== itm.specializes)
-            return { status: 400, statusText: `Cannot change the specialization (tried to change from ${this.specializes} to ${itm.specializes})`, ok: false };
+            return Msg.create(610, this.id, itm.id);
+        if(this.specializes && this.specializes !== itm.specializes)
+            return Msg.create(611, this.specializes, itm.specializes);
 
         // Runtime guards:
+    /* this is now checked in schema validation: */
         // Ensure title is a multi-language text (array of ILanguageText)
         if (itm.title !== undefined) {
             const tRes = validateMultiLanguageText(itm.title, 'title');
@@ -246,6 +249,9 @@ abstract class Element extends Identifiable implements IElement {
             icon: this.icon
         };
     }
+    protected normalize(itm: IElement): IElement {
+        return super.normalize(itm);
+    }
     protected validate(itm: IElement) {
         // If eligibleProperty is not present, all properties are allowed;
         // if present and empty, no properties are allowed:
@@ -280,6 +286,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
         this.priorRevision = itm.priorRevision;
         this.modified = itm.modified;
         this.creator = itm.creator;
+
         this.hasProperty = itm.hasProperty ? itm.hasProperty.map(i => new AProperty().set(i)) : [];
         // made chainable in concrete subclass
     }
@@ -292,6 +299,15 @@ abstract class AnElement extends Identifiable implements IAnElement {
             creator: this.creator,
             hasProperty: this.hasProperty.map(p => p.get())
         };
+    }
+    protected normalize(itm: IAnElement): IAnElement {
+        // In JSON-LD all configurable properties have an ID-string as tag and an itemType pig:aProperty;
+        // collect them here in a hasProperty array, where the tag becomes hasClass;
+        // they will be instantiated as AProperty items in set():
+        const norm = itm;
+        norm.hasProperty = collect(itm, PigItemType.aProperty) as IAProperty[] | undefined;
+        logger.debug('AnElement.normalize: '+ JSON.stringify(norm, null, 2));
+        return super.normalize(itm) as IAnElement;
     }
     protected validate(itm: IAnElement) {
         // ToDo: implement further validation logic
@@ -314,7 +330,7 @@ export interface IProperty extends IIdentifiable {
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
     eligibleValue?: IEligibleValue[]; // array of allowed values, datatype-dependent
-    composedProperty?: TPigId[];  // must be IRI of another Property, no cyclic references
+    composedProperty?: TPigId[];  // must be URI of another Property, no cyclic references
     defaultValue?: string;   // in PIG, values of all datatypes are strings
 }
 export class Property extends Identifiable implements IProperty {
@@ -367,19 +383,23 @@ export class Property extends Identifiable implements IProperty {
     getHTML(options?: object): stringHTML {
         return '<div>not implemented yet</div>';
     }
-    validate(itm: IProperty) {
+    normalize(itm: IProperty): IProperty {
         // normalize datatype:
         itm.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
+        return super.normalize(itm) as IProperty;
+    }
+    validate(itm: IProperty) {
+        const norm = this.normalize(itm) as IProperty;
 
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         try {
-            const ok = SCH.validatePropertySchema(itm as unknown as object);
+            const ok = SCH.validatePropertySchema(norm as unknown as object);
             if (!ok) {
                 const msg = SCH.getValidatePropertyErrors();
-                return { status: 400, statusText: `Schema validation failed for Property '${itm.id}': ${msg}`, ok: false };
+                return Msg.create(681, 'Property', norm.id, msg);
             }
         } catch (err: any) {
-            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
+            return Msg.create(682, 'Property', norm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
@@ -388,16 +408,18 @@ export class Property extends Identifiable implements IProperty {
     //    if (!rsp.ok) return rsp;
         // all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
         // others shall be treated as strings (with a warning in the log):
-        if (!isSupportedXsDataType(itm.datatype))
-            logger.warn(`Property '${itm.id}' has unsupported datatype '${itm.datatype}'. It will be treated as 'xs:string'.`);
-//            return { status: 699, statusText: `Invalid datatype: ${itm.datatype}. Must be one of the XsDataType values.`, ok: false }; */
+        if (!isSupportedXsDataType(norm.datatype)) {
+            const msg = Msg.create(680, norm.id, norm.datatype);
+            logger.warn(msg.statusText);
+            //            return msg */
+        }
 
         // ToDo: implement further validation logic
-        return super.validate(itm);
+        return super.validate(norm);
     }
 }
 export interface IReference extends IIdentifiable {
-    eligibleTarget: TPigId[]; // must be IRI of an Entity or Relationship (class)
+    eligibleTarget: TPigId[]; // must be URI of an Entity or Relationship (class)
 }
 export class Reference extends Identifiable implements IReference {
     eligibleTarget!: TPigId[];
@@ -421,17 +443,21 @@ export class Reference extends Identifiable implements IReference {
     getHTML(options?: object): stringHTML {
         return '<div>not implemented yet</div>';
     }
+    normalize(itm: IReference): IReference {
+        return super.normalize(itm) as IReference;
+    }
     validate(itm: IReference) {
+        const norm = this.normalize(itm) as IReference;
         // id and itemType checked in superclass
         // At metamodel level, simple id strings are listed:
-        const rsp = validateIdStringArray(itm.eligibleTarget, 'eligibleTarget');
+        const rsp = validateIdStringArray(norm.eligibleTarget, 'eligibleTarget');
         if (!rsp.ok) return rsp;
-        return super.validate(itm);
+        return super.validate(norm);
     }
 }
 
 export interface IEntity extends IElement {
-    eligibleReference?: TPigId[];  // must hold Reference IRIs
+    eligibleReference?: TPigId[];  // must hold Reference URIs
 }
 export class Entity extends Element implements IEntity {
     eligibleReference?: TPigId[];
@@ -452,35 +478,42 @@ export class Entity extends Element implements IEntity {
             eligibleReference: Array.isArray(this.eligibleReference) ? this.eligibleReference : undefined
         };
     }
+    normalize(itm: IEntity): IEntity {
+        return super.normalize(itm);
+    }
     validate(itm: IEntity) {
-        // logger.debug('Entity.validate: ', itm);
+        // normalize only at the lowest subclass level:
+        const norm = this.normalize(itm) as IEntity;
+        // logger.debug('Entity.validate: ', norm);
+
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        // ... only at the lowest subclass level:
         try {
-            const ok = SCH.validateEntitySchema(itm as unknown as object);
+            const ok = SCH.validateEntitySchema(norm as unknown as object);
             if (!ok) {
                 const msg = SCH.getValidateEntityErrors();
-                return { status: 400, statusText: `Schema validation failed for Entity '${itm.id}': ${msg}`, ok: false };
+                return Msg.create(682, 'Entity', norm.id, msg);
             }
         } catch (err: any) {
-            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
+            return Msg.create(683, 'Entity', norm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
         // id and itemType checked in superclass
-        // check whether specializes is another Entity IRI is done in overall consistency check
+        // check whether specializes is another Entity URI is done in overall consistency check
 
         // If eligibleReference is not present, all references are allowed;
         // if present and empty, no references are allowed:
-        const rsp = validateIdStringArray(itm.eligibleReference, 'eligibleReference', { canBeUndefined: true, minCount: 0 });
+        const rsp = validateIdStringArray(norm.eligibleReference, 'eligibleReference', { canBeUndefined: true, minCount: 0 });
         if (!rsp.ok) return rsp;
         // ToDo: implement further validation logic
-        return super.validate(itm);
+        return super.validate(norm);
     }
 }
 
 export interface IRelationship extends IElement {
-    eligibleSource?: TPigId[];  // must hold Reference IRIs
-    eligibleTarget?: TPigId[];  // must hold Reference IRIs
+    eligibleSource?: TPigId[];  // must hold Reference URIs
+    eligibleTarget?: TPigId[];  // must hold Reference URIs
 }
 export class Relationship extends Element implements IRelationship {
     eligibleSource?: TPigId[];
@@ -504,42 +537,49 @@ export class Relationship extends Element implements IRelationship {
             eligibleTarget: Array.isArray(this.eligibleTarget) ? this.eligibleTarget : undefined
         };
     }
+    normalize(itm: IRelationship): IRelationship {
+        return super.normalize(itm);
+    }
     validate(itm: IRelationship) {
+        // normalize only at the lowest subclass level:
+        const norm = this.normalize(itm) as IRelationship;
+
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        // ... only at the lowest subclass level:
         try {
-            const ok = SCH.validateRelationshipSchema(itm as unknown as object);
+            const ok = SCH.validateRelationshipSchema(norm as unknown as object);
             if (!ok) {
                 const msg = SCH.getValidateRelationshipErrors();
-                return { status: 400, statusText: `Schema validation failed for Relationship '${itm.id}': ${msg}`, ok: false };
+                return Msg.create(681, 'Relationship', norm.id, msg);
             }
         } catch (err: any) {
-            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
+            return Msg.create(682, 'Relationship', norm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
         // id and itemType checked in superclass
-        // check whether specializes is another Relationship IRI is done in overall consistency check
+        // check whether specializes is another Relationship URI is done in overall consistency check
 
         // If eligibleSource/eligibleTarget are not present, sources resp. targets of all classes are allowed;
         // if present, at least one entry must be there, because a relationship without source or target makes no sense:
-        let rsp = validateIdStringArray(itm.eligibleSource, 'eligibleSource', { canBeUndefined: true, minCount: 1 });
+        let rsp = validateIdStringArray(norm.eligibleSource, 'eligibleSource', { canBeUndefined: true, minCount: 1 });
         if (!rsp.ok) return rsp;
-        rsp = validateIdStringArray(itm.eligibleTarget, 'eligibletarget', { canBeUndefined: true, minCount: 1 });
+        rsp = validateIdStringArray(norm.eligibleTarget, 'eligibletarget', { canBeUndefined: true, minCount: 1 });
         if (!rsp.ok) return rsp;
         // ToDo: implement further validation logic
-        return super.validate(itm);
+        return super.validate(norm);
     }
 }
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
     value?: string;
-    id?: TPigId;  // must point to an element of eligibleValue in its Property class
+    idRef?: TPigId;  // must point to an element of eligibleValue in its Property class
     aComposedProperty?: TPigId[];
 }
 export class AProperty extends Item implements IAProperty {
     value?: string;
-    id?: TPigId;
+    idRef?: TPigId;
     aComposedProperty?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.aProperty });
@@ -550,6 +590,7 @@ export class AProperty extends Item implements IAProperty {
             super.set(itm);
             this.aComposedProperty = itm.aComposedProperty;
             this.value = itm.value;
+            this.idRef = itm.idRef;
         }
         return this;
     }
@@ -557,7 +598,8 @@ export class AProperty extends Item implements IAProperty {
         return {
             ...super.get(),
             aComposedProperty: this.aComposedProperty,
-            value: this.value
+            value: this.value,
+            idRef: this.idRef
         };
     }
     getHTML(options?: object): stringHTML {
@@ -567,17 +609,17 @@ export class AProperty extends Item implements IAProperty {
     validate(itm: IAProperty) {
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            return { status: 400, statusText: `'${PigItemType.aProperty}' must have a hasClass reference`, ok: false };
+            return Msg.create(601, PigItemType.aProperty);
         // ToDo: implement further validation logic
-        // - Check class reference; must be an existing Property IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
+        // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
 }
 export interface IAReference extends IItem {
-    element: TPigId;
+    idRef: TPigId;
 }
 export class AReference extends Item implements IAReference {
-    element!: TPigId;
+    idRef!: TPigId;
     constructor() {
         super({ itemType: PigItemType.aReference });
     }
@@ -585,14 +627,14 @@ export class AReference extends Item implements IAReference {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus) {
             super.set(itm);
-            this.element = itm.element;
+            this.idRef = itm.idRef;
         }
         return this;
     }
     get() {
         return {
             ...super.get(),
-            element: this.element
+            id: this.idRef
         };
     }
     getHTML(options?: object): stringHTML {
@@ -602,15 +644,15 @@ export class AReference extends Item implements IAReference {
     validate(itm: IAReference) {
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            return { status: 400, statusText: `'${PigItemType.aReference}' must have a hasClass reference`, ok: false };
+            return Msg.create(601, PigItemType.aReference);
         // ToDo: implement further validation logic
-        // - Check class reference; must be an existing Reference IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
+        // - Check class reference; must be an existing Reference URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
 }
 
 export interface IAnEntity extends IAnElement {
-    hasReference?: IAReference[];  // optional, must hold anEntity or aRelationship IRIs
+    hasReference?: IAReference[];  // optional, must hold anEntity or aRelationship URIs
 }
 export class AnEntity extends AnElement implements IAnEntity {
     hasReference!: AReference[];
@@ -635,13 +677,38 @@ export class AnEntity extends AnElement implements IAnEntity {
         // ToDo: implement a HTML representation of the entity including its properties
         return '<div>not implemented yet</div>';
     }
+    normalize(itm: IAnEntity): IAnEntity {
+        // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aReference;
+        // collect them here in a hasReference array, where the tag becomes hasClass;
+        // they will be instantiated as AProperty items in set():
+        const norm = itm;
+        norm.hasReference = collect(itm, PigItemType.aReference) as IAReference[] | undefined;
+        logger.debug('AnEntity.normalize: ' + JSON.stringify(norm, null, 2));
+        return super.normalize(itm) as IAnEntity;
+    }
     validate(itm: IAnEntity) {
+        // normalize only at the lowest subclass level:
+        const norm = this.normalize(itm);
+
+    /*    // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        // ... only at the lowest subclass level:
+        try {
+            const ok = SCH.validateAnEntitySchema(norm as unknown as object);
+            if (!ok) {
+                const msg = SCH.getValidateAnEntityErrors();
+                return { status: 400, statusText: `Schema validation failed for Relationship '${norm.id}': ${msg}`, ok: false };
+            }
+        } catch (err: any) {
+            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
+        } */
+
+        // Runtime guards:
         // id and itemType checked in superclass
-        if (!itm.hasClass)
-            return { status: 400, statusText: `'${PigItemType.anEntity}' must have a hasClass reference`, ok: false };
+        if (!norm.hasClass)
+            return Msg.create(601, PigItemType.anEntity);
         // ToDo: implement further validation logic
-        // - Check class reference; must be an existing Entity IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return super.validate(itm);
+        // - Check class reference; must be an existing Entity URI (requires access to the cache to resolve the class -> do it through overall consistency check):
+        return super.validate(norm);
     }
 }
 
@@ -675,13 +742,32 @@ export class ARelationship extends AnElement implements IARelationship {
         // ToDo: implement a HTML representation of the relationship including its properties
         return '<div>not implemented yet</div>';
     }
+    normalize(itm: IARelationship): IARelationship {
+        return super.normalize(itm) as IARelationship;
+    }
     validate(itm: IARelationship) {
+        // normalize only at the lowest subclass level:
+        const norm = this.normalize(itm);
+
+    /*    // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        // ... only at the lowest subclass level:
+        try {
+            const ok = SCH.validateARelationshipSchema(norm as unknown as object);
+            if (!ok) {
+                const msg = SCH.getValidateARelationshipErrors();
+                return { status: 400, statusText: `Schema validation failed for ARelationship '${norm.id}': ${msg}`, ok: false };
+            }
+        } catch (err: any) {
+            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
+        } */
+
+        // Runtime guards:
         // id and itemType checked in superclass
-        if (!itm.hasClass)
-            return { status: 400, statusText: `'${PigItemType.aRelationship}' must have a hasClass reference`, ok: false };
+        if (!norm.hasClass)
+            return Msg.create(601, PigItemType.aRelationship);
         // ToDo: implement further validation logic
-        // - Check class reference; must be an existing Relationship IRI (requires access to the cache to resolve the class -> do it through overall consistency check):
-        return super.validate(itm);
+        // - Check class reference; must be an existing Relationship URI (requires access to the cache to resolve the class -> do it through overall consistency check):
+        return super.validate(norm);
     }
 }
 
@@ -735,26 +821,26 @@ function extractId(obj: unknown): string | undefined {
  */
 function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
     if (input === null || input === undefined) {
-        return { status: 400, statusText: `${fieldName} is missing`, ok: false };
+        return Msg.create(620, fieldName);
     }
     // if (typeof input === 'string') {
     //    return input.trim() === '' ? { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false } : rspOK;
     // }
     if (typeof input === 'object') {
         const id = extractId(input);
-        return id ? validateIdString(id, fieldName) : { status: 400, statusText: `${fieldName} is missing id`, ok: false };
+        return id ? validateIdString(id, fieldName) : Msg.create(623, fieldName);
     }
-    return { status: 400, statusText: `${fieldName} has invalid type`, ok: false };
+    return Msg.create(622, fieldName);
 }
 function validateIdString(input: unknown, fieldName = 'id'): IRsp {
     if (typeof input === 'string') {
         if (input.trim().length < 1) {
-            return { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false };
+            Msg.create(624, fieldName);
         }
         if (isValidIdString(input))
             return rspOK;
     }
-    return { status: 400, statusText: `${fieldName} must be a string with a term having a namespace or an URI`, ok: false };
+    return Msg.create(625, fieldName);
 }
 function isValidIdString(input: string): boolean {
     return typeof(input) == 'string' && (RE.termWithNamespace.test(input) || RE.uri.test(input));
@@ -776,17 +862,17 @@ export function validateIdStringArray(
         return rspOK;
     }
     if (!Array.isArray(input)) {
-        return { status: 400, statusText: `${fieldName} must be an array`, ok: false };
+        return Msg.create(630, fieldName);
     }
 
     const minCount = options?.minCount ?? 1;
-    if (input.length < minCount ) {
-        return { status: 400, statusText: `${fieldName} must contain at least ${minCount} element(s)`, ok: false };
+    if (input.length < minCount) {
+        return Msg.create(631, fieldName, minCount);
     }
 
     for (let i = 0; i < input.length; i++) {
         if (!isValidIdString(input[i])) {
-            return { status: 400, statusText: `${fieldName}[${i}] must be a valid id string`, ok: false };
+            return Msg.create(632, fieldName, i);
         }
     }
 
@@ -810,27 +896,25 @@ export function validateIdStringArray(
  */
 function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
     if (!Array.isArray(input)) {
-        return { status: 400, statusText: `${fieldName} must be an array`, ok: false };
+        return Msg.create(630, fieldName);
     }
     if (input.length === 0) {
-        return { status: 400, statusText: `${fieldName} must contain at least one element`, ok: false };
+        return Msg.create(631, fieldName, 1);
     }
 
     for (let i = 0; i < input.length; i++) {
         const el = input[i];
         if (el === null || el === undefined || typeof el !== 'object' || Array.isArray(el)) {
-            return { status: 400, statusText: `${fieldName}[${i}] must be an object with an 'id' or '@id' string`, ok: false };
+            return Msg.create(633, fieldName, i);
         }
         const obj = el as Record<string, unknown>;
-        // prefer '@id' then 'id'
         const candidate = Object.prototype.hasOwnProperty.call(obj, '@id') ? obj['@id'] : obj['id'];
         if (typeof candidate !== 'string' || !isValidIdString(candidate)) {
-            return { status: 400, statusText: `${fieldName}[${i}] must contain a valid 'id' or '@id' string`, ok: false };
+            return Msg.create(634, fieldName, i);
         }
-        // enforce single-key id-objects uncomment the check below:
         const keys = Object.keys(obj);
         if (keys.length !== 1 || (keys[0] !== 'id' && keys[0] !== '@id')) {
-            return { status: 400, statusText: `${fieldName}[${i}] must be an id-object with a single 'id' or '@id' property`, ok: false };
+            return Msg.create(635, fieldName, i);
         }
     }
 
@@ -959,8 +1043,8 @@ function normalizeLanguageText(src: any): ILanguageText {
     return { value: String(src) };
 }
 
-function normalizeMultiLanguageText(src: any): ILanguageText[] {
-    if (!src) return [];
+function normalizeMultiLanguageText(src: any): ILanguageText[] | undefined {
+    if (!src) return;
     if (Array.isArray(src)) return src.map(normalizeLanguageText);
     return [normalizeLanguageText(src)];
 }
@@ -973,17 +1057,17 @@ function normalizeMultiLanguageText(src: any): ILanguageText[] {
 function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
 //    logger.debug('validateMultiLanguageText',arr,fieldName);
     if (!Array.isArray(arr)) {
-        return { status: 698, statusText: `Invalid ${fieldName}: expected an array of language-tagged texts`, ok: false };
+        return Msg.create(640, fieldName);
     }
     if (arr.length === 0) return rspOK;
     if (arr.length === 1) {
         const e = arr[0];
         if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
-            return { status: 698, statusText: `Invalid ${fieldName} entry: expected object with string 'value'`, ok: false };
+            return Msg.create(641, fieldName);
         }
         // single entry: lang optional
         if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
-            return { status: 698, statusText: `Invalid ${fieldName} entry: 'lang' must be a string when present`, ok: false };
+            return Msg.create(642, fieldName);
         }
         return rspOK;
     }
@@ -991,16 +1075,98 @@ function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
     for (let i = 0; i < arr.length; i++) {
         const e = arr[i];
         if (!e || typeof e !== 'object') {
-            return { status: 698, statusText: `Invalid ${fieldName} entry at index ${i}: expected object with 'value' and 'lang'`, ok: false };
+            return Msg.create(643, fieldName, i);
         }
         if (typeof (e as any).value !== 'string') {
-            return { status: 698, statusText: `Invalid ${fieldName} entry at index ${i}: 'value' must be a string`, ok: false };
+            return Msg.create(644, fieldName, i);
         }
         if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
-            return { status: 698, statusText: `Invalid ${fieldName} entry at index ${i}: 'lang' must be a non-empty string`, ok: false };
+            return Msg.create(645, fieldName, i);
         }
     }
     return rspOK;
+}
+/**
+ * Collect configurable properties from a JSON-LD object.
+ * In JSON-LD, configurable properties have an ID-string as key (namespace:name or URI)
+ * and their value is an array of objects with itemType 'pig:aProperty'.
+ * This function extracts those properties and transforms them into a hasProperty array,
+ * where the original key becomes the 'hasClass' field of each property.
+ * 
+ * @param obj - The input object (typically from JSON-LD)
+ * @returns Array of IAProperty objects, or undefined if no properties found
+ */
+function collect(obj: any, itype: PigItemTypeValue): IAProperty[] | IAReference[] | undefined {
+    if (!obj || typeof obj !== 'object') return undefined;
+
+    const properties: IAProperty[] = [];
+
+    // Standard PIG fields that should NOT be collected as properties;
+    // the tags have already been renamed with LIB.renameJsonTags( ..., LIB.fromJSONLD):
+    const skipKeys = new Set(LIB.toJSONLD.map(([key]) => key));
+
+    for (const key of Object.keys(obj)) {
+        // Skip known metadata keys and standard PIG fields
+        if (skipKeys.has(key)) continue;
+
+        // Check if key is a valid ID string (namespace:name or URI)
+        if (!isValidIdString(key)) continue;
+
+        const val = obj[key];
+
+        // Handle array of property values
+        if (Array.isArray(val)) {
+            for (const item of val) {
+                if (item && typeof item === 'object') {
+                    // Check if it has itemType 'pig:aProperty' (may be an id-object)
+                    // the tags have already been renamed:
+                    const itemTypeValue = item.itemType /* || (item['pig:itemType'] && extractId(item['pig:itemType'])) */;
+
+                    if (itemTypeValue === itype /* || !itemTypeValue*/) {
+                        // Add the property with the key as its hasClass reference
+                        properties.push({
+                            itemType: itype,
+                            hasClass: key,
+                            // itype == PigItemType.Property: value in case of a plain value 
+                            value: item.value /*|| item['@value'] */,
+                            // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
+                            // itype == PigItemType.Reference: idRef is mandatory
+                            idRef: item.id,
+                            aComposedProperty: item.aComposedProperty
+                        });
+                    }
+                }
+            }
+        }
+        // Handle single property value (non-array)
+        else if (val && typeof val === 'object') {
+            const itemTypeValue = val.itemType || (val['pig:itemType'] && extractId(val['pig:itemType']));
+
+            if (itemTypeValue === itype /* || !itemTypeValue */) {
+                properties.push({
+                    itemType: itype,
+                    hasClass: key,
+                    // itype == PigItemType.Property: value in case of a plain value 
+                    value: val.value /*|| item['@value'] */,
+                    // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
+                    // itype == PigItemType.Reference: idRef is mandatory
+                    idRef: val.id,
+                    aComposedProperty: val.aComposedProperty
+                });
+            }
+        }
+        // Handle primitive values (string, number, boolean) - create simple properties
+        else if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
+            properties.push({
+                itemType: itype,
+                hasClass: key,
+                value: String(val)
+            });
+        }
+    }
+
+    return properties;
+    //    return properties.length > 0 ? properties : undefined;
 }
 /**
  * Replace top-level string values that are valid id-strings with id-objects.

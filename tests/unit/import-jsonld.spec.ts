@@ -6,9 +6,9 @@ import { TPigItem } from '../../src/utils/schemas/pig/pig-metaclasses';
 describe('importJSONLD (file system)', () => {
     // List of relative filenames (relative to this test file). Add more entries as needed.
     const filenames = [
-        "../data/JSON-LD/03/Project 'Requirement with Enumerated Property'.pig.jsonld"
-        // "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
-        // "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
+        "../data/JSON-LD/03/Project 'Requirement with Enumerated Property'.pig.jsonld",
+        "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
+        "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
         // add more test files here, e.g.
         // "../data/JSON-LD/another-sample.pig.jsonld"
     ];
@@ -28,7 +28,10 @@ describe('importJSONLD (file system)', () => {
             const rsp = await importJSONLD(testFile);
             if (!rsp.ok)
                 console.warn('importJSONLD',rsp.status,rsp.statusText);
-            //expect(rsp.ok).toBe(true);
+            // expect(rsp.ok).toBe(true);
+            // expect(rsp.status).toSatisfy((status: number) => [0, 691].includes(status)); ... needs jest-extended
+            // expect(rsp.status).toBeOneOf([0, 691]);  ... needs jest-extended
+            expect([0, 691]).toContain(rsp.status);  // however, any error message will be inverse ...
             processedCount++;
 
             const instances = rsp.response as TPigItem[];
@@ -40,7 +43,7 @@ describe('importJSONLD (file system)', () => {
 
             instances.forEach((itm, index) => {
                 console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status, itm.getJSONLD()['@id']);
-                console.info(JSON.stringify(itm.getJSONLD(),null,2));
+                console.info(JSON.stringify(itm.get(),null,2));
                 // each instantiated item must have a successful status
                 expect(itm.status().ok).toBe(true);
                 // additional per-item assertions can be added here

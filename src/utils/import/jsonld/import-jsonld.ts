@@ -1,4 +1,5 @@
-import { LIB, logger, IRsp, rspOK } from "../../lib/helpers";
+import { IRsp, rspOK, Msg } from "../../lib/messages";
+import { LIB, logger } from "../../lib/helpers";
 //import { JsonObject, JsonValue } from '../../lib/helpers';
 import { Property, Reference, Entity, Relationship,
     AProperty, AReference, AnEntity, ARelationship, PigItemType,
@@ -27,7 +28,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     try {
         doc = JSON.parse(text);
     } catch (err: any) {
-        return LIB.createRsp( 500, `Failed to parse JSON-LD: ${err?.message ?? err}`);
+        return Msg.create(690, err?.message ?? err);
     }
 //    logger.debug('importJSONLD: parsed ', doc);
     return instantiateFromDoc(doc);
@@ -111,7 +112,7 @@ function instantiateFromDoc(doc: any): IRsp {
     if (created.length === graph.length) 
         res = rspOK;
     else
-        res = LIB.createRsp(699, `Imported ${created.length} of ${graph.length} items from JSON-LD.`);
+        res = Msg.create(691, created.length, graph.length);
 
     res.response = created;
     res.responseType = 'json';
