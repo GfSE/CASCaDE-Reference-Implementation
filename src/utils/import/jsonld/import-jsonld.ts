@@ -55,8 +55,8 @@ function instantiateFromDoc(doc: any): IRsp {
         const itype: any = elem['pig:itemType']['@id'] as any;
 
         // temporary filter to allow development step by step per itemType:
-        if (![PigItemType.Property, PigItemType.Reference, PigItemType.Entity, PigItemType.Relationship,
-            PigItemType.anEntity].includes(itype))
+        if (![/*PigItemType.Property, PigItemType.Reference, PigItemType.Entity, PigItemType.Relationship,
+            PigItemType.anEntity,*/ PigItemType.aRelationship ].includes(itype))
             continue;
      //   logger.debug('importJSONLD: @graph renamed', elem, itype);
 

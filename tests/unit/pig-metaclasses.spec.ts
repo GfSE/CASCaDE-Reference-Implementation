@@ -13,7 +13,7 @@ import { LIB } from '../../src/utils/lib/helpers';
 import { JsonObject } from '../../src/utils/lib/helpers';
 import { XsDataType, PigItemType, PigItemTypeValue,
     IProperty, IAProperty, IReference, IEntity, IAnEntity, IRelationship, IARelationship,
-        Property, AProperty, Reference, Entity, AnEntity, Relationship, ARelationship } from '../../src/utils/schemas/pig/pig-metaclasses';
+        Property, AProperty, Reference, Entity, AnEntity, Relationship, ARelationship, AReference } from '../../src/utils/schemas/pig/pig-metaclasses';
 
 describe("PIG Metaclasses", () => {
     let propertyClass_input: IProperty;
@@ -23,9 +23,11 @@ describe("PIG Metaclasses", () => {
     let referenceClass_input_JSONLD: any;
     let entityClass_input: IEntity;
     let entity1_input: IAnEntity;
-    let entity2_input: IAnEntity;
+//    let entity2_input: IAnEntity;
     let relationshipClass_input: IRelationship;
     let relationship_input: IARelationship;
+    let anEntity_with_ref_input: IAnEntity;
+    let anEntity_with_ref_input_JSONLD: any;
 
     beforeAll(() => {
 
@@ -66,27 +68,29 @@ describe("PIG Metaclasses", () => {
         referenceClass_input = {
             id: "pig:shows",
             itemType: PigItemType.Reference,
+            specializes: "pig:eligibleReference",
             title: [{ value: "shows", lang: "en" }],
             description: [{ value: "This is a class for a reference used by anEntity", lang: "en" }],
 
-            eligibleTarget: ["o:Entity_1"]
+            eligibleTarget: ["o:Entity_Diagram"]
         };
         referenceClass_input_JSONLD = {
             ['@id']: "pig:shows",
+            ['pig:specializes']: { ['@id']: "pig:eligibleReference" },
             ['pig:itemType']: { ['@id']: PigItemType.Reference },
             ['dcterms:title']: [{ ['@value']: "shows", ['@language']: "en" }],
             ['dcterms:description']: [{ ['@value']: "This is a class for a reference used by anEntity", ['@language']: "en" }],
 
-            ['pig:eligibleTarget']: [{ ['@id']: "o:Entity_1" }]
+            ['pig:eligibleTarget']: [{ ['@id']: "o:Entity_Diagram" }]
         };
 
         // Entity with class:
         entityClass_input = {
-            id: "o:Entity_1",
+            id: "o:Entity_Diagram",
             itemType: PigItemType.Entity,
             specializes: "pig:Entity",
             title: [{ value: "Title of Entity Class 1" }],  // if there is just one language, lang can be omitted
-            description: [{ value: "Description of o:Entity_1" }],
+            description: [{ value: "Description of o:Entity_Diagram" }],
 
             icon: { value: "&#x2662;" },
             eligibleReference: [],
@@ -97,32 +101,72 @@ describe("PIG Metaclasses", () => {
             id: "d:anEntity_1",
             revision: "v1.0",
             itemType: PigItemType.anEntity,
-            modified: new Date(),
+            modified: '2025-12-15T00:00:00Z',
             creator: "test_user",
             title: [{ value: "Title of anEntity 1", lang: "en" }],
             description: [{ value: "Description of d:anEntity_1", lang: "en" }],
 
-            hasClass: "o:Entity_1",
+            hasClass: "o:Entity_Diagram",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
-                value: "Category of anEntity_1"
+                value: "Category of d:anEntity_1"
             }]
         };
-        entity2_input = {
+    /*    entity2_input = {
             id: "d:anEntity_2",
             revision: "v1.0",
             itemType: PigItemType.anEntity,
-            modified: new Date(),
+            modified: '2025-12-16T00:00:00Z',
             creator: "test_user",
             title: [{ value: "Title of Entity 2", lang: "en" }],
             description: [{ value: "Description of d:anEntity_2", lang: "en" }],
 
-            hasClass: "o:Entity_1",
+            hasClass: "o:Entity_Diagram",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
                 value: "Category of d:anEntity_2"
+            }]
+        }; */
+
+        // An entity input with reference (not reusing entity1_input):
+        anEntity_with_ref_input = {
+            id: "d:anEntity_Diagram",
+            hasClass: "o:Entity_Diagram",
+            revision: "v1.0",
+            itemType: PigItemType.anEntity,
+            modified: '2025-12-20T00:00:00Z',
+            creator: "test_user",
+            title: [{ value: "a Diagram", lang: "en" }],
+            description: [{ value: "An Entity instance that has a reference to another Entity instance", lang: "en" }],
+            hasProperty: [{
+                itemType: PigItemType.aProperty,
+                hasClass: "dcterms:type",
+                value: "Category (notation) of d:anEntity_Diagram"
+            }],
+            hasTarget: [{
+                itemType: PigItemType.aReference,
+                hasClass: "pig:shows",
+                idRef: "d:anEntity_ModelElement"
+            }]
+        };
+        anEntity_with_ref_input_JSONLD = {
+            ['@id']: "d:anEntity_Diagram",
+            ['@type']: { ['@id']: "o:Entity_Diagram" },
+            ['pig:revision']: "v1.0",
+            ['pig:itemType']: { ['@id']: PigItemType.anEntity },
+            ['dcterms:modified']: '2025-12-20T00:00:00Z',
+            ['dcterms:creator']: "test_user",
+            ['dcterms:title']: [{ ['@value']: "a Diagram", ['@language']: "en" }],
+            ['dcterms:description']: [{ ['@value']: "An Entity instance that has a reference to another Entity instance", ['@language']: "en" }],
+            ["dcterms:type"]: [{
+                ['pig:itemType']: { ['@id']: PigItemType.aProperty },
+                ['@value']: "Category (notation) of d:anEntity_Diagram"
+            }],
+            ["pig:shows"]: [{
+                ['pig:itemType']: { ['@id']: PigItemType.aReference },
+                ['@id']: "d:anEntity_ModelElement"
             }]
         };
 
@@ -134,8 +178,8 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "Title of RelationshipClass", lang: "en" }],
             description: [{ value: "Description of o:Relationship", lang: "en" }],
 
-            eligibleSource: ["o:Entity_1"],
-            eligibleTarget: ["o:Entity_1"],
+            eligibleSource: ["o:Entity_Diagram"],
+            eligibleTarget: ["o:Entity_Diagram"],
             eligibleProperty: ["dcterms:type"]
         };
         relationship_input = {
@@ -143,20 +187,19 @@ describe("PIG Metaclasses", () => {
             itemType: PigItemType.aRelationship,
             hasClass: "o:Relationship",
             revision: "v1.0",
-            modified: new Date(),
+            modified: '2025-12-17T00:00:00Z',
             creator: "test_user",
             title: [{ value: "Title of d:aRelationship_1", lang: "en" }],
             description: [{ value: "Description of d:aRelationship_1", lang: "en" }],
 
-            hasSource: { "itemType": "pig:aReference", "hasClass": "o:relates", "idRef": "d:anEntity_1" },
-            hasTarget: { "itemType": "pig:aReference", "hasClass": "o:relates", "idRef": "d:anEntity_2" },
+            hasSource: [{ "itemType": "pig:aReference", "hasClass": "o:relates", "idRef": "d:anEntity_1" }],
+            hasTarget: [{ "itemType": "pig:aReference", "hasClass": "o:relates", "idRef": "d:anEntity_2" }],
             hasProperty: [{
                 itemType: PigItemType.aProperty,
                 hasClass: "dcterms:title",
-                value: "Name for Relationship_1"
+                value: "Name for d:aRelationship_1"
             }]
         };
-        
     });
 
     test("Test class pig:Property", () => {
@@ -167,8 +210,8 @@ describe("PIG Metaclasses", () => {
             console.error('status:', inst.status());
         expect(inst.status().ok).toBe(true);
         expect(inst.id).toBe("dcterms:type");
-        expect(inst.title).toEqual([{ value: "The type or category", lang: "en" }]);
-        expect(inst.description).toEqual([{ value: "This is a class for a property named dcterms:type used by anEntity or aRelationship", lang: "en" }]);
+        expect(inst.title).toEqual(propertyClass_input.title);
+        expect(inst.description).toEqual(propertyClass_input.description);
 
         expect(inst.itemType).toBe(PigItemType.Property);
         expect(inst.datatype).toBe(XsDataType.String);
@@ -213,7 +256,7 @@ describe("PIG Metaclasses", () => {
         expect(inst.description).toEqual([{ value: "This is a class for a reference used by anEntity", lang: "en" }]);
 
         expect(inst.itemType).toBe(PigItemType.Reference);
-        expect(inst.eligibleTarget).toStrictEqual(['o:Entity_1']);
+        expect(inst.eligibleTarget).toStrictEqual(['o:Entity_Diagram']);
 
         // check the output as JSON:
         const refClass_output = inst.get();
@@ -256,9 +299,9 @@ describe("PIG Metaclasses", () => {
         expect(inst.status().ok).toBe(true);
 
         // check the attribute values:
-        expect(inst.id).toBe('o:Entity_1');
+        expect(inst.id).toBe('o:Entity_Diagram');
         expect(inst.title).toEqual([{ value: 'Title of Entity Class 1' }]);
-        expect(inst.description).toEqual([{ value: 'Description of o:Entity_1' }]);
+        expect(inst.description).toEqual([{ value: 'Description of o:Entity_Diagram' }]);
 
         expect(inst.itemType).toBe(PigItemType.Entity);
         expect(inst.eligibleProperty).toStrictEqual(["dcterms:type"]);
@@ -287,8 +330,8 @@ describe("PIG Metaclasses", () => {
         expect(inst.description).toEqual([{ value: 'Description of o:Relationship', lang: "en" }]);
 
         expect(inst.itemType).toBe(PigItemType.Relationship);
-        expect(inst.eligibleTarget).toStrictEqual(['o:Entity_1']);
-        expect(inst.eligibleSource).toStrictEqual(['o:Entity_1']);
+        expect(inst.eligibleTarget).toStrictEqual(['o:Entity_Diagram']);
+        expect(inst.eligibleSource).toStrictEqual(['o:Entity_Diagram']);
         expect(inst.eligibleProperty).toStrictEqual(["dcterms:type"]);
 
         // check the output:
@@ -316,6 +359,59 @@ describe("PIG Metaclasses", () => {
         expect(() => new Property().set(badInput as any)).toThrow(/Expected 'Property'/);
     }); */
 
-/* ToDo: ... more tests to come */
+    test("Test instance pig:anEntity with hasTarget using set()", () => {
+        const inst = new AnEntity().set(anEntity_with_ref_input);
+        if (!inst.status().ok)
+            console.error('status:', inst.status());
+        expect(inst.status().ok).toBe(true);
 
+        // check the attribute values upon creation:
+        expect(inst.id).toBe('d:anEntity_Diagram');
+
+        // check hasProperty:
+        expect(inst.hasProperty).toHaveLength(1);
+        expect(inst.hasProperty[0]).toBeInstanceOf(AProperty);
+        expect(inst.hasProperty[0].hasClass).toBe('dcterms:type');
+        expect(inst.hasProperty[0].value).toBe("Category (notation) of d:anEntity_Diagram");
+     //   expect(inst.hasProperty[0].value).toBe(anEntity_with_ref_input.hasProperty[0].value);
+        expect(inst.hasProperty[0].itemType).toBe(PigItemType.aProperty);
+
+        // check hasTarget:
+        expect(inst.hasTarget).toHaveLength(1);
+        expect(inst.hasTarget[0]).toBeInstanceOf(AReference);
+        expect(inst.hasTarget[0].hasClass).toBe('pig:shows');
+        expect(inst.hasTarget[0].idRef).toBe('d:anEntity_ModelElement');
+        expect(inst.hasTarget[0].itemType).toBe(PigItemType.aReference);
+
+        // check the output as JSON native:
+        const anEntity_output = inst.get();
+        console.debug('pig:anEntity.get():', anEntity_output);
+        // Due to possible different order of properties, use toMatchObject for partial deep comparison;
+        // succeeds if the properties of the latter are found in the former with the same values:
+        expect(anEntity_output).toMatchObject(anEntity_with_ref_input);
+        expect(anEntity_with_ref_input).toMatchObject(anEntity_output);
+
+        // check the output as JSON-LD:
+        const anEntity_output_JSONLD = inst.getJSONLD();
+        console.debug('pig:anEntity.getJSONLD():', anEntity_output_JSONLD);
+        // Due to possible different order of properties, use toMatchObject for partial deep comparison;
+        // succeeds if the properties of the latter are found in the former with the same values:
+        expect(anEntity_output_JSONLD).toMatchObject(anEntity_with_ref_input_JSONLD);
+        expect(anEntity_with_ref_input_JSONLD).toMatchObject(anEntity_output_JSONLD);
+
+    });
+    test("Test instance pig:anEntity with hasTarget using setJSONLD()", () => {
+        // input JSON-LD to JSON conversion check:
+        const inst = new AnEntity().setJSONLD(anEntity_with_ref_input_JSONLD);
+        if (!inst.status().ok)
+            console.error('status:', inst.status());
+        expect(inst.status().ok).toBe(true);
+
+        const anEntity_output = inst.get();
+        expect(anEntity_output).toMatchObject(anEntity_with_ref_input);
+        expect(anEntity_with_ref_input).toMatchObject(anEntity_output);
+        // expect(inst.get()).toEqual(anEntity_with_ref_input);
+    });
+
+    /* ToDo: ... more tests to come */
 });

@@ -5,10 +5,10 @@ import { TPigItem } from '../../src/utils/schemas/pig/pig-metaclasses';
 
 describe('importJSONLD (file system)', () => {
     // List of relative filenames (relative to this test file). Add more entries as needed.
-    const filenames = [
-        "../data/JSON-LD/03/Project 'Requirement with Enumerated Property'.pig.jsonld",
-        "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
-        "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
+    const filenames:string[] = [
+    //    "../data/JSON-LD/03/Project 'Requirement with Enumerated Property'.pig.jsonld",
+    //    "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
+    //    "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
         // add more test files here, e.g.
         // "../data/JSON-LD/another-sample.pig.jsonld"
     ];

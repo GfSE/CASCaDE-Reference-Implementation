@@ -396,8 +396,13 @@ function getMessage(code: number, ...args: any[]): string {
     return msgFn ? msgFn(...args) : `Unknown error code ${code}`;
 }
 
+/*!
+ * Messages and Responses
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
 /**
- * Msg - Create IRsp without response payload (status and statusText only)
+ * Messages and Responses
  * Use for validation errors and status messages
  */
 export class Msg {
