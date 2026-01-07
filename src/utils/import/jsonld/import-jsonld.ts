@@ -1,8 +1,8 @@
 import { IRsp, rspOK, Msg } from "../../lib/messages";
 import { LIB, logger } from "../../lib/helpers";
 //import { JsonObject, JsonValue } from '../../lib/helpers';
-import { Property, Reference, Entity, Relationship,
-    AProperty, AReference, AnEntity, ARelationship, PigItemType,
+import { Property, Link, Entity, Relationship,
+    AProperty, ASourceLink, ATargetLink, AnEntity, ARelationship, PigItemType,
     TPigItem } from '../../schemas/pig/pig-metaclasses';
 
 /**
@@ -55,8 +55,8 @@ function instantiateFromDoc(doc: any): IRsp {
         const itype: any = elem['pig:itemType']['@id'] as any;
 
         // temporary filter to allow development step by step per itemType:
-        if (![/*PigItemType.Property, PigItemType.Reference, PigItemType.Entity, PigItemType.Relationship,
-            PigItemType.anEntity,*/ PigItemType.aRelationship ].includes(itype))
+        if (![PigItemType.Property, PigItemType.Link, PigItemType.Entity, PigItemType.Relationship,
+            PigItemType.anEntity, PigItemType.aRelationship ].includes(itype))
             continue;
      //   logger.debug('importJSONLD: @graph renamed', elem, itype);
 
@@ -66,8 +66,8 @@ function instantiateFromDoc(doc: any): IRsp {
                 case PigItemType.Property:
                     instance = new Property();
                     break;
-                case PigItemType.Reference:
-                    instance = new Reference();
+                case PigItemType.Link:
+                    instance = new Link();
                     break;
                 case PigItemType.Entity:
                     instance = new Entity();
@@ -78,8 +78,11 @@ function instantiateFromDoc(doc: any): IRsp {
                 case PigItemType.aProperty:
                     instance = new AProperty();
                     break;
-                case PigItemType.aReference:
-                    instance = new AReference();
+                case PigItemType.aSourceLink:
+                    instance = new ASourceLink();
+                    break;
+                case PigItemType.aTargetLink:
+                    instance = new ATargetLink();
                     break;
                 case PigItemType.anEntity:
                     instance = new AnEntity();

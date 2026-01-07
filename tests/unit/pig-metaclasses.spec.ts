@@ -2,7 +2,7 @@
 *   Dependencies: pig-metaclasses.ts
 *   Authors: chrissaenz@psg-inc.net, oskar.dungern@gfse.org
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
-*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
 *
 *   Design Decisions:
 *   - Testing and verification of the concrete children in the PIG metaclasses,
@@ -12,27 +12,30 @@
 import { LIB } from '../../src/utils/lib/helpers';
 import { JsonObject } from '../../src/utils/lib/helpers';
 import { XsDataType, PigItemType, PigItemTypeValue,
-    IProperty, IAProperty, IReference, IEntity, IAnEntity, IRelationship, IARelationship,
-        Property, AProperty, Reference, Entity, AnEntity, Relationship, ARelationship, AReference } from '../../src/utils/schemas/pig/pig-metaclasses';
+    IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,
+        Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, ASourceLink, ATargetLink } from '../../src/utils/schemas/pig/pig-metaclasses';
 
 describe("PIG Metaclasses", () => {
-    let propertyClass_input: IProperty;
-    let propertyClass_input_JSONLD: any;
-    let property_input: IAProperty;
-    let referenceClass_input: IReference;
-    let referenceClass_input_JSONLD: any;
-    let entityClass_input: IEntity;
-    let entity1_input: IAnEntity;
-//    let entity2_input: IAnEntity;
-    let relationshipClass_input: IRelationship;
-    let relationship_input: IARelationship;
+    let Property_input: IProperty;
+    let Property_input_JSONLD: any;
+    let aProperty_input: IAProperty;
+    let Link_input: ILink;
+    let Link_input_JSONLD: any;
+    let entityClass_Diagram_input: IEntity;
+    let entityClass_ModelElement_input: IEntity;
+    let anEntity_actor_input: IAnEntity;
+    let anEntity_state_input: IAnEntity;
+    let Link_mutates_toActor: ILink;
+    let Link_mutates_toState: ILink;
+    let Relationship_mutates_input: IRelationship;
+    let aRelationship_mutates_input: IARelationship;
     let anEntity_with_ref_input: IAnEntity;
     let anEntity_with_ref_input_JSONLD: any;
 
     beforeAll(() => {
 
         // Property with class:
-        propertyClass_input = {
+        Property_input = {
             id: "dcterms:type",
             hasClass: "owl:DatatypeProperty",
             itemType: PigItemType.Property,
@@ -45,7 +48,7 @@ describe("PIG Metaclasses", () => {
             maxLength: 20,
             defaultValue: "default_category"
         };
-        propertyClass_input_JSONLD = {
+        Property_input_JSONLD = {
             ['@id']: "dcterms:type",
             ["@type"]: { ['@id']: "owl:DatatypeProperty" },
             ['pig:itemType']: { ['@id']: PigItemType.Property },
@@ -58,77 +61,87 @@ describe("PIG Metaclasses", () => {
             ['sh:maxLength']: 20,
             ['sh:defaultValue']: "default_category"
         };
-        property_input = {
+        aProperty_input = {
             itemType: PigItemType.aProperty,
             hasClass: "dcterms:type",
             value: "A category"   // usually a property belongs to a certain entity or relationship
         };
 
-        // Reference with class:
-        referenceClass_input = {
+        // Link class:
+        Link_input = {
             id: "pig:shows",
-            itemType: PigItemType.Reference,
-            specializes: "pig:eligibleReference",
+            itemType: PigItemType.Link,
+            specializes: PigItemType.Link,
             title: [{ value: "shows", lang: "en" }],
             description: [{ value: "This is a class for a reference used by anEntity", lang: "en" }],
 
-            eligibleTarget: ["o:Entity_Diagram"]
+            eligibleEndpoint: ["o:Entity_Diagram"]
         };
-        referenceClass_input_JSONLD = {
+        Link_input_JSONLD = {
             ['@id']: "pig:shows",
-            ['pig:specializes']: { ['@id']: "pig:eligibleReference" },
-            ['pig:itemType']: { ['@id']: PigItemType.Reference },
+            ['pig:specializes']: { ['@id']: PigItemType.Link },
+            ['pig:itemType']: { ['@id']: PigItemType.Link },
             ['dcterms:title']: [{ ['@value']: "shows", ['@language']: "en" }],
             ['dcterms:description']: [{ ['@value']: "This is a class for a reference used by anEntity", ['@language']: "en" }],
 
-            ['pig:eligibleTarget']: [{ ['@id']: "o:Entity_Diagram" }]
+            ['pig:eligibleEndpoint']: [{ ['@id']: "o:Entity_Diagram" }]
         };
 
         // Entity with class:
-        entityClass_input = {
+        entityClass_Diagram_input = {
             id: "o:Entity_Diagram",
             itemType: PigItemType.Entity,
-            specializes: "pig:Entity",
-            title: [{ value: "Title of Entity Class 1" }],  // if there is just one language, lang can be omitted
+            specializes: PigItemType.Entity,
+            title: [{ value: "Title of o:Entity_Diagram" }],  // if there is just one language, lang can be omitted
             description: [{ value: "Description of o:Entity_Diagram" }],
 
             icon: { value: "&#x2662;" },
-            eligibleReference: [],
+            eligibleTargetLink: ["pig:shows"],
+            eligibleProperty: ["dcterms:type"]
+        };
+        entityClass_ModelElement_input = {
+            id: "o:Entity_ModelElement",
+            itemType: PigItemType.Entity,
+            specializes: PigItemType.Entity,
+            title: [{ value: "Title of Entity o:Entity_ModelElement" }],  // if there is just one language, lang can be omitted
+            description: [{ value: "Description of o:Entity_ModelElement" }],
+
+            icon: { value: "&#x2662;" },
             eligibleProperty: ["dcterms:type"]
         };
 
-        entity1_input = {
-            id: "d:anEntity_1",
+        anEntity_actor_input = {
+            id: "d:anEntity_Actor",
             revision: "v1.0",
             itemType: PigItemType.anEntity,
             modified: '2025-12-15T00:00:00Z',
             creator: "test_user",
-            title: [{ value: "Title of anEntity 1", lang: "en" }],
-            description: [{ value: "Description of d:anEntity_1", lang: "en" }],
+            title: [{ value: "Title of d:anEntity_Actor", lang: "en" }],
+            description: [{ value: "Description of d:anEntity_Actor", lang: "en" }],
 
-            hasClass: "o:Entity_Diagram",
+            hasClass: "o:Entity_Actor",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
-                value: "Category of d:anEntity_1"
+                value: "Category of d:anEntity_Actor"
             }]
         };
-    /*    entity2_input = {
-            id: "d:anEntity_2",
+        anEntity_state_input = {
+            id: "d:anEntity_State",
             revision: "v1.0",
             itemType: PigItemType.anEntity,
             modified: '2025-12-16T00:00:00Z',
             creator: "test_user",
-            title: [{ value: "Title of Entity 2", lang: "en" }],
-            description: [{ value: "Description of d:anEntity_2", lang: "en" }],
+            title: [{ value: "Title of d:anEntity_State"}],
+            description: [{ value: "Description of d:anEntity_State"}],
 
-            hasClass: "o:Entity_Diagram",
+            hasClass: "o:Entity_State",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
                 hasClass: "dcterms:type",
-                value: "Category of d:anEntity_2"
+                value: "Category of d:anEntity_State"
             }]
-        }; */
+        };
 
         // An entity input with reference (not reusing entity1_input):
         anEntity_with_ref_input = {
@@ -145,8 +158,8 @@ describe("PIG Metaclasses", () => {
                 hasClass: "dcterms:type",
                 value: "Category (notation) of d:anEntity_Diagram"
             }],
-            hasTarget: [{
-                itemType: PigItemType.aReference,
+            hasTargetLink: [{
+                itemType: PigItemType.aTargetLink,
                 hasClass: "pig:shows",
                 idRef: "d:anEntity_ModelElement"
             }]
@@ -165,53 +178,71 @@ describe("PIG Metaclasses", () => {
                 ['@value']: "Category (notation) of d:anEntity_Diagram"
             }],
             ["pig:shows"]: [{
-                ['pig:itemType']: { ['@id']: PigItemType.aReference },
+                ['pig:itemType']: { ['@id']: PigItemType.aTargetLink },
                 ['@id']: "d:anEntity_ModelElement"
             }]
         };
 
         // Relationship with class:
-        relationshipClass_input = {
-            id: "o:Relationship",
-            itemType: PigItemType.Relationship,
-            specializes: "pig:Relationship",
-            title: [{ value: "Title of RelationshipClass", lang: "en" }],
-            description: [{ value: "Description of o:Relationship", lang: "en" }],
+        Link_mutates_toActor = {
+            id: "o:Link_mutates_toActor",
+            itemType: PigItemType.Link,
+            specializes: PigItemType.aSourceLink,
+            title: [{ value: "to actor", lang: "en" }],
+            description: [{ value: "This is a class for a link to the source of o:Relationship_mutates", lang: "en" }],
 
-            eligibleSource: ["o:Entity_Diagram"],
-            eligibleTarget: ["o:Entity_Diagram"],
-            eligibleProperty: ["dcterms:type"]
+            eligibleEndpoint: ["o:Entity_Actor"]
         };
-        relationship_input = {
-            id: "d:aRelationship_1",
+        Link_mutates_toState = {
+            id: "o:Link_mutates_toState",
+            itemType: PigItemType.Link,
+            specializes: PigItemType.aTargetLink,
+            title: [{ value: "to state" }],
+            description: [{ value: "This is a class for a link to the target of o:Relationship_mutates" }],
+
+            eligibleEndpoint: ["o:Entity_State"]
+        };
+        Relationship_mutates_input = {
+            id: "o:Relationship_mutates",
+            itemType: PigItemType.Relationship,
+            specializes: PigItemType.Relationship,
+            title: [{ value: "Title of o:Relationship_mutates", lang: "en" }],
+            description: [{ value: "Description of o:Relationship_mutates", lang: "en" }],
+
+            eligibleProperty: ["dcterms:type"],
+            eligibleSourceLink: "o:Link_mutates_toActor",
+            eligibleTargetLink: "o:Link_mutates_toState"
+        };
+        aRelationship_mutates_input = {
+            id: "d:aRelationship_mutates_1",
             itemType: PigItemType.aRelationship,
-            hasClass: "o:Relationship",
+            hasClass: "o:Relationship_mutates",
             revision: "v1.0",
             modified: '2025-12-17T00:00:00Z',
             creator: "test_user",
-            title: [{ value: "Title of d:aRelationship_1", lang: "en" }],
-            description: [{ value: "Description of d:aRelationship_1", lang: "en" }],
+            title: [{ value: "Title of d:aRelationship_mutates_1", lang: "en" }],
+            description: [{ value: "Description of d:aRelationship_mutates_1", lang: "en" }],
 
-            hasSource: [{ "itemType": "pig:aReference", "hasClass": "o:relates", "idRef": "d:anEntity_1" }],
-            hasTarget: [{ "itemType": "pig:aReference", "hasClass": "o:relates", "idRef": "d:anEntity_2" }],
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: "dcterms:title",
-                value: "Name for d:aRelationship_1"
-            }]
+                hasClass: "dcterms:type",
+                value: "Category of d:aRelationship_mutates_1"
+            }],
+            hasSourceLink: [{ "itemType": "pig:aSourceLink", "hasClass": "o:Link_mutates_toActor", "idRef": "d:anEntity_Actor" }],
+            hasTargetLink: [{ "itemType": "pig:aTargetLink", "hasClass": "o:Link_mutates_toState", "idRef": "d:anEntity_State" }]
         };
     });
 
     test("Test class pig:Property", () => {
-        const inst = new Property().set(propertyClass_input);
+        const inst = new Property().set(Property_input);
 
         // check the attribute values upon creation:
         if (!inst.status().ok)
             console.error('status:', inst.status());
         expect(inst.status().ok).toBe(true);
         expect(inst.id).toBe("dcterms:type");
-        expect(inst.title).toEqual(propertyClass_input.title);
-        expect(inst.description).toEqual(propertyClass_input.description);
+        expect(inst.title).toEqual(Property_input.title);
+        expect(inst.description).toEqual(Property_input.description);
 
         expect(inst.itemType).toBe(PigItemType.Property);
         expect(inst.datatype).toBe(XsDataType.String);
@@ -223,29 +254,29 @@ describe("PIG Metaclasses", () => {
         // check the output as JSON:
         const propertyClass_output = inst.get();
     //    console.debug('pig:Property output:', propertyClass_output);
-        expect(propertyClass_output).toEqual(propertyClass_input);
+        expect(propertyClass_output).toEqual(Property_input);
 
         // check the output as JSON-LD:
         const propertyClass_output_JSONLD = inst.getJSONLD();
-        expect(propertyClass_output_JSONLD).toEqual(propertyClass_input_JSONLD);
+        expect(propertyClass_output_JSONLD).toEqual(Property_input_JSONLD);
 
         // input JSON-LD to JSON conversion check;
         // no access to other items is necessary in case of Property (class):
-        const test_PC_fromJSONLD = new Property().setJSONLD(propertyClass_input_JSONLD);
-        expect(test_PC_fromJSONLD.get()).toEqual(propertyClass_input);
+        const test_PC_fromJSONLD = new Property().setJSONLD(Property_input_JSONLD);
+        expect(test_PC_fromJSONLD.get()).toEqual(Property_input);
 
         // check with bad data type:
-        const bad_input = Object.assign({}, propertyClass_input, { datatype: "badType" as XsDataType });
+        const bad_input = Object.assign({}, Property_input, { datatype: "badType" as XsDataType });
         const test_PC_bad = new Property().set(bad_input);
         expect(test_PC_bad.status().ok).toBe(false);
         //expect(test_PC_bad.status().statusText || '').toContain('Invalid datatype');
         //expect(test_PC_bad.status().statusText || '').toMatch(/invalid datatype/i);
     });
 
-    test("Test class pig:Reference", () => {
-        const inst = new Reference().set(referenceClass_input);
-        // console.debug('pig:Reference input:', referenceClass_input);
-        // console.debug('pig:Reference item:', inst);
+    test("Test class pig:Link", () => {
+        const inst = new Link().set(Link_input);
+        // console.debug('pig:Link input:', linkClass_input);
+        // console.debug('pig:Link item:', inst);
 
         // check the attribute values upon creation:
         if (!inst.status().ok)
@@ -255,28 +286,28 @@ describe("PIG Metaclasses", () => {
         expect(inst.title).toEqual([{ value: "shows", lang: "en" }]);
         expect(inst.description).toEqual([{ value: "This is a class for a reference used by anEntity", lang: "en" }]);
 
-        expect(inst.itemType).toBe(PigItemType.Reference);
-        expect(inst.eligibleTarget).toStrictEqual(['o:Entity_Diagram']);
+        expect(inst.itemType).toBe(PigItemType.Link);
+        expect(inst.eligibleEndpoint).toStrictEqual(['o:Entity_Diagram']);
 
         // check the output as JSON:
         const refClass_output = inst.get();
-        //    console.debug('pig:Reference output:', referenceClass_output);
-        expect(refClass_output).toEqual(referenceClass_input);
+        //    console.debug('pig:Link output:', referenceClass_output);
+        expect(refClass_output).toEqual(Link_input);
 
         // check the output as JSON-LD:
-        const refClass_output_JSONLD = inst.getJSONLD();
-        expect(refClass_output_JSONLD).toEqual(referenceClass_input_JSONLD);
+        const linkClass_output_JSONLD = inst.getJSONLD();
+        expect(linkClass_output_JSONLD).toEqual(Link_input_JSONLD);
 
         // input JSON-LD to JSON conversion check
-        // no access to other items is necessary in case of Reference (class):
-        const test_RfC_fromJSONLD = new Reference().setJSONLD(referenceClass_input_JSONLD);
-        expect(test_RfC_fromJSONLD.get()).toEqual(referenceClass_input);
+        // no access to other items is necessary in case of Link (class):
+        const test_RfC_fromJSONLD = new Link().setJSONLD(Link_input_JSONLD);
+        expect(test_RfC_fromJSONLD.get()).toEqual(Link_input);
     });
 
     test("Test instance pig:aProperty", () => {
         // NOTE: aProperty needs to reference PropertClass but there is no validation in either class to ensure that
         // either of them exists.
-        const inst = new AProperty().set(property_input);
+        const inst = new AProperty().set(aProperty_input);
 
         // check the attribute values upon creation:
         if (!inst.status().ok)
@@ -291,7 +322,7 @@ describe("PIG Metaclasses", () => {
     });
 
     test("Test class pig:Entity", () => {
-        const inst = new Entity().set(entityClass_input);
+        const inst = new Entity().set(entityClass_Diagram_input);
 
         // check the attribute values upon creation:
         if (!inst.status().ok)
@@ -300,7 +331,7 @@ describe("PIG Metaclasses", () => {
 
         // check the attribute values:
         expect(inst.id).toBe('o:Entity_Diagram');
-        expect(inst.title).toEqual([{ value: 'Title of Entity Class 1' }]);
+        expect(inst.title).toEqual([{ value: 'Title of o:Entity_Diagram' }]);
         expect(inst.description).toEqual([{ value: 'Description of o:Entity_Diagram' }]);
 
         expect(inst.itemType).toBe(PigItemType.Entity);
@@ -308,14 +339,19 @@ describe("PIG Metaclasses", () => {
 
         // check the output:
         const entityClass_output = inst.get();
-        expect(entityClass_output).toEqual(entityClass_input);
+        expect(entityClass_output).toEqual(entityClass_Diagram_input);
 
     });
 
     test("Test class pig:Relationship", () => {
+        const linkToActor = new Link().set(Link_mutates_toActor);
+        if (!linkToActor.status().ok)
+            console.error('status:', linkToActor.status());
+        expect(linkToActor.status().ok).toBe(true);
+
         // NOTE: Relationship needs to reference two Entity objects but there is no validation in either class to ensure that
         // either of them exists.
-        const inst = new Relationship().set(relationshipClass_input);
+        const inst = new Relationship().set(Relationship_mutates_input);
 
         // check the attribute values upon creation:
         if (!inst.status().ok)
@@ -323,27 +359,27 @@ describe("PIG Metaclasses", () => {
         expect(inst.status().ok).toBe(true);
 
         // check the attribute values:
-    //    expect(inst.validate(relationshipClass_input)).toBe(0);
+    //    expect(inst.validate(Relationship_mutates_input)).toBe(0);
 
-        expect(inst.id).toBe('o:Relationship');
-        expect(inst.title).toEqual([{ value: 'Title of RelationshipClass', lang: "en" }]);
-        expect(inst.description).toEqual([{ value: 'Description of o:Relationship', lang: "en" }]);
+        expect(inst.id).toBe('o:Relationship_mutates');
+        expect(inst.title).toEqual([{ value: 'Title of o:Relationship_mutates', lang: "en" }]);
+        expect(inst.description).toEqual([{ value: 'Description of o:Relationship_mutates', lang: "en" }]);
 
         expect(inst.itemType).toBe(PigItemType.Relationship);
-        expect(inst.eligibleTarget).toStrictEqual(['o:Entity_Diagram']);
-        expect(inst.eligibleSource).toStrictEqual(['o:Entity_Diagram']);
+        expect(inst.eligibleSourceLink).toBe('o:Link_mutates_toActor');
+        expect(inst.eligibleTargetLink).toBe('o:Link_mutates_toState');
         expect(inst.eligibleProperty).toStrictEqual(["dcterms:type"]);
 
         // check the output:
         const relationshipClass_output = inst.get();
-        expect(relationshipClass_output).toEqual(relationshipClass_input);
+        expect(relationshipClass_output).toEqual(Relationship_mutates_input);
 
     });
 
     test('Error when itemType is invalid, no exception thrown', () => {
         expect(() => {
             // do not add a completly bad input to avoid a TS error:
-            const inst = new Property().set(Object.assign({}, propertyClass_input, { itemType: 'bad' }));
+            const inst = new Property().set(Object.assign({}, Property_input, { itemType: 'bad' }));
             expect(inst.status().ok).toBe(false);
         }).not.toThrow();
     });
@@ -351,7 +387,7 @@ describe("PIG Metaclasses", () => {
     test('throws when itemType is invalid', () => {
         expect(() => {
             // do not add a completly bad input to avoid a TS error:
-            new Property().set(Object.assign({}, propertyClass_input, {itemType: 'bad'}));
+            new Property().set(Object.assign({}, Property_input, {itemType: 'bad'}));
         }).toThrow(); // checks only that an exception is thrown
 
         // more detailed checking: Message, Regex oder Error-Konstruktor
@@ -359,7 +395,7 @@ describe("PIG Metaclasses", () => {
         expect(() => new Property().set(badInput as any)).toThrow(/Expected 'Property'/);
     }); */
 
-    test("Test instance pig:anEntity with hasTarget using set()", () => {
+    test("Test instance pig:anEntity with hasTargetLink using set()", () => {
         const inst = new AnEntity().set(anEntity_with_ref_input);
         if (!inst.status().ok)
             console.error('status:', inst.status());
@@ -377,11 +413,11 @@ describe("PIG Metaclasses", () => {
         expect(inst.hasProperty[0].itemType).toBe(PigItemType.aProperty);
 
         // check hasTarget:
-        expect(inst.hasTarget).toHaveLength(1);
-        expect(inst.hasTarget[0]).toBeInstanceOf(AReference);
-        expect(inst.hasTarget[0].hasClass).toBe('pig:shows');
-        expect(inst.hasTarget[0].idRef).toBe('d:anEntity_ModelElement');
-        expect(inst.hasTarget[0].itemType).toBe(PigItemType.aReference);
+        expect(inst.hasTargetLink).toHaveLength(1);
+        expect(inst.hasTargetLink[0]).toBeInstanceOf(ATargetLink);
+        expect(inst.hasTargetLink[0].hasClass).toBe('pig:shows');
+        expect(inst.hasTargetLink[0].idRef).toBe('d:anEntity_ModelElement');
+        expect(inst.hasTargetLink[0].itemType).toBe(PigItemType.aTargetLink);
 
         // check the output as JSON native:
         const anEntity_output = inst.get();
@@ -400,7 +436,22 @@ describe("PIG Metaclasses", () => {
         expect(anEntity_with_ref_input_JSONLD).toMatchObject(anEntity_output_JSONLD);
 
     });
-    test("Test instance pig:anEntity with hasTarget using setJSONLD()", () => {
+    test("Test 2 instances pig:anEntity with pig:aRelationship using set()", () => {
+        const actor = new AnEntity().set(anEntity_actor_input);
+        if (!actor.status().ok)
+            console.error('status:', actor.status());
+        expect(actor.status().ok).toBe(true);
+        const state = new AnEntity().set(anEntity_state_input);
+        if (!state.status().ok)
+            console.error('status:', state.status());
+        expect(state.status().ok).toBe(true);
+        const mutates = new ARelationship().set(aRelationship_mutates_input);
+        if (!mutates.status().ok)
+            console.error('status:', mutates.status());
+        expect(mutates.status().ok).toBe(true);
+    });
+
+    test("Test instance pig:anEntity with hasTargetLink using setJSONLD()", () => {
         // input JSON-LD to JSON conversion check:
         const inst = new AnEntity().setJSONLD(anEntity_with_ref_input_JSONLD);
         if (!inst.status().ok)

@@ -6,7 +6,7 @@
 /** Product Information Graph (PIG) Metaclasses - the basic object structure representing the PIG
 *   Dependencies: none
 *   Authors: oskar.dungern@gfse.org, ..
-*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
 *
 *   Design Decisions:
 *   - The PIG classes contain *only* the elements in the metamodel; it could be generated from the metamodel.
@@ -14,13 +14,13 @@
 *   - All names are always in singular form, even if they have multiple values.
 *   - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
 *   - The 'AProperty' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
-*   - Similarly, the 'AReference' instances are instantiated as part their parent objects 'AnEntity'.
-*   - Both 'AProperty' and 'AReference' have no identifier and no revision history of their own.
+*   - Similarly, the 'ALink' instances are instantiated as part their parent objects 'AnEntity'.
+*   - Both 'AProperty' and 'ALink' have no identifier and no revision history of their own.
 *   - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
 *     This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
 *   - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
 *     before the items are instantiated here.
-*   - References to other items are stored as simple strings (the URIs) to avoid deep object graphs;
+*   - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
 *     those references are expanded to id objects only when serializing to JSON-LD.
 *   - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
 *   - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
@@ -39,7 +39,7 @@ import { SCH } from './pig-schemata';
 
 export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
-export type TPigClass = Property | Reference | Entity | Relationship;
+export type TPigClass = Property | Link | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
 export type TPigAnElement = AnEntity | ARelationship;
 export type TPigItem = TPigClass | TPigAnElement;
@@ -50,28 +50,31 @@ export type TISODateString = string;
 export const PigItemType = {
     // PIG classes:
     Property: 'pig:Property',
-    Reference: 'pig:Reference',
+//    Reference: 'pig:Reference',
+    Link: 'pig:Link', 
     Entity: 'pig:Entity',
     Relationship: 'pig:Relationship',
     // PIG instances/individuals:
     aProperty: 'pig:aProperty',
-    aReference: 'pig:aReference',
+//    aReference: 'pig:aReference',
+    aSourceLink: 'pig:aSourceLink',
+    aTargetLink: 'pig:aTargetLink',
     anEntity: 'pig:anEntity',
     aRelationship: 'pig:aRelationship'
 } as const;
 export type PigItemTypeValue = typeof PigItemType[keyof typeof PigItemType];
 
 /* same as above, but using 'type' instead of 'const enum':
-export type PigItemTypeValue = 'pig:Property' | 'pig:Reference' | 'pig:Entity' | 'pig:Relationship' | 'pig:aProperty' | 'pig:aReference' | 'pig:anEntity' | 'pig:aRelationship';
-export const PigItemType: Record<'Property' | 'Reference' | 'Entity' | 'Relationship' | 'aProperty' | 'aReference' | 'anEntity' | 'aRelationship', PigItemTypeValue> = {
+export type PigItemTypeValue = 'pig:Property' | 'pig:Link' | 'pig:Entity' | 'pig:Relationship' | 'pig:aProperty' | 'pig:aLink' | 'pig:anEntity' | 'pig:aRelationship';
+export const PigItemType: Record<'Property' | 'Link' | 'Entity' | 'Relationship' | 'aProperty' | 'aLink' | 'anEntity' | 'aRelationship', PigItemTypeValue> = {
     // PIG classes:
     Property: 'pig:Property',
-    Reference: 'pig:Reference',
+    Link: 'pig:Link',
     Entity: 'pig:Entity',
     Relationship: 'pig:Relationship',
     // PIG instances/individuals:
     aProperty: 'pig:aProperty',
-    aReference: 'pig:aReference',
+    aLink: 'pig:aLink',
     anEntity: 'pig:anEntity',
     aRelationship: 'pig:aRelationship'
 };*/
@@ -192,6 +195,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // id extraction
         _itm = replaceIdObjects(_itm);
         _itm = this.normalize(_itm);
+        //logger.debug('setJSONLD',_itm);
         // now set the normalized object:
         this.set(_itm);
         return this; // make chainable
@@ -232,6 +236,35 @@ abstract class Identifiable extends Item implements IIdentifiable {
     }
 }
 
+interface IALink extends IItem {
+    idRef: TPigId;  // must point to an element according to eligibleTarget of the class
+}
+abstract class ALink extends Item implements IALink {
+    idRef!: TPigId;
+    constructor(itm: IItem) {
+        super(itm);
+    }
+    protected set(itm: IALink) {
+        super.set(itm);
+        this.idRef = itm.idRef;
+        return this;
+    }
+    protected get() {
+        if (!this.lastStatus.ok) return undefined;
+        return LIB.stripUndefined({
+            ...super.get(),
+            idRef: this.idRef
+        });
+    }
+    protected validate(itm: IALink) {
+        // id and itemType checked in superclass
+        if (!itm.hasClass)
+            return Msg.create(601, itm.itemType);
+        // ToDo: implement further validation logic
+        // - Check class reference; must be an existing Link URI (requires access to the cache to resolve the class -> do it through overall consistency check):
+        return super.validate(itm);
+    }
+}
 interface IElement extends IIdentifiable {
     eligibleProperty?: TPigId[];
     icon?: IText;  // optional, default is undefined (no icon)
@@ -262,9 +295,10 @@ abstract class Element extends Identifiable implements IElement {
     }
     protected validate(itm: IElement) {
         // If eligibleProperty is not present, all properties are allowed;
-        // if present and empty, no properties are allowed:
-        const rsp = validateIdStringArray(itm.eligibleProperty, 'eligibleProperty', { canBeUndefined: true, minCount: 0 });
-        if (!rsp.ok) return rsp;
+        // if present and empty, no properties are allowed.
+        // This is tested via schema at concrete class level.
+    /*    const rsp = validateIdStringArray(itm.eligibleProperty, 'eligibleProperty', { canBeUndefined: true, minCount: 0 });
+        if (!rsp.ok) return rsp; */
         // ToDo: implement further validation logic
         return super.validate(itm);
     }
@@ -297,7 +331,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
         this.creator = itm.creator;
 
         this.hasProperty = itm.hasProperty ? itm.hasProperty.map(p => new AProperty().set(p)) : [];
-        logger.debug('anEl.set 9',itm.hasProperty, this.hasProperty);
+    //    logger.debug('anEl.set 9',itm.hasProperty, this.hasProperty);
         // made chainable in concrete subclass
     }
     protected get() {
@@ -440,19 +474,19 @@ export class Property extends Identifiable implements IProperty {
         return super.validate(itm);
     }
 }
-export interface IReference extends IIdentifiable {
-    eligibleTarget: TPigId[]; // must be URI of an Entity or Relationship (class)
+export interface ILink extends IIdentifiable {
+    eligibleEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
 }
-export class Reference extends Identifiable implements IReference {
-    eligibleTarget!: TPigId[];
+export class Link extends Identifiable implements ILink {
+    eligibleEndpoint!: TPigId[];
     constructor() {
-        super({ itemType: PigItemType.Reference });
+        super({ itemType: PigItemType.Link });
     }
-    set(itm: IReference) {
+    set(itm: ILink) {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.eligibleTarget = itm.eligibleTarget;
+            this.eligibleEndpoint = itm.eligibleEndpoint;
         }
         return this;
     }
@@ -460,40 +494,40 @@ export class Reference extends Identifiable implements IReference {
         if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
-            eligibleTarget: this.eligibleTarget
+            eligibleEndpoint: this.eligibleEndpoint
         });
     }
     getHTML(options?: object): stringHTML {
         return '<div>not implemented yet</div>';
     }
-    normalize(itm: IReference): IReference {
-        return super.normalize(itm) as IReference;
+    normalize(itm: ILink): ILink {
+        return super.normalize(itm) as ILink;
     }
-    validate(itm: IReference) {
+    validate(itm: ILink) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         try {
-            const ok = SCH.validateReferenceSchema(itm);
+            const ok = SCH.validateLinkSchema(itm);
             if (!ok) {
-                const msg = SCH.getValidateReferenceErrors();
-                return Msg.create(681, 'Reference', itm.id, msg);
+                const msg = SCH.getValidateLinkErrors();
+                return Msg.create(681, 'Link', itm.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'Reference', itm.id, err?.message ?? String(err));
+            return Msg.create(682, 'Link', itm.id, err?.message ?? String(err));
         }
 
-        // id and itemType checked in superclass
+    /*    // id and itemType checked in superclass
         // At metamodel level, simple id strings are listed:
-        const rsp = validateIdStringArray(itm.eligibleTarget, 'eligibleTarget');
-        if (!rsp.ok) return rsp;
+        const rsp = validateIdStringArray(itm.eligibleEndpoint, 'eligibleEndpoint');
+        if (!rsp.ok) return rsp; */
         return super.validate(itm);
     }
 }
 
 export interface IEntity extends IElement {
-    eligibleReference?: TPigId[];  // must hold Reference URIs
+    eligibleTargetLink?: TPigId[];  // must hold Link URIs
 }
 export class Entity extends Element implements IEntity {
-    eligibleReference?: TPigId[];
+    eligibleTargetLink?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.Entity });
     }
@@ -501,7 +535,7 @@ export class Entity extends Element implements IEntity {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.eligibleReference = itm.eligibleReference;
+            this.eligibleTargetLink = itm.eligibleTargetLink;
         }
         return this;  // make chainable
     }
@@ -509,68 +543,10 @@ export class Entity extends Element implements IEntity {
         if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
-            eligibleReference: Array.isArray(this.eligibleReference) ? this.eligibleReference : undefined
+            eligibleTargetLink: Array.isArray(this.eligibleTargetLink) ? this.eligibleTargetLink : undefined
         });
     }
 /*    getGQL(): string {
-        const props: string[] = [];
-
-        // Add id
-        props.push(`id: '${this.id}'`);
-
-        // Add itemType
-        props.push(`itemType: '${this.itemType}'`);
-
-        // Add hasClass if present
-        if (this.hasClass) {
-            props.push(`hasClass: '${this.hasClass}'`);
-        }
-
-        // Add specializes if present
-        if (this.specializes) {
-            props.push(`specializes: '${this.specializes}'`);
-        }
-
-        // Add title if present
-        if (this.title && this.title.length > 0) {
-            const titleStr = this.title.map(t =>
-                t.lang ? `{value: '${t.value.replace(/'/g, "\\'")}', lang: '${t.lang}'}`
-                    : `{value: '${t.value.replace(/'/g, "\\'")}'}`
-            ).join(', ');
-            props.push(`title: [${titleStr}]`);
-        }
-
-        // Add description if present
-        if (this.description && this.description.length > 0) {
-            const descStr = this.description.map(d =>
-                d.lang ? `{value: '${d.value.replace(/'/g, "\\'")}', lang: '${d.lang}'}`
-                    : `{value: '${d.value.replace(/'/g, "\\'")}'}`
-            ).join(', ');
-            props.push(`description: [${descStr}]`);
-        }
-
-        // Add eligibleProperty if present
-        if (this.eligibleProperty && this.eligibleProperty.length > 0) {
-            const propsStr = this.eligibleProperty.map(p => `'${p}'`).join(', ');
-            props.push(`eligibleProperty: [${propsStr}]`);
-        }
-
-        // Add eligibleReference if present
-        if (this.eligibleReference && this.eligibleReference.length > 0) {
-            const refsStr = this.eligibleReference.map(r => `'${r}'`).join(', ');
-            props.push(`eligibleReference: [${refsStr}]`);
-        }
-
-        // Add icon if present
-        if (this.icon) {
-            props.push(`icon: {value: '${this.icon.value.replace(/'/g, "\\'")}'}`);
-        }
-
-        // Build the CREATE statement
-        const nodeLabel = 'Entity';
-        const propertiesStr = props.join(', ');
-
-        return `CREATE (n:${nodeLabel} {${propertiesStr}})`;
     } */
     normalize(itm: IEntity): IEntity {
         return super.normalize(itm);
@@ -592,22 +568,22 @@ export class Entity extends Element implements IEntity {
         // id and itemType checked in superclass
         // check whether specializes is another Entity URI is done in overall consistency check
 
-        // If eligibleReference is not present, all references are allowed;
+    /*    // If eligibleTarget is not present, all references are allowed;
         // if present and empty, no references are allowed:
-        const rsp = validateIdStringArray(itm.eligibleReference, 'eligibleReference', { canBeUndefined: true, minCount: 0 });
-        if (!rsp.ok) return rsp;
+        const rsp = validateIdStringArray(itm.eligibleTargetLink, 'eligibleTargetLink', { canBeUndefined: true, minCount: 0 });
+        if (!rsp.ok) return rsp; */
         // ToDo: implement further validation logic
         return super.validate(itm);
     }
 }
 
 export interface IRelationship extends IElement {
-    eligibleSource?: TPigId[];  // must hold Reference URIs
-    eligibleTarget?: TPigId[];  // must hold Reference URIs
+    eligibleSourceLink?: TPigId;  // must hold Link URI
+    eligibleTargetLink?: TPigId;  // must hold Link URI
 }
 export class Relationship extends Element implements IRelationship {
-    eligibleSource?: TPigId[];
-    eligibleTarget?: TPigId[];
+    eligibleSourceLink?: TPigId;
+    eligibleTargetLink?: TPigId;
     constructor() {
         super({ itemType: PigItemType.Relationship });
     }
@@ -615,8 +591,8 @@ export class Relationship extends Element implements IRelationship {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.eligibleSource = itm.eligibleSource;
-            this.eligibleTarget = itm.eligibleTarget;
+            this.eligibleSourceLink = itm.eligibleSourceLink;
+            this.eligibleTargetLink = itm.eligibleTargetLink;
         }
         return this;
     }
@@ -624,8 +600,8 @@ export class Relationship extends Element implements IRelationship {
         if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
-            eligibleSource: Array.isArray(this.eligibleSource) ? this.eligibleSource : undefined,
-            eligibleTarget: Array.isArray(this.eligibleTarget) ? this.eligibleTarget : undefined
+            eligibleSourceLink: this.eligibleSourceLink,
+            eligibleTargetLink: this.eligibleTargetLink
         });
     }
     normalize(itm: IRelationship): IRelationship {
@@ -648,12 +624,12 @@ export class Relationship extends Element implements IRelationship {
         // id and itemType checked in superclass
         // check whether specializes is another Relationship URI is done in overall consistency check
 
-        // If eligibleSource/eligibleTarget are not present, sources resp. targets of all classes are allowed;
+    /*    // If eligibleSource/eligibleTarget are not present, sources resp. targets of all classes are allowed;
         // if present, at least one entry must be there, because a relationship without source or target makes no sense:
-        let rsp = validateIdStringArray(itm.eligibleSource, 'eligibleSource', { canBeUndefined: true, minCount: 1 });
+        let rsp = validateIdStringArray(itm.eligibleSourceLink, 'eligibleSourceLink', { canBeUndefined: true, minCount: 1 });
         if (!rsp.ok) return rsp;
-        rsp = validateIdStringArray(itm.eligibleTarget, 'eligibleTarget', { canBeUndefined: true, minCount: 1 });
-        if (!rsp.ok) return rsp;
+        rsp = validateIdStringArray(itm.eligibleTargetLink, 'eligibleTargetLink', { canBeUndefined: true, minCount: 1 });
+        if (!rsp.ok) return rsp; */
         // ToDo: implement further validation logic
         return super.validate(itm);
     }
@@ -696,7 +672,7 @@ export class AProperty extends Item implements IAProperty {
         return '<div>not implemented yet</div>';
     }
     validate(itm: IAProperty) {
-        // id and itemType checked in superclass
+        // itemType checked in superclass
         if (!itm.hasClass)
             return Msg.create(601, PigItemType.aProperty);
         // ToDo: implement further validation logic
@@ -704,58 +680,70 @@ export class AProperty extends Item implements IAProperty {
         return super.validate(itm);
     }
 }
-export interface IAReference extends IItem {
-    idRef: TPigId;
-}
-export class AReference extends Item implements IAReference {
-    idRef!: TPigId;  // must point to an element according to eligibleTarget of the class
+export class ASourceLink extends ALink implements IALink {
     constructor() {
-        super({ itemType: PigItemType.aReference });
+        super({ itemType: PigItemType.aSourceLink });
     }
-    set(itm: IAReference) {
+    set(itm: IALink) {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.idRef = itm.idRef;
         }
         return this;
     }
     get() {
         if (!this.lastStatus.ok) return undefined;
-        return LIB.stripUndefined({
-            ...super.get(),
-            idRef: this.idRef
-        });
+        return super.get();
     }
-    getHTML(options?: object): stringHTML {
-        // ToDo: implement a HTML snippet with a link to the referenced element
-        return '<div>not implemented yet</div>';
-    }
-    validate(itm: IAReference) {
-        // id and itemType checked in superclass
+    validate(itm: IALink) {
+        // itemType checked in superclass
         if (!itm.hasClass)
-            return Msg.create(601, PigItemType.aReference);
+            return Msg.create(601, PigItemType.aSourceLink);
         // ToDo: implement further validation logic
-        // - Check class reference; must be an existing Reference URI (requires access to the cache to resolve the class -> do it through overall consistency check):
+        // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
+        return super.validate(itm);
+    }
+}
+export class ATargetLink extends ALink implements IALink {
+    constructor() {
+        super({ itemType: PigItemType.aTargetLink });
+    }
+    set(itm: IALink) {
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus.ok) {
+            super.set(itm);
+        }
+        return this;
+    }
+    get() {
+        if (!this.lastStatus.ok) return undefined;
+        return super.get();
+    }
+    validate(itm: IALink) {
+        // itemType checked in superclass
+        if (!itm.hasClass)
+            return Msg.create(601, PigItemType.aTargetLink);
+        // ToDo: implement further validation logic
+        // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
 }
 
 export interface IAnEntity extends IAnElement {
-    hasTarget?: IAReference[];  // optional, must hold anEntity or aRelationship URIs
+    hasTargetLink?: IALink[];  // optional, must hold anEntity or aRelationship URIs
 }
 export class AnEntity extends AnElement implements IAnEntity {
-    hasTarget!: AReference[];
+    hasTargetLink!: ATargetLink[];
     constructor() {
         super({ itemType: PigItemType.anEntity });
     }
     set(itm: IAnEntity) {
         const _itm:IAnEntity = LIB.stripUndefined( itm );
-        logger.debug('AnEntity.set():', _itm);
+    //    logger.debug('AnEntity.set():', _itm);
         this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
             super.set(_itm);
-            this.hasTarget = _itm.hasTarget ? _itm.hasTarget.map(r => new AReference().set(r)) : [];
+            this.hasTargetLink = _itm.hasTargetLink ? _itm.hasTargetLink.map(r => new ATargetLink().set(r)) : [];
         }
         return this;
     }
@@ -763,13 +751,13 @@ export class AnEntity extends AnElement implements IAnEntity {
         if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ... super.get(),
-            hasTarget: this.hasTarget.map(r => r.get())
+            hasTargetLink: this.hasTargetLink.map(t => t.get())
         });
     }
     getJSONLD() {
         const jld = super.getJSONLD();
-        const out = addConfigurablesToJSONLD(jld, this, 'hasTarget');
-        logger.debug('AnEntity.getJSONLD: ', out);
+        const out = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
+    //    logger.debug('AnEntity.getJSONLD: ', out);
         return out;
     }
     getHTML(options?: object): stringHTML {
@@ -777,11 +765,11 @@ export class AnEntity extends AnElement implements IAnEntity {
         return '<div>not implemented yet</div>';
     }
     normalize(itm: IAnEntity): IAnEntity {
-        // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aReference;
+        // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aLink;
         // collect them here in a hasTarget array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
         const _itm = { ...itm }; 
-        _itm.hasTarget = collectConfigurablesFromJSONLD(_itm, PigItemType.aReference) as IAReference[] | undefined;
+        _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[] | undefined;
     //    logger.debug('AnEntity.normalize: ' + JSON.stringify(norm, null, 2));
         return super.normalize(_itm) as IAnEntity;
     }
@@ -809,21 +797,23 @@ export class AnEntity extends AnElement implements IAnEntity {
 }
 
 export interface IARelationship extends IAnElement {
-    hasSource: IAReference[];
-    hasTarget: IAReference[];
+    hasSourceLink: IALink[];
+    hasTargetLink: IALink[];
 }
 export class ARelationship extends AnElement implements IARelationship {
-    hasSource!: AReference[];
-    hasTarget!: AReference[];
+    hasSourceLink!: ASourceLink[];
+    hasTargetLink!: ATargetLink[];
     constructor() {
         super({ itemType: PigItemType.aRelationship });
     }
     set(itm: IARelationship) {
-        this.lastStatus = this.validate(itm);
+        const _itm: IARelationship = LIB.stripUndefined(itm);
+        //logger.debug('ARelationship.set():', _itm);
+        this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
-            super.set(itm);
-            this.hasSource = itm.hasSource ? itm.hasSource.map(s => new AReference().set(s)) : [];
-            this.hasTarget = itm.hasTarget ? itm.hasTarget.map(t => new AReference().set(t)) : [];
+            super.set(_itm);
+            this.hasSourceLink = _itm.hasSourceLink ? _itm.hasSourceLink.map(s => new ASourceLink().set(s)) : [];
+            this.hasTargetLink = _itm.hasTargetLink ? _itm.hasTargetLink.map(t => new ATargetLink().set(t)) : [];
         }
         return this;
     }
@@ -831,8 +821,8 @@ export class ARelationship extends AnElement implements IARelationship {
         if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
-            hasSource: this.hasSource.map(s => s.get()),
-            hasTarget: this.hasTarget.map(t => t.get())
+            hasSourceLink: this.hasSourceLink.map(s => s.get()),
+            hasTargetLink: this.hasTargetLink.map(t => t.get())
         });
     }
     getHTML(options?: object): stringHTML {
@@ -840,20 +830,27 @@ export class ARelationship extends AnElement implements IARelationship {
         return '<div>not implemented yet</div>';
     }
     normalize(itm: IARelationship): IARelationship {
-        return super.normalize(itm) as IARelationship;
+        // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aLink;
+        // collect them here in a hasTarget array, where the tag becomes hasClass;
+        // they will be instantiated as AProperty items in set():
+        const _itm = { ...itm };
+        _itm.hasSourceLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
+        _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
+        //    logger.debug('ARelationship.normalize: ' + JSON.stringify(norm, null, 2));
+        return super.normalize(_itm) as IARelationship;
     }
     validate(itm: IARelationship) {
-    /*    // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        // Schema validation (AJV) - provides structural checks and reuses the idString definition
         // ... only at the lowest subclass level:
         try {
             const ok = SCH.validateARelationshipSchema(itm);
             if (!ok) {
                 const msg = SCH.getValidateARelationshipErrors();
-                return { status: 400, statusText: `Schema validation failed for ARelationship '${itm.id}': ${msg}`, ok: false };
+                return Msg.create(681, 'aRelationship', itm.id, msg);
             }
         } catch (err: any) {
-            return { status: 500, statusText: `Schema validation error: ${err?.message ?? String(err)}`, ok: false };
-        } */
+            return Msg.create(682, 'aRelationship', itm.id, err?.message ?? String(err));
+        }
 
         // Runtime guards:
         // id and itemType checked in superclass
@@ -869,8 +866,8 @@ export class ARelationship extends AnElement implements IARelationship {
 export function isProperty(obj: Identifiable): obj is Property {
     return !!obj && obj.itemType === PigItemType.Property;
 }
-export function isReference(obj: Identifiable): obj is Reference {
-    return !!obj && obj.itemType === PigItemType.Reference;
+export function isLink(obj: Identifiable): obj is Link {
+    return !!obj && obj.itemType === PigItemType.Link;
 }
 export function isEntity(obj: Identifiable): obj is Entity {
     return !!obj && obj.itemType === PigItemType.Entity;
@@ -1190,7 +1187,7 @@ function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
  * @param obj - The input object (typically from JSON-LD)
  * @returns Array of IAProperty objects, or undefined if no properties found
  */
-function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAProperty[] | IAReference[] | undefined {
+function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAProperty[] | IALink[] | undefined {
     if (!obj || typeof obj !== 'object') return undefined;
 
     const properties: IAProperty[] = [];
@@ -1199,7 +1196,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
     // the tags have already been renamed with LIB.renameJsonTags( ..., LIB.fromJSONLD):
     const skipKeys = new Set(LIB.toJSONLD.map(([key]) => key));
 
-    logger.debug('collect 1',obj,itype);
+    //logger.debug('collect 1',obj,itype);
     for (const key of Object.keys(obj)) {
         // Skip known metadata keys and standard PIG fields
         if (skipKeys.has(key)) continue;
@@ -1208,7 +1205,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
         if (!isValidIdString(key)) continue;
 
         const val = obj[key];
-        logger.debug('collect 2', key,val);
+        //logger.debug('collect 2', key,val);
 
         // Handle array of property values
         if (Array.isArray(val)) {
@@ -1226,7 +1223,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
                             // itype == PigItemType.Property: value in case of a plain value 
                             value: item.value /*|| item['@value'] */,
                             // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
-                            // itype == PigItemType.Reference: idRef is mandatory
+                            // itype == PigItemType.Link: idRef is mandatory
                             idRef: item.id,
                             aComposedProperty: item.aComposedProperty
                         });
@@ -1246,7 +1243,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
                     // itype == PigItemType.Property: value in case of a plain value 
                     value: val.value /*|| item['@value'] */,
                     // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
-                    // itype == PigItemType.Reference: idRef is mandatory
+                    // itype == PigItemType.Link: idRef is mandatory
                     idRef: val.id,
                     aComposedProperty: val.aComposedProperty
                 });
@@ -1268,15 +1265,15 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
     //    return properties.length > 0 ? properties : undefined;
 }
 /**
- * Add hasProperty, hasSource or hasTarget arrays to JSON-LD output
+ * Add hasProperty, hasSourceLink or hasTargetLink arrays to JSON-LD output
  */
 function addConfigurablesToJSONLD(
     jld: JsonObject,
     anEl: IAnElement | AnEntity | ARelationship,
-    hasX: 'hasProperty' | 'hasSource' | 'hasTarget'
+    hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
 ): JsonObject {
     const items = (anEl as any)[hasX];
-    logger.debug('addConfigurablesToJSONLD:', jld, anEl, hasX, items);
+//    logger.debug('addConfigurablesToJSONLD:', jld, anEl, hasX, items);
 
     if (!Array.isArray(items)) {
         return jld;

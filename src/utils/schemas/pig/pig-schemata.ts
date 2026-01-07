@@ -125,8 +125,8 @@ const PROPERTY_SCHEMA = {
 };
 const validatePropertySchema = ajv.compile(PROPERTY_SCHEMA);
 
-/* REFERENCE_SCHEMA: describes IReference (pig:Reference) */
-const REFERENCE_SCHEMA = {
+/* LINK_SCHEMA: describes IReference (pig:Link) */
+const LINK_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'https://gfse.org/schemas/pig/IReference',
     type: 'object',
@@ -134,8 +134,8 @@ const REFERENCE_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:Reference'],
-            description: 'The PigItemType for pig:Reference'
+            enum: ['pig:Link'],
+            description: 'The PigItemType for pig:Link'
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
@@ -149,14 +149,14 @@ const REFERENCE_SCHEMA = {
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
-        eligibleTarget: {
+        eligibleEndpoint: {
             type: 'array',
             minItems: 1,
             items: { $ref: '#/$defs/idString' }
         }
     },
     additionalProperties: false,
-    required: ['id', 'itemType', 'title', 'eligibleTarget'],
+    required: ['id', 'itemType', 'title', 'eligibleEndpoint'],
     // One of 'hasClass' and 'specializes' must be there but not both:
     oneOf: [
         { required: ['hasClass'] },
@@ -179,7 +179,7 @@ const REFERENCE_SCHEMA = {
         }
     }
 };
-const validateReferenceSchema = ajv.compile(REFERENCE_SCHEMA);
+const validateLinkSchema = ajv.compile(LINK_SCHEMA);
 
 /* ENTITY_SCHEMA: describes IEntity (pig:Entity) */
 const ENTITY_SCHEMA = {
@@ -199,7 +199,7 @@ const ENTITY_SCHEMA = {
             type: 'array',
             items: { $ref: '#/$defs/idString' }
         },
-        eligibleReference: {
+        eligibleTargetLink: {
             type: 'array',
             items: { $ref: '#/$defs/idString' }
         },
@@ -213,12 +213,12 @@ const ENTITY_SCHEMA = {
         },
         title: {
             type: 'array',
-        //    minItems: 1,
+            minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
         description: {
             type: 'array',
-        //    minItems: 1,
+            minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         }
     },
@@ -229,11 +229,6 @@ const ENTITY_SCHEMA = {
         { required: ['hasClass'] },
         { required: ['specializes'] }
     ],
-    /* One of 'title' and 'description' must be there with content, or both:
-    anyOf: [
-        { required: ['title'] },
-        { required: ['description'] }
-    ], */
     $defs: {
         idString: {
             type: 'string',
@@ -272,14 +267,8 @@ const RELATIONSHIP_SCHEMA = {
             type: 'array',
             items: { $ref: '#/$defs/idString' }
         },
-        eligibleSource: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        },
-        eligibleTarget: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        },
+        eligibleSourceLink: { $ref: '#/$defs/idString' },
+        eligibleTargetLink: { $ref: '#/$defs/idString' },
         icon: {
             type: 'object',
             required: ['value'],
@@ -290,12 +279,12 @@ const RELATIONSHIP_SCHEMA = {
         },
         title: {
             type: 'array',
-        //    minItems: 1,
+            minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
         description: {
             type: 'array',
-        //    minItems: 1,
+            minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         }
     },
@@ -325,21 +314,10 @@ const RELATIONSHIP_SCHEMA = {
 };
 const validateRelationshipSchema = ajv.compile(RELATIONSHIP_SCHEMA);
 
-/* ANENTITY_SCHEMA: describes IAnEntity (pig:anEntity) */
-/*
-// One of 'title' and 'description' must be there with content, or both:
-anyOf: [
-    {
-        required: ['title'],
-        properties: { title: { type: 'array', minItems: 1 } }
-    },
-    {
-        required: ['description'],
-        properties: { description: { type: 'array', minItems: 1 } }
-    }
-],
-*/
-/* ANENTITY_SCHEMA: describes IAnEntity (pig:anEntity) */
+/** ANENTITY_SCHEMA: describes IAnEntity (pig:anEntity);
+ * The schema for anEntity differs from others, as anEntity instance may have no title,
+ * but only a description (e.g. for simple text paragraphs).
+ */
 const ANENTITY_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
     $id: 'https://gfse.org/schemas/pig/IAnEntity',
@@ -363,6 +341,8 @@ const ANENTITY_SCHEMA = {
         revision: { type: 'string' },
         priorRevision: {
             type: 'array',
+            minItems: 1,
+            maxItems: 2,
             items: { type: 'string' }
         },
         modified: {
@@ -396,14 +376,14 @@ const ANENTITY_SCHEMA = {
                 additionalProperties: false
             }
         },
-        hasTarget: {
+        hasTargetLink: {
             type: 'array',
             items: {
                 type: 'object',
                 properties: {
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aReference']
+                        enum: ['pig:aTargetLink']
                     },
                     hasClass: { $ref: '#/$defs/idString' },
                     idRef: { $ref: '#/$defs/idString' }
@@ -445,16 +425,133 @@ const ANENTITY_SCHEMA = {
 };
 const validateAnEntitySchema = ajv.compile(ANENTITY_SCHEMA);
 
+/* ARELATIONSHIP_SCHEMA: describes IARelationship (pig:aRelationship) */
+const ARELATIONSHIP_SCHEMA = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'https://gfse.org/schemas/pig/IARelationship',
+    type: 'object',
+    properties: {
+        id: { $ref: '#/$defs/idString' },
+        itemType: {
+            type: 'string',
+            enum: ['pig:aRelationship'],
+            description: 'The PigItemType for pig:aRelationship'
+        },
+        hasClass: { $ref: '#/$defs/idString' },
+        title: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        description: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        revision: { type: 'string' },
+        priorRevision: {
+            type: 'array',
+            minItems: 1,
+            maxItems: 2,
+            items: { type: 'string' }
+        },
+        modified: {
+            type: 'string',
+            format: 'date-time'
+        },
+        creator: { type: 'string' },
+        hasProperty: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    itemType: {
+                        type: 'string',
+                        enum: ['pig:aProperty']
+                    },
+                    hasClass: { $ref: '#/$defs/idString' },
+                    value: { type: 'string' },
+                    idRef: { $ref: '#/$defs/idString' },
+                    aComposedProperty: {
+                        type: 'array',
+                        items: { $ref: '#/$defs/idString' }
+                    }
+                },
+                required: ['itemType', 'hasClass'],
+                oneOf: [
+                    { required: ['value'] },
+                    { required: ['idRef'] }
+                ],
+                additionalProperties: false
+            }
+        },
+        hasSourceLink: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                type: 'object',
+                properties: {
+                    itemType: {
+                        type: 'string',
+                        enum: ['pig:aSourceLink']
+                    },
+                    hasClass: { $ref: '#/$defs/idString' },
+                    idRef: { $ref: '#/$defs/idString' }
+                },
+                required: ['itemType', 'hasClass', 'idRef'],
+                additionalProperties: false
+            }
+        },
+        hasTargetLink: {
+            type: 'array',
+            minItems: 1,
+            items: {
+                type: 'object',
+                properties: {
+                    itemType: {
+                        type: 'string',
+                        enum: ['pig:aTargetLink']
+                    },
+                    hasClass: { $ref: '#/$defs/idString' },
+                    idRef: { $ref: '#/$defs/idString' }
+                },
+                required: ['itemType', 'hasClass', 'idRef'],
+                additionalProperties: false
+            }
+        }
+    },
+    additionalProperties: false,
+    // aRelationship does not need title nor description; the indications of its class suffice:
+    required: ['id', 'itemType', 'hasClass', 'modified', 'hasSourceLink', 'hasTargetLink'],
+    $defs: {
+        idString: {
+            type: 'string',
+            description: 'TPigId — term with namespace (prefix:local) or an URI',
+            pattern: ID_NAME_PATTERN
+        },
+        LanguageText: {
+            type: 'object',
+            required: ['value'],
+            additionalProperties: false,
+            properties: {
+                value: { type: 'string' },
+                lang: { type: 'string' }
+            }
+        }
+    }
+};
+const validateARelationshipSchema = ajv.compile(ARELATIONSHIP_SCHEMA);
+
 export const SCH = {
     PROPERTY_SCHEMA,
     validatePropertySchema,
     getValidatePropertyErrors() {
         return ajv.errorsText(validatePropertySchema.errors, { separator: '; ' });
     },
-    REFERENCE_SCHEMA,
-    validateReferenceSchema,
-    getValidateReferenceErrors() {
-        return ajv.errorsText(validateReferenceSchema.errors, { separator: '; ' })
+    LINK_SCHEMA,
+    validateLinkSchema,
+    getValidateLinkErrors() {
+        return ajv.errorsText(validateLinkSchema.errors, { separator: '; ' })
     },
     ENTITY_SCHEMA,
     validateEntitySchema,
@@ -470,5 +567,10 @@ export const SCH = {
     validateAnEntitySchema,
     getValidateAnEntityErrors() {
         return ajv.errorsText(validateAnEntitySchema.errors, { separator: '; ' })
+    },
+    ARELATIONSHIP_SCHEMA,
+    validateARelationshipSchema,
+    getValidateARelationshipErrors() {
+        return ajv.errorsText(validateARelationshipSchema.errors, { separator: '; ' })
     }
 };
