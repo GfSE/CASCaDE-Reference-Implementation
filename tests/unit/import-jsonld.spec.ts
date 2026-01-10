@@ -31,7 +31,7 @@ describe('importJSONLD (file system)', () => {
             // expect(rsp.ok).toBe(true);
             // expect(rsp.status).toSatisfy((status: number) => [0, 691].includes(status)); ... needs jest-extended
             // expect(rsp.status).toBeOneOf([0, 691]);  ... needs jest-extended
-            expect([0, 691]).toContain(rsp.status);  // however, any error message will be inverse ...
+            expect([0, 691]).toContain(rsp.status);  // some or all items have been processed
             processedCount++;
 
             const instances = rsp.response as TPigItem[];

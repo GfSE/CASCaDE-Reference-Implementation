@@ -1,12 +1,17 @@
+/*!
+ * Product Information Graph (PIG) - helper routines
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
 /** Product Information Graph (PIG) - helper routines
-*   Dependencies: none
-*   Authors: oskar.dungern@gfse.org, ..
-*   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
-*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
-*
-*   Design Decisions:
-*   - 
-*/
+ *  Dependencies: none
+ *  Authors: oskar.dungern@gfse.org, ..
+ *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ *
+ *  Design Decisions:
+ *  - 
+ */
 
 import { IRsp, Rsp, Msg } from './messages';
 

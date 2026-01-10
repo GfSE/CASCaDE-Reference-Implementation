@@ -1,22 +1,61 @@
-import { IRsp, rspOK, Msg } from "../../lib/messages";
-import { LIB, logger } from "../../lib/helpers";
-//import { JsonObject, JsonValue } from '../../lib/helpers';
-import { Property, Link, Entity, Relationship,
-    AProperty, ASourceLink, ATargetLink, AnEntity, ARelationship, PigItemType,
-    TPigItem } from '../../schemas/pig/pig-metaclasses';
-
+/*! Cross-environment JSON-LD importer.
+ * Messages and Responses
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
 /**
  * Cross-environment JSON-LD importer.
  * - Accepts a Node file path, an http(s) URL string or a browser File/Blob.
  * - Extracts elements from '@graph' (or 'graph'), converts JSON-LD keys to internal keys
  *   and instantiates matching PIG class instances where possible.
  *
+ *  Dependencies:
+ *  Authors: oskar.dungern@gfse.org, ..
+ *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ * 
  * Usage:
  * - Node:   await importJsonLd('C:/path/to/file.jsonld')
  * - URL:    await importJsonLd('https://example/.../doc.jsonld')
  * - Browser: await importJsonLd(fileInput.files[0])
  */
+
+import { IRsp, rspOK, Msg } from "../../lib/messages";
+import { LIB, logger } from "../../lib/helpers";
+import {
+    Property, Link, Entity, Relationship,
+    AProperty, ASourceLink, ATargetLink, AnEntity, ARelationship, PigItemType,
+    TPigItem
+} from '../../schemas/pig/pig-metaclasses';
+import { SCH_LD } from '../../schemas/pig/pig-schemata-jsonld';
+
 export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
+    const rsp = await LIB.readFileAsText(source);
+    if (!rsp.ok)
+        return rsp;
+
+    const text = rsp.response as string;
+    logger.info('importJSONLD: loaded text length ' + text.length);
+
+    let doc: any;
+    try {
+        doc = JSON.parse(text);
+    } catch (err: any) {
+        return Msg.create(690, err?.message ?? err);
+    }
+
+    // ✅ Validate entire JSON-LD document structure
+    const isValidPackage = SCH_LD.validatePackageLD(doc);
+    if (!isValidPackage) {
+        const errors = SCH_LD.getValidatePackageLDErrors();
+        logger.error('JSON-LD package validation failed:', errors);
+        return Msg.create(697, errors);
+    }
+
+    //    logger.debug('importJSONLD: parsed ', doc);
+    return instantiateFromDoc(doc);
+}
+/*export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
     const rsp = await LIB.readFileAsText(source);
     if (!rsp.ok)
         return rsp;
@@ -32,33 +71,31 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     }
 //    logger.debug('importJSONLD: parsed ', doc);
     return instantiateFromDoc(doc);
-}
-
-/* --- helpers --- */
+} */
 
 // Instantiate objects from parsed JSON-LD document
 function instantiateFromDoc(doc: any): IRsp {
     const created: TPigItem[] = [];
     const graph: any[] = Array.isArray(doc['@graph']) ? doc['@graph'] : (Array.isArray(doc.graph) ? doc.graph : []);
     // logger.debug('importJSONLD: @graph', graph);
-    for (const elem of graph) {
+    for (const item of graph) {
     /*    // convert JSON-LD keys to internal keys (immutable)
-        let obj = LIB.renameJsonTags(elem as JsonValue, LIB.fromJSONLD, { mutate: false }) as JsonObject;
+        let obj = LIB.renameJsonTags(item as JsonValue, LIB.fromJSONLD, { mutate: false }) as JsonObject;
         obj = LIB.replaceIdObjects(obj) as JsonObject; */
 
-        if (!elem['pig:itemType'] || !elem['pig:itemType']['@id']) {
-            logger.warn('importJSONLD: @graph element missing pig:itemType, skipping '+ elem.id);
+        if (!item['pig:itemType'] || !item['pig:itemType']['@id']) {
+            logger.warn('importJSONLD: @graph element missing pig:itemType, skipping '+ item.id);
             continue;
         }   
 
         // determine itemType
-        const itype: any = elem['pig:itemType']['@id'] as any;
+        const itype: any = item['pig:itemType']['@id'] as any;
 
         // temporary filter to allow development step by step per itemType:
         if (![PigItemType.Property, PigItemType.Link, PigItemType.Entity, PigItemType.Relationship,
             PigItemType.anEntity, PigItemType.aRelationship ].includes(itype))
             continue;
-     //   logger.debug('importJSONLD: @graph renamed', elem, itype);
+     //   logger.debug('importJSONLD: @graph renamed', item, itype);
 
         let instance: any = null;
         try {
@@ -99,7 +136,7 @@ function instantiateFromDoc(doc: any): IRsp {
 
         if (instance) {
             try {
-                (instance as any).setJSONLD(elem, created);
+                (instance as any).setJSONLD(item, created);
                 created.push(instance);
             } catch (err) {
                 // do not abort: keep partially populated instance for inspection

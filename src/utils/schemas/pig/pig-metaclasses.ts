@@ -4,29 +4,30 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 /** Product Information Graph (PIG) Metaclasses - the basic object structure representing the PIG
-*   Dependencies: none
-*   Authors: oskar.dungern@gfse.org, ..
-*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
-*
-*   Design Decisions:
-*   - The PIG classes contain *only* the elements in the metamodel; it could be generated from the metamodel.
-*   - Abstract classes are not exported, only the concrete classes.
-*   - All names are always in singular form, even if they have multiple values.
-*   - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
-*   - The 'AProperty' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
-*   - Similarly, the 'ALink' instances are instantiated as part their parent objects 'AnEntity'.
-*   - Both 'AProperty' and 'ALink' have no identifier and no revision history of their own.
-*   - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
-*     This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
-*   - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
-*     before the items are instantiated here.
-*   - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
-*     those references are expanded to id objects only when serializing to JSON-LD.
-*   - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
-*   - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
-*   - The 'set' methods are chainable to allow concise code when creating new instances.
-*   - Programming errors result in exceptions, data errors in IRsp return values.
-*/
+ *  Dependencies: none
+ *  Authors: oskar.dungern@gfse.org, ..
+ *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
+ *
+ *  Design Decisions:
+ *  - The PIG classes contain *only *the elements in the metamodel; it could be generated from the metamodel.
+ *  - Abstract classes are not exported, only the concrete classes.
+ *  - All names are always in singular form, even if they have multiple values.
+ *  - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
+ *  - The 'AProperty' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
+ *  - Similarly, the 'ALink' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
+ *  - Both 'AProperty' and 'ALink' have no identifier and no revision history of their own.
+ *  - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
+ *    This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
+ *  - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
+ *    before the items are instantiated here.
+ *  - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
+ *    those references are expanded to id objects only when serializing to JSON-LD.
+ *  - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
+ *  - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
+ *  - The 'set' methods are chainable to allow concise code when creating new instances.
+ *  - Programming errors result in exceptions, data errors in IRsp return values.
+ */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../lib/messages";
 import { RE } from "../../lib/definitions";
@@ -50,13 +51,11 @@ export type TISODateString = string;
 export const PigItemType = {
     // PIG classes:
     Property: 'pig:Property',
-//    Reference: 'pig:Reference',
     Link: 'pig:Link', 
     Entity: 'pig:Entity',
     Relationship: 'pig:Relationship',
     // PIG instances/individuals:
     aProperty: 'pig:aProperty',
-//    aReference: 'pig:aReference',
     aSourceLink: 'pig:aSourceLink',
     aTargetLink: 'pig:aTargetLink',
     anEntity: 'pig:anEntity',
@@ -187,30 +186,27 @@ abstract class Identifiable extends Item implements IIdentifiable {
             description: this.description
         });
     }
-    // setJSONLD and getJSONLD are designed to do the conversion for all subclasses;
-    // access to other items in the package (or cache) is necessary in some cases such as Property (class):
-    setJSONLD(itm: any, cache?: TPigItem[]) {
+    protected setJSONLD(itm: any) {
         let _itm = { ...itm };
-        _itm = LIB.renameJsonTags(_itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
-        // id extraction
+
+        // 1. Rename JSON-LD tags to internal format
+        _itm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
+
+        // 2. Replace id-objects with id-strings
         _itm = replaceIdObjects(_itm);
-        _itm = this.normalize(_itm);
-        //logger.debug('setJSONLD',_itm);
-        // now set the normalized object:
-        this.set(_itm);
-        return this; // make chainable
+
+        // 3. Normalize multi-language texts (from abstract normalize)
+        _itm = { ..._itm };
+        _itm.title = normalizeMultiLanguageText(_itm.title);
+        _itm.description = normalizeMultiLanguageText(_itm.description);
+
+        // Set the normalized object in the concrete subclass
+        return _itm;
     }
-    getJSONLD() {
+    protected getJSONLD() {
         const jld = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
     //    logger.debug('Identifiable.getJSONLD: ', jld);
         return makeIdObjects(jld) as JsonObject;        
-    }
-    protected normalize(itm: IIdentifiable): IIdentifiable {
-        // Normalize to tolerate some variations in input:
-        const _itm = { ...itm };
-        _itm.title = normalizeMultiLanguageText(_itm.title);
-        _itm.description = normalizeMultiLanguageText(_itm.description);
-        return _itm;
     }
     protected validate(itm: IIdentifiable) {
         if (this.id && itm.id !== this.id)
@@ -290,9 +286,6 @@ abstract class Element extends Identifiable implements IElement {
             icon: this.icon
         };
     }
-    protected normalize(itm: IElement): IElement {
-        return super.normalize(itm);
-    }
     protected validate(itm: IElement) {
         // If eligibleProperty is not present, all properties are allowed;
         // if present and empty, no properties are allowed.
@@ -345,20 +338,23 @@ abstract class AnElement extends Identifiable implements IAnElement {
             hasProperty: this.hasProperty.map(p => p.get())
         };
     }
-    getJSONLD() {
-        const jld = super.getJSONLD();
-
-        return addConfigurablesToJSONLD(jld, this, 'hasProperty');
-    }
-    protected normalize(itm: IAnElement): IAnElement {
+    protected setJSONLD(itm:any) {
         // In JSON-LD all configurable properties have an ID-string as tag and an itemType pig:aProperty;
         // collect them here in a hasProperty array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
-        const _itm = { ...itm };
+        const _itm = super.setJSONLD(itm) as any;
+
         _itm.hasProperty = collectConfigurablesFromJSONLD(_itm, PigItemType.aProperty) as IAProperty[] | undefined;
         _itm.modified = _itm.modified || new Date().toISOString();
-    //    logger.debug('AnElement.normalize: '+ JSON.stringify(_itm, null, 2));
-        return super.normalize(_itm) as IAnElement;
+        //    logger.debug('AnElement.setJSONLD: '+ JSON.stringify(_itm, null, 2));
+
+        // Set the normalized object in the concrete subclass
+        return _itm
+    }
+    protected getJSONLD() {
+        const jld = super.getJSONLD();
+
+        return addConfigurablesToJSONLD(jld, this, 'hasProperty');
     }
     protected validate(itm: IAnElement) {
         // ToDo: implement further validation logic
@@ -436,15 +432,21 @@ export class Property extends Identifiable implements IProperty {
             composedProperty: this.composedProperty
         });
     }
+    setJSONLD(itm: any) {
+        const _itm = super.setJSONLD(itm) as any;
+
+        // Normalize datatype (Property-specific)
+        if (_itm.datatype) {
+            _itm.datatype = _itm.datatype.replace(/^xsd:/, 'xs:');
+        }
+
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return super.getJSONLD();
+    }
     getHTML(options?: object): stringHTML {
         return '<div>not implemented yet</div>';
-    }
-    normalize(itm: IProperty): IProperty {
-    //    logger.debug('P.norm', itm)
-        // normalize datatype:
-        const _itm = { ...itm };
-        _itm.datatype = _itm.datatype.replace(/^xsd:/, 'xs:');
-        return super.normalize(_itm) as IProperty;
     }
     validate(itm: IProperty) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
@@ -497,11 +499,15 @@ export class Link extends Identifiable implements ILink {
             eligibleEndpoint: this.eligibleEndpoint
         });
     }
+    setJSONLD(itm:any) {
+        const _itm = super.setJSONLD(itm) as any;
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return super.getJSONLD();
+    }
     getHTML(options?: object): stringHTML {
         return '<div>not implemented yet</div>';
-    }
-    normalize(itm: ILink): ILink {
-        return super.normalize(itm) as ILink;
     }
     validate(itm: ILink) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
@@ -546,10 +552,12 @@ export class Entity extends Element implements IEntity {
             eligibleTargetLink: Array.isArray(this.eligibleTargetLink) ? this.eligibleTargetLink : undefined
         });
     }
-/*    getGQL(): string {
-    } */
-    normalize(itm: IEntity): IEntity {
-        return super.normalize(itm);
+    setJSONLD(itm: any) {
+        const _itm = super.setJSONLD(itm) as any;
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return super.getJSONLD();
     }
     validate(itm: IEntity) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
@@ -604,8 +612,12 @@ export class Relationship extends Element implements IRelationship {
             eligibleTargetLink: this.eligibleTargetLink
         });
     }
-    normalize(itm: IRelationship): IRelationship {
-        return super.normalize(itm);
+    setJSONLD(itm: any) {
+        const _itm = super.setJSONLD(itm) as any;
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return super.getJSONLD();
     }
     validate(itm: IRelationship) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
@@ -667,6 +679,22 @@ export class AProperty extends Item implements IAProperty {
             idRef: this.idRef
         });
     }
+/*    setJSONLD(itm: any) {
+        const _itm = { ...itm };
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return this.get();
+    } */
+    setJSONLD(itm: any) {
+        let _itm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
+        _itm = replaceIdObjects(_itm);
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        const jld = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
+        return makeIdObjects(jld) as JsonObject;
+    }
     getHTML(options?: object): stringHTML {
         // ToDo: implement a HTML snippet with the property value
         return '<div>not implemented yet</div>';
@@ -695,6 +723,22 @@ export class ASourceLink extends ALink implements IALink {
         if (!this.lastStatus.ok) return undefined;
         return super.get();
     }
+    setJSONLD(itm: any) {
+        let _itm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
+        _itm = replaceIdObjects(_itm);
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        const jld = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
+        return makeIdObjects(jld) as JsonObject;
+    }
+/*    setJSONLD(itm: any) {
+        const _itm = { ...itm };
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return this.get();
+    } */
     validate(itm: IALink) {
         // itemType checked in superclass
         if (!itm.hasClass)
@@ -719,6 +763,22 @@ export class ATargetLink extends ALink implements IALink {
         if (!this.lastStatus.ok) return undefined;
         return super.get();
     }
+    setJSONLD(itm: any) {
+        let _itm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
+        _itm = replaceIdObjects(_itm);
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        const jld = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
+        return makeIdObjects(jld) as JsonObject;
+    }
+/*    setJSONLD(itm: any) {
+        const _itm = { ...itm };
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return this.get();
+    } */
     validate(itm: IALink) {
         // itemType checked in superclass
         if (!itm.hasClass)
@@ -754,24 +814,24 @@ export class AnEntity extends AnElement implements IAnEntity {
             hasTargetLink: this.hasTargetLink.map(t => t.get())
         });
     }
+    setJSONLD(itm: any) {
+        // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aLink;
+        // collect them here in a hasTarget array, where the tag becomes hasClass;
+        // they will be instantiated as AProperty items in set():
+        const _itm = super.setJSONLD(itm) as any;
+        _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[] | undefined;
+
+        return this.set(_itm);
+    }
     getJSONLD() {
-        const jld = super.getJSONLD();
-        const out = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
+        let jld = super.getJSONLD();
+        jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
     //    logger.debug('AnEntity.getJSONLD: ', out);
-        return out;
+        return jld;
     }
     getHTML(options?: object): stringHTML {
         // ToDo: implement a HTML representation of the entity including its properties
         return '<div>not implemented yet</div>';
-    }
-    normalize(itm: IAnEntity): IAnEntity {
-        // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aLink;
-        // collect them here in a hasTarget array, where the tag becomes hasClass;
-        // they will be instantiated as AProperty items in set():
-        const _itm = { ...itm }; 
-        _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[] | undefined;
-    //    logger.debug('AnEntity.normalize: ' + JSON.stringify(norm, null, 2));
-        return super.normalize(_itm) as IAnEntity;
     }
     validate(itm: IAnEntity) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
@@ -825,19 +885,25 @@ export class ARelationship extends AnElement implements IARelationship {
             hasTargetLink: this.hasTargetLink.map(t => t.get())
         });
     }
-    getHTML(options?: object): stringHTML {
-        // ToDo: implement a HTML representation of the relationship including its properties
-        return '<div>not implemented yet</div>';
-    }
-    normalize(itm: IARelationship): IARelationship {
+    setJSONLD(itm: any) {
         // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aLink;
         // collect them here in a hasTarget array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
-        const _itm = { ...itm };
+        const _itm = super.setJSONLD(itm) as any;
         _itm.hasSourceLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
         _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
-        //    logger.debug('ARelationship.normalize: ' + JSON.stringify(norm, null, 2));
-        return super.normalize(_itm) as IARelationship;
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        let jld = super.getJSONLD();
+        jld = addConfigurablesToJSONLD(jld, this, 'hasSourceLink');
+        jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
+        //    logger.debug('AnEntity.getJSONLD: ', out);
+        return jld;
+    }
+    getHTML(options?: object): stringHTML {
+        // ToDo: implement a HTML representation of the relationship including its properties
+        return '<div>not implemented yet</div>';
     }
     validate(itm: IARelationship) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition

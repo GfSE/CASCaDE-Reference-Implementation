@@ -1,3 +1,8 @@
+/*!
+ * Product Information Graph (PIG) - Centralized error and status messages
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
 /** Product Information Graph (PIG) - Centralized error and status messages
 *   Dependencies: none (self-contained)
 *   Authors: oskar.dungern@gfse.org
@@ -14,18 +19,19 @@
 *   - Multi-language support: en, de, fr, es
 */
 
-// IRsp interface
-// An xhr-like object to return the result of the import;
-// use it as follows (according to GitHub Copilot):
-// - XML Document:
-//   const rspDoc: IRsp<Document> = { status: 200, statusText: 'OK', response: doc, responseType: 'document' };
-// - or JSON payload:
-//   type PigPackage = { /* ... */ };
-//   const rspJson: IRsp<PigPackage> = { status: 200, statusText: 'OK', response: pigPackage, responseType: 'json' };
-// - or dynamically:
-//   if (rsp.responseType === 'document') {
-//      const doc = rsp.response as Document;
-//   };
+/** IRsp interface
+ * An xhr-like object to return the result of the import;
+ * use it as follows (according to GitHub Copilot):
+ * - XML Document:
+ *   const rspDoc: IRsp<Document> = { status: 200, statusText: 'OK', response: doc, responseType: 'document' };
+ * - or JSON payload:
+ *   type PigPackage = { /* ... * / };
+ *   const rspJson: IRsp<PigPackage> = { status: 200, statusText: 'OK', response: pigPackage, responseType: 'json' };
+ * - or dynamically:
+ *   if (rsp.responseType === 'document') {
+ *      const doc = rsp.response as Document;
+ *   };
+ */
 export interface IRsp<T = unknown> {
     status: number;
     statusText?: string;
@@ -379,6 +385,16 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `Type de source non pris en charge lors de la lecture d'un fichier en tant que texte`,
         es: () =>
             `Tipo de fuente no compatible al leer un archivo como texto`
+    },
+    697: {
+        en: (errors: string) =>
+            `JSON-LD package validation failed: ${errors}`,
+        de: (errors: string) =>
+            `JSON-LD Paket-Validierung fehlgeschlagen: ${errors}`,
+        fr: (errors: string) =>
+            `Échec de la validation du package JSON-LD: ${errors}`,
+        es: (errors: string) =>
+            `Error en la validación del paquete JSON-LD: ${errors}`
     }
 };
 

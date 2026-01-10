@@ -19,8 +19,8 @@ describe("PIG Metaclasses", () => {
     let Property_input: IProperty;
     let Property_input_JSONLD: any;
     let aProperty_input: IAProperty;
-    let Link_input: ILink;
-    let Link_input_JSONLD: any;
+    let Link_shows_input: ILink;
+    let Link_shows_input_JSONLD: any;
     let entityClass_Diagram_input: IEntity;
     let entityClass_ModelElement_input: IEntity;
     let anEntity_actor_input: IAnEntity;
@@ -68,7 +68,7 @@ describe("PIG Metaclasses", () => {
         };
 
         // Link class:
-        Link_input = {
+        Link_shows_input = {
             id: "pig:shows",
             itemType: PigItemType.Link,
             specializes: PigItemType.Link,
@@ -77,7 +77,7 @@ describe("PIG Metaclasses", () => {
 
             eligibleEndpoint: ["o:Entity_Diagram"]
         };
-        Link_input_JSONLD = {
+        Link_shows_input_JSONLD = {
             ['@id']: "pig:shows",
             ['pig:specializes']: { ['@id']: PigItemType.Link },
             ['pig:itemType']: { ['@id']: PigItemType.Link },
@@ -187,7 +187,7 @@ describe("PIG Metaclasses", () => {
         Link_mutates_toActor = {
             id: "o:Link_mutates_toActor",
             itemType: PigItemType.Link,
-            specializes: PigItemType.aSourceLink,
+            specializes: PigItemType.Link,
             title: [{ value: "to actor", lang: "en" }],
             description: [{ value: "This is a class for a link to the source of o:Relationship_mutates", lang: "en" }],
 
@@ -196,7 +196,7 @@ describe("PIG Metaclasses", () => {
         Link_mutates_toState = {
             id: "o:Link_mutates_toState",
             itemType: PigItemType.Link,
-            specializes: PigItemType.aTargetLink,
+            specializes: PigItemType.Link,
             title: [{ value: "to state" }],
             description: [{ value: "This is a class for a link to the target of o:Relationship_mutates" }],
 
@@ -274,7 +274,7 @@ describe("PIG Metaclasses", () => {
     });
 
     test("Test class pig:Link", () => {
-        const inst = new Link().set(Link_input);
+        const inst = new Link().set(Link_shows_input);
         // console.debug('pig:Link input:', linkClass_input);
         // console.debug('pig:Link item:', inst);
 
@@ -292,16 +292,16 @@ describe("PIG Metaclasses", () => {
         // check the output as JSON:
         const refClass_output = inst.get();
         //    console.debug('pig:Link output:', referenceClass_output);
-        expect(refClass_output).toEqual(Link_input);
+        expect(refClass_output).toEqual(Link_shows_input);
 
         // check the output as JSON-LD:
         const linkClass_output_JSONLD = inst.getJSONLD();
-        expect(linkClass_output_JSONLD).toEqual(Link_input_JSONLD);
+        expect(linkClass_output_JSONLD).toEqual(Link_shows_input_JSONLD);
 
         // input JSON-LD to JSON conversion check
         // no access to other items is necessary in case of Link (class):
-        const test_RfC_fromJSONLD = new Link().setJSONLD(Link_input_JSONLD);
-        expect(test_RfC_fromJSONLD.get()).toEqual(Link_input);
+        const test_RfC_fromJSONLD = new Link().setJSONLD(Link_shows_input_JSONLD);
+        expect(test_RfC_fromJSONLD.get()).toEqual(Link_shows_input);
     });
 
     test("Test instance pig:aProperty", () => {

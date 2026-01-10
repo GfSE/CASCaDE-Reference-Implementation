@@ -6,6 +6,7 @@
 /** JSON SCHEMATA for PIG items: Property, Reference, Entity, Relationship
  *  Dependencies: ajv (Another JSON Schema Validator) https://ajv.js.org/
  *  Authors: oskar.dungern@gfse.org, ..
+ *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  *
  * Design decisions:
@@ -14,6 +15,11 @@
  * - schemata of all classes as well as relationship instances must have a title and may have a description
  * - schema for entity may have either a title or a description or both.
  *   This allows entities (such as simple paragraphs) without a title but with a description only.
+ *
+ * Limitations:
+ * - xs:datatype values are only pattern-validated here; specific accepted values are validated in code
+ * - further constraints (e.g. maxCount >= minCount) are validated in code
+ * - eligible values in Property only for string values; other datatypes to be implemented
 */
 
 import { ajv } from '../../../plugins/ajv';
@@ -66,6 +72,8 @@ const PROPERTY_SCHEMA = {
         minInclusive: { type: 'number' },
         maxInclusive: { type: 'number' },
         pattern: { type: 'string' },
+        unit: { type: 'string' },
+        defaultValue: { type: 'string' },
         eligibleValue: {
             type: 'array',
             items: {
@@ -78,8 +86,6 @@ const PROPERTY_SCHEMA = {
                 additionalProperties: false
             }
         },
-        defaultValue: { type: 'string' },
-        unit: { type: 'string' },
         composedProperty: {
             type: 'array',
             items: { $ref: '#/$defs/idString' }
