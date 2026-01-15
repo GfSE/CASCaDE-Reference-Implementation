@@ -6,9 +6,9 @@ import { TPigItem } from '../../src/utils/schemas/pig/pig-metaclasses';
 describe('importJSONLD (file system)', () => {
     // List of relative filenames (relative to this test file). Add more entries as needed.
     const filenames:string[] = [
-        "../data/JSON-LD/03/Project 'Requirement with Enumerated Property'.pig.jsonld",
-        "../data/JSON-LD/01/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
-        "../data/JSON-LD/02/Small Autonomous Vehicle.pig.jsonld"
+        "../data/JSON-LD/05/Project 'Requirement with Enumerated Property'.pig.jsonld",
+        "../data/JSON-LD/21/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
+        "../data/JSON-LD/22/Small Autonomous Vehicle.pig.jsonld"
         // add more test files here, e.g.
         // "../data/JSON-LD/another-sample.pig.jsonld"
     ];
@@ -41,10 +41,11 @@ describe('importJSONLD (file system)', () => {
             expect(Array.isArray(instances)).toBe(true);
             expect(instances.length).toBeGreaterThan(0);
 
+            console.debug(`import-jsonld: `,instances);
             instances.forEach((itm, index) => {
                 console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status);
+                console.debug(JSON.stringify(itm.get(), null, 2));
                 expect(itm.status().ok).toBe(true);
-                console.info(JSON.stringify(itm.get(),null,2));
                 // each instantiated item must have a successful status
                 // additional per-item assertions can be added here
                 //    expect(itm).toBeInstanceOf(Property);

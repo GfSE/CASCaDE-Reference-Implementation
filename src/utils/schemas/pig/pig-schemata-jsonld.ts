@@ -305,8 +305,6 @@ const ANENTITY_LD_SCHEMA = {
         }
     },
     patternProperties: {
-        // Match configurable properties, but exclude standard PIG properties
-        // Negative lookahead: don't match properties starting with 'pig:', '@', or 'dcterms:' that are already defined
         '^(?!pig:itemType|pig:revision|pig:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$': {
             type: 'array',
             items: {
@@ -330,8 +328,10 @@ const ANENTITY_LD_SCHEMA = {
                 oneOf: [
                     {
                         // aProperty with direct value: must have @value
+                        type: 'object',
                         properties: {
                             'pig:itemType': {
+                                type: 'object',
                                 properties: {
                                     '@id': { const: 'pig:aProperty' }
                                 }
@@ -342,8 +342,10 @@ const ANENTITY_LD_SCHEMA = {
                     },
                     {
                         // aProperty with enumeration reference: must have @id
+                        type: 'object',
                         properties: {
                             'pig:itemType': {
+                                type: 'object',
                                 properties: {
                                     '@id': { const: 'pig:aProperty' }
                                 }
@@ -354,8 +356,10 @@ const ANENTITY_LD_SCHEMA = {
                     },
                     {
                         // aTargetLink: must have @id
+                        type: 'object',
                         properties: {
                             'pig:itemType': {
+                                type: 'object',
                                 properties: {
                                     '@id': { const: 'pig:aTargetLink' }
                                 }
@@ -446,8 +450,10 @@ const ARELATIONSHIP_LD_SCHEMA = {
                 oneOf: [
                     {
                         // aProperty with direct value: must have @value
+                        type: 'object',
                         properties: {
                             'pig:itemType': {
+                                type: 'object',
                                 properties: {
                                     '@id': { const: 'pig:aProperty' }
                                 }
@@ -458,8 +464,10 @@ const ARELATIONSHIP_LD_SCHEMA = {
                     },
                     {
                         // aProperty with enumeration reference: must have @id
+                        type: 'object',
                         properties: {
                             'pig:itemType': {
+                                type: 'object',
                                 properties: {
                                     '@id': { const: 'pig:aProperty' }
                                 }
@@ -470,8 +478,10 @@ const ARELATIONSHIP_LD_SCHEMA = {
                     },
                     {
                         // aSourceLink or aTargetLink: must have @id
+                        type: 'object',
                         properties: {
                             'pig:itemType': {
+                                type: 'object',
                                 properties: {
                                     '@id': { enum: ['pig:aSourceLink', 'pig:aTargetLink'] }
                                 }
@@ -504,6 +514,30 @@ const APACKAGE_LD_SCHEMA = {
                 { type: 'string' }
             ]
         },
+        '@id': { $ref: '#/$defs/idString' },
+        '@type': { $ref: '#/$defs/idString' },
+        'pig:itemType': {
+            type: 'object',
+            required: ['@id'],
+            properties: {
+                '@id': {
+                    type: 'string',
+                    enum: ['pig:aPackage'],
+                    description: 'The PigItemType for pig:aPackage'
+                }
+            },
+            additionalProperties: false
+        },
+        'dcterms:modified': { type: 'string', format: 'date-time' },
+        'dcterms:creator': { type: 'string' },
+        'dcterms:title': {
+            type: 'array',
+            items: { $ref: '#/$defs/languageValue' }
+        },
+        'dcterms:description': {
+            type: 'array',
+            items: { $ref: '#/$defs/languageValue' }
+        },
         '@graph': {
             type: 'array',
             minItems: 0,
@@ -524,8 +558,10 @@ const APACKAGE_LD_SCHEMA = {
                 allOf: [
                     {
                         if: {
+                            type: 'object',
                             properties: {
                                 'pig:itemType': {
+                                    type: 'object',
                                     properties: {
                                         '@id': { const: 'pig:anEntity' }
                                     }
@@ -536,8 +572,10 @@ const APACKAGE_LD_SCHEMA = {
                     },
                     {
                         if: {
+                            type: 'object',
                             properties: {
                                 'pig:itemType': {
+                                    type: 'object',
                                     properties: {
                                         '@id': { const: 'pig:aRelationship' }
                                     }
@@ -548,8 +586,10 @@ const APACKAGE_LD_SCHEMA = {
                     },
                     {
                         if: {
+                            type: 'object',
                             properties: {
                                 'pig:itemType': {
+                                    type: 'object',
                                     properties: {
                                         '@id': { const: 'pig:Property' }
                                     }
@@ -560,8 +600,10 @@ const APACKAGE_LD_SCHEMA = {
                     },
                     {
                         if: {
+                            type: 'object',
                             properties: {
                                 'pig:itemType': {
+                                    type: 'object',
                                     properties: {
                                         '@id': { const: 'pig:Link' }
                                     }
@@ -572,8 +614,10 @@ const APACKAGE_LD_SCHEMA = {
                     },
                     {
                         if: {
+                            type: 'object',
                             properties: {
                                 'pig:itemType': {
+                                    type: 'object',
                                     properties: {
                                         '@id': { const: 'pig:Entity' }
                                     }
@@ -584,8 +628,10 @@ const APACKAGE_LD_SCHEMA = {
                     },
                     {
                         if: {
+                            type: 'object',
                             properties: {
                                 'pig:itemType': {
+                                    type: 'object',
                                     properties: {
                                         '@id': { const: 'pig:Relationship' }
                                     }
@@ -598,8 +644,8 @@ const APACKAGE_LD_SCHEMA = {
             }
         }
     },
-    required: ['@context', '@graph'],
-    additionalProperties: true,
+    required: ['@id', '@context', '@graph'],
+    additionalProperties: false,
     $defs: JSONLD_DEFS
 };
 

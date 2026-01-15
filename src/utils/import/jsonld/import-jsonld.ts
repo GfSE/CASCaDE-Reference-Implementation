@@ -1,5 +1,4 @@
 /*! Cross-environment JSON-LD importer.
- * Messages and Responses
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
@@ -22,13 +21,14 @@
 
 import { IRsp, rspOK, Msg } from "../../lib/messages";
 import { LIB, logger } from "../../lib/helpers";
-import {
-    Property, Link, Entity, Relationship,
-    AProperty, ASourceLink, ATargetLink, AnEntity, ARelationship, PigItemType,
-    TPigItem
-} from '../../schemas/pig/pig-metaclasses';
+import { APackage, TPigItem } from '../../schemas/pig/pig-metaclasses';
 import { SCH_LD } from '../../schemas/pig/pig-schemata-jsonld';
 
+/**
+ * Import JSON-LD document and instantiate PIG items
+ * @param source - File path, URL, or File/Blob object
+ * @returns IRsp with array of TPigItem (first item is APackage, rest are graph items)
+ */
 export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
     const rsp = await LIB.readFileAsText(source);
     if (!rsp.ok)
@@ -52,109 +52,28 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         return Msg.create(697, errors);
     }
 
-    //    logger.debug('importJSONLD: parsed ', doc);
-    return instantiateFromDoc(doc);
-}
-/*export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
-    const rsp = await LIB.readFileAsText(source);
-    if (!rsp.ok)
-        return rsp;
-
-    const text = rsp.response as string;
-    logger.info('importJSONLD: loaded text length ' + text.length);
-//    logger.debug('importJSONLD: loaded text', text);
-    let doc: any;
-    try {
-        doc = JSON.parse(text);
-    } catch (err: any) {
-        return Msg.create(690, err?.message ?? err);
+    // Instantiate APackage and load the document
+    const aPackage = new APackage();
+    const allItems = aPackage.setJSONLD(doc);
+    
+    // allItems[0] is the package itself, rest are graph items
+//    const graphItems = allItems.slice(1);
+    const expectedCount = doc['@graph']?.length || 0;
+    const actualCount = allItems.length -1;
+    
+    let result: IRsp;
+    if (actualCount === expectedCount) {
+        result = rspOK;
+        logger.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
+    } else {
+        result = Msg.create(691, actualCount, expectedCount);
+        logger.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items`);
     }
-//    logger.debug('importJSONLD: parsed ', doc);
-    return instantiateFromDoc(doc);
-} */
 
-// Instantiate objects from parsed JSON-LD document
-function instantiateFromDoc(doc: any): IRsp {
-    const created: TPigItem[] = [];
-    const graph: any[] = Array.isArray(doc['@graph']) ? doc['@graph'] : (Array.isArray(doc.graph) ? doc.graph : []);
-    // logger.debug('importJSONLD: @graph', graph);
-    for (const item of graph) {
-    /*    // convert JSON-LD keys to internal keys (immutable)
-        let obj = LIB.renameJsonTags(item as JsonValue, LIB.fromJSONLD, { mutate: false }) as JsonObject;
-        obj = LIB.replaceIdObjects(obj) as JsonObject; */
-
-        if (!item['pig:itemType'] || !item['pig:itemType']['@id']) {
-            logger.warn('importJSONLD: @graph element missing pig:itemType, skipping '+ item.id);
-            continue;
-        }   
-
-        // determine itemType
-        const itype: any = item['pig:itemType']['@id'] as any;
-
-        // temporary filter to allow development step by step per itemType:
-        if (![PigItemType.Property, PigItemType.Link, PigItemType.Entity, PigItemType.Relationship,
-            PigItemType.anEntity, PigItemType.aRelationship ].includes(itype))
-            continue;
-     //   logger.debug('importJSONLD: @graph renamed', item, itype);
-
-        let instance: any = null;
-        try {
-            switch (itype) {
-                case PigItemType.Property:
-                    instance = new Property();
-                    break;
-                case PigItemType.Link:
-                    instance = new Link();
-                    break;
-                case PigItemType.Entity:
-                    instance = new Entity();
-                    break;
-                case PigItemType.Relationship:
-                    instance = new Relationship();
-                    break;
-                case PigItemType.aProperty:
-                    instance = new AProperty();
-                    break;
-                case PigItemType.aSourceLink:
-                    instance = new ASourceLink();
-                    break;
-                case PigItemType.aTargetLink:
-                    instance = new ATargetLink();
-                    break;
-                case PigItemType.anEntity:
-                    instance = new AnEntity();
-                    break;
-                case PigItemType.aRelationship:
-                    instance = new ARelationship();
-                    break;
-                default:
-                    instance = null;
-            }
-        } catch {
-            instance = null;
-        }
-
-        if (instance) {
-            try {
-                (instance as any).setJSONLD(item, created);
-                created.push(instance);
-            } catch (err) {
-                // do not abort: keep partially populated instance for inspection
-                // eslint-disable-next-line no-console
-                logger.warn(`Warning: failed to populate instance with itemType '${itype}': ${err}`);
-            }
-    /*    } else {
-            // fallback: push converted plain object
-            created.push(obj); */
-        }
-    }
-    let res: IRsp;
-    if (created.length === graph.length) 
-        res = rspOK;
-    else
-        res = Msg.create(691, created.length, graph.length);
-
-    res.response = created;
-    res.responseType = 'json';
-    return res as IRsp<TPigItem[]>;
+    // Return all items (package + graph items)
+    result.response = allItems;
+    result.responseType = 'json';
+    
+    return result as IRsp<TPigItem[]>;
 }
+

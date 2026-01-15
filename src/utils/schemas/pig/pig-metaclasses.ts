@@ -43,12 +43,13 @@ export type TRevision = string;  // ToDo: should be better described using a pat
 export type TPigClass = Property | Link | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
 export type TPigAnElement = AnEntity | ARelationship;
-export type TPigItem = TPigClass | TPigAnElement;
+export type TPigItem = APackage | TPigClass | TPigAnElement;
 export type stringHTML = string;  // contains HTML code
 export type tagIETF = string; // contains IETF language tag
 export type TISODateString = string;
 
 export const PigItemType = {
+    aPackage: 'pig:aPackage',
     // PIG classes:
     Property: 'pig:Property',
     Link: 'pig:Link', 
@@ -302,7 +303,7 @@ interface IAnElement extends IIdentifiable {
     priorRevision?: TRevision[];  // optional
     modified: TISODateString;
     creator?: string;
-    hasProperty?: IAProperty[];  // a JSON object on input - ToDo: define the json schema for property values
+    hasProperty?: IAProperty[];
 }
 abstract class AnElement extends Identifiable implements IAnElement {
     revision!: TRevision;
@@ -443,6 +444,7 @@ export class Property extends Identifiable implements IProperty {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
     getHTML(options?: object): stringHTML {
@@ -504,6 +506,7 @@ export class Link extends Identifiable implements ILink {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
     getHTML(options?: object): stringHTML {
@@ -557,6 +560,7 @@ export class Entity extends Element implements IEntity {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
     validate(itm: IEntity) {
@@ -617,6 +621,7 @@ export class Relationship extends Element implements IRelationship {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
     validate(itm: IRelationship) {
@@ -692,6 +697,7 @@ export class AProperty extends Item implements IAProperty {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         const jld = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
         return makeIdObjects(jld) as JsonObject;
     }
@@ -729,16 +735,10 @@ export class ASourceLink extends ALink implements IALink {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         const jld = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
         return makeIdObjects(jld) as JsonObject;
     }
-/*    setJSONLD(itm: any) {
-        const _itm = { ...itm };
-        return this.set(_itm);
-    }
-    getJSONLD() {
-        return this.get();
-    } */
     validate(itm: IALink) {
         // itemType checked in superclass
         if (!itm.hasClass)
@@ -769,6 +769,7 @@ export class ATargetLink extends ALink implements IALink {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         const jld = LIB.renameJsonTags(this.get() as unknown as JsonObject, LIB.toJSONLD, { mutate: false }) as JsonObject;
         return makeIdObjects(jld) as JsonObject;
     }
@@ -824,6 +825,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         return this.set(_itm);
     }
     getJSONLD() {
+        //        if (!this.lastStatus.ok) return undefined;
         let jld = super.getJSONLD();
         jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
     //    logger.debug('AnEntity.getJSONLD: ', out);
@@ -895,6 +897,7 @@ export class ARelationship extends AnElement implements IARelationship {
         return this.set(_itm);
     }
     getJSONLD() {
+//        if (!this.lastStatus.ok) return undefined;
         let jld = super.getJSONLD();
         jld = addConfigurablesToJSONLD(jld, this, 'hasSourceLink');
         jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
@@ -927,6 +930,325 @@ export class ARelationship extends AnElement implements IARelationship {
         return super.validate(itm);
     }
 }
+// For packages:
+export interface IAPackage extends IIdentifiable {
+    context?: INamespace[] | string | Record<string, string>;
+    graph: TPigItem[];
+    modified?: TISODateString;
+    creator?: string;
+}
+export class APackage extends Identifiable implements IAPackage {
+    context?: INamespace[] | string | Record<string, string>;
+    graph: TPigItem[] = [];
+    modified?: TISODateString;
+    creator?: string;
+
+    constructor() {
+        super({ itemType: PigItemType.aPackage });
+    }
+
+    set(itm: IAPackage): APackage {
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus.ok) {
+            super.set(itm);
+            this.context = itm.context;
+            this.graph = [];
+            for (const item of itm.graph) {
+                const instance = this.instantiateItem(item);
+                if (instance)
+                    this.graph.push(instance);
+                else
+                    logger.warn(`APackage.set: could not instantiate item ${JSON.stringify(item)}`);
+            }
+            this.modified = itm.modified;
+            this.creator = itm.creator;
+        }
+        return this;
+    }
+
+    get() {
+        if (!this.lastStatus.ok) return undefined;
+        
+        // Build complete package representation
+        const pkg = {
+            ...super.get(),
+            context: this.context,
+            graph: this.graph.map(item => {
+                logger.debug(`APackage.get: processing item `, item);
+                return item.get();
+            }),
+            modified: this.modified,
+            creator: this.creator
+        } as IAPackage;
+        
+        return LIB.stripUndefined(pkg);
+    }
+
+    setJSONLD(doc: any): TPigItem[] {
+        // Extract @context
+        const ctx = this.extractContext(doc);
+        
+        // Extract package metadata
+        const meta = this.extractMetadata(doc);
+        
+        // Extract and process @graph
+        const graph: any[] = Array.isArray(doc['@graph']) 
+            ? doc['@graph'] 
+            : (Array.isArray(doc.graph) ? doc.graph : []);
+
+        if (graph.length === 0) {
+            logger.warn('APackage.setJSONLD: empty @graph');
+        }
+
+    /*    logger.debug(`APackage.setJSONLD: processing ${graph.length} items from package ${meta.id || 'unnamed'}`);
+        logger.debug('APackage.setJSONLD: extracted context:', ctx);
+        logger.debug('APackage.setJSONLD: extracted metadata:', meta);
+    */
+        // Set default modified timestamp if not present
+        if (!this.modified) {
+            this.modified = new Date().toISOString();
+        }
+
+        // Call set to validate and return all items including package
+        this.set({
+            itemType: PigItemType.aPackage,
+            id: meta.id,
+            title: meta.title,
+            description: meta.description,
+            context: ctx,
+            graph: graph,
+            modified: meta.modified,
+            creator: meta.creator
+        } as IAPackage);
+
+        // return the instantiated graph and graph items:
+        return [this as TPigItem].concat(this.graph);
+    }
+
+/*    getJSONLD(): string {
+        if (!this.lastStatus.ok) 
+            return JSON.stringify({ error: this.lastStatus.statusText });
+
+        // Start with parent's JSON-LD representation
+        const jld = super.getJSONLD() as JsonObject;
+
+        // Add @context
+        if (this.context) {
+            jld['@context'] = buildContextForJSONLD(this.context);
+        }
+
+        // Add @graph with full items (using their getJSONLD methods)
+        jld['@graph'] = this.items.map(item => {
+            if ('getJSONLD' in item && typeof item.getJSONLD === 'function') {
+                const itemJLD = item.getJSONLD();
+                // If getJSONLD returns a string, parse it back to object
+                return typeof itemJLD === 'string' ? JSON.parse(itemJLD) : itemJLD;
+            }
+            return { '@id': (item as any).id };
+        });
+
+        // Add metadata
+        if (this.modified) {
+            jld['dcterms:modified'] = this.modified;
+        }
+        if (this.creator) {
+            jld['dcterms:creator'] = this.creator;
+        }
+
+        // Return stringified JSON-LD
+        return JSON.stringify(jld, null, 4);
+    } */
+
+    validate(itm: IAPackage): IRsp {
+        // graph must be present and be an array
+        if (!Array.isArray(itm.graph)) {
+            return Msg.create(630, 'graph');
+        }
+
+        // Call parent validation
+        return super.validate(itm);
+    }
+
+    /**
+     * Extract @context from JSON-LD document
+     * @param doc - Parsed JSON-LD document
+     * @returns Context as INamespace[], string, Record<string, string>, or undefined
+     */
+    private extractContext(doc: any): INamespace[] | string | Record<string, string> | undefined {
+        const ctx = doc['@context'] || doc.context;
+        // logger.debug('extractContext (1): ',ctx);
+
+        if (!ctx) {
+            logger.warn('APackage: no @context found in document');
+            return undefined;
+        }
+
+    /*    // String context (URL)
+        if (typeof ctx === 'string') {
+            logger.debug(`APackage: extracted context URL: ${ctx}`);
+            return ctx;
+        } */
+
+        // Object context - convert to namespace array
+        if (typeof ctx === 'object' && !Array.isArray(ctx)) {
+            const namespaces: INamespace[] = [];
+            for (const [key, value] of Object.entries(ctx)) {
+                if (typeof value === 'string') {
+                    namespaces.push({
+                        tag: key.endsWith(':') ? key : key + ':',
+                        uri: value
+                    });
+                }
+            }
+            if (namespaces.length > 0) {
+                logger.debug(`APackage: extracted ${namespaces.length} namespaces from context`);
+                return namespaces;
+            }
+            // Return original object if no valid namespaces found
+            logger.debug('APackage: extracted context object');
+            return ctx;
+        }
+
+    /*    // Array context
+        if (Array.isArray(ctx)) {
+            logger.debug(`APackage: extracted array context with ${ctx.length} entries`);
+            return ctx;
+        } */
+
+        logger.warn('APackage: unsupported @context format');
+        return undefined;
+    }
+    /**
+     * Extract package metadata from JSON-LD document
+     * @param doc - Parsed JSON-LD document
+     * @returns Metadata object with id, modified, creator, title, and description
+     */
+    private extractMetadata(doc: any): {
+        id?: TPigId;
+        modified?: TISODateString;
+        creator?: string;
+        title?: ILanguageText[];
+        description?: ILanguageText[];
+    } {
+        const metadata: {
+            id?: TPigId;
+            modified?: TISODateString;
+            creator?: string;
+            title?: ILanguageText[];
+            description?: ILanguageText[];
+        } = {};
+
+        // Extract ID
+        metadata.id = doc['@id'] || doc.id;
+
+        // Extract dcterms:modified
+        metadata.modified = doc['dcterms:modified'] || doc.modified;
+
+        // Extract dcterms:creator
+        metadata.creator = doc['dcterms:creator'] || doc.creator;
+
+        // Extract dcterms:title (first language value)
+        const titleArray = doc['dcterms:title'] || doc.title;
+        if (Array.isArray(titleArray) && titleArray.length > 0) {
+            metadata.title = [{
+                value: titleArray[0]['@value'] || titleArray[0].value || titleArray[0],
+                lang: titleArray[0]['@language'] || titleArray[0].language || 'en'
+            }];
+        } else if (typeof titleArray === 'string') {
+            metadata.title = [{ value: titleArray, lang: 'en' }];
+        }
+
+        // Extract dcterms:description (first language value)
+        const descArray = doc['dcterms:description'] || doc.description;
+        if (Array.isArray(descArray) && descArray.length > 0) {
+            metadata.description = [{
+                value: descArray[0]['@value'] || descArray[0].value || descArray[0],
+                lang: descArray[0]['@language'] || descArray[0].language || 'en'
+            }];
+        } else if (typeof descArray === 'string') {
+            metadata.description = [{ value: descArray, lang: 'en' }];
+        }
+
+        logger.debug(`APackage metadata: id=${metadata.id}, title=${metadata.title?.[0]?.value}, modified=${metadata.modified}, creator=${metadata.creator}`);
+
+        return metadata;
+    }
+
+    /**
+     * Instantiate a single PIG item from JSON-LD
+     */
+    private instantiateItem(item: any): TPigItem | undefined {
+        // Validate item has required pig:itemType
+        if (!item['pig:itemType'] || !item['pig:itemType']['@id']) {
+            logger.error('APackage: @graph element missing pig:itemType, skipping ' + (item['@id'] || item.id || 'unknown'));
+            return;
+        }
+
+        const itype: any = item['pig:itemType']['@id'];
+
+        // Filter allowed item types
+        if (!this.isAllowedItemType(itype)) {
+            logger.error(`APackage: skipping unknown item type '${itype}'`);
+            return;
+        }
+
+        const instance = this.createInstance(itype);
+        
+        if (!instance) {
+            logger.error(`APackage: unable to create instance for itemType '${itype}'`);
+            return;
+        }
+
+        try {
+            (instance as any).setJSONLD(item);
+            logger.debug(`APackage: successfully instantiated ${itype} with id ${item['@id']}`);
+            return instance;
+        } catch (err: any) {
+            logger.error(`APackage: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`);
+        }
+    }
+
+    /**
+     * Check if item type is allowed for instantiation
+     */
+    private isAllowedItemType(itype: any): boolean {
+        return [
+            PigItemType.Property,
+            PigItemType.Link,
+            PigItemType.Entity,
+            PigItemType.Relationship,
+            PigItemType.anEntity,
+            PigItemType.aRelationship
+        ].includes(itype);
+    }
+
+    /**
+     * Create a new instance based on item type
+     */
+    private createInstance(itype: any): TPigItem | null {
+        try {
+            switch (itype) {
+                case PigItemType.Property:
+                    return new Property();
+                case PigItemType.Link:
+                    return new Link();
+                case PigItemType.Entity:
+                    return new Entity();
+                case PigItemType.Relationship:
+                    return new Relationship();
+                case PigItemType.anEntity:
+                    return new AnEntity();
+                case PigItemType.aRelationship:
+                    return new ARelationship();
+                default:
+                    return null;
+            }
+        } catch (err: any) {
+            logger.error(`APackage: error creating instance for '${itype}': ${err?.message ?? err}`);
+            return null;
+        }
+    }
+}
 
 /* Simple runtime type-guards */
 export function isProperty(obj: Identifiable): obj is Property {
@@ -947,13 +1269,18 @@ export function isRelationship(obj: Identifiable): obj is Relationship {
 export function isARelationship(obj: Identifiable): obj is ARelationship {
     return !!obj && obj.itemType === PigItemType.aRelationship;
 }
+export function isAPackage(obj: Identifiable): obj is APackage {
+    return !!obj && obj.itemType === PigItemType.aPackage;
+}
+
 // -------- Helper functions --------
 
-// Extract an id string from common shapes:
-// - { id: 'xyz' } -> 'xyz'
-// - { '@id': 'xyz' } -> 'xyz'
-// - 'xyz' -> 'xyz'
-// Returns undefined when no usable id found.
+/** Extract an id string from common shapes:
+ * - { id: 'xyz' } -> 'xyz'
+ * - { '@id': 'xyz' } -> 'xyz'
+ * - 'xyz' -> 'xyz'
+ * Returns undefined when no usable id found.
+ */
 function extractId(obj: unknown): string | undefined {
     if (obj === null || obj === undefined)
         return undefined;
@@ -967,28 +1294,6 @@ function extractId(obj: unknown): string | undefined {
     return undefined;
 }
 
-/**
- * Validate that an input is an id-object or id-string.
- * Returns rspOK on success, else an IRsp error object.
- * Accepts:
- * - 'xyz'                -> ok
- * - { id: 'xyz' }        -> ok
- * - { '@id': 'xyz' }     -> ok
- * Anything else -> error IRsp
- */
-function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
-    if (input === null || input === undefined) {
-        return Msg.create(620, fieldName);
-    }
-    // if (typeof input === 'string') {
-    //    return input.trim() === '' ? { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false } : rspOK;
-    // }
-    if (typeof input === 'object') {
-        const id = extractId(input);
-        return id ? validateIdString(id, fieldName) : Msg.create(623, fieldName);
-    }
-    return Msg.create(622, fieldName);
-}
 function validateIdString(input: unknown, fieldName = 'id'): IRsp {
     if (typeof input === 'string') {
         if (input.trim().length < 1) {
@@ -1034,6 +1339,28 @@ export function validateIdStringArray(
     }
 
     return rspOK;
+}
+/**
+ * Validate that an input is an id-object or id-string.
+ * Returns rspOK on success, else an IRsp error object.
+ * Accepts:
+ * - 'xyz'                -> ok
+ * - { id: 'xyz' }        -> ok
+ * - { '@id': 'xyz' }     -> ok
+ * Anything else -> error IRsp
+ */
+function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
+    if (input === null || input === undefined) {
+        return Msg.create(620, fieldName);
+    }
+    // if (typeof input === 'string') {
+    //    return input.trim() === '' ? { status: 400, statusText: `${fieldName} must be a non-empty string`, ok: false } : rspOK;
+    // }
+    if (typeof input === 'object') {
+        const id = extractId(input);
+        return id ? validateIdString(id, fieldName) : Msg.create(623, fieldName);
+    }
+    return Msg.create(622, fieldName);
 }
 /**
  * Convert valid id-strings to id-objects.
