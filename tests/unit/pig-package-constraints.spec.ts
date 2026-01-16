@@ -6,7 +6,6 @@
 
 import { checkConstraintsForPackage } from '../../src/utils/schemas/pig/pig-package-constraints';
 import { APackage, IAPackage, PigItemType } from '../../src/utils/schemas/pig/pig-metaclasses';
-import { rspOK } from '../../src/utils/lib/messages';
 
 describe('PIG Package Constraint Validation', () => {
     describe('Positive Tests - Valid Packages', () => {
@@ -90,7 +89,7 @@ describe('PIG Package Constraint Validation', () => {
             const items = pkg.setJSONLD(validPackageJsonLd);
             
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBeGreaterThan(1);
+            expect(items.length).toBe(6);
 
             const result = checkConstraintsForPackage(pkg.get() as IAPackage);
             
@@ -213,7 +212,7 @@ describe('PIG Package Constraint Validation', () => {
             const items = pkg.setJSONLD(packageWithRelationship);
             
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBeGreaterThan(1);
+            expect(items.length).toBe(9);
 
             const result = checkConstraintsForPackage(pkg.get() as IAPackage);
             

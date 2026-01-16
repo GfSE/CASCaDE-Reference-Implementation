@@ -41,10 +41,10 @@ describe('importJSONLD (file system)', () => {
             expect(Array.isArray(instances)).toBe(true);
             expect(instances.length).toBeGreaterThan(0);
 
-            console.debug(`import-jsonld: `,instances);
+            // console.debug(`import-jsonld: `,instances);
             instances.forEach((itm, index) => {
                 console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status);
-                console.debug(JSON.stringify(itm.get(), null, 2));
+                // console.debug(JSON.stringify(itm.get(), null, 2));
                 expect(itm.status().ok).toBe(true);
                 // each instantiated item must have a successful status
                 // additional per-item assertions can be added here

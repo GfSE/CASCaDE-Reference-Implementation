@@ -191,7 +191,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         let _itm = { ...itm };
 
         // 1. Rename JSON-LD tags to internal format
-        _itm = LIB.renameJsonTags(itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
+        _itm = LIB.renameJsonTags(_itm as JsonValue, LIB.fromJSONLD, { mutate: false }) as any;
 
         // 2. Replace id-objects with id-strings
         _itm = replaceIdObjects(_itm);
@@ -1315,7 +1315,7 @@ function extractId(obj: unknown): string | undefined {
     return undefined;
 }
 
-function validateIdString(input: unknown, fieldName = 'id'): IRsp {
+/* function validateIdString(input: unknown, fieldName = 'id'): IRsp {
     if (typeof input === 'string') {
         if (input.trim().length < 1) {
             Msg.create(624, fieldName);
@@ -1324,7 +1324,7 @@ function validateIdString(input: unknown, fieldName = 'id'): IRsp {
             return rspOK;
     }
     return Msg.create(625, fieldName);
-}
+} */
 function isValidIdString(input: string): boolean {
     return typeof(input) == 'string' && (RE.termWithNamespace.test(input) || RE.uri.test(input));
 }
@@ -1335,7 +1335,7 @@ function isValidIdString(input: string): boolean {
  * @param fieldName  name used in error messages
  * @returns IRsp (rspOK on success, error IRsp on failure)
  */
-export function validateIdStringArray(
+/* export function validateIdStringArray(
     input: unknown,
     fieldName = 'ids',
     options?: { canBeUndefined?: boolean, minCount?: number }
@@ -1360,7 +1360,7 @@ export function validateIdStringArray(
     }
 
     return rspOK;
-}
+} */
 /**
  * Validate that an input is an id-object or id-string.
  * Returns rspOK on success, else an IRsp error object.
@@ -1370,7 +1370,7 @@ export function validateIdStringArray(
  * - { '@id': 'xyz' }     -> ok
  * Anything else -> error IRsp
  */
-function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
+/* function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
     if (input === null || input === undefined) {
         return Msg.create(620, fieldName);
     }
@@ -1382,7 +1382,7 @@ function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
         return id ? validateIdString(id, fieldName) : Msg.create(623, fieldName);
     }
     return Msg.create(622, fieldName);
-}
+} */
 /**
  * Convert valid id-strings to id-objects.
  * - Accepts any JsonValue (string/number/boolean/null/object/array).
@@ -1399,7 +1399,7 @@ function validateIdObject(input: unknown, fieldName = 'id'): IRsp {
  * @param fieldName  name used in error messages
  * @returns IRsp (rspOK on success, error IRsp on failure)
  */
-function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
+/*function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
     if (!Array.isArray(input)) {
         return Msg.create(630, fieldName);
     }
@@ -1424,7 +1424,8 @@ function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
     }
 
     return rspOK;
-} function makeIdObjects(
+} */
+function makeIdObjects(
     node: JsonValue,
     options?: { idKey?: string; mutate?: boolean }
 ): JsonValue {

@@ -417,14 +417,3 @@ export const logger = {
         if (logger.isEnabled('debug')) console.debug(...args);
     }
 };
-/* ToDo: Suppress output in production builds --> implement log levels or filter
-export const logger = {
-    info: (...args: any[]) => console.info(...args),
-    warn: (...args: any[]) => console.warn(...args),
-    error: (...args: any[]) => console.error(...args),
-    debug: (...args: any[]) => console.debug(...args)
-//    info: (msg: string) => console.info(msg),
-//    warn: (msg: string) => console.warn(msg),
-//    error: (msg: string) => console.error(msg),
-//    debug: (msg: string) => console.debug(msg)
-};*/

@@ -9,8 +9,6 @@
 *       will provide test coverage for the abstract classes they inherit from.
 */
 
-import { LIB } from '../../src/utils/lib/helpers';
-import { JsonObject } from '../../src/utils/lib/helpers';
 import { XsDataType, PigItemType, PigItemTypeValue,
     IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,
         Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, ASourceLink, ATargetLink } from '../../src/utils/schemas/pig/pig-metaclasses';
@@ -421,7 +419,7 @@ describe("PIG Metaclasses", () => {
 
         // check the output as JSON native:
         const anEntity_output = inst.get();
-        console.debug('pig:anEntity.get():', anEntity_output);
+        // console.debug('pig:anEntity.get():', anEntity_output);
         // Due to possible different order of properties, use toMatchObject for partial deep comparison;
         // succeeds if the properties of the latter are found in the former with the same values:
         expect(anEntity_output).toMatchObject(anEntity_with_ref_input);
@@ -429,7 +427,7 @@ describe("PIG Metaclasses", () => {
 
         // check the output as JSON-LD:
         const anEntity_output_JSONLD = inst.getJSONLD();
-        console.debug('pig:anEntity.getJSONLD():', anEntity_output_JSONLD);
+        // console.debug('pig:anEntity.getJSONLD():', anEntity_output_JSONLD);
         // Due to possible different order of properties, use toMatchObject for partial deep comparison;
         // succeeds if the properties of the latter are found in the former with the same values:
         expect(anEntity_output_JSONLD).toMatchObject(anEntity_with_ref_input_JSONLD);
