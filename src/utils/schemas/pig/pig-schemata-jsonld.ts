@@ -19,10 +19,14 @@
  * - xs:datatype values are only pattern-validated here; specific accepted values are validated in code
  * - further constraints (e.g. maxCount >= minCount) are validated in code
  * - eligible values in Property only for string values; other datatypes to be implemented
+ *
+ * ToDo:
+ * - load schemata from external files, as soon as a server with CORS enabled is available
 */
 
 import { ajv } from '../../../plugins/ajv';
 
+const SCHEMA_PATH = 'https://cascade.gfse.org/pig/2026-01-12/schema/jsonld/';
 const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
 
 /* Shared JSON-LD definitions */
@@ -53,7 +57,7 @@ const JSONLD_DEFS = {
 /* PROPERTY_LD_SCHEMA: validates JSON-LD representation of IProperty */
 const PROPERTY_LD_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: '#/schema/jsonld/Property',
+    $id: `${SCHEMA_PATH}Property`,
     type: 'object',
     properties: {
         '@id': { $ref: '#/$defs/idString' },
@@ -122,7 +126,7 @@ const PROPERTY_LD_SCHEMA = {
 /* LINK_LD_SCHEMA: validates JSON-LD representation of ILink */
 const LINK_LD_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: '#/schema/jsonld/Link',
+    $id: `${SCHEMA_PATH}Link`,
     type: 'object',
     properties: {
         '@id': { $ref: '#/$defs/idString' },
@@ -167,7 +171,7 @@ const LINK_LD_SCHEMA = {
 /* ENTITY_LD_SCHEMA: validates JSON-LD representation of IEntity */
 const ENTITY_LD_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: '#/schema/jsonld/Entity',
+    $id: `${SCHEMA_PATH}Entity`,
     type: 'object',
     properties: {
         '@id': { $ref: '#/$defs/idString' },
@@ -220,7 +224,7 @@ const ENTITY_LD_SCHEMA = {
 /* RELATIONSHIP_LD_SCHEMA: validates JSON-LD representation of IRelationship */
 const RELATIONSHIP_LD_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: '#/schema/jsonld/Relationship',
+    $id: `${SCHEMA_PATH}Relationship`,
     type: 'object',
     properties: {
         '@id': { $ref: '#/$defs/idString' },
@@ -271,7 +275,7 @@ const RELATIONSHIP_LD_SCHEMA = {
 /* ANENTITY_LD_SCHEMA: validates JSON-LD representation of IAnEntity */
 const ANENTITY_LD_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: '#/schema/jsonld/AnEntity',
+    $id: `${SCHEMA_PATH}AnEntity`,
     type: 'object',
     properties: {
         '@id': { $ref: '#/$defs/idString' },
@@ -391,7 +395,7 @@ const ANENTITY_LD_SCHEMA = {
 /* ARELATIONSHIP_LD_SCHEMA: validates JSON-LD representation of IARelationship */
 const ARELATIONSHIP_LD_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: '#/schema/jsonld/ARelationship',
+    $id: `${SCHEMA_PATH}ARelationship`,
     type: 'object',
     properties: {
         '@id': { $ref: '#/$defs/idString' },
@@ -503,7 +507,7 @@ const ARELATIONSHIP_LD_SCHEMA = {
 /* APACKAGE_LD_SCHEMA: validates a complete JSON-LD document with @graph */
 const APACKAGE_LD_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: '#/schema/jsonld/APackage',
+    $id: `${SCHEMA_PATH}APackage`,
     type: 'object',
     properties: {
         '@context': {
@@ -568,7 +572,7 @@ const APACKAGE_LD_SCHEMA = {
                                 }
                             }
                         },
-                        then: { $ref: '#/schema/jsonld/AnEntity' }
+                        then: { $ref: `${SCHEMA_PATH}AnEntity` }
                     },
                     {
                         if: {
@@ -582,7 +586,7 @@ const APACKAGE_LD_SCHEMA = {
                                 }
                             }
                         },
-                        then: { $ref: '#/schema/jsonld/ARelationship' }
+                        then: { $ref: `${SCHEMA_PATH}ARelationship` }
                     },
                     {
                         if: {
@@ -596,7 +600,7 @@ const APACKAGE_LD_SCHEMA = {
                                 }
                             }
                         },
-                        then: { $ref: '#/schema/jsonld/Property' }
+                        then: { $ref: `${SCHEMA_PATH}Property` }
                     },
                     {
                         if: {
@@ -610,7 +614,7 @@ const APACKAGE_LD_SCHEMA = {
                                 }
                             }
                         },
-                        then: { $ref: '#/schema/jsonld/Link' }
+                        then: { $ref: `${SCHEMA_PATH}Link` }
                     },
                     {
                         if: {
@@ -624,7 +628,7 @@ const APACKAGE_LD_SCHEMA = {
                                 }
                             }
                         },
-                        then: { $ref: '#/schema/jsonld/Entity' }
+                        then: { $ref: `${SCHEMA_PATH}Entity` }
                     },
                     {
                         if: {
@@ -638,7 +642,7 @@ const APACKAGE_LD_SCHEMA = {
                                 }
                             }
                         },
-                        then: { $ref: '#/schema/jsonld/Relationship' }
+                        then: { $ref: `${SCHEMA_PATH}Relationship` }
                     }
                 ]
             }

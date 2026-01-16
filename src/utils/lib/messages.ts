@@ -287,7 +287,69 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `Entrada ${fieldName}[${index}]: 'lang' debe ser una cadena no vacía`
     },
 
-    // Schema validation (650-659)
+    // Package constraint validation (670-679)
+    670: {
+        en: (index: number) =>
+            `Package validation failed: item at index ${index} is missing id`,
+        de: (index: number) =>
+            `Paket-Validierung fehlgeschlagen: Element mit Index ${index} hat keine id`,
+        fr: (index: number) =>
+            `Échec de la validation du package: élément à l'index ${index} n'a pas d'id`,
+        es: (index: number) =>
+            `Error en la validación del paquete: elemento en índice ${index} no tiene id`
+    },
+    671: {
+        en: (id: string, firstIndex: number, secondIndex: number) =>
+            `Package validation failed: duplicate ID '${id}' found at indices ${firstIndex} and ${secondIndex}`,
+        de: (id: string, firstIndex: number, secondIndex: number) =>
+            `Paket-Validierung fehlgeschlagen: doppelte ID '${id}' bei Indizes ${firstIndex} und ${secondIndex} gefunden`,
+        fr: (id: string, firstIndex: number, secondIndex: number) =>
+            `Échec de la validation du package: ID dupliqué '${id}' trouvé aux indices ${firstIndex} et ${secondIndex}`,
+        es: (id: string, firstIndex: number, secondIndex: number) =>
+            `Error en la validación del paquete: ID duplicado '${id}' encontrado en índices ${firstIndex} y ${secondIndex}`
+    },
+    672: {
+        en: (parentId: string, propIndex: number, msg: string) =>
+            `Package validation failed: item '${parentId}' hasProperty[${propIndex}] has ${msg}`,
+        de: (parentId: string, propIndex: number, msg: string) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' hasProperty[${propIndex}] hat ${msg}`,
+        fr: (parentId: string, propIndex: number, msg: string) =>
+            `Échec de la validation du package: élément '${parentId}' hasProperty[${propIndex}] a ${msg}`,
+        es: (parentId: string, propIndex: number, msg: string) =>
+            `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}] tiene ${msg}`
+    },
+    673: {
+        en: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+            `Package validation failed: item '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
+        de: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
+        fr: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+            `Échec de la validation du package: élément '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
+        es: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+            `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`
+    },
+    674: {
+        en: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
+            `Package validation failed: item '${parentId}' ${linkArrayName}[${linkIndex}] has ${msg}`,
+        de: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${linkArrayName}[${linkIndex}] hat ${msg}`,
+        fr: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
+            `Échec de la validation du package: élément '${parentId}' ${linkArrayName}[${linkIndex}] a ${msg}`,
+        es: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
+            `Error en la validación del paquete: elemento '${parentId}' ${linkArrayName}[${linkIndex}] tiene ${msg}`
+    },
+    675: {
+        en: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
+            `Package validation failed: item '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`,
+        de: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`,
+        fr: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
+            `Échec de la validation du package: élément '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`,
+        es: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
+            `Error en la validación del paquete: elemento '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`
+    },
+
+    // Schema validation (680-689)
     680: {
         en: (id: string, datatype: string) =>
             `Property '${id}' has unsupported datatype '${datatype}'. It will be treated as 'xs:string'.`,

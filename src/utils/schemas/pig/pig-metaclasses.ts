@@ -35,8 +35,8 @@ import { LIB, logger } from "../../lib/helpers";
 import { JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
 // use central Ajv instance from the Vue plugin:
 import { SCH } from './pig-schemata';
+import { checkConstraintsForPackage } from './pig-package-constraints';
 // optional: import type for better TS typing where needed
-// import type Ajv from 'ajv';
 
 export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
@@ -802,6 +802,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         const _itm:IAnEntity = LIB.stripUndefined( itm );
     //    logger.debug('AnEntity.set():', _itm);
         this.lastStatus = this.validate(_itm);
+    //    logger.debug('AnEntity.set status and input: ' + JSON.stringify(this.lastStatus), JSON.stringify(_itm, null, 2));
         if (this.lastStatus.ok) {
             super.set(_itm);
             this.hasTargetLink = _itm.hasTargetLink ? _itm.hasTargetLink.map(r => new ATargetLink().set(r)) : [];
@@ -819,8 +820,10 @@ export class AnEntity extends AnElement implements IAnEntity {
         // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aLink;
         // collect them here in a hasTarget array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
+    //    logger.debug('AnEntity.setJSONLD input: ', JSON.stringify(itm, null, 2));
         const _itm = super.setJSONLD(itm) as any;
         _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[] | undefined;
+        // logger.debug('AnEntity.setJSONLD: ', JSON.stringify(_itm, null, 2));
 
         return this.set(_itm);
     }
@@ -952,14 +955,7 @@ export class APackage extends Identifiable implements IAPackage {
         if (this.lastStatus.ok) {
             super.set(itm);
             this.context = itm.context;
-            this.graph = [];
-            for (const item of itm.graph) {
-                const instance = this.instantiateItem(item);
-                if (instance)
-                    this.graph.push(instance);
-                else
-                    logger.warn(`APackage.set: could not instantiate item ${JSON.stringify(item)}`);
-            }
+            this.graph = itm.graph;
             this.modified = itm.modified;
             this.creator = itm.creator;
         }
@@ -974,7 +970,7 @@ export class APackage extends Identifiable implements IAPackage {
             ...super.get(),
             context: this.context,
             graph: this.graph.map(item => {
-                logger.debug(`APackage.get: processing item `, item);
+                // logger.debug(`APackage.get: processing item `, item);
                 return item.get();
             }),
             modified: this.modified,
@@ -992,13 +988,25 @@ export class APackage extends Identifiable implements IAPackage {
         const meta = this.extractMetadata(doc);
         
         // Extract and process @graph
-        const graph: any[] = Array.isArray(doc['@graph']) 
+        let graph: any[] = Array.isArray(doc['@graph']) 
             ? doc['@graph'] 
             : (Array.isArray(doc.graph) ? doc.graph : []);
 
         if (graph.length === 0) {
             logger.warn('APackage.setJSONLD: empty @graph');
         }
+
+        graph = graph.map(
+            item => {
+                const instance = this.instantiateItem(item);
+                if (instance) {
+                    // logger.debug(`APackage.set: `, instance);
+                    return instance;
+                }
+                else
+                    logger.warn(`APackage.setJSONLD: could not instantiate item ${JSON.stringify(item)}`);
+            }
+        );
 
     /*    logger.debug(`APackage.setJSONLD: processing ${graph.length} items from package ${meta.id || 'unnamed'}`);
         logger.debug('APackage.setJSONLD: extracted context:', ctx);
@@ -1061,12 +1069,25 @@ export class APackage extends Identifiable implements IAPackage {
 
     validate(itm: IAPackage): IRsp {
         // graph must be present and be an array
-        if (!Array.isArray(itm.graph)) {
+        if (!Array.isArray(itm.graph) || itm.graph.length<1) {
             return Msg.create(630, 'graph');
         }
 
         // Call parent validation
-        return super.validate(itm);
+        let rsp = super.validate(itm);
+        if (!rsp.ok) {
+            return rsp;
+        }
+
+        rsp = checkConstraintsForPackage(itm);
+        // if (itm.id == 'd:test-invalid-prop')
+            // logger.debug(`APackage.validate: validating package `, itm, rsp);
+
+        if (!rsp.ok) {
+            return rsp;
+        }
+
+        return rspOK;
     }
 
     /**
@@ -1101,11 +1122,11 @@ export class APackage extends Identifiable implements IAPackage {
                 }
             }
             if (namespaces.length > 0) {
-                logger.debug(`APackage: extracted ${namespaces.length} namespaces from context`);
+                // logger.debug(`APackage: extracted ${namespaces.length} namespaces from context`);
                 return namespaces;
             }
             // Return original object if no valid namespaces found
-            logger.debug('APackage: extracted context object');
+            // logger.debug('APackage: extracted context object');
             return ctx;
         }
 
@@ -1169,7 +1190,7 @@ export class APackage extends Identifiable implements IAPackage {
             metadata.description = [{ value: descArray, lang: 'en' }];
         }
 
-        logger.debug(`APackage metadata: id=${metadata.id}, title=${metadata.title?.[0]?.value}, modified=${metadata.modified}, creator=${metadata.creator}`);
+        // logger.debug(`APackage metadata: id=${metadata.id}, title=${metadata.title?.[0]?.value}, modified=${metadata.modified}, creator=${metadata.creator}`);
 
         return metadata;
     }
@@ -1201,7 +1222,7 @@ export class APackage extends Identifiable implements IAPackage {
 
         try {
             (instance as any).setJSONLD(item);
-            logger.debug(`APackage: successfully instantiated ${itype} with id ${item['@id']}`);
+            // logger.debug(`APackage: successfully instantiated ${itype} with id ${item['@id']}`);
             return instance;
         } catch (err: any) {
             logger.error(`APackage: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`);
