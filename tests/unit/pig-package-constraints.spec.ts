@@ -90,7 +90,7 @@ describe('PIG Package Constraint Validation', () => {
             const items = pkg.setJSONLD(validPackageJsonLd);
             
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBeGreaterThan(0);
+            expect(items.length).toBeGreaterThan(1);
 
             const result = checkConstraintsForPackage(pkg.get() as IAPackage);
             
@@ -213,6 +213,7 @@ describe('PIG Package Constraint Validation', () => {
             const items = pkg.setJSONLD(packageWithRelationship);
             
             expect(pkg.status().ok).toBe(true);
+            expect(items.length).toBeGreaterThan(1);
 
             const result = checkConstraintsForPackage(pkg.get() as IAPackage);
             
