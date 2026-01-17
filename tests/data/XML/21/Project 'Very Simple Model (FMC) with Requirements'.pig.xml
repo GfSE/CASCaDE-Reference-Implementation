@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pig:Package xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
+             xmlns:o="https://product-information-graph.org/v0.2/ontology#"
+             xmlns:d="https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#"
+             xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+             xmlns:owl="http://www.w3.org/2002/07/owl#"
+             xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+             xmlns:dcterms="http://purl.org/dc/terms/"
+             xmlns:FMC="http://fmc-modeling.org#"
+             xmlns:IREB="https://cpre.ireb.org/en/downloads-and-resources/glossary#"
+             xmlns:ReqIF="https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#"
+             xmlns:oslc_rm="http://open-services.net/ns/rm#"
+             xmlns:SpecIF="https://specif.de/v1.2/schema#"
+             id="d:ACP-Very-Simple-Model-FMC-with-Requirements"
+             rdf:type="pig:Package">
+    <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
+    <dcterms:modified>2026-01-12T12:38:50.406Z</dcterms:modified>
+
+    <graph>
+        <!-- Metamodel: Entity Classes -->
+        <pig:Entity id="pig:Entity" rdf:type="owl:Class">
+            <dcterms:title>Entity</dcterms:title>
+            <dcterms:description>A PIG meta-model element used for entities (aka resources or artifacts).</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="pig:Organizer">
+            <pig:specializes>pig:Entity</pig:specializes>
+            <dcterms:title>Organizer</dcterms:title>
+            <dcterms:description>An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="pig:HierarchyRoot">
+            <pig:specializes>pig:Organizer</pig:specializes>
+            <dcterms:title>Hierarchy Root</dcterms:title>
+            <dcterms:description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</dcterms:description>
+            <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
+        </pig:Entity>
+
+        <pig:Entity id="pig:Outline">
+            <pig:specializes>pig:Organizer</pig:specializes>
+            <dcterms:title>Outline</dcterms:title>
+            <dcterms:description>A subclass of PIG organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
+        </pig:Entity>
+
+        <pig:Entity id="pig:View">
+            <pig:specializes>pig:Organizer</pig:specializes>
+            <dcterms:title>View</dcterms:title>
+            <dcterms:description>A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:eligibleTargetLink>pig:shows</pig:eligibleTargetLink>
+            <pig:eligibleTargetLink>pig:depicts</pig:eligibleTargetLink>
+        </pig:Entity>
+
+        <!-- Metamodel: Relationship Class -->
+        <pig:Relationship id="pig:Relationship" rdf:type="owl:Class">
+            <dcterms:title>Relationship</dcterms:title>
+            <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:eligibleSourceLink>pig:SourceLink</pig:eligibleSourceLink>
+            <pig:eligibleTargetLink>pig:TargetLink</pig:eligibleTargetLink>
+        </pig:Relationship>
+
+        <!-- Metamodel: Properties -->
+        <pig:Property id="pig:icon" rdf:type="owl:DatatypeProperty">
+            <dcterms:title>has icon</dcterms:title>
+            <dcterms:description>Specifies an icon for a model element (entity or relationship).</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+
+        <pig:Property id="pig:category">
+            <pig:specializes>dcterms:type</pig:specializes>
+            <dcterms:title>has category</dcterms:title>
+            <dcterms:description>Specifies a category for an element (entity, relationship or organizer).</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="32"/>
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+
+        <!-- Metamodel: Links -->
+        <pig:Link id="pig:Link" rdf:type="owl:ObjectProperty">
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>linked with</dcterms:title>
+            <dcterms:description>Connects a reified relationship with its source or target. Also connects an organizer to a model element</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:SourceLink">
+            <pig:specializes>pig:Link</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>to source</dcterms:title>
+            <dcterms:description>Connects the source of a reified relationship.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:TargetLink">
+            <pig:specializes>pig:Link</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>to target</dcterms:title>
+            <dcterms:description>Connects the target of a reified relationship or an organizer.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:lists">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Organizer</pig:eligibleEndpoint>
+            <dcterms:title>lists</dcterms:title>
+            <dcterms:description>Lists an entity, a relationship or a subordinated organizer.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:shows">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>shows</dcterms:title>
+            <dcterms:description>Shows an entity or a relationship.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:depicts">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <dcterms:title>depicts</dcterms:title>
+            <dcterms:description>Depicts an entity; inverse of uml:ownedDiagram.</dcterms:description>
+        </pig:Link>
+
+        <!-- Dublin Core Properties -->
+        <pig:Property id="dcterms:title" rdf:type="owl:DatatypeProperty">
+            <dcterms:title xml:lang="en">Title</dcterms:title>
+            <dcterms:title xml:lang="de">Titel</dcterms:title>
+            <dcterms:title xml:lang="fr">Titre</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;A name given to the resource. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://purl.org/dc/elements/1.1/title"&gt;DCMI&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength value="256"/>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+
+        <pig:Property id="dcterms:description" rdf:type="owl:DatatypeProperty">
+            <dcterms:title xml:lang="en">Description</dcterms:title>
+            <dcterms:title xml:lang="de">Beschreibung</dcterms:title>
+            <dcterms:title xml:lang="fr">Description</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;An account of the resource. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://purl.org/dc/elements/1.1/description"&gt;DCMI&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+
+        <!-- SpecIF Properties -->
+        <pig:Property id="SpecIF:Diagram" rdf:type="owl:DatatypeProperty">
+            <dcterms:title xml:lang="en">Diagram</dcterms:title>
+            <dcterms:title xml:lang="de">Diagramm</dcterms:title>
+            <dcterms:title xml:lang="fr">Diagramme</dcterms:title>
+            <dcterms:description xml:lang="en">A diagram illustrating the resource or a link to a diagram.</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+        </pig:Property>
+
+        <pig:Property id="SpecIF:Priority" rdf:type="owl:ObjectProperty">
+            <dcterms:title xml:lang="en">Priority</dcterms:title>
+            <dcterms:title xml:lang="de">Priorität</dcterms:title>
+            <dcterms:title xml:lang="fr">Priorité</dcterms:title>
+            <dcterms:description xml:lang="en">Enumerated values for the 'Priority' of the resource.</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <pig:eligibleValue id="SpecIF:priorityHigh">
+                <dcterms:title xml:lang="en">high</dcterms:title>
+                <dcterms:title xml:lang="de">hoch</dcterms:title>
+                <dcterms:title xml:lang="fr">haut</dcterms:title>
+            </pig:eligibleValue>
+            <pig:eligibleValue id="SpecIF:priorityMedium">
+                <dcterms:title xml:lang="en">medium</dcterms:title>
+                <dcterms:title xml:lang="de">mittel</dcterms:title>
+                <dcterms:title xml:lang="fr">moyen</dcterms:title>
+            </pig:eligibleValue>
+            <pig:eligibleValue id="SpecIF:priorityLow">
+                <dcterms:title xml:lang="en">low</dcterms:title>
+                <dcterms:title xml:lang="de">niedrig</dcterms:title>
+                <dcterms:title xml:lang="fr">bas</dcterms:title>
+            </pig:eligibleValue>
+        </pig:Property>
+
+        <!-- Domain-Specific Entity Classes -->
+        <pig:Entity id="SpecIF:Paragraph">
+            <dcterms:title xml:lang="en">Paragraph</dcterms:title>
+            <dcterms:title xml:lang="de">Textabsatz</dcterms:title>
+            <dcterms:title xml:lang="fr">Paragraphe</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</dcterms:description>
+            <pig:specializes>pig:Entity</pig:specializes>
+            <pig:eligibleProperty>SpecIF:Diagram</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="FMC:Actor">
+            <dcterms:title xml:lang="en">Actor</dcterms:title>
+            <dcterms:title xml:lang="de">Akteur</dcterms:title>
+            <dcterms:title xml:lang="fr">Acteur</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.&lt;/p&gt;&lt;p&gt;The  particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="fr">&lt;p&gt;Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].&lt;/p&gt;</dcterms:description>
+            <pig:specializes>pig:Entity</pig:specializes>
+            <pig:icon>&#x25A1;</pig:icon>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="FMC:State">
+            <dcterms:title xml:lang="en">State</dcterms:title>
+            <dcterms:title xml:lang="de">Zustand</dcterms:title>
+            <dcterms:title xml:lang="fr">État</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean  ontology-term, such as [[bpmn:dataObject]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="fr">&lt;p&gt;Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].&lt;/p&gt;</dcterms:description>
+            <pig:specializes>pig:Entity</pig:specializes>
+            <pig:icon>&#x25CB;</pig:icon>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="FMC:Event">
+            <dcterms:title xml:lang="en">Event</dcterms:title>
+            <dcterms:title xml:lang="de">Ereignis</dcterms:title>
+            <dcterms:title xml:lang="fr">Évenement</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="fr">&lt;p&gt;Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].&lt;/p&gt;</dcterms:description>
+            <pig:specializes>pig:Entity</pig:specializes>
+            <pig:icon>&#x2662;</pig:icon>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="IREB:Requirement">
+            <dcterms:title xml:lang="en">Requirement</dcterms:title>
+            <dcterms:title xml:lang="de">Anforderung</dcterms:title>
+            <dcterms:title xml:lang="fr">Exigence</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A condition or capability needed by a user to solve a problem or achieve an objective.&lt;/li&gt;&lt;li&gt;A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.&lt;/li&gt;&lt;li&gt;A documented representation of a condition or capability as in (1) or (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A need perceived by a stakeholder.&lt;/li&gt;&lt;li&gt;A capability or property that a system shall have.&lt;/li&gt;&lt;li&gt;A documented representation of a need, capability or property.&lt;/li&gt;&lt;/ol&gt;</dcterms:description>
+            <dcterms:description xml:lang="de">&lt;p&gt;Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.&lt;/li&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Ein von einem Stakeholder wahrgenommener Bedarf.&lt;/li&gt;&lt;li&gt;Eine Fähigkeit oder Eigenschaft, die ein System haben soll.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.&lt;/li&gt;&lt;/ol&gt;</dcterms:description>
+            <dcterms:description xml:lang="fr">&lt;p&gt;Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Définition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.&lt;/li&gt;&lt;li&gt;Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Un besoin perçu par une partie prenante;&lt;/li&gt;&lt;li&gt;Une capacité ou une propriété qu'un système doit avoir.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.&lt;/li&gt;&lt;/ol&gt;</dcterms:description>
+            <pig:specializes>pig:Entity</pig:specializes>
+            <pig:icon>&#8623;</pig:icon>
+            <pig:eligibleProperty>SpecIF:Priority</pig:eligibleProperty>
+        </pig:Entity>
+
+        <!-- Domain-Specific Relationship Classes -->
+        <pig:Relationship id="SpecIF:writes">
+            <dcterms:title xml:lang="en">writes</dcterms:title>
+            <dcterms:title xml:lang="de">schreibt</dcterms:title>
+            <dcterms:title xml:lang="fr">écrit</dcterms:title>
+            <dcterms:description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</dcterms:description>
+            <pig:specializes>pig:Relationship</pig:specializes>
+            <pig:eligibleSourceLink>SpecIF:writes-toSource</pig:eligibleSourceLink>
+            <pig:eligibleTargetLink>SpecIF:writes-toTarget</pig:eligibleTargetLink>
+        </pig:Relationship>
+
+        <pig:Link id="SpecIF:writes-toSource">
+            <pig:specializes>pig:SourceLink</pig:specializes>
+            <dcterms:title>SpecIF:writes to source</dcterms:title>
+            <dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
+            <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
+        </pig:Link>
+
+        <pig:Link id="SpecIF:writes-toTarget">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <dcterms:title>SpecIF:writes to target</dcterms:title>
+            <dcterms:description>Connects the target of SpecIF:writes</dcterms:description>
+            <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
+        </pig:Link>
+
+        <pig:Relationship id="SpecIF:reads">
+            <dcterms:title xml:lang="en">reads</dcterms:title>
+            <dcterms:title xml:lang="de">liest</dcterms:title>
+            <dcterms:title xml:lang="fr">lit</dcterms:title>
+            <dcterms:description xml:lang="en">A [[FMC:Actor]] 'reads' a [[FMC:State]].</dcterms:description>
+            <pig:specializes>pig:Relationship</pig:specializes>
+            <pig:eligibleSourceLink>SpecIF:reads-toSource</pig:eligibleSourceLink>
+            <pig:eligibleTargetLink>SpecIF:reads-toTarget</pig:eligibleTargetLink>
+        </pig:Relationship>
+
+        <pig:Link id="SpecIF:reads-toSource">
+            <pig:specializes>pig:SourceLink</pig:specializes>
+            <dcterms:title>SpecIF:reads to source</dcterms:title>
+            <dcterms:description>Connects the source of SpecIF:reads</dcterms:description>
+            <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
+        </pig:Link>
+
+        <pig:Link id="SpecIF:reads-toTarget">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <dcterms:title>SpecIF:reads to target</dcterms:title>
+            <dcterms:description>Connects the target of SpecIF:reads</dcterms:description>
+            <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
+        </pig:Link>
+
+        <pig:Relationship id="oslc_rm:satisfies">
+            <dcterms:title xml:lang="en">satisfies</dcterms:title>
+            <dcterms:title xml:lang="de">erfüllt</dcterms:title>
+            <dcterms:title xml:lang="fr">satisfait</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;The object is satisfied by the subject. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X &lt;em&gt;satisfies&lt;/em&gt; 'Requirement-4711'.&lt;/p&gt;</dcterms:description>
+            <pig:specializes>pig:Relationship</pig:specializes>
+            <pig:eligibleSourceLink>oslc_rm:satisfies-toSource</pig:eligibleSourceLink>
+            <pig:eligibleTargetLink>oslc_rm:satisfies-toTarget</pig:eligibleTargetLink>
+        </pig:Relationship>
+
+        <pig:Link id="oslc_rm:satisfies-toSource">
+            <pig:specializes>pig:SourceLink</pig:specializes>
+            <dcterms:title>oslc_rm:satisfies to source</dcterms:title>
+            <dcterms:description>Connects the source of oslc_rm:satisfies</dcterms:description>
+            <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
+        </pig:Link>
+
+        <pig:Link id="oslc_rm:satisfies-toTarget">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <dcterms:title>oslc_rm:satisfies to target</dcterms:title>
+            <dcterms:description>Connects the target of oslc_rm:satisfies</dcterms:description>
+            <pig:eligibleEndpoint>IREB:Requirement</pig:eligibleEndpoint>
+        </pig:Link>
+
+        <!-- Instance Data: Requirements -->
+        <pig:anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b" rdf:type="IREB:Requirement">
+            <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+            <dcterms:title>Data Volume</dcterms:title>
+            <dcterms:description>&lt;p&gt;The data store MUST support a total volume up to 850 GB.&lt;/p&gt;</dcterms:description>
+            <pig:aProperty hasClass="SpecIF:Priority">
+                <value>SpecIF:priorityHigh</value>
+            </pig:aProperty>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:Req-0Z7916e2872e78ecadc50feddc00918a" rdf:type="IREB:Requirement">
+            <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+            <dcterms:title>Consistency</dcterms:title>
+            <dcterms:description>&lt;p&gt;The data store MUST be consistent at all times.&lt;/p&gt;</dcterms:description>
+            <pig:aProperty hasClass="SpecIF:Priority">
+                <value>SpecIF:priorityHigh</value>
+            </pig:aProperty>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:Req-2b9016e2872e78ecadc50feddc0013Ac" rdf:type="IREB:Requirement">
+            <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+            <dcterms:title>Response Time</dcterms:title>
+            <dcterms:description>&lt;p&gt;The system SHOULD respond on user queries within 300 ms.&lt;/p&gt;</dcterms:description>
+            <pig:aProperty hasClass="SpecIF:Priority">
+                <value>SpecIF:priorityMedium</value>
+            </pig:aProperty>
+        </pig:anEntity>
+
+        <!-- Instance Data: View/Diagram -->
+        <pig:anEntity id="d:Diagram-aec0df7900010000017001eaf53e8876" rdf:type="pig:View">
+            <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
+            <dcterms:title>IT-Integration: FiCo-Application and FiCo-Data</dcterms:title>
+            <pig:aProperty hasClass="SpecIF:Diagram">
+                <value>&lt;p class="inline-label"&gt;Model Diagram:&lt;/p&gt;&lt;p&gt;&lt;object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg"&gt;Notation: FMC Block Diagram&lt;/object&gt;&lt;/p&gt;</value>
+            </pig:aProperty>
+            <pig:aProperty hasClass="pig:category">
+                <value>FMC Block Diagram</value>
+            </pig:aProperty>
+            <pig:aTargetLink hasClass="pig:shows">
+                <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:shows">
+                <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:shows">
+                <idRef>d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:shows">
+                <idRef>d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <!-- Instance Data: Model Elements -->
+        <pig:anEntity id="d:MEl-50fbfe8f0029b1a8016ea86245a9d83a" rdf:type="FMC:Actor">
+            <dcterms:modified>2020-03-06T09:04:00+01:00</dcterms:modified>
+            <dcterms:title>FiCo-Application</dcterms:title>
+            <dcterms:description>&lt;p&gt;IT-Application for Finance and Controlling.&lt;/p&gt;</dcterms:description>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:MEl-50feddc00029b1a8016e2872e78ecadc" rdf:type="FMC:State">
+            <dcterms:modified>2020-03-06T09:03:00+01:00</dcterms:modified>
+            <dcterms:title>FiCo-Data</dcterms:title>
+            <dcterms:description>&lt;p&gt;Finance and Controlling Data, such as cost-units per project with budget, accrued cost etc.&lt;/p&gt;</dcterms:description>
+        </pig:anEntity>
+
+        <!-- Instance Data: Model Relationships -->
+        <pig:aRelationship id="d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc" rdf:type="SpecIF:writes">
+            <dcterms:modified>2020-03-06T09:05:00+01:00</dcterms:modified>
+            <dcterms:description>'FiCo-Application' writes 'FiCo-Data'</dcterms:description>
+            <pig:aSourceLink hasClass="SpecIF:writes-toSource">
+                <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
+            </pig:aSourceLink>
+            <pig:aTargetLink hasClass="SpecIF:writes-toTarget">
+                <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aTargetLink>
+        </pig:aRelationship>
+
+        <pig:aRelationship id="d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc" rdf:type="SpecIF:reads">
+            <dcterms:modified>2020-03-06T09:05:00+01:00</dcterms:modified>
+            <dcterms:description>'FiCo-Application' reads 'FiCo-Data'</dcterms:description>
+            <pig:aSourceLink hasClass="SpecIF:reads-toSource">
+                <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
+            </pig:aSourceLink>
+            <pig:aTargetLink hasClass="SpecIF:reads-toTarget">
+                <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aTargetLink>
+        </pig:aRelationship>
+
+        <!-- Instance Data: Satisfaction Relationships -->
+        <pig:aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b" rdf:type="oslc_rm:satisfies">
+            <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+            <dcterms:description>'FiCo-Data' satisfies 'Data Volume'</dcterms:description>
+            <pig:aSourceLink hasClass="oslc_rm:satisfies-toSource">
+                <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aSourceLink>
+            <pig:aTargetLink hasClass="oslc_rm:satisfies-toTarget">
+                <idRef>d:Req-1a8016e2872e78ecadc50feddc00029b</idRef>
+            </pig:aTargetLink>
+        </pig:aRelationship>
+
+        <pig:aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-0Z7916e2872e78ecadc50feddc00918a" rdf:type="oslc_rm:satisfies">
+            <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+            <dcterms:description>'FiCo-Data' satisfies 'Consistency'</dcterms:description>
+            <pig:aSourceLink hasClass="oslc_rm:satisfies-toSource">
+                <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aSourceLink>
+            <pig:aTargetLink hasClass="oslc_rm:satisfies-toTarget">
+                <idRef>d:Req-0Z7916e2872e78ecadc50feddc00918a</idRef>
+            </pig:aTargetLink>
+        </pig:aRelationship>
+
+        <pig:aRelationship id="d:Ssat-50fbfe8f0029b1a8016ea86245a9d83a-2b9016e2872e78ecadc50feddc0013Ac" rdf:type="oslc_rm:satisfies">
+            <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+            <dcterms:description>'FiCo-Application' satisfies 'Response Time'</dcterms:description>
+            <pig:aSourceLink hasClass="oslc_rm:satisfies-toSource">
+                <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
+            </pig:aSourceLink>
+            <pig:aTargetLink hasClass="oslc_rm:satisfies-toTarget">
+                <idRef>d:Req-2b9016e2872e78ecadc50feddc0013Ac</idRef>
+            </pig:aTargetLink>
+        </pig:aRelationship>
+
+        <!-- Instance Data: Hierarchy -->
+        <pig:anEntity id="d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements" rdf:type="pig:HierarchyRoot">
+            <dcterms:modified>2026-01-12T12:38:50.710Z</dcterms:modified>
+            <dcterms:title>Hierarchy Root</dcterms:title>
+            <dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:HR-Folder-Introduction</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:HR-Folder-Requirements</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:HR-Folder-SystemModel</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:HR-FolderGlossary-10875487071</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:Folder-Introduction" rdf:type="pig:Outline">
+            <dcterms:modified>2025-02-07T08:32:00+01:00</dcterms:modified>
+            <dcterms:title>Introduction</dcterms:title>
+            <dcterms:description>&lt;p&gt;This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in &lt;a href="https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html" target="_blank"&gt;Tutorial 6: Very Simple Model (FMC)&lt;/a&gt; and &lt;a href="https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html" target="_blank"&gt;Tutorial 9: Very Simple Model (FMC) with Requirements&lt;/a&gt;.&lt;/p&gt;</dcterms:description>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:HR-Folder-Introduction" rdf:type="pig:Outline">
+            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
+            <pig:aProperty hasClass="pig:category">
+                <value>ReqIF:HierarchyRoot</value>
+            </pig:aProperty>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:Folder-Introduction</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:Folder-Requirements" rdf:type="pig:Outline">
+            <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
+            <dcterms:title>Requirements</dcterms:title>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:Req-1a8016e2872e78ecadc50feddc00029b</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:Req-0Z7916e2872e78ecadc50feddc00918a</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:Req-2b9016e2872e78ecadc50feddc0013Ac</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:HR-Folder-Requirements" rdf:type="pig:Outline">
+            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
+            <pig:aProperty hasClass="pig:category">
+                <value>ReqIF:HierarchyRoot</value>
+            </pig:aProperty>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:Folder-Requirements</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:Folder-SystemModel" rdf:type="pig:Outline">
+            <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
+            <dcterms:title>System Model</dcterms:title>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:Diagram-aec0df7900010000017001eaf53e8876</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:HR-Folder-SystemModel" rdf:type="pig:Outline">
+            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
+            <pig:aProperty hasClass="pig:category">
+                <value>ReqIF:HierarchyRoot</value>
+            </pig:aProperty>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:Folder-SystemModel</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:FolderGlossary-10875487071" rdf:type="pig:Outline">
+            <dcterms:modified>2026-01-12T12:38:44.062Z</dcterms:modified>
+            <dcterms:title>Model Elements (Glossary)</dcterms:title>
+            <pig:aProperty hasClass="pig:category">
+                <value>SpecIF:Glossary</value>
+            </pig:aProperty>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
+            </pig:aTargetLink>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+
+        <pig:anEntity id="d:HR-FolderGlossary-10875487071" rdf:type="pig:Outline">
+            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
+            <pig:aProperty hasClass="pig:category">
+                <value>ReqIF:HierarchyRoot</value>
+            </pig:aProperty>
+            <pig:aTargetLink hasClass="pig:lists">
+                <idRef>d:FolderGlossary-10875487071</idRef>
+            </pig:aTargetLink>
+        </pig:anEntity>
+    </graph>
+</pig:Package>
