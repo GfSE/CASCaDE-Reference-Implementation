@@ -146,7 +146,22 @@
             <dcterms:title xml:lang="en">Title</dcterms:title>
             <dcterms:title xml:lang="de">Titel</dcterms:title>
             <dcterms:title xml:lang="fr">Titre</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;A name given to the resource. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://purl.org/dc/elements/1.1/title"&gt;DCMI&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>
+                    A name given to the resource. <small>
+                        (<i>
+                            source: <a href="http://purl.org/dc/elements/1.1/title">DCMI</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>
+                    Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. <small>
+                        (<i>
+                            source: <a href="http://open-services.net/">OSLC</a>
+                        </i>)
+                    </small>
+                </p>
+            </dcterms:description>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:maxLength value="256"/>
@@ -159,7 +174,22 @@
             <dcterms:title xml:lang="en">Description</dcterms:title>
             <dcterms:title xml:lang="de">Beschreibung</dcterms:title>
             <dcterms:title xml:lang="fr">Description</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;An account of the resource. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://purl.org/dc/elements/1.1/description"&gt;DCMI&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>
+                    An account of the resource. <small>
+                        (<i>
+                            source: <a href="http://purl.org/dc/elements/1.1/description">DCMI</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>
+                    Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. <small>
+                        (<i>
+                            source: <a href="http://open-services.net/">OSLC</a>
+                        </i>)
+                    </small>
+                </p>
+            </dcterms:description>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
                     <xs:maxOccurs>1</xs:maxOccurs>
@@ -208,8 +238,12 @@
             <dcterms:title xml:lang="en">Paragraph</dcterms:title>
             <dcterms:title xml:lang="de">Textabsatz</dcterms:title>
             <dcterms:title xml:lang="fr">Paragraphe</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</dcterms:description>
-            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>A 'Paragraph' is an unspecified information in a document at any level.</p>
+            </dcterms:description>
+            <dcterms:description xml:lang="de">
+                <p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>
+            </dcterms:description>
             <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
             <pig:eligibleProperty>SpecIF:Diagram</pig:eligibleProperty>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
@@ -219,9 +253,18 @@
             <dcterms:title xml:lang="en">Actor</dcterms:title>
             <dcterms:title xml:lang="de">Akteur</dcterms:title>
             <dcterms:title xml:lang="fr">Acteur</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.&lt;/p&gt;&lt;p&gt;The  particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].&lt;/p&gt;</dcterms:description>
-            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].&lt;/p&gt;</dcterms:description>
-            <dcterms:description xml:lang="fr">&lt;p&gt;Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p>
+                <p>The  particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>
+            </dcterms:description>
+            <dcterms:description xml:lang="de">
+                <p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p>
+                <p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>
+            </dcterms:description>
+            <dcterms:description xml:lang="fr">
+                <p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p>
+                <p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>
+            </dcterms:description>
             <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
             <pig:icon>&#x25A1;</pig:icon>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
@@ -231,9 +274,18 @@
             <dcterms:title xml:lang="en">State</dcterms:title>
             <dcterms:title xml:lang="de">Zustand</dcterms:title>
             <dcterms:title xml:lang="fr">État</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean  ontology-term, such as [[bpmn:dataObject]].&lt;/p&gt;</dcterms:description>
-            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].&lt;/p&gt;</dcterms:description>
-            <dcterms:description xml:lang="fr">&lt;p&gt;Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p>
+                <p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean  ontology-term, such as [[bpmn:dataObject]].</p>
+            </dcterms:description>
+            <dcterms:description xml:lang="de">
+                <p>Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.</p>
+                <p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].</p>
+            </dcterms:description>
+            <dcterms:description xml:lang="fr">
+                <p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p>
+                <p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p>
+            </dcterms:description>
             <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
             <pig:icon>&#x25CB;</pig:icon>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
@@ -243,9 +295,18 @@
             <dcterms:title xml:lang="en">Event</dcterms:title>
             <dcterms:title xml:lang="de">Ereignis</dcterms:title>
             <dcterms:title xml:lang="fr">Évenement</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].&lt;/p&gt;</dcterms:description>
-            <dcterms:description xml:lang="de">&lt;p&gt;Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].&lt;/p&gt;</dcterms:description>
-            <dcterms:description xml:lang="fr">&lt;p&gt;Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p>
+                <p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>
+            </dcterms:description>
+            <dcterms:description xml:lang="de">
+                <p>Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.</p>
+                <p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].</p>
+            </dcterms:description>
+            <dcterms:description xml:lang="fr">
+                <p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p>
+                <p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p>
+            </dcterms:description>
             <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
             <pig:icon>&#x2662;</pig:icon>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
@@ -255,9 +316,69 @@
             <dcterms:title xml:lang="en">Requirement</dcterms:title>
             <dcterms:title xml:lang="de">Anforderung</dcterms:title>
             <dcterms:title xml:lang="fr">Exigence</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A condition or capability needed by a user to solve a problem or achieve an objective.&lt;/li&gt;&lt;li&gt;A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.&lt;/li&gt;&lt;li&gt;A documented representation of a condition or capability as in (1) or (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A need perceived by a stakeholder.&lt;/li&gt;&lt;li&gt;A capability or property that a system shall have.&lt;/li&gt;&lt;li&gt;A documented representation of a need, capability or property.&lt;/li&gt;&lt;/ol&gt;</dcterms:description>
-            <dcterms:description xml:lang="de">&lt;p&gt;Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.&lt;/li&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Ein von einem Stakeholder wahrgenommener Bedarf.&lt;/li&gt;&lt;li&gt;Eine Fähigkeit oder Eigenschaft, die ein System haben soll.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.&lt;/li&gt;&lt;/ol&gt;</dcterms:description>
-            <dcterms:description xml:lang="fr">&lt;p&gt;Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Définition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.&lt;/li&gt;&lt;li&gt;Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Un besoin perçu par une partie prenante;&lt;/li&gt;&lt;li&gt;Une capacité ou une propriété qu'un système doit avoir.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.&lt;/li&gt;&lt;/ol&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>
+                    A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Definition:</p>
+                <ol>
+                    <li>A condition or capability needed by a user to solve a problem or achieve an objective.</li>
+                    <li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li>
+                    <li>A documented representation of a condition or capability as in (1) or (2).</li>
+                </ol>
+                <p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p>
+                <ol>
+                    <li>A need perceived by a stakeholder.</li>
+                    <li>A capability or property that a system shall have.</li>
+                    <li>A documented representation of a need, capability or property.</li>
+                </ol>
+            </dcterms:description>
+            <dcterms:description xml:lang="de">
+                <p>
+                    Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Definition:</p>
+                <ol>
+                    <li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li>
+                    <li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li>
+                    <li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li>
+                </ol>
+                <p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p>
+                <ol>
+                    <li>Ein von einem Stakeholder wahrgenommener Bedarf.</li>
+                    <li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li>
+                    <li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li>
+                </ol>
+            </dcterms:description>
+            <dcterms:description xml:lang="fr">
+                <p>
+                    Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Définition:</p>
+                <ol>
+                    <li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li>
+                    <li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li>
+                    <li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li>
+                </ol>
+                <p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p>
+                <ol>
+                    <li>Un besoin perçu par une partie prenante;</li>
+                    <li>Une capacité ou une propriété qu'un système doit avoir.</li>
+                    <li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li>
+                </ol>
+            </dcterms:description>
             <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
             <pig:icon>&#8623;</pig:icon>
             <pig:eligibleProperty>SpecIF:Priority</pig:eligibleProperty>
@@ -316,7 +437,18 @@
             <dcterms:title xml:lang="en">satisfies</dcterms:title>
             <dcterms:title xml:lang="de">erfüllt</dcterms:title>
             <dcterms:title xml:lang="fr">satisfait</dcterms:title>
-            <dcterms:description xml:lang="en">&lt;p&gt;The object is satisfied by the subject. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X &lt;em&gt;satisfies&lt;/em&gt; 'Requirement-4711'.&lt;/p&gt;</dcterms:description>
+            <dcterms:description xml:lang="en">
+                <p>
+                    The object is satisfied by the subject. <small>
+                        (<i>
+                            source: <a href="http://open-services.net/">OSLC</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>
+                    SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.
+                </p>
+            </dcterms:description>
             <rdfs:subClassOf>pig:Relationship</rdfs:subClassOf>
             <pig:eligibleSourceLink>oslc_rm:satisfies-toSource</pig:eligibleSourceLink>
             <pig:eligibleTargetLink>oslc_rm:satisfies-toTarget</pig:eligibleTargetLink>
@@ -341,7 +473,9 @@
         <pig:anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b" rdf:type="IREB:Requirement">
             <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
             <dcterms:title>Data Volume</dcterms:title>
-            <dcterms:description>&lt;p&gt;The data store MUST support a total volume up to 850 GB.&lt;/p&gt;</dcterms:description>
+            <dcterms:description>
+                <p>The data store MUST support a total volume up to 850 GB.</p>
+            </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
                 <value>SpecIF:priorityHigh</value>
             </pig:aProperty>
@@ -350,7 +484,9 @@
         <pig:anEntity id="d:Req-0Z7916e2872e78ecadc50feddc00918a" rdf:type="IREB:Requirement">
             <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
             <dcterms:title>Consistency</dcterms:title>
-            <dcterms:description>&lt;p&gt;The data store MUST be consistent at all times.&lt;/p&gt;</dcterms:description>
+            <dcterms:description>
+                <p>The data store MUST be consistent at all times.</p>
+            </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
                 <value>SpecIF:priorityHigh</value>
             </pig:aProperty>
@@ -359,7 +495,9 @@
         <pig:anEntity id="d:Req-2b9016e2872e78ecadc50feddc0013Ac" rdf:type="IREB:Requirement">
             <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
             <dcterms:title>Response Time</dcterms:title>
-            <dcterms:description>&lt;p&gt;The system SHOULD respond on user queries within 300 ms.&lt;/p&gt;</dcterms:description>
+            <dcterms:description>
+                <p>The system SHOULD respond on user queries within 300 ms.</p>
+            </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
                 <value>SpecIF:priorityMedium</value>
             </pig:aProperty>
@@ -370,7 +508,12 @@
             <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
             <dcterms:title>IT-Integration: FiCo-Application and FiCo-Data</dcterms:title>
             <pig:aProperty rdf:type="SpecIF:Diagram">
-                <value>&lt;p class="inline-label"&gt;Model Diagram:&lt;/p&gt;&lt;p&gt;&lt;object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg"&gt;Notation: FMC Block Diagram&lt;/object&gt;&lt;/p&gt;</value>
+                <value>
+                    <p class="inline-label">Model Diagram:</p>
+                    <p>
+                        <object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object>
+                    </p>
+                </value>
             </pig:aProperty>
             <pig:aProperty rdf:type="pig:category">
                 <value>FMC Block Diagram</value>
@@ -393,13 +536,17 @@
         <pig:anEntity id="d:MEl-50fbfe8f0029b1a8016ea86245a9d83a" rdf:type="FMC:Actor">
             <dcterms:modified>2020-03-06T09:04:00+01:00</dcterms:modified>
             <dcterms:title>FiCo-Application</dcterms:title>
-            <dcterms:description>&lt;p&gt;IT-Application for Finance and Controlling.&lt;/p&gt;</dcterms:description>
+            <dcterms:description>
+                <p>IT-Application for Finance and Controlling.</p>
+            </dcterms:description>
         </pig:anEntity>
 
         <pig:anEntity id="d:MEl-50feddc00029b1a8016e2872e78ecadc" rdf:type="FMC:State">
             <dcterms:modified>2020-03-06T09:03:00+01:00</dcterms:modified>
             <dcterms:title>FiCo-Data</dcterms:title>
-            <dcterms:description>&lt;p&gt;Finance and Controlling Data, such as cost-units per project with budget, accrued cost etc.&lt;/p&gt;</dcterms:description>
+            <dcterms:description>
+                <p>Finance and Controlling Data, such as cost-units per project with budget, accrued cost etc.</p>
+            </dcterms:description>
         </pig:anEntity>
 
         <!-- Instance Data: Model Relationships -->
@@ -481,7 +628,11 @@
         <pig:anEntity id="d:Folder-Introduction" rdf:type="pig:Outline">
             <dcterms:modified>2025-02-07T08:32:00+01:00</dcterms:modified>
             <dcterms:title>Introduction</dcterms:title>
-            <dcterms:description>&lt;p&gt;This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in &lt;a href="https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html" target="_blank"&gt;Tutorial 6: Very Simple Model (FMC)&lt;/a&gt; and &lt;a href="https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html" target="_blank"&gt;Tutorial 9: Very Simple Model (FMC) with Requirements&lt;/a&gt;.&lt;/p&gt;</dcterms:description>
+            <dcterms:description>
+                <p>
+                    This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in <a href="https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html" target="_blank">Tutorial 6: Very Simple Model (FMC)</a> and <a href="https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html" target="_blank">Tutorial 9: Very Simple Model (FMC) with Requirements</a>.
+                </p>
+            </dcterms:description>
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-Folder-Introduction" rdf:type="pig:Outline">
