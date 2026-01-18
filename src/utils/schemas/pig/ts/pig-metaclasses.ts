@@ -29,12 +29,12 @@
  *  - Programming errors result in exceptions, data errors in IRsp return values.
  */
 
-import { IRsp, rspOK, Msg, Rsp } from "../../lib/messages";
-import { RE } from "../../lib/definitions";
-import { LIB, logger } from "../../lib/helpers";
-import { JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../lib/helpers";
+import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
+import { RE } from "../../../lib/definitions";
+import { LIB, logger } from "../../../lib/helpers";
+import { JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../../lib/helpers";
 // use central Ajv instance from the Vue plugin:
-import { SCH } from './pig-schemata';
+import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage } from './pig-package-constraints';
 // optional: import type for better TS typing where needed
 

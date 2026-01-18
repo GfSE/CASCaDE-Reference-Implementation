@@ -22,7 +22,7 @@
  * - eligible values in Property only for string values; other datatypes to be implemented
 */
 
-import { ajv } from '../../../plugins/ajv';
+import { ajv } from '../../../../plugins/ajv';
 
 const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
 //const PROP_NAME_PATTERN = '(^[A-Za-z0-9_\\-]+:[^:\\s]+$)|(^https?:\\/\\/\\S+$)';

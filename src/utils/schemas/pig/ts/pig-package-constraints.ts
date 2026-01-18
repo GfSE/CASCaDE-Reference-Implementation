@@ -50,8 +50,8 @@
  *      Modification date validation
  */
 
-import { IRsp, rspOK, Msg } from "../../lib/messages";
-import { logger } from "../../lib/helpers";
+import { IRsp, rspOK, Msg } from "../../../lib/messages";
+import { logger } from "../../../lib/helpers";
 import { IAPackage, PigItemType, PigItemTypeValue, TPigId } from "./pig-metaclasses";
 
 /**

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { importJSONLD } from '../../src/utils/import/jsonld/import-jsonld';
-import { TPigItem } from '../../src/utils/schemas/pig/pig-metaclasses';
+import { importJSONLD } from '../../src/utils/import/jsonld/import-package-jsonld';
+import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 
 describe('importJSONLD (file system)', () => {
     // List of relative filenames (relative to this test file). Add more entries as needed.

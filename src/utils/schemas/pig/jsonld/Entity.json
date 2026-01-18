@@ -1,0 +1,119 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/Entity.json",
+    "title": "PIG Entity JSON-LD Schema",
+    "description": "Validates <strong>Entity</strong> class definitions for individual information objects. Configures which properties (pig:eligibleProperty) and which outgoing links are allowed (pig:eligibleTargetLink). Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. Supports specialization hierarchies via pig:specializes and optional visual representation via pig:icon.",
+    "type": "object",
+    "properties": {
+        "@id": {
+            "$ref": "#/$defs/idString"
+        },
+        "@type": {
+            "$ref": "#/$defs/idString"
+        },
+        "pig:specializes": {
+            "$ref": "#/$defs/idObject"
+        },
+        "pig:itemType": {
+            "type": "object",
+            "required": [ "@id" ],
+            "properties": {
+                "@id": {
+                    "type": "string",
+                    "enum": [ "pig:Entity" ],
+                    "description": "The PigItemType for pig:Entity"
+                }
+            },
+            "additionalProperties": false
+        },
+        "dcterms:title": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/$defs/languageValue"
+            }
+        },
+        "dcterms:description": {
+            "type": "array",
+            "items": {
+                "$ref": "#/$defs/languageValue"
+            }
+        },
+        "pig:eligibleProperty": {
+            "type": "array",
+            "description": "Array of Property class references that can be used with this Entity",
+            "items": {
+                "$ref": "#/$defs/idObject"
+            }
+        },
+        "pig:eligibleTargetLink": {
+            "type": "array",
+            "description": "Array of Link class references that can be used as outgoing links from this Entity",
+            "items": {
+                "$ref": "#/$defs/idObject"
+            }
+        },
+        "pig:icon": {
+            "type": "object",
+            "description": "Optional icon representation for this Entity type",
+            "properties": {
+                "@value": {
+                    "type": "string",
+                    "description": "Icon identifier or path"
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "@id",
+        "pig:itemType",
+        "dcterms:title"
+    ],
+    "oneOf": [
+        {
+            "required": [ "@type" ],
+            "description": "New Entity class (not specialized)"
+        },
+        {
+            "required": [ "pig:specializes" ],
+            "description": "Specialized Entity class"
+        }
+    ],
+    "additionalProperties": false,
+    "$defs": {
+        "idString": {
+            "type": "string",
+            "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
+            "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
+        },
+        "idObject": {
+            "type": "object",
+            "required": [ "@id" ],
+            "properties": {
+                "@id": {
+                    "$ref": "#/$defs/idString"
+                }
+            },
+            "additionalProperties": false,
+            "description": "JSON-LD ID object wrapper"
+        },
+        "languageValue": {
+            "type": "object",
+            "required": [ "@value" ],
+            "properties": {
+                "@value": {
+                    "type": "string",
+                    "description": "The actual text content"
+                },
+                "@language": {
+                    "type": "string",
+                    "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+                    "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+                }
+            },
+            "additionalProperties": false,
+            "description": "Multi-language text value with optional language tag"
+        }
+    }
+}

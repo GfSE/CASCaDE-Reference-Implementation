@@ -4,8 +4,8 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { checkConstraintsForPackage } from '../../src/utils/schemas/pig/pig-package-constraints';
-import { APackage, IAPackage, PigItemType } from '../../src/utils/schemas/pig/pig-metaclasses';
+import { checkConstraintsForPackage } from '../../src/utils/schemas/pig/ts/pig-package-constraints';
+import { APackage, IAPackage, PigItemType } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 
 describe('PIG Package Constraint Validation', () => {
     describe('Positive Tests - Valid Packages', () => {

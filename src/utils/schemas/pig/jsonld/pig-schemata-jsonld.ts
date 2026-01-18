@@ -24,9 +24,9 @@
  * - load schemata from external files, as soon as a server with CORS enabled is available
 */
 
-import { ajv } from '../../../plugins/ajv';
+import { ajv } from '../../../../plugins/ajv';
 
-const SCHEMA_PATH = 'https://cascade.gfse.org/pig/2026-01-12/schema/jsonld/';
+const SCHEMA_PATH = 'http://product-information-graph.org/schema/2026-01-12/jsonld/';
 const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
 
 /* Shared JSON-LD definitions */

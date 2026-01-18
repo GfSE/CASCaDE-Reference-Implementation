@@ -11,7 +11,7 @@
 */
 
 import { IRsp } from '../../lib/messages';
-import { IEntity, IRelationship, IProperty, IAnEntity, IARelationship } from '../../schemas/pig/pig-metaclasses';
+import { IEntity, IRelationship, IProperty, IAnEntity, IARelationship } from '../../schemas/pig/ts/pig-metaclasses';
 
 export class reqif2pig {
     private validate(xml: Document): boolean {

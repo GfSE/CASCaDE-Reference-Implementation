@@ -1,0 +1,104 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/Link.json",
+    "title": "PIG Link JSON-LD Schema",
+    "description": "Validates Link class definitions that specify navigable connections between items. Defines eligible endpoint classes (pig:eligibleEndpoint) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., 'contains' / 'is contained by').",
+    "type": "object",
+    "properties": {
+        "@id": {
+            "$ref": "#/$defs/idString"
+        },
+        "@type": {
+            "$ref": "#/$defs/idString"
+        },
+        "pig:specializes": {
+            "$ref": "#/$defs/idObject"
+        },
+        "pig:itemType": {
+            "type": "object",
+            "required": [ "@id" ],
+            "properties": {
+                "@id": {
+                    "type": "string",
+                    "enum": [ "pig:Link" ],
+                    "description": "The PigItemType for pig:Link"
+                }
+            },
+            "additionalProperties": false
+        },
+        "dcterms:title": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/$defs/languageValue"
+            }
+        },
+        "dcterms:description": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/$defs/languageValue"
+            }
+        },
+        "pig:eligibleEndpoint": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Array of Entity or Relationship class references that can be endpoints for this link",
+            "items": {
+                "$ref": "#/$defs/idObject"
+            }
+        }
+    },
+    "required": [
+        "@id",
+        "pig:itemType",
+        "dcterms:title",
+        "pig:eligibleEndpoint"
+    ],
+    "oneOf": [
+        {
+            "required": [ "@type" ],
+            "description": "New Link class (not specialized)"
+        },
+        {
+            "required": [ "pig:specializes" ],
+            "description": "Specialized Link class"
+        }
+    ],
+    "additionalProperties": false,
+    "$defs": {
+        "idString": {
+            "type": "string",
+            "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
+            "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
+        },
+        "idObject": {
+            "type": "object",
+            "required": [ "@id" ],
+            "properties": {
+                "@id": {
+                    "$ref": "#/$defs/idString"
+                }
+            },
+            "additionalProperties": false,
+            "description": "JSON-LD ID object wrapper"
+        },
+        "languageValue": {
+            "type": "object",
+            "required": [ "@value" ],
+            "properties": {
+                "@value": {
+                    "type": "string",
+                    "description": "The actual text content"
+                },
+                "@language": {
+                    "type": "string",
+                    "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+                    "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+                }
+            },
+            "additionalProperties": false,
+            "description": "Multi-language text value with optional language tag"
+        }
+    }
+}

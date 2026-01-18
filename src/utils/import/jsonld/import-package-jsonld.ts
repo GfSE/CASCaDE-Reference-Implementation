@@ -21,8 +21,8 @@
 
 import { IRsp, rspOK, Msg } from "../../lib/messages";
 import { LIB, logger } from "../../lib/helpers";
-import { APackage, TPigItem } from '../../schemas/pig/pig-metaclasses';
-import { SCH_LD } from '../../schemas/pig/pig-schemata-jsonld';
+import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
+import { SCH_LD } from '../../schemas/pig/jsonld/pig-schemata-jsonld';
 
 /**
  * Import JSON-LD document and instantiate PIG items
