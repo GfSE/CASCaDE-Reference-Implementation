@@ -15,7 +15,7 @@
              id="d:ACP-Very-Simple-Model-FMC-with-Requirements"
              rdf:type="pig:Package">
     <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
-    <dcterms:modified>2026-01-12T12:38:50.406Z</dcterms:modified>
+    <dcterms:modified>2026-01-17T22:38:19.595Z</dcterms:modified>
 
     <graph>
         <!-- Metamodel: Entity Classes -->
@@ -69,7 +69,16 @@
         </pig:Relationship>
 
         <!-- Metamodel: Properties -->
-        <pig:Property id="pig:icon" rdf:type="owl:DatatypeProperty">
+        <pig:Property id="pig:Property" rdf:type="owl:DatatypeProperty">
+            <dcterms:title>Property</dcterms:title>
+            <dcterms:description>A PIG meta-model element used for properties (aka attributes).</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:anyType"/>
+            </xs:simpleType>
+        </pig:Property>
+
+        <pig:Property id="pig:icon">
+            <rdfs:subPropertyOf>pig:Property</rdfs:subPropertyOf>
             <dcterms:title>has icon</dcterms:title>
             <dcterms:description>Specifies an icon for a model element (entity or relationship).</dcterms:description>
             <xs:simpleType>
@@ -608,7 +617,7 @@
 
         <!-- Instance Data: Hierarchy -->
         <pig:anEntity id="d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements" rdf:type="pig:HierarchyRoot">
-            <dcterms:modified>2026-01-12T12:38:50.710Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:20.041Z</dcterms:modified>
             <dcterms:title>Hierarchy Root</dcterms:title>
             <dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
             <pig:aTargetLink rdf:type="pig:lists">
@@ -636,7 +645,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-Folder-Introduction" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
@@ -661,7 +670,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-Folder-Requirements" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
@@ -680,7 +689,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-Folder-SystemModel" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
@@ -691,7 +700,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:FolderGlossary-10875487071" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:44.062Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:13.953Z</dcterms:modified>
             <dcterms:title>Model Elements (Glossary)</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>SpecIF:Glossary</value>
@@ -705,7 +714,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-FolderGlossary-10875487071" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
