@@ -79,6 +79,7 @@ export const PigItemType: Record<'Property' | 'Link' | 'Entity' | 'Relationship'
     aRelationship: 'pig:aRelationship'
 };*/
 export enum XsDataType {
+    anyType = 'xs:anyType',
     Boolean = 'xs:boolean',
     Integer = 'xs:integer',
     Double = 'xs:double',

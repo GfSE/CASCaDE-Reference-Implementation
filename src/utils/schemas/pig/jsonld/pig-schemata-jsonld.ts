@@ -10,700 +10,290 @@
  *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  *
  * Design decisions:
+ * - the JSON-LD schemata are provided in addition to the JSON schemata (pig-schemata-json.ts);
+ *   the former validate incoming JSON-LD documents before transformation,
+ *   and the latter are used after transformation to internal representation, before an item is instantiated.
+ * - this allows separate validation of incoming/outgoing JSON-LD documents
  * - use JSON Schema draft-07 (widely supported)
  * - use ajv for validation (fast, popular)
  * - these schemas validate JSON-LD documents (@graph, @context, @id, @type)
- * - separate from internal JSON schemas (pig-schemata.ts)
+ * - schemata are loaded from external JSON files in the same directory
  *
  * Limitations:
  * - xs:datatype values are only pattern-validated here; specific accepted values are validated in code
  * - further constraints (e.g. maxCount >= minCount) are validated in code
  * - eligible values in Property only for string values; other datatypes to be implemented
  *
- * ToDo:
- * - load schemata from external files, as soon as a server with CORS enabled is available
+ * Schema files:
+ * - Property.json
+ * - Link.json
+ * - Entity.json
+ * - Relationship.json
+ * - anEntity.json
+ * - aRelationship.json
+ * - aPackage.json
 */
 
 import { ajv } from '../../../../plugins/ajv';
+import { LIB } from '../../../lib/helpers';
+import * as path from 'path';
 
-const SCHEMA_PATH = 'http://product-information-graph.org/schema/2026-01-12/jsonld/';
-const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
+export const SCHEMA_PATH = 'http://product-information-graph.org/schema/2026-01-12/jsonld/';
 
-/* Shared JSON-LD definitions */
-const JSONLD_DEFS = {
-    idString: {
-        type: 'string',
-        pattern: ID_NAME_PATTERN
-    },
-    idObject: {
-        type: 'object',
-        required: ['@id'],
-        properties: {
-            '@id': { $ref: '#/$defs/idString'  }
-        },
-        additionalProperties: false
-    },
-    languageValue: {
-        type: 'object',
-        required: ['@value'],
-        properties: {
-            '@value': { type: 'string' },
-            '@language': { type: 'string' }
-        },
-        additionalProperties: false
+// Schema file names (must match files in this directory)
+const SCHEMA_FILES = {
+    Property: 'Property.json',
+    Link: 'Link.json',
+    Entity: 'Entity.json',
+    Relationship: 'Relationship.json',
+    AnEntity: 'anEntity.json',
+    ARelationship: 'aRelationship.json',
+    APackage: 'aPackage.json'
+} as const;
+
+// Type for schema keys
+type SchemaKey = keyof typeof SCHEMA_FILES;
+
+// Cache for loaded schemas
+const schemaCache: Partial<Record<SchemaKey, any>> = {};
+
+/**
+ * Load a JSON schema from file
+ * @param schemaKey - Key identifying the schema (e.g., 'Property', 'Link')
+ * @returns Promise resolving to the schema object
+ */
+async function loadSchema(schemaKey: SchemaKey): Promise<any> {
+    // Return cached schema if available
+    if (schemaCache[schemaKey]) {
+        return schemaCache[schemaKey];
     }
-};
 
-/* PROPERTY_LD_SCHEMA: validates JSON-LD representation of IProperty */
-const PROPERTY_LD_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: `${SCHEMA_PATH}Property`,
-    type: 'object',
-    properties: {
-        '@id': { $ref: '#/$defs/idString' },
-        '@type': { $ref: '#/$defs/idString' },
-        'pig:specializes': { $ref: '#/$defs/idObject' },
-        'pig:itemType': {
-            type: 'object',
-            required: ['@id'],
-            properties: {
-                '@id': {
-                    type: 'string',
-                    enum: ['pig:Property'],
-                    description: 'The PigItemType for pig:Property'
-                }
-            },
-            additionalProperties: false
-        },
-        'dcterms:title': {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'dcterms:description': {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'sh:datatype': { $ref: '#/$defs/idObject' },
-        'sh:minCount': { type: 'number' },
-        'sh:maxCount': { type: 'number' },
-        'sh:maxLength': { type: 'number' },
-        'sh:minInclusive': { type: 'number' },
-        'sh:maxInclusive': { type: 'number' },
-        'sh:pattern': { type: 'string' },
-        'pig:unit': { type: 'string' },
-        'sh:defaultValue': { type: 'string' },
-        'pig:eligibleValue': {
-            type: 'array',
-            items: {
-                type: 'object',
-                required: ['@id', 'dcterms:title'],
-                properties: {
-                    '@id': { $ref: '#/$defs/idString' },
-                    'dcterms:title': {
-                        type: 'array',
-                        minItems: 1,
-                        items: { $ref: '#/$defs/languageValue' }
-                    }
-                },
-                additionalProperties: false
-            }
-        },
-        'pig:composedProperty': {
-            type: 'array',
-            items: { $ref: '#/$defs/idObject' }
-        }
-    },
-    required: ['@id', 'pig:itemType', 'dcterms:title', 'sh:datatype'],
-    oneOf: [
-        { required: ['@type'] },
-        { required: ['pig:specializes'] }
-    ],
-    additionalProperties: false,
-    $defs: JSONLD_DEFS
-};
-/* LINK_LD_SCHEMA: validates JSON-LD representation of ILink */
-const LINK_LD_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: `${SCHEMA_PATH}Link`,
-    type: 'object',
-    properties: {
-        '@id': { $ref: '#/$defs/idString' },
-        '@type': { $ref: '#/$defs/idString' },
-        'pig:specializes': { $ref: '#/$defs/idObject' },
-        'pig:itemType': {
-            type: 'object',
-            required: ['@id'],
-            properties: {
-                '@id': {
-                    type: 'string',
-                    enum: ['pig:Link'],
-                    description: 'The PigItemType for pig:Property'
-                }
-            },
-            additionalProperties: false
-        },
-        'dcterms:title': {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'dcterms:description': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'pig:eligibleEndpoint': {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/idObject' }
-        }
-    },
-    required: ['@id', 'pig:itemType', 'dcterms:title', 'pig:eligibleEndpoint'],
-    oneOf: [
-        { required: ['@type'] },
-        { required: ['pig:specializes'] }
-    ],
-    additionalProperties: false,
-    $defs: JSONLD_DEFS
-};
+    const filename = SCHEMA_FILES[schemaKey];
+    const schemaPath = path.join(__dirname, filename);
 
-/* ENTITY_LD_SCHEMA: validates JSON-LD representation of IEntity */
-const ENTITY_LD_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: `${SCHEMA_PATH}Entity`,
-    type: 'object',
-    properties: {
-        '@id': { $ref: '#/$defs/idString' },
-        '@type': { $ref: '#/$defs/idString' },
-        'pig:specializes': { $ref: '#/$defs/idObject' },
-        'pig:itemType': {
-            type: 'object',
-            required: ['@id'],
-            properties: {
-                '@id': {
-                    type: 'string',
-                    enum: ['pig:Entity'],
-                    description: 'The PigItemType for pig:Property'
-                }
-            },
-            additionalProperties: false
-        },
-        'dcterms:title': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'dcterms:description': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'pig:eligibleProperty': {
-            type: 'array',
-            items: { $ref: '#/$defs/idObject' }
-        },
-        'pig:eligibleTargetLink': {
-            type: 'array',
-            items: { $ref: '#/$defs/idObject' }
-        },
-        'pig:icon': {
-            type: 'object',
-            properties: {
-                '@value': { type: 'string' }
-            }
+    try {
+        // Use LIB.readFileAsText to support both Node and browser
+        const rsp = await LIB.readFileAsText(schemaPath);
+        
+        if (!rsp.ok) {
+            throw new Error(`Failed to load schema ${filename}: ${rsp.statusText}`);
         }
-    },
-    required: ['@id', 'pig:itemType', 'dcterms:title'],
-    oneOf: [
-        { required: ['@type'] },
-        { required: ['pig:specializes'] }
-    ],
-    additionalProperties: false,
-    $defs: JSONLD_DEFS
-};
 
-/* RELATIONSHIP_LD_SCHEMA: validates JSON-LD representation of IRelationship */
-const RELATIONSHIP_LD_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: `${SCHEMA_PATH}Relationship`,
-    type: 'object',
-    properties: {
-        '@id': { $ref: '#/$defs/idString' },
-        '@type': { $ref: '#/$defs/idString' },
-        'pig:specializes': { $ref: '#/$defs/idObject' },
-        'pig:itemType': {
-            type: 'object',
-            required: ['@id'],
-            properties: {
-                '@id': {
-                    type: 'string',
-                    enum: ['pig:Relationship'],
-                    description: 'The PigItemType for pig:Property'
-                }
-            },
-            additionalProperties: false
-        },
-        'dcterms:title': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'dcterms:description': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'pig:eligibleProperty': {
-            type: 'array',
-            items: { $ref: '#/$defs/idObject' }
-        },
-        'pig:eligibleSourceLink': { $ref: '#/$defs/idObject' },
-        'pig:eligibleTargetLink': { $ref: '#/$defs/idObject' },
-        'pig:icon': {
-            type: 'object',
-            properties: {
-                '@value': { type: 'string' }
-            }
-        }
-    },
-    required: ['@id', 'pig:itemType', 'dcterms:title'],
-    oneOf: [
-        { required: ['@type'] },
-        { required: ['pig:specializes'] }
-    ],
-    additionalProperties: false,
-    $defs: JSONLD_DEFS
-};
+        const schema = JSON.parse(rsp.response as string);
+        
+        // Cache the schema
+        schemaCache[schemaKey] = schema;
+        
+        return schema;
+    } catch (error) {
+        const msg = error instanceof Error ? error.message : String(error);
+        throw new Error(`Error loading schema ${filename}: ${msg}`);
+    }
+}
 
-/* ANENTITY_LD_SCHEMA: validates JSON-LD representation of IAnEntity */
-const ANENTITY_LD_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: `${SCHEMA_PATH}AnEntity`,
-    type: 'object',
-    properties: {
-        '@id': { $ref: '#/$defs/idString' },
-        '@type': { $ref: '#/$defs/idString' },
-        'pig:itemType': {
-            type: 'object',
-            required: ['@id'],
-            properties: {
-                '@id': {
-                    type: 'string',
-                    enum: ['pig:anEntity'],
-                    description: 'The PigItemType for pig:anEntity'
-                }
-            },
-            additionalProperties: false
-        },
-        'pig:revision': { type: 'string' },
-        'pig:priorRevision': {
-            type: 'array',
-            items: { type: 'string' }
-        },
-        'dcterms:modified': { type: 'string', format: 'date-time' },
-        'dcterms:creator': { type: 'string' },
-        'dcterms:title': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'dcterms:description': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        }
-    },
-    patternProperties: {
-        '^(?!pig:itemType|pig:revision|pig:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$': {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    'pig:itemType': {
-                        type: 'object',
-                        required: ['@id'],
-                        properties: {
-                            '@id': {
-                                type: 'string',
-                                enum: ['pig:aProperty', 'pig:aTargetLink']
-                            }
-                        },
-                        additionalProperties: false
-                    },
-                    '@value': { type: 'string' },
-                    '@id': { $ref: '#/$defs/idString' }
-                },
-                required: ['pig:itemType'],
-                oneOf: [
-                    {
-                        // aProperty with direct value: must have @value
-                        type: 'object',
-                        properties: {
-                            'pig:itemType': {
-                                type: 'object',
-                                properties: {
-                                    '@id': { const: 'pig:aProperty' }
-                                }
-                            }
-                        },
-                        required: ['@value'],
-                        not: { required: ['@id'] }
-                    },
-                    {
-                        // aProperty with enumeration reference: must have @id
-                        type: 'object',
-                        properties: {
-                            'pig:itemType': {
-                                type: 'object',
-                                properties: {
-                                    '@id': { const: 'pig:aProperty' }
-                                }
-                            }
-                        },
-                        required: ['@id'],
-                        not: { required: ['@value'] }
-                    },
-                    {
-                        // aTargetLink: must have @id
-                        type: 'object',
-                        properties: {
-                            'pig:itemType': {
-                                type: 'object',
-                                properties: {
-                                    '@id': { const: 'pig:aTargetLink' }
-                                }
-                            }
-                        },
-                        required: ['@id'],
-                        not: { required: ['@value'] }
-                    }
-                ],
-                additionalProperties: false
-            }
-        }
-    },
-    required: ['@id', 'pig:itemType', '@type', 'dcterms:modified'],
-    anyOf: [
-        {
-            required: ['dcterms:title'],
-            properties: { 'dcterms:title': { type: 'array', minItems: 1 } }
-        },
-        {
-            required: ['dcterms:description'],
-            properties: { 'dcterms:description': { type: 'array', minItems: 1 } }
-        }
-    ],
-    additionalProperties: false,
-    $defs: JSONLD_DEFS
-};
+/**
+ * Load all schemas from JSON files
+ * @returns Promise resolving to an object with all loaded schemas
+ */
+async function loadAllSchemas(): Promise<Record<SchemaKey, any>> {
+    const schemas = {} as Record<SchemaKey, any>;
+    
+    for (const key of Object.keys(SCHEMA_FILES) as SchemaKey[]) {
+        schemas[key] = await loadSchema(key);
+    }
+    
+    return schemas;
+}
 
-/* ARELATIONSHIP_LD_SCHEMA: validates JSON-LD representation of IARelationship */
-const ARELATIONSHIP_LD_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: `${SCHEMA_PATH}ARelationship`,
-    type: 'object',
-    properties: {
-        '@id': { $ref: '#/$defs/idString' },
-        '@type': { $ref: '#/$defs/idString' },
-        'pig:itemType': {
-            type: 'object',
-            required: ['@id'],
-            properties: {
-                '@id': {
-                    type: 'string',
-                    enum: ['pig:aRelationship'],
-                    description: 'The PigItemType for pig:aRelationship'
-                }
-            },
-            additionalProperties: false
-        },
-        'pig:revision': { type: 'string' },
-        'pig:priorRevision': {
-            type: 'array',
-            items: { type: 'string' }
-        },
-        'dcterms:modified': { type: 'string', format: 'date-time' },
-        'dcterms:creator': { type: 'string' },
-        'dcterms:title': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'dcterms:description': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        }
-    },
-    patternProperties: {
-        // Match configurable properties and links, but exclude standard PIG properties
-        // Negative lookahead: don't match properties that are already defined in 'properties'
-        '^(?!pig:itemType|pig:revision|pig:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$': {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    'pig:itemType': {
-                        type: 'object',
-                        required: ['@id'],
-                        properties: {
-                            '@id': {
-                                type: 'string',
-                                enum: ['pig:aProperty', 'pig:aSourceLink', 'pig:aTargetLink']
-                            }
-                        },
-                        additionalProperties: false
-                    },
-                    '@value': { type: 'string' },
-                    '@id': { $ref: '#/$defs/idString' }
-                },
-                required: ['pig:itemType'],
-                oneOf: [
-                    {
-                        // aProperty with direct value: must have @value
-                        type: 'object',
-                        properties: {
-                            'pig:itemType': {
-                                type: 'object',
-                                properties: {
-                                    '@id': { const: 'pig:aProperty' }
-                                }
-                            }
-                        },
-                        required: ['@value'],
-                        not: { required: ['@id'] }
-                    },
-                    {
-                        // aProperty with enumeration reference: must have @id
-                        type: 'object',
-                        properties: {
-                            'pig:itemType': {
-                                type: 'object',
-                                properties: {
-                                    '@id': { const: 'pig:aProperty' }
-                                }
-                            }
-                        },
-                        required: ['@id'],
-                        not: { required: ['@value'] }
-                    },
-                    {
-                        // aSourceLink or aTargetLink: must have @id
-                        type: 'object',
-                        properties: {
-                            'pig:itemType': {
-                                type: 'object',
-                                properties: {
-                                    '@id': { enum: ['pig:aSourceLink', 'pig:aTargetLink'] }
-                                }
-                            }
-                        },
-                        required: ['@id'],
-                        not: { required: ['@value'] }
-                    }
-                ],
-                additionalProperties: false
-            }
-        }
-    },
-    required: ['@id', 'pig:itemType', '@type', 'dcterms:modified'],
-    additionalProperties: false, // ✅ Strict validation enabled
-    $defs: JSONLD_DEFS
-};
+/**
+ * Initialize and register all schemas with AJV
+ * Must be called before using any validators
+ */
+async function initializeSchemas(): Promise<void> {
+    const schemas = await loadAllSchemas();
+    
+    // Register all schemas with AJV
+    ajv.addSchema(schemas.Property);
+    ajv.addSchema(schemas.Link);
+    ajv.addSchema(schemas.Entity);
+    ajv.addSchema(schemas.Relationship);
+    ajv.addSchema(schemas.AnEntity);
+    ajv.addSchema(schemas.ARelationship);
+    ajv.addSchema(schemas.APackage);
+}
 
-/* APACKAGE_LD_SCHEMA: validates a complete JSON-LD document with @graph */
-const APACKAGE_LD_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: `${SCHEMA_PATH}APackage`,
-    type: 'object',
-    properties: {
-        '@context': {
-            description: 'JSON-LD context',
-            oneOf: [
-                { type: 'object' },
-                { type: 'array' },
-                { type: 'string' }
-            ]
-        },
-        '@id': { $ref: '#/$defs/idString' },
-        '@type': { $ref: '#/$defs/idString' },
-        'pig:itemType': {
-            type: 'object',
-            required: ['@id'],
-            properties: {
-                '@id': {
-                    type: 'string',
-                    enum: ['pig:aPackage'],
-                    description: 'The PigItemType for pig:aPackage'
-                }
-            },
-            additionalProperties: false
-        },
-        'dcterms:modified': { type: 'string', format: 'date-time' },
-        'dcterms:creator': { type: 'string' },
-        'dcterms:title': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        'dcterms:description': {
-            type: 'array',
-            items: { $ref: '#/$defs/languageValue' }
-        },
-        '@graph': {
-            type: 'array',
-            minItems: 0,
-            items: {
-                type: 'object',
-                required: ['pig:itemType'],
-                properties: {
-                    'pig:itemType': {
-                        type: 'object',
-                        required: ['@id'],
-                        properties: {
-                            '@id': { type: 'string' }
-                        }
-                    }
-                },
-                // Use if-then-else chains to apply only the matching schema based on itemType;
-                // test the instances first:
-                allOf: [
-                    {
-                        if: {
-                            type: 'object',
-                            properties: {
-                                'pig:itemType': {
-                                    type: 'object',
-                                    properties: {
-                                        '@id': { const: 'pig:anEntity' }
-                                    }
-                                }
-                            }
-                        },
-                        then: { $ref: `${SCHEMA_PATH}AnEntity` }
-                    },
-                    {
-                        if: {
-                            type: 'object',
-                            properties: {
-                                'pig:itemType': {
-                                    type: 'object',
-                                    properties: {
-                                        '@id': { const: 'pig:aRelationship' }
-                                    }
-                                }
-                            }
-                        },
-                        then: { $ref: `${SCHEMA_PATH}ARelationship` }
-                    },
-                    {
-                        if: {
-                            type: 'object',
-                            properties: {
-                                'pig:itemType': {
-                                    type: 'object',
-                                    properties: {
-                                        '@id': { const: 'pig:Property' }
-                                    }
-                                }
-                            }
-                        },
-                        then: { $ref: `${SCHEMA_PATH}Property` }
-                    },
-                    {
-                        if: {
-                            type: 'object',
-                            properties: {
-                                'pig:itemType': {
-                                    type: 'object',
-                                    properties: {
-                                        '@id': { const: 'pig:Link' }
-                                    }
-                                }
-                            }
-                        },
-                        then: { $ref: `${SCHEMA_PATH}Link` }
-                    },
-                    {
-                        if: {
-                            type: 'object',
-                            properties: {
-                                'pig:itemType': {
-                                    type: 'object',
-                                    properties: {
-                                        '@id': { const: 'pig:Entity' }
-                                    }
-                                }
-                            }
-                        },
-                        then: { $ref: `${SCHEMA_PATH}Entity` }
-                    },
-                    {
-                        if: {
-                            type: 'object',
-                            properties: {
-                                'pig:itemType': {
-                                    type: 'object',
-                                    properties: {
-                                        '@id': { const: 'pig:Relationship' }
-                                    }
-                                }
-                            }
-                        },
-                        then: { $ref: `${SCHEMA_PATH}Relationship` }
-                    }
-                ]
-            }
-        }
-    },
-    required: ['@id', '@context', '@graph'],
-    additionalProperties: false,
-    $defs: JSONLD_DEFS
-};
+// Initialize schemas on module load
+let initializationPromise: Promise<void> | null = null;
 
-// Register all schemata before compilation:
-ajv.addSchema(PROPERTY_LD_SCHEMA);
-ajv.addSchema(LINK_LD_SCHEMA);
-ajv.addSchema(ENTITY_LD_SCHEMA);
-ajv.addSchema(RELATIONSHIP_LD_SCHEMA);
-ajv.addSchema(ANENTITY_LD_SCHEMA);
-ajv.addSchema(ARELATIONSHIP_LD_SCHEMA);
+function ensureInitialized(): Promise<void> {
+    if (!initializationPromise) {
+        initializationPromise = initializeSchemas();
+    }
+    return initializationPromise;
+}
 
-// Compile all schemata
-const validatePropertyLD = ajv.compile(PROPERTY_LD_SCHEMA);
-const validateLinkLD = ajv.compile(LINK_LD_SCHEMA);
-const validateEntityLD = ajv.compile(ENTITY_LD_SCHEMA);
-const validateRelationshipLD = ajv.compile(RELATIONSHIP_LD_SCHEMA);
-const validateAnEntityLD = ajv.compile(ANENTITY_LD_SCHEMA);
-const validateARelationshipLD = ajv.compile(ARELATIONSHIP_LD_SCHEMA);
-const validatePackageLD = ajv.compile(APACKAGE_LD_SCHEMA);
+/**
+ * Compiled validators (lazy-loaded)
+ */
+let validatePropertyLD: any = null;
+let validateLinkLD: any = null;
+let validateEntityLD: any = null;
+let validateRelationshipLD: any = null;
+let validateAnEntityLD: any = null;
+let validateARelationshipLD: any = null;
+let validatePackageLD: any = null;
 
+/**
+ * Get or compile a validator
+ */
+async function getValidator(schemaKey: SchemaKey): Promise<any> {
+    await ensureInitialized();
+    
+    const schema = await loadSchema(schemaKey);
+    
+    // Check if already compiled
+    switch (schemaKey) {
+        case 'Property':
+            if (!validatePropertyLD) validatePropertyLD = ajv.compile(schema);
+            return validatePropertyLD;
+        case 'Link':
+            if (!validateLinkLD) validateLinkLD = ajv.compile(schema);
+            return validateLinkLD;
+        case 'Entity':
+            if (!validateEntityLD) validateEntityLD = ajv.compile(schema);
+            return validateEntityLD;
+        case 'Relationship':
+            if (!validateRelationshipLD) validateRelationshipLD = ajv.compile(schema);
+            return validateRelationshipLD;
+        case 'AnEntity':
+            if (!validateAnEntityLD) validateAnEntityLD = ajv.compile(schema);
+            return validateAnEntityLD;
+        case 'ARelationship':
+            if (!validateARelationshipLD) validateARelationshipLD = ajv.compile(schema);
+            return validateARelationshipLD;
+        case 'APackage':
+            if (!validatePackageLD) validatePackageLD = ajv.compile(schema);
+            return validatePackageLD;
+        default:
+            throw new Error(`Unknown schema key: ${schemaKey}`);
+    }
+}
+
+/**
+ * Public API - returns promises that resolve to validators
+ */
 export const SCH_LD = {
-    PROPERTY_LD_SCHEMA,
-    validatePropertyLD,
-    getValidatePropertyLDErrors() {
-        return ajv.errorsText(validatePropertyLD.errors, { separator: '; ' });
+    // Lazy-loading getters for validators
+    async getPropertyValidator() {
+        return await getValidator('Property');
     },
-    LINK_LD_SCHEMA,
-    validateLinkLD,
-    getValidateLinkLDErrors() {
-        return ajv.errorsText(validateLinkLD.errors, { separator: '; ' });
+    async getLinkValidator() {
+        return await getValidator('Link');
     },
-    ENTITY_LD_SCHEMA,
-    validateEntityLD,
-    getValidateEntityLDErrors() {
-        return ajv.errorsText(validateEntityLD.errors, { separator: '; ' });
+    async getEntityValidator() {
+        return await getValidator('Entity');
     },
-    RELATIONSHIP_LD_SCHEMA,
-    validateRelationshipLD,
-    getValidateRelationshipLDErrors() {
-        return ajv.errorsText(validateRelationshipLD.errors, { separator: '; ' });
+    async getRelationshipValidator() {
+        return await getValidator('Relationship');
     },
-    ANENTITY_LD_SCHEMA,
-    validateAnEntityLD,
-    getValidateAnEntityLDErrors() {
-        return ajv.errorsText(validateAnEntityLD.errors, { separator: '; ' });
+    async getAnEntityValidator() {
+        return await getValidator('AnEntity');
     },
-    ARELATIONSHIP_LD_SCHEMA,
-    validateARelationshipLD,
-    getValidateARelationshipLDErrors() {
-        return ajv.errorsText(validateARelationshipLD.errors, { separator: '; ' });
+    async getARelationshipValidator() {
+        return await getValidator('ARelationship');
     },
-    APACKAGE_LD_SCHEMA,
-    validatePackageLD,
-    getValidatePackageLDErrors() {
-        return ajv.errorsText(validatePackageLD.errors, { separator: '; ' });
+    async getPackageValidator() {
+        return await getValidator('APackage');
+    },
+
+    // Schema getter methods (return promises)
+    async getPropertySchema() {
+        return await loadSchema('Property');
+    },
+    async getLinkSchema() {
+        return await loadSchema('Link');
+    },
+    async getEntitySchema() {
+        return await loadSchema('Entity');
+    },
+    async getRelationshipSchema() {
+        return await loadSchema('Relationship');
+    },
+    async getAnEntitySchema() {
+        return await loadSchema('AnEntity');
+    },
+    async getARelationshipSchema() {
+        return await loadSchema('ARelationship');
+    },
+    async getPackageSchema() {
+        return await loadSchema('APackage');
+    },
+
+    // Validation methods (async)
+    async validatePropertyLD(data: any): Promise<boolean> {
+        const validator = await getValidator('Property');
+        return validator(data);
+    },
+    async validateLinkLD(data: any): Promise<boolean> {
+        const validator = await getValidator('Link');
+        return validator(data);
+    },
+    async validateEntityLD(data: any): Promise<boolean> {
+        const validator = await getValidator('Entity');
+        return validator(data);
+    },
+    async validateRelationshipLD(data: any): Promise<boolean> {
+        const validator = await getValidator('Relationship');
+        return validator(data);
+    },
+    async validateAnEntityLD(data: any): Promise<boolean> {
+        const validator = await getValidator('AnEntity');
+        return validator(data);
+    },
+    async validateARelationshipLD(data: any): Promise<boolean> {
+        const validator = await getValidator('ARelationship');
+        return validator(data);
+    },
+    async validatePackageLD(data: any): Promise<boolean> {
+        const validator = await getValidator('APackage');
+        return validator(data);
+    },
+
+    // Error getter methods
+    async getValidatePropertyLDErrors(): Promise<string> {
+        const validator = await getValidator('Property');
+        return ajv.errorsText(validator.errors, { separator: '; ' });
+    },
+    async getValidateLinkLDErrors(): Promise<string> {
+        const validator = await getValidator('Link');
+        return ajv.errorsText(validator.errors, { separator: '; ' });
+    },
+    async getValidateEntityLDErrors(): Promise<string> {
+        const validator = await getValidator('Entity');
+        return ajv.errorsText(validator.errors, { separator: '; ' });
+    },
+    async getValidateRelationshipLDErrors(): Promise<string> {
+        const validator = await getValidator('Relationship');
+        return ajv.errorsText(validator.errors, { separator: '; ' });
+    },
+    async getValidateAnEntityLDErrors(): Promise<string> {
+        const validator = await getValidator('AnEntity');
+        return ajv.errorsText(validator.errors, { separator: '; ' });
+    },
+    async getValidateARelationshipLDErrors(): Promise<string> {
+        const validator = await getValidator('ARelationship');
+        return ajv.errorsText(validator.errors, { separator: '; ' });
+    },
+    async getValidatePackageLDErrors(): Promise<string> {
+        const validator = await getValidator('APackage');
+        return ajv.errorsText(validator.errors, { separator: '; ' });
+    },
+
+    // Utility: Ensure all schemas are loaded
+    async initialize(): Promise<void> {
+        await ensureInitialized();
     }
 };
+
+// Export schema path for external use
+export { SCHEMA_FILES };

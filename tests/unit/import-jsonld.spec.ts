@@ -43,7 +43,7 @@ describe('importJSONLD (file system)', () => {
 
             // console.debug(`import-jsonld: `,instances);
             instances.forEach((itm, index) => {
-                console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status);
+            //    console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status);
                 // console.debug(JSON.stringify(itm.get(), null, 2));
                 expect(itm.status().ok).toBe(true);
                 // each instantiated item must have a successful status

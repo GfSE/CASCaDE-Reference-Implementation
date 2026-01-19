@@ -71,7 +71,7 @@
         "dcterms:creator": {
             "type": "string",
             "description": "Optional package creator"
-        }
+        },
         "@graph": {
             "type": "array",
             "minItems": 0,
@@ -201,23 +201,28 @@
     },
     "required": [ "@context", "@graph" ],
     "additionalProperties": true,
-    "$defs": {
-        "languageValue": {
-            "type": "object",
-            "required": [ "@value" ],
-            "properties": {
-                "@value": {
-                    "type": "string",
-                    "description": "The actual text content"
-                },
-                "@language": {
-                    "type": "string",
-                    "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
-                    "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
-                }
-            },
-            "additionalProperties": false,
-            "description": "Multi-language text value with optional language tag"
+  "$defs": {
+    "idString": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
+      "description": "Valid identifier format: namespace:name or full URI (e.g., 'pig:Property', 'http://example.org/id')"
+    },
+    "languageValue": {
+      "type": "object",
+      "required": [ "@value" ],
+      "properties": {
+        "@value": {
+          "type": "string",
+          "description": "The actual text content"
+        },
+        "@language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+          "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
         }
+      },
+      "additionalProperties": false,
+      "description": "Multi-language text value with optional language tag"
     }
+  }
 }

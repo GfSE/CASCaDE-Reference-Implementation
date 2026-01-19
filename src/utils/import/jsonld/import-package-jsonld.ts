@@ -45,9 +45,9 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     }
 
     // ✅ Validate entire JSON-LD document structure
-    const isValidPackage = SCH_LD.validatePackageLD(doc);
+    const isValidPackage = await SCH_LD.validatePackageLD(doc);
     if (!isValidPackage) {
-        const errors = SCH_LD.getValidatePackageLDErrors();
+        const errors = await SCH_LD.getValidatePackageLDErrors();
         logger.error('JSON-LD package validation failed:', errors);
         return Msg.create(697, errors);
     }

@@ -101,7 +101,7 @@ function checkUniqueIds(pkg: IAPackage): IRsp {
         const itemId = (item as any)['@id'] ?? (item as any).id;
 
         if (!itemId) {
-            logger.warn(`Item at index ${i} is missing an ID`,item);
+        //    logger.warn(`Item at index ${i} is missing an ID`,item);
             return Msg.create(670, i);
         }
 
