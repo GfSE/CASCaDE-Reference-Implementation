@@ -40,11 +40,13 @@
         header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
+            font-weight: 300;
         }
 
         header p {
             font-size: 1.1em;
             opacity: 0.9;
+            font-weight: 300;
         }
 
         .content {
@@ -52,23 +54,24 @@
         }
 
         h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #3498db;
+            color: #3498db;
+            margin: 36px 0 10px;
+            border-top: 2px solid #3498db;
+            font-weight: 400;
         }
 
         h3 {
             color: #3498db;
-            margin: 30px 0 15px;
+            margin: 24px 0 10px;
+            font-weight: 400;
         }
 
-        .schema-list {
+        .resources-list {
             list-style: none;
             margin: 20px 0;
         }
 
-        .schema-list li {
+        .resources-list li {
             margin: 10px 0;
             padding: 15px;
             background: #f8f9fa;
@@ -77,19 +80,18 @@
             transition: background 0.2s;
         }
 
-        .schema-list li:hover {
+        .resources-list li:hover {
             background: #e9ecef;
         }
 
-        .schema-list a {
+        .resources-list a {
             color: #2c3e50;
             text-decoration: none;
             font-weight: 500;
-            display: block;
             font-size: 1.1em;
         }
 
-        .schema-list a:hover {
+        .resources-list a:hover {
             color: #3498db;
         }
 
@@ -119,7 +121,7 @@
         }
 
         .features li {
-            margin: 8px 0;
+            margin: 9px 0;
         }
 
         footer {
@@ -166,17 +168,18 @@
 
         <div class="content">
             <section>
-				<p>These schemata validate the JSON-LD representation of PIG items and correspond to the 
-				<a href="https://cascade.gfse.org/results/Latest%20Metamodel/" target="_blank">PIG Metamodel</a>. 
+				<p>These schemata validate the JSON-LD representation of PIG items corresponding to the 
+				<a href="https://product-information-graph.org/doc/metamodel/latest/" target="_blank">PIG Metamodel</a>. 
 				Each schema enforces structural constraints, data types, and cardinalities defined in the PIG metamodel, 
 				ensuring interoperability and semantic consistency across different tools and organizations.</p>
 
+				<h2>Schemata</h2>
                 <h3>PIG Metamodel Class Items</h3>
                 <p>These schemata validate PIG class definitions. Classes are derived from the ontology. 
                 In general, each concept in the ontology results in a class of either Property, Link, Entity, or Relationship. 
                 A class definition must conform to its respective schema and must have a <code>dcterms:title</code> and optionally a <code>dcterms:description</code> to convey meaning.</p>
                 
-                <ul class="schema-list">
+                <ul class="resources-list">
                     <li>
                         <a href="Property.json">Property.json</a>
                         <div class="description">
@@ -226,7 +229,7 @@
                 conforming to the class definitions above. They include revision control, modification tracking, and 
                 properties/links as configured by their respective classes.</p>
                 
-                <ul class="schema-list">
+                <ul class="resources-list">
                     <li>
                         <a href="anEntity.json">anEntity.json</a>
                         <div class="description">
@@ -253,7 +256,7 @@
                 <p>This schema validates complete PIG data packages. A package contains a subset of the product information 
                 graph bundled for specific purposes such as customer-supplier agreements, milestone deliverables, or 
                 change requests. Packages include their own context definitions and maintain referential integrity.</p>
-				<ul class="schema-list">
+				<ul class="resources-list">
                     <li>
                         <a href="aPackage.json">aPackage.json</a>
                         <div class="description">
@@ -267,33 +270,35 @@
                 </ul>
             </section>
 
-            <section class="features">
+            <section>
                 <h2>Key Features</h2>
-                <ul>
-                    <li><strong>Design for transformation:</strong> The PIG metamodel assures loss-less transformation between OWL/RDF (Knowledge Graphs), GQL (Property Graphs) and Object-oriented Programming</li>
-                    <li><strong>Federation:</strong> JSON-LD supports dataspaces with federated data under full control of the respective owners</li>
-                    <li><strong>Multi-user Operation:</strong> JSON-LD lends itself for traceable multi-user access and versioning</li>
-                    <li><strong>Wide technology support:</strong> Good support by many programming languages including JavaScript, Python, Java and C#</li>
-                    <li><strong>JSON Schema Draft-07 compliant:</strong> Industry-standard validation with wide tooling support</li>
-                    <li><strong>Strict validation:</strong> Additional properties are not allowed to prevent schema violations</li>
-                    <li><strong>Pattern-based validation:</strong> Configurable properties and links use regex patterns with negative lookahead</li>
-                    <li><strong>Multi-language support:</strong> IETF language tags (<code>@language</code>) for internationalization</li>
-                    <li><strong>Conditional schemata:</strong> If-then logic applies correct validation based on <code>pig:itemType</code></li>
-                    <li><strong>Modular design:</strong> Reusable definitions for each metamodel item type</li>
-                    <li><strong>Package validation:</strong> Complete graph validation with both class and instance items</li>
-                    <li><strong>Format validation:</strong> Simple datatypes with optinal range limitation, ISO 8601 date-time, URI patterns and CURIE namespace syntax</li>
-                </ul>
+				<div class="features">
+					<ul>
+						<li><strong>Separation of Concerns:</strong> Syntax and Semantics are separated, so that no software updates are needed, when the ontology evolves over time.</li>
+						<li><strong>Design for transformation:</strong> The PIG metamodel assures loss-less transformation between OWL/RDF (Knowledge Graphs), GQL (Property Graphs) and Object-oriented Programming.</li>
+						<li><strong>Federation:</strong> JSON-LD supports dataspaces with federated data under full control of the respective owners.</li>
+						<li><strong>Multi-user Operation:</strong> JSON-LD lends itself for traceable multi-user access and versioning.</li>
+						<li><strong>Wide technology support:</strong> Good support by many programming languages including JavaScript, Python, Java and C#.</li>
+						<li><strong>JSON Schema Draft-07 compliant:</strong> Industry-standard validation with wide tooling support.</li>
+						<li><strong>Strict validation:</strong> Additional properties are not allowed to prevent schema violations.</li>
+						<li><strong>Multi-language support:</strong> IETF language tags (<code>@language</code>) for internationalization.</li>
+						<li><strong>Modular design:</strong> Reusable definitions for each metamodel item type.</li>
+						<li><strong>Package validation:</strong> Complete graph validation with both class and instance items.</li>
+						<li><strong>Format validation:</strong> Simple datatypes with optinal range limitation, ISO 8601 date-time, URI patterns and CURIE namespace syntax.</li>
+					</ul>
+				</div>
             </section>
         </div>
 
         <footer>
             <p>
                 <strong>Product Information Graph (PIG)</strong><br>
+                Developed by the <a href="https://cascade.gfse.org">CASCaRA (CASCaDE) Initiative</a><br>
                 Copyright © 2025 <a href="https://gfse.org" target="_blank">GfSE - Gesellschaft für Systems Engineering e.V.</a><br>
                 Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache 2.0</a>
             </p>
             <p style="margin-top: 15px; font-size: 0.9em;">
-                Authors: oskar.dungern@gfse.org | 
+                Author: Oskar.Dungern@gfse.org | 
                 <a href="https://github.com/GfSE/CASCaDE-Reference-Implementation" target="_blank">GitHub Repository</a> | 
                 <a href="https://github.com/GfSE/CASCaDE-Reference-Implementation/issues" target="_blank">Report Issues</a>
             </p>
