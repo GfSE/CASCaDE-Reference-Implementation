@@ -1,8 +1,8 @@
 import { App, Plugin } from 'vue';
-import RdfExportComponent from "./RdfExportPlugin.vue";
+import ReqifImportComponent from "./ReqifImportPlugin.vue";
 
-const rdfExportPlugin: Plugin = {
-    install(app: App, options?) {
+const reqifImportPlugin: Plugin = {
+    install(app: App) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
 
@@ -12,8 +12,8 @@ const rdfExportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('RdfExportComponent', RdfExportComponent);
+        app.component('ReqifImportComponent', ReqifImportComponent);
     }
 }
 
-export default rdfExportPlugin;
+export default reqifImportPlugin;

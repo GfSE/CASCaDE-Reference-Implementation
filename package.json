@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "ajv-keywords": "^5.1.0",
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
@@ -29,6 +30,8 @@
     "@vue/eslint-config-typescript": "^9.1.0",
     "@vue/test-utils": "^2.0.0-0",
     "@vue/vue3-jest": "^27.0.0-alpha.1",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "babel-jest": "^27.0.6",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",

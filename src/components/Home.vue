@@ -2,7 +2,7 @@
   <div class="Home Page">
     <h1>{{ msg }}</h1>
     <p>
-      Landing page for CASCaDE app. Perform simple import and export functions here.
+      Landing page for the CASCaRA App. Perform simple import and export functions for verification and validation of the PIG Metamodel using (near to) real-world examples.
     </p>
     <ul>
         <li v-for="(component, name) in globalComponents" :key="name">

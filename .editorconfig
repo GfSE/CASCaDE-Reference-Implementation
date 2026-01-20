@@ -1,0 +1,33 @@
+# EditorConfig is awesome: https://editorconfig.org
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{js,jsx,ts,tsx}]
+indent_style = space
+indent_size = 4
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+# Project-specific coding preferences (custom keys, for human/CI consumption)
+# Prefer explicit semicolons to avoid ASI pitfalls
+ts_semicolons = true
+# Preferred quote style: single or double
+ts_quote_type = single
+# Trailing comma policy
+ts_trailing_comma = none
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+insert_final_newline = true

@@ -1,0 +1,1097 @@
+﻿import { describe, it, expect } from '@jest/globals';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
+
+// Import schema files
+import PropertySchema from './Property.json';
+import LinkSchema from './Link.json';
+import EntitySchema from './Entity.json';
+import RelationshipSchema from './Relationship.json';
+import AnEntitySchema from './anEntity.json';
+import ARelationshipSchema from './aRelationship.json';
+import APackageSchema from './aPackage.json';
+
+describe('PIG JSON-LD Schema Validation', () => {
+  let ajv: Ajv;
+
+  beforeEach(() => {
+    ajv = new Ajv({ 
+      strict: false,
+      allErrors: true,
+      schemas: [
+        PropertySchema,
+        LinkSchema,
+        EntitySchema,
+        RelationshipSchema,
+        AnEntitySchema,
+        ARelationshipSchema
+      ]
+    });
+    addFormats(ajv);
+  });
+
+  describe('Property Schema', () => {
+    it('should validate a valid Property with datatype', () => {
+      const validProperty = {
+        "@id": "ex:NameProperty",
+        "@type": "pig:Property",
+        "pig:itemType": {
+          "@id": "pig:Property"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Name",
+            "@language": "en"
+          },
+          {
+            "@value": "Name",
+            "@language": "de"
+          }
+        ],
+        "dcterms:description": [
+          {
+            "@value": "The name of an entity",
+            "@language": "en"
+          }
+        ],
+        "sh:datatype": {
+          "@id": "xsd:string"
+        },
+        "sh:minCount": 1,
+        "sh:maxCount": 1,
+        "sh:maxLength": 100
+      };
+
+      const validate = ajv.compile(PropertySchema);
+      const valid = validate(validProperty);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+
+    it('should validate a Property with enumeration values', () => {
+      const propertyWithEnum = {
+        "@id": "ex:StatusProperty",
+        "@type": "pig:Property",
+        "pig:itemType": {
+          "@id": "pig:Property"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Status",
+            "@language": "en"
+          }
+        ],
+        "sh:datatype": {
+          "@id": "xsd:string"
+        },
+        "pig:eligibleValue": [
+          {
+            "@id": "ex:StatusActive",
+            "dcterms:title": [
+              {
+                "@value": "Active",
+                "@language": "en"
+              }
+            ]
+          },
+          {
+            "@id": "ex:StatusInactive",
+            "dcterms:title": [
+              {
+                "@value": "Inactive",
+                "@language": "en"
+              }
+            ]
+          }
+        ]
+      };
+
+      const validate = ajv.compile(PropertySchema);
+      const valid = validate(propertyWithEnum);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate a specialized Property', () => {
+      const specializedProperty = {
+        "@id": "ex:ExtendedNameProperty",
+        "pig:specializes": {
+          "@id": "ex:NameProperty"
+        },
+        "pig:itemType": {
+          "@id": "pig:Property"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Extended Name",
+            "@language": "en"
+          }
+        ],
+        "sh:datatype": {
+          "@id": "xsd:string"
+        },
+        "sh:maxLength": 200
+      };
+
+      const validate = ajv.compile(PropertySchema);
+      const valid = validate(specializedProperty);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate a numeric Property with constraints', () => {
+      const numericProperty = {
+        "@id": "ex:AgeProperty",
+        "@type": "pig:Property",
+        "pig:itemType": {
+          "@id": "pig:Property"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Age",
+            "@language": "en"
+          }
+        ],
+        "sh:datatype": {
+          "@id": "xsd:integer"
+        },
+        "sh:minInclusive": 0,
+        "sh:maxInclusive": 150,
+        "pig:unit": "years"
+      };
+
+      const validate = ajv.compile(PropertySchema);
+      const valid = validate(numericProperty);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should reject Property without required @type or pig:specializes', () => {
+      const invalidProperty = {
+        "@id": "ex:InvalidProperty",
+        "pig:itemType": {
+          "@id": "pig:Property"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Invalid",
+            "@language": "en"
+          }
+        ],
+        "sh:datatype": {
+          "@id": "xsd:string"
+        }
+      };
+
+      const validate = ajv.compile(PropertySchema);
+      const valid = validate(invalidProperty);
+      
+      expect(valid).toBe(false);
+    });
+  });
+
+  describe('Link Schema', () => {
+    it('should validate a valid Link with eligible endpoints', () => {
+      const validLink = {
+        "@id": "ex:ContainsLink",
+        "@type": "pig:Link",
+        "pig:itemType": {
+          "@id": "pig:Link"
+        },
+        "dcterms:title": [
+          {
+            "@value": "contains",
+            "@language": "en"
+          },
+          {
+            "@value": "enthält",
+            "@language": "de"
+          }
+        ],
+        "dcterms:description": [
+          {
+            "@value": "Indicates containment relationship",
+            "@language": "en"
+          }
+        ],
+        "pig:eligibleEndpoint": [
+          {
+            "@id": "ex:ComponentEntity"
+          },
+          {
+            "@id": "ex:SubsystemEntity"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(LinkSchema);
+      const valid = validate(validLink);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+
+    it('should validate a specialized Link', () => {
+      const specializedLink = {
+        "@id": "ex:StrictlyContainsLink",
+        "pig:specializes": {
+          "@id": "ex:ContainsLink"
+        },
+        "pig:itemType": {
+          "@id": "pig:Link"
+        },
+        "dcterms:title": [
+          {
+            "@value": "strictly contains",
+            "@language": "en"
+          }
+        ],
+        "pig:eligibleEndpoint": [
+          {
+            "@id": "ex:ComponentEntity"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(LinkSchema);
+      const valid = validate(specializedLink);
+      
+      expect(valid).toBe(true);
+    });
+  });
+
+  describe('Entity Schema', () => {
+    it('should validate a valid Entity with properties and links', () => {
+      const validEntity = {
+        "@id": "ex:PersonEntity",
+        "@type": "pig:Entity",
+        "pig:itemType": {
+          "@id": "pig:Entity"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Person",
+            "@language": "en"
+          },
+          {
+            "@value": "Person",
+            "@language": "de"
+          }
+        ],
+        "dcterms:description": [
+          {
+            "@value": "A human being",
+            "@language": "en"
+          }
+        ],
+        "pig:eligibleProperty": [
+          {
+            "@id": "ex:NameProperty"
+          },
+          {
+            "@id": "ex:AgeProperty"
+          },
+          {
+            "@id": "ex:EmailProperty"
+          }
+        ],
+        "pig:eligibleTargetLink": [
+          {
+            "@id": "ex:WorksAtLink"
+          },
+          {
+            "@id": "ex:KnowsLink"
+          }
+        ],
+        "pig:icon": {
+          "@value": "👤"
+        }
+      };
+
+      const validate = ajv.compile(EntitySchema);
+      const valid = validate(validEntity);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+
+    it('should validate an Entity without optional properties', () => {
+      const minimalEntity = {
+        "@id": "ex:MinimalEntity",
+        "@type": "pig:Entity",
+        "pig:itemType": {
+          "@id": "pig:Entity"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Minimal Entity",
+            "@language": "en"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(EntitySchema);
+      const valid = validate(minimalEntity);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate a specialized Entity', () => {
+      const specializedEntity = {
+        "@id": "ex:EmployeeEntity",
+        "pig:specializes": {
+          "@id": "ex:PersonEntity"
+        },
+        "pig:itemType": {
+          "@id": "pig:Entity"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Employee",
+            "@language": "en"
+          }
+        ],
+        "pig:eligibleProperty": [
+          {
+            "@id": "ex:EmployeeIDProperty"
+          },
+          {
+            "@id": "ex:SalaryProperty"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(EntitySchema);
+      const valid = validate(specializedEntity);
+      
+      expect(valid).toBe(true);
+    });
+  });
+
+  describe('Relationship Schema', () => {
+    it('should validate a valid Relationship with source and target links', () => {
+      const validRelationship = {
+        "@id": "ex:EmploymentRelationship",
+        "@type": "pig:Relationship",
+        "pig:itemType": {
+          "@id": "pig:Relationship"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Employment",
+            "@language": "en"
+          },
+          {
+            "@value": "Beschäftigung",
+            "@language": "de"
+          }
+        ],
+        "dcterms:description": [
+          {
+            "@value": "Relationship between an employee and an organization",
+            "@language": "en"
+          }
+        ],
+        "pig:eligibleSourceLink": {
+          "@id": "ex:EmployeeLink"
+        },
+        "pig:eligibleTargetLink": {
+          "@id": "ex:EmployerLink"
+        },
+        "pig:eligibleProperty": [
+          {
+            "@id": "ex:StartDateProperty"
+          },
+          {
+            "@id": "ex:PositionProperty"
+          }
+        ],
+        "pig:icon": {
+          "@value": "💼"
+        }
+      };
+
+      const validate = ajv.compile(RelationshipSchema);
+      const valid = validate(validRelationship);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+
+    it('should validate a Relationship without properties', () => {
+      const simpleRelationship = {
+        "@id": "ex:SimpleRelationship",
+        "@type": "pig:Relationship",
+        "pig:itemType": {
+          "@id": "pig:Relationship"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Simple Connection",
+            "@language": "en"
+          }
+        ],
+        "pig:eligibleSourceLink": {
+          "@id": "ex:SourceLink"
+        },
+        "pig:eligibleTargetLink": {
+          "@id": "ex:TargetLink"
+        }
+      };
+
+      const validate = ajv.compile(RelationshipSchema);
+      const valid = validate(simpleRelationship);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate a specialized Relationship', () => {
+      const specializedRelationship = {
+        "@id": "ex:FullTimeEmployment",
+        "pig:specializes": {
+          "@id": "ex:EmploymentRelationship"
+        },
+        "pig:itemType": {
+          "@id": "pig:Relationship"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Full-Time Employment",
+            "@language": "en"
+          }
+        ],
+        "pig:eligibleSourceLink": {
+          "@id": "ex:EmployeeLink"
+        },
+        "pig:eligibleTargetLink": {
+          "@id": "ex:EmployerLink"
+        }
+      };
+
+      const validate = ajv.compile(RelationshipSchema);
+      const valid = validate(specializedRelationship);
+      
+      expect(valid).toBe(true);
+    });
+  });
+
+  describe('anEntity Schema (Instance)', () => {
+    it('should validate a valid entity instance with properties', () => {
+      const validEntityInstance = {
+        "@id": "ex:JohnDoe",
+        "@type": "ex:PersonEntity",
+        "pig:itemType": {
+          "@id": "pig:anEntity"
+        },
+        "pig:revision": "1.0",
+        "dcterms:modified": "2024-01-15T10:30:00Z",
+        "dcterms:creator": "user@example.com",
+        "dcterms:title": [
+          {
+            "@value": "John Doe",
+            "@language": "en"
+          }
+        ],
+        "dcterms:description": [
+          {
+            "@value": "Software Engineer",
+            "@language": "en"
+          }
+        ],
+        "ex:NameProperty": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aProperty"
+            },
+            "@value": "John Doe"
+          }
+        ],
+        "ex:AgeProperty": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aProperty"
+            },
+            "@value": "35"
+          }
+        ],
+        "ex:StatusProperty": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aProperty"
+            },
+            "@id": "ex:StatusActive"
+          }
+        ],
+        "ex:WorksAtLink": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aTargetLink"
+            },
+            "@id": "ex:CompanyABC"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(AnEntitySchema);
+      const valid = validate(validEntityInstance);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+
+    it('should validate an entity instance with only title', () => {
+      const entityWithTitle = {
+        "@id": "ex:SimpleEntity",
+        "@type": "ex:SimpleEntityType",
+        "pig:itemType": {
+          "@id": "pig:anEntity"
+        },
+        "dcterms:modified": "2024-01-15T10:30:00Z",
+        "dcterms:title": [
+          {
+            "@value": "Simple Entity",
+            "@language": "en"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(AnEntitySchema);
+      const valid = validate(entityWithTitle);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate an entity instance with only description', () => {
+      const entityWithDescription = {
+        "@id": "ex:DescribedEntity",
+        "@type": "ex:EntityType",
+        "pig:itemType": {
+          "@id": "pig:anEntity"
+        },
+        "dcterms:modified": "2024-01-15T10:30:00Z",
+        "dcterms:description": [
+          {
+            "@value": "This entity has only a description",
+            "@language": "en"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(AnEntitySchema);
+      const valid = validate(entityWithDescription);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate an entity instance with version history', () => {
+      const versionedEntity = {
+        "@id": "ex:VersionedEntity",
+        "@type": "ex:EntityType",
+        "pig:itemType": {
+          "@id": "pig:anEntity"
+        },
+        "pig:revision": "3.2",
+        "pig:priorRevision": ["1.0", "2.0", "3.0", "3.1"],
+        "dcterms:modified": "2024-01-20T14:45:00Z",
+        "dcterms:title": [
+          {
+            "@value": "Versioned Entity",
+            "@language": "en"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(AnEntitySchema);
+      const valid = validate(versionedEntity);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should reject entity instance without title or description', () => {
+      const invalidEntity = {
+        "@id": "ex:InvalidEntity",
+        "@type": "ex:EntityType",
+        "pig:itemType": {
+          "@id": "pig:anEntity"
+        },
+        "dcterms:modified": "2024-01-15T10:30:00Z"
+      };
+
+      const validate = ajv.compile(AnEntitySchema);
+      const valid = validate(invalidEntity);
+      
+      expect(valid).toBe(false);
+    });
+  });
+
+  describe('aRelationship Schema (Instance)', () => {
+    it('should validate a valid relationship instance with properties and links', () => {
+      const validRelationshipInstance = {
+        "@id": "ex:JohnEmployment",
+        "@type": "ex:EmploymentRelationship",
+        "pig:itemType": {
+          "@id": "pig:aRelationship"
+        },
+        "pig:revision": "1.0",
+        "dcterms:modified": "2024-01-15T10:30:00Z",
+        "dcterms:creator": "hr@example.com",
+        "dcterms:title": [
+          {
+            "@value": "John's Employment at ABC Corp",
+            "@language": "en"
+          }
+        ],
+        "dcterms:description": [
+          {
+            "@value": "Full-time employment as Senior Developer",
+            "@language": "en"
+          }
+        ],
+        "ex:EmployeeLink": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aSourceLink"
+            },
+            "@id": "ex:JohnDoe"
+          }
+        ],
+        "ex:EmployerLink": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aTargetLink"
+            },
+            "@id": "ex:CompanyABC"
+          }
+        ],
+        "ex:StartDateProperty": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aProperty"
+            },
+            "@value": "2020-03-01"
+          }
+        ],
+        "ex:PositionProperty": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aProperty"
+            },
+            "@value": "Senior Software Developer"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(ARelationshipSchema);
+      const valid = validate(validRelationshipInstance);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+
+    it('should validate a minimal relationship instance', () => {
+      const minimalRelationship = {
+        "@id": "ex:SimpleConnection",
+        "@type": "ex:SimpleRelationshipType",
+        "pig:itemType": {
+          "@id": "pig:aRelationship"
+        },
+        "dcterms:modified": "2024-01-15T10:30:00Z",
+        "dcterms:title": [
+          {
+            "@value": "A Simple Connection",
+            "@language": "en"
+          }
+        ],
+        "ex:SourceLink": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aSourceLink"
+            },
+            "@id": "ex:EntityA"
+          }
+        ],
+        "ex:TargetLink": [
+          {
+            "pig:itemType": {
+              "@id": "pig:aTargetLink"
+            },
+            "@id": "ex:EntityB"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(ARelationshipSchema);
+      const valid = validate(minimalRelationship);
+      
+      expect(valid).toBe(true);
+    });
+  });
+
+  describe('aPackage Schema (Complete Document)', () => {
+    it('should validate a complete PIG package with mixed items', () => {
+      const validPackage = {
+        "@context": {
+          "pig": "https://cascade.gfse.org/pig/",
+          "dcterms": "http://purl.org/dc/terms/",
+          "sh": "http://www.w3.org/ns/shacl#",
+          "xsd": "http://www.w3.org/2001/XMLSchema#",
+          "ex": "https://example.org/ontology/"
+        },
+        "@graph": [
+          {
+            "@id": "ex:NameProperty",
+            "@type": "pig:Property",
+            "pig:itemType": {
+              "@id": "pig:Property"
+            },
+            "dcterms:title": [
+              {
+                "@value": "Name",
+                "@language": "en"
+              }
+            ],
+            "sh:datatype": {
+              "@id": "xsd:string"
+            }
+          },
+          {
+            "@id": "ex:PersonEntity",
+            "@type": "pig:Entity",
+            "pig:itemType": {
+              "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+              {
+                "@value": "Person",
+                "@language": "en"
+              }
+            ],
+            "pig:eligibleProperty": [
+              {
+                "@id": "ex:NameProperty"
+              }
+            ]
+          },
+          {
+            "@id": "ex:JohnDoe",
+            "@type": "ex:PersonEntity",
+            "pig:itemType": {
+              "@id": "pig:anEntity"
+            },
+            "dcterms:modified": "2024-01-15T10:30:00Z",
+            "dcterms:title": [
+              {
+                "@value": "John Doe",
+                "@language": "en"
+              }
+            ],
+            "ex:NameProperty": [
+              {
+                "pig:itemType": {
+                  "@id": "pig:aProperty"
+                },
+                "@value": "John Doe"
+              }
+            ]
+          }
+        ],
+        "@id": "ex:ExamplePackage",
+        "dcterms:title": [
+          {
+            "@value": "Example PIG Package",
+            "@language": "en"
+          }
+        ],
+        "dcterms:modified": "2024-01-15T10:30:00Z",
+        "dcterms:creator": "test@example.com"
+      };
+
+      const validate = ajv.compile(APackageSchema);
+      const valid = validate(validPackage);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+
+    it('should validate a package with context as string URL', () => {
+      const packageWithContextURL = {
+        "@context": "https://cascade.gfse.org/pig/context.jsonld",
+        "@graph": [
+          {
+            "@id": "ex:TestEntity",
+            "@type": "pig:Entity",
+            "pig:itemType": {
+              "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+              {
+                "@value": "Test Entity",
+                "@language": "en"
+              }
+            ]
+          }
+        ]
+      };
+
+      const validate = ajv.compile(APackageSchema);
+      const valid = validate(packageWithContextURL);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate an empty package', () => {
+      const emptyPackage = {
+        "@context": {
+          "pig": "https://cascade.gfse.org/pig/"
+        },
+        "@graph": []
+      };
+
+      const validate = ajv.compile(APackageSchema);
+      const valid = validate(emptyPackage);
+      
+      expect(valid).toBe(true);
+    });
+
+    it('should validate a library example package', () => {
+      const libraryPackage = {
+        "@context": {
+          "pig": "https://cascade.gfse.org/pig/",
+          "dcterms": "http://purl.org/dc/terms/",
+          "sh": "http://www.w3.org/ns/shacl#",
+          "xsd": "http://www.w3.org/2001/XMLSchema#",
+          "exlib": "https://example.org/library/"
+        },
+        "@graph": [
+          {
+            "@id": "exlib:LocationProperty",
+            "@type": "pig:Property",
+            "pig:itemType": {
+              "@id": "pig:Property"
+            },
+            "dcterms:title": [
+              {
+                "@value": "Location",
+                "@language": "en"
+              }
+            ],
+            "sh:datatype": {
+              "@id": "xsd:string"
+            }
+          },
+          {
+            "@id": "exlib:LibraryEntity",
+            "@type": "pig:Entity",
+            "pig:itemType": {
+              "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+              {
+                "@value": "Library",
+                "@language": "en"
+              }
+            ],
+            "pig:eligibleProperty": [
+              {
+                "@id": "exlib:LocationProperty"
+              }
+            ],
+            "pig:icon": {
+              "@value": "🏛"
+            }
+          },
+          {
+            "@id": "exlib:BookEntity",
+            "@type": "pig:Entity",
+            "pig:itemType": {
+              "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+              {
+                "@value": "Book",
+                "@language": "en"
+              }
+            ],
+            "pig:icon": {
+              "@value": "📖"
+            }
+          },
+          {
+            "@id": "exlib:OwnedByLink",
+            "@type": "pig:Link",
+            "pig:itemType": {
+              "@id": "pig:Link"
+            },
+            "dcterms:title": [
+              {
+                "@value": "owned-by",
+                "@language": "en"
+              }
+            ],
+            "pig:eligibleEndpoint": [
+              {
+                "@id": "exlib:LibraryEntity"
+              }
+            ]
+          },
+          {
+            "@id": "exlib:BnF",
+            "@type": "exlib:LibraryEntity",
+            "pig:itemType": {
+              "@id": "pig:anEntity"
+            },
+            "dcterms:modified": "2024-01-15T10:00:00Z",
+            "dcterms:title": [
+              {
+                "@value": "Bibliothèque nationale de France",
+                "@language": "fr"
+              }
+            ],
+            "exlib:LocationProperty": [
+              {
+                "pig:itemType": {
+                  "@id": "pig:aProperty"
+                },
+                "@value": "Paris"
+              }
+            ]
+          },
+          {
+            "@id": "exlib:LeMalade",
+            "@type": "exlib:BookEntity",
+            "pig:itemType": {
+              "@id": "pig:anEntity"
+            },
+            "dcterms:modified": "2024-01-15T10:00:00Z",
+            "dcterms:title": [
+              {
+                "@value": "Le Malade imaginaire",
+                "@language": "fr"
+              }
+            ],
+            "exlib:OwnedByLink": [
+              {
+                "pig:itemType": {
+                  "@id": "pig:aTargetLink"
+                },
+                "@id": "exlib:BnF"
+              }
+            ]
+          }
+        ],
+        "@id": "exlib:LibraryExample",
+        "dcterms:title": [
+          {
+            "@value": "Libraries Example",
+            "@language": "en"
+          }
+        ],
+        "dcterms:description": [
+          {
+            "@value": "Example ontology for library management with books and authors",
+            "@language": "en"
+          }
+        ],
+        "dcterms:modified": "2024-01-15T12:00:00Z",
+        "dcterms:creator": "example@library.org"
+      };
+
+      const validate = ajv.compile(APackageSchema);
+      const valid = validate(libraryPackage);
+      
+      expect(valid).toBe(true);
+      if (!valid) console.log(validate.errors);
+    });
+  });
+
+  describe('Edge Cases and Error Handling', () => {
+    it('should reject invalid language tags', () => {
+      const invalidLanguageTag = {
+        "@id": "ex:TestEntity",
+        "@type": "pig:Entity",
+        "pig:itemType": {
+          "@id": "pig:Entity"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Test",
+            "@language": "english"  // Invalid: should be 'en'
+          }
+        ]
+      };
+
+      const validate = ajv.compile(EntitySchema);
+      const valid = validate(invalidLanguageTag);
+      
+      expect(valid).toBe(false);
+    });
+
+    it('should reject invalid ID patterns', () => {
+      const invalidId = {
+        "@id": "invalid id with spaces",
+        "@type": "pig:Entity",
+        "pig:itemType": {
+          "@id": "pig:Entity"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Test",
+            "@language": "en"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(EntitySchema);
+      const valid = validate(invalidId);
+      
+      expect(valid).toBe(false);
+    });
+
+    it('should reject additional properties not defined in schema', () => {
+      const extraProperties = {
+        "@id": "ex:TestProperty",
+        "@type": "pig:Property",
+        "pig:itemType": {
+          "@id": "pig:Property"
+        },
+        "dcterms:title": [
+          {
+            "@value": "Test",
+            "@language": "en"
+          }
+        ],
+        "sh:datatype": {
+          "@id": "xsd:string"
+        },
+        "customField": "not allowed"  // Should be rejected
+      };
+
+      const validate = ajv.compile(PropertySchema);
+      const valid = validate(extraProperties);
+      
+      expect(valid).toBe(false);
+    });
+
+    it('should validate URLs as valid IDs', () => {
+      const urlId = {
+        "@id": "https://example.org/entities/123",
+        "@type": "https://example.org/types/Person",
+        "pig:itemType": {
+          "@id": "pig:Entity"
+        },
+        "dcterms:title": [
+          {
+            "@value": "URL Entity",
+            "@language": "en"
+          }
+        ]
+      };
+
+      const validate = ajv.compile(EntitySchema);
+      const valid = validate(urlId);
+      
+      expect(valid).toBe(true);
+    });
+  });
+});

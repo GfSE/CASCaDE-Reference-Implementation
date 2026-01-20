@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import ajvPlugin from './plugins/ajv';
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -15,7 +16,7 @@ const vuetify = createVuetify({
 
 const app = createApp(App);
 
-app.use(vuetify).use(router);
+app.use(vuetify).use(router).use(ajvPlugin);
 
 // parameters: root, recursive, file to match
 const pluginFiles = require.context('./plugins', true, /\.ts$/);
