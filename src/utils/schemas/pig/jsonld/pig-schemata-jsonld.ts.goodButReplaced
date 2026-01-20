@@ -10,6 +10,8 @@
  *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  *
  * Design decisions:
+ * - in this solution, the JSON-LD schemata are hard-coded in TypeScript
+ *   while the preferred solution is to load them from external files.
  * - use JSON Schema draft-07 (widely supported)
  * - use ajv for validation (fast, popular)
  * - these schemas validate JSON-LD documents (@graph, @context, @id, @type)

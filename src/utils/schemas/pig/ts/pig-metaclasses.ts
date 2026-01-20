@@ -85,6 +85,7 @@ export enum XsDataType {
     Double = 'xs:double',
     String = 'xs:string',
     AnyURI = 'xs:anyURI',
+    Date = 'xs:date',
     DateTime = 'xs:dateTime',
     Duration = 'xs:duration',
     ComplexType = 'xs:complexType'
