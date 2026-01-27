@@ -1113,6 +1113,7 @@ export class APackage extends Identifiable implements IAPackage {
             creator: meta.creator
         } as IAPackage);
 
+        // logger.debug(`APackage.setJSONLD: package ${JSON.stringify(this, null, 2)} set with status`, this.lastStatus);
         // return the instantiated graph with instantiated graph items:
         return this;
     }
@@ -1206,7 +1207,7 @@ export class APackage extends Identifiable implements IAPackage {
     setXML(xmlString: stringXML) {
         // 1. Parse XML string to JSON
         const parsed = xml2json(xmlString);
-        logger.debug('APackage.setXML: parsed XML to JSON', JSON.stringify(parsed,null,2));
+        // logger.debug('APackage.setXML: parsed XML to JSON', JSON.stringify(parsed,null,2));
 
         if (!parsed.ok) {
             this.lastStatus = parsed;
@@ -1215,10 +1216,10 @@ export class APackage extends Identifiable implements IAPackage {
         }
 
         const doc = parsed.response as JsonObject;
-        logger.debug('APackage.setXML: parsed XML to JSON', doc);
+        // logger.debug('APackage.setXML: parsed XML to JSON', doc);
 
         // 2. Extract namespaces (if needed in future)
-        // const ctx = this.extractContextXML(doc);
+        const ctx = extractContextXML(xmlString);
 
         // 3. Extract package metadata (if available in XML)
         // const meta = this.extractMetadataXML(doc);
@@ -1256,13 +1257,13 @@ export class APackage extends Identifiable implements IAPackage {
             id: doc.id,
             title: doc.title,
             description: doc.description,
-            // context: ctx,
+            context: ctx,
             graph: instantiatedGraph,
             modified: doc.modified,
             creator: doc.creator
         } as unknown as IAPackage);
 
-        logger.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
+        // logger.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
         return this;
     }
     /**
@@ -2097,6 +2098,62 @@ function xml2json(xml: stringXML): IRsp<unknown> {
     }
 }
 /**
+ * Extract XML namespaces from XML string and group them in a context object
+ * Compatible with JSON-LD @context format
+ * 
+ * @param xmlString - XML string containing namespace declarations
+ * @returns Context as INamespace[], string, Record<string, string>, or undefined
+ * 
+ * @example
+ * Input XML:
+ * <pig:aPackage xmlns:pig="https://pig.gfse.org/" 
+ *               xmlns:dcterms="http://purl.org/dc/terms/"
+ *               xmlns="http://default.org/">
+ * 
+ * Output:
+ * [
+ *   { tag: "pig:", uri: "https://pig.gfse.org/" },
+ *   { tag: "dcterms:", uri: "http://purl.org/dc/terms/" },
+ *   { tag: "@vocab", uri: "http://default.org/" }
+ * ]
+ */
+function extractContextXML(xmlString: stringXML): INamespace[] | string | Record<string, string> | undefined {
+    const namespaces: INamespace[] = [];
+
+    // Global regex to find all xmlns declarations
+    // Matches both xmlns:prefix="uri" and xmlns="uri"
+    const xmlnsRegex = /xmlns(?::([a-zA-Z0-9_-]+))?=["']([^"']+)["']/g;
+
+    let match;
+    while ((match = xmlnsRegex.exec(xmlString)) !== null) {
+        const prefix = match[1]; // undefined for default namespace
+        const uri = match[2];
+
+        if (prefix) {
+            // Prefixed namespace: xmlns:prefix="uri"
+            namespaces.push({
+                tag: prefix.endsWith(':') ? prefix : prefix + ':',
+                uri: uri
+            });
+        } else {
+            // Default namespace: xmlns="uri"
+            // Use '@vocab' as tag for default namespace (JSON-LD convention)
+            namespaces.push({
+                tag: '@vocab',
+                uri: uri
+            });
+        }
+    }
+
+    if (namespaces.length === 0) {
+        logger.warn('extractContextXML: no namespaces found in XML');
+        return undefined;
+    }
+
+    // logger.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
+    return namespaces;
+}
+/**
  * Convert an XML DOM Element to a JSON object recursively
  * Handles:
  * - PIG classes (Property, Link, Entity, Relationship)
@@ -2123,7 +2180,9 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         const attrName = attr.name;
         const attrValue = attr.value;
 
-        if (attrName === 'id') {
+        if (attrName.startsWith('xmlns')) {
+            continue; // skip namespace declarations
+        } else if (attrName === 'id') {
             result.id = attrValue;
         } else if (attrName === 'rdf:type' || attrName === 'type') {
             result.hasClass = attrValue;
