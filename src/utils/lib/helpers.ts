@@ -2,12 +2,12 @@
  * Product Information Graph (PIG) - helper routines
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /** Product Information Graph (PIG) - helper routines
  *  Dependencies: none
  *  Authors: oskar.dungern@gfse.org, ..
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  *
  *  Design Decisions:
  *  - 
@@ -23,38 +23,34 @@ export type JsonValue = JsonPrimitive | JsonObject | JsonArray;
 export interface JsonObject { [key: string]: JsonValue; }
 export type JsonArray = Array<JsonValue>
 
-// Map PIG metamodel attributés to/from JSON-LD keys;
-// all other keys are derived from the ontology and handled dynamically:
-const TO_JSONLD: [string, string][] = [
-    ['context', '@context'],
-    ['id', '@id'],
-    ['revision', 'pig:revision'],
-    ['priorRevision', 'pig:priorRevision'], 
-    ['hasClass', '@type'],
-    ['specializes', 'pig:specializes'],
-    ['icon', 'pig:icon'], 
-    ['value', '@value'],
-    ['lang', '@language'],
-    ['datatype', 'sh:datatype'],
-    ['minCount', 'sh:minCount'],
-    ['maxCount', 'sh:maxCount'],
-    ['maxLength', 'sh:maxLength'],
-    ['defaultValue', 'sh:defaultValue'],
-    ['pattern', 'sh:pattern'],
-    ['itemType', 'pig:itemType'],
-    ['eligibleProperty', 'pig:eligibleProperty'],
-//    ['eligibleReference', 'pig:eligibleReference'],
-    ['eligibleSourceLink', 'pig:eligibleSourceLink'],
-    ['eligibleTargetLink', 'pig:eligibleTargetLink'],
-    ['eligibleEndpoint', 'pig:eligibleEndpoint'],
-    ['eligibleValue', 'pig:eligibleValue'], 
-    ['title', 'dcterms:title'],
-    ['description', 'dcterms:description'],
-    ['created', 'dcterms:created'],
-    ['modified', 'dcterms:modified'],
-    ['creator', 'dcterms:creator']
-];
-const FROM_JSONLD: [string, string][] = TO_JSONLD.map(([a, b]) => [b, a] as [string, string]);
+
+/**
+ * Standard XML Namespaces used in PIG XML documents
+ * Collected from tests/data/XML files
+ */
+const NAMESPACE_MAP: Record<string, string> = {
+    'xml': 'http://www.w3.org/XML/1998/namespace',
+    'xs': 'http://www.w3.org/2001/XMLSchema#',
+    'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+    'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+    'owl': 'http://www.w3.org/2002/07/owl#',
+    'dcterms': 'http://purl.org/dc/terms/',
+    'FMC': 'http://fmc-modeling.org#',
+    'IREB': 'https://cpre.ireb.org/en/downloads-and-resources/glossary#',
+    'ReqIF': 'https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#',
+    'oslc_rm': 'http://open-services.net/ns/rm#',
+    'pig': 'https://product-information-graph.org/v0.2/metamodel#',
+    'SpecIF': 'https://specif.de/v1.2/schema#',
+    'o': 'https://product-information-graph.org/ontology/application#',
+    'd': 'https://product-information-graph.org/example#'  // default example namespace
+};
+
+/**
+ * Generate XML namespace declarations string from NAMESPACE_MAP
+ */
+export const XML_NAMESPACES = Object.entries(NAMESPACE_MAP)
+    .map(([prefix, uri]) => `xmlns:${prefix}="${uri}"`)
+    .join('\n    ');
 
 // LIB object with helper methods
 export const LIB = {
@@ -180,85 +176,6 @@ export const LIB = {
     return outObj;
     },
     /**
-     * Rename JSON object keys (tags) according to a mapping.
-     * - mapping may be a Record<string,string> or Array<[string, string]>
-     * - options.mutate: if true, mutate the original object in-place; default false (returns a new object)
-     * - Only object keys are renamed; array elements and primitive values are preserved (but nested objects are processed)
-     * Usage: renameJsonTags(node, LIB.fromJSONLD)
-     */
-    toJSONLD: TO_JSONLD, // see above
-    fromJSONLD: FROM_JSONLD,
-    renameJsonTags(
-        node: JsonValue,
-        mapping: Record<string, string> | Array<[string, string]>,
-        options ?: { mutate?: boolean }
-    ): JsonValue {
-        const mutate = !!(options && options.mutate);
-
-        // normalize mapping to a simple lookup object:
-        const mapObj: Record<string, string> = Array.isArray(mapping)
-            ? mapping.reduce((acc, pair) => {
-                if (Array.isArray(pair) && pair.length >= 2) acc[pair[0]] = pair[1];
-                return acc;
-            }, {} as Record<string, string>)
-            : { ...mapping };
-
-        // 1. handle leaf and null
-        if (node === undefined || node === null || this.isLeaf(node)) {
-            return node;
-        }
-
-        // 2. handle array
-        if (Array.isArray(node)) {
-            if (mutate) {
-                for (let i = 0; i < node.length; i++) {
-                    const item = node[i];
-                    node[i] = LIB.renameJsonTags(item, mapObj, options);
-                }
-                return node;
-            }
-            const out: JsonArray = [];
-            for (let i = 0; i < node.length; i++) {
-                out[i] = LIB.renameJsonTags(node[i], mapObj, options);
-            }
-            return out;
-        }
-
-        // 3. handle object
-        const src = node as JsonObject;
-        if (mutate) {
-            for (const key of Object.keys(src)) {
-                // unsafe: const mappedKey = mapObj.hasOwnProperty(key) ? mapObj[key] : key;
-                // es2022 safe: const mappedKey = Object.hasOwn(mapObj, key) ? mapObj[key] : key;
-                const mappedKey = Object.prototype.hasOwnProperty.call(mapObj, key) ? mapObj[key] : key;
-                const child = src[key];
-                const newValue = LIB.renameJsonTags(child, mapObj, options);
-                if (mappedKey !== key) {
-                    // if target key already exists we overwrite — intentional but warn in console
-                    if (Object.prototype.hasOwnProperty.call(src, mappedKey)) {
-                        // eslint-disable-next-line no-console
-                        logger.warn(`renameJsonTags: overwriting key '${mappedKey}' while renaming '${key}'`);
-                    }
-                    src[mappedKey] = newValue;
-                    delete src[key];
-                } else {
-                    src[key] = newValue;
-                }
-            }
-            return src;
-        }
-
-        // logger.debug('src',src);
-        const out: JsonObject = {};
-        for (const key of Object.keys(src)) {
-            // unsafe: const mappedKey = mapObj.hasOwnProperty(key) ? mapObj[key] : key;
-            // es2022 safe: const mappedKey = Object.hasOwn(mapObj, key) ? mapObj[key] : key;
-            const mappedKey = Object.prototype.hasOwnProperty.call(mapObj, key) ? mapObj[key] : key;
-            out[mappedKey] = LIB.renameJsonTags(src[key], mapObj, options);
-        }
-        return out;
-    },
-    /**
      * Convert a string to an enum member value.
      * - Tries to match enum values first, then (optionally) enum keys (names).
      * - Works for string and numeric enums.
@@ -326,6 +243,87 @@ export const LIB = {
         }
         return value;
     },
+    /**
+     * Wrap XML fragment with root element and namespace declarations
+     * @param xml - XML fragment (without root wrapper)
+     * @param options - Optional configuration
+     * @returns Complete XML document with namespace declarations
+     */
+    makeXMLDoc(
+        xml: string,
+        options?: {
+            rootTag?: string;           // Custom root tag (default: 'pig:Package')
+            includeXmlDeclaration?: boolean;  // Include <?xml...?> declaration (default: false)
+            detectNamespaces?: boolean; // Only include namespaces actually used (default: true)
+        }
+    ): string {
+        const rootTag = options?.rootTag ?? 'pig:Package';
+        const includeXmlDecl = options?.includeXmlDeclaration ?? false;
+        const detectNs = options?.detectNamespaces ?? true;
+
+        // Detect which namespace prefixes are actually used in the XML
+        let namespacesToInclude: Record<string, string>;
+        const unknownPrefixes: Set<string> = new Set();
+
+        if (detectNs) {
+            namespacesToInclude = {};
+            const foundPrefixes = new Set<string>();
+
+            // Find namespace prefixes in element tags (opening and closing)
+            // Match: <prefix:localName or </prefix:localName
+            const elementPattern = /<\/?(\w+):/g;
+            let match;
+            while ((match = elementPattern.exec(xml)) !== null) {
+                foundPrefixes.add(match[1]);
+            }
+
+            // Find namespace prefixes in attribute names
+            // Match: prefix:attrName= (but not in attribute values)
+            const attrPattern = /\s(\w+):\w+\s*=/g;
+            while ((match = attrPattern.exec(xml)) !== null) {
+                foundPrefixes.add(match[1]);
+            }
+
+            // Always include the root tag's namespace
+            const rootPrefix = rootTag.includes(':') ? rootTag.split(':')[0] : '';
+            if (rootPrefix) {
+                foundPrefixes.add(rootPrefix);
+            }
+
+            // Check each found prefix against NAMESPACE_MAP
+            for (const prefix of foundPrefixes) {
+                if (NAMESPACE_MAP[prefix]) {
+                    namespacesToInclude[prefix] = NAMESPACE_MAP[prefix];
+                } else {
+                    unknownPrefixes.add(prefix);
+                }
+            }
+
+            // Log errors for unknown namespaces
+            if (unknownPrefixes.size > 0) {
+                const unknownList = Array.from(unknownPrefixes).join(', ');
+                logger.error(
+                    `makeXMLDoc: Unknown namespace prefixes found: ${unknownList}. ` +
+                    `These prefixes are not defined in NAMESPACE_MAP and will not be declared in the XML document. ` +
+                    `Please add them to NAMESPACE_MAP in helpers.ts.`
+                );
+            }
+        } else {
+            // Include all namespaces
+            namespacesToInclude = { ...NAMESPACE_MAP };
+        }
+
+        // Build namespace declarations string
+        const nsDeclarations = Object.entries(namespacesToInclude)
+            .map(([prefix, uri]) => `xmlns:${prefix}="${uri}"`)
+            .join('\n    ');
+
+        // Build the complete document
+        const xmlDeclaration = includeXmlDecl ? '<?xml version="1.0" encoding="UTF-8"?>\n' : '';
+        const wrappedXml = `${xmlDeclaration}<${rootTag} ${nsDeclarations}>${xml}</${rootTag}>`;
+
+        return wrappedXml;
+    },
     // Load text from Node file path, HTTP(S) URL or browser File/Blob
     async readFileAsText(source: string | File | Blob): Promise<IRsp<unknown>> {
         if (typeof source === 'string') {
@@ -373,7 +371,6 @@ export const LIB = {
     isHttpUrl(s: string): boolean {
             return /^https?:\/\//i.test(s);
     },
-
     isNodeEnv(): boolean {
         const p = (globalThis as any).process;
         return typeof p !== 'undefined' && !!(p.versions && p.versions.node);

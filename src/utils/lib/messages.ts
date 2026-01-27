@@ -2,12 +2,12 @@
  * Product Information Graph (PIG) - Centralized error and status messages
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /** Product Information Graph (PIG) - Centralized error and status messages
 *   Dependencies: none (self-contained)
 *   Authors: oskar.dungern@gfse.org
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
-*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
 *
 *   Design Decisions:
 *   - All PIG validation and error messages centralized here
@@ -383,20 +383,20 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
 
     // General errors (690-699)
     690: {
-        en: (msg: string) => `Failed to parse JSON-LD: ${msg}`,
-        de: (msg: string) => `Parsing von JSON-LD fehlgeschlagen: ${msg}`,
-        fr: (msg: string) => `Échec de l'analyse JSON-LD: ${msg}`,
-        es: (msg: string) => `Error al analizar JSON-LD: ${msg}`
+        en: (format: string, msg: string) => `Failed to parse ${format}: ${msg}`,
+        de: (format: string, msg: string) => `Parsing von ${format} fehlgeschlagen: ${msg}`,
+        fr: (format: string, msg: string) => `Échec de l'analyse ${format}: ${msg}`,
+        es: (format: string, msg: string) => `Error al analizar ${format}: ${msg}`
     },
     691: {
-        en: (created: number, total: number) =>
-            `Imported ${created} of ${total} items from JSON-LD.`,
-        de: (created: number, total: number) =>
-            `${created} von ${total} Elementen aus JSON-LD importiert.`,
-        fr: (created: number, total: number) =>
-            `${created} éléments sur ${total} importés depuis JSON-LD.`,
-        es: (created: number, total: number) =>
-            `${created} de ${total} elementos importados desde JSON-LD.`
+        en: (format: string, created: number, total: number) =>
+            `Imported ${created} of ${total} items from ${format}`,
+        de: (format: string, created: number, total: number) =>
+            `${created} von ${total} Elementen aus ${format} importiert`,
+        fr: (format: string, created: number, total: number) =>
+            `${created} éléments sur ${total} importés depuis ${format}`,
+        es: (format: string, created: number, total: number) =>
+            `${created} de ${total} elementos importados desde ${format}`
     },
     692: {
         en: (url: string, statusText: string) =>
@@ -449,14 +449,20 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `Tipo de fuente no compatible al leer un archivo como texto`
     },
     697: {
-        en: (errors: string) =>
-            `JSON-LD package validation failed: ${errors}`,
-        de: (errors: string) =>
-            `JSON-LD Paket-Validierung fehlgeschlagen: ${errors}`,
-        fr: (errors: string) =>
-            `Échec de la validation du package JSON-LD: ${errors}`,
-        es: (errors: string) =>
-            `Error en la validación del paquete JSON-LD: ${errors}`
+        en: (format: string, errors: string) =>
+            `${format} package validation failed: ${errors}`,
+        de: (format: string, errors: string) =>
+            `${format} Paket-Validierung fehlgeschlagen: ${errors}`,
+        fr: (format: string, errors: string) =>
+            `Échec de la validation du package ${format}: ${errors}`,
+        es: (format: string, errors: string) =>
+            `Error en la validación del paquete ${format}: ${errors}`
+    },
+    699: {
+        en: (func: string) => `${func} not yet implemented`,
+        de: (func: string) => `${func} ist noch nicht implementiert`,
+        fr: (func: string) => `${func} pas encore implémenté`,
+        es: (func: string) => `${func} aún no implementado`
     }
 };
 

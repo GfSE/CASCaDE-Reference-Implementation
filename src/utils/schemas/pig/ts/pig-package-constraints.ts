@@ -20,7 +20,7 @@
  * To be discussed:
  * - Handling (error responses vs log messages)
  * - Old thinking: The whole package is rejected if any constraint fails (current approach).
- * - New thinking --> 'Permissive Computing: Report all issues but return the package with a valid subgraph;
+ * - New thinking --> 'Permissive Computing': Report all issues but return the package with a valid subgraph;
  *   sometimes there may be 2 or more choices of valid subgraphs when constraints fail.
  *   Partial data is better than no data.
  * 
@@ -41,7 +41,7 @@
  *      Cyclic specialization detection
  *      Cyclic composed property detection
  *      Property value constraints
- *      Required properties check
+ *      Required properties check --> done by schema validation!
  *      Relationship structure
  * Phase 4 (optional):
  *      Orphaned items (warnings)
@@ -128,7 +128,7 @@ function buildItemTypeMap(pkg: IAPackage): Map<TPigId, PigItemTypeValue> {
         const itemId = (item as any)['@id'] ?? (item as any).id;
         const itemType = (item as any).itemType;
         // if (pkg.id == 'd:test-invalid-prop')
-            // logger.debug(`buildItemTypeMap (3): `, item, itemId, itemType);
+        //     logger.debug(`buildItemTypeMap (3): `, item, itemId, itemType);
         if (itemId && itemType) {
             itemTypeMap.set(itemId, itemType);
         }
@@ -206,6 +206,9 @@ function validatePropertyHasClass(
     if (!prop.hasClass) {
         return Msg.create(672, parentId, propIndex, 'missing hasClass');
     }
+
+    // logger.debug(`validatePropertyHasClass: checking hasClass ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
+    // logger.debug(`validatePropertyHasClass: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
 
     const targetType = itemTypeMap.get(prop.hasClass);
     if (!targetType) {

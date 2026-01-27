@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pig:Package xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
+<pig:aPackage xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
              xmlns:o="https://product-information-graph.org/v0.2/ontology#"
              xmlns:d="https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#"
              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -724,4 +724,4 @@
             </pig:aTargetLink>
         </pig:anEntity>
     </graph>
-</pig:Package>
+</pig:aPackage>

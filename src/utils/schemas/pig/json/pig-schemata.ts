@@ -215,7 +215,8 @@ const ENTITY_SCHEMA = {
             additionalProperties: false,
             properties: {
                 value: { type: 'string' }
-            }
+            },
+            description: 'string or data URI of an icon representing the entity'
         },
         title: {
             type: 'array',
@@ -281,7 +282,8 @@ const RELATIONSHIP_SCHEMA = {
             additionalProperties: false,
             properties: {
                 value: { type: 'string' }
-            }
+            },
+            description: 'string or data URI of an icon representing the relationship'
         },
         title: {
             type: 'array',

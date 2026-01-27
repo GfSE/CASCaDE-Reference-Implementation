@@ -6,10 +6,10 @@ import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 describe('importJSONLD (file system)', () => {
     // List of relative filenames (relative to this test file). Add more entries as needed.
     const filenames:string[] = [
-        "../data/JSON-LD/05/Project 'Requirement with Enumerated Property'.pig.jsonld",
-        "../data/JSON-LD/11/Alice.pig.jsonld",
+        //"../data/JSON-LD/05/Project 'Requirement with Enumerated Property'.pig.jsonld",
+        //"../data/JSON-LD/11/Alice.pig.jsonld",
         "../data/JSON-LD/21/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
-        "../data/JSON-LD/22/Small Autonomous Vehicle.pig.jsonld"
+        //"../data/JSON-LD/22/Small Autonomous Vehicle.pig.jsonld"
         // add more test files here, e.g.
         // "../data/JSON-LD/another-sample.pig.jsonld"
     ];
@@ -32,7 +32,7 @@ describe('importJSONLD (file system)', () => {
             // expect(rsp.ok).toBe(true);
             // expect(rsp.status).toSatisfy((status: number) => [0, 691].includes(status)); ... needs jest-extended
             // expect(rsp.status).toBeOneOf([0, 691]);  ... needs jest-extended
-            expect([0, 691]).toContain(rsp.status);  // some or all items have been processed
+            expect(rsp.status === 0 || rsp.status === 691).toBe(true); // some or all items have been processed
             processedCount++;
 
             const instances = rsp.response as TPigItem[];

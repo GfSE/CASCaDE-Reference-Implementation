@@ -41,7 +41,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     try {
         doc = JSON.parse(text);
     } catch (err: any) {
-        return Msg.create(690, err?.message ?? err);
+        return Msg.create(690, 'JSON-LD', err?.message ?? err);
     }
 
     // ✅ Validate entire JSON-LD document structure
@@ -49,12 +49,18 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     if (!isValidPackage) {
         const errors = await SCH_LD.getValidatePackageLDErrors();
         logger.error('JSON-LD package validation failed:', errors);
-        return Msg.create(697, errors);
+        return Msg.create(697, 'JSON-LD', errors);
     }
 
     // Instantiate APackage and load the document
-    const aPackage = new APackage();
-    const allItems = aPackage.setJSONLD(doc);
+    const aPackage = new APackage().setJSONLD(doc);
+
+    // Check if package was successfully created
+    if (!aPackage.status().ok) {
+        return aPackage.status();
+    }
+
+    const allItems = aPackage.getAllItems();
     
     // allItems[0] is the package itself, rest are graph items
 //    const graphItems = allItems.slice(1);
@@ -66,7 +72,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         result = rspOK;
         logger.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
     } else {
-        result = Msg.create(691, actualCount, expectedCount);
+        result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
         logger.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items`);
     }
 
