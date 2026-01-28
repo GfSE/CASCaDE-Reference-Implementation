@@ -33,13 +33,14 @@
  *      Entity and Relationship specializes references
  *      @type consistency
  * Phase 2 (important):
+ *      namespace prefixes are defined in the context
+ *      Enumeration value references
  *      eligibleProperty references
  *      eligibleEndpoint references
  *      Link endpoint compliance
- *      Enumeration value references
  * Phase 3 (useful):
- *      Cyclic specialization detection
- *      Cyclic composed property detection
+ *      No cyclic specialization
+ *      No cyclic composition of properties
  *      Property value constraints
  *      Required properties check --> done by schema validation!
  *      Relationship structure

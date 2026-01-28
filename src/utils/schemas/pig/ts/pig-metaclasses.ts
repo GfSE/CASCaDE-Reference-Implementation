@@ -173,9 +173,9 @@ abstract class Identifiable extends Item implements IIdentifiable {
     }
     protected validate(itm: IIdentifiable) {
         if (this.id && itm.id !== this.id)
-            return Msg.create(610, this.id, itm.id);
+            return Msg.create(602, this.id, itm.id);
         if (this.specializes && this.specializes !== itm.specializes)
-            return Msg.create(611, this.specializes, itm.specializes);
+            return Msg.create(603, this.specializes, itm.specializes);
 
         // Runtime guards:
         /* this is now checked in schema validation: */
@@ -583,6 +583,7 @@ export class Entity extends Element implements IEntity {
     validate(itm: IEntity) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         // ... only at the lowest subclass level:
+        logger.debug('Entity.validate: ', itm);
         try {
             const ok = SCH.validateEntitySchema(itm);
             if (!ok) {
@@ -1072,7 +1073,7 @@ export class APackage extends Identifiable implements IAPackage {
         const meta = this.extractMetadataJSONLD(doc);
         
         // Extract and process @graph
-        let graph: any[] = Array.isArray(doc['@graph']) 
+        const graph: any[] = Array.isArray(doc['@graph']) 
             ? doc['@graph'] 
             : (Array.isArray(doc.graph) ? doc.graph : []);
 
@@ -1080,17 +1081,27 @@ export class APackage extends Identifiable implements IAPackage {
             logger.warn('APackage.setJSONLD: empty @graph');
         }
 
-        graph = graph.map(
-            item => {
-                const instance = this.instantiateItemJSONLD(item);
-                if (instance) {
-                    // logger.debug(`APackage.set: `, instance);
-                    return instance;
-                }
-                else
-                    logger.warn(`APackage.setJSONLD: could not instantiate item ${JSON.stringify(item, null, 2)}`);
+        // Instantiate each graph item
+        const instantiatedGraph: TPigItem[] = [];
+        const errors: string[] = [];
+
+        for (const item of graph) {
+            const result = this.instantiateItemJSONLD(item);
+
+            if (result.ok && result.response) {
+                instantiatedGraph.push(result.response as TPigItem);
+            } else {
+                const errorMsg = result.statusText || 'Unknown instantiation error';
+                errors.push(errorMsg);
+                logger.warn(`APackage.setJSONLD: ${errorMsg}`);
             }
-        );
+        }
+
+        if (errors.length > 0) {
+            logger.warn(`APackage.setJSONLD: ${errors.length} item(s) failed instantiation`);
+            this.lastStatus = Msg.create(679, 'JSON-LD Package Import', instantiatedGraph.length, graph.length);
+            return this;
+        }
 
     //    logger.debug(`APackage.setJSONLD: processing ${graph.length} items from package ${meta.id || 'unnamed'}`);
     //    logger.debug('APackage.setJSONLD: extracted context:', ctx);
@@ -1108,7 +1119,7 @@ export class APackage extends Identifiable implements IAPackage {
             title: meta.title,
             description: meta.description,
             context: ctx,
-            graph: graph,
+            graph: instantiatedGraph,
             modified: meta.modified,
             creator: meta.creator
         } as IAPackage);
@@ -1151,61 +1162,9 @@ export class APackage extends Identifiable implements IAPackage {
         // Return stringified JSON-LD
         return JSON.stringify(jld, null, 4);
     } */
-/*    setXML(doc: any) {
-        // Extract namespaces
-//        const ctx = this.extractContextXML(doc);
-
-        // Extract package metadata
-//        const meta = this.extractMetadataXML(doc);
-
-        // Extract and process @graph
-        let graph: any[] = Array.isArray(doc.graph) ? doc.graph : [];
-
-        if (graph.length === 0) {
-            logger.warn('APackage.setXML: empty graph');
-        }
-
-        graph = graph.map(
-            item => {
-                const instance = this.instantiateItemXML(item);
-                if (instance) {
-                    // logger.debug(`APackage.set: `, instance);
-                    return instance;
-                }
-                else
-                    logger.warn(`APackage.setXML: could not instantiate item ${JSON.stringify(item)}`);
-            }
-        );
-
-        //    logger.debug(`APackage.setXML: processing ${graph.length} items from package ${meta.id || 'unnamed'}`);
-        //    logger.debug('APackage.setXML: extracted context:', ctx);
-        //    logger.debug('APackage.setXML: extracted metadata:', meta);
-        
-        // Set default modified timestamp if not present
-        if (!this.modified) {
-            this.modified = new Date().toISOString();
-        }
-
-        // Call set to validate and return all items including package
-        this.set({
-            itemType: PigItemType.aPackage,
-        //    id: meta.id,
-        //    title: meta.title,
-        //    description: meta.description,
-        //    context: ctx,
-            graph: graph,
-        //    modified: meta.modified,
-        //    creator: meta.creator
-        } as IAPackage);
-
-        // return the instantiated graph and graph items:
-        return this;
-        //    this.lastStatus = Msg.create(699, 'setXML');
-        //    return this;
-        // return super.setXML(itm);
-    } */
     setXML(xmlString: stringXML) {
         // 1. Parse XML string to JSON
+        //    The context is skipped here, as it is extracted separately below.
         const parsed = xml2json(xmlString);
         // logger.debug('APackage.setXML: parsed XML to JSON', JSON.stringify(parsed,null,2));
 
@@ -1219,10 +1178,10 @@ export class APackage extends Identifiable implements IAPackage {
         // logger.debug('APackage.setXML: parsed XML to JSON', doc);
 
         // 2. Extract namespaces (if needed in future)
-        const ctx = extractContextXML(xmlString);
+        const ctx = this.extractContextXML(xmlString);
 
-        // 3. Extract package metadata (if available in XML)
-        // const meta = this.extractMetadataXML(doc);
+        // 3. Extract package metadata
+        //    ... can be obtained directly from parsed JSON.
 
         // 4. Extract and process graph items
         const graph: any[] = Array.isArray(doc.graph) ? doc.graph : [];
@@ -1232,17 +1191,26 @@ export class APackage extends Identifiable implements IAPackage {
         }
 
         // 5. Instantiate each graph item from parsed JSON
-        const instantiatedGraph = graph
-            .map(item => {
-                const instance = this.instantiateItemXML(item);
-                if (instance) {
-                    return instance;
-                } else {
-                    logger.warn(`APackage.setXML: could not instantiate item ${JSON.stringify(item,null,2)}`);
-                    return undefined;
-                }
-            })
-            .filter((item): item is TPigItem => item !== undefined); // ✅ Type-safe filter
+        const instantiatedGraph: TPigItem[] = [];
+        const errors: string[] = [];
+
+        for (const item of graph) {
+            const result = this.instantiateItemXML(item);
+
+            if (result.ok && result.response) {
+                instantiatedGraph.push(result.response as TPigItem);
+            } else {
+                const errorMsg = result.statusText || 'Unknown instantiation error';
+                errors.push(errorMsg);
+                logger.warn(`APackage.setXML: ${errorMsg}`);
+            }
+        }
+
+        if (errors.length > 0) {
+            logger.warn(`APackage.setXML: ${errors.length} item(s) failed instantiation`);
+            this.lastStatus = Msg.create(679, 'XML Package Import', instantiatedGraph.length, graph.length);
+            return this;
+        }
 
         // logger.debug(`APackage.setXML: successfully instantiated ${instantiatedGraph.length} of ${graph.length} items`);
 
@@ -1398,6 +1366,62 @@ export class APackage extends Identifiable implements IAPackage {
         return undefined;
     }
     /**
+     * Extract XML namespaces from XML string and group them in a context object
+     * Compatible with JSON-LD @context format
+     * 
+     * @param xmlString - XML string containing namespace declarations
+     * @returns Context as INamespace[], string, Record<string, string>, or undefined
+     * 
+     * @example
+     * Input XML:
+     * <pig:aPackage xmlns:pig="https://pig.gfse.org/" 
+     *               xmlns:dcterms="http://purl.org/dc/terms/"
+     *               xmlns="http://default.org/">
+     * 
+     * Output:
+     * [
+     *   { tag: "pig:", uri: "https://pig.gfse.org/" },
+     *   { tag: "dcterms:", uri: "http://purl.org/dc/terms/" },
+     *   { tag: "@vocab", uri: "http://default.org/" }
+     * ]
+     */
+    private extractContextXML(xmlString: stringXML): INamespace[] | string | Record<string, string> | undefined {
+        const namespaces: INamespace[] = [];
+
+        // Global regex to find all xmlns declarations
+        // Matches both xmlns:prefix="uri" and xmlns="uri"
+        const xmlnsRegex = /xmlns(?::([a-zA-Z0-9_-]+))?=["']([^"']+)["']/g;
+
+        let match;
+        while ((match = xmlnsRegex.exec(xmlString)) !== null) {
+            const prefix = match[1]; // undefined for default namespace
+            const uri = match[2];
+
+            if (prefix) {
+                // Prefixed namespace: xmlns:prefix="uri"
+                namespaces.push({
+                    tag: prefix.endsWith(':') ? prefix : prefix + ':',
+                    uri: uri
+                });
+            } else {
+                // Default namespace: xmlns="uri"
+                // Use '@vocab' as tag for default namespace (JSON-LD convention)
+                namespaces.push({
+                    tag: '@vocab',
+                    uri: uri
+                });
+            }
+        }
+
+        if (namespaces.length === 0) {
+            logger.warn('extractContextXML: no namespaces found in XML');
+            return undefined;
+        }
+
+        // logger.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
+        return namespaces;
+    }
+    /**
      * Extract package metadata from JSON-LD document
      * @param doc - Parsed JSON-LD document
      * @returns Metadata object with id, modified, creator, title, and description
@@ -1455,45 +1479,66 @@ export class APackage extends Identifiable implements IAPackage {
 
     /**
      * Instantiate a single PIG item from JSON-LD
+     * @param item - JSON-LD object
+     * @returns IRsp with instantiated TPigItem in response, or error status
      */
-    private instantiateItemJSONLD(item: any): TPigItem | undefined {
+    private instantiateItemJSONLD(item: any): IRsp<unknown> {
         // Validate item has required pig:itemType
         if (!item['pig:itemType'] || !item['pig:itemType']['@id']) {
-            logger.error('APackage: @graph element missing pig:itemType, skipping ' + (item['@id'] || item.id || 'unknown'));
-            return;
+            const id = item['@id'] || item.id || 'unknown';
+            logger.error(`APackage.instantiateItemJSONLD: @graph element missing pig:itemType, skipping ${id}`);
+            return Msg.create(650, 'Instantiation from JSON-LD', 'pig:itemType', id);
         }
 
         const itype: any = item['pig:itemType']['@id'];
 
         // Filter allowed item types
         if (!this.isAllowedItemType(itype)) {
-            logger.error(`APackage: skipping unknown item type '${itype}'`);
-            return;
+            logger.error(`APackage.instantiateItemJSONLD: skipping item type '${itype}' which is not allowed in a graph`);
+            return Msg.create(651, 'Instantiation from JSON-LD', itype);
         }
 
         const instance = this.createInstance(itype);
-        
+
         if (!instance) {
-            logger.error(`APackage: unable to create instance for itemType '${itype}'`);
-            return;
+            logger.error(`APackage.instantiateItemJSONLD: unable to create instance for itemType '${itype}'`);
+            return Msg.create(652, 'Instantiation from JSON-LD', itype);
         }
 
         try {
             (instance as any).setJSONLD(item);
-            // logger.debug(`APackage: successfully instantiated ${itype} with id ${item['@id']}`);
-            return instance;
+
+            // Check if instantiation was successful
+            const status = (instance as any).status();
+            if (!status || !status.ok) {
+                logger.error(
+                    `APackage.instantiateItemJSONLD: ${itype} '${item['@id'] || item.id || 'unknown'}' failed validation: ${status?.statusText || 'unknown error'}`
+                );
+                return status || Msg.create(653, 'Instantiation from JSON-LD', itype, item['@id'] || item.id || 'unknown');
+            }
+
+            // logger.debug(`APackage.instantiateItemJSONLD: successfully instantiated ${itype} with id ${item['@id']}`);
+            return {
+                ...rspOK,
+                response: instance
+            };
         } catch (err: any) {
-            logger.error(`APackage: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`);
+            const errorMsg = `APackage.instantiateItemJSONLD: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`;
+            logger.error(errorMsg);
+            return Msg.create(654, 'Instantiation from JSON-LD', itype, err?.message ?? String(err));
         }
     }
     /**
      * Instantiate a single PIG item from XML (already converted to JSON)
+     * @param item - JSON object from xml2json conversion
+     * @returns IRsp with instantiated TPigItem in response, or error status
      */
-    private instantiateItemXML(item: any): TPigItem | undefined {
+    private instantiateItemXML(item: any): IRsp<unknown> {
         // Validate item has required itemType
         if (!item.itemType) {
-            logger.error('APackage.instantiateItemXML: element missing itemType, skipping ' + (item.id || 'unknown'));
-            return;
+            const id = item.id || 'unknown';
+            logger.error(`APackage.instantiateItemXML: element missing itemType, skipping ${id}`);
+            return Msg.create(650, 'Instantiation from XML', 'itemType', id);
         }
 
         const itype: any = item.itemType;
@@ -1501,14 +1546,14 @@ export class APackage extends Identifiable implements IAPackage {
         // Filter allowed item types
         if (!this.isAllowedItemType(itype)) {
             logger.error(`APackage.instantiateItemXML: skipping item type '${itype}' which is not allowed in a graph`);
-            return;
+            return Msg.create(651, 'Instantiation from XML', itype);
         }
 
         const instance = this.createInstance(itype);
 
         if (!instance) {
             logger.error(`APackage.instantiateItemXML: unable to create instance for itemType '${itype}'`);
-            return;
+            return Msg.create(652, 'Instantiation from XML', itype);
         }
 
         try {
@@ -1522,16 +1567,20 @@ export class APackage extends Identifiable implements IAPackage {
                 logger.error(
                     `APackage.instantiateItemXML: ${itype} '${item.id || 'unknown'}' failed validation: ${status?.statusText || 'unknown error'}`
                 );
-                return;
+                return status || Msg.create(653, 'Instantiation from XML', itype, item.id || 'unknown');
             }
 
             // logger.debug(`APackage.instantiateItemXML: successfully instantiated ${itype} with id ${item.id}`);
-            return instance;
+            return {
+                ...rspOK,
+                response: instance
+            };
         } catch (err: any) {
-            logger.error(`APackage.instantiateItemXML: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`);
+            const errorMsg = `APackage.instantiateItemXML: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`;
+            logger.error(errorMsg);
+            return Msg.create(654, 'Instantiation from XML', itype, err?.message ?? String(err));
         }
     }
-
     /**
      * Check if item type is allowed for instantiation.
      * The following types are not allowed in a graph:
@@ -2096,62 +2145,6 @@ function xml2json(xml: stringXML): IRsp<unknown> {
         logger.error('xml2json: exception:', err);
         return Msg.create(690, 'XML', err?.message ?? String(err));
     }
-}
-/**
- * Extract XML namespaces from XML string and group them in a context object
- * Compatible with JSON-LD @context format
- * 
- * @param xmlString - XML string containing namespace declarations
- * @returns Context as INamespace[], string, Record<string, string>, or undefined
- * 
- * @example
- * Input XML:
- * <pig:aPackage xmlns:pig="https://pig.gfse.org/" 
- *               xmlns:dcterms="http://purl.org/dc/terms/"
- *               xmlns="http://default.org/">
- * 
- * Output:
- * [
- *   { tag: "pig:", uri: "https://pig.gfse.org/" },
- *   { tag: "dcterms:", uri: "http://purl.org/dc/terms/" },
- *   { tag: "@vocab", uri: "http://default.org/" }
- * ]
- */
-function extractContextXML(xmlString: stringXML): INamespace[] | string | Record<string, string> | undefined {
-    const namespaces: INamespace[] = [];
-
-    // Global regex to find all xmlns declarations
-    // Matches both xmlns:prefix="uri" and xmlns="uri"
-    const xmlnsRegex = /xmlns(?::([a-zA-Z0-9_-]+))?=["']([^"']+)["']/g;
-
-    let match;
-    while ((match = xmlnsRegex.exec(xmlString)) !== null) {
-        const prefix = match[1]; // undefined for default namespace
-        const uri = match[2];
-
-        if (prefix) {
-            // Prefixed namespace: xmlns:prefix="uri"
-            namespaces.push({
-                tag: prefix.endsWith(':') ? prefix : prefix + ':',
-                uri: uri
-            });
-        } else {
-            // Default namespace: xmlns="uri"
-            // Use '@vocab' as tag for default namespace (JSON-LD convention)
-            namespaces.push({
-                tag: '@vocab',
-                uri: uri
-            });
-        }
-    }
-
-    if (namespaces.length === 0) {
-        logger.warn('extractContextXML: no namespaces found in XML');
-        return undefined;
-    }
-
-    // logger.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
-    return namespaces;
 }
 /**
  * Convert an XML DOM Element to a JSON object recursively

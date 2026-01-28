@@ -24,7 +24,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -33,7 +33,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_RefersTo',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
@@ -44,7 +44,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -91,10 +91,10 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(true);
             expect(items.length).toBe(6);
 
-            const result = checkConstraintsForPackage(pkg.get() as IAPackage);
+            const rsp = checkConstraintsForPackage(pkg.get() as IAPackage);
             
-            expect(result.ok).toBe(true);
-            expect(result.status).toBe(0);
+            expect(rsp.ok).toBe(true);
+            expect(rsp.status).toBe(0);
         });
 
         test('should validate package with relationship containing source and target links', () => {
@@ -112,7 +112,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Rationale',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Rationale', '@language': 'en' }
@@ -121,7 +121,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Source',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
@@ -132,7 +132,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
@@ -143,7 +143,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Relationship_Trace',
-                        '@type': 'pig:Relationship',
+                        'pig:specializes': 'pig:Relationship',
                         'pig:itemType': { '@id': 'pig:Relationship' },
                         'dcterms:title': [
                             { '@value': 'Trace', '@language': 'en' }
@@ -151,7 +151,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -214,10 +214,10 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(true);
             expect(items.length).toBe(9);
 
-            const result = checkConstraintsForPackage(pkg.get() as IAPackage);
+            const rsp = checkConstraintsForPackage(pkg.get() as IAPackage);
             
-            expect(result.ok).toBe(true);
-            expect(result.status).toBe(0);
+            expect(rsp.ok).toBe(true);
+            expect(rsp.status).toBe(0);
         });
     });
 
@@ -237,7 +237,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -246,7 +246,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -254,7 +254,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok', // ❌ Duplicate ID
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Another Entity', '@language': 'en' }
@@ -272,12 +272,12 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(671); // Duplicate ID error code
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(671); // Duplicate ID error code
-            expect(result.statusText).toContain('duplicate ID');
-            expect(result.statusText).toContain('o:Entity_Requirement'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(671); // Duplicate ID error code
+            expect(rsp.statusText).toContain('duplicate ID');
+            expect(rsp.statusText).toContain('o:Entity_Requirement'); */
         });
 
         test('should reject package with an item missing ID', () => {
@@ -295,7 +295,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -304,7 +304,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         // ❌ Missing @id
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Entity Without ID', '@language': 'en' }
@@ -320,13 +320,7 @@ describe('PIG Package Constraint Validation', () => {
             /*   if (pck.status().ok)
                    console.error('status:', pck.status()); */
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(670); // Missing ID error code
-            
-        /*    const result = pkg.get() as IAPackage;
-            
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(670); // Missing ID error code
-            expect(result.statusText).toContain('missing id'); */
+            expect(pkg.status().status).toBe(679); // Error code for one or more failed item instantiations
         });
     });
 
@@ -346,7 +340,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -380,13 +374,13 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(673); // Invalid hasClass reference
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(673); // Invalid hasClass reference
-            expect(result.statusText).toContain('hasProperty[0].hasClass');
-            expect(result.statusText).toContain('o:Property_NonExistent');
-            expect(result.statusText).toContain('not found in package'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(673); // Invalid hasClass reference
+            expect(rsp.statusText).toContain('hasProperty[0].hasClass');
+            expect(rsp.statusText).toContain('o:Property_NonExistent');
+            expect(rsp.statusText).toContain('not found in package'); */
         });
 
         test('should reject aProperty referencing wrong type (Link instead of Property)', () => {
@@ -404,7 +398,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Link_RefersTo', // This is a Link, not a Property!
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
@@ -415,7 +409,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -449,13 +443,13 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(673); // Invalid hasClass type
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(673);
-            expect(result.statusText).toContain('hasProperty[0].hasClass');
-            expect(result.statusText).toContain('o:Link_RefersTo');
-            expect(result.statusText).toContain('expected pig:Property, found pig:Link'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(673);
+            expect(rsp.statusText).toContain('hasProperty[0].hasClass');
+            expect(rsp.statusText).toContain('o:Link_RefersTo');
+            expect(rsp.statusText).toContain('expected pig:Property, found pig:Link'); */
         });
     });
 
@@ -535,13 +529,13 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(675); // Invalid hasClass reference
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(675); // Invalid link hasClass reference
-            expect(result.statusText).toContain('hasTargetLink[0].hasClass');
-            expect(result.statusText).toContain('o:Link_NonExistent');
-            expect(result.statusText).toContain('not found in package'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(675); // Invalid link hasClass reference
+            expect(rsp.statusText).toContain('hasTargetLink[0].hasClass');
+            expect(rsp.statusText).toContain('o:Link_NonExistent');
+            expect(rsp.statusText).toContain('not found in package'); */
         });
 
         test('should reject aSourceLink referencing wrong type (Property instead of Link)', () => {
@@ -559,7 +553,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Rationale',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Rationale', '@language': 'en' }
@@ -568,7 +562,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Source',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
@@ -579,7 +573,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
@@ -598,7 +592,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -658,13 +652,13 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(675); // Invalid hasClass type
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(675);
-            expect(result.statusText).toContain('hasSourceLink[0].hasClass');
-            expect(result.statusText).toContain('o:Property_Status');
-            expect(result.statusText).toContain('expected pig:Link, found pig:Property'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(675);
+            expect(rsp.statusText).toContain('hasSourceLink[0].hasClass');
+            expect(rsp.statusText).toContain('o:Property_Status');
+            expect(rsp.statusText).toContain('expected pig:Link, found pig:Property'); */
         });
     });
 });
