@@ -146,7 +146,7 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
     },
     623: {
         en: (fieldName: string) => `${fieldName} is missing id`,
-        de: (fieldName: string) => `${fieldName} fehlt der id`,
+        de: (fieldName: string) => `${fieldName} fehlt die ID`,
         fr: (fieldName: string) => `${fieldName} manque l'id`,
         es: (fieldName: string) => `${fieldName} falta el id`
     },
