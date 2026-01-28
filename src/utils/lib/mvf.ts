@@ -11,7 +11,7 @@
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { LIB, JsonPrimitive, JsonValue, JsonObject, JsonArray, logger } from './helpers';
+import { LIB, JsonPrimitive, JsonValue, JsonObject, logger } from './helpers';
 
 // Map PIG metamodel attributes to/from JSON-LD keys;
 // all other keys are derived from the ontology and handled dynamically:
