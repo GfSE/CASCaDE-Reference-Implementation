@@ -47,6 +47,7 @@
         "dcterms:title": {
             "type": "array",
             "description": "Multi-language titles",
+            "minItems": 1,
             "items": {
                 "$ref": "#/$defs/languageValue"
             }
@@ -54,6 +55,7 @@
         "dcterms:description": {
             "type": "array",
             "description": "Multi-language descriptions",
+            "minItems": 1,
             "items": {
                 "$ref": "#/$defs/languageValue"
             }

@@ -52,6 +52,7 @@
         "dcterms:title": {
             "type": "array",
             "description": "Optional package title",
+            "minItems": 1,
             "items": {
                 "$ref": "#/$defs/languageValue"
             }
@@ -59,6 +60,7 @@
         "dcterms:description": {
             "type": "array",
             "description": "Optional package description",
+            "minItems": 1,
             "items": {
                 "$ref": "#/$defs/languageValue"
             }

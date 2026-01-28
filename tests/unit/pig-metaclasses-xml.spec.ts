@@ -420,7 +420,7 @@ describe('PIG Metaclasses XML Import', () => {
             `;
 
             const anEntity = new AnEntity().setXML(xmlInput);
-            console.debug('anEntity', JSON.stringify(anEntity,null,2));
+            // console.debug('anEntity', JSON.stringify(anEntity,null,2));
 
             // check the attribute values upon creation:
             if (!anEntity.status().ok)

@@ -33,12 +33,13 @@
                 "$ref": "#/$defs/languageValue"
             }
         },
-        "dcterms:description": {
-            "type": "array",
-            "items": {
-                "$ref": "#/$defs/languageValue"
-            }
-        },
+      "dcterms:description": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "$ref": "#/$defs/languageValue"
+        }
+      },
         "pig:eligibleProperty": {
             "type": "array",
             "description": "Array of Property class references that can be used with this Entity",

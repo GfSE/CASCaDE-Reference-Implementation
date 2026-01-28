@@ -89,8 +89,4 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
     result.responseType = 'json';
     
     return result as IRsp<TPigItem[]>;
-/*
-    // TEMPORARY: Return not implemented message
-    return Msg.create(699, 'XML import');
-*/
 }
