@@ -141,7 +141,7 @@
         <bounds x="996" y="60" width="120" height="55"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-b352860236f74501a0a4326327431235" source="id-654b74b495074d0aa06d0bfac5aa3fac" target="id-3ee06b26e2da434e8035b53d920def12" archimateRelationship="id-2f50b6529ab3464fa935aa1c8ff812ce"/>
       </child>
-      <documentation>A process for ontology-based applications is shown:&#xD;
+      <documentation>A process for ontology-based applications with three steps is shown:&#xD;
 1. The application ontology is edited using the PIG classes for ontologies. For example the terms (concepts) for *library*, *book* and *author* plus their relationships *owned-by* and *written-by* are defined.&#xD;
 2. The application data is edited using the classes for application as generated from the application ontology. For example, libraries, books and authors are defined with their relationships.&#xD;
 3. The application data is stored in a graph database, a so-called Triple-Store. For example, the users can query the data to list all libraries owning a given book or to list all authors found in a given library. The latter is a *graph search* which is particularly performant when graph databases are used.&#xD;
@@ -154,9 +154,9 @@ If you like, have a look at the demonstration:&#xD;
 &#xD;
 | Step | Libraries (Example ) | Develop your own example |&#xD;
 | --- | --- | --- |&#xD;
-| 1 | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif&quot;) with loaded classes for building an ontology and some terms. You can add terms of the library domain. | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/data/Classes-for-Ontology.specif&quot;) with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
+| 1 | [Editor](https://specif.de/apps/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif&quot;) with loaded classes for building an ontology and some terms. You can add terms of the library domain. | [Editor](https://specif.de/apps/edit#import=&quot;https://cascade.gfse.org/examples/data/Classes-for-Ontology.specif&quot;) with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
 | 2 | [Library Ontology as HTML](https://cascade.gfse.org/examples/libraries/Library-Ontology%20(Example).html)&lt;br/>[Classes for Libraries](https://cascade.gfse.org/examples/libraries/data/Classes-for-Libraries.specif) to laod in the editor. | Export SpecIF Class Definitions (third option) to load in the next step. |&#xD;
-| 3 | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).specif&quot;) with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | [Editor](https://specif.de/apps-alpha/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
+| 3 | [Editor](https://specif.de/apps/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).specif&quot;) with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | [Editor](https://specif.de/apps/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
 | 4 | [Library Data as HTML](https://cascade.gfse.org/examples/libraries/Libraries%20(Example).html)&lt;br/>[Library Data as Turtle](https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).ttl) to load in the next step. | Export your application data  (Turtle) to load in the next step. |&#xD;
 | 5 | Load library data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). | Load your application data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). |&#xD;
 &#xD;

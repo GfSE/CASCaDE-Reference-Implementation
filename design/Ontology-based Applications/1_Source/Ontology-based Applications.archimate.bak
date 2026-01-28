@@ -22,7 +22,7 @@
     </element>
   </folder>
   <folder name="Application" id="id-f09782c932dd495da41018067847083f" type="application">
-    <element xsi:type="archimate:ApplicationComponent" name="PIG Editor" id="id-98c642d92ebc48969b5a440887ccb1ff">
+    <element xsi:type="archimate:ApplicationComponent" name="PIG App" id="id-98c642d92ebc48969b5a440887ccb1ff">
       <documentation>A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. In this case, the PIG Editor is used both for defining the application ontology and the application data.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="Classes for Ontology [JSON-LD]" id="id-c9fa68c1bfc449558cf431c9c8a9b55c">
@@ -154,9 +154,9 @@ If you like, have a look at the demonstration:&#xD;
 &#xD;
 | Step | Libraries (Example ) | Develop your own example |&#xD;
 | --- | --- | --- |&#xD;
-| 1 | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif&quot;) with loaded classes for building an ontology and some terms. You can add terms of the library domain. | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/data/Classes-for-Ontology.specif&quot;) with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
+| 1 | [Editor](https://specif.de/apps/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif&quot;) with loaded classes for building an ontology and some terms. You can add terms of the library domain. | [Editor](https://specif.de/apps/edit#import=&quot;https://cascade.gfse.org/examples/data/Classes-for-Ontology.specif&quot;) with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
 | 2 | [Library Ontology as HTML](https://cascade.gfse.org/examples/libraries/Library-Ontology%20(Example).html)&lt;br/>[Classes for Libraries](https://cascade.gfse.org/examples/libraries/data/Classes-for-Libraries.specif) to laod in the editor. | Export SpecIF Class Definitions (third option) to load in the next step. |&#xD;
-| 3 | [Editor](https://specif.de/apps-alpha/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).specif&quot;) with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | [Editor](https://specif.de/apps-alpha/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
+| 3 | [Editor](https://specif.de/apps/edit#import=&quot;https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).specif&quot;) with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | [Editor](https://specif.de/apps/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
 | 4 | [Library Data as HTML](https://cascade.gfse.org/examples/libraries/Libraries%20(Example).html)&lt;br/>[Library Data as Turtle](https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).ttl) to load in the next step. | Export your application data  (Turtle) to load in the next step. |&#xD;
 | 5 | Load library data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). | Load your application data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). |&#xD;
 &#xD;
