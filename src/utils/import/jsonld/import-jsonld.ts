@@ -12,7 +12,7 @@
  *  Authors: oskar.dungern@gfse.org, ..
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
- * 
+ *
  * Usage:
  * - Node:   await importJsonLd('C:/path/to/file.jsonld')
  * - URL:    await importJsonLd('https://example/.../doc.jsonld')
@@ -55,12 +55,11 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     // Instantiate APackage and load the document
     const aPackage = new APackage();
     const allItems = aPackage.setJSONLD(doc);
-    
+
     // allItems[0] is the package itself, rest are graph items
-//    const graphItems = allItems.slice(1);
     const expectedCount = doc['@graph']?.length || 0;
     const actualCount = allItems.length -1;
-    
+
     let result: IRsp;
     if (actualCount === expectedCount) {
         result = rspOK;
@@ -73,7 +72,9 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     // Return all items (package + graph items)
     result.response = allItems;
     result.responseType = 'json';
-    
-    return result as IRsp<TPigItem[]>;
+
+    result = result as IRsp<TPigItem[]>;
+
+    return result
 }
 

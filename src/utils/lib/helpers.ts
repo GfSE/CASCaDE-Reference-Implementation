@@ -10,7 +10,7 @@
  *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  *
  *  Design Decisions:
- *  - 
+ *  -
  */
 
 import { IRsp, Rsp, Msg } from './messages';
@@ -29,10 +29,10 @@ const TO_JSONLD: [string, string][] = [
     ['context', '@context'],
     ['id', '@id'],
     ['revision', 'pig:revision'],
-    ['priorRevision', 'pig:priorRevision'], 
+    ['priorRevision', 'pig:priorRevision'],
     ['hasClass', '@type'],
     ['specializes', 'pig:specializes'],
-    ['icon', 'pig:icon'], 
+    ['icon', 'pig:icon'],
     ['value', '@value'],
     ['lang', '@language'],
     ['datatype', 'sh:datatype'],
@@ -47,7 +47,7 @@ const TO_JSONLD: [string, string][] = [
     ['eligibleSourceLink', 'pig:eligibleSourceLink'],
     ['eligibleTargetLink', 'pig:eligibleTargetLink'],
     ['eligibleEndpoint', 'pig:eligibleEndpoint'],
-    ['eligibleValue', 'pig:eligibleValue'], 
+    ['eligibleValue', 'pig:eligibleValue'],
     ['title', 'dcterms:title'],
     ['description', 'dcterms:description'],
     ['created', 'dcterms:created'],
