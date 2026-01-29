@@ -1234,6 +1234,9 @@ export class APackage extends Identifiable implements IAPackage {
         // logger.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
         return this;
     }
+    getHTML(options?: object): stringHTML[] {
+        return ['<div>not implemented yet</div>'];
+    }
     /**
      * Extract all items from an instantiated APackage with status validation
      * Returns an array with the package as first element (if valid), followed by all valid graph items
@@ -1249,7 +1252,6 @@ export class APackage extends Identifiable implements IAPackage {
      * // allItems[1..n] === all valid graph items
      */
     getAllItems(): TPigItem[] {
-        // Validate package structure
 
         if (!Array.isArray(this.graph)) {
             logger.warn('LIB.allItems: APackage has no valid graph array');
