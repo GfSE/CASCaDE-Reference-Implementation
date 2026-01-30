@@ -83,7 +83,7 @@ describe('PIG Package getHTML() Method', () => {
             // First element: Package metadata
             const packageHTML = htmlList[0];
             expect(typeof packageHTML).toBe('string');
-            expect(packageHTML).toContain('pig-package-metadata');
+            expect(packageHTML).toContain('pig-apackage');
             expect(packageHTML).toContain('Test Package');
             expect(packageHTML).toContain('A test package for HTML generation');
             expect(packageHTML).toContain('d:test-package-html');
@@ -98,7 +98,7 @@ describe('PIG Package getHTML() Method', () => {
             // Second element: Entity HTML
             const entityHTML = htmlList[1];
             expect(typeof entityHTML).toBe('string');
-            expect(entityHTML).toContain('pig-entity');
+            expect(entityHTML).toContain('pig-anentity');
             expect(entityHTML).toContain('System shall be secure');
             expect(entityHTML).toContain('The system must implement security measures');
             expect(entityHTML).toContain('d:REQ-001');

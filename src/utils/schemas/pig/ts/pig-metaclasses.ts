@@ -110,6 +110,11 @@ export interface ILanguageText {
 export interface IText {
     value: string;
 }
+export interface IOptionsHTML {
+    widthLeft?: string;  // e.g. '150px' or '67%'
+    itemType?: PigItemTypeValue[];
+    lang?: tagIETF;
+}
 
 //////////////////////////////////////
 // The abstract classes:
@@ -583,7 +588,7 @@ export class Entity extends Element implements IEntity {
     validate(itm: IEntity) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         // ... only at the lowest subclass level:
-        logger.debug('Entity.validate: ', itm);
+        // logger.debug('Entity.validate: ', itm);
         try {
             const ok = SCH.validateEntitySchema(itm);
             if (!ok) {
@@ -911,11 +916,15 @@ export class AnEntity extends AnElement implements IAnEntity {
             return this.set(this.lastStatus.response as IAnEntity);
         return this;
     }
-    getHTML(options?: object): stringHTML {
+    getHTML(options?: IOptionsHTML): stringHTML {
         if (!this.lastStatus.ok) return '<div class="pig-error">Invalid entity</div>';
 
-        const titleText = this.title?.[0]?.value || '';
-        const descText = this.description?.[0]?.value || '';
+        // Extract language preference from options, default to 'en-US'
+        const lang = options?.lang || 'en-US';
+        const widthLeft = options?.widthLeft || '67%';
+
+        const titleText = getLocalText(this.title, lang);
+        const descText = getLocalText(this.description, lang);
 
         // Build properties HTML
         let propertiesHTML = '';
@@ -924,36 +933,36 @@ export class AnEntity extends AnElement implements IAnEntity {
             for (const prop of this.hasProperty) {
                 const propData = prop.get();
                 if (propData && propData.hasClass) {
-                    const propValue = propData.value || propData.idRef || '—';
-                    propertiesHTML += `<dt>${propData.hasClass}</dt><dd>${propValue}</dd>`;
+                    const propValue = passifyHTML(propData.value || propData.idRef || '—');
+                    const propClass = passifyHTML(propData.hasClass);
+                    propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
                 }
             }
             propertiesHTML += '</dl></div>';
         }
 
-        // Build metadata HTML
+        // Build metadata HTML with localized date
         const metadataHTML = `<div class="pig-metadata">
-            <h3>Metadata</h3>
             <dl>
-                <dt>ID</dt><dd>${this.id}</dd>
-                <dt>Class</dt><dd>${this.hasClass || '—'}</dd>
-                <dt>Revision</dt><dd>${this.revision}</dd>
-                <dt>Modified</dt><dd>${new Date(this.modified).toLocaleString('en-US')}</dd>
-                ${this.creator ? `<dt>Creator</dt><dd>${this.creator}</dd>` : ''}
-                ${this.priorRevision && this.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${this.priorRevision.join(', ')}</dd>` : ''}
+                <dt>ID</dt><dd>${passifyHTML(this.id)}</dd>
+                <dt>Class</dt><dd>${passifyHTML(this.hasClass || '—')}</dd>
+                <dt>Revision</dt><dd>${passifyHTML(this.revision)}</dd>
+                <dt>Modified</dt><dd>${getLocalDate(this.modified, lang)}</dd>
+                ${this.creator ? `<dt>Creator</dt><dd>${passifyHTML(this.creator)}</dd>` : ''}
+                ${this.priorRevision && this.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${this.priorRevision.map(r => passifyHTML(r)).join(', ')}</dd>` : ''}
             </dl>
         </div>`;
 
-        return `<div class="pig-entity" style="display: flex; gap: 1rem;">
-            <div class="pig-main" style="flex: 0 0 67%; min-width: 0;">
-                ${titleText ? `<h3>${titleText}</h3>` : ''}
-                ${descText ? `<div class="pig-description">${descText}</div>` : ''}
-            </div>
-            <div class="pig-sidebar" style="flex: 1; min-width: 0;">
-                ${propertiesHTML}
-                ${metadataHTML}
-            </div>
-        </div>`;
+        return `<div class="pig-anentity" style="display: flex; gap: 1rem;">
+                    <div class="col-main" style="flex: 0 0 ${widthLeft}; min-width: 0;">
+                        ${titleText ? `<h3>${titleText}</h3>` : ''}
+                        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
+                    </div>
+                    <div class="col-right" style="flex: 1; min-width: 0;">
+                        ${propertiesHTML}
+                        ${metadataHTML}
+                    </div>
+                </div>`;
     }
 }
 
@@ -1274,31 +1283,49 @@ export class APackage extends Identifiable implements IAPackage {
         // logger.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
         return this;
     }
-    getHTML(options?: object): stringHTML[] {
+    getHTML(options?: IOptionsHTML): stringHTML[] {
         if (!this.lastStatus.ok) {
-            return ['<div class="pig-error">Invalid package</div>'];
+            return [`<div class="pig-error">Invalid package; status: (${this.lastStatus.status}) ${passifyHTML(this.lastStatus.statusText || '')}</div>`];
         }
 
         const result: stringHTML[] = [];
 
-        // 1. Package metadata as first element
-        const titleText = this.title?.[0]?.value || 'Untitled Package';
-        const descText = this.description?.[0]?.value || '';
+        // Extract language preference from options, default to 'en-US'
+        const lang = options?.lang || 'en-US';
+        const widthLeft = options?.widthLeft || '67%';
 
-        const packageMetadata = `<div class="pig-package-metadata">
-        <h2>${titleText}</h2>
+        // 1. Package metadata as first element with localization
+        const titleText = getLocalText(this.title, lang);
+        const descText = getLocalText(this.description, lang);
+
+        const pkgMetadata = `<div class="pig-apackage" style="display: flex; gap: 1rem;">
+                    <div class="col-main" style="flex: 0 0 ${widthLeft}; min-width: 0;">
+                        <h3>${titleText || 'Untitled Package'}</h3>
+                        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
+                    </div>
+                    <div class="col-right" style="flex: 1; min-width: 0;">
+                        <dl>
+                            <dt>ID</dt><dd>${passifyHTML(this.id)}</dd>
+                            ${this.modified ? `<dt>Modified</dt><dd>${getLocalDate(this.modified, lang)}</dd>` : ''}
+                            ${this.creator ? `<dt>Creator</dt><dd>${passifyHTML(this.creator)}</dd>` : ''}
+                            <dt>Items in Graph</dt><dd>${this.graph.length}</dd>
+                        </dl>
+                    </div>
+                </div>`;
+        result.push(pkgMetadata);
+
+    /*    const packageMetadata = `<div class="pig-package-metadata">
+        <h2>${titleText || 'Untitled Package'}</h2>
         ${descText ? `<div class="pig-description">${descText}</div>` : ''}
         <dl>
-            <dt>ID</dt><dd>${this.id}</dd>
-            ${this.modified ? `<dt>Modified</dt><dd>${new Date(this.modified).toLocaleString('en-US')}</dd>` : ''}
-            ${this.creator ? `<dt>Creator</dt><dd>${this.creator}</dd>` : ''}
+            <dt>ID</dt><dd>${passifyHTML(this.id)}</dd>
+            ${this.modified ? `<dt>Modified</dt><dd>${getLocalDate(this.modified, lang)}</dd>` : ''}
+            ${this.creator ? `<dt>Creator</dt><dd>${passifyHTML(this.creator)}</dd>` : ''}
             <dt>Items in Graph</dt><dd>${this.graph.length}</dd>
         </dl>
-    </div>`;
+    </div>`; */
 
-        result.push(packageMetadata);
-
-        // 2. Add HTML for all anEntity items
+        // 2. Add HTML for all anEntity items (options are passed through)
         for (const item of this.graph) {
             if (item.itemType === PigItemType.anEntity) {
                 const entityHTML = (item as AnEntity).getHTML(options);
@@ -2657,102 +2684,98 @@ function isMultiLanguageText(propertyName: string): boolean {
     return multiLangFields.has(localName) || multiLangFields.has(propertyName);
 }
 
-/**
- * Parse XML string and convert to JSON object
- * @param xml - XML string to parse
- * @returns IRsp with JsonObject on success, error message on failure
- *
-function xml2json(xml: stringXML): IRsp<unknown> {
+// Helper function to get localized text from multi-language array
+function getLocalText(texts?: ILanguageText[], lang?: TISODateString): string {
+    if (!texts || texts.length === 0) return '';
+
+    lang = lang ?? 'en-US';
+
+    // Try to find exact language match
+    const exact = texts.find(t => t.lang === lang);
+    if (exact) return passifyHTML(exact.value);
+
+    // Try to find language prefix match (e.g., 'en' for 'en-US')
+    const langPrefix = lang.split('-')[0];
+    const prefixMatch = texts.find(t => t.lang?.startsWith(langPrefix));
+    if (prefixMatch) return passifyHTML(prefixMatch.value);
+
+    // Fallback to first available text
+    return passifyHTML(texts[0].value);
+}
+
+// Format date using the specified locale
+function getLocalDate(dateStr: string, lang?: TISODateString): string {
     try {
-        logger.debug('xml2json: parsing ',xml);
-
-        // Parse XML string
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(xml, 'text/xml');
-
-        // Check for parsing errors
-        const parserError = doc.querySelector('parsererror');
-        if (parserError) {
-            const errorMessage = parserError.textContent || 'Unknown XML parsing error';
-            logger.error('xml2json: XML parsing failed:', errorMessage);
-            return Msg.create(690, 'XML', errorMessage);
-        }
-
-        // Get root element
-        const rootElement = doc.documentElement;
-        if (!rootElement) {
-            return Msg.create(690, 'XML', 'No root element found in XML');
-        }
-
-        // Extract data from XML element
-        const result: any = {};
-
-        // Extract id from attribute
-        if (rootElement.hasAttribute('id')) {
-            result.id = rootElement.getAttribute('id');
-        }
-
-        // Extract itemType from element name (e.g., pig:Property -> pig:Property)
-        const tagName = rootElement.tagName;
-        if (tagName.includes(':')) {
-            result.itemType = tagName;
-        } else {
-            result.itemType = tagName;
-        }
-
-        // Extract rdf:type attribute if present (for hasClass)
-        if (rootElement.hasAttribute('rdf:type')) {
-            result.hasClass = rootElement.getAttribute('rdf:type');
-        }
-
-        // Extract specializes from rdfs:subClassOf or rdfs:subPropertyOf
-        const subClassOf = rootElement.querySelector('rdfs\\:subClassOf, [*|subClassOf]');
-        if (subClassOf && subClassOf.textContent) {
-            result.specializes = subClassOf.textContent.trim();
-        }
-        const subPropertyOf = rootElement.querySelector('rdfs\\:subPropertyOf, [*|subPropertyOf]');
-        if (subPropertyOf && subPropertyOf.textContent) {
-            result.specializes = subPropertyOf.textContent.trim();
-        }
-
-        // Extract multi-language title elements
-        const titleElements = rootElement.querySelectorAll('dcterms\\:title, [*|title]');
-        if (titleElements.length > 0) {
-            result.title = Array.from(titleElements).map(el => {
-                const langAttr = el.getAttribute('xml:lang') || el.getAttribute('lang');
-                return {
-                    value: el.textContent?.trim() || '',
-                    ...(langAttr && { lang: langAttr })
-                };
-            });
-        }
-
-        // Extract multi-language description elements
-        const descriptionElements = rootElement.querySelectorAll('dcterms\\:description, [*|description]');
-        if (descriptionElements.length > 0) {
-            result.description = Array.from(descriptionElements).map(el => {
-                const langAttr = el.getAttribute('xml:lang') || el.getAttribute('lang');
-                return {
-                    value: el.textContent?.trim() || '',
-                    ...(langAttr && { lang: langAttr })
-                };
-            });
-        }
-
-        logger.debug('xml2json: successfully parsed XML');
-
-        // Return success with parsed result
-        return {
-            ...rspOK,
-            response: result as JsonObject,
-            responseType: 'json'
-        };
-
-    } catch (err: any) {
-        logger.error('xml2json: exception:', err);
-        return Msg.create(690, 'XML', err?.message ?? String(err));
+        return new Date(dateStr).toLocaleString(lang ?? 'en-US');
+    } catch {
+        return dateStr;
     }
-} */
+}
+/**
+ * Sanitize HTML by removing dangerous elements and attributes that could execute code
+ * Preserves safe XHTML formatting (p, div, span, strong, em, etc.)
+ * Removes: <script>, <style>, <embed>, <iframe>, <object>, <link>, <meta>, <form>
+ * Removes: All event handler attributes (onclick, onerror, onload, etc.)
+ * Removes: javascript: and data: protocols in href and src attributes
+ * 
+ * @param html - HTML string to sanitize
+ * @returns Sanitized HTML string safe for rendering, preserving XHTML structure
+ * 
+ * @example
+ * const unsafe = '<p onclick="alert(1)">Text</p><script>alert(2)</script>';
+ * const safe = passifyHTML(unsafe);
+ * // Returns: '<p>Text</p>'
+ */
+function passifyHTML(html: string): string {
+    if (!html || typeof html !== 'string') return '';
+
+    let passified = html;
+
+    // 1. Remove dangerous tags including their content
+    const dangerousTags = [
+        'script',
+        'style',
+        'embed',
+        'iframe',
+    //    'object',  
+        'link',
+        'meta',
+        'base',
+        'form'
+    ];
+
+    dangerousTags.forEach(tag => {
+        // Remove tags with any attributes (case-insensitive, multiline, greedy)
+        const regex = new RegExp(`<${tag}[^>]*>.*?<\\/${tag}>`, 'gis');
+        passified = passified.replace(regex, '');
+        // Remove self-closing tags
+        const selfClosing = new RegExp(`<${tag}[^>]*\\/?>`, 'gi');
+        passified = passified.replace(selfClosing, '');
+    });
+
+    // 2. Remove event handler attributes (onXYZ="...")
+    // Matches on followed by word characters, capturing until the closing quote
+    passified = passified.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
+
+    // 3. Remove dangerous protocols from href and src attributes
+    // Replace javascript: and data: with # (safer than removing the attribute)
+    passified = passified.replace(/\s+(href|src)\s*=\s*["']\s*(javascript|data):[^"']*["']/gi, ' $1="#"');
+
+    // 4. Remove dangerous attributes
+    const dangerousAttrs = [
+        'formaction',
+        'action',
+        'dynsrc',
+        'lowsrc'
+    ];
+
+    dangerousAttrs.forEach(attr => {
+        const regex = new RegExp(`\\s+${attr}\\s*=\\s*["'][^"']*["']`, 'gi');
+        passified = passified.replace(regex, '');
+    });
+
+    return passified;
+}
 /**
  * Replace top-level string values that are valid id-strings with id-objects.
  * - Non-recursive (flat): only replaces direct properties of the provided object.

@@ -54,15 +54,6 @@ export const XML_NAMESPACES = Object.entries(NAMESPACE_MAP)
 
 // LIB object with helper methods
 export const LIB = {
-/*    createRsp<T = unknown>(status: number, statusText?: string, response?: T, responseType?: XMLHttpRequestResponseType): IRsp<T> {
-        return {
-            status: status,
-            statusText: statusText,
-            response: response,
-            responseType: responseType,
-            ok: status > 199 && status < 300 || status === 0
-        };
-    }, */
 
     isLeaf(node: JsonValue): boolean {
         return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
@@ -243,6 +234,7 @@ export const LIB = {
         }
         return value;
     },
+
     /**
      * Wrap XML fragment with root element and namespace declarations
      * @param xml - XML fragment (without root wrapper)
