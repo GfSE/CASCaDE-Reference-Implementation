@@ -2,12 +2,12 @@
  * Product Information Graph (PIG) - Centralized error and status messages
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /** Product Information Graph (PIG) - Centralized error and status messages
 *   Dependencies: none (self-contained)
 *   Authors: oskar.dungern@gfse.org
 *   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
-*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
 *
 *   Design Decisions:
 *   - All PIG validation and error messages centralized here
@@ -103,8 +103,8 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `'${itemType}' debe tener una referencia hasClass`
     },
 
-    // Identifiable validation (610-619)
-    610: {
+    // Identifiable validation
+    602: {
         en: (fromId: string, toId: string) => 
             `Cannot change the id of an item (tried to change from ${fromId} to ${toId})`,
         de: (fromId: string, toId: string) => 
@@ -114,7 +114,7 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
         es: (fromId: string, toId: string) => 
             `No se puede cambiar el id de un elemento (intento de ${fromId} a ${toId})`
     },
-    611: {
+    603: {
         en: (fromSpec: string, toSpec: string) => 
             `Cannot change the specialization (tried to change from ${fromSpec} to ${toSpec})`,
         de: (fromSpec: string, toSpec: string) => 
@@ -287,6 +287,42 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `Entrada ${fieldName}[${index}]: 'lang' debe ser una cadena no vacía`
     },
 
+    // Item instantiation and validation (650-659)
+    650: {
+        en: (op: string, field: string, id: string) => `${op}: Missing required field "${field}" in item with id "${id}"`,
+        de: (op: string, field: string, id: string) => `${op}: Pflichtfeld "${field}" fehlt bei Item mit ID "${id}"`,
+        fr: (op: string, field: string, id: string) => `${op}: Champ obligatoire "${field}" manquant dans l'élément avec id "${id}"`,
+        es: (op: string, field: string, id: string) => `${op}: Falta el campo obligatorio "${field}" en el elemento con id "${id}"`
+    },
+
+    651: {
+        en: (op: string, field: string) => `${op}: Item type "${field}" is not allowed in package graph`,
+        de: (op: string, field: string) => `${op}: Elementtyp "${field}" ist im Package-Graph nicht erlaubt`,
+        fr: (op: string, field: string) => `${op}: Le type d'élément "${field}" n'est pas autorisé dans le graphe de package`,
+        es: (op: string, field: string) => `${op}: El tipo de elemento "${field}" no está permitido en el grafo del paquete`
+    },
+
+    652: {
+        en: (op: string, field: string) => `${op}: Unable to create instance for itemType "${field}"`,
+        de: (op: string, field: string) => `${op}: Instanz für itemType "${field}" kann nicht erstellt werden`,
+        fr: (op: string, field: string) => `${op}: Impossible de créer une instance pour itemType "${field}"`,
+        es: (op: string, field: string) => `${op}: No se puede crear una instancia para itemType "${field}"`
+    },
+
+    653: {
+        en: (op: string, field: string, id: string) => `${op}: Validation failed for ${field} with id "${id}"`,
+        de: (op: string, field: string, id: string) => `${op}: Validierung fehlgeschlagen für ${field} mit ID "${id}"`,
+        fr: (op: string, field: string, id: string) => `${op}: Échec de validation pour ${field} avec id "${id}"`,
+        es: (op: string, field: string, id: string) => `${op}: Falló la validación para ${field} con id "${id}"`
+    },
+
+    654: {
+        en: (op: string, field: string, err: string) => `${op}: Failed to instantiate ${field}: ${err}`,
+        de: (op: string, field: string, err: string) => `${op}: Instanziierung von ${field} fehlgeschlagen: ${err}`,
+        fr: (op: string, field: string, err: string) => `${op}: Échec d'instanciation de ${field}: ${err}`,
+        es: (op: string, field: string, err: string) => `${op}: Fallo al instanciar ${field}: ${err}`
+    },
+
     // Package constraint validation (670-679)
     670: {
         en: (index: number) =>
@@ -348,6 +384,16 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
         es: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
             `Error en la validación del paquete: elemento '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`
     },
+    679: {
+        en: (op: string, act: number, exp: number) =>
+            `${op}: Created ${act} of ${exp} graph items`,
+        de: (op: string, act: number, exp: number) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
+        fr: (op: string, act: number, exp: number) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}`,
+        es: (op: string, act: number, exp: number) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
+    },
 
     // Schema validation (680-689)
     680: {
@@ -383,20 +429,20 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
 
     // General errors (690-699)
     690: {
-        en: (msg: string) => `Failed to parse JSON-LD: ${msg}`,
-        de: (msg: string) => `Parsing von JSON-LD fehlgeschlagen: ${msg}`,
-        fr: (msg: string) => `Échec de l'analyse JSON-LD: ${msg}`,
-        es: (msg: string) => `Error al analizar JSON-LD: ${msg}`
+        en: (format: string, msg: string) => `Failed to parse ${format}: ${msg}`,
+        de: (format: string, msg: string) => `Parsing von ${format} fehlgeschlagen: ${msg}`,
+        fr: (format: string, msg: string) => `Échec de l'analyse ${format}: ${msg}`,
+        es: (format: string, msg: string) => `Error al analizar ${format}: ${msg}`
     },
     691: {
-        en: (created: number, total: number) =>
-            `Imported ${created} of ${total} items from JSON-LD.`,
-        de: (created: number, total: number) =>
-            `${created} von ${total} Elementen aus JSON-LD importiert.`,
-        fr: (created: number, total: number) =>
-            `${created} éléments sur ${total} importés depuis JSON-LD.`,
-        es: (created: number, total: number) =>
-            `${created} de ${total} elementos importados desde JSON-LD.`
+        en: (format: string, created: number, total: number) =>
+            `Imported ${created} of ${total} items from ${format}`,
+        de: (format: string, created: number, total: number) =>
+            `${created} von ${total} Elementen aus ${format} importiert`,
+        fr: (format: string, created: number, total: number) =>
+            `${created} éléments sur ${total} importés depuis ${format}`,
+        es: (format: string, created: number, total: number) =>
+            `${created} de ${total} elementos importados desde ${format}`
     },
     692: {
         en: (url: string, statusText: string) =>
@@ -449,14 +495,20 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `Tipo de fuente no compatible al leer un archivo como texto`
     },
     697: {
-        en: (errors: string) =>
-            `JSON-LD package validation failed: ${errors}`,
-        de: (errors: string) =>
-            `JSON-LD Paket-Validierung fehlgeschlagen: ${errors}`,
-        fr: (errors: string) =>
-            `Échec de la validation du package JSON-LD: ${errors}`,
-        es: (errors: string) =>
-            `Error en la validación del paquete JSON-LD: ${errors}`
+        en: (format: string, errors: string) =>
+            `${format} package validation failed: ${errors}`,
+        de: (format: string, errors: string) =>
+            `${format} Paket-Validierung fehlgeschlagen: ${errors}`,
+        fr: (format: string, errors: string) =>
+            `Échec de la validation du package ${format}: ${errors}`,
+        es: (format: string, errors: string) =>
+            `Error en la validación del paquete ${format}: ${errors}`
+    },
+    699: {
+        en: (func: string) => `${func} not yet implemented`,
+        de: (func: string) => `${func} ist noch nicht implementiert`,
+        fr: (func: string) => `${func} pas encore implémenté`,
+        es: (func: string) => `${func} aún no implementado`
     }
 };
 

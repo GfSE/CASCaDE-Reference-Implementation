@@ -21,8 +21,8 @@
 
 import { IRsp, rspOK, Msg } from "../../lib/messages";
 import { LIB, logger } from "../../lib/helpers";
-import { APackage, TPigItem } from '../../schemas/pig/pig-metaclasses';
-import { SCH_LD } from '../../schemas/pig/pig-schemata-jsonld';
+import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
+import { SCH_LD } from '../../schemas/pig/jsonld/pig-schemata-jsonld';
 
 /**
  * Import JSON-LD document and instantiate PIG items
@@ -35,26 +35,32 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         return rsp;
 
     const text = rsp.response as string;
-    logger.info('importJSONLD: loaded text length ' + text.length);
+    // logger.info('importJSONLD: loaded text length ' + text.length);
 
     let doc: any;
     try {
         doc = JSON.parse(text);
     } catch (err: any) {
-        return Msg.create(690, err?.message ?? err);
+        return Msg.create(690, 'JSON-LD', err?.message ?? err);
     }
 
     // ✅ Validate entire JSON-LD document structure
-    const isValidPackage = SCH_LD.validatePackageLD(doc);
+    const isValidPackage = await SCH_LD.validatePackageLD(doc);
     if (!isValidPackage) {
-        const errors = SCH_LD.getValidatePackageLDErrors();
+        const errors = await SCH_LD.getValidatePackageLDErrors();
         logger.error('JSON-LD package validation failed:', errors);
-        return Msg.create(697, errors);
+        return Msg.create(697, 'JSON-LD', errors);
     }
 
     // Instantiate APackage and load the document
-    const aPackage = new APackage();
-    const allItems = aPackage.setJSONLD(doc);
+    const aPackage = new APackage().setJSONLD(doc);
+
+    // Check if package was successfully created
+    if (!aPackage.status().ok) {
+        return aPackage.status();
+    }
+
+    const allItems = aPackage.getAllItems();
     
     // allItems[0] is the package itself, rest are graph items
 //    const graphItems = allItems.slice(1);
@@ -66,7 +72,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         result = rspOK;
         logger.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
     } else {
-        result = Msg.create(691, actualCount, expectedCount);
+        result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
         logger.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items`);
     }
 

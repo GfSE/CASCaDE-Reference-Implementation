@@ -1,0 +1,104 @@
+import * as fs from 'fs';
+import * as path from 'path';
+import { importXML } from '../../src/utils/import/xml/import-package-xml';
+import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
+
+describe('importXML (file system)', () => {
+    // List of relative filenames (relative to this test file). Add more entries as needed.
+    const filenames: string[] = [
+        //"../data/XML/05/Project 'Requirement with Enumerated Property'.pig.xml",
+        //"../data/XML/11/Alice.pig.xml",
+        "../data/XML/21/Project 'Very Simple Model (FMC) with Requirements'.pig.xml",
+        //"../data/XML/22/Small Autonomous Vehicle.pig.xml"
+        // add more test files here, e.g.
+        // "../data/XML/another-sample.pig.xml"
+    ];
+    let processedCount = 0;
+
+    // Create a separate Jest test for each filename.
+    // If a file is missing we use test.skip so CI/test run remains stable.
+    filenames.forEach((filenameRel) => {
+        //    console.debug('filenameRel', filenameRel);
+        const testFile = path.resolve(__dirname, filenameRel);
+        const testName = path.basename(testFile);
+        const runner = fs.existsSync(testFile) ? test : test.skip;
+        //    console.debug('testFile', testFile, testName, runner);
+
+        runner(`imports ${testName} and instantiates PIG classes`, async () => {
+            // import and test
+            const rsp = await importXML(testFile);
+            if (!rsp.ok)
+                console.warn('importXML', rsp.status, rsp.statusText);
+            // expect(rsp.ok).toBe(true);
+            // expect(rsp.status).toSatisfy((status: number) => [0, 691].includes(status)); ... needs jest-extended
+            // expect(rsp.status).toBeOneOf([0, 691]);  ... needs jest-extended
+            expect(rsp.status === 0 || rsp.status === 691).toBe(true); // some or all items have been processed
+            processedCount++;
+
+            const instances = rsp.response as TPigItem[];
+            //    console.debug('instances', instances);
+
+            // basic expectations
+            expect(Array.isArray(instances)).toBe(true);
+            expect(instances.length).toBeGreaterThan(0);
+
+            // console.debug(`import-xml: `,instances);
+            instances.forEach((itm, index) => {
+                //    console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status);
+                // console.debug(JSON.stringify(itm.get(), null, 2));
+                expect(itm.status().ok).toBe(true);
+                // each instantiated item must have a successful status
+                // additional per-item assertions can be added here
+                //    expect(itm).toBeInstanceOf(Property);
+                //    expect(inst.id).toBe('dcterms:type');
+                //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
+                //    expect(inst.datatype).toBe('xs:string');
+            });
+        });
+    });
+    test('Check the number of files processed', () => {
+        // Ensure that all files were processed:
+        expect(processedCount).toBe(filenames.length);
+    });
+
+    /*    test('reads XML from multiple files and instantiates PIG classes', async () => {
+            let processedCount = 0;
+    
+            for (const filenameRel of filenames) {
+                const testFile = path.resolve(__dirname, filenameRel);
+                if (!fs.existsSync(testFile)) {
+                    // Skip missing test files but warn so missing data is visible in CI logs
+                    // eslint-disable-next-line no-console
+                    console.warn(`import-xml test: file not found, skipping: ${testFile}`);
+                    continue;
+                }
+            //    console.debug('testFile', testFile);
+    
+                // import and test
+                // awaits the importer for each file in sequence
+                const rsp = await importXML(testFile);
+                const instances = rsp.response as TPigItem[];
+                console.debug('instances', instances);
+    
+                // basic expectations
+                expect(Array.isArray(instances)).toBe(true);
+                expect(instances.length).toBeGreaterThan(0);
+    
+                instances.forEach((itm, index) => {
+                    // each instantiated item must have a successful status
+                    expect(itm.status().ok).toBe(true);
+                    // further per-item assertions can be added here
+                    //    expect(itm).toBeInstanceOf(Property);
+                    //    expect(inst.id).toBe('dcterms:type');
+                    //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
+                    //    expect(inst.datatype).toBe('xs:string');
+                    console.debug(`Instance ${index}:`, itm);
+                });
+    
+                processedCount++;
+            }
+    
+            // Ensure that all files were processed:
+            expect(processedCount).toBe(filenames.length);
+        }); */
+});

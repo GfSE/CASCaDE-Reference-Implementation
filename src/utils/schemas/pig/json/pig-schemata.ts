@@ -22,7 +22,7 @@
  * - eligible values in Property only for string values; other datatypes to be implemented
 */
 
-import { ajv } from '../../../plugins/ajv';
+import { ajv } from '../../../../plugins/ajv';
 
 const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
 //const PROP_NAME_PATTERN = '(^[A-Za-z0-9_\\-]+:[^:\\s]+$)|(^https?:\\/\\/\\S+$)';
@@ -215,7 +215,8 @@ const ENTITY_SCHEMA = {
             additionalProperties: false,
             properties: {
                 value: { type: 'string' }
-            }
+            },
+            description: 'string or data URI of an icon representing the entity'
         },
         title: {
             type: 'array',
@@ -281,7 +282,8 @@ const RELATIONSHIP_SCHEMA = {
             additionalProperties: false,
             properties: {
                 value: { type: 'string' }
-            }
+            },
+            description: 'string or data URI of an icon representing the relationship'
         },
         title: {
             type: 'array',
