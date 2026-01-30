@@ -912,8 +912,48 @@ export class AnEntity extends AnElement implements IAnEntity {
         return this;
     }
     getHTML(options?: object): stringHTML {
-        // ToDo: implement a HTML representation of the entity including its properties
-        return '<div>not implemented yet</div>';
+        if (!this.lastStatus.ok) return '<div class="pig-error">Invalid entity</div>';
+
+        const titleText = this.title?.[0]?.value || '';
+        const descText = this.description?.[0]?.value || '';
+
+        // Build properties HTML
+        let propertiesHTML = '';
+        if (this.hasProperty && this.hasProperty.length > 0) {
+            propertiesHTML = '<div class="pig-properties"><h3>Properties</h3><dl>';
+            for (const prop of this.hasProperty) {
+                const propData = prop.get();
+                if (propData && propData.hasClass) {
+                    const propValue = propData.value || propData.idRef || '—';
+                    propertiesHTML += `<dt>${propData.hasClass}</dt><dd>${propValue}</dd>`;
+                }
+            }
+            propertiesHTML += '</dl></div>';
+        }
+
+        // Build metadata HTML
+        const metadataHTML = `<div class="pig-metadata">
+            <h3>Metadata</h3>
+            <dl>
+                <dt>ID</dt><dd>${this.id}</dd>
+                <dt>Class</dt><dd>${this.hasClass || '—'}</dd>
+                <dt>Revision</dt><dd>${this.revision}</dd>
+                <dt>Modified</dt><dd>${new Date(this.modified).toLocaleString('en-US')}</dd>
+                ${this.creator ? `<dt>Creator</dt><dd>${this.creator}</dd>` : ''}
+                ${this.priorRevision && this.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${this.priorRevision.join(', ')}</dd>` : ''}
+            </dl>
+        </div>`;
+
+        return `<div class="pig-entity" style="display: flex; gap: 1rem;">
+				<div class="pig-main" style="flex: 0 0 67%; min-width: 0;">
+					${titleText ? `<h3>${titleText}</h3>` : ''}
+					${descText ? `<div class="pig-description">${descText}</div>` : ''}
+				</div>
+				<div class="pig-sidebar" style="flex: 1; min-width: 0;">
+					${propertiesHTML}
+					${metadataHTML}
+				</div>
+			</div>`;
     }
 }
 
@@ -1235,7 +1275,38 @@ export class APackage extends Identifiable implements IAPackage {
         return this;
     }
     getHTML(options?: object): stringHTML[] {
-        return ['<div>not implemented yet</div>'];
+        if (!this.lastStatus.ok) {
+            return ['<div class="pig-error">Invalid package</div>'];
+        }
+
+        const result: stringHTML[] = [];
+
+        // 1. Package metadata as first element
+        const titleText = this.title?.[0]?.value || 'Untitled Package';
+        const descText = this.description?.[0]?.value || '';
+
+        const packageMetadata = `<div class="pig-package-metadata">
+        <h2>${titleText}</h2>
+        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
+        <dl>
+            <dt>ID</dt><dd>${this.id}</dd>
+            ${this.modified ? `<dt>Modified</dt><dd>${new Date(this.modified).toLocaleString('en-US')}</dd>` : ''}
+            ${this.creator ? `<dt>Creator</dt><dd>${this.creator}</dd>` : ''}
+            <dt>Items in Graph</dt><dd>${this.graph.length}</dd>
+        </dl>
+    </div>`;
+
+        result.push(packageMetadata);
+
+        // 2. Add HTML for all anEntity items
+        for (const item of this.graph) {
+            if (item.itemType === PigItemType.anEntity) {
+                const entityHTML = (item as AnEntity).getHTML(options);
+                result.push(entityHTML);
+            }
+        }
+
+        return result;
     }
     /**
      * Extract all items from an instantiated APackage with status validation
