@@ -945,15 +945,15 @@ export class AnEntity extends AnElement implements IAnEntity {
         </div>`;
 
         return `<div class="pig-entity" style="display: flex; gap: 1rem;">
-				<div class="pig-main" style="flex: 0 0 67%; min-width: 0;">
-					${titleText ? `<h3>${titleText}</h3>` : ''}
-					${descText ? `<div class="pig-description">${descText}</div>` : ''}
-				</div>
-				<div class="pig-sidebar" style="flex: 1; min-width: 0;">
-					${propertiesHTML}
-					${metadataHTML}
-				</div>
-			</div>`;
+            <div class="pig-main" style="flex: 0 0 67%; min-width: 0;">
+                ${titleText ? `<h3>${titleText}</h3>` : ''}
+                ${descText ? `<div class="pig-description">${descText}</div>` : ''}
+            </div>
+            <div class="pig-sidebar" style="flex: 1; min-width: 0;">
+                ${propertiesHTML}
+                ${metadataHTML}
+            </div>
+        </div>`;
     }
 }
 
