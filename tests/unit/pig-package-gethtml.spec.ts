@@ -4,7 +4,7 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { APackage, PigItemType } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
+import { APackage } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 
 describe('PIG Package getHTML() Method', () => {
     describe('Valid Package with Single Entity', () => {
