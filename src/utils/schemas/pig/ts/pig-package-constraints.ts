@@ -31,7 +31,6 @@
  *   ✅ aLink.hasClass → Link
  *      anEntity and aRelationship class references
  *      Entity and Relationship specializes references
- *      @type consistency
  * Phase 2 (important):
  *      namespace prefixes are defined in the context
  *      Enumeration value references
