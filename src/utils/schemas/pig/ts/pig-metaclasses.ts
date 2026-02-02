@@ -1062,6 +1062,19 @@ export class APackage extends Identifiable implements IAPackage {
     }
 
     validate(itm: IAPackage, checks?: ConstraintCheckType[] ): IRsp {
+        // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        // ... only at the lowest subclass level:
+        logger.debug('APackage.validate: ', itm);
+        try {
+            const ok = SCH.validateAPackageSchema(itm);
+            if (!ok) {
+                const msg = SCH.getValidateAPackageErrors();
+                return Msg.create(681, 'aPackage', itm.id, msg);
+            }
+        } catch (err: any) {
+            return Msg.create(682, 'aRelationship', itm.id, err?.message ?? String(err));
+        }
+
         // graph must be present and be an array
         if (!Array.isArray(itm.graph) || itm.graph.length < 1) {
             return Msg.create(630, 'graph');

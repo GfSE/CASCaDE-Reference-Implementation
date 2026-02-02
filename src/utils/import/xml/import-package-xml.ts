@@ -63,7 +63,8 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
     */
 
     // Instantiate APackage directly from XML string
-    const aPackage = new APackage().setXML(
+    const aPackage = new APackage().setXML(xmlString); // apply all constraints checks by default
+/*    const aPackage = new APackage().setXML(
         xmlString,
         // some examples are incomplete, so we skip the tests for specializes:
         [
@@ -74,7 +75,7 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
             ConstraintCheckType.aRelationshipHasClass,
         ]
     );
-
+*/
     // Check if package was successfully created
     if (!aPackage.status().ok) {
         return aPackage.status();

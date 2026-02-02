@@ -90,7 +90,7 @@
         </pig:Property>
 
         <pig:Property id="pig:category">
-            <pig:specializes>dcterms:type</pig:specializes>
+            <pig:specializes>pig:Property</pig:specializes>
             <dcterms:title>has category</dcterms:title>
             <dcterms:description>Specifies a category for an element (entity, relationship or organizer).</dcterms:description>
             <xs:simpleType>

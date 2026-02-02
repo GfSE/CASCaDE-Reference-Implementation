@@ -240,7 +240,7 @@
         {
             "@id": "pig:category",
             "pig:specializes": {
-                "@id": "dcterms:type"
+                "@id": "pig:Property"
             },
             "pig:itemType": {
                 "@id": "pig:Property"
