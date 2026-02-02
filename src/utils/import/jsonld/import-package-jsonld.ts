@@ -23,6 +23,7 @@ import { IRsp, rspOK, Msg } from "../../lib/messages";
 import { LIB, logger } from "../../lib/helpers";
 import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
 import { SCH_LD } from '../../schemas/pig/jsonld/pig-schemata-jsonld';
+import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
 
 /**
  * Import JSON-LD document and instantiate PIG items
@@ -53,7 +54,17 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     }
 
     // Instantiate APackage and load the document
-    const aPackage = new APackage().setJSONLD(doc);
+    const aPackage = new APackage().setJSONLD(
+        doc,
+        // some examples are incomplete, so we skip the tests for specializes:
+        [
+            ConstraintCheckType.UniqueIds,
+            ConstraintCheckType.aPropertyHasClass,
+            ConstraintCheckType.aLinkHasClass,
+            ConstraintCheckType.anEntityHasClass,
+            ConstraintCheckType.aRelationshipHasClass,
+        ]
+    );
 
     // Check if package was successfully created
     if (!aPackage.status().ok) {

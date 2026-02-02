@@ -22,6 +22,7 @@
 import { IRsp, rspOK, Msg } from '../../lib/messages';
 import { LIB, logger } from '../../lib/helpers';
 import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
+import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
 
 /**
  * Import XML document and instantiate PIG items
@@ -60,8 +61,19 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
             return Msg.create(697, 'XML', errors);
         }
     */
-    // ✅ Instantiate APackage directly from XML string
-    const aPackage = new APackage().setXML(xmlString);
+
+    // Instantiate APackage directly from XML string
+    const aPackage = new APackage().setXML(
+        xmlString,
+        // some examples are incomplete, so we skip the tests for specializes:
+        [
+            ConstraintCheckType.UniqueIds,
+            ConstraintCheckType.aPropertyHasClass,
+            ConstraintCheckType.aLinkHasClass,
+            ConstraintCheckType.anEntityHasClass,
+            ConstraintCheckType.aRelationshipHasClass,
+        ]
+    );
 
     // Check if package was successfully created
     if (!aPackage.status().ok) {

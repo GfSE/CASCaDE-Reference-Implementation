@@ -8,7 +8,7 @@ describe('importJSONLD (file system)', () => {
     const filenames:string[] = [
         //"../data/JSON-LD/05/Project 'Requirement with Enumerated Property'.pig.jsonld",
         //"../data/JSON-LD/11/Alice.pig.jsonld",
-        //"../data/JSON-LD/21/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
+        "../data/JSON-LD/21/Project 'Very Simple Model (FMC) with Requirements'.pig.jsonld",
         //"../data/JSON-LD/22/Small Autonomous Vehicle.pig.jsonld"
         // add more test files here, e.g.
         // "../data/JSON-LD/another-sample.pig.jsonld"

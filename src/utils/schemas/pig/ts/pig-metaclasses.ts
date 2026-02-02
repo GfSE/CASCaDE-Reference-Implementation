@@ -36,7 +36,7 @@ import { MVF } from "../../../lib/mvf";
 import { JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../../lib/helpers";
 // use central Ajv instance from the Vue plugin:
 import { SCH } from '../json/pig-schemata';
-import { checkConstraintsForPackage } from './pig-package-constraints';
+import { checkConstraintsForPackage, ConstraintCheckType } from './pig-package-constraints';
 // optional: import type for better TS typing where needed
 
 export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
@@ -111,8 +111,8 @@ export interface IText {
     value: string;
 }
 export interface IOptionsHTML {
-    widthLeft?: string;  // e.g. '150px' or '67%'
-    itemType?: PigItemTypeValue[];
+    widthMain?: string;  // width of the main column, e.g. '150px' or '67%'
+    itemType?: PigItemTypeValue[]; // itemTypes to include
     lang?: tagIETF;
 }
 
@@ -921,7 +921,7 @@ export class AnEntity extends AnElement implements IAnEntity {
 
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang || 'en-US';
-        const widthLeft = options?.widthLeft || '67%';
+        const widthMain = options?.widthMain || '67%';
 
         const titleText = getLocalText(this.title, lang);
         const descText = getLocalText(this.description, lang);
@@ -954,7 +954,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         </div>`;
 
         return `<div class="pig-anentity" style="display: flex; gap: 1rem;">
-                    <div class="col-main" style="flex: 0 0 ${widthLeft}; min-width: 0;">
+                    <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
                         ${titleText ? `<h3>${titleText}</h3>` : ''}
                         ${descText ? `<div class="pig-description">${descText}</div>` : ''}
                     </div>
@@ -1061,7 +1061,7 @@ export class APackage extends Identifiable implements IAPackage {
         super({ itemType: PigItemType.aPackage });
     }
 
-    validate(itm: IAPackage): IRsp {
+    validate(itm: IAPackage, checks?: ConstraintCheckType[] ): IRsp {
         // graph must be present and be an array
         if (!Array.isArray(itm.graph) || itm.graph.length < 1) {
             return Msg.create(630, 'graph');
@@ -1073,7 +1073,7 @@ export class APackage extends Identifiable implements IAPackage {
             return rsp;
         }
 
-        rsp = checkConstraintsForPackage(itm);
+        rsp = checkConstraintsForPackage(itm,checks);
         // if (itm.id == 'd:test-invalid-prop')
         // logger.debug(`APackage.validate: validating package `, itm, rsp);
 
@@ -1084,8 +1084,8 @@ export class APackage extends Identifiable implements IAPackage {
         return rspOK;
     }
 
-    set(itm: IAPackage): APackage {
-        this.lastStatus = this.validate(itm);
+    set(itm: IAPackage, checks?: ConstraintCheckType[]): APackage {
+        this.lastStatus = this.validate(itm,checks);
         if (this.lastStatus.ok) {
             super.set(itm);
             this.context = itm.context;
@@ -1114,7 +1114,7 @@ export class APackage extends Identifiable implements IAPackage {
         return LIB.stripUndefined(pkg);
     }
 
-    setJSONLD(doc: any): APackage {
+    setJSONLD(doc: any, checks?: ConstraintCheckType[]): APackage {
         // Extract @context
         const ctx = this.extractContextJSONLD(doc);
         
@@ -1171,7 +1171,7 @@ export class APackage extends Identifiable implements IAPackage {
             graph: instantiatedGraph,
             modified: meta.modified,
             creator: meta.creator
-        } as IAPackage);
+        } as IAPackage, checks);
 
         // logger.debug(`APackage.setJSONLD: package ${JSON.stringify(this, null, 2)} set with status`, this.lastStatus);
         // return the instantiated graph with instantiated graph items:
@@ -1211,7 +1211,7 @@ export class APackage extends Identifiable implements IAPackage {
         // Return stringified JSON-LD
         return JSON.stringify(jld, null, 4);
     } */
-    setXML(xmlString: stringXML) {
+    setXML(xmlString: stringXML, checks?: ConstraintCheckType[]) {
         // 1. Parse XML string to JSON
         //    The context is skipped here, as it is extracted separately below.
         const parsed = xml2json(xmlString);
@@ -1278,7 +1278,7 @@ export class APackage extends Identifiable implements IAPackage {
             graph: instantiatedGraph,
             modified: doc.modified,
             creator: doc.creator
-        } as unknown as IAPackage);
+        } as unknown as IAPackage, checks);
 
         // logger.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
         return this;
@@ -1291,15 +1291,16 @@ export class APackage extends Identifiable implements IAPackage {
         const result: stringHTML[] = [];
 
         // Extract language preference from options, default to 'en-US'
-        const lang = options?.lang || 'en-US';
-        const widthLeft = options?.widthLeft || '67%';
+        const lang = options?.lang ?? 'en-US';
+        const widthMain = options?.widthMain ?? '67%';
+        const includeItemTypes = options?.itemType ?? [PigItemType.anEntity];
 
         // 1. Package metadata as first element with localization
         const titleText = getLocalText(this.title, lang);
         const descText = getLocalText(this.description, lang);
 
         const pkgMetadata = `<div class="pig-apackage" style="display: flex; gap: 1rem;">
-                    <div class="col-main" style="flex: 0 0 ${widthLeft}; min-width: 0;">
+                    <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
                         <h3>${titleText || 'Untitled Package'}</h3>
                         ${descText ? `<div class="pig-description">${descText}</div>` : ''}
                     </div>
@@ -1314,20 +1315,9 @@ export class APackage extends Identifiable implements IAPackage {
                 </div>`;
         result.push(pkgMetadata);
 
-    /*    const packageMetadata = `<div class="pig-package-metadata">
-        <h2>${titleText || 'Untitled Package'}</h2>
-        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
-        <dl>
-            <dt>ID</dt><dd>${passifyHTML(this.id)}</dd>
-            ${this.modified ? `<dt>Modified</dt><dd>${getLocalDate(this.modified, lang)}</dd>` : ''}
-            ${this.creator ? `<dt>Creator</dt><dd>${passifyHTML(this.creator)}</dd>` : ''}
-            <dt>Items in Graph</dt><dd>${this.graph.length}</dd>
-        </dl>
-    </div>`; */
-
         // 2. Add HTML for all anEntity items (options are passed through)
         for (const item of this.graph) {
-            if (item.itemType === PigItemType.anEntity) {
+            if (includeItemTypes.includes(item.itemType)) {
                 const entityHTML = (item as AnEntity).getHTML(options);
                 result.push(entityHTML);
             }
@@ -1586,7 +1576,7 @@ export class APackage extends Identifiable implements IAPackage {
         // Validate item has required pig:itemType
         if (!item['pig:itemType'] || !item['pig:itemType']['@id']) {
             const id = item['@id'] || item.id || 'unknown';
-            logger.error(`APackage.instantiateItemJSONLD: @graph element missing pig:itemType, skipping ${id}`);
+        //    logger.error(`APackage.instantiateItemJSONLD: @graph element missing pig:itemType, skipping ${id}`);
             return Msg.create(650, 'Instantiation from JSON-LD', 'pig:itemType', id);
         }
 
@@ -1594,14 +1584,14 @@ export class APackage extends Identifiable implements IAPackage {
 
         // Filter allowed item types
         if (!this.isAllowedItemType(itype)) {
-            logger.error(`APackage.instantiateItemJSONLD: skipping item type '${itype}' which is not allowed in a graph`);
+        //    logger.error(`APackage.instantiateItemJSONLD: skipping item type '${itype}' which is not allowed in a graph`);
             return Msg.create(651, 'Instantiation from JSON-LD', itype);
         }
 
         const instance = this.createInstance(itype);
 
         if (!instance) {
-            logger.error(`APackage.instantiateItemJSONLD: unable to create instance for itemType '${itype}'`);
+        //    logger.error(`APackage.instantiateItemJSONLD: unable to create instance for itemType '${itype}'`);
             return Msg.create(652, 'Instantiation from JSON-LD', itype);
         }
 
@@ -1611,9 +1601,9 @@ export class APackage extends Identifiable implements IAPackage {
             // Check if instantiation was successful
             const status = (instance as any).status();
             if (!status || !status.ok) {
-                logger.error(
+            /*    logger.error(
                     `APackage.instantiateItemJSONLD: ${itype} '${item['@id'] || item.id || 'unknown'}' failed validation: ${status?.statusText || 'unknown error'}`
-                );
+                ); */
                 return status || Msg.create(653, 'Instantiation from JSON-LD', itype, item['@id'] || item.id || 'unknown');
             }
 
@@ -1624,7 +1614,7 @@ export class APackage extends Identifiable implements IAPackage {
             };
         } catch (err: any) {
             const errorMsg = `APackage.instantiateItemJSONLD: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`;
-            logger.error(errorMsg);
+        //    logger.error(errorMsg);
             return Msg.create(654, 'Instantiation from JSON-LD', itype, err?.message ?? String(err));
         }
     }
@@ -1645,14 +1635,14 @@ export class APackage extends Identifiable implements IAPackage {
 
         // Filter allowed item types
         if (!this.isAllowedItemType(itype)) {
-            logger.error(`APackage.instantiateItemXML: skipping item type '${itype}' which is not allowed in a graph`);
+        //    logger.error(`APackage.instantiateItemXML: skipping item type '${itype}' which is not allowed in a graph`);
             return Msg.create(651, 'Instantiation from XML', itype);
         }
 
         const instance = this.createInstance(itype);
 
         if (!instance) {
-            logger.error(`APackage.instantiateItemXML: unable to create instance for itemType '${itype}'`);
+        //    logger.error(`APackage.instantiateItemXML: unable to create instance for itemType '${itype}'`);
             return Msg.create(652, 'Instantiation from XML', itype);
         }
 
@@ -1664,9 +1654,9 @@ export class APackage extends Identifiable implements IAPackage {
             // Check if instantiation was successful
             const status = (instance as any).status();
             if (!status || !status.ok) {
-                logger.error(
+            /*    logger.error(
                     `APackage.instantiateItemXML: ${itype} '${item.id || 'unknown'}' failed validation: ${status?.statusText || 'unknown error'}`
-                );
+                ); */
                 return status || Msg.create(653, 'Instantiation from XML', itype, item.id || 'unknown');
             }
 
@@ -1677,7 +1667,7 @@ export class APackage extends Identifiable implements IAPackage {
             };
         } catch (err: any) {
             const errorMsg = `APackage.instantiateItemXML: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`;
-            logger.error(errorMsg);
+        //    logger.error(errorMsg);
             return Msg.create(654, 'Instantiation from XML', itype, err?.message ?? String(err));
         }
     }
