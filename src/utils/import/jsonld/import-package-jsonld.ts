@@ -54,7 +54,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     }
 
     // Instantiate APackage and load the document
-    const aPackage = new APackage().setJSONLD(doc); // apply all constraints checks by default
+    const aPackage = new APackage().setJSONLD(doc); // apply all constraint checks by default
 /*    const aPackage = new APackage().setJSONLD(
         doc,
         // some examples are incomplete, so we skip the tests for specializes:
