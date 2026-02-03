@@ -1,0 +1,808 @@
+{
+    "@context": {
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "owl": "http://www.w3.org/2002/07/owl#",
+        "sh": "http://www.w3.org/ns/shacl#",
+        "xs": "http://www.w3.org/2001/XMLSchema#",
+        "dcterms": "http://purl.org/dc/terms/",
+        "schema": "http://schema.org/",
+        "pig": "https://product-information-graph.org/ontology/2026-01-20/foundation#",
+        "o": "https://alice.org/ontology#",
+        "d": "https://alice.org/data#"
+    },
+    "@id": "d:example_Alice_worksFor_ACME",
+    "@type": "pig:Package",
+    "pig:itemType": {
+        "@id": "pig:aPackage"
+    },
+    "dcterms:title": [
+        {
+            "@value": "Example: Alice works for ACME",
+            "@language": "en"
+        }
+    ],
+    "dcterms:modified": "2026-01-20T09:38:26.464Z",
+    "dcterms:license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "@graph": [
+        {
+            "@id": "pig:Entity",
+            "@type": "owl:Class",
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Entity",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A PIG meta-model item used for entities (aka resources or artifacts).",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "pig:category"
+                },
+                {
+                    "@id": "pig:icon"
+                }
+            ]
+        },
+        {
+            "@id": "pig:Organizer",
+            "pig:specializes": {
+                "@id": "pig:Entity"
+            },
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Organizer",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "pig:category"
+                }
+            ]
+        },
+        {
+            "@id": "pig:HierarchyRoot",
+            "pig:specializes": {
+                "@id": "pig:Organizer"
+            },
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Hierarchy Root",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A subclass of PIG organizer serving as a root for hierarchically organized graph elements.",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [],
+            "pig:eligibleTargetLink": [
+                {
+                    "@id": "pig:lists"
+                }
+            ]
+        },
+        {
+            "@id": "pig:Outline",
+            "pig:specializes": {
+                "@id": "pig:Organizer"
+            },
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Outline",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A subclass of PIG organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "pig:category"
+                }
+            ],
+            "pig:eligibleTargetLink": [
+                {
+                    "@id": "pig:lists"
+                }
+            ]
+        },
+        {
+            "@id": "pig:View",
+            "pig:specializes": {
+                "@id": "pig:Organizer"
+            },
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "View",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "pig:category"
+                },
+                {
+                    "@id": "pig:icon"
+                }
+            ],
+            "pig:eligibleTargetLink": [
+                {
+                    "@id": "pig:shows"
+                },
+                {
+                    "@id": "pig:depicts"
+                }
+            ]
+        },
+        {
+            "@id": "pig:Relationship",
+            "@type": "owl:Class",
+            "pig:itemType": {
+                "@id": "pig:Relationship"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Relationship",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A PIG meta-model item used for reified relationships (aka predicates).",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "pig:category"
+                },
+                {
+                    "@id": "pig:icon"
+                }
+            ],
+            "pig:eligibleSourceLink": {
+                "@id": "pig:SourceLink"
+            },
+            "pig:eligibleTargetLink": {
+                "@id": "pig:TargetLink"
+            }
+        },
+        {
+            "@id": "pig:Property",
+            "@type": "owl:DatatypeProperty",
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Property",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A PIG meta-model item used for properties (aka attributes).",
+                    "@language": "en"
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:anyType"
+            }
+        },
+        {
+            "@id": "pig:icon",
+            "pig:specializes": {
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "has icon"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Specifies an icon for a model element (entity or relationship)."
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "pig:category",
+            "pig:specializes": {
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "has category"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Specifies a category for an element (entity, relationship or organizer)."
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
+            "sh:maxLength": 32,
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "pig:Link",
+            "@type": "owl:ObjectProperty",
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "pig:Entity"
+                },
+                {
+                    "@id": "pig:Relationship"
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "linked with",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element",
+                    "@language": "en"
+                }
+            ]
+        },
+        {
+            "@id": "pig:SourceLink",
+            "pig:specializes": {
+                "@id": "pig:Link"
+            },
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "pig:Entity"
+                },
+                {
+                    "@id": "pig:Relationship"
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "to source",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Connects the source of a reified relationship.",
+                    "@language": "en"
+                }
+            ]
+        },
+        {
+            "@id": "pig:TargetLink",
+            "pig:specializes": {
+                "@id": "pig:Link"
+            },
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "pig:Entity"
+                },
+                {
+                    "@id": "pig:Relationship"
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "to target",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Connects the target of a reified relationship or an organizer.",
+                    "@language": "en"
+                }
+            ]
+        },
+        {
+            "@id": "pig:lists",
+            "pig:specializes": {
+                "@id": "pig:TargetLink"
+            },
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "pig:Entity"
+                },
+                {
+                    "@id": "pig:Relationship"
+                },
+                {
+                    "@id": "pig:Organizer"
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "lists",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Lists an entity, a relationship or a subordinated organizer.",
+                    "@language": "en"
+                }
+            ]
+        },
+        {
+            "@id": "pig:shows",
+            "pig:specializes": {
+                "@id": "pig:TargetLink"
+            },
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "pig:Entity"
+                },
+                {
+                    "@id": "pig:Relationship"
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "shows",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Shows an entity or a relationship.",
+                    "@language": "en"
+                }
+            ]
+        },
+        {
+            "@id": "pig:depicts",
+            "pig:specializes": {
+                "@id": "pig:TargetLink"
+            },
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "pig:Entity"
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "depicts",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Depicts an entity; inverse of uml:ownedDiagram.",
+                    "@language": "en"
+                }
+            ]
+        },
+        {
+            "@id": "schema:Person",
+            "pig:specializes": {
+                "@id": "pig:Entity"
+            },
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Person",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A person (alive, dead, undead, or fictional).",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "schema:familyName"
+                },
+                {
+                    "@id": "schema:givenName"
+                },
+                {
+                    "@id": "schema:birthDate"
+                }
+            ]
+        },
+        {
+            "@id": "schema:Organization",
+            "pig:specializes": {
+                "@id": "pig:Entity"
+            },
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Organization",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "An organization such as a school, NGO, corporation, club, etc.",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "schema:legalName"
+                },
+                {
+                    "@id": "schema:taxID"
+                }
+            ]
+        },
+        {
+            "@id": "schema:birthDate",
+            "pig:specializes": {
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "birth date",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Date of birth.",
+                    "@language": "en"
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:date"
+            },
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "schema:familyName",
+            "pig:specializes": {
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "family name",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Family name. In the U.S., the last name of a Person.",
+                    "@language": "en"
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "schema:givenName",
+            "pig:specializes": {
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "given name",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Given name. In the U.S., the first name of a Person.",
+                    "@language": "en"
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "schema:legalName",
+            "pig:specializes": {
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "legal name",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "The official name of the organization, e.g. the registered company name.",
+                    "@language": "en"
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "schema:taxID",
+            "pig:specializes": {
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "tax ID",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain.",
+                    "@language": "en"
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "schema:WorksFor",
+            "pig:specializes": {
+                "@id": "pig:Relationship"
+            },
+            "pig:itemType": {
+                "@id": "pig:Relationship"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "works for",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "Organizations that the person works for.",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleProperty": [],
+            "pig:eligibleSourceLink": {
+                "@id": "o:Employee"
+            },
+            "pig:eligibleTargetLink": {
+                "@id": "o:Employer"
+            }
+        },
+        {
+            "@id": "o:Employee",
+            "pig:specializes": {
+                "@id": "pig:SourceLink"
+            },
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "employee",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "The employee in a 'worksFor' relationship",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "schema:Person"
+                }
+            ]
+        },
+        {
+            "@id": "o:Employer",
+            "pig:specializes": {
+                "@id": "pig:TargetLink"
+            },
+            "pig:itemType": {
+                "@id": "pig:Link"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "employer",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "The employer in a 'worksFor' relationship",
+                    "@language": "en"
+                }
+            ],
+            "pig:eligibleEndpoint": [
+                {
+                    "@id": "schema:Organization"
+                }
+            ]
+        },
+        {
+            "@id": "d:ACME",
+            "@type": "schema:Organization",
+            "pig:itemType": {
+                "@id": "pig:anEntity"
+            },
+            "dcterms:modified": "2026-01-20T09:38:26.464Z",
+            "dcterms:title": [
+                {
+                    "@value": "ACME Corp.",
+                    "@language": "en"
+                }
+            ],
+            "schema:legalName": [
+                {
+                    "@value": "ACME Corp.",
+                    "pig:itemType": {
+                        "@id": "pig:aProperty"
+                    }
+                }
+            ],
+            "schema:taxID": [
+                {
+                    "@value": "DE_123456789",
+                    "pig:itemType": {
+                        "@id": "pig:aProperty"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:Alice",
+            "@type": "schema:Person",
+            "pig:itemType": {
+                "@id": "pig:anEntity"
+            },
+            "dcterms:modified": "2026-01-20T09:38:26.464Z",
+            "dcterms:title": [
+                {
+                    "@value": "Alice",
+                    "@language": "en"
+                }
+            ],
+            "schema:familyName": [
+                {
+                    "@value": "Carpenter",
+                    "pig:itemType": {
+                        "@id": "pig:aProperty"
+                    }
+                }
+            ],
+            "schema:givenName": [
+                {
+                    "@value": "Alice",
+                    "pig:itemType": {
+                        "@id": "pig:aProperty"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:Alice_worksFor_ACME",
+            "@type": "schema:WorksFor",
+            "pig:itemType": {
+                "@id": "pig:aRelationship"
+            },
+            "dcterms:modified": "2026-01-20T09:38:26.464Z",
+            "o:Employee": [
+                {
+                    "@id": "d:Alice",
+                    "pig:itemType": {
+                        "@id": "pig:aSourceLink"
+                    }
+                }
+            ],
+            "o:Employer": [
+                {
+                    "@id": "d:ACME",
+                    "pig:itemType": {
+                        "@id": "pig:aTargetLink"
+                    }
+                }
+            ]
+        }
+    ]
+}

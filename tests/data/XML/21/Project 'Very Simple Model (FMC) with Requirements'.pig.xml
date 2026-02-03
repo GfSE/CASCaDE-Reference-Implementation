@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<pig:Package xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
+<pig:aPackage xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
              xmlns:o="https://product-information-graph.org/v0.2/ontology#"
              xmlns:d="https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#"
              xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -15,7 +15,7 @@
              id="d:ACP-Very-Simple-Model-FMC-with-Requirements"
              rdf:type="pig:Package">
     <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
-    <dcterms:modified>2026-01-12T12:38:50.406Z</dcterms:modified>
+    <dcterms:modified>2026-01-17T22:38:19.595Z</dcterms:modified>
 
     <graph>
         <!-- Metamodel: Entity Classes -->
@@ -27,21 +27,21 @@
         </pig:Entity>
 
         <pig:Entity id="pig:Organizer">
-            <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
+            <pig:specializes>pig:Entity</pig:specializes>
             <dcterms:title>Organizer</dcterms:title>
             <dcterms:description>An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.</dcterms:description>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
 
         <pig:Entity id="pig:HierarchyRoot">
-            <rdfs:subClassOf>pig:Organizer</rdfs:subClassOf>
+            <pig:specializes>pig:Organizer</pig:specializes>
             <dcterms:title>Hierarchy Root</dcterms:title>
             <dcterms:description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</dcterms:description>
             <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
         </pig:Entity>
 
         <pig:Entity id="pig:Outline">
-            <rdfs:subClassOf>pig:Organizer</rdfs:subClassOf>
+            <pig:specializes>pig:Organizer</pig:specializes>
             <dcterms:title>Outline</dcterms:title>
             <dcterms:description>A subclass of PIG organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</dcterms:description>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
@@ -49,7 +49,7 @@
         </pig:Entity>
 
         <pig:Entity id="pig:View">
-            <rdfs:subClassOf>pig:Organizer</rdfs:subClassOf>
+            <pig:specializes>pig:Organizer</pig:specializes>
             <dcterms:title>View</dcterms:title>
             <dcterms:description>A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.</dcterms:description>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
@@ -69,7 +69,16 @@
         </pig:Relationship>
 
         <!-- Metamodel: Properties -->
-        <pig:Property id="pig:icon" rdf:type="owl:DatatypeProperty">
+        <pig:Property id="pig:Property" rdf:type="owl:DatatypeProperty">
+            <dcterms:title>Property</dcterms:title>
+            <dcterms:description>A PIG meta-model element used for properties (aka attributes).</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:anyType"/>
+            </xs:simpleType>
+        </pig:Property>
+
+        <pig:Property id="pig:icon">
+            <pig:specializes>pig:Property</pig:specializes>
             <dcterms:title>has icon</dcterms:title>
             <dcterms:description>Specifies an icon for a model element (entity or relationship).</dcterms:description>
             <xs:simpleType>
@@ -81,7 +90,7 @@
         </pig:Property>
 
         <pig:Property id="pig:category">
-            <rdfs:subPropertyOf>dcterms:type</rdfs:subPropertyOf>
+            <pig:specializes>pig:Property</pig:specializes>
             <dcterms:title>has category</dcterms:title>
             <dcterms:description>Specifies a category for an element (entity, relationship or organizer).</dcterms:description>
             <xs:simpleType>
@@ -102,7 +111,7 @@
         </pig:Link>
 
         <pig:Link id="pig:SourceLink">
-            <rdfs:subPropertyOf>pig:Link</rdfs:subPropertyOf>
+            <pig:specializes>pig:Link</pig:specializes>
             <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
             <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
             <dcterms:title>to source</dcterms:title>
@@ -110,7 +119,7 @@
         </pig:Link>
 
         <pig:Link id="pig:TargetLink">
-            <rdfs:subPropertyOf>pig:Link</rdfs:subPropertyOf>
+            <pig:specializes>pig:Link</pig:specializes>
             <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
             <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
             <dcterms:title>to target</dcterms:title>
@@ -118,7 +127,7 @@
         </pig:Link>
 
         <pig:Link id="pig:lists">
-            <rdfs:subPropertyOf>pig:TargetLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:TargetLink</pig:specializes>
             <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
             <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
             <pig:eligibleEndpoint>pig:Organizer</pig:eligibleEndpoint>
@@ -127,7 +136,7 @@
         </pig:Link>
 
         <pig:Link id="pig:shows">
-            <rdfs:subPropertyOf>pig:TargetLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:TargetLink</pig:specializes>
             <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
             <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
             <dcterms:title>shows</dcterms:title>
@@ -135,7 +144,7 @@
         </pig:Link>
 
         <pig:Link id="pig:depicts">
-            <rdfs:subPropertyOf>pig:TargetLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:TargetLink</pig:specializes>
             <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
             <dcterms:title>depicts</dcterms:title>
             <dcterms:description>Depicts an entity; inverse of uml:ownedDiagram.</dcterms:description>
@@ -244,7 +253,7 @@
             <dcterms:description xml:lang="de">
                 <p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>
             </dcterms:description>
-            <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
+            <pig:specializes>pig:Entity</pig:specializes>
             <pig:eligibleProperty>SpecIF:Diagram</pig:eligibleProperty>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
@@ -265,7 +274,7 @@
                 <p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p>
                 <p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>
             </dcterms:description>
-            <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
+            <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#x25A1;</pig:icon>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
@@ -286,7 +295,7 @@
                 <p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p>
                 <p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p>
             </dcterms:description>
-            <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
+            <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#x25CB;</pig:icon>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
@@ -307,7 +316,7 @@
                 <p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p>
                 <p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p>
             </dcterms:description>
-            <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
+            <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#x2662;</pig:icon>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
@@ -379,7 +388,7 @@
                     <li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li>
                 </ol>
             </dcterms:description>
-            <rdfs:subClassOf>pig:Entity</rdfs:subClassOf>
+            <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#8623;</pig:icon>
             <pig:eligibleProperty>SpecIF:Priority</pig:eligibleProperty>
         </pig:Entity>
@@ -390,20 +399,20 @@
             <dcterms:title xml:lang="de">schreibt</dcterms:title>
             <dcterms:title xml:lang="fr">écrit</dcterms:title>
             <dcterms:description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</dcterms:description>
-            <rdfs:subClassOf>pig:Relationship</rdfs:subClassOf>
+            <pig:specializes>pig:Relationship</pig:specializes>
             <pig:eligibleSourceLink>SpecIF:writes-toSource</pig:eligibleSourceLink>
             <pig:eligibleTargetLink>SpecIF:writes-toTarget</pig:eligibleTargetLink>
         </pig:Relationship>
 
         <pig:Link id="SpecIF:writes-toSource">
-            <rdfs:subPropertyOf>pig:SourceLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:SourceLink</pig:specializes>
             <dcterms:title>SpecIF:writes to source</dcterms:title>
             <dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
             <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
         </pig:Link>
 
         <pig:Link id="SpecIF:writes-toTarget">
-            <rdfs:subPropertyOf>pig:TargetLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:TargetLink</pig:specializes>
             <dcterms:title>SpecIF:writes to target</dcterms:title>
             <dcterms:description>Connects the target of SpecIF:writes</dcterms:description>
             <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
@@ -414,20 +423,20 @@
             <dcterms:title xml:lang="de">liest</dcterms:title>
             <dcterms:title xml:lang="fr">lit</dcterms:title>
             <dcterms:description xml:lang="en">A [[FMC:Actor]] 'reads' a [[FMC:State]].</dcterms:description>
-            <rdfs:subClassOf>pig:Relationship</rdfs:subClassOf>
+            <pig:specializes>pig:Relationship</pig:specializes>
             <pig:eligibleSourceLink>SpecIF:reads-toSource</pig:eligibleSourceLink>
             <pig:eligibleTargetLink>SpecIF:reads-toTarget</pig:eligibleTargetLink>
         </pig:Relationship>
 
         <pig:Link id="SpecIF:reads-toSource">
-            <rdfs:subPropertyOf>pig:SourceLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:SourceLink</pig:specializes>
             <dcterms:title>SpecIF:reads to source</dcterms:title>
             <dcterms:description>Connects the source of SpecIF:reads</dcterms:description>
             <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
         </pig:Link>
 
         <pig:Link id="SpecIF:reads-toTarget">
-            <rdfs:subPropertyOf>pig:TargetLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:TargetLink</pig:specializes>
             <dcterms:title>SpecIF:reads to target</dcterms:title>
             <dcterms:description>Connects the target of SpecIF:reads</dcterms:description>
             <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
@@ -449,13 +458,13 @@
                     SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.
                 </p>
             </dcterms:description>
-            <rdfs:subClassOf>pig:Relationship</rdfs:subClassOf>
+            <pig:specializes>pig:Relationship</pig:specializes>
             <pig:eligibleSourceLink>oslc_rm:satisfies-toSource</pig:eligibleSourceLink>
             <pig:eligibleTargetLink>oslc_rm:satisfies-toTarget</pig:eligibleTargetLink>
         </pig:Relationship>
 
         <pig:Link id="oslc_rm:satisfies-toSource">
-            <rdfs:subPropertyOf>pig:SourceLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:SourceLink</pig:specializes>
             <dcterms:title>oslc_rm:satisfies to source</dcterms:title>
             <dcterms:description>Connects the source of oslc_rm:satisfies</dcterms:description>
             <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
@@ -463,7 +472,7 @@
         </pig:Link>
 
         <pig:Link id="oslc_rm:satisfies-toTarget">
-            <rdfs:subPropertyOf>pig:TargetLink</rdfs:subPropertyOf>
+            <pig:specializes>pig:TargetLink</pig:specializes>
             <dcterms:title>oslc_rm:satisfies to target</dcterms:title>
             <dcterms:description>Connects the target of oslc_rm:satisfies</dcterms:description>
             <pig:eligibleEndpoint>IREB:Requirement</pig:eligibleEndpoint>
@@ -608,7 +617,7 @@
 
         <!-- Instance Data: Hierarchy -->
         <pig:anEntity id="d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements" rdf:type="pig:HierarchyRoot">
-            <dcterms:modified>2026-01-12T12:38:50.710Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:20.041Z</dcterms:modified>
             <dcterms:title>Hierarchy Root</dcterms:title>
             <dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
             <pig:aTargetLink rdf:type="pig:lists">
@@ -636,7 +645,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-Folder-Introduction" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
@@ -661,7 +670,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-Folder-Requirements" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
@@ -680,7 +689,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-Folder-SystemModel" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
@@ -691,7 +700,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:FolderGlossary-10875487071" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:44.062Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:13.953Z</dcterms:modified>
             <dcterms:title>Model Elements (Glossary)</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>SpecIF:Glossary</value>
@@ -705,7 +714,7 @@
         </pig:anEntity>
 
         <pig:anEntity id="d:HR-FolderGlossary-10875487071" rdf:type="pig:Outline">
-            <dcterms:modified>2026-01-12T12:38:50.579Z</dcterms:modified>
+            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
             <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
             <pig:aProperty rdf:type="pig:category">
                 <value>ReqIF:HierarchyRoot</value>
@@ -715,4 +724,4 @@
             </pig:aTargetLink>
         </pig:anEntity>
     </graph>
-</pig:Package>
+</pig:aPackage>

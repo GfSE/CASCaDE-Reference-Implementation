@@ -4,8 +4,8 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { checkConstraintsForPackage } from '../../src/utils/schemas/pig/pig-package-constraints';
-import { APackage, IAPackage, PigItemType } from '../../src/utils/schemas/pig/pig-metaclasses';
+import { APackage } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
+import { ConstraintCheckType } from '../../src/utils/schemas/pig/ts/pig-package-constraints';
 
 describe('PIG Package Constraint Validation', () => {
     describe('Positive Tests - Valid Packages', () => {
@@ -23,8 +23,28 @@ describe('PIG Package Constraint Validation', () => {
                 'dcterms:modified': '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
+                        "@id": "pig:Property",
+                        "@type": "owl:DatatypeProperty",
+                        "pig:itemType": {
+                            "@id": "pig:Property"
+                        },
+                        "dcterms:title": [
+                            {
+                                "@value": "Property"
+                            }
+                        ],
+                        "dcterms:description": [
+                            {
+                                "@value": "A PIG meta-model element used for properties (aka attributes)."
+                            }
+                        ],
+                        "sh:datatype": {
+                            "@id": "xs:anyType"
+                        }
+                    },
+                    {
                         '@id': 'o:Property_Status',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -32,8 +52,33 @@ describe('PIG Package Constraint Validation', () => {
                         'sh:datatype': { '@id': 'xs:string' }
                     },
                     {
+                        "@id": "pig:Link",
+                        "@type": "owl:ObjectProperty",
+                        "pig:itemType": {
+                            "@id": "pig:Link"
+                        },
+                        "pig:eligibleEndpoint": [
+                            {
+                                "@id": "pig:Entity"
+                            },
+                            {
+                                "@id": "pig:Relationship"
+                            }
+                        ],
+                        "dcterms:title": [
+                            {
+                                "@value": "linked with"
+                            }
+                        ],
+                        "dcterms:description": [
+                            {
+                                "@value": "Connects a reified relationship with its source or target. Also connects an organizer to a model element"
+                            }
+                        ]
+                    },
+                    {
                         '@id': 'o:Link_RefersTo',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
@@ -43,8 +88,25 @@ describe('PIG Package Constraint Validation', () => {
                         ]
                     },
                     {
+                        "@id": "pig:Entity",
+                        "@type": "owl:Class",
+                        "pig:itemType": {
+                            "@id": "pig:Entity"
+                        },
+                        "dcterms:title": [
+                            {
+                                "@value": "Entity"
+                            }
+                        ],
+                        "dcterms:description": [
+                            {
+                                "@value": "A PIG meta-model element used for entities (aka resources or artifacts)."
+                            }
+                        ]
+                    },
+                    {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -85,16 +147,12 @@ describe('PIG Package Constraint Validation', () => {
                 ]
             };
 
-            const pkg = new APackage();
-            const items = pkg.setJSONLD(validPackageJsonLd);
+            const pkg = new APackage().setJSONLD(validPackageJsonLd);  // all constraint checks
+            const items = pkg.getAllItems();
             
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBe(6);
+            expect(items.length).toBe(9);
 
-            const result = checkConstraintsForPackage(pkg.get() as IAPackage);
-            
-            expect(result.ok).toBe(true);
-            expect(result.status).toBe(0);
         });
 
         test('should validate package with relationship containing source and target links', () => {
@@ -111,8 +169,28 @@ describe('PIG Package Constraint Validation', () => {
                 'dcterms:modified': '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
+                        "@id": "pig:Property",
+                        "@type": "owl:DatatypeProperty",
+                        "pig:itemType": {
+                            "@id": "pig:Property"
+                        },
+                        "dcterms:title": [
+                            {
+                                "@value": "Property"
+                            }
+                        ],
+                        "dcterms:description": [
+                            {
+                                "@value": "A PIG meta-model element used for properties (aka attributes)."
+                            }
+                        ],
+                        "sh:datatype": {
+                            "@id": "xs:anyType"
+                        }
+                    },
+                    {
                         '@id': 'o:Property_Rationale',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Rationale', '@language': 'en' }
@@ -120,8 +198,33 @@ describe('PIG Package Constraint Validation', () => {
                         'sh:datatype': { '@id': 'xs:string' }
                     },
                     {
+                        "@id": "pig:Link",
+                        "@type": "owl:ObjectProperty",
+                        "pig:itemType": {
+                            "@id": "pig:Link"
+                        },
+                        "pig:eligibleEndpoint": [
+                            {
+                                "@id": "pig:Entity"
+                            },
+                            {
+                                "@id": "pig:Relationship"
+                            }
+                        ],
+                        "dcterms:title": [
+                            {
+                                "@value": "linked with"
+                            }
+                        ],
+                        "dcterms:description": [
+                            {
+                                "@value": "Connects a reified relationship with its source or target. Also connects an organizer to a model element"
+                            }
+                        ]
+                    },
+                    {
                         '@id': 'o:Link_Source',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
@@ -132,7 +235,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
@@ -142,8 +245,42 @@ describe('PIG Package Constraint Validation', () => {
                         ]
                     },
                     {
+                        "@id": "pig:Entity",
+                        "@type": "owl:Class",
+                        "pig:itemType": {
+                            "@id": "pig:Entity"
+                        },
+                        "dcterms:title": [
+                            {
+                                "@value": "Entity"
+                            }
+                        ],
+                        "dcterms:description": [
+                            {
+                                "@value": "A PIG meta-model element used for entities (aka resources or artifacts)."
+                            }
+                        ]
+                    },
+                    {
+                        "@id": "pig:Relationship",
+                        "@type": "owl:Class",
+                        "pig:itemType": {
+                            "@id": "pig:Relationship"
+                        },
+                        "dcterms:title": [
+                            {
+                                "@value": "Relationship"
+                            }
+                        ],
+                        "dcterms:description": [
+                            {
+                                "@value": "A PIG meta-model element used for reified relationships (aka predicates)."
+                            }
+                        ]
+                    },
+                    {
                         '@id': 'o:Relationship_Trace',
-                        '@type': 'pig:Relationship',
+                        'pig:specializes': 'pig:Relationship',
                         'pig:itemType': { '@id': 'pig:Relationship' },
                         'dcterms:title': [
                             { '@value': 'Trace', '@language': 'en' }
@@ -151,7 +288,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -208,16 +345,12 @@ describe('PIG Package Constraint Validation', () => {
                 ]
             };
 
-            const pkg = new APackage();
-            const items = pkg.setJSONLD(packageWithRelationship);
+            const pkg = new APackage().setJSONLD(packageWithRelationship);
+            const items = pkg.getAllItems();
             
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBe(9);
+            expect(items.length).toBe(13);
 
-            const result = checkConstraintsForPackage(pkg.get() as IAPackage);
-            
-            expect(result.ok).toBe(true);
-            expect(result.status).toBe(0);
         });
     });
 
@@ -237,7 +370,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -246,7 +379,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -254,7 +387,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok', // ❌ Duplicate ID
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Another Entity', '@language': 'en' }
@@ -264,7 +397,7 @@ describe('PIG Package Constraint Validation', () => {
             };
 
             const pkg = new APackage();
-            pkg.setJSONLD(packageWithDuplicateIds);
+            pkg.setJSONLD(packageWithDuplicateIds,[ConstraintCheckType.UniqueIds]);
 
             // check the attribute values upon creation:
          /*   if (pck.status().ok)
@@ -272,12 +405,12 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(671); // Duplicate ID error code
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(671); // Duplicate ID error code
-            expect(result.statusText).toContain('duplicate ID');
-            expect(result.statusText).toContain('o:Entity_Requirement'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(671); // Duplicate ID error code
+            expect(rsp.statusText).toContain('duplicate ID');
+            expect(rsp.statusText).toContain('o:Entity_Requirement'); */
         });
 
         test('should reject package with an item missing ID', () => {
@@ -295,7 +428,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -304,7 +437,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         // ❌ Missing @id
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Entity Without ID', '@language': 'en' }
@@ -320,13 +453,7 @@ describe('PIG Package Constraint Validation', () => {
             /*   if (pck.status().ok)
                    console.error('status:', pck.status()); */
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(670); // Missing ID error code
-            
-        /*    const result = pkg.get() as IAPackage;
-            
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(670); // Missing ID error code
-            expect(result.statusText).toContain('missing id'); */
+            expect(pkg.status().status).toBe(679); // Error code for one or more failed item instantiations
         });
     });
 
@@ -346,7 +473,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -380,13 +507,13 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(673); // Invalid hasClass reference
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(673); // Invalid hasClass reference
-            expect(result.statusText).toContain('hasProperty[0].hasClass');
-            expect(result.statusText).toContain('o:Property_NonExistent');
-            expect(result.statusText).toContain('not found in package'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(673); // Invalid hasClass reference
+            expect(rsp.statusText).toContain('hasProperty[0].hasClass');
+            expect(rsp.statusText).toContain('o:Property_NonExistent');
+            expect(rsp.statusText).toContain('not found in package'); */
         });
 
         test('should reject aProperty referencing wrong type (Link instead of Property)', () => {
@@ -404,7 +531,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Link_RefersTo', // This is a Link, not a Property!
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
@@ -415,7 +542,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -449,13 +576,13 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(673); // Invalid hasClass type
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(673);
-            expect(result.statusText).toContain('hasProperty[0].hasClass');
-            expect(result.statusText).toContain('o:Link_RefersTo');
-            expect(result.statusText).toContain('expected pig:Property, found pig:Link'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(673);
+            expect(rsp.statusText).toContain('hasProperty[0].hasClass');
+            expect(rsp.statusText).toContain('o:Link_RefersTo');
+            expect(rsp.statusText).toContain('expected pig:Property, found pig:Link'); */
         });
     });
 
@@ -535,13 +662,13 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(675); // Invalid hasClass reference
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(675); // Invalid link hasClass reference
-            expect(result.statusText).toContain('hasTargetLink[0].hasClass');
-            expect(result.statusText).toContain('o:Link_NonExistent');
-            expect(result.statusText).toContain('not found in package'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(675); // Invalid link hasClass reference
+            expect(rsp.statusText).toContain('hasTargetLink[0].hasClass');
+            expect(rsp.statusText).toContain('o:Link_NonExistent');
+            expect(rsp.statusText).toContain('not found in package'); */
         });
 
         test('should reject aSourceLink referencing wrong type (Property instead of Link)', () => {
@@ -559,7 +686,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Rationale',
-                        '@type': 'pig:Property',
+                        'pig:specializes': 'pig:Property',
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Rationale', '@language': 'en' }
@@ -568,7 +695,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Source',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
@@ -579,7 +706,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
-                        '@type': 'pig:Link',
+                        'pig:specializes': 'pig:Link',
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
@@ -598,7 +725,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        '@type': 'pig:Entity',
+                        'pig:specializes': 'pig:Entity',
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -658,13 +785,300 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(675); // Invalid hasClass type
             
-        /*    const result = pkg.get() as IAPackage;
+        /*    const rsp = pkg.get() as IAPackage;
             
-            expect(result.ok).toBe(false);
-            expect(result.status).toBe(675);
-            expect(result.statusText).toContain('hasSourceLink[0].hasClass');
-            expect(result.statusText).toContain('o:Property_Status');
-            expect(result.statusText).toContain('expected pig:Link, found pig:Property'); */
+            expect(rsp.ok).toBe(false);
+            expect(rsp.status).toBe(675);
+            expect(rsp.statusText).toContain('hasSourceLink[0].hasClass');
+            expect(rsp.statusText).toContain('o:Property_Status');
+            expect(rsp.statusText).toContain('expected pig:Link, found pig:Property'); */
+        });
+    });
+    describe('Negative Tests - Invalid Entity and Relationship hasClass References', () => {
+        test('should reject anEntity with missing hasClass reference', () => {
+            const packageWithMissingEntityClass = {
+                '@context': {
+                    'pig': 'https://product-information-graph.gfse.org/',
+                    'dcterms': 'http://purl.org/dc/terms/',
+                    'sh': 'http://www.w3.org/ns/shacl#',
+                    'o': 'https://example.org/ontology/',
+                    'd': 'https://example.org/data/'
+                },
+                '@id': 'd:test-missing-entity-class',
+                'pig:itemType': { '@id': 'pig:aPackage' },
+                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@graph': [
+                    {
+                        '@id': 'o:Entity_Requirement',
+                        'pig:specializes': 'pig:Entity',
+                        'pig:itemType': { '@id': 'pig:Entity' },
+                        'dcterms:title': [
+                            { '@value': 'Requirement', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'd:REQ-invalid-class-nok',
+                        // ❌ Missing @type (which maps to hasClass)
+                        'pig:itemType': { '@id': 'pig:anEntity' },
+                        'pig:revision': '1.0',
+                        'dcterms:modified': '2025-01-16T10:00:00Z',
+                        'dcterms:title': [
+                            { '@value': 'Entity without class', '@language': 'en' }
+                        ]
+                    }
+                ]
+            };
+
+            const pkg = new APackage();
+            pkg.setJSONLD(packageWithMissingEntityClass);
+
+            expect(pkg.status().ok).toBe(false);
+            expect(pkg.status().status).toBe(679); // Not all item instantiations succeeded
+        });
+
+        test('should reject anEntity with hasClass pointing to non-existent Entity', () => {
+            const packageWithInvalidEntityClass = {
+                '@context': {
+                    'pig': 'https://product-information-graph.gfse.org/',
+                    'dcterms': 'http://purl.org/dc/terms/',
+                    'sh': 'http://www.w3.org/ns/shacl#',
+                    'o': 'https://example.org/ontology/',
+                    'd': 'https://example.org/data/'
+                },
+                '@id': 'd:test-invalid-entity-class',
+                'pig:itemType': { '@id': 'pig:aPackage' },
+                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@graph': [
+                    {
+                        '@id': 'o:Entity_Requirement',
+                        'pig:specializes': 'pig:Entity',
+                        'pig:itemType': { '@id': 'pig:Entity' },
+                        'dcterms:title': [
+                            { '@value': 'Requirement', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'd:REQ-nonexistent-class-nok',
+                        '@type': 'o:Entity_NonExistent', // ❌ References non-existent Entity class
+                        'pig:itemType': { '@id': 'pig:anEntity' },
+                        'pig:revision': '1.0',
+                        'dcterms:modified': '2025-01-16T10:00:00Z',
+                        'dcterms:title': [
+                            { '@value': 'Entity with invalid class', '@language': 'en' }
+                        ]
+                    }
+                ]
+            };
+
+            const pkg = new APackage();
+            pkg.setJSONLD(packageWithInvalidEntityClass);
+
+            expect(pkg.status().ok).toBe(false);
+            expect(pkg.status().status).toBe(675); // Invalid hasClass reference (not found)
+        });
+
+        test('should reject anEntity with hasClass pointing to wrong type (Property instead of Entity)', () => {
+            const packageWithWrongEntityClassType = {
+                '@context': {
+                    'pig': 'https://product-information-graph.gfse.org/',
+                    'dcterms': 'http://purl.org/dc/terms/',
+                    'sh': 'http://www.w3.org/ns/shacl#',
+                    'o': 'https://example.org/ontology/',
+                    'd': 'https://example.org/data/'
+                },
+                '@id': 'd:test-wrong-entity-class-type',
+                'pig:itemType': { '@id': 'pig:aPackage' },
+                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@graph': [
+                    {
+                        '@id': 'o:Property_Status',
+                        'pig:specializes': 'pig:Property',
+                        'pig:itemType': { '@id': 'pig:Property' },
+                        'dcterms:title': [
+                            { '@value': 'Status', '@language': 'en' }
+                        ],
+                        'sh:datatype': { '@id': 'xs:string' }
+                    },
+                    {
+                        '@id': 'd:REQ-wrong-class-type-nok',
+                        '@type': 'o:Property_Status', // ❌ References Property instead of Entity
+                        'pig:itemType': { '@id': 'pig:anEntity' },
+                        'pig:revision': '1.0',
+                        'dcterms:modified': '2025-01-16T10:00:00Z',
+                        'dcterms:title': [
+                            { '@value': 'Entity with Property as class', '@language': 'en' }
+                        ]
+                    }
+                ]
+            };
+
+            const pkg = new APackage();
+            pkg.setJSONLD(packageWithWrongEntityClassType);
+
+            expect(pkg.status().ok).toBe(false);
+            expect(pkg.status().status).toBe(675); // Invalid hasClass type
+        });
+
+        test('should reject aRelationship with missing hasClass reference', () => {
+            const packageWithMissingRelClass = {
+                '@context': {
+                    'pig': 'https://product-information-graph.gfse.org/',
+                    'dcterms': 'http://purl.org/dc/terms/',
+                    'sh': 'http://www.w3.org/ns/shacl#',
+                    'o': 'https://example.org/ontology/',
+                    'd': 'https://example.org/data/'
+                },
+                '@id': 'd:test-missing-rel-class',
+                'pig:itemType': { '@id': 'pig:aPackage' },
+                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@graph': [
+                    {
+                        '@id': 'o:Link_Source',
+                        'pig:specializes': 'pig:Link',
+                        'pig:itemType': { '@id': 'pig:Link' },
+                        'dcterms:title': [
+                            { '@value': 'Source', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'o:Link_Target',
+                        'pig:specializes': 'pig:Link',
+                        'pig:itemType': { '@id': 'pig:Link' },
+                        'dcterms:title': [
+                            { '@value': 'Target', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'o:Relationship_Trace',
+                        'pig:specializes': 'pig:Relationship',
+                        'pig:itemType': { '@id': 'pig:Relationship' },
+                        'dcterms:title': [
+                            { '@value': 'Trace', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'o:Entity_Requirement',
+                        'pig:specializes': 'pig:Entity',
+                        'pig:itemType': { '@id': 'pig:Entity' },
+                        'dcterms:title': [
+                            { '@value': 'Requirement', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'd:REQ-008-ok',
+                        '@type': 'o:Entity_Requirement',
+                        'pig:itemType': { '@id': 'pig:anEntity' },
+                        'pig:revision': '1.0',
+                        'dcterms:modified': '2025-01-16T10:00:00Z',
+                        'dcterms:title': [
+                            { '@value': 'Source Requirement', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'd:REL-missing-class-nok',
+                        // ❌ Missing @type (which maps to hasClass)
+                        'pig:itemType': { '@id': 'pig:aRelationship' },
+                        'pig:revision': '1.0',
+                        'dcterms:modified': '2025-01-16T10:00:00Z',
+                        'dcterms:title': [
+                            { '@value': 'Relationship without class', '@language': 'en' }
+                        ],
+                        'o:Link_Source': [
+                            {
+                                'pig:itemType': { '@id': 'pig:aSourceLink' },
+                                '@id': 'd:REQ-008-ok'
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            const pkg = new APackage();
+            pkg.setJSONLD(packageWithMissingRelClass);
+
+            expect(pkg.status().ok).toBe(false);
+            expect(pkg.status().status).toBe(679); // Not all item instantiations succeeded
+        });
+
+        test('should reject aRelationship with hasClass pointing to wrong type (Link instead of Relationship)', () => {
+            const packageWithWrongRelClassType = {
+                '@context': {
+                    'pig': 'https://product-information-graph.gfse.org/',
+                    'dcterms': 'http://purl.org/dc/terms/',
+                    'sh': 'http://www.w3.org/ns/shacl#',
+                    'o': 'https://example.org/ontology/',
+                    'd': 'https://example.org/data/'
+                },
+                '@id': 'd:test-wrong-rel-class-type',
+                'pig:itemType': { '@id': 'pig:aPackage' },
+                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@graph': [
+                    {
+                        '@id': 'o:Link_Source',
+                        'pig:specializes': 'pig:Link',
+                        'pig:itemType': { '@id': 'pig:Link' },
+                        'dcterms:title': [
+                            { '@value': 'Source', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'o:Link_Target',
+                        'pig:specializes': 'pig:Link',
+                        'pig:itemType': { '@id': 'pig:Link' },
+                        'dcterms:title': [
+                            { '@value': 'Target', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'o:Relationship_Trace',
+                        'pig:specializes': 'pig:Relationship',
+                        'pig:itemType': { '@id': 'pig:Relationship' },
+                        'dcterms:title': [
+                            { '@value': 'Trace', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'o:Entity_Requirement',
+                        'pig:specializes': 'pig:Entity',
+                        'pig:itemType': { '@id': 'pig:Entity' },
+                        'dcterms:title': [
+                            { '@value': 'Requirement', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'd:REQ-009-ok',
+                        '@type': 'o:Entity_Requirement',
+                        'pig:itemType': { '@id': 'pig:anEntity' },
+                        'pig:revision': '1.0',
+                        'dcterms:modified': '2025-01-16T10:00:00Z',
+                        'dcterms:title': [
+                            { '@value': 'Source Requirement', '@language': 'en' }
+                        ]
+                    },
+                    {
+                        '@id': 'd:REL-wrong-class-type-nok',
+                        '@type': 'o:Link_Source', // ❌ References Link instead of Relationship
+                        'pig:itemType': { '@id': 'pig:aRelationship' },
+                        'pig:revision': '1.0',
+                        'dcterms:modified': '2025-01-16T10:00:00Z',
+                        'dcterms:title': [
+                            { '@value': 'Relationship with Link as class', '@language': 'en' }
+                        ],
+                        'o:Link_Source': [
+                            {
+                                'pig:itemType': { '@id': 'pig:aSourceLink' },
+                                '@id': 'd:REQ-009-ok'
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            const pkg = new APackage();
+            pkg.setJSONLD(packageWithWrongRelClassType);
+
+            expect(pkg.status().ok).toBe(false);
+            expect(pkg.status().status).toBe(679); // Not all item instantiations succeeded
         });
     });
 });

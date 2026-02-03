@@ -22,7 +22,7 @@
  * - eligible values in Property only for string values; other datatypes to be implemented
 */
 
-import { ajv } from '../../../plugins/ajv';
+import { ajv } from '../../../../plugins/ajv';
 
 const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
 //const PROP_NAME_PATTERN = '(^[A-Za-z0-9_\\-]+:[^:\\s]+$)|(^https?:\\/\\/\\S+$)';
@@ -215,7 +215,8 @@ const ENTITY_SCHEMA = {
             additionalProperties: false,
             properties: {
                 value: { type: 'string' }
-            }
+            },
+            description: 'string or data URI of an icon representing the entity'
         },
         title: {
             type: 'array',
@@ -281,7 +282,8 @@ const RELATIONSHIP_SCHEMA = {
             additionalProperties: false,
             properties: {
                 value: { type: 'string' }
-            }
+            },
+            description: 'string or data URI of an icon representing the relationship'
         },
         title: {
             type: 'array',
@@ -548,6 +550,77 @@ const ARELATIONSHIP_SCHEMA = {
 };
 const validateARelationshipSchema = ajv.compile(ARELATIONSHIP_SCHEMA);
 
+/* APACKAGE_SCHEMA: describes IAPackage (pig:aPackage) */
+const APACKAGE_SCHEMA = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'https://gfse.org/schemas/pig/IAPackage',
+    type: 'object',
+    properties: {
+        context: {
+            type: 'array',
+        //    minItems: 1,
+            items: {
+                type: 'object',
+                description: 'Namespace definitions with tag and URI mappings',
+                properties: {
+                    tag: { type: 'string' },
+                    uri: { type: 'string', format: 'uri' }
+                },
+                additionalProperties: false
+            }
+        },
+        id: { $ref: '#/$defs/idString' },
+        itemType: {
+            type: 'string',
+            enum: ['pig:aPackage'],
+            description: 'The PigItemType for pig:aPackage'
+        },
+        title: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        description: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        modified: {
+            type: 'string',
+            format: 'date-time'
+        },
+        creator: { type: 'string' },
+        graph: {
+            type: 'array',
+            items: {
+                type: 'object',
+                description: 'Any PIG item in the package graph; items are checked individually before instantiation'
+            }
+        }
+    },
+    additionalProperties: false,
+    required: ['id', 'itemType', 'modified', 'graph'],
+    $defs: {
+        idString: {
+            type: 'string',
+            description: 'TPigId — term with namespace (prefix:local) or an URI',
+            pattern: ID_NAME_PATTERN
+        },
+        LanguageText: {
+            type: 'object',
+            required: ['value'],
+            additionalProperties: false,
+            properties: {
+                value: { type: 'string' },
+                lang: { type: 'string' }
+            }
+        }
+    }
+};
+const validateAPackageSchema = ajv.compile(APACKAGE_SCHEMA);
+
+/** SCH: Exported schemata and validation functions for PIG items:
+*/
 export const SCH = {
     PROPERTY_SCHEMA,
     validatePropertySchema,
@@ -578,5 +651,10 @@ export const SCH = {
     validateARelationshipSchema,
     getValidateARelationshipErrors() {
         return ajv.errorsText(validateARelationshipSchema.errors, { separator: '; ' })
+    },
+    APACKAGE_SCHEMA,
+    validateAPackageSchema,
+    getValidateAPackageErrors() {
+        return ajv.errorsText(validateAPackageSchema.errors, { separator: '; ' })
     }
 };

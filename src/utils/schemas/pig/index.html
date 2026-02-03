@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product Information Graph (PIG) - A universal graph metamodel for integrated product data">
+    <meta name="author" content="Dr. Oskar von Dungern | Gesellschaft für Systems Engineering e.V. (GfSE)">
+    <meta name="keywords" content="Product Information Graph, PIG, Knowledge Graph, Systems Engineering, Ontology, RDF, JSON-LD">
+    <title>Product Information Graph (PIG) | CASCaRA | GfSE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        h2 {
+            color: #3498db;
+            margin: 36px 0 10px;
+            border-top: 2px solid #3498db;
+            font-weight: 400;
+        }
+
+        h3 {
+            color: #3498db;
+            margin: 24px 0 10px;
+            font-weight: 400;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .card a {
+            display: inline-block;
+            color: #3498db;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .card a:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .resources-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .resources-list li {
+            margin: 10px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .resources-list li:hover {
+            background: #e9ecef;
+        }
+
+        .resources-list a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .resources-list a:hover {
+            color: #3498db;
+        }
+
+        .resources-list .description {
+            color: #7f8c8d;
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            border-radius: 3px;
+            margin-right: 8px;
+            text-transform: uppercase;
+        }
+
+        .badge.format {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge.new {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .badge.draft {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .features {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 30px 0;
+        }
+
+        .features ul {
+            margin: 15px 0 0 20px;
+        }
+
+        .features li {
+            margin: 9px 0;
+        }
+
+        .cta {
+            background: linear-gradient(135deg, #2980b9, #3498db);
+            color: white;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .cta h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .cta p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+        }
+
+        .cta a {
+            display: inline-block;
+            background: white;
+            color: #3498db;
+            padding: 15px 40px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+
+        .cta a:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            header p {
+                font-size: 1.1em;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Product Information Graph</h1>
+            <p>A Universal Graph Metamodel for Integrated Product Data</p>
+        </header>
+
+        <div class="content">
+			<p><strong>Product Information Graph (PIG)</strong> is a metamodel for representing and integrating product information from diverse sources into a knowledge graph. PIG enables seamless collaboration between different tools and domains throughout the entire product lifecycle.</p>
+			<p>This site publishes documentation and serves schemata with CORS enabled.</p>
+
+            <section>
+                <h2>Content</h2>
+                <ul class="resources-list">
+                    <li>
+                        <p><strong>PIG Documentation:</strong> The latest revision as agreed by the CASCaRA Submission Team.<br/>
+							• <a href="./doc/metamodel/latest/">Metamodel</a><br/>
+							• Ontology <i>(in preparation)</i><br/>
+						</p>
+                    </li>
+                    <li>
+                        <p><strong>JSON-LD Schemata:</strong> The versions as agreed by the CASCaRA Submission Team.<br/>
+							• <a href="./schema/latest/jsonld/">Latest</a><br/>
+							• <a href="./schema/2026-01-12/jsonld/">2026-01-12</a><br/>
+						</p>
+                    </li>
+                </ul>
+                
+            </section>
+
+            <section>
+                <h2>Key Features</h2>
+				<div class="features">
+					<ul>
+						<li><strong>Separation of Concerns:</strong> Syntax and Semantics are separated, so that no software updates are needed, when the ontology evolves over time.</li>
+						<li><strong>Design for transformation:</strong> The PIG metamodel assures loss-less transformation between OWL/RDF (Knowledge Graphs), GQL (Property Graphs) and Object-oriented Programming.</li>
+						<li><strong>Federation:</strong> JSON-LD supports dataspaces with federated data under full control of the respective owners.</li>
+						<li><strong>Multi-Format Support:</strong> JSON-LD, RDF/Turtle, and Property Graphs</li>
+						<li><strong>Strict Validation:</strong> JSON Schema Draft-07 and SHACL-based validation</li>
+						<li><strong>Multi-Language Support:</strong> Built-in support for multilingual content with IETF language tags</li>
+						<li><strong>Versioning:</strong> Built-in revision control with <code>pig:revision</code> and <code>pig:priorRevision</code></li>
+						<li><strong>Specialization:</strong> Class hierarchies through <code>pig:specializes</code></li>
+					</ul>
+				</div>
+            </section>
+<!--
+            <section>
+                <h2>Formats and Schemas</h2>
+                <ul class="resources-list">
+                    <li>
+                        <a href="./pig/schema/2026-01-12/jsonld/">JSON-LD Schemas (Draft-07)</a>
+                        <div class="description">Complete JSON Schema validation for all PIG metamodel classes and instances</div>
+																																								
+
+   
+  
+ 
+						
+                    </li>
+                    <li>
+                        <a href="./pig/schema/2026-01-12/rdf/">RDF/Turtle Schemas with SHACL</a>
+                        <div class="description">SHACL shapes for validating RDF-based PIG data</div>
+																																											  
+																																											 
+																																												 
+                    </li>
+                    <li>
+                        <a href="./results/">Latest Results</a>
+                        <div class="description">Metamodel implementation in RDF/Turtle and JSON-LD with JSON Schema (2026-01-12)</div>
+														 
+												 
+																																										  
+																																																																																																																								
+							  
+																									   
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Examples and Validation</h2>
+                <p>Demonstration examples showcase practical applications of the PIG metamodel:</p>
+                
+                <ul class="resources-list">
+                    <li>
+                        <a href="./examples/libraries/">Library Management Ontology</a>
+                        <div class="description">Example of an ontology-based application with libraries, books, and authors</div>
+                    </li>
+                    <li>
+                        <a href="./validation/">Validation Examples</a>
+                        <div class="description">
+                            Validated examples:<br>
+                            • Very Simple Model with Requirements (FMC)<br>
+                            • Small Autonomous Vehicle (SysML v1)<br>
+                            • Dimmer (FMC)
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Standards and Ontologies</h2>
+                <p>PIG is built on established standards and ontologies:</p>
+                
+                <div class="features">
+                    <ul>
+                        <li><strong>W3C Standards:</strong> RDF, JSON-LD, SHACL, Dublin Core</li>
+                        <li><strong>JSON Schema:</strong> Draft-07 for structural validation</li>
+                        <li><strong>ISO/IEC:</strong> 15288 (Systems Engineering), 21838-1 (Top-level Ontologies)</li>
+                        <li><strong>OMG:</strong> SysML, UML, Commons Ontology Library</li>
+                        <li><strong>Domain Ontologies:</strong> BFO, IOF (Industrial Ontologies Foundry)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="cta">
+                <h3>Get Started with PIG</h3>
+                <p>Explore the schemas, examples, and documentation</p>
+                <a href="./pig/schema/2026-01-12/jsonld/">JSON-LD Schemas</a>
+                <a href="https://github.com/GfSE/CASCaDE-Verification-and-Validation" target="_blank">GitHub Repository</a>
+                <a href="./literature/">Literature</a>
+            </div>
+-->
+            <section>
+                <h2>Project and Community</h2>
+                <p>PIG is being developed as part of the <strong>CASCaRA</strong> project (Collaborative Artifact, Specification, Context and Resource Access), an initiative by:</p>
+                
+                <ul class="resources-list">
+                    <li>
+                        <a href="https://gfse.org" target="_blank">GfSE e.V.</a>
+                        <div class="description">German Society for Systems Engineering</div>
+                    </li>
+                    <li>
+                        <a href="https://www.prostep.org" target="_blank">prostep ivip</a>
+                        <div class="description">Association for Product Development</div>
+                    </li>
+                    <li>
+                        <a href="https://www.omg.org" target="_blank">OMG</a>
+                        <div class="description">Object Management Group - CASCaRA RFP approved (2024-12-13)</div>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>News</h2>
+                <ul class="resources-list">
+                    <li>
+                        <span class="badge new">2026-01-12</span>
+                        <a href="https://cascade.gfse.org/results/#2026-01-12-metamodel-implemented-in-rdfturtle-and-json-ld-with-json-schema"><strong>Metamodel Implementation</strong></a>
+                        <div class="description">Complete implementation in RDF/Turtle and JSON-LD with JSON Schema. Validation with real-world examples successfully completed.</div>
+                    </li>
+                    <li>
+                        <span class="badge draft">2025-12-08</span>
+                        <a href="https://cascade.gfse.org/results/#2025-12-08-cascara-initial-standard-submission-at-omg"><strong>CASCaRA Initial Submission</strong></a>
+                        <div class="description">Initial standard submission to OMG completed. Strong interest from other OMG initiatives.</div>
+                    </li>
+                    <li>
+                        <span class="badge draft">2024-12-13</span>
+                        <a href="https://cascade.gfse.org/results/#2024-12-13-omg-approves-rfp"><strong>OMG RFP Approved</strong></a>
+                        <div class="description">Request for Proposal approved by OMG Architecture Board and Technical Committee.</div>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Contact and Contribute</h2>
+                <p>Interested in PIG? We're looking for support from companies and software developers!</p>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>📧 Contact</h3>
+                        <p>
+                            <strong>Uwe Kaufmann</strong><br>
+                            <a href="mailto:uwe.kaufmann@gfse.org">Uwe.Kaufmann@gfse.org</a> | 
+                            <a href="https://www.linkedin.com/in/uwekaufmann/" target="_blank">LinkedIn</a>
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <h3>📧 Technical Lead</h3>
+                        <p>
+                            <strong>Dr.-Ing. Oskar von Dungern</strong><br>
+                            <a href="mailto:oskar.dungern@gfse.org">Oskar.Dungern@gfse.org</a> | 
+                            <a href="https://www.linkedin.com/in/odungern/" target="_blank">LinkedIn</a> | <a href="https://github.com/odungern" target="_blank">GitHub</a>
+                        </p>
+                        <p>
+                            <strong>Michael Kirsch</strong><br>
+                            <a href="mailto:Michael.Kirsch@em.ag">Michael.Kirsch@em.ag</a> | 
+                            <a href="https://www.linkedin.com/in/michael-kirsch-58859454/" target="_blank">LinkedIn</a>
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <h3>🐙 Repository</h3>
+                        <p>
+                            <a href="https://github.com/GfSE/CASCaDE-Pages" target="_blank">GitHub: CASCaDE-Pages</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Verification-and-Validation" target="_blank">GitHub: Validation</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Pages/discussions" target="_blank">Discussions</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>
+                <strong>Product Information Graph (PIG)</strong><br>
+                Developed by the <a href="https://cascade.gfse.org">CASCaRA (CASCaDE) Initiative</a><br>
+                Copyright © 2025 <a href="https://gfse.org" target="_blank">GfSE - Gesellschaft für Systems Engineering e.V.</a><br>
+                Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache 2.0</a>
+            </p>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                <a href="https://github.com/GfSE/CASCaDE-Pages" target="_blank">GitHub</a> |
+                <a href="https://github.com/GfSE/CASCaDE-Pages/issues" target="_blank">Report Issues</a> |
+                <a href="./literature/">Literature</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

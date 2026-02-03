@@ -1,0 +1,121 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/Relationship.json",
+    "title": "PIG Relationship JSON-LD Schema",
+    "description": "Validates <strong>Relationship</strong> class definitions for directed connections between entities. Configures which properties (pig:eligibleProperty), source links (pig:eligibleSourceLink) and target links (pig:eligibleTargetLink) are allowed. Relationships are reified connections that can carry their own properties, enabling rich traceability and dependency modeling (e.g., 'Refinement' relationships with rationale and traceability status). Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance. Supports specialization hierarchies and optional icons.",
+    "type": "object",
+  "properties": {
+    "@id": {
+      "$ref": "#/$defs/idString"
+    },
+    "@type": {
+      "$ref": "#/$defs/idString"
+    },
+    "pig:specializes": {
+      "$ref": "#/$defs/idObject"
+    },
+    "pig:itemType": {
+      "type": "object",
+      "required": [ "@id" ],
+      "properties": {
+        "@id": {
+          "type": "string",
+          "enum": [ "pig:Relationship" ],
+          "description": "The PigItemType for pig:Relationship"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dcterms:title": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "dcterms:description": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "pig:eligibleProperty": {
+      "type": "array",
+      "description": "Array of Property class references that can be used with this Relationship",
+      "items": {
+        "$ref": "#/$defs/idObject"
+      }
+    },
+    "pig:eligibleSourceLink": {
+      "$ref": "#/$defs/idObject",
+      "description": "Link class reference that defines the source endpoint of this Relationship"
+    },
+    "pig:eligibleTargetLink": {
+      "$ref": "#/$defs/idObject",
+      "description": "Link class reference that defines the target endpoint of this Relationship"
+    },
+    "pig:icon": {
+      "type": "object",
+      "description": "Optional icon representation for this Relationship type",
+      "properties": {
+        "@value": {
+          "type": "string",
+          "description": "Icon identifier or path"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+    "required": [
+        "@id",
+        "pig:itemType",
+        "dcterms:title"
+    ],
+    "oneOf": [
+        {
+            "required": [ "@type" ],
+            "description": "New Relationship class (not specialized)"
+        },
+        {
+            "required": [ "pig:specializes" ],
+            "description": "Specialized Relationship class"
+        }
+    ],
+    "additionalProperties": false,
+    "$defs": {
+        "idString": {
+            "type": "string",
+            "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
+            "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
+        },
+        "idObject": {
+            "type": "object",
+            "required": [ "@id" ],
+            "properties": {
+                "@id": {
+                    "$ref": "#/$defs/idString"
+                }
+            },
+            "additionalProperties": false,
+            "description": "JSON-LD ID object wrapper"
+        },
+        "languageValue": {
+            "type": "object",
+            "required": [ "@value" ],
+            "properties": {
+                "@value": {
+                    "type": "string",
+                    "description": "The actual text content"
+                },
+                "@language": {
+                    "type": "string",
+                    "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+                    "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+                }
+            },
+            "additionalProperties": false,
+            "description": "Multi-language text value with optional language tag"
+        }
+    }
+}
