@@ -6,10 +6,9 @@
             <v-card-actions>
                 <v-file-input
                     v-model='selectedFiles'
-                    accept='.jsonld'
+                    accept='.json,.jsonld,application/ld+json'
                     label='JSON-LD Input'
                     prepend-icon='mdi-folder-open'
-                    multiple
                 ></v-file-input>
                 <v-btn color='red' @click='dialog = false'>Close</v-btn>
                 <v-btn color='blue' @click='submitFiles'>Submit</v-btn>
@@ -19,8 +18,10 @@
 </template>
 
 <script lang="ts">
+import { markRaw, toRaw } from 'vue'
 import { Options, Vue } from 'vue-class-component';
-// import { jsonld2pig } from '../../utils/import/jsonld/jsonld2pig';
+import { importJSONLD } from '../../utils/import/jsonld/import-jsonld';
+import { TPigItem } from '../../utils/schemas/pig/pig-metaclasses';
 
 @Options({
   data() {
@@ -30,17 +31,17 @@ import { Options, Vue } from 'vue-class-component';
     };
   },
   methods: {
-    submitFiles() {
-/*
-        const JsonldTranslator = new jsonld2pig();
-        let translatorResponse = JsonldTranslator.toPig(this.selectedFiles);
-        console.log(translatorResponse.ok);
-        console.log(translatorResponse.status);
+    async submitFiles() {
+        // need to make sure we implement injestion of multiple files later
+        const rawFiles = toRaw(this.selectedFiles) as File;
+        // const files: File = rawFiles.map(f => markRaw(f));
+        const translatorResponse = await importJSONLD(rawFiles);
+        const allItems = translatorResponse.response as TPigItem[];
+        console.log(allItems);
 
         // reset variables
         this.dialog = false;
         this.selectedFiles = [];
-*/
     }
   },
 })
