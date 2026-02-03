@@ -36,7 +36,6 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         return rsp;
 
     const text = rsp.response as string;
-    // logger.info('importJSONLD: loaded text length ' + text.length);
 
     let doc: any;
     try {

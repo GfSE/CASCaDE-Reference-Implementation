@@ -20,8 +20,8 @@
 <script lang="ts">
 import { markRaw, toRaw } from 'vue'
 import { Options, Vue } from 'vue-class-component';
-import { importJSONLD } from '../../utils/import/jsonld/import-jsonld';
-import { TPigItem } from '../../utils/schemas/pig/pig-metaclasses';
+import { importJSONLD } from '../../utils/import/jsonld/import-package-jsonld';
+import { TPigItem, APackage } from '../../utils/schemas/pig/ts/pig-metaclasses';
 
 @Options({
   data() {
@@ -32,12 +32,15 @@ import { TPigItem } from '../../utils/schemas/pig/pig-metaclasses';
   },
   methods: {
     async submitFiles() {
-        // need to make sure we implement injestion of multiple files later
+        // submit the file for reading
         const rawFiles = toRaw(this.selectedFiles) as File;
-        // const files: File = rawFiles.map(f => markRaw(f));
+
+        // extract HTML of object
         const translatorResponse = await importJSONLD(rawFiles);
         const allItems = translatorResponse.response as TPigItem[];
-        console.log(allItems);
+        const thePackage = allItems[0] as APackage;
+
+        console.log('package: ' + thePackage.getHTML());
 
         // reset variables
         this.dialog = false;

@@ -173,8 +173,8 @@ export const LIB = {
      * - Only object keys are renamed; array elements and primitive values are preserved (but nested objects are processed)
      * Usage: renameJsonTags(node, LIB.fromJSONLD)
      */
-    toJSONLD: TO_JSONLD, // see above
-    fromJSONLD: FROM_JSONLD,
+//     toJSONLD: TO_JSONLD, // see above
+//     fromJSONLD: FROM_JSONLD,
     renameJsonTags(
         node: JsonValue,
         mapping: Record<string, string> | Array<[string, string]>,

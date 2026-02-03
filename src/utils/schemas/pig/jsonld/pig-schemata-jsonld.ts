@@ -4,7 +4,7 @@
  */
 /** JSON-LD SCHEMATA for PIG items: Property, Link, Entity, Relationship, AnEntity, ARelationship
  *  These schemas validate the JSON-LD representation (with @id, @type, @value, etc.)
- *  
+ *
  *  Dependencies: ajv (Another JSON Schema Validator) https://ajv.js.org/
  *  Authors: oskar.dungern@gfse.org, ..
  *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
@@ -36,19 +36,28 @@
 
 import { ajv } from '../../../../plugins/ajv';
 import { LIB } from '../../../lib/helpers';
-import * as path from 'path';
 
 export const SCHEMA_PATH = 'http://product-information-graph.org/schema/2026-01-12/jsonld/';
 
 // Schema file names (must match files in this directory)
+// const SCHEMA_FILES = {
+//     Property: 'Property.json',
+//     Link: 'Link.json',
+//     Entity: 'Entity.json',
+//     Relationship: 'Relationship.json',
+//     AnEntity: 'anEntity.json',
+//     ARelationship: 'aRelationship.json',
+//     APackage: 'aPackage.json'
+// } as const;
+
 const SCHEMA_FILES = {
-    Property: 'Property.json',
-    Link: 'Link.json',
-    Entity: 'Entity.json',
-    Relationship: 'Relationship.json',
-    AnEntity: 'anEntity.json',
-    ARelationship: 'aRelationship.json',
-    APackage: 'aPackage.json'
+    Property: new URL('./Property.json', import.meta.url).href,
+    Link: new URL('./Link.json', import.meta.url).href,
+    Entity: new URL('./Entity.json', import.meta.url).href,
+    Relationship: new URL('./Relationship.json', import.meta.url).href,
+    AnEntity: new URL('./anEntity.json', import.meta.url).href,
+    ARelationship: new URL('./aRelationship.json', import.meta.url).href,
+    APackage: new URL('./aPackage.json', import.meta.url).href
 } as const;
 
 // Type for schema keys
@@ -68,26 +77,25 @@ async function loadSchema(schemaKey: SchemaKey): Promise<any> {
         return schemaCache[schemaKey];
     }
 
-    const filename = SCHEMA_FILES[schemaKey];
-    const schemaPath = path.join(__dirname, filename);
+    const schemaPath = SCHEMA_FILES[schemaKey];
 
     try {
         // Use LIB.readFileAsText to support both Node and browser
         const rsp = await LIB.readFileAsText(schemaPath);
-        
+
         if (!rsp.ok) {
-            throw new Error(`Failed to load schema ${filename}: ${rsp.statusText}`);
+            throw new Error(`Failed to load schema ${schemaPath}: ${rsp.statusText}`);
         }
 
         const schema = JSON.parse(rsp.response as string);
-        
+
         // Cache the schema
         schemaCache[schemaKey] = schema;
-        
+
         return schema;
     } catch (error) {
         const msg = error instanceof Error ? error.message : String(error);
-        throw new Error(`Error loading schema ${filename}: ${msg}`);
+        throw new Error(`Error loading schema ${schemaPath}: ${msg}`);
     }
 }
 
@@ -97,11 +105,11 @@ async function loadSchema(schemaKey: SchemaKey): Promise<any> {
  */
 async function loadAllSchemas(): Promise<Record<SchemaKey, any>> {
     const schemas = {} as Record<SchemaKey, any>;
-    
+
     for (const key of Object.keys(SCHEMA_FILES) as SchemaKey[]) {
         schemas[key] = await loadSchema(key);
     }
-    
+
     return schemas;
 }
 
@@ -111,7 +119,7 @@ async function loadAllSchemas(): Promise<Record<SchemaKey, any>> {
  */
 async function initializeSchemas(): Promise<void> {
     const schemas = await loadAllSchemas();
-    
+
     // Register all schemas with AJV
     ajv.addSchema(schemas.Property);
     ajv.addSchema(schemas.Link);
@@ -148,9 +156,9 @@ let validatePackageLD: any = null;
  */
 async function getValidator(schemaKey: SchemaKey): Promise<any> {
     await ensureInitialized();
-    
+
     const schema = await loadSchema(schemaKey);
-    
+
     // Check if already compiled
     switch (schemaKey) {
         case 'Property':
