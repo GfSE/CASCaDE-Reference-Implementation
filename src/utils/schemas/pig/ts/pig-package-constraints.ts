@@ -162,57 +162,6 @@ export function checkConstraintsForPackage(
 }
 
 /**
- * Check cross-item constraints for a package
- * @param pkg - Package to validate
- * @returns IRsp (rspOK on success, error IRsp on failure)
- *
-export function checkConstraintsForPackage(pkg: IAPackage): IRsp {
-    // 1. Check that all primary IDs are unique
-    const uniquenessCheck = checkUniqueIds(pkg);
-    if (!uniquenessCheck.ok) {
-        return uniquenessCheck;
-    }
-
-    // 2. Build a map of itemTypes by ID for quick lookup
-    const itemTypeMap = buildItemTypeMap(pkg);
-    // if (pkg.id == 'd:test-invalid-prop')
-        // logger.debug(`checkConstraintsForPackage (1): `, pkg, itemTypeMap);
-
-    // 3. Check aProperty.hasClass references
-    const propertyCheck = checkPropertyReferences(pkg, itemTypeMap);
-    if (!propertyCheck.ok) {
-        return propertyCheck;
-    }
-
-    // 4. Check aLink.hasClass references (aSourceLink and aTargetLink)
-    const linkCheck = checkLinkReferences(pkg, itemTypeMap);
-    if (!linkCheck.ok) {
-        return linkCheck;
-    }
-
-    // 5. Check anEntity.hasClass and aRelationship.hasClass references
-    const classCheck = checkEntityAndRelationshipReferences(pkg, itemTypeMap, 'hasClass');
-    if (!classCheck.ok) {
-        return classCheck;
-    }
-
-    // 6. Check Entity.specializes and Relationship.specializes references
-    const specializesCheck = checkEntityAndRelationshipReferences(pkg, itemTypeMap, 'specializes');
-    if (!specializesCheck.ok) {
-        return specializesCheck;
-    }
-
-    // 7. Check Property.specializes and Link.specializes references
-    const propertyLinkSpecializesCheck = checkPropertyAndLinkReferences(pkg, itemTypeMap, 'specializes');
-    if (!propertyLinkSpecializesCheck.ok) {
-        return propertyLinkSpecializesCheck;
-    }
-
-    // logger.debug(`Package ${pkg.id || 'unnamed'}: all constraints validated successfully`);
-    return rspOK;
-}*/
-
-/**
  * Check that all primary IDs in the package are unique;
  * validates both '@id' and 'id' fields.
  * @param pkg - Package to validate
@@ -489,57 +438,6 @@ function checkEntityOrRelationshipReferences(
                 }
             }
 
-    /*
-        const contextName = isHasClass ? 'hasClass' : 'specializes';
-        // Check Entity items (both anEntity for hasClass, and Entity for specializes)
-        const isEntityInstance = iType === PigItemType.anEntity;
-        const isEntityClass = iType === PigItemType.Entity;
-
-        if ((isHasClass && isEntityInstance) || (!isHasClass && isEntityClass)) {
-            const entity = item as any;
-            const referenceValue = entity[referenceType];
-
-            if (!referenceValue) {
-                // specializes is optional (can inherit from pig:Entity directly)
-                if (!isHasClass) {
-                    continue;
-                }
-                return Msg.create(674, iId, i, contextName, `missing ${contextName}`);
-            }
-
-            const targetType = itemTypeMap.get(referenceValue);
-            if (!targetType) {
-                return Msg.create(675, iId, i, contextName, referenceValue, 'not found in package');
-            }
-            if (targetType !== PigItemType.Entity) {
-                return Msg.create(675, iId, i, contextName, referenceValue, `expected pig:Entity, found ${targetType}`);
-            }
-        }
-
-        // Check Relationship items (both aRelationship for hasClass, and Relationship for specializes)
-        const isRelationshipInstance = iType === PigItemType.aRelationship;
-        const isRelationshipClass = iType === PigItemType.Relationship;
-
-        if ((isHasClass && isRelationshipInstance) || (!isHasClass && isRelationshipClass)) {
-            const rel = item as any;
-            const referenceValue = rel[referenceType];
-
-            if (!referenceValue) {
-                // specializes is optional (can inherit from pig:Relationship directly)
-                if (!isHasClass) {
-                    continue;
-                }
-                return Msg.create(674, iId, i, contextName, `missing ${contextName}`);
-            }
-
-            const targetType = itemTypeMap.get(referenceValue);
-            if (!targetType) {
-                return Msg.create(675, iId, i, contextName, referenceValue, 'not found in package');
-            }
-            if (targetType !== PigItemType.Relationship) {
-                return Msg.create(675, iId, i, contextName, referenceValue, `expected pig:Relationship, found ${targetType}`);
-            }
-        } */
     }
 
     return rspOK;
