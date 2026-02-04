@@ -2714,10 +2714,11 @@ function getLocalDate(dateStr: string, lang?: TISODateString): string {
  * Sanitize HTML by removing dangerous elements and attributes that could execute code
  * Preserves safe XHTML formatting (p, div, span, strong, em, etc.)
  * Preserves <object> tags ONLY for safe media types (image/*, video/*, audio/*)
+ * Allows data: URLs ONLY for safe image types in <img> tags
  * Removes: <script>, <style>, <embed>, <iframe>, <link>, <meta>, <form>
  * Removes: <object> with dangerous MIME types (application/x-shockwave-flash, etc.)
  * Removes: All event handler attributes (onclick, onerror, onload, etc.)
- * Removes: javascript: and data: protocols in href and src attributes
+ * Removes: javascript: protocols and unsafe data: URLs
  * 
  * @param html - HTML string to sanitize
  * @returns Sanitized HTML string safe for rendering, preserving XHTML structure and safe media
@@ -2733,9 +2734,14 @@ function getLocalDate(dateStr: string, lang?: TISODateString): string {
  * // Returns: '<object data="image.png" type="image/png">Image</object>'
  * 
  * @example
- * const malicious = '<object data="malware.swf" type="application/x-shockwave-flash"></object>';
- * const safe = passifyHTML(malicious);
- * // Returns: ''
+ * const safeDataUrl = '<img src="data:image/png;base64,iVBORw0KG...">';
+ * const safe = passifyHTML(safeDataUrl);
+ * // Returns: '<img src="data:image/png;base64,iVBORw0KG...">' (preserved)
+ * 
+ * @example
+ * const unsafeDataUrl = '<img src="data:image/svg+xml,<svg onload=alert(1)>">';
+ * const safe = passifyHTML(unsafeDataUrl);
+ * // Returns: '<img src="#">' (blocked)
  */
 function passifyHTML(html: string): string {
     if (!html || typeof html !== 'string') return '';
@@ -2810,9 +2816,43 @@ function passifyHTML(html: string): string {
     // Matches on followed by word characters, capturing until the closing quote
     passified = passified.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
 
-    // 4. Remove dangerous protocols from href and src attributes
-    // Replace javascript: and data: with # (safer than removing the attribute)
-    passified = passified.replace(/\s+(href|src)\s*=\s*["']\s*(javascript|data):[^"']*["']/gi, ' $1="#"');
+    // 4. Handle data: URLs and other dangerous protocols
+    // Safe data: URL types for images only
+    const safeDataUrlTypes = new Set([
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/gif',
+        'image/webp'
+    ]);
+
+    // Process src and href attributes
+    passified = passified.replace(/\s+(href|src)\s*=\s*["']([^"']*)["']/gi, (match, attr, url) => {
+        const trimmedUrl = url.trim();
+
+        // Block javascript: protocol
+        if (trimmedUrl.toLowerCase().startsWith('javascript:')) {
+            return ` ${attr}="#"`;
+        }
+
+        // Handle data: URLs
+        if (trimmedUrl.toLowerCase().startsWith('data:')) {
+            // Extract MIME type from data URL
+            const dataUrlMatch = trimmedUrl.match(/^data:([^;,]+)/i);
+            const mimeType = dataUrlMatch ? dataUrlMatch[1].toLowerCase() : '';
+
+            // Allow only safe image data URLs in src attributes
+            if (attr.toLowerCase() === 'src' && safeDataUrlTypes.has(mimeType)) {
+                return match; // Keep safe data URL
+            }
+
+            // Block all other data URLs (including SVG which can contain scripts)
+            return ` ${attr}="#"`;
+        }
+
+        // Keep safe URLs (http, https, relative paths, anchors)
+        return match;
+    });
 
     // 5. Remove dangerous attributes
     const dangerousAttrs = [
@@ -2869,4 +2909,5 @@ function buildIdObject(id: string, useJsonLd = false): JsonObject {
 }
 makeIdObject(str: string): JsonObject {
         return { id: str };
-},*/
+}
+*/
