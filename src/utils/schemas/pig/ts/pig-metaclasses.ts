@@ -752,7 +752,7 @@ export class AProperty extends Item implements IAProperty {
             idRef: this.idRef
         });
     }
-    setJSONLD(itm: any) {
+/*    setJSONLD(itm: any) {
         let _itm = MVF.renameJsonTags(itm as JsonValue, MVF.fromJSONLD, { mutate: false }) as any;
         _itm = replaceIdObjects(_itm);
         return this.set(_itm);
@@ -762,15 +762,11 @@ export class AProperty extends Item implements IAProperty {
         const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
         return makeIdObjects(jld) as JsonObject;
     }
-/*    setXML(itm: stringXML) {
+    setXML(itm: stringXML) {
         this.lastStatus = Msg.create(699, 'setXML');
         return this;
         //    return itm;
     } */
-    getHTML(options?: object): stringHTML {
-        // ToDo: implement a HTML snippet with the property value
-        return '<div>not implemented yet</div>';
-    }
 }
 export class ASourceLink extends ALink implements IALink {
     constructor() {
