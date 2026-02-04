@@ -39,17 +39,7 @@ import { LIB } from '../../../lib/helpers';
 
 export const SCHEMA_PATH = 'http://product-information-graph.org/schema/2026-01-12/jsonld/';
 
-// Schema file names (must match files in this directory)
-// const SCHEMA_FILES = {
-//     Property: 'Property.json',
-//     Link: 'Link.json',
-//     Entity: 'Entity.json',
-//     Relationship: 'Relationship.json',
-//     AnEntity: 'anEntity.json',
-//     ARelationship: 'aRelationship.json',
-//     APackage: 'aPackage.json'
-// } as const;
-
+/* best solution and should work, but produces a runtime error for some reason:
 const SCHEMA_FILES = {
     Property: new URL('./Property.json', import.meta.url).href,
     Link: new URL('./Link.json', import.meta.url).href,
@@ -58,6 +48,20 @@ const SCHEMA_FILES = {
     AnEntity: new URL('./anEntity.json', import.meta.url).href,
     ARelationship: new URL('./aRelationship.json', import.meta.url).href,
     APackage: new URL('./aPackage.json', import.meta.url).href
+} as const;
+*/
+// Local path for schema files (relative to project root)
+const SCHEMA_PATH_LOCAL = 'src/utils/schemas/pig/jsonld/';
+
+// Schema files with local paths:
+const SCHEMA_FILES = {
+    Property: `${SCHEMA_PATH_LOCAL}Property.json`,
+    Link: `${SCHEMA_PATH_LOCAL}Link.json`,
+    Entity: `${SCHEMA_PATH_LOCAL}Entity.json`,
+    Relationship: `${SCHEMA_PATH_LOCAL}Relationship.json`,
+    AnEntity: `${SCHEMA_PATH_LOCAL}anEntity.json`,
+    ARelationship: `${SCHEMA_PATH_LOCAL}aRelationship.json`,
+    APackage: `${SCHEMA_PATH_LOCAL}aPackage.json`
 } as const;
 
 // Type for schema keys
