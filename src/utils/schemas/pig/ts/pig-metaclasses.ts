@@ -31,10 +31,9 @@
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
 import { RE } from "../../../lib/definitions";
-import { LIB, logger } from "../../../lib/helpers";
+import { LIB, LOG } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
 import { JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../../lib/helpers";
-// use central Ajv instance from the Vue plugin:
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage, ConstraintCheckType } from './pig-package-constraints';
 // optional: import type for better TS typing where needed
@@ -201,13 +200,13 @@ abstract class Identifiable extends Item implements IIdentifiable {
     protected set(itm: IIdentifiable) {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
-        //        logger.debug('Identifiable.set i: ', itm);
+        //        LOG.debug('Identifiable.set i: ', itm);
         super.set(itm);
         this.id = itm.id;
         this.specializes = itm.specializes;
         this.title = itm.title;
         this.description = itm.description;
-//        logger.debug('Identifiable.set o: ', this);
+//        LOG.debug('Identifiable.set o: ', this);
         // made chainable in concrete subclass
     }
     protected get() {
@@ -238,7 +237,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
     }
     protected getJSONLD() {
         const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
-    //    logger.debug('Identifiable.getJSONLD: ', jld);
+    //    LOG.debug('Identifiable.getJSONLD: ', jld);
         return makeIdObjects(jld) as JsonObject;        
     }
     protected setXML(itm: any) {
@@ -345,7 +344,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
         super(itm);
     }
     protected set(itm: IAnElement) {
-    //    logger.debug('anEl.set 0', itm.hasProperty);
+    //    LOG.debug('anEl.set 0', itm.hasProperty);
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
         super.set(itm);
@@ -355,11 +354,11 @@ abstract class AnElement extends Identifiable implements IAnElement {
         this.creator = itm.creator;
 
         this.hasProperty = itm.hasProperty ? itm.hasProperty.map(p => new AProperty().set(p)) : [];
-    //    logger.debug('anEl.set 9',itm.hasProperty, this.hasProperty);
+    //    LOG.debug('anEl.set 9',itm.hasProperty, this.hasProperty);
         // made chainable in concrete subclass
     }
     protected get() {
-    //    logger.debug('anElement.get():', this/*.hasProperty, this.hasProperty.map(p => p.get())*/);
+    //    LOG.debug('anElement.get():', this/*.hasProperty, this.hasProperty.map(p => p.get())*/);
         return {
             ...super.get(),
             revision: this.revision,
@@ -377,7 +376,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
         _itm.hasProperty = collectConfigurablesFromJSONLD(_itm, PigItemType.aProperty) as IAProperty[] | undefined;
         _itm.modified = _itm.modified || new Date().toISOString();
-        //    logger.debug('AnElement.setJSONLD: '+ JSON.stringify(_itm, null, 2));
+        //    LOG.debug('AnElement.setJSONLD: '+ JSON.stringify(_itm, null, 2));
 
         // Set the normalized object in the concrete subclass
         return _itm
@@ -450,7 +449,7 @@ export class Property extends Identifiable implements IProperty {
         // others shall be treated as strings (with a warning in the log):
         if (!isSupportedXsDataType(itm.datatype)) {
             const msg = Msg.create(680, itm.id, itm.datatype);
-            logger.warn(msg.statusText);
+            LOG.warn(msg.statusText);
             //            return msg */
         }
 
@@ -459,7 +458,7 @@ export class Property extends Identifiable implements IProperty {
     }
     set(itm: IProperty) {
         this.lastStatus = this.validate(itm);
-        // logger.debug('Property.set: '+ JSON.stringify(this.lastStatus));
+        // LOG.debug('Property.set: '+ JSON.stringify(this.lastStatus));
         if (this.lastStatus.ok) {
             super.set(itm);
             this.datatype = itm.datatype;
@@ -588,7 +587,7 @@ export class Entity extends Element implements IEntity {
     validate(itm: IEntity) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         // ... only at the lowest subclass level:
-        // logger.debug('Entity.validate: ', itm);
+        // LOG.debug('Entity.validate: ', itm);
         try {
             const ok = SCH.validateEntitySchema(itm);
             if (!ok) {
@@ -872,9 +871,9 @@ export class AnEntity extends AnElement implements IAnEntity {
     }
     set(itm: IAnEntity) {
         const _itm:IAnEntity = LIB.stripUndefined( itm );
-    //    logger.debug('AnEntity.set():', _itm);
+    //    LOG.debug('AnEntity.set():', _itm);
         this.lastStatus = this.validate(_itm);
-    //    logger.debug('AnEntity.set status and input: ' + JSON.stringify(this.lastStatus), JSON.stringify(_itm, null, 2));
+    //    LOG.debug('AnEntity.set status and input: ' + JSON.stringify(this.lastStatus), JSON.stringify(_itm, null, 2));
         if (this.lastStatus.ok) {
             super.set(_itm);
             this.hasTargetLink = _itm.hasTargetLink ? _itm.hasTargetLink.map(r => new ATargetLink().set(r)) : [];
@@ -892,10 +891,10 @@ export class AnEntity extends AnElement implements IAnEntity {
         // In JSON-LD all configurable references have an ID-string as tag and an itemType pig:aLink;
         // collect them here in a hasTarget array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
-    //    logger.debug('AnEntity.setJSONLD input: ', JSON.stringify(itm, null, 2));
+    //    LOG.debug('AnEntity.setJSONLD input: ', JSON.stringify(itm, null, 2));
         const _itm = super.setJSONLD(itm) as any;
         _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[] | undefined;
-        // logger.debug('AnEntity.setJSONLD: ', JSON.stringify(_itm, null, 2));
+        // LOG.debug('AnEntity.setJSONLD: ', JSON.stringify(_itm, null, 2));
 
         return this.set(_itm);
     }
@@ -903,7 +902,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         //        if (!this.lastStatus.ok) return undefined;
         let jld = super.getJSONLD();
         jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
-    //    logger.debug('AnEntity.getJSONLD: ', out);
+    //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
     setXML(itm: stringXML) {
@@ -995,7 +994,7 @@ export class ARelationship extends AnElement implements IARelationship {
     }
     set(itm: IARelationship) {
         const _itm: IARelationship = LIB.stripUndefined(itm);
-        //logger.debug('ARelationship.set():', _itm);
+        //LOG.debug('ARelationship.set():', _itm);
         this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
             super.set(_itm);
@@ -1026,7 +1025,7 @@ export class ARelationship extends AnElement implements IARelationship {
         let jld = super.getJSONLD();
         jld = addConfigurablesToJSONLD(jld, this, 'hasSourceLink');
         jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
-        //    logger.debug('AnEntity.getJSONLD: ', out);
+        //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
     setXML(itm: stringXML) {
@@ -1060,7 +1059,7 @@ export class APackage extends Identifiable implements IAPackage {
     validate(itm: IAPackage, checks?: ConstraintCheckType[] ): IRsp {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         // ... only at the lowest subclass level:
-        // logger.debug('APackage.validate: ', itm);
+        // LOG.debug('APackage.validate: ', itm);
         try {
             const ok = SCH.validateAPackageSchema(itm);
             if (!ok) {
@@ -1085,7 +1084,7 @@ export class APackage extends Identifiable implements IAPackage {
 
         rsp = checkConstraintsForPackage(itm,checks);
         // if (itm.id == 'd:test-invalid-prop')
-        // logger.debug(`APackage.validate: validating package `, itm, rsp);
+        // LOG.debug(`APackage.validate: validating package `, itm, rsp);
 
         if (!rsp.ok) {
             return rsp;
@@ -1114,7 +1113,7 @@ export class APackage extends Identifiable implements IAPackage {
             ...super.get(),
             context: this.context,
             graph: this.graph.map(item => {
-                // logger.debug(`APackage.get: processing item `, item);
+                // LOG.debug(`APackage.get: processing item `, item);
                 return item.get();
             }),
             modified: this.modified,
@@ -1137,7 +1136,7 @@ export class APackage extends Identifiable implements IAPackage {
             : (Array.isArray(doc.graph) ? doc.graph : []);
 
         if (graph.length === 0) {
-            logger.warn('APackage.setJSONLD: empty @graph');
+            LOG.warn('APackage.setJSONLD: empty @graph');
         }
 
         // Instantiate each graph item
@@ -1152,19 +1151,19 @@ export class APackage extends Identifiable implements IAPackage {
             } else {
                 const errorMsg = result.statusText || 'Unknown instantiation error';
                 errors.push(errorMsg);
-                logger.warn(`APackage.setJSONLD: ${errorMsg}`);
+                LOG.warn(`APackage.setJSONLD: ${errorMsg}`);
             }
         }
 
         if (errors.length > 0) {
-            logger.warn(`APackage.setJSONLD: ${errors.length} item(s) failed instantiation`);
+            LOG.warn(`APackage.setJSONLD: ${errors.length} item(s) failed instantiation`);
             this.lastStatus = Msg.create(679, 'JSON-LD Package Import', instantiatedGraph.length, graph.length);
             return this;
         }
 
-    //    logger.debug(`APackage.setJSONLD: processing ${graph.length} items from package ${meta.id || 'unnamed'}`);
-    //    logger.debug('APackage.setJSONLD: extracted context:', ctx);
-    //    logger.debug('APackage.setJSONLD: extracted metadata:', meta);
+    //    LOG.debug(`APackage.setJSONLD: processing ${graph.length} items from package ${meta.id || 'unnamed'}`);
+    //    LOG.debug('APackage.setJSONLD: extracted context:', ctx);
+    //    LOG.debug('APackage.setJSONLD: extracted metadata:', meta);
     
         // Set default modified timestamp if not present
         if (!this.modified) {
@@ -1183,7 +1182,7 @@ export class APackage extends Identifiable implements IAPackage {
             creator: meta.creator
         } as IAPackage, checks);
 
-        // logger.debug(`APackage.setJSONLD: package ${JSON.stringify(this, null, 2)} set with status`, this.lastStatus);
+        // LOG.debug(`APackage.setJSONLD: package ${JSON.stringify(this, null, 2)} set with status`, this.lastStatus);
         // return the instantiated graph with instantiated graph items:
         return this;
     }
@@ -1225,16 +1224,16 @@ export class APackage extends Identifiable implements IAPackage {
         // 1. Parse XML string to JSON
         //    The context is skipped here, as it is extracted separately below.
         const parsed = xml2json(xmlString);
-        // logger.debug('APackage.setXML: parsed XML to JSON', JSON.stringify(parsed,null,2));
+        // LOG.debug('APackage.setXML: parsed XML to JSON', JSON.stringify(parsed,null,2));
 
         if (!parsed.ok) {
             this.lastStatus = parsed;
-            logger.error(`APackage.setXML: XML parsing failed: ${parsed.statusText}`);
+            LOG.error(`APackage.setXML: XML parsing failed: ${parsed.statusText}`);
             return this;
         }
 
         const doc = parsed.response as JsonObject;
-        // logger.debug('APackage.setXML: parsed XML to JSON', doc);
+        // LOG.debug('APackage.setXML: parsed XML to JSON', doc);
 
         // 2. Extract namespaces (if needed in future)
         const ctx = this.extractContextXML(xmlString);
@@ -1246,7 +1245,7 @@ export class APackage extends Identifiable implements IAPackage {
         const graph: any[] = Array.isArray(doc.graph) ? doc.graph : [];
 
         if (graph.length === 0) {
-            logger.warn('APackage.setXML: empty graph');
+            LOG.warn('APackage.setXML: empty graph');
         }
 
         // 5. Instantiate each graph item from parsed JSON
@@ -1261,17 +1260,17 @@ export class APackage extends Identifiable implements IAPackage {
             } else {
                 const errorMsg = result.statusText || 'Unknown instantiation error';
                 errors.push(errorMsg);
-                logger.warn(`APackage.setXML: ${errorMsg}`);
+                LOG.warn(`APackage.setXML: ${errorMsg}`);
             }
         }
 
         if (errors.length > 0) {
-            logger.warn(`APackage.setXML: ${errors.length} item(s) failed instantiation`);
+            LOG.warn(`APackage.setXML: ${errors.length} item(s) failed instantiation`);
             this.lastStatus = Msg.create(679, 'XML Package Import', instantiatedGraph.length, graph.length);
             return this;
         }
 
-        // logger.debug(`APackage.setXML: successfully instantiated ${instantiatedGraph.length} of ${graph.length} items`);
+        // LOG.debug(`APackage.setXML: successfully instantiated ${instantiatedGraph.length} of ${graph.length} items`);
 
         // 6. Set default modified timestamp if not present
         if (!this.modified) {
@@ -1290,7 +1289,7 @@ export class APackage extends Identifiable implements IAPackage {
             creator: doc.creator
         } as unknown as IAPackage, checks);
 
-        // logger.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
+        // LOG.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
         return this;
     }
     getHTML(options?: IOptionsHTML): stringHTML[] {
@@ -1352,7 +1351,7 @@ export class APackage extends Identifiable implements IAPackage {
     getAllItems(): TPigItem[] {
 
         if (!Array.isArray(this.graph)) {
-            logger.warn('LIB.allItems: APackage has no valid graph array');
+            LOG.warn('LIB.allItems: APackage has no valid graph array');
             return [];
         }
 
@@ -1361,7 +1360,7 @@ export class APackage extends Identifiable implements IAPackage {
         // Check package status
         const pkgStatus = this.status();
         if (!pkgStatus || !pkgStatus.ok) {
-            logger.warn(
+            LOG.warn(
                 `LIB.allItems: APackage '${this.id || 'unknown'}' has invalid status: ${pkgStatus?.statusText || 'unknown error'}`
             );
             return [];
@@ -1377,14 +1376,14 @@ export class APackage extends Identifiable implements IAPackage {
 
         for (const item of this.graph) {
             if (!item || typeof item !== 'object') {
-                logger.warn('LIB.allItems: encountered invalid graph item (not an object)');
+                LOG.warn('LIB.allItems: encountered invalid graph item (not an object)');
                 invalidCount++;
                 continue;
             }
 
             // Check if item has status() method
             if (typeof (item as any).status !== 'function') {
-                logger.warn(
+                LOG.warn(
                     `LIB.allItems: graph item '${(item as any).id || 'unknown'}' has no status() method`
                 );
                 invalidCount++;
@@ -1394,7 +1393,7 @@ export class APackage extends Identifiable implements IAPackage {
             // Check item status
             const itemStatus = (item as any).status();
             if (!itemStatus || !itemStatus.ok) {
-                logger.warn(
+                LOG.warn(
                     `LIB.allItems: graph item '${(item as any).id || 'unknown'}' (${(item as any).itemType || 'unknown type'}) has invalid status: ${itemStatus?.statusText || 'unknown error'}`
                 );
                 invalidCount++;
@@ -1408,7 +1407,7 @@ export class APackage extends Identifiable implements IAPackage {
 
         // Summary log
         if (invalidCount > 0) {
-            logger.warn(
+            LOG.warn(
                 `LIB.allItems: filtered out ${invalidCount} invalid item(s), kept ${validCount} valid item(s) from package '${this.id || 'unknown'}'`
             );
         }
@@ -1423,16 +1422,16 @@ export class APackage extends Identifiable implements IAPackage {
      */
     private extractContextJSONLD(doc: any): INamespace[] | string | Record<string, string> | undefined {
         const ctx = doc['@context'] || doc.context;
-        // logger.debug('extractContextJSONLD (1): ',ctx);
+        // LOG.debug('extractContextJSONLD (1): ',ctx);
 
         if (!ctx) {
-            logger.warn('APackage: no @context found in document');
+            LOG.warn('APackage: no @context found in document');
             return undefined;
         }
 
     /*    // String context (URL)
         if (typeof ctx === 'string') {
-            logger.debug(`APackage: extracted context URL: ${ctx}`);
+            LOG.debug(`APackage: extracted context URL: ${ctx}`);
             return ctx;
         } */
 
@@ -1448,21 +1447,21 @@ export class APackage extends Identifiable implements IAPackage {
                 }
             }
             if (namespaces.length > 0) {
-                // logger.debug(`APackage: extracted ${namespaces.length} namespaces from context`);
+                // LOG.debug(`APackage: extracted ${namespaces.length} namespaces from context`);
                 return namespaces;
             }
             // Return original object if no valid namespaces found
-            // logger.debug('APackage: extracted context object');
+            // LOG.debug('APackage: extracted context object');
             return ctx;
         }
 
     /*    // Array context
         if (Array.isArray(ctx)) {
-            logger.debug(`APackage: extracted array context with ${ctx.length} entries`);
+            LOG.debug(`APackage: extracted array context with ${ctx.length} entries`);
             return ctx;
         } */
 
-        logger.warn('APackage: unsupported @context format');
+        LOG.warn('APackage: unsupported @context format');
         return undefined;
     }
     /**
@@ -1514,11 +1513,11 @@ export class APackage extends Identifiable implements IAPackage {
         }
 
         if (namespaces.length === 0) {
-            logger.warn('extractContextXML: no namespaces found in XML');
+            LOG.warn('extractContextXML: no namespaces found in XML');
             return undefined;
         }
 
-        // logger.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
+        // LOG.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
         return namespaces;
     }
     /**
@@ -1572,7 +1571,7 @@ export class APackage extends Identifiable implements IAPackage {
             metadata.description = [{ value: descArray, lang: 'en' }];
         }
 
-        // logger.debug(`APackage metadata: id=${metadata.id}, title=${metadata.title?.[0]?.value}, modified=${metadata.modified}, creator=${metadata.creator}`);
+        // LOG.debug(`APackage metadata: id=${metadata.id}, title=${metadata.title?.[0]?.value}, modified=${metadata.modified}, creator=${metadata.creator}`);
 
         return metadata;
     }
@@ -1586,7 +1585,7 @@ export class APackage extends Identifiable implements IAPackage {
         // Validate item has required pig:itemType
         if (!item['pig:itemType'] || !item['pig:itemType']['@id']) {
             const id = item['@id'] || item.id || 'unknown';
-        //    logger.error(`APackage.instantiateItemJSONLD: @graph element missing pig:itemType, skipping ${id}`);
+        //    LOG.error(`APackage.instantiateItemJSONLD: @graph element missing pig:itemType, skipping ${id}`);
             return Msg.create(650, 'Instantiation from JSON-LD', 'pig:itemType', id);
         }
 
@@ -1594,14 +1593,14 @@ export class APackage extends Identifiable implements IAPackage {
 
         // Filter allowed item types
         if (!this.isAllowedItemType(itype)) {
-        //    logger.error(`APackage.instantiateItemJSONLD: skipping item type '${itype}' which is not allowed in a graph`);
+        //    LOG.error(`APackage.instantiateItemJSONLD: skipping item type '${itype}' which is not allowed in a graph`);
             return Msg.create(651, 'Instantiation from JSON-LD', itype);
         }
 
         const instance = this.createInstance(itype);
 
         if (!instance) {
-        //    logger.error(`APackage.instantiateItemJSONLD: unable to create instance for itemType '${itype}'`);
+        //    LOG.error(`APackage.instantiateItemJSONLD: unable to create instance for itemType '${itype}'`);
             return Msg.create(652, 'Instantiation from JSON-LD', itype);
         }
 
@@ -1611,20 +1610,20 @@ export class APackage extends Identifiable implements IAPackage {
             // Check if instantiation was successful
             const status = (instance as any).status();
             if (!status || !status.ok) {
-            /*    logger.error(
+            /*    LOG.error(
                     `APackage.instantiateItemJSONLD: ${itype} '${item['@id'] || item.id || 'unknown'}' failed validation: ${status?.statusText || 'unknown error'}`
                 ); */
                 return status || Msg.create(653, 'Instantiation from JSON-LD', itype, item['@id'] || item.id || 'unknown');
             }
 
-            // logger.debug(`APackage.instantiateItemJSONLD: successfully instantiated ${itype} with id ${item['@id']}`);
+            // LOG.debug(`APackage.instantiateItemJSONLD: successfully instantiated ${itype} with id ${item['@id']}`);
             return {
                 ...rspOK,
                 response: instance
             };
         } catch (err: any) {
             const errorMsg = `APackage.instantiateItemJSONLD: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`;
-        //    logger.error(errorMsg);
+        //    LOG.error(errorMsg);
             return Msg.create(654, 'Instantiation from JSON-LD', itype, err?.message ?? String(err));
         }
     }
@@ -1637,7 +1636,7 @@ export class APackage extends Identifiable implements IAPackage {
         // Validate item has required itemType
         if (!item.itemType) {
             const id = item.id || 'unknown';
-            logger.error(`APackage.instantiateItemXML: element missing itemType, skipping ${id}`);
+            LOG.error(`APackage.instantiateItemXML: element missing itemType, skipping ${id}`);
             return Msg.create(650, 'Instantiation from XML', 'itemType', id);
         }
 
@@ -1645,14 +1644,14 @@ export class APackage extends Identifiable implements IAPackage {
 
         // Filter allowed item types
         if (!this.isAllowedItemType(itype)) {
-        //    logger.error(`APackage.instantiateItemXML: skipping item type '${itype}' which is not allowed in a graph`);
+        //    LOG.error(`APackage.instantiateItemXML: skipping item type '${itype}' which is not allowed in a graph`);
             return Msg.create(651, 'Instantiation from XML', itype);
         }
 
         const instance = this.createInstance(itype);
 
         if (!instance) {
-        //    logger.error(`APackage.instantiateItemXML: unable to create instance for itemType '${itype}'`);
+        //    LOG.error(`APackage.instantiateItemXML: unable to create instance for itemType '${itype}'`);
             return Msg.create(652, 'Instantiation from XML', itype);
         }
 
@@ -1664,20 +1663,20 @@ export class APackage extends Identifiable implements IAPackage {
             // Check if instantiation was successful
             const status = (instance as any).status();
             if (!status || !status.ok) {
-            /*    logger.error(
+            /*    LOG.error(
                     `APackage.instantiateItemXML: ${itype} '${item.id || 'unknown'}' failed validation: ${status?.statusText || 'unknown error'}`
                 ); */
                 return status || Msg.create(653, 'Instantiation from XML', itype, item.id || 'unknown');
             }
 
-            // logger.debug(`APackage.instantiateItemXML: successfully instantiated ${itype} with id ${item.id}`);
+            // LOG.debug(`APackage.instantiateItemXML: successfully instantiated ${itype} with id ${item.id}`);
             return {
                 ...rspOK,
                 response: instance
             };
         } catch (err: any) {
             const errorMsg = `APackage.instantiateItemXML: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`;
-        //    logger.error(errorMsg);
+        //    LOG.error(errorMsg);
             return Msg.create(654, 'Instantiation from XML', itype, err?.message ?? String(err));
         }
     }
@@ -1723,7 +1722,7 @@ export class APackage extends Identifiable implements IAPackage {
                     return null;
             }
         } catch (err: any) {
-            logger.error(`APackage: error creating instance for '${itype}': ${err?.message ?? err}`);
+            LOG.error(`APackage: error creating instance for '${itype}': ${err?.message ?? err}`);
             return null;
         }
     }
@@ -1993,7 +1992,7 @@ function replaceIdObjects(
 }
 // Helper: normalize language tags/values ---
 function normalizeLanguageText(src: any): ILanguageText {
-//    logger.debug('normalizeLanguageText', src);
+//    LOG.debug('normalizeLanguageText', src);
     if (!src)
         return { value: '' };
     if (typeof src === 'object') {
@@ -2019,7 +2018,7 @@ function normalizeMultiLanguageText(src: any): ILanguageText[] | undefined {
    Returns IRsp (rspOK on success, error IRsp on failure)
 */
 function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
-//    logger.debug('validateMultiLanguageText',arr,fieldName);
+//    LOG.debug('validateMultiLanguageText',arr,fieldName);
     if (!Array.isArray(arr)) {
         return Msg.create(640, fieldName);
     }
@@ -2069,7 +2068,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
     // the tags have already been renamed with MVF.renameJsonTags( ..., MVF.fromJSONLD):
     const skipKeys = new Set(MVF.toJSONLD.keys());
 
-    //logger.debug('collect 1',obj,itype);
+    //LOG.debug('collect 1',obj,itype);
     for (const key of Object.keys(obj)) {
         // Skip known metadata keys and standard PIG fields
         if (skipKeys.has(key)) continue;
@@ -2078,7 +2077,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
         if (!isValidIdString(key)) continue;
 
         const val = obj[key];
-        //logger.debug('collect 2', key,val);
+        //LOG.debug('collect 2', key,val);
 
         // Handle array of property values
         if (Array.isArray(val)) {
@@ -2146,7 +2145,7 @@ function addConfigurablesToJSONLD(
     hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
 ): JsonObject {
     const items = (anEl as any)[hasX];
-//    logger.debug('addConfigurablesToJSONLD:', jld, anEl, hasX, items);
+//    LOG.debug('addConfigurablesToJSONLD:', jld, anEl, hasX, items);
 
     if (!Array.isArray(items)) {
         return jld;
@@ -2203,7 +2202,7 @@ function xml2json(xml: stringXML): IRsp<unknown> {
         if (!parserError && doc.documentElement) {
             // Success without wrapper
             const result = xmlElementToJson(doc.documentElement);
-            // logger.debug('xml2json: successfully parsed XML without wrapper');
+            // LOG.debug('xml2json: successfully parsed XML without wrapper');
 
             return {
                 ...rspOK,
@@ -2213,14 +2212,14 @@ function xml2json(xml: stringXML): IRsp<unknown> {
         }
 
         // Try 2: Parse with wrapper (for namespace issues)
-        // logger.debug('xml2json: first attempt failed, trying with wrapper');
+        // LOG.debug('xml2json: first attempt failed, trying with wrapper');
         const wrapped = LIB.makeXMLDoc(xml);
         const wrappedDoc = parser.parseFromString(wrapped, 'text/xml');
 
         const wrappedError = wrappedDoc.querySelector('parsererror');
         if (wrappedError) {
             const errorMessage = wrappedError.textContent || 'Unknown XML parsing error';
-            logger.error('xml2json: XML parsing failed even with wrapper:', errorMessage);
+            LOG.error('xml2json: XML parsing failed even with wrapper:', errorMessage);
             return Msg.create(690, 'XML', errorMessage);
         }
 
@@ -2233,7 +2232,7 @@ function xml2json(xml: stringXML): IRsp<unknown> {
         const actualElement = rootElement.firstElementChild as ElementXML;
         const result = xmlElementToJson(actualElement);
 
-        // logger.debug('xml2json: successfully parsed XML with wrapper',result);
+        // LOG.debug('xml2json: successfully parsed XML with wrapper',result);
 
         return {
             ...rspOK,
@@ -2242,7 +2241,7 @@ function xml2json(xml: stringXML): IRsp<unknown> {
         };
 
     } catch (err: any) {
-        logger.error('xml2json: exception:', err);
+        LOG.error('xml2json: exception:', err);
         return Msg.create(690, 'XML', err?.message ?? String(err));
     }
 }
@@ -2628,7 +2627,7 @@ function xSimpleType(simpleTypeElement: ElementXML, result: JsonObject): void {
                 break;
             default:
                 // Unknown constraint - log warning
-                logger.warn(`processSimpleType: unknown constraint '${localName}' with value '${value}'`);
+                LOG.warn(`processSimpleType: unknown constraint '${localName}' with value '${value}'`);
         }
     }
 }
@@ -2714,30 +2713,84 @@ function getLocalDate(dateStr: string, lang?: TISODateString): string {
 /**
  * Sanitize HTML by removing dangerous elements and attributes that could execute code
  * Preserves safe XHTML formatting (p, div, span, strong, em, etc.)
- * Removes: <script>, <style>, <embed>, <iframe>, <object>, <link>, <meta>, <form>
+ * Preserves <object> tags ONLY for safe media types (image/*, video/*, audio/*)
+ * Removes: <script>, <style>, <embed>, <iframe>, <link>, <meta>, <form>
+ * Removes: <object> with dangerous MIME types (application/x-shockwave-flash, etc.)
  * Removes: All event handler attributes (onclick, onerror, onload, etc.)
  * Removes: javascript: and data: protocols in href and src attributes
  * 
  * @param html - HTML string to sanitize
- * @returns Sanitized HTML string safe for rendering, preserving XHTML structure
+ * @returns Sanitized HTML string safe for rendering, preserving XHTML structure and safe media
  * 
  * @example
  * const unsafe = '<p onclick="alert(1)">Text</p><script>alert(2)</script>';
  * const safe = passifyHTML(unsafe);
  * // Returns: '<p>Text</p>'
+ * 
+ * @example
+ * const media = '<object data="image.png" type="image/png">Image</object>';
+ * const safe = passifyHTML(media);
+ * // Returns: '<object data="image.png" type="image/png">Image</object>'
+ * 
+ * @example
+ * const malicious = '<object data="malware.swf" type="application/x-shockwave-flash"></object>';
+ * const safe = passifyHTML(malicious);
+ * // Returns: ''
  */
 function passifyHTML(html: string): string {
     if (!html || typeof html !== 'string') return '';
 
     let passified = html;
 
-    // 1. Remove dangerous tags including their content
+    // 1. Process <object> tags - keep only safe media types
+    const safeMediaTypes = new Set([
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/gif',
+        'image/svg+xml',
+        'image/webp',
+        'video/mp4',
+        'video/webm',
+        'video/ogg',
+        'audio/mpeg',
+        'audio/mp3',
+        'audio/ogg',
+        'audio/wav',
+        'audio/webm'
+    ]);
+
+    // Match all <object> tags with their attributes and content
+    const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;
+    passified = passified.replace(objectRegex, (match, attributes, content) => {
+        // Extract type attribute
+        const typeMatch = attributes.match(/type\s*=\s*["']([^"']+)["']/i);
+        const mimeType = typeMatch ? typeMatch[1].toLowerCase() : '';
+
+        // Check if MIME type is safe
+        if (safeMediaTypes.has(mimeType)) {
+            // Keep the object tag, but sanitize attributes
+            let sanitizedAttrs = attributes;
+
+            // Remove event handlers from attributes
+            sanitizedAttrs = sanitizedAttrs.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
+
+            // Remove dangerous protocols from data attribute
+            sanitizedAttrs = sanitizedAttrs.replace(/\s+data\s*=\s*["']\s*(javascript|data):[^"']*["']/gi, ' data="#"');
+
+            return `<object${sanitizedAttrs}>${content}</object>`;
+        }
+
+        // Remove unsafe object tag
+        return '';
+    });
+
+    // 2. Remove dangerous tags including their content
     const dangerousTags = [
         'script',
         'style',
         'embed',
         'iframe',
-    //    'object',  
         'link',
         'meta',
         'base',
@@ -2753,15 +2806,15 @@ function passifyHTML(html: string): string {
         passified = passified.replace(selfClosing, '');
     });
 
-    // 2. Remove event handler attributes (onXYZ="...")
+    // 3. Remove event handler attributes (onXYZ="...")
     // Matches on followed by word characters, capturing until the closing quote
     passified = passified.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
 
-    // 3. Remove dangerous protocols from href and src attributes
+    // 4. Remove dangerous protocols from href and src attributes
     // Replace javascript: and data: with # (safer than removing the attribute)
     passified = passified.replace(/\s+(href|src)\s*=\s*["']\s*(javascript|data):[^"']*["']/gi, ' $1="#"');
 
-    // 4. Remove dangerous attributes
+    // 5. Remove dangerous attributes
     const dangerousAttrs = [
         'formaction',
         'action',
@@ -2776,6 +2829,7 @@ function passifyHTML(html: string): string {
 
     return passified;
 }
+
 /**
  * Replace top-level string values that are valid id-strings with id-objects.
  * - Non-recursive (flat): only replaces direct properties of the provided object.

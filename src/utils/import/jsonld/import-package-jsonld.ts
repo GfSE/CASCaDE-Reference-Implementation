@@ -20,7 +20,7 @@
  */
 
 import { IRsp, rspOK, Msg } from "../../lib/messages";
-import { LIB, logger } from "../../lib/helpers";
+import { LIB, LOG } from "../../lib/helpers";
 import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
 import { SCH_LD } from '../../schemas/pig/jsonld/pig-schemata-jsonld';
 // import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
@@ -48,7 +48,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     const isValidPackage = await SCH_LD.validatePackageLD(doc);
     if (!isValidPackage) {
         const errors = await SCH_LD.getValidatePackageLDErrors();
-        logger.error('JSON-LD package validation failed:', errors);
+        LOG.error('JSON-LD package validation failed:', errors);
         return Msg.create(697, 'JSON-LD', errors);
     }
 
@@ -82,10 +82,10 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     let result: IRsp;
     if (actualCount === expectedCount) {
         result = rspOK;
-        logger.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
+        LOG.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
     } else {
         result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
-        logger.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items`);
+        LOG.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items`);
     }
 
     // Return all items (package + graph items)

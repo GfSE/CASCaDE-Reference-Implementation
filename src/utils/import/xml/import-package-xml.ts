@@ -20,7 +20,7 @@
  */
 
 import { IRsp, rspOK, Msg } from '../../lib/messages';
-import { LIB, logger } from '../../lib/helpers';
+import { LIB, LOG } from '../../lib/helpers';
 import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
 //import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
 
@@ -35,7 +35,7 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
         return rsp;
 
     const xmlString = rsp.response as string;
-    // logger.info('importXML: loaded text length ' + xmlString.length);
+    // LOG.info('importXML: loaded text length ' + xmlString.length);
 
     // ✅ Optional: Pre-validate XML syntax
     let doc: Document;
@@ -57,7 +57,7 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
         const isValidPackage = await SCH_XSD.validatePackageXML(doc);
         if (!isValidPackage) {
             const errors = await SCH_XSD.getValidatePackageXMLErrors();
-            logger.error('XML package validation failed:', errors);
+            LOG.error('XML package validation failed:', errors);
             return Msg.create(697, 'XML', errors);
         }
     */
@@ -92,10 +92,10 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
     let result: IRsp;
     if (actualCount === expectedCount) {
         result = rspOK;
-        logger.info(`importXML: successfully instantiated package with all ${actualCount} items`);
+        LOG.info(`importXML: successfully instantiated package with all ${actualCount} items`);
     } else {
         result = Msg.create(691, 'XML', actualCount, expectedCount);
-        logger.warn(`importXML: instantiated ${actualCount} of ${expectedCount} items`);
+        LOG.warn(`importXML: instantiated ${actualCount} of ${expectedCount} items`);
     }
 
     // Return all items (package + graph items)

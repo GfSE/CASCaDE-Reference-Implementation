@@ -55,7 +55,7 @@
  */
 
 import { IRsp, rspOK, Msg } from "../../../lib/messages";
-import { logger } from "../../../lib/helpers";
+import { LOG } from "../../../lib/helpers";
 import { IAPackage, PigItemType, PigItemTypeValue, TPigId } from "./pig-metaclasses";
 
 /**
@@ -157,7 +157,7 @@ export function checkConstraintsForPackage(
         if (!rsp.ok) return rsp;
     }
 
-    // logger.debug(`Package ${pkg.id || 'unnamed'}: all constraints validated successfully`);
+    // LOG.debug(`Package ${pkg.id || 'unnamed'}: all constraints validated successfully`);
     return rspOK;
 }
 
@@ -175,7 +175,7 @@ function checkUniqueIds(pkg: IAPackage): IRsp {
         const itemId = (item as any)['@id'] ?? (item as any).id;
 
         if (!itemId) {
-        //    logger.warn(`Item at index ${i} is missing an ID`,item);
+        //    LOG.warn(`Item at index ${i} is missing an ID`,item);
             return Msg.create(670, i);
         }
 
@@ -202,14 +202,14 @@ function buildItemTypeMap(pkg: IAPackage): Map<TPigId, PigItemTypeValue> {
         const itemId = (item as any)['@id'] ?? (item as any).id;
         const itemType = (item as any).itemType;
         // if (pkg.id == 'd:test-invalid-prop')
-        //     logger.debug(`buildItemTypeMap (3): `, item, itemId, itemType);
+        //     LOG.debug(`buildItemTypeMap (3): `, item, itemId, itemType);
         if (itemId && itemType) {
             itemTypeMap.set(itemId, itemType);
         }
     }
 
     // if (pkg.id == 'd:test-invalid-prop')
-        // logger.debug(`buildItemTypeMap (9): `, pkg, itemTypeMap);
+        // LOG.debug(`buildItemTypeMap (9): `, pkg, itemTypeMap);
     return itemTypeMap;
 }
 
@@ -228,12 +228,12 @@ function checkPropertyReferences(
         const itemType = (item as any).itemType;
         const itemId = (item as any)['@id'] ?? (item as any).id;
         // if (pkg.id == 'd:test-invalid-prop')
-            // logger.debug(`checkPropertyReferences (1): `, pkg, itemType, itemId);
+            // LOG.debug(`checkPropertyReferences (1): `, pkg, itemType, itemId);
 
         // Check AnEntity items
         if (itemType === PigItemType.anEntity) {
             const entity = item as any;
-            // logger.debug(`Checking properties for AnEntity `, entity);
+            // LOG.debug(`Checking properties for AnEntity `, entity);
             if (entity.hasProperty && Array.isArray(entity.hasProperty)) {
                 for (let j = 0; j < entity.hasProperty.length; j++) {
                     const prop = entity.hasProperty[j];
@@ -281,8 +281,8 @@ function checkPropertyHasClass(
         return Msg.create(672, parentId, propIndex, 'missing hasClass');
     }
 
-    // logger.debug(`checkPropertyHasClass: checking hasClass ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
-    // logger.debug(`checkPropertyHasClass: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
+    // LOG.debug(`checkPropertyHasClass: checking hasClass ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
+    // LOG.debug(`checkPropertyHasClass: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
 
     const targetType = itemTypeMap.get(prop.hasClass);
     if (!targetType) {
@@ -415,7 +415,7 @@ function checkEntityOrRelationshipReferences(
             if ((isHasClass && isInstance) || (!isHasClass && isClass)) {
                 const referenceValue = item[referenceType];
 
-            //    logger.debug('checkEntityOrRelationshipReferences: ',item);
+            //    LOG.debug('checkEntityOrRelationshipReferences: ',item);
 
                 if (!referenceValue) {
                     // specializes is optional (can inherit from pig:Entity directly)

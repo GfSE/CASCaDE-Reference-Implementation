@@ -294,7 +294,7 @@ export const LIB = {
             // Log errors for unknown namespaces
             if (unknownPrefixes.size > 0) {
                 const unknownList = Array.from(unknownPrefixes).join(', ');
-                logger.error(
+                LOG.error(
                     `makeXMLDoc: Unknown namespace prefixes found: ${unknownList}. ` +
                     `These prefixes are not defined in NAMESPACE_MAP and will not be declared in the XML document. ` +
                     `Please add them to NAMESPACE_MAP in helpers.ts.`
@@ -370,7 +370,7 @@ export const LIB = {
 };
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
-export const logger = {
+export const LOG = {
     // Configure which log levels are enabled (default: all)
     enabledLevels: new Set<LogLevel>(['info', 'warn', 'error', 'debug']),
 
@@ -394,15 +394,15 @@ export const logger = {
     },
 
     info: (...args: any[]) => {
-        if (logger.isEnabled('info')) console.info(...args);
+        if (LOG.isEnabled('info')) console.info(...args);
     },
     warn: (...args: any[]) => {
-        if (logger.isEnabled('warn')) console.warn(...args);
+        if (LOG.isEnabled('warn')) console.warn(...args);
     },
     error: (...args: any[]) => {
-        if (logger.isEnabled('error')) console.error(...args);
+        if (LOG.isEnabled('error')) console.error(...args);
     },
     debug: (...args: any[]) => {
-        if (logger.isEnabled('debug')) console.debug(...args);
+        if (LOG.isEnabled('debug')) console.debug(...args);
     }
 };
