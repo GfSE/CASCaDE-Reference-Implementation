@@ -33,7 +33,7 @@ import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
 import { RE } from "../../../lib/definitions";
 import { LIB, LOG } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
-import { JsonPrimitive, JsonValue, JsonArray, JsonObject } from "../../../lib/helpers";
+import { JsonPrimitive, JsonValue, JsonArray, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage, ConstraintCheckType } from './pig-package-constraints';
 // optional: import type for better TS typing where needed
@@ -46,8 +46,6 @@ export type TPigAnElement = AnEntity | ARelationship;
 export type TPigItem = APackage | TPigClass | TPigAnElement;
 export type stringHTML = string;  // contains HTML code
 export type stringXML = string;  // contains XML code
-export type tagIETF = string; // contains IETF language tag
-export type TISODateString = string;
 export type ElementXML = globalThis.Element;  // DOM Element typ
 
 export const PigItemType = {
@@ -928,8 +926,8 @@ export class AnEntity extends AnElement implements IAnEntity {
             for (const prop of this.hasProperty) {
                 const propData = prop.get();
                 if (propData && propData.hasClass) {
-                    const propValue = passifyHTML(propData.value || propData.idRef || '—');
-                    const propClass = passifyHTML(propData.hasClass);
+                    const propValue = LIB.passifyHTML(propData.value || propData.idRef || '—');
+                    const propClass = LIB.passifyHTML(propData.hasClass);
                     propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
                 }
             }
@@ -939,12 +937,12 @@ export class AnEntity extends AnElement implements IAnEntity {
         // Build metadata HTML with localized date
         const metadataHTML = `<div class="pig-metadata">
             <dl>
-                <dt>ID</dt><dd>${passifyHTML(this.id)}</dd>
-                <dt>Class</dt><dd>${passifyHTML(this.hasClass || '—')}</dd>
-                <dt>Revision</dt><dd>${passifyHTML(this.revision)}</dd>
-                <dt>Modified</dt><dd>${getLocalDate(this.modified, lang)}</dd>
-                ${this.creator ? `<dt>Creator</dt><dd>${passifyHTML(this.creator)}</dd>` : ''}
-                ${this.priorRevision && this.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${this.priorRevision.map(r => passifyHTML(r)).join(', ')}</dd>` : ''}
+                <dt>ID</dt><dd>${LIB.passifyHTML(this.id)}</dd>
+                <dt>Class</dt><dd>${LIB.passifyHTML(this.hasClass || '—')}</dd>
+                <dt>Revision</dt><dd>${LIB.passifyHTML(this.revision)}</dd>
+                <dt>Modified</dt><dd>${LIB.getLocalDate(this.modified, lang)}</dd>
+                ${this.creator ? `<dt>Creator</dt><dd>${LIB.passifyHTML(this.creator)}</dd>` : ''}
+                ${this.priorRevision && this.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${this.priorRevision.map(r => LIB.passifyHTML(r)).join(', ')}</dd>` : ''}
             </dl>
         </div>`;
 
@@ -1294,7 +1292,7 @@ export class APackage extends Identifiable implements IAPackage {
     }
     getHTML(options?: IOptionsHTML): stringHTML[] {
         if (!this.lastStatus.ok) {
-            return [`<div class="pig-error">Invalid package; status: (${this.lastStatus.status}) ${passifyHTML(this.lastStatus.statusText || '')}</div>`];
+            return [`<div class="pig-error">Invalid package; status: (${this.lastStatus.status}) ${LIB.passifyHTML(this.lastStatus.statusText || '')}</div>`];
         }
 
         const result: stringHTML[] = [];
@@ -1315,9 +1313,9 @@ export class APackage extends Identifiable implements IAPackage {
                     </div>
                     <div class="col-right" style="flex: 1; min-width: 0;">
                         <dl>
-                            <dt>ID</dt><dd>${passifyHTML(this.id)}</dd>
-                            ${this.modified ? `<dt>Modified</dt><dd>${getLocalDate(this.modified, lang)}</dd>` : ''}
-                            ${this.creator ? `<dt>Creator</dt><dd>${passifyHTML(this.creator)}</dd>` : ''}
+                            <dt>ID</dt><dd>${LIB.passifyHTML(this.id)}</dd>
+                            ${this.modified ? `<dt>Modified</dt><dd>${LIB.getLocalDate(this.modified, lang)}</dd>` : ''}
+                            ${this.creator ? `<dt>Creator</dt><dd>${LIB.passifyHTML(this.creator)}</dd>` : ''}
                             <dt>Items in Graph</dt><dd>${this.graph.length}</dd>
                         </dl>
                     </div>
@@ -1836,7 +1834,7 @@ function isValidIdString(input: string): boolean {
     // }
     if (typeof input === 'object') {
         const id = extractId(input);
-        return id ? validateIdString(id, fieldName) : Msg.create(623, fieldName);
+        return id ? validateIdString(id, fieldName) : Msg.create(621, fieldName);
     }
     return Msg.create(622, fieldName);
 } */
@@ -2691,183 +2689,15 @@ function getLocalText(texts?: ILanguageText[], lang?: TISODateString): string {
 
     // Try to find exact language match
     const exact = texts.find(t => t.lang === lang);
-    if (exact) return passifyHTML(exact.value);
+    if (exact) return LIB.passifyHTML(exact.value);
 
     // Try to find language prefix match (e.g., 'en' for 'en-US')
     const langPrefix = lang.split('-')[0];
     const prefixMatch = texts.find(t => t.lang?.startsWith(langPrefix));
-    if (prefixMatch) return passifyHTML(prefixMatch.value);
+    if (prefixMatch) return LIB.passifyHTML(prefixMatch.value);
 
     // Fallback to first available text
-    return passifyHTML(texts[0].value);
-}
-
-// Format date using the specified locale
-function getLocalDate(dateStr: string, lang?: TISODateString): string {
-    try {
-        return new Date(dateStr).toLocaleString(lang ?? 'en-US');
-    } catch {
-        return dateStr;
-    }
-}
-/**
- * Sanitize HTML by removing dangerous elements and attributes that could execute code
- * Preserves safe XHTML formatting (p, div, span, strong, em, etc.)
- * Preserves <object> tags ONLY for safe media types (image/*, video/*, audio/*)
- * Allows data: URLs ONLY for safe image types in <img> tags
- * Removes: <script>, <style>, <embed>, <iframe>, <link>, <meta>, <form>
- * Removes: <object> with dangerous MIME types (application/x-shockwave-flash, etc.)
- * Removes: All event handler attributes (onclick, onerror, onload, etc.)
- * Removes: javascript: protocols and unsafe data: URLs
- * 
- * @param html - HTML string to sanitize
- * @returns Sanitized HTML string safe for rendering, preserving XHTML structure and safe media
- * 
- * @example
- * const unsafe = '<p onclick="alert(1)">Text</p><script>alert(2)</script>';
- * const safe = passifyHTML(unsafe);
- * // Returns: '<p>Text</p>'
- * 
- * @example
- * const media = '<object data="image.png" type="image/png">Image</object>';
- * const safe = passifyHTML(media);
- * // Returns: '<object data="image.png" type="image/png">Image</object>'
- * 
- * @example
- * const safeDataUrl = '<img src="data:image/png;base64,iVBORw0KG...">';
- * const safe = passifyHTML(safeDataUrl);
- * // Returns: '<img src="data:image/png;base64,iVBORw0KG...">' (preserved)
- * 
- * @example
- * const unsafeDataUrl = '<img src="data:image/svg+xml,<svg onload=alert(1)>">';
- * const safe = passifyHTML(unsafeDataUrl);
- * // Returns: '<img src="#">' (blocked)
- */
-function passifyHTML(html: string): string {
-    if (!html || typeof html !== 'string') return '';
-
-    let passified = html;
-
-    // 1. Process <object> tags - keep only safe media types
-    const safeMediaTypes = new Set([
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/gif',
-        'image/svg+xml',
-        'image/webp',
-        'video/mp4',
-        'video/webm',
-        'video/ogg',
-        'audio/mpeg',
-        'audio/mp3',
-        'audio/ogg',
-        'audio/wav',
-        'audio/webm'
-    ]);
-
-    // Match all <object> tags with their attributes and content
-    const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;
-    passified = passified.replace(objectRegex, (match, attributes, content) => {
-        // Extract type attribute
-        const typeMatch = attributes.match(/type\s*=\s*["']([^"']+)["']/i);
-        const mimeType = typeMatch ? typeMatch[1].toLowerCase() : '';
-
-        // Check if MIME type is safe
-        if (safeMediaTypes.has(mimeType)) {
-            // Keep the object tag, but sanitize attributes
-            let sanitizedAttrs = attributes;
-
-            // Remove event handlers from attributes
-            sanitizedAttrs = sanitizedAttrs.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-
-            // Remove dangerous protocols from data attribute
-            sanitizedAttrs = sanitizedAttrs.replace(/\s+data\s*=\s*["']\s*(javascript|data):[^"']*["']/gi, ' data="#"');
-
-            return `<object${sanitizedAttrs}>${content}</object>`;
-        }
-
-        // Remove unsafe object tag
-        return '';
-    });
-
-    // 2. Remove dangerous tags including their content
-    const dangerousTags = [
-        'script',
-        'style',
-        'embed',
-        'iframe',
-        'link',
-        'meta',
-        'base',
-        'form'
-    ];
-
-    dangerousTags.forEach(tag => {
-        // Remove tags with any attributes (case-insensitive, multiline, greedy)
-        const regex = new RegExp(`<${tag}[^>]*>.*?<\\/${tag}>`, 'gis');
-        passified = passified.replace(regex, '');
-        // Remove self-closing tags
-        const selfClosing = new RegExp(`<${tag}[^>]*\\/?>`, 'gi');
-        passified = passified.replace(selfClosing, '');
-    });
-
-    // 3. Remove event handler attributes (onXYZ="...")
-    // Matches on followed by word characters, capturing until the closing quote
-    passified = passified.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-
-    // 4. Handle data: URLs and other dangerous protocols
-    // Safe data: URL types for images only
-    const safeDataUrlTypes = new Set([
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/gif',
-        'image/webp'
-    ]);
-
-    // Process src and href attributes
-    passified = passified.replace(/\s+(href|src)\s*=\s*["']([^"']*)["']/gi, (match, attr, url) => {
-        const trimmedUrl = url.trim();
-
-        // Block javascript: protocol
-        if (trimmedUrl.toLowerCase().startsWith('javascript:')) {
-            return ` ${attr}="#"`;
-        }
-
-        // Handle data: URLs
-        if (trimmedUrl.toLowerCase().startsWith('data:')) {
-            // Extract MIME type from data URL
-            const dataUrlMatch = trimmedUrl.match(/^data:([^;,]+)/i);
-            const mimeType = dataUrlMatch ? dataUrlMatch[1].toLowerCase() : '';
-
-            // Allow only safe image data URLs in src attributes
-            if (attr.toLowerCase() === 'src' && safeDataUrlTypes.has(mimeType)) {
-                return match; // Keep safe data URL
-            }
-
-            // Block all other data URLs (including SVG which can contain scripts)
-            return ` ${attr}="#"`;
-        }
-
-        // Keep safe URLs (http, https, relative paths, anchors)
-        return match;
-    });
-
-    // 5. Remove dangerous attributes
-    const dangerousAttrs = [
-        'formaction',
-        'action',
-        'dynsrc',
-        'lowsrc'
-    ];
-
-    dangerousAttrs.forEach(attr => {
-        const regex = new RegExp(`\\s+${attr}\\s*=\\s*["'][^"']*["']`, 'gi');
-        passified = passified.replace(regex, '');
-    });
-
-    return passified;
+    return LIB.passifyHTML(texts[0].value);
 }
 
 /**

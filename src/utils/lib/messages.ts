@@ -32,6 +32,7 @@
  *      const doc = rsp.response as Document;
  *   };
  */
+// type XMLHttpRequestResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text"
 export interface IRsp<T = unknown> {
     status: number;
     statusText?: string;
@@ -125,6 +126,7 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `No se puede cambiar la especialización (intento de ${fromSpec} a ${toSpec})`
     },
 
+/*  currently not used:
     // ID validation (620-629)
     620: {
         en: (fieldName: string) => `${fieldName} is missing`,
@@ -144,12 +146,6 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
         fr: (fieldName: string) => `${fieldName} a un type invalide`,
         es: (fieldName: string) => `${fieldName} tiene un tipo inválido`
     },
-    623: {
-        en: (fieldName: string) => `${fieldName} is missing id`,
-        de: (fieldName: string) => `${fieldName} fehlt die ID`,
-        fr: (fieldName: string) => `${fieldName} manque l'id`,
-        es: (fieldName: string) => `${fieldName} falta el id`
-    },
     624: {
         en: (fieldName: string) => `${fieldName} must be a non-empty string`,
         de: (fieldName: string) => `${fieldName} muss eine nicht-leere Zeichenkette sein`,
@@ -166,7 +162,7 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
         es: (fieldName: string) => 
             `${fieldName} debe ser una cadena con un término que tenga un espacio de nombres o un URI`
     },
-
+*/
     // Array validation (630-639)
     630: {
         en: (fieldName: string) => `${fieldName} must be an array`,
@@ -321,6 +317,14 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
         de: (op: string, field: string, err: string) => `${op}: Instanziierung von ${field} fehlgeschlagen: ${err}`,
         fr: (op: string, field: string, err: string) => `${op}: Échec d'instanciation de ${field}: ${err}`,
         es: (op: string, field: string, err: string) => `${op}: Fallo al instanciar ${field}: ${err}`
+    },
+
+    // Import and Transformation (660-669)
+    660: {
+        en: (format: string, msg: string) => `Failed to transform ${format}: ${msg}`,
+        de: (format: string, msg: string) => `Transformation von ${format} fehlgeschlagen: ${msg}`,
+        fr: (format: string, msg: string) => `Échec de transformation ${format}: ${msg}`,
+        es: (format: string, msg: string) => `Error al transformar ${format}: ${msg}`
     },
 
     // Package constraint validation (670-679)
