@@ -109,7 +109,10 @@ const PROPERTY_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
     /*    },
@@ -179,7 +182,10 @@ const LINK_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -248,7 +254,10 @@ const ENTITY_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -314,7 +323,10 @@ const RELATIONSHIP_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -368,7 +380,10 @@ const ANENTITY_SCHEMA = {
                         enum: ['pig:aProperty']
                     },
                     hasClass: { $ref: '#/$defs/idString' },
-                    value: { type: 'string' },
+                    value: {
+                        type: 'string',
+                        minLength: 1
+                    },
                     idRef: { $ref: '#/$defs/idString' },
                     aComposedProperty: {
                         type: 'array',
@@ -425,7 +440,10 @@ const ANENTITY_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -478,7 +496,10 @@ const ARELATIONSHIP_SCHEMA = {
                         enum: ['pig:aProperty']
                     },
                     hasClass: { $ref: '#/$defs/idString' },
-                    value: { type: 'string' },
+                    value: {
+                        type: 'string',
+                        minLength: 1
+                    },
                     idRef: { $ref: '#/$defs/idString' },
                     aComposedProperty: {
                         type: 'array',
@@ -542,7 +563,10 @@ const ARELATIONSHIP_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -611,7 +635,10 @@ const APACKAGE_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }

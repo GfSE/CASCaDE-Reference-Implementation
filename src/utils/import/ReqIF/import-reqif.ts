@@ -1,44 +1,64 @@
 /*!
- * ReqIF Import Utilities
+ * Imports a ReqIF XML document and transforms it using the ReqIF-to-PIG stylesheet.
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
-
-import '../../lib/node-polyfills'; // DOM polyfills for Node.js
-import { LIB, LOG } from '../../lib/helpers';
-import { IRsp, /*Rsp,*/ Msg, rspOK } from '../../lib/messages';
-import { APackage, TPigItem, stringXML } from '../../schemas/pig/ts/pig-metaclasses';
-import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
-import { transformXSLToString } from '../../lib/transform-xsl';
-
 /**
  * Imports a ReqIF XML document and transforms it using the ReqIF-to-PIG stylesheet.
+ *  Authors: oskar.dungern@gfse.org
  * 
- * @param xmlDoc - The XML document to import
+ * Security note: Uses saxon-js which has a transitive dependency on @xmldom/xmldom
+ * with known vulnerabilities. Input is validated and size-limited. See docs/SECURITY.md
+ * 
+ * @param xmlString - The XML document to import
  * @param filename - The name of the file being imported (for validation)
  * @returns IRsp containing the transformed XML document or error messages
  */
-export async function importReqif(xmlString: stringXML, filename: string): Promise<IRsp<unknown>> {
+
+import { LOG } from '../../lib/helpers';
+import { PIN } from '../../lib/platform-independence';
+import { IRsp, /*Rsp,*/ Msg, rspOK } from '../../lib/messages';
+import { APackage, TPigItem, stringXML } from '../../schemas/pig/ts/pig-metaclasses';
+import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
+
+const MAX_XML_SIZE = 4 * 1024 * 1024;
+
+export async function importReqif(
+    xmlString: stringXML,
+    filename: string
+    //    options?: any
+): Promise<IRsp<unknown>> {
     // Check file extension
     if (!filename.toLowerCase().endsWith('.reqif')) {
         return Msg.create(660, filename, 'expected .reqif file extension');
     }
 
-/*    const rspRead = await LIB.readFileAsText(source);
-    if (!rspRead.ok)
-        return rspRead;
+    // Security: Size limit check
+    if (xmlString.length > MAX_XML_SIZE) {
+        return Msg.create(660, filename, `file too large (max ${MAX_XML_SIZE / 1024 / 1024}MB)`);
+    }
 
-    const xmlString = rspRead.response as string;
-    // LOG.info('importXML: loaded text length ' + xmlString.length); 
-*/
-    const parser = new DOMParser();
+    // Security: Basic XML structure validation before parsing
+    if (!xmlString.trim().startsWith('<?xml') && !xmlString.trim().startsWith('<')) {
+        return Msg.create(660, filename, 'invalid XML structure');
+    }
+
+    /*    const rspRead = await LIB.readFileAsText(source);
+        if (!rspRead.ok)
+            return rspRead;
+    
+        const xmlString = rspRead.response as string;
+        // LOG.info('importXML: loaded text length ' + xmlString.length); 
+    */
+    const parser = PIN.createDOMParser();
     const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
+    // LOG.debug(`importReqIF: parsed XML document with root element <${xmlDoc.documentElement?.tagName}>`);
     // Check for parsing errors
-    const sourceError = xmlDoc.querySelector('parsererror');
+    const sourceError = PIN.getXmlParseError(xmlDoc);
     if (sourceError) {
-        throw new Error(`XML parsing error: ${sourceError.textContent}`);
+        return Msg.create(660, filename, sourceError.textContent ?? 'Unknown error');
     }
 
     // Validate that it's a ReqIF XML document
@@ -46,39 +66,30 @@ export async function importReqif(xmlString: stringXML, filename: string): Promi
         return Msg.create(660, filename, 'missing required ReqIF namespace or root element');
     }
 
-    // Load XSL stylesheet
-    const stylesheetPath = './src/utils/schemas/ReqIF/ReqIF-to-PIG.xsl';
-    const stylesheetRsp = await LIB.readFileAsText(stylesheetPath);
+    // In future, we will support different transformation methods:
+    //    const method = options?.method || 'XSLT';
 
-    if (!stylesheetRsp.ok) {
-        return Msg.create(694, stylesheetPath, stylesheetRsp.statusText);
-    }
+    // The precompiled XSL stylesheet to use for transformation:
+    const stylesheetPath = './src/utils/schemas/XSLT/ReqIF-to-PIG.sef.json';
 
-    // Parse stylesheet
-    const xslDoc = parser.parseFromString(stylesheetRsp.response as string, 'text/xml');
-
-    // Check for parsing errors
-    const stylesheetError = xslDoc.querySelector('parsererror');
-    if (stylesheetError) {
-        return Msg.create(690, stylesheetPath, stylesheetError.textContent || 'XML parsing error');
-    }
-
+    // LOG.debug(`importReqIF: starting transformation using stylesheet ${stylesheetPath}...`);
     // Transform the document
-    const rsp = transformXSLToString(xmlDoc, xslDoc);
+    const rsp = await PIN.transformXSL(xmlString, stylesheetPath);
 
     if (!rsp.ok) {
-        return Msg.create(660, filename, rsp.statusText);
+        return Msg.create(660, filename, rsp.statusText ?? 'Unknown error');
     }
 
+    // LOG.debug('importReqIF: transformation successful', rsp.response);
     const aPackage = new APackage().setXML(
         rsp.response as string,
         // input has only instances, so omit constraint checks on classes:
         [
-            ConstraintCheckType.UniqueIds,
-            ConstraintCheckType.aPropertyHasClass,
-            ConstraintCheckType.aLinkHasClass,
-            ConstraintCheckType.anEntityHasClass,
-            ConstraintCheckType.aRelationshipHasClass,
+            ConstraintCheckType.UniqueIds
+        //    ConstraintCheckType.aPropertyHasClass,
+        //    ConstraintCheckType.aLinkHasClass,
+        //    ConstraintCheckType.anEntityHasClass,
+        //    ConstraintCheckType.aRelationshipHasClass,
         ]
     );
 

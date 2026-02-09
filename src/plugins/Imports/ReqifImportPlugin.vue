@@ -19,31 +19,41 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import { reqif2pig } from '../../utils/import/ReqIF/reqif2pig';
+    import { Options, Vue } from 'vue-class-component';
+    import { importReqif } from '../../utils/import/ReqIF/import-reqif';
 
-@Options({
-  data() {
-    return {
-        dialog: false,
-        selectedFiles: []
-    };
-  },
-  methods: {
-    submitFiles() {
-        const ReqifTranslator = new reqif2pig();
-        let translatorResponse = ReqifTranslator.toPig(this.selectedFiles);
-        console.log(translatorResponse.ok);
-        console.log(translatorResponse.status);
+    @Options({
+        data() {
+            return {
+                dialog: false,
+                selectedFiles: []
+            };
+        },
+        methods: {
+            submitFiles() {
+                /*  OD: reqif2pig is outdated; use import-reqif.ts instead.
+                    A single file is expected, which needs to be handed in as stringXML.
+                    Use PIN.readFileAsText() to read the file and pass the content to the translator: */
 
-        // reset variables
-        this.dialog = false;
-        this.selectedFiles = [];
-    }
-  },
-})
+                /* something is wrong ... and produces a build error:
+                this.selectedFiles.forEach((file: File) => {
+                    const fileContent = await PIN.readFileAsText(file);
+                    const rsp = await importReqif(fileContent);
+                    if (rsp.ok) {
+                        // handle successful import, e.g., store the PIG items and update the UI
+                    } else {
+                        // handle import error, e.g., log/show an error message
+                    }
+                }); */
 
-export default class ReqifImportComponent extends Vue {}
+                // reset variables
+                this.dialog = false;
+                this.selectedFiles = [];
+            }
+        }
+    })
+
+    export default class ReqifImportComponent extends Vue { }
 </script>
 
 <style scoped></style>

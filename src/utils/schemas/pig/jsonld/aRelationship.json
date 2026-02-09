@@ -169,6 +169,7 @@
             "properties": {
                 "@value": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "The actual text content"
                 },
                 "@language": {

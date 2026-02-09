@@ -2,6 +2,7 @@
  * Package-level constraint validation for Product Information Graph (PIG)
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
  */
 /**
  * Package-level constraint validation for Product Information Graph (PIG)
@@ -13,16 +14,6 @@
  * - Future: Validation of eligibleProperty, eligibleEndpoint, etc.
  * 
  * Dependencies: pig-metaclasses.ts, messages.ts
- * Authors: oskar.dungern@gfse.org
- * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
- *
- * To be discussed:
- * - Handling (error responses vs log messages)
- * - Old thinking: The whole package is rejected if any constraint fails (current approach).
- * - New thinking --> 'Permissive Computing': Report all issues but return the package with a valid subgraph;
- *   sometimes there may be 2 or more choices of valid subgraphs when constraints fail.
- *   Partial data is better than no data.
  * 
  * List of constraint checks:
  * Phase 1 (critical):
@@ -52,10 +43,19 @@
  *      Language tag consistency
  *      Namespace usage
  *      Modification date validation
+ *
+ * To be discussed:
+ * - Handling (error responses vs log messages)
+ * - Old thinking: The whole package is rejected if any constraint fails (current approach).
+ * - New thinking --> 'Permissive Computing': Report all issues but return the package with a valid subgraph;
+ *   sometimes there may be 2 or more choices of valid subgraphs when constraints fail.
+ *   Partial data is better than no data.
+ *
+ * Authors: oskar.dungern@gfse.org
  */
 
 import { IRsp, rspOK, Msg } from "../../../lib/messages";
-import { LOG } from "../../../lib/helpers";
+// import { LOG } from "../../../lib/helpers";
 import { IAPackage, PigItemType, PigItemTypeValue, TPigId } from "./pig-metaclasses";
 
 /**
@@ -167,6 +167,7 @@ export function checkConstraintsForPackage(
  * @param pkg - Package to validate
  * @returns IRsp (rspOK on success, error with duplicate info on failure)
  */
+
 function checkUniqueIds(pkg: IAPackage): IRsp {
     const idMap = new Map<TPigId, number>();
 
@@ -175,13 +176,12 @@ function checkUniqueIds(pkg: IAPackage): IRsp {
         const itemId = (item as any)['@id'] ?? (item as any).id;
 
         if (!itemId) {
-        //    LOG.warn(`Item at index ${i} is missing an ID`,item);
             return Msg.create(670, i);
         }
 
-        if (idMap.has(itemId)) {
-            const firstIndex = idMap.get(itemId)!;
-            return Msg.create(671, itemId, firstIndex, i);
+        const existingIndex = idMap.get(itemId);
+        if (existingIndex !== undefined) {  // ✅ Type Guard statt !
+            return Msg.create(671, itemId, existingIndex, i);
         }
 
         idMap.set(itemId, i);

@@ -19,11 +19,23 @@
  * - Browser: await importJsonLd(fileInput.files[0])
  */
 
-import { IRsp, rspOK, Msg } from "../../lib/messages";
-import { LIB, LOG } from "../../lib/helpers";
+import { IRsp, rspOK, Msg } from '../../lib/messages';
+import { LOG } from '../../lib/helpers';
+import { PIN } from '../../lib/platform-independence';
 import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
 import { SCH_LD } from '../../schemas/pig/jsonld/pig-schemata-jsonld';
 // import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
+
+/**
+ * JSON-LD document structure
+ */
+interface JsonLdDocument {
+    '@context'?: unknown;
+    '@graph'?: unknown[];
+    '@id'?: string;
+    '@type'?: string | string[];
+    [key: string]: unknown;
+}
 
 /**
  * Import JSON-LD document and instantiate PIG items
@@ -31,17 +43,19 @@ import { SCH_LD } from '../../schemas/pig/jsonld/pig-schemata-jsonld';
  * @returns IRsp with array of TPigItem (first item is APackage, rest are graph items)
  */
 export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
-    const rsp = await LIB.readFileAsText(source);
+    LOG.debug('importJSONLD: starting import from source', source);
+    const rsp = await PIN.readFileAsText(source);
     if (!rsp.ok)
         return rsp;
 
     const text = rsp.response as string;
 
-    let doc: any;
+    let doc: JsonLdDocument;
     try {
-        doc = JSON.parse(text);
-    } catch (err: any) {
-        return Msg.create(690, 'JSON-LD', err?.message ?? err);
+        doc = JSON.parse(text) as JsonLdDocument;
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        return Msg.create(690, 'JSON-LD', errorMessage);
     }
 
     // ✅ Validate entire JSON-LD document structure
@@ -54,19 +68,19 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
 
     // Instantiate APackage and load the document
     const aPackage = new APackage().setJSONLD(doc); // apply all constraint checks by default
-/*  keeping it because it will be needed when implementing further consistency checks:
-    const aPackage = new APackage().setJSONLD(
-        doc,
-        // some examples are incomplete, so we skip the tests for specializes:
-        [
-            ConstraintCheckType.UniqueIds,
-            ConstraintCheckType.aPropertyHasClass,
-            ConstraintCheckType.aLinkHasClass,
-            ConstraintCheckType.anEntityHasClass,
-            ConstraintCheckType.aRelationshipHasClass,
-        ]
-    );
-*/
+    /*  keeping it because it will be needed when implementing further consistency checks:
+        const aPackage = new APackage().setJSONLD(
+            doc,
+            // some examples are incomplete, so we skip the tests for specializes:
+            [
+                ConstraintCheckType.UniqueIds,
+                ConstraintCheckType.aPropertyHasClass,
+                ConstraintCheckType.aLinkHasClass,
+                ConstraintCheckType.anEntityHasClass,
+                ConstraintCheckType.aRelationshipHasClass,
+            ]
+        );
+    */
     // Check if package was successfully created
     if (!aPackage.status().ok) {
         return aPackage.status();
@@ -75,9 +89,9 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
     const allItems = aPackage.getAllItems();
 
     // allItems[0] is the package itself, rest are graph items
-//    const graphItems = allItems.slice(1);
+
     const expectedCount = doc['@graph']?.length || 0;
-    const actualCount = allItems.length -1;
+    const actualCount = allItems.length - 1;
 
     let result: IRsp;
     if (actualCount === expectedCount) {

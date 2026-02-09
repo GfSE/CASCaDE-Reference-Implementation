@@ -6,14 +6,12 @@
  */
 /** Product Information Graph (PIG) - helper routines
  *  Dependencies: none
- *  Authors: oskar.dungern@gfse.org, ..
+ *  Authors: oskar.dungern@gfse.org
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
  *  Design Decisions:
  *  -
  */
-
-import { IRsp, Rsp, Msg } from './messages';
 
 /**
  * JSON helper types
@@ -318,66 +316,6 @@ export const LIB = {
 
         return wrappedXml;
     },
-    // Load text from Node file path, HTTP(S) URL or browser File/Blob
-    async readFileAsText(source: string | File | Blob): Promise<IRsp<unknown>> {
-        if (typeof source === 'string') {
-            // string can be a URL or a Node filesystem path
-            if (this.isHttpUrl(source)) {
-                // browser or Node fetch
-                try {
-                    const resp = await fetch(source);
-                    if (!resp.ok) {
-                        return Msg.create(692, source, resp.statusText);
-                    }
-                    const text = await resp.text();
-                    return Rsp.create(0, text, 'text');
-                } catch (e: unknown) {
-                    const msg = e instanceof Error ? e.message : String(e);
-                    return Msg.create(693, source, msg);
-                }
-            }
-            // assume Node path: dynamic import to avoid bundling 'fs' into browser build
-            if (this.isNodeEnv()) {
-                try {
-                    // const { readFile } = await import('fs/promises');
-
-                    // Use eval to prevent bundlers from including this;
-                    // it is a common pattern to conditionally load Node modules without breaking browser builds
-                    const readFileFunc = new Function(
-                        'return import("fs/promises").then(m => m.readFile);'
-                    );
-                    const readFile = await readFileFunc();
-
-                    const data = await readFile(source, { encoding: 'utf8' });
-                    return Rsp.create(0, data, 'text');
-
-                } catch (e: unknown) {
-                    const msg = e instanceof Error ? e.message : String(e);
-                    return Msg.create(694, source, msg);
-                }
-            }
-            return Msg.create(695);  // not an http(s) URL and not running in Node
-        }
-
-        // File or Blob (browser)
-        if (typeof (source as Blob).text === 'function') {
-            try {
-                const text = await (source as Blob).text();
-                return Rsp.create(0, text, 'text');
-            } catch (e: unknown) {
-                const msg = e instanceof Error ? e.message : String(e);
-                return Msg.create(694, '', msg);
-            }
-        }
-        return Msg.create(696); // unsupported source type
-    },
-    isHttpUrl(s: string): boolean {
-            return /^https?:\/\//i.test(s);
-    },
-    isNodeEnv(): boolean {
-        const p = (globalThis as any).process;
-        return typeof p !== 'undefined' && !!(p.versions && p.versions.node);
-    },
 
     // Format date using the specified locale
     getLocalDate(dateStr: string, lang ?: TISODateString): string {
@@ -573,6 +511,7 @@ export const LOG = {
         return this.enabledLevels.has(level);
     },
 
+    /* eslint-disable no-console */
     info: (...args: any[]) => {
         if (LOG.isEnabled('info')) console.info(...args);
     },
@@ -585,4 +524,5 @@ export const LOG = {
     debug: (...args: any[]) => {
         if (LOG.isEnabled('debug')) console.debug(...args);
     }
+    /* eslint-enable no-console */
 };

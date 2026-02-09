@@ -6,8 +6,7 @@
  */
 /** Product Information Graph (PIG) Metaclasses - the basic object structure representing the PIG
  *  Dependencies: none
- *  Authors: oskar.dungern@gfse.org, ..
- *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *  Authors: oskar.dungern@gfse.org
  *
  *  Design Decisions:
  *  - The PIG classes contain *only *the elements in the metamodel; it could be generated from the metamodel.
@@ -33,6 +32,7 @@ import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
 import { RE } from "../../../lib/definitions";
 import { LIB, LOG } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
+import { PIN, NodeType } from "../../../lib/platform-independence";
 import { JsonPrimitive, JsonValue, JsonArray, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage, ConstraintCheckType } from './pig-package-constraints';
@@ -78,6 +78,36 @@ export const PigItemType: Record<'Property' | 'Link' | 'Entity' | 'Relationship'
     anEntity: 'pig:anEntity',
     aRelationship: 'pig:aRelationship'
 };*/
+
+const PIG_CLASSES = new Set<PigItemTypeValue>([
+    PigItemType.Property,
+    PigItemType.Link,
+    PigItemType.Entity,
+    PigItemType.Relationship
+]);
+
+const PIG_INSTANCES = new Set<PigItemTypeValue>([
+    PigItemType.anEntity,
+    PigItemType.aRelationship,
+    PigItemType.aProperty,
+    PigItemType.aSourceLink,
+    PigItemType.aTargetLink
+]);
+
+/**
+ * Check if itemType is a PIG class (Property, Link, Entity, Relationship)
+ */
+function isPigClass(itemType: PigItemTypeValue): boolean {
+    return PIG_CLASSES.has(itemType);
+}
+
+/**
+ * Check if itemType is a PIG instance (anEntity, aRelationship, aProperty, aSourceLink, aTargetLink)
+ */
+function isPigInstance(itemType: PigItemTypeValue): boolean {
+    return PIG_INSTANCES.has(itemType);
+}
+
 export enum XsDataType {
     anyType = 'xs:anyType',
     Boolean = 'xs:boolean',
@@ -141,7 +171,7 @@ abstract class Item implements IItem {
         this.itemType = itm.itemType;
     }
     status(): IRsp {
-        return this.lastStatus;
+        return this.lastStatus as IRsp;
     }
     protected validate(itm: IItem) {
         if (itm.itemType !== this.itemType)
@@ -177,7 +207,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         if (this.id && itm.id !== this.id)
             return Msg.create(602, this.id, itm.id);
         if (this.specializes && this.specializes !== itm.specializes)
-            return Msg.create(603, this.specializes, itm.specializes);
+            return Msg.create(603, this.specializes, itm.specializes ?? '');
 
         // Runtime guards:
         /* this is now checked in schema validation: */
@@ -198,7 +228,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
     protected set(itm: IIdentifiable) {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
-        //        LOG.debug('Identifiable.set i: ', itm);
+//        LOG.debug('Identifiable.set i: ', itm);
         super.set(itm);
         this.id = itm.id;
         this.specializes = itm.specializes;
@@ -704,7 +734,7 @@ export class Relationship extends Element implements IRelationship {
         if (this.lastStatus.ok)
             return this.set(this.lastStatus.response as ILink);
         return this;
-    /*    this.lastStatus = Msg.create(699, 'setXML');
+    /*    this.lastStatus = Msg.create(698, 'setXML');
         return this; */
     }
 }
@@ -760,7 +790,7 @@ export class AProperty extends Item implements IAProperty {
         return makeIdObjects(jld) as JsonObject;
     }
     setXML(itm: stringXML) {
-        this.lastStatus = Msg.create(699, 'setXML');
+        this.lastStatus = Msg.create(698, 'setXML');
         return this;
         //    return itm;
     } */
@@ -869,7 +899,9 @@ export class AnEntity extends AnElement implements IAnEntity {
     }
     set(itm: IAnEntity) {
         const _itm:IAnEntity = LIB.stripUndefined( itm );
-    //    LOG.debug('AnEntity.set():', _itm);
+        //    LOG.debug('AnEntity.set():', _itm);
+        _itm.id = normalizeId(_itm.id, PigItemType.anEntity);
+        _itm.hasClass = normalizeId(_itm.hasClass!, PigItemType.Entity);
         this.lastStatus = this.validate(_itm);
     //    LOG.debug('AnEntity.set status and input: ' + JSON.stringify(this.lastStatus), JSON.stringify(_itm, null, 2));
         if (this.lastStatus.ok) {
@@ -993,6 +1025,8 @@ export class ARelationship extends AnElement implements IARelationship {
     set(itm: IARelationship) {
         const _itm: IARelationship = LIB.stripUndefined(itm);
         //LOG.debug('ARelationship.set():', _itm);
+        _itm.id = normalizeId(_itm.id, PigItemType.aRelationship);
+        _itm.hasClass = normalizeId(_itm.hasClass!, PigItemType.Relationship);
         this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
             super.set(_itm);
@@ -1092,13 +1126,16 @@ export class APackage extends Identifiable implements IAPackage {
     }
 
     set(itm: IAPackage, checks?: ConstraintCheckType[]): APackage {
-        this.lastStatus = this.validate(itm,checks);
+        //    const _itm: IAPackage = LIB.stripUndefined(itm);
+        const _itm = { ...itm };
+        _itm.id = normalizeId(_itm.id, PigItemType.aPackage);
+        this.lastStatus = this.validate(_itm,checks);
         if (this.lastStatus.ok) {
-            super.set(itm);
-            this.context = itm.context;
-            this.graph = itm.graph;
-            this.modified = itm.modified;
-            this.creator = itm.creator;
+            super.set(_itm);
+            this.context = _itm.context;
+            this.graph = _itm.graph;
+            this.modified = _itm.modified;
+            this.creator = _itm.creator;
         }
         return this;
     }
@@ -1258,6 +1295,7 @@ export class APackage extends Identifiable implements IAPackage {
             } else {
                 const errorMsg = result.statusText || 'Unknown instantiation error';
                 errors.push(errorMsg);
+                // LOG.debug(`APackage.setXML: failed to instantiate item from XML: `, JSON.stringify(item, null, 2));
                 LOG.warn(`APackage.setXML: ${errorMsg}`);
             }
         }
@@ -1373,6 +1411,8 @@ export class APackage extends Identifiable implements IAPackage {
         let invalidCount = 0;
 
         for (const item of this.graph) {
+            // LOG.debug(`LIB.allItems: processing graph item `, item);
+
             if (!item || typeof item !== 'object') {
                 LOG.warn('LIB.allItems: encountered invalid graph item (not an object)');
                 invalidCount++;
@@ -1418,13 +1458,13 @@ export class APackage extends Identifiable implements IAPackage {
      * @param doc - Parsed JSON-LD document
      * @returns Context as INamespace[], string, Record<string, string>, or undefined
      */
-    private extractContextJSONLD(doc: any): INamespace[] | string | Record<string, string> | undefined {
+    private extractContextJSONLD(doc: any): INamespace[]{
         const ctx = doc['@context'] || doc.context;
         // LOG.debug('extractContextJSONLD (1): ',ctx);
 
         if (!ctx) {
             LOG.warn('APackage: no @context found in document');
-            return undefined;
+            return [];
         }
 
     /*    // String context (URL)
@@ -1460,7 +1500,7 @@ export class APackage extends Identifiable implements IAPackage {
         } */
 
         LOG.warn('APackage: unsupported @context format');
-        return undefined;
+        return [];
     }
     /**
      * Extract XML namespaces from XML string and group them in a context object
@@ -1482,7 +1522,7 @@ export class APackage extends Identifiable implements IAPackage {
      *   { tag: "@vocab", uri: "http://default.org/" }
      * ]
      */
-    private extractContextXML(xmlString: stringXML): INamespace[] | string | Record<string, string> | undefined {
+    private extractContextXML(xmlString: stringXML): INamespace[] {
         const namespaces: INamespace[] = [];
 
         // Global regex to find all xmlns declarations
@@ -1512,7 +1552,7 @@ export class APackage extends Identifiable implements IAPackage {
 
         if (namespaces.length === 0) {
             LOG.warn('extractContextXML: no namespaces found in XML');
-            return undefined;
+            return [];
         }
 
         // LOG.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
@@ -1765,7 +1805,6 @@ function extractId(obj: unknown): string | undefined {
         const o = obj as Record<string, unknown>;
         if (typeof o.id === 'string' && o.id.trim().length>0)
             return o.id;
-    //    if (typeof o['@id'] === 'string' && (o['@id'] as string).trim() !== '') return o['@id'] as string;
     }
     return undefined;
 }
@@ -1789,8 +1828,8 @@ function isValidIdString(input: string): boolean {
  * @param input  value to check
  * @param fieldName  name used in error messages
  * @returns IRsp (rspOK on success, error IRsp on failure)
- */
-/* export function validateIdStringArray(
+ * /
+export function validateIdStringArray(
     input: unknown,
     fieldName = 'ids',
     options?: { canBeUndefined?: boolean, minCount?: number }
@@ -1988,6 +2027,44 @@ function replaceIdObjects(
 
     return walk(root);
 }
+/**
+ * Normalize ID by adding namespace prefix if missing
+ * Logs transformations for debugging ReqIF imports
+ * 
+ * @param id - Raw ID from import (may lack namespace)
+ * @param itemType - PIG item type to determine correct prefix
+ * @returns Normalized ID with namespace prefix
+ */
+
+/**
+ * Normalize ID by adding namespace prefix if missing
+ */
+function normalizeId(id: string, itemType: PigItemTypeValue): string {
+    if (!id || typeof id !== 'string') {
+        return id;
+    }
+
+    // Already has namespace or is URI?
+    if (id.includes(':')) {
+        return id;
+    }
+
+    // Determine prefix using optimized type guards
+    let prefix: string;
+    if (isPigInstance(itemType)) {
+        prefix = 'd:';
+    } else if (isPigClass(itemType)) {
+        prefix = 'o:';
+    } else {
+        prefix = 'd:'; // Default for aPackage or unknown
+    }
+
+    const normalized = `${prefix}${id}`;
+    LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
+
+    return normalized;
+}
+
 // Helper: normalize language tags/values ---
 function normalizeLanguageText(src: any): ILanguageText {
 //    LOG.debug('normalizeLanguageText', src);
@@ -2181,7 +2258,6 @@ function addConfigurablesToJSONLD(
     delete jld[hasX];
     return jld;
 }
-// const xmlParser = new DOMParser();
 /**
  * Parse XML string and convert to JSON object
  * Recursively traverses the XML structure without assuming specific tag names
@@ -2191,11 +2267,11 @@ function addConfigurablesToJSONLD(
  */
 function xml2json(xml: stringXML): IRsp<unknown> {
     try {
-        const parser = new DOMParser();
+        const parser = PIN.createDOMParser();
 
         // Try 1: Parse without wrapper
         const doc = parser.parseFromString(xml, 'text/xml');
-        const parserError = doc.querySelector('parsererror');
+        const parserError = PIN.getXmlParseError(doc);
 
         if (!parserError && doc.documentElement) {
             // Success without wrapper
@@ -2214,7 +2290,7 @@ function xml2json(xml: stringXML): IRsp<unknown> {
         const wrapped = LIB.makeXMLDoc(xml);
         const wrappedDoc = parser.parseFromString(wrapped, 'text/xml');
 
-        const wrappedError = wrappedDoc.querySelector('parsererror');
+        const wrappedError = PIN.getXmlParseError(wrappedDoc);
         if (wrappedError) {
             const errorMessage = wrappedError.textContent || 'Unknown XML parsing error';
             LOG.error('xml2json: XML parsing failed even with wrapper:', errorMessage);
@@ -2291,7 +2367,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     const configurableTargetLinks: JsonObject[] = [];
 
     for (const child of Array.from(xmlElement.childNodes)) {
-        if (child.nodeType === Node.ELEMENT_NODE) {
+        if (child.nodeType === NodeType.ELEMENT_NODE) {
             const childElement = child as ElementXML;
             const childTagName = childElement.tagName;
 
@@ -2315,7 +2391,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             }
             childElementsByTag.get(childTagName)!.push(childElement);
 
-        } else if (child.nodeType === Node.TEXT_NODE) {
+        } else if (child.nodeType === NodeType.TEXT_NODE) {
             const text = child.textContent?.trim();
             if (text) {
                 textContent.push(text);
@@ -2326,7 +2402,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     // 4. Convert grouped child elements to JSON
     for (const [tagName, elements] of childElementsByTag) {
 
-        // ✅ Special handling for 'graph' - always array of heterogeneous items
+    /*    // ✅ Special handling for 'graph' - always array of heterogeneous items
         if (tagName === 'graph' || tagName === 'pig:graph') {
             result.graph = elements.flatMap(graphContainer => {
                 // Get all direct children of <graph> container
@@ -2334,10 +2410,26 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                     .map(childElement => xmlElementToJson(childElement as ElementXML));
             });
             continue;
+        } */
+        // ✅ Special handling for 'graph' - always array of heterogeneous items
+        if (tagName === 'graph' || tagName === 'pig:graph') {
+            result.graph = elements.flatMap(graphContainer => {
+                // Get all direct children of <graph> container
+                // ✅ Use childNodes instead of children for @xmldom compatibility
+                const graphItems: JsonObject[] = [];
+                for (const child of Array.from(graphContainer.childNodes)) {
+                    if (child.nodeType === NodeType.ELEMENT_NODE) {
+                        graphItems.push(xmlElementToJson(child as ElementXML));
+                    }
+                }
+                return graphItems;
+            });
+            continue;
         }
 
         // Special handling for xs:simpleType
         if (tagName === 'xs:simpleType' || tagName === 'simpleType') {
+        //    LOG.debug('Processing xs:simpleType element',elements);
             xSimpleType(elements[0], result);
             continue;
         }
@@ -2374,7 +2466,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             // Regular fields
             else {
                 const hasChildElements = Array.from(elem.childNodes).some(
-                    node => node.nodeType === Node.ELEMENT_NODE
+                    node => node.nodeType === NodeType.ELEMENT_NODE
                 );
 
                 if (!hasChildElements && childText) {
@@ -2396,7 +2488,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                     };
                 } else {
                     const hasChildElements = Array.from(elem.childNodes).some(
-                        node => node.nodeType === Node.ELEMENT_NODE
+                        node => node.nodeType === NodeType.ELEMENT_NODE
                     );
 
                     if (!hasChildElements && childText) {
@@ -2470,7 +2562,7 @@ function requiresArray(propertyName: string, parentItemType?: string): boolean {
     return false;
 }
 /**
- * ✅ NEW: Process pig:aProperty element
+ * Process pig:aProperty element
  * Extracts:
  * - rdf:type → hasClass
  * - <value> → value
@@ -2489,7 +2581,7 @@ function processConfigurableProperty(elem: ElementXML): JsonObject {
 
     // Extract child elements
     for (const child of Array.from(elem.childNodes)) {
-        if (child.nodeType === Node.ELEMENT_NODE) {
+        if (child.nodeType === NodeType.ELEMENT_NODE) {
             const childElement = child as ElementXML;
             const childTagName = childElement.tagName;
 
@@ -2510,7 +2602,7 @@ function processConfigurableProperty(elem: ElementXML): JsonObject {
 }
 
 /**
- * ✅ NEW: Process pig:aSourceLink or pig:aTargetLink element
+ * Process pig:aSourceLink or pig:aTargetLink element
  * Extracts:
  * - rdf:type → hasClass
  * - <idRef> → idRef
@@ -2529,7 +2621,7 @@ function processConfigurableLink(elem: ElementXML, itemType: PigItemTypeValue): 
 
     // Extract child elements
     for (const child of Array.from(elem.childNodes)) {
-        if (child.nodeType === Node.ELEMENT_NODE) {
+        if (child.nodeType === NodeType.ELEMENT_NODE) {
             const childElement = child as ElementXML;
             const childTagName = childElement.tagName;
 
@@ -2543,7 +2635,7 @@ function processConfigurableLink(elem: ElementXML, itemType: PigItemTypeValue): 
 }
 
 /**
- * ✅ NEW: Check if a property name needs IText wrapper ({ value: "..." })
+ * Check if a property name needs IText wrapper ({ value: "..." })
  * Currently only 'icon' according to IElement interface
  */
 function requiresIText(propertyName: string): boolean {
@@ -2572,10 +2664,18 @@ function requiresIText(propertyName: string): boolean {
  *   maxCount: 1
  */
 function xSimpleType(simpleTypeElement: ElementXML, result: JsonObject): void {
-    // Find xs:restriction element
-    const restriction = Array.from(simpleTypeElement.children).find(
-        child => child.tagName === 'xs:restriction' || child.tagName === 'restriction'
-    ) as ElementXML | undefined;
+    // Find xs:restriction element using childNodes instead of children
+    let restriction: ElementXML | undefined;
+
+    for (const child of Array.from(simpleTypeElement.childNodes)) {
+        if (child.nodeType === NodeType.ELEMENT_NODE) {
+            const elem = child as ElementXML;
+            if (elem.tagName === 'xs:restriction' || elem.tagName === 'restriction') {
+                restriction = elem;
+                break;
+            }
+        }
+    }
 
     if (!restriction) return;
 
@@ -2585,13 +2685,16 @@ function xSimpleType(simpleTypeElement: ElementXML, result: JsonObject): void {
         result.datatype = baseAttr;
     }
 
-    // Process restriction children
-    for (const child of Array.from(restriction.children)) {
-        const tagName = child.tagName;
+    // Process restriction children using childNodes
+    for (const child of Array.from(restriction.childNodes)) {
+        if (child.nodeType !== NodeType.ELEMENT_NODE) continue;
+
+        const elem = child as ElementXML;
+        const tagName = elem.tagName;
         const localName = tagName.includes(':') ? tagName.split(':')[1] : tagName;
 
         // Extract value attribute or text content
-        const value = child.getAttribute('value') || child.textContent?.trim();
+        const value = elem.getAttribute('value') || elem.textContent?.trim();
         if (!value) continue;
 
         // Map XSD constraints to PIG properties
@@ -2625,7 +2728,7 @@ function xSimpleType(simpleTypeElement: ElementXML, result: JsonObject): void {
                 break;
             default:
                 // Unknown constraint - log warning
-                LOG.warn(`processSimpleType: unknown constraint '${localName}' with value '${value}'`);
+                LOG.warn(`xSimpleType: unknown constraint '${localName}' with value '${value}'`);
         }
     }
 }
@@ -2635,21 +2738,30 @@ function xSimpleType(simpleTypeElement: ElementXML, result: JsonObject): void {
  * @param xmlElement - XML DOM Element
  * @returns Text content, preserving HTML if present
  */
+/**
+ * Get the text content of an XML DOM element, handling both simple text and HTML content
+ * @param xmlElement - XML DOM Element
+ * @returns Text content, preserving HTML if present (without escaping)
+ */
 function getXmlElementText(xmlElement: ElementXML): string {
     // Check if element contains HTML elements (p, div, span, etc.)
     const hasHtmlContent = Array.from(xmlElement.childNodes).some(node =>
-        node.nodeType === Node.ELEMENT_NODE &&
+        node.nodeType === NodeType.ELEMENT_NODE &&
         ['p', 'div', 'span', 'small', 'i', 'a', 'object'].includes((node as ElementXML).tagName.toLowerCase())
     );
 
     if (hasHtmlContent) {
-        // Return innerHTML to preserve HTML structure
-        return xmlElement.innerHTML.trim();
+        // ✅ Use platform-independent serialization WITHOUT escaping
+        /* In the browser, we could use:
+        return xmlElement.innerHTML?.trim() || ''; */
+        // return serializeXmlContent(xmlElement);
+        return PIN.innerHTML(xmlElement) || '';
     } else {
         // Return plain text content
         return xmlElement.textContent?.trim() || '';
     }
 }
+
 /**
  * Check if a property name represents a multi-language text field
  * These fields must always be arrays of ILanguageText objects according to pig-schemata.ts

@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build:xslt": "node scripts/compile-xslt.js",
+    "build:vue": "vue-cli-service build",
+    "build": "npm run build:xslt && npm run build:vue",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "test:logic": "jest --selectProjects unit-logic",
     "test:unit": "jest --selectProjects unit-logic unit-vue",
@@ -13,13 +15,16 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@xmldom/xmldom": "^0.8.11",
     "ajv-keywords": "^5.1.0",
     "core-js": "^3.8.3",
+    "saxon-js": "^2.7.0",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.6.3",
     "vuetify": "^3.10.5",
-    "xmldom": "^0.6.0"
+    "xmldom": "^0.6.0",
+    "xslt3": "^2.7.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",
@@ -38,13 +43,20 @@
     "@vue/vue3-jest": "^27.0.0",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "assert": "^2.1.0",
+    "buffer": "^6.0.3",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "jest": "27.5.1",
+    "path-browserify": "^1.0.1",
     "playwright": "^1.58.1",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
     "ts-jest": "27.1.5",
     "typescript": "4.7",
-    "unplugin-vue-components": "^29.0.0"
+    "unplugin-vue-components": "^29.0.0",
+    "url": "^0.11.4",
+    "util": "^0.12.5"
   },
   "overrides": {
     "cross-spawn": ">=6.0.6"

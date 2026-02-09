@@ -20,7 +20,8 @@
  */
 
 import { IRsp, rspOK, Msg } from '../../lib/messages';
-import { LIB, LOG } from '../../lib/helpers';
+import { LOG } from '../../lib/helpers';
+import { PIN } from '../../lib/platform-independence';
 import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
 //import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
 
@@ -30,7 +31,7 @@ import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
  * @returns IRsp with array of TPigItem (first item is APackage, rest are graph items)
  */
 export async function importXML(source: string | File | Blob): Promise<IRsp> {
-    const rsp = await LIB.readFileAsText(source);
+    const rsp = await PIN.readFileAsText(source);
     if (!rsp.ok)
         return rsp;
 
@@ -38,13 +39,12 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
     // LOG.info('importXML: loaded text length ' + xmlString.length);
 
     // ✅ Optional: Pre-validate XML syntax
-    let doc: Document;
     try {
-        const parser = new DOMParser();
-        doc = parser.parseFromString(xmlString, 'text/xml');
+        const parser = PIN.createDOMParser();
 
-        // Check for XML parsing errors
-        const parserError = doc.querySelector('parsererror');
+        const doc = parser.parseFromString(xmlString, 'text/xml');
+        const parserError = PIN.getXmlParseError(doc);
+
         if (parserError) {
             const errorMessage = parserError.textContent || 'Unknown XML parsing error';
             return Msg.create(690, 'XML', errorMessage);

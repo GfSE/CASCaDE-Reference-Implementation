@@ -105,7 +105,8 @@
             "properties": {
                 "@value": {
                     "type": "string",
-                    "description": "The actual text content"
+                    "minLength": 1,
+                   "description": "The actual text content"
                 },
                 "@language": {
                     "type": "string",

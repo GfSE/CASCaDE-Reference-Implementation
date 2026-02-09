@@ -35,7 +35,7 @@
 */
 
 import { ajv } from '../../../../plugins/ajv';
-import { LIB } from '../../../lib/helpers';
+import { PIN } from '../../../lib/platform-independence';
 
 export const SCHEMA_PATH = 'http://product-information-graph.org/schema/2026-01-12/jsonld/';
 
@@ -85,7 +85,7 @@ async function loadSchema(schemaKey: SchemaKey): Promise<any> {
 
     try {
         // Use LIB.readFileAsText to support both Node and browser
-        const rsp = await LIB.readFileAsText(schemaPath);
+        const rsp = await PIN.readFileAsText(schemaPath);
 
         if (!rsp.ok) {
             throw new Error(`Failed to load schema ${schemaPath}: ${rsp.statusText}`);
