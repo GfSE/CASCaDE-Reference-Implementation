@@ -54,6 +54,7 @@
             <dcterms:description>A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.</dcterms:description>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
             <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:diagram</pig:eligibleProperty>
             <pig:eligibleTargetLink>pig:shows</pig:eligibleTargetLink>
             <pig:eligibleTargetLink>pig:depicts</pig:eligibleTargetLink>
         </pig:Entity>
@@ -207,7 +208,7 @@
         </pig:Property>
 
         <!-- SpecIF Properties -->
-        <pig:Property id="SpecIF:Diagram" rdf:type="owl:DatatypeProperty">
+        <pig:Property id="pig:diagram" rdf:type="owl:DatatypeProperty">
             <dcterms:title xml:lang="en">Diagram</dcterms:title>
             <dcterms:title xml:lang="de">Diagramm</dcterms:title>
             <dcterms:title xml:lang="fr">Diagramme</dcterms:title>
@@ -254,7 +255,7 @@
                 <p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>
             </dcterms:description>
             <pig:specializes>pig:Entity</pig:specializes>
-            <pig:eligibleProperty>SpecIF:Diagram</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:diagram</pig:eligibleProperty>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
 
@@ -516,7 +517,7 @@
         <pig:anEntity id="d:Diagram-aec0df7900010000017001eaf53e8876" rdf:type="pig:View">
             <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
             <dcterms:title>IT-Integration: FiCo-Application and FiCo-Data</dcterms:title>
-            <pig:aProperty rdf:type="SpecIF:Diagram">
+            <pig:aProperty rdf:type="pig:diagram">
                 <value>
                     <p class="inline-label">Model Diagram:</p>
                     <p>

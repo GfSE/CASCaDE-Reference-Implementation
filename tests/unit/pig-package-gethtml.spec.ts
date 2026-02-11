@@ -69,7 +69,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(validPackageWithEntity, [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]);
+            const pkg = new APackage().setJSONLD(validPackageWithEntity, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 
@@ -137,7 +137,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithoutEntities, [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]);
+            const pkg = new APackage().setJSONLD(packageWithoutEntities, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 
@@ -217,7 +217,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithMixedItems, [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]);
+            const pkg = new APackage().setJSONLD(packageWithMixedItems, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 
@@ -243,7 +243,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [] // Empty graph - invalid!
             };
 
-            const pkg = new APackage().setJSONLD(invalidPackage, [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]);
+            const pkg = new APackage().setJSONLD(invalidPackage, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(false);
 
@@ -313,7 +313,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithMultipleEntities, [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]);
+            const pkg = new APackage().setJSONLD(packageWithMultipleEntities, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 

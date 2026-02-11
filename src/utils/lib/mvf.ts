@@ -64,6 +64,7 @@ const FROM_XML = new Map<string, string>([
     ['pig:revision', 'revision'],
     ['pig:priorRevision', 'priorRevision'],
     ['rdf:type', 'hasClass'],
+    ['pig:hasClass', 'hasClass'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     ['pig:specializes', 'specializes'],
@@ -96,30 +97,35 @@ const TO_XML = new Map<string, string>(
     Array.from(FROM_XML.entries()).map(([a, b]) => [b, a])
 );
 
+// Map entries with the same keys: The second prevails.
+const FROM_REQIF = new Map<string, string>([
+]);
+const TO_REQIF = new Map<string, string>(
+    Array.from(FROM_REQIF.entries()).map(([a, b]) => [b, a])
+);
+
 /**
- * Multi-Vocabulary Facilities object
- * Provides mapping between different vocabulary representations
+ * Multi-Vocabulary Facility object
+ * Provides mapping between different vocabularies
  */
 export const MVF = {
     /**
-     * Mapping from internal format to JSON-LD
+     * Mapping between internal format and JSON-LD
      */
     toJSONLD: TO_JSONLD,
-
-    /**
-     * Mapping from JSON-LD to internal format
-     */
     fromJSONLD: FROM_JSONLD,
 
     /**
-     * Mapping from internal format to XML
+     * Mapping between internal format and XML
      */
     toXML: TO_XML,
+    fromXML: FROM_XML,
 
     /**
-     * Mapping from XML to internal format
+     * Mapping between internal format and ReqIF
      */
-    fromXML: FROM_XML,
+    toReqIF: TO_REQIF,
+    fromReqIF: FROM_REQIF,
 
     /**
      * Rename JSON object keys (tags) according to a mapping.

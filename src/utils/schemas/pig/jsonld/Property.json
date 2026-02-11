@@ -53,11 +53,11 @@
         },
         "sh:maxCount": {
             "type": "number",
-            "minimum": 0
+            "minimum": 1
         },
         "sh:maxLength": {
             "type": "number",
-            "minimum": 0
+            "minimum": 1
         },
         "sh:minInclusive": {
             "type": "number"

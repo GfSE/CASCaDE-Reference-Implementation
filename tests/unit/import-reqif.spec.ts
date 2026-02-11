@@ -22,22 +22,35 @@ describe('ReqIF Import', () => {
         }));
 
     beforeAll(() => {
-        console.log(`Found ${reqifFiles.length} ReqIF test files:`);
-        reqifFiles.forEach(f => console.log(`  - ${f.name}`));
+        let str = `Found ${reqifFiles.length} ReqIF test files:`;
+        reqifFiles.forEach(f => str += `\n  - ${f.name}`);
+        console.log(str);
     });
+    // Ensure console flush before test ends
+    afterEach(async () => {
+        await new Promise(resolve => setImmediate(resolve));
+    });
+
+    // Reliable logging with synchronous write
+    const logResponse = (context: string, response: any) => {
+        if (!response.ok) {
+            const msg = `\n❌ ${context} FAILED:\n${JSON.stringify(response, null, 2)}\n`;
+            process.stderr.write(msg);
+        }
+    };
 
     describe('importReqif() - Basic functionality', () => {
         it('should transform ReqIF XML to PIG format', async () => {
             const testFile = reqifFiles[0];
             const fileContent = await PIN.readFileAsText(testFile.path);
             if (!fileContent.ok)
-                console.error('response from readFileAsText:', fileContent);
+                logResponse('readFileAsText', fileContent);
 
             expect(fileContent.status).toBe(0);
 
             const rsp = await importReqif(fileContent.response as string, testFile.name);
             if (!rsp.ok)
-                console.error('response from importReqif:', rsp);
+                logResponse('importReqif', rsp);
 
             expect(rsp.status).toBe(0);
             expect(rsp.response).toBeTruthy();
@@ -61,6 +74,8 @@ describe('ReqIF Import', () => {
             const invalidXml = '<invalid>xml without closing tag';
 
             const result = await importReqif(invalidXml, 'invalidXML.reqif');
+            // if (!result.ok)
+            //    logResponse('importReqif', result);
 
             expect(result.ok).toBe(false);
             expect(result.statusText).toBeTruthy();
@@ -73,6 +88,8 @@ describe('ReqIF Import', () => {
                 </root>`;
 
             const result = await importReqif(notReqIF, 'notReqIF.reqif');
+            // if (!result.ok)
+            //    logResponse('importReqif', result);
 
             expect(result.status).not.toBe(0);
             expect(result.statusText).toContain('missing required ReqIF namespace or root element');
@@ -101,6 +118,8 @@ describe('ReqIF Import', () => {
                 expect(fileContent.status).toBe(0);
 
                 const result = await importReqif(fileContent.response as string, testFile.name);
+                if (!result.ok)
+                    logResponse(`importReqif for ${testFile.name}`, result);
 
                 expect(result.status).toBe(0);
                 expect(result.response).toBeTruthy();
@@ -120,6 +139,7 @@ describe('ReqIF Import', () => {
         it('should create valid PIG package with items', async () => {
             const testFile = reqifFiles.find(f => f.name === 'Related-Terms.reqif');
             if (!testFile) {
+                logResponse('find test file', { ok: false, status: 404, statusText: 'Related-Terms.reqif not found' });
                 console.warn('Related-Terms.reqif not found, skipping package creation test');
                 return;
             }
@@ -128,6 +148,8 @@ describe('ReqIF Import', () => {
             expect(fileContent.status).toBe(0);
 
             const result = await importReqif(fileContent.response as string, testFile.name);
+            if (!result.ok)
+                logResponse(`importReqif for ${testFile.name}`, result);
 
             expect(result.status).toBe(0);
             expect(result.responseType).toBe('json');
@@ -148,7 +170,7 @@ describe('ReqIF Import', () => {
         it('should transform SpecObjects to PIG entities', async () => {
             const testFile = reqifFiles.find(f => f.name === 'Related-Terms.reqif');
             if (!testFile) {
-                console.warn('Related-Terms.reqif not found, skipping entity transformation test');
+                logResponse('find test file', { ok: false, status: 404, statusText: 'Related-Terms.reqif not found' });
                 return;
             }   
             const fileContent = await PIN.readFileAsText(testFile.path);
@@ -156,6 +178,8 @@ describe('ReqIF Import', () => {
             expect(fileContent.status).toBe(0);
 
             const result = await importReqif(fileContent.response as string, testFile.name);
+            if (!result.ok)
+                logResponse(`importReqif for ${testFile.name}`, result);
 
             expect(result.status).toBe(0);
 
@@ -170,16 +194,18 @@ describe('ReqIF Import', () => {
         });
 
         it('should preserve metadata in transformation', async () => {
-            const testFile = reqifFiles[0];
+            const testFile = reqifFiles.find(f => f.name === 'Related-Terms.reqif');
             if (!testFile) {
-                console.warn(`${reqifFiles[0].name} not found, skipping metadata preservation test`);
+                logResponse('find test file', { ok: false, status: 404, statusText: 'Related-Terms.reqif not found' });
                 return;
-            }
+            }   
             const fileContent = await PIN.readFileAsText(testFile.path);
 
             expect(fileContent.status).toBe(0);
 
             const result = await importReqif(fileContent.response as string, testFile.name);
+            if (!result.ok)
+                logResponse(`importReqif for ${testFile.name}`, result);
 
             expect(result.status).toBe(0);
 
@@ -188,17 +214,17 @@ describe('ReqIF Import', () => {
 
             expect(itemsWithTitle.length).toBeGreaterThan(0);
 
-            console.log(`${itemsWithTitle.length} items have titles`);
+            // console.log(`${itemsWithTitle.length} items have titles`);
         });
     });
 
     describe('Performance', () => {
         it('should import ReqIF in reasonable time', async () => {
-            const testFile = reqifFiles[0];
+            const testFile = reqifFiles.find(f => f.name === 'Related-Terms.reqif');
             if (!testFile) {
-                console.warn(`${reqifFiles[0].name} not found, skipping performance test`);
+                logResponse('find test file', { ok: false, status: 404, statusText: 'Related-Terms.reqif not found' });
                 return;
-            }
+            }   
             const fileContent = await PIN.readFileAsText(testFile.path);
 
             expect(fileContent.status).toBe(0);
@@ -206,6 +232,8 @@ describe('ReqIF Import', () => {
             const startTime = Date.now();
             const result = await importReqif(fileContent.response as string, testFile.name);
             const duration = Date.now() - startTime;
+            if (!result.ok)
+                logResponse(`importReqif for ${testFile.name}`, result);
 
             expect(result.status).toBe(0);
             expect(duration).toBeLessThan(10000); // Should complete in under 10 seconds
@@ -247,7 +275,6 @@ describe('ReqIF Import', () => {
 
             for (const testCase of testCases) {
                 const result = await importReqif(testCase.xml, testCase.filename);
-                // console.debug(`Error message for ${testCase.filename}: ${result.statusText}`);
 
                 expect(result.status).not.toBe(0);
                 expect(result.statusText?.toLowerCase()).toContain(testCase.expectedError.toLowerCase());

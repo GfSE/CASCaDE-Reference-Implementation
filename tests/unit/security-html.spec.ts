@@ -47,7 +47,7 @@ describe('HTML Security - XSS Prevention', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(maliciousPackageJsonLd, []); // no constraint checks, here
+            const pkg = new APackage().setJSONLD(maliciousPackageJsonLd, {check: []}); // no constraint checks, here
             if (!pkg.status().ok)
                 console.error('status:', pkg.status());
             expect(pkg.status().ok).toBe(true);
@@ -114,7 +114,7 @@ describe('HTML Security - XSS Prevention', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(mixedContentPackage, []); // no constraint checks, here
+            const pkg = new APackage().setJSONLD(mixedContentPackage, { check: [] }); // no constraint checks, here
             if (!pkg.status().ok)
                 console.error('status:', pkg.status());
             expect(pkg.status().ok).toBe(true);
@@ -184,7 +184,7 @@ describe('HTML Security - XSS Prevention', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(maliciousObjectPackage,[]); // no constraint checks, here
+            const pkg = new APackage().setJSONLD(maliciousObjectPackage, { check: [] }); // no constraint checks, here
             if (!pkg.status().ok)
                 console.error('status:', pkg.status());
             expect(pkg.status().ok).toBe(true);

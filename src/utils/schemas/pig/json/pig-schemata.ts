@@ -67,8 +67,8 @@ const PROPERTY_SCHEMA = {
             pattern: '^xs:[A-Za-z]+$'
         },
         minCount: { type: 'integer', minimum: 0 },
-        maxCount: { type: 'integer', minimum: 0 },
-        maxLength: { type: 'integer', minimum: 0 },
+        maxCount: { type: 'integer', minimum: 1 },
+        maxLength: { type: 'integer', minimum: 1 },
         minInclusive: { type: 'number' },
         maxInclusive: { type: 'number' },
         pattern: { type: 'string' },

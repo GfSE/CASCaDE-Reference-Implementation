@@ -12,5 +12,7 @@ export const RE = {
     //                                                                                                                          $8: 0..1 fragment=page anchor (hash)
     //                                                                                                                                       $9: ends with certain characters or eol
     // Namespace: /^([\w-]+)[.:]([\w\.-]*)$/
-    termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_\\-\\.]*):([^\s]+)$/
+    termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_\\-\\.]*):([^\s]+)$/,
+    isoDateTime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}(:\d{2})?)?$/,
+    hasTimezone: /(Z|[+-]\d{2}(:\d{2})?)$/
 }

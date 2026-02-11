@@ -84,13 +84,13 @@ export async function importReqif(
     const aPackage = new APackage().setXML(
         rsp.response as string,
         // input has only instances, so omit constraint checks on classes:
-        [
+        {check: [
             ConstraintCheckType.UniqueIds
         //    ConstraintCheckType.aPropertyHasClass,
         //    ConstraintCheckType.aLinkHasClass,
         //    ConstraintCheckType.anEntityHasClass,
         //    ConstraintCheckType.aRelationshipHasClass,
-        ]
+        ] as ConstraintCheckType[]}
     );
 
     // Check if package was successfully created
@@ -101,8 +101,8 @@ export async function importReqif(
     // allItems[0] is the package itself, rest are graph items:
     const allItems = aPackage.getAllItems();
 
-    const actualCount = allItems.length - 1;
-    LOG.info(`importReqIF: successfully instantiated ${actualCount} items`);
+    // const actualCount = allItems.length - 1;
+    // LOG.info(`importReqIF: successfully instantiated ${actualCount} items`);
 
     // Return all items (package + graph items)
     const result = rspOK;

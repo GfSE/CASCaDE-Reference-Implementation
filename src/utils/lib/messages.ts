@@ -391,6 +391,26 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (parentId, index, prpName, prpVal, msg) =>
             `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`
     },
+    676: {
+        en: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] uses '${linkClassId}' which is not eligible in class '${classId}'.`,
+        de: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] verwendet '${linkClassId}', der in Klasse '${classId}' nicht zulässig ist.`,
+        fr: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] utilise '${linkClassId}' qui n'est pas éligible dans la classe '${classId}'.`,
+        es: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] usa '${linkClassId}' que no es elegible en la clase '${classId}'.`
+    },
+    678: {
+        en: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `Instance '${instanceId}' has ${actualCount} occurrence(s) of property '${propClassId}' but ${issue}: expected ${expectedCount}`,
+        de: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `Instanz '${instanceId}' hat ${actualCount} Vorkommen von Property '${propClassId}', aber ${issue}: erwartet ${expectedCount}`,
+        fr: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `L'instance '${instanceId}' a ${actualCount} occurrence(s) de la propriété '${propClassId}' mais ${issue}: attendu ${expectedCount}`,
+        es: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `La instancia '${instanceId}' tiene ${actualCount} ocurrencia(s) de la propiedad '${propClassId}' pero ${issue}: se esperaba ${expectedCount}`
+    },
     679: {
         en: (op, act, exp) =>
             `${op}: Created ${act} of ${exp} graph items`,
