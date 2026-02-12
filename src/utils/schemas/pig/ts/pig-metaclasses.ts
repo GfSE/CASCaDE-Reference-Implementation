@@ -34,7 +34,7 @@
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
-import { RE } from "../../../lib/definitions";
+import { DEF, RE } from "../../../lib/definitions";
 import { LIB, LOG } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
 import { PIN, NodeType } from "../../../lib/platform-independence";
@@ -272,11 +272,11 @@ abstract class Identifiable extends Item implements IIdentifiable {
     //    LOG.debug('Identifiable.getJSONLD: ', jld);
         return makeIdObjects(jld) as JsonObject;        
     }
-    protected setXML(itm: any) {
+/*    protected setXML(itm: any) {
         this.lastStatus = xml2json(itm);
         // Set the normalized object in the concrete subclass
         return this; // differently than setJSOLD(), returns this
-    }
+    } */
 }
 
 interface IALink extends IItem {
@@ -317,11 +317,11 @@ abstract class ALink extends Item implements IALink {
         const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
         return makeIdObjects(jld) as JsonObject;
     }
-    protected setXML(itm: any) {
+/*    protected setXML(itm: any) {
         this.lastStatus = xml2json(itm);
         // Set the normalized object in the concrete subclass
         return this;
-    }
+    } */
 }
 interface IElement extends IIdentifiable {
     eligibleProperty?: TPigId[];
@@ -422,14 +422,14 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
         return addConfigurablesToJSONLD(jld, this, 'hasProperty');
     }
-    protected setXML(itm: stringXML) {
+/*    protected setXML(itm: stringXML) {
         const _itm = super.setXML(itm);
         _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
         //    LOG.debug('AnElement.setXML: '+ JSON.stringify(_itm, null, 2));
 
         // Set the normalized object in the concrete subclass
         return _itm;
-    }
+    } */
 }
 
 //////////////////////////////////////
@@ -544,9 +544,10 @@ export class Property extends Identifiable implements IProperty {
         return super.getJSONLD();
     }
     setXML(itm: stringXML) {
-        super.setXML(itm);
-        if (this.lastStatus.ok)
-            return this.set(this.lastStatus.response as IProperty);
+        const rsp = xml2json(itm);
+        if (rsp.ok)
+            return this.set(rsp.response as IProperty);
+        this.lastStatus = rsp;
         return this;
     }
     getHTML(options?: object): stringHTML {
@@ -603,9 +604,10 @@ export class Link extends Identifiable implements ILink {
         return super.getJSONLD();
     }
     setXML(itm: stringXML) {
-        super.setXML(itm);
-        if (this.lastStatus.ok)
-            return this.set(this.lastStatus.response as ILink);
+        const rsp = xml2json(itm);
+        if (rsp.ok)
+            return this.set(rsp.response as ILink);
+        this.lastStatus = rsp;
         return this;
     }
     getHTML(options?: object): stringHTML {
@@ -670,9 +672,10 @@ export class Entity extends Element implements IEntity {
         return super.getJSONLD();
     }
     setXML(itm: stringXML) {
-        super.setXML(itm);
-        if (this.lastStatus.ok)
-            return this.set(this.lastStatus.response as ILink);
+        const rsp = xml2json(itm);
+        if (rsp.ok)
+            return this.set(rsp.response as IEntity);
+        this.lastStatus = rsp;
         return this;
     }
 }
@@ -739,9 +742,10 @@ export class Relationship extends Element implements IRelationship {
         return super.getJSONLD();
     }
     setXML(itm: stringXML) {
-        super.setXML(itm);
-        if (this.lastStatus.ok)
-            return this.set(this.lastStatus.response as ILink);
+        const rsp = xml2json(itm);
+        if (rsp.ok)
+            return this.set(rsp.response as IRelationship);
+        this.lastStatus = rsp;
         return this;
     }
 }
@@ -940,9 +944,14 @@ export class AnEntity extends AnElement implements IAnEntity {
         return jld;
     }
     setXML(itm: stringXML) {
-        super.setXML(itm);
-        if (this.lastStatus.ok)
-            return this.set(this.lastStatus.response as IAnEntity);
+        const rsp = xml2json(itm);
+        if (rsp.ok) {
+            const _itm = rsp.response as IAnEntity;
+            _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
+            LOG.debug('anEntity via setXML:', _itm);
+            return this.set(_itm);
+        }
+        this.lastStatus = rsp;
         return this;
     }
     getHTML(options?: IOptionsHTML): stringHTML {
@@ -1064,9 +1073,13 @@ export class ARelationship extends AnElement implements IARelationship {
         return jld;
     }
     setXML(itm: stringXML) {
-        super.setXML(itm);
-        if (this.lastStatus.ok)
-            return this.set(this.lastStatus.response as IARelationship);
+        const rsp = xml2json(itm);
+        if (rsp.ok) {
+            const _itm = rsp.response as IARelationship;
+            _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
+            return this.set(_itm);
+        }
+        this.lastStatus = rsp;
         return this;
     }
     getHTML(options?: object): stringHTML {
@@ -1183,7 +1196,7 @@ export class APackage extends Identifiable implements IAPackage {
         const errors: string[] = [];
 
         for (const item of graph) {
-            const result = this.instantiateItemJSONLD(item);
+            const result = this.instantiateItemJSONLD(item, { defaultModified: meta.modified });
 
             if (result.ok && result.response) {
                 instantiatedGraph.push(result.response as TPigItem);
@@ -1204,11 +1217,6 @@ export class APackage extends Identifiable implements IAPackage {
     //    LOG.debug('APackage.setJSONLD: extracted context:', ctx);
     //    LOG.debug('APackage.setJSONLD: extracted metadata:', meta);
     
-        // Set default modified timestamp if not present
-        if (!this.modified) {
-            this.modified = new Date().toISOString();
-        }
-
         // Call set to validate and return all items including package
         this.set({
             itemType: PigItemType.aPackage,
@@ -1272,6 +1280,7 @@ export class APackage extends Identifiable implements IAPackage {
         }
 
         const doc = parsed.response as JsonObject;
+        doc.modified = normalizeDateTime(doc.modified) || new Date().toISOString();
         // LOG.debug('APackage.setXML: parsed XML to JSON', doc);
 
         // 2. Extract namespaces (if needed in future)
@@ -1289,11 +1298,10 @@ export class APackage extends Identifiable implements IAPackage {
 
         // 5. Instantiate each graph item from parsed JSON
         const instantiatedGraph: TPigItem[] = [];
-        const defaultDate = (doc.modified || new Date().toISOString()) as TISODateString;
         const errors: string[] = [];
 
         for (const item of graph) {
-            const result = this.instantiateItem(item, { defaultModified: defaultDate, source: 'xml' });
+            const result = this.instantiateItem(item, { defaultModified: doc.modified as TISODateString, source: 'xml' });
 
             if (result.ok && result.response) {
                 instantiatedGraph.push(result.response as TPigItem);
@@ -1569,28 +1577,19 @@ export class APackage extends Identifiable implements IAPackage {
      * @returns Metadata object with id, modified, creator, title, and description
      */
     private extractMetadataJSONLD(doc: any): {
-        id?: TPigId;
+        id: TPigId;
         modified?: TISODateString;
         creator?: string;
         title?: ILanguageText[];
         description?: ILanguageText[];
     } {
-        const metadata: {
-            id?: TPigId;
-            modified?: TISODateString;
-            creator?: string;
-            title?: ILanguageText[];
-            description?: ILanguageText[];
-        } = {};
-
-        // Extract ID
-        metadata.id = normalizeId(doc['@id'] || doc.id, PigItemType.aPackage);
-
-        // Extract dcterms:modified
-        metadata.modified = doc['dcterms:modified'] || doc.modified;
-
-        // Extract dcterms:creator
-        metadata.creator = doc['dcterms:creator'] || doc.creator;
+        const metadata = {
+            id: normalizeId(doc['@id'] || doc.id, PigItemType.aPackage),
+            modified: normalizeDateTime(doc['dcterms:modified'] || doc.modified) || new Date().toISOString(), // TISODateString
+            creator: doc['dcterms:creator'] || doc.creator, // string
+            title: undefined as ILanguageText[] | undefined, // to be extracted
+            description: undefined as ILanguageText[] | undefined // to be extracted
+        };
 
         // Extract dcterms:title (first language value)
         const titleArray = doc['dcterms:title'] || doc.title;
@@ -1624,7 +1623,7 @@ export class APackage extends Identifiable implements IAPackage {
      * @param item - JSON-LD object
      * @returns IRsp with instantiated TPigItem in response, or error status
      */
-    private instantiateItemJSONLD(item: any): IRsp<unknown> {
+    private instantiateItemJSONLD(item: any, options?: any): IRsp<unknown> {
         // ✅ Support both JSON-LD and Plain JSON formats
         let itype: any;
 
@@ -1653,6 +1652,9 @@ export class APackage extends Identifiable implements IAPackage {
         }
 
         try {
+            if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itype))
+                item.modified = normalizeDateTime(item.modified) || options?.defaultModified || new Date().toISOString();
+
             (instance as any).setJSONLD(item);
 
             // Check if instantiation was successful
@@ -1670,50 +1672,6 @@ export class APackage extends Identifiable implements IAPackage {
             return Msg.create(654, 'Instantiation from JSON-LD', itype, err?.message ?? String(err));
         }
     }
-/*    private instantiateItemJSONLD(item: any): IRsp<unknown> {
-        // Validate item has required pig:itemType
-        if (!item['pig:itemType'] || !item['pig:itemType']['@id']) {
-            const id = item['@id'] || item.id || 'unknown';
-        //    LOG.error(`APackage.instantiateItemJSONLD: @graph element missing pig:itemType, skipping ${id}`);
-            return Msg.create(650, 'Instantiation from JSON-LD', 'pig:itemType', id);
-        }
-
-        const itype: any = item['pig:itemType']['@id'];
-
-        // Filter allowed item types
-        if (!this.isInstantiableItemType(itype)) {
-        //    LOG.error(`APackage.instantiateItemJSONLD: skipping item type '${itype}' which is not allowed in a graph`);
-            return Msg.create(651, 'Instantiation from JSON-LD', itype);
-        }
-
-        const instance = this.createInstance(itype);
-
-        if (!instance) {
-        //    LOG.error(`APackage.instantiateItemJSONLD: unable to create instance for itemType '${itype}'`);
-            return Msg.create(652, 'Instantiation from JSON-LD', itype);
-        }
-
-        try {
-            (instance as any).setJSONLD(item);
-
-            // Check if instantiation was successful
-            const status = (instance as any).status();
-            if (!status || !status.ok) {
-                return status || Msg.create(653, 'Instantiation from JSON-LD', itype, item['@id'] || item.id || 'unknown');
-            }
-
-            // LOG.debug(`APackage.instantiateItemJSONLD: successfully instantiated ${itype} with id ${item['@id']}`);
-            return {
-                ...rspOK,
-                response: instance,
-                responseType: 'json'
-            };
-        } catch (err: any) {
-            const errorMsg = `APackage.instantiateItemJSONLD: failed to populate instance with itemType '${itype}': ${err?.message ?? err}`;
-        //    LOG.error(errorMsg);
-            return Msg.create(654, 'Instantiation from JSON-LD', itype, err?.message ?? String(err));
-        }
-    } */
     /**
      * Instantiate a single PIG item from XML (already converted to JSON)
      * @param item - JSON object from xml2json conversion
@@ -1748,7 +1706,7 @@ export class APackage extends Identifiable implements IAPackage {
             // LOG.debug(`APackage.instantiateItem: instantiating item from ${source}: ${JSON.stringify(instance,null,2)}`);
 
             if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itype))
-                item.modified = item.modified || options?.defaultModified || new Date().toISOString;
+                item.modified = normalizeDateTime(item.modified) || options?.defaultModified || new Date().toISOString();
 
             // When transforming individual items, use setXML which internally calls xml2json and then set();
             // but here we already have JSON from xml2json, so call set() directly:
@@ -2123,7 +2081,7 @@ function normalizeDateTime(dateStr: any): string | undefined {
     // return if it is already a valid ISO string:
     if (typeof dateStr === 'string') {
         if (RE.isoDateTime.test(dateStr)) {
-            return dateStr + (RE.hasTimezone.test(dateStr)? '':'Z');
+            return dateStr + (RE.hasTimezone.test(dateStr)? '':DEF.defaultTimezone);
         }
     }
     if (!dateStr || typeof dateStr !== 'string')

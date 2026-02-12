@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "node scripts/generate-build-info.js",
+    "predev": "node scripts/generate-build-info.js",
+    "build:info": "node scripts/generate-build-info.js",
     "build:xslt": "node scripts/compile-xslt.js",
     "build:vue": "vue-cli-service build",
     "build": "npm run build:xslt && npm run build:vue",
