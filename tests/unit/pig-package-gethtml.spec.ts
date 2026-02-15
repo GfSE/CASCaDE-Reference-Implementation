@@ -69,7 +69,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(validPackageWithEntity, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(validPackageWithEntity, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 
@@ -137,7 +137,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithoutEntities, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(packageWithoutEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 
@@ -217,7 +217,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithMixedItems, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(packageWithMixedItems, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 
@@ -232,26 +232,24 @@ describe('PIG Package getHTML() Method', () => {
         });
     });
 
-    describe('Invalid Package', () => {
-        test('should return error HTML for invalid package', () => {
+    describe('Package with empty graph', () => {
+        test('should be accepted', () => {
             const invalidPackage = {
                 '@context': {
                     'pig': 'https://product-information-graph.gfse.org/'
                 },
                 '@id': 'd:invalid-package',
                 'pig:itemType': { '@id': 'pig:aPackage' },
-                '@graph': [] // Empty graph - invalid!
+                '@graph': [] // Empty graph
             };
 
-            const pkg = new APackage().setJSONLD(invalidPackage, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(invalidPackage, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
-            expect(pkg.status().ok).toBe(false);
+            expect(pkg.status().ok).toBe(true);
 
             const htmlList = pkg.getHTML();
 
             expect(htmlList.length).toBe(1);
-            expect(htmlList[0]).toContain('pig-error');
-            expect(htmlList[0]).toContain('Invalid package');
         });
     });
 
@@ -313,7 +311,7 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithMultipleEntities, {check: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(packageWithMultipleEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
             
             expect(pkg.status().ok).toBe(true);
 

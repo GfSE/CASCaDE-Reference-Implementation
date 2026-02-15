@@ -54,7 +54,7 @@
                 "$ref": "#/$defs/idObject"
             }
         },
-        "pig:icon": {
+        "pig:Icon": {
             "type": "object",
             "description": "Optional icon representation for this Entity type",
             "properties": {

@@ -143,9 +143,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(germanTitle?.value).toBe('hoch');
         });
 
-        it('should import pig:icon property', () => {
+        it('should import pig:Icon property', () => {
             const jsonldInput = {
-                '@id': 'pig:icon',
+                '@id': 'pig:Icon',
                 'pig:specializes': { '@id': 'pig:Property' },
                 'pig:itemType': { '@id': 'pig:Property' },
                 'dcterms:title': [
@@ -307,8 +307,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': 'A PIG meta-model element used for entities (aka resources or artifacts).' }
                 ],
                 'pig:eligibleProperty': [
-                    { '@id': 'pig:category' },
-                    { '@id': 'pig:icon' }
+                    { '@id': 'pig:Category' },
+                    { '@id': 'pig:Icon' }
                 ]
             };
 
@@ -368,9 +368,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     }
                 ],
                 'pig:specializes': { '@id': 'pig:Entity' },
-                'pig:icon': { '@value': '□' },
+                'pig:Icon': { '@value': '□' },
                 'pig:eligibleProperty': [
-                    { '@id': 'pig:category' }
+                    { '@id': 'pig:Category' }
                 ],
                 'pig:eligibleTargetLink': [],
                 'pig:itemType': { '@id': 'pig:Entity' }
@@ -399,7 +399,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     }
                 ],
                 'pig:specializes': { '@id': 'pig:Entity' },
-                'pig:icon': { '@value': '↯' },
+                'pig:Icon': { '@value': '↯' },
                 'pig:eligibleProperty': [
                     { '@id': 'SpecIF:Priority' }
                 ],
@@ -429,8 +429,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': 'A PIG meta-model element used for reified relationships (aka predicates).' }
                 ],
                 'pig:eligibleProperty': [
-                    { '@id': 'pig:category' },
-                    { '@id': 'pig:icon' }
+                    { '@id': 'pig:Category' },
+                    { '@id': 'pig:Icon' }
                 ],
                 'pig:eligibleSourceLink': { '@id': 'pig:SourceLink' },
                 'pig:eligibleTargetLink': { '@id': 'pig:TargetLink' }
@@ -543,7 +543,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         'pig:itemType': { '@id': 'pig:aProperty' }
                     }
                 ],
-                'pig:category': [
+                'pig:Category': [
                     {
                         '@value': 'FMC Block Diagram',
                         'pig:itemType': { '@id': 'pig:aProperty' }
@@ -578,7 +578,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(anEntity.status().ok).toBe(true);
 
             expect(anEntity.hasProperty?.length).toBe(2);
-            expect(anEntity.hasProperty[1].hasClass).toBe('pig:category');
+            expect(anEntity.hasProperty[1].hasClass).toBe('pig:Category');
         });
 
         it('should import FMC:Actor entity', () => {

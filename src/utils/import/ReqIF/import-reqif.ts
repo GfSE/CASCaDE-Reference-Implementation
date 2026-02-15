@@ -5,14 +5,19 @@
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /**
- * Imports a ReqIF XML document and transforms it using the ReqIF-to-PIG stylesheet.
+ * Imports a ReqIF XML document and transforms it using a ReqIF-to-PIG stylesheet.
  *  Authors: oskar.dungern@gfse.org
  * 
  * Security note: Uses saxon-js which has a transitive dependency on @xmldom/xmldom
  * with known vulnerabilities. Input is validated and size-limited. See docs/SECURITY.md
+ *
+ * ToDo:
+ * - Decide whether the file is read within or outside the import function.
+ *   Here it is outside, but in case of importXML() and importSJSONLD(), it is inside.
+ * - Extend the constraint checks - very limited now.
  * 
  * @param xmlString - The XML document to import
- * @param filename - The name of the file being imported (for validation)
+ * @param filename - The name of the file being imported (for error messages)
  * @returns IRsp containing the transformed XML document or error messages
  */
 
@@ -84,7 +89,7 @@ export async function importReqif(
     const aPackage = new APackage().setXML(
         rsp.response as string,
         // input has only instances, so omit constraint checks on classes:
-        {check: [
+        {checkConstraints: [
             ConstraintCheckType.UniqueIds
         //    ConstraintCheckType.aPropertyHasClass,
         //    ConstraintCheckType.aLinkHasClass,
@@ -99,7 +104,7 @@ export async function importReqif(
     }
 
     // allItems[0] is the package itself, rest are graph items:
-    const allItems = aPackage.getAllItems();
+    const allItems = aPackage.getItems();
 
     // const actualCount = allItems.length - 1;
     // LOG.info(`importReqIF: successfully instantiated ${actualCount} items`);

@@ -14,22 +14,18 @@
  * - Property occurrence validation (minCount, maxCount)
  * - Eligible properties and links validation
  * 
- * Dependencies: pig-metaclasses.ts, messages.ts
- * 
  * List of constraint checks:
  * Phase 1 (critical):
  *   ✅ Unique IDs
  *   ✅ aProperty.hasClass → Property
  *   ✅ aLink.hasClass → Link
  *   ✅ anEntity and aRelationship class references
- *   ✅ Entity and Relationship specializes references
-                                                 
+ *   ✅ Entity and Relationship specializes references                                               
  *      Instances are consistent with their classes
  *   ✅ - properties and links are eligible
- *   ✅   - occurrence (minCount, maxCount) with language-aware validation for xs:string
-*      - value range 
+ *   ✅ - occurrence (minCount, maxCount) with language-aware validation for xs:string
+ *      - value range including reference to eligible values (enumerations)
  * Phase 2 (important):
-                     
  *      namespace prefixes are defined in the context
  *      Enumeration value references
  *      eligibleProperty references
@@ -103,9 +99,9 @@ const allConstraintChecks: ConstraintCheckType[] = [
  */
 export function checkConstraintsForPackage(
     pkg: IAPackage,
-    options?: { check: ConstraintCheckType[] }
+    options?: { checkConstraints: ConstraintCheckType[] }
 ): IRsp {
-    const checksSet = new Set(options?.check ?? allConstraintChecks);
+    const checksSet = new Set(options?.checkConstraints ?? allConstraintChecks);
 
     // 1. Check that all primary IDs are unique
     if (checksSet.has(ConstraintCheckType.UniqueIds)) {
@@ -361,11 +357,10 @@ function resolveEligibleTargetLinks(
 
     // Initialize with direct eligible links
     // .. is an array in case of anEntity and a single value in case of aRelationship, normalize to array
-    const allEligible: TPigId[] = Array.isArray(directEligible) ?
+    let allEligible: TPigId[] = Array.isArray(directEligible) ?
         [...directEligible]
         : (typeof directEligible === 'string' ? [directEligible] : []);
 
-    /* This is in fact wrong: In case of eligible links, a parent class inherits from its children.
     // Resolve parent class if specializes is present
     if (classDef.specializes) {
         const parentEligible = resolveEligibleTargetLinks(classDef.specializes, classMap, visited);
@@ -376,7 +371,7 @@ function resolveEligibleTargetLinks(
             // Merge parent's eligible links
             allEligible = [...new Set([...allEligible, ...parentEligible])];
         }
-    } */
+    }
 
     return allEligible;
 }
@@ -407,9 +402,8 @@ function resolveEligibleSourceLinks(
 
     // Initialize with direct eligible links
     // .. exists only for aRelationship and is a single value, normalize to array:
-    const allEligible: TPigId[] = Array.isArray(directEligible) ? [...directEligible] : [directEligible];
+    let allEligible: TPigId[] = Array.isArray(directEligible) ? [...directEligible] : [directEligible];
 
-    /* This is in fact wrong: In case of eligible links, a parent class inherits from its children.
     if (classDef.specializes) {
         const parentEligible = resolveEligibleSourceLinks(classDef.specializes, classMap, visited);
         if (parentEligible.includes('*')) {
@@ -417,7 +411,7 @@ function resolveEligibleSourceLinks(
         } else {
             allEligible = [...new Set([...allEligible, ...parentEligible])];
         }
-    } */
+    }
 
     return allEligible;
 }

@@ -55,7 +55,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, {check: [ConstraintCheckType.aPropertyHasClass]});
+                const result = checkConstraintsForPackage(pkg, {checkConstraints: [ConstraintCheckType.aPropertyHasClass]});
                 expect(result.ok).toBe(true);
             });
 
@@ -85,7 +85,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
 
@@ -115,7 +115,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass]});
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass]});
                 expect(result.ok).toBe(true);
             });
 
@@ -155,7 +155,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
 
@@ -173,7 +173,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('no values present');
@@ -209,7 +209,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too few values for language');
@@ -253,7 +253,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
 
@@ -282,7 +282,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too many values for language');
@@ -319,7 +319,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too many values for language');
@@ -348,7 +348,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -382,7 +382,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
 
@@ -401,7 +401,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too few occurrences');
@@ -442,7 +442,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too many occurrences');
@@ -471,7 +471,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
 
@@ -506,7 +506,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -533,7 +533,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -560,7 +560,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -587,7 +587,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(true);
         });
 
@@ -616,7 +616,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(false);
             expect(result.status).toBe(678);
         });
@@ -678,7 +678,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(true);
         });
     });
@@ -699,7 +699,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(true);
         });
 
@@ -752,7 +752,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(true);
         });
     });
@@ -772,7 +772,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(true);
         });
 
@@ -823,7 +823,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(true);
         });
     });
@@ -844,7 +844,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(false);
             expect(result.statusText).toMatch(/d:entity-1/);
             expect(result.statusText).toMatch(/o:Name/);
@@ -876,7 +876,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { check: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
             expect(result.ok).toBe(false);
             expect(result.statusText).toMatch(/d:entity-1/);
             expect(result.statusText).toMatch(/o:Weight/);

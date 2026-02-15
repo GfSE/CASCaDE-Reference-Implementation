@@ -11,9 +11,13 @@
  * Security Note: Uses @xmldom/xmldom for Node.js XML parsing, which has known
  * vulnerabilities. See SECURITY.md for details and mitigation measures.
  * 
- * Dependencies:
+ * Dependencies
  * - @xmldom/xmldom (Node.js only, dynamically loaded)
  * - saxon-js (for XSLT transformations, works in both environments)
+ *
+ * Design Decisions
+ * - Instead of shims, specific functions are implemented such as PIN.innerHTML(),
+ *   because it is considered more robust than fiddling around with prototypes provided by 3rd parties
  * 
  * Authors: oskar.dungern@gfse.org
  * License: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)

@@ -47,12 +47,12 @@ describe('HTML Security - XSS Prevention', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(maliciousPackageJsonLd, {check: []}); // no constraint checks, here
+            const pkg = new APackage().setJSONLD(maliciousPackageJsonLd, {checkConstraints: []}); // no constraint checks, here
             if (!pkg.status().ok)
                 console.error('status:', pkg.status());
             expect(pkg.status().ok).toBe(true);
 
-            const items = pkg.getAllItems();
+            const items = pkg.getItems();
             const entityItem = items.find(item => item.id === 'd:REQ-XSS-001');
             
             expect(entityItem).toBeDefined();
@@ -114,12 +114,12 @@ describe('HTML Security - XSS Prevention', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(mixedContentPackage, { check: [] }); // no constraint checks, here
+            const pkg = new APackage().setJSONLD(mixedContentPackage, { checkConstraints: [] }); // no constraint checks, here
             if (!pkg.status().ok)
                 console.error('status:', pkg.status());
             expect(pkg.status().ok).toBe(true);
 
-            const items = pkg.getAllItems();
+            const items = pkg.getItems();
             const entity = items.find(item => item.id === 'd:REQ-MIXED-CONTENT') as AnEntity;
             
             expect(entity).toBeDefined();
@@ -184,12 +184,12 @@ describe('HTML Security - XSS Prevention', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(maliciousObjectPackage, { check: [] }); // no constraint checks, here
+            const pkg = new APackage().setJSONLD(maliciousObjectPackage, { checkConstraints: [] }); // no constraint checks, here
             if (!pkg.status().ok)
                 console.error('status:', pkg.status());
             expect(pkg.status().ok).toBe(true);
 
-            const items = pkg.getAllItems();
+            const items = pkg.getItems();
             const entity = items.find(item => item.id === 'd:REQ-MALICIOUS-OBJ') as AnEntity;
             
             expect(entity).toBeDefined();

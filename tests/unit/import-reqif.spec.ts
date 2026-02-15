@@ -31,7 +31,7 @@ describe('ReqIF Import', () => {
         await new Promise(resolve => setImmediate(resolve));
     });
 
-    // Reliable logging with synchronous write
+    // Reliable error logging with synchronous write
     const logResponse = (context: string, response: any) => {
         if (!response.ok) {
             const msg = `\n❌ ${context} FAILED:\n${JSON.stringify(response, null, 2)}\n`;

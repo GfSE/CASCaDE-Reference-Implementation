@@ -65,8 +65,6 @@
             <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
             <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
-            <pig:eligibleSourceLink>pig:SourceLink</pig:eligibleSourceLink>
-            <pig:eligibleTargetLink>pig:TargetLink</pig:eligibleTargetLink>
         </pig:Relationship>
 
         <!-- Metamodel: Properties -->

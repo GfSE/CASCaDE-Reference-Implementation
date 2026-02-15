@@ -148,7 +148,7 @@ describe('PIG Package Constraint Validation', () => {
             };
 
             const pkg = new APackage().setJSONLD(validPackageJsonLd);  // all constraint checks
-            const items = pkg.getAllItems();
+            const items = pkg.getItems();
             
             expect(pkg.status().ok).toBe(true);
             expect(items.length).toBe(9);
@@ -346,7 +346,7 @@ describe('PIG Package Constraint Validation', () => {
             };
 
             const pkg = new APackage().setJSONLD(packageWithRelationship);
-            const items = pkg.getAllItems();
+            const items = pkg.getItems();
             
             expect(pkg.status().ok).toBe(true);
             expect(items.length).toBe(13);

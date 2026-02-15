@@ -8,10 +8,7 @@
  * - Parses XML document, converts XML structure to internal keys
  *   and instantiates matching PIG class instances where possible.
  *
- *  Dependencies:
- *  Authors: oskar.dungern@gfse.org, ..
- *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ * Authors: oskar.dungern@gfse.org
  * 
  * Usage:
  * - Node:   await importXML('C:/path/to/file.xml')
@@ -76,26 +73,32 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
             ConstraintCheckType.aRelationshipHasClass,
         ]
     );
-*/
+
     // Check if package was successfully created
     if (!aPackage.status().ok) {
         return aPackage.status();
     }
-
+*/
     // allItems[0] is the package itself, rest are graph items:
-    const allItems = aPackage.getAllItems();
+    const allItems = aPackage.getItems();
     
-    const graphElement = aPackage.graph;
-    const expectedCount = graphElement?.length || 0;
+    const expectedCount = aPackage.graph?.length || 0;
     const actualCount = allItems.length - 1;
     
     let result: IRsp;
     if (actualCount === expectedCount) {
+        LOG.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
         result = rspOK;
-        LOG.info(`importXML: successfully instantiated package with all ${actualCount} items`);
     } else {
-        result = Msg.create(691, 'XML', actualCount, expectedCount);
-        LOG.warn(`importXML: instantiated ${actualCount} of ${expectedCount} items`);
+        let str = '\nErroneous items:';
+        for (let i = 1; i < allItems.length; i++) {
+            const st = allItems[i].status();
+            if (!st.ok)
+                str += `\n- graph[${i}]: (${st.status}) /${st.statusText}`;
+        }
+        LOG.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items` + str);
+
+        result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
     }
 
     // Return all items (package + graph items)

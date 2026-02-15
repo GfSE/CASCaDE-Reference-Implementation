@@ -55,7 +55,7 @@
       "$ref": "#/$defs/idObject",
       "description": "Link class reference that defines the target endpoint of this Relationship"
     },
-    "pig:icon": {
+    "pig:Icon": {
       "type": "object",
       "description": "Optional icon representation for this Relationship type",
       "properties": {

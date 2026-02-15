@@ -26,7 +26,7 @@ const FROM_JSONLD = new Map<string, string>([
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     ['pig:specializes', 'specializes'],
-    ['pig:icon', 'icon'],
+    ['pig:Icon', 'icon'],
 //    ['xs:simpleType', 'datatype'], ... doesn't make sense as long as rejected by the schema
     ['sh:datatype', 'datatype'],
 //    ['xs:minOccurs', 'minCount'],
@@ -68,7 +68,8 @@ const FROM_XML = new Map<string, string>([
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     ['pig:specializes', 'specializes'],
-    ['pig:icon', 'icon'],
+    ['pig:icon', 'icon'],  // older files may use 'pig:icon' instead of 'pig:Icon'
+    ['pig:Icon', 'icon'],
     ['sh:datatype', 'datatype'],
     ['xs:simpleType', 'datatype'],
     ['sh:minCount', 'minCount'],
