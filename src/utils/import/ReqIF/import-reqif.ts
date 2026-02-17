@@ -11,6 +11,12 @@
  * Security note: Uses saxon-js which has a transitive dependency on @xmldom/xmldom
  * with known vulnerabilities. Input is validated and size-limited. See docs/SECURITY.md
  *
+ * Design Decisions:
+ * - SEF stylesheet is loaded from public/assets/xslt/ in both environments
+ * - Browser: fetches via HTTP from /assets/xslt/
+ * - Node.js: reads from local public/assets/xslt/ directory
+ * - Single source of truth: SEF file stored only in public/assets/xslt/
+ * 
  * ToDo:
  * - Decide whether the file is read within or outside the import function.
  *   Here it is outside, but in case of importXML() and importSJSONLD(), it is inside.
@@ -28,6 +34,24 @@ import { APackage, TPigItem, stringXML } from '../../schemas/pig/ts/pig-metaclas
 import { ConstraintCheckType } from '../../schemas/pig/ts/pig-package-constraints';
 
 const MAX_XML_SIZE = 4 * 1024 * 1024;
+
+/**
+ * Get platform-appropriate path to ReqIF-to-PIG stylesheet
+ * - Browser: URL to public asset (/assets/xslt/)
+ * - Node.js: Local filesystem path to public directory (public/assets/xslt/)
+ * 
+ * @returns Path/URL to ReqIF-to-PIG.sef.json
+ */
+function getStylesheetPath(): string {
+    if (PIN.isBrowserEnv()) {
+        // Browser: fetch from public directory via HTTP
+        const baseUrl = window.location.origin;
+        return `${baseUrl}/assets/xslt/ReqIF-to-PIG.sef.json`;
+    } else {
+        // Node.js: read from local public directory
+        return './public/assets/xslt/ReqIF-to-PIG.sef.json';
+    }
+}
 
 export async function importReqif(
     xmlString: stringXML,
@@ -74,8 +98,9 @@ export async function importReqif(
     // In future, we will support different transformation methods:
     //    const method = options?.method || 'XSLT';
 
-    // The precompiled XSL stylesheet to use for transformation:
-    const stylesheetPath = './src/utils/schemas/XSLT/ReqIF-to-PIG.sef.json';
+    // Get platform-appropriate stylesheet path
+    const stylesheetPath = getStylesheetPath();
+    LOG.debug(`importReqIF: using stylesheet path: ${stylesheetPath}`);
 
     // LOG.debug(`importReqIF: starting transformation using stylesheet ${stylesheetPath}...`);
     // Transform the document
@@ -89,13 +114,15 @@ export async function importReqif(
     const aPackage = new APackage().setXML(
         rsp.response as string,
         // input has only instances, so omit constraint checks on classes:
-        {checkConstraints: [
-            ConstraintCheckType.UniqueIds
-        //    ConstraintCheckType.aPropertyHasClass,
-        //    ConstraintCheckType.aLinkHasClass,
-        //    ConstraintCheckType.anEntityHasClass,
-        //    ConstraintCheckType.aRelationshipHasClass,
-        ] as ConstraintCheckType[]}
+        {
+            checkConstraints: [
+                ConstraintCheckType.UniqueIds
+                //    ConstraintCheckType.aPropertyHasClass,
+                //    ConstraintCheckType.aLinkHasClass,
+                //    ConstraintCheckType.anEntityHasClass,
+                //    ConstraintCheckType.aRelationshipHasClass,
+            ] as ConstraintCheckType[]
+        }
     );
 
     // Check if package was successfully created

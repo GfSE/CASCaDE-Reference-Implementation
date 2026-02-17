@@ -1981,10 +1981,14 @@ function normalizeDateTime(dateStr: any): string | undefined {
     // return if it is already a valid ISO string:
     if (typeof dateStr === 'string') {
         const match = dateStr.match(RE.isoDateTime);
+        // LOG.debug(`normalizeDateTime: checking '${dateStr}' against ISO regex, match:`, match);
         if (match) {
-            // match[1] ist die Timezone-Gruppe (oder undefined)
-            const normalized = match[1] ? dateStr : dateStr + DEF.defaultTimezone;
-            LOG.info(`ID normalized: '${dateStr}' → '${normalized}'`);
+            // match[1] is the timezone group (or undefined):
+            if (match[1])
+                return dateStr; // valid ISO with timezone
+
+            const normalized = dateStr + DEF.defaultTimezone;
+            LOG.info(`DateTime normalized: '${dateStr}' → '${normalized}'`);
             return normalized;
         }
     }
@@ -1996,7 +2000,7 @@ function normalizeDateTime(dateStr: any): string | undefined {
         return undefined;
     }
     const normalized = date.toISOString();
-    LOG.info(`ID normalized: '${dateStr}' → '${normalized}'`);
+    LOG.info(`DateTime normalized: '${dateStr}' → '${normalized}'`);
     return normalized;
 }
 

@@ -26,7 +26,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const XSLT_FOLDER = path.resolve(__dirname, '..', 'src', 'utils', 'schemas', 'XSLT');
+const XSLT_FOLDER = path.resolve(__dirname, '..', 'public', 'assets', 'xslt');
 
 console.log('═══════════════════════════════════════════════════════════');
 console.log('  XSLT Compilation Script');

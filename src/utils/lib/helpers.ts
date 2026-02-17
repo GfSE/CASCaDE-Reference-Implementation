@@ -11,6 +11,9 @@
  *
  *  Design Decisions:
  *  -
+ *
+ *  ToDo:
+ *  -
  */
 
 /**
@@ -27,7 +30,7 @@ export type TISODateString = string;
 /**
  * Standard XML Namespaces used in PIG XML documents
  * Collected from tests/data/XML files
- */
+ * /
 const NAMESPACE_MAP: Record<string, string> = {
     'xml': 'http://www.w3.org/XML/1998/namespace',
     'xs': 'http://www.w3.org/2001/XMLSchema#',
@@ -47,10 +50,11 @@ const NAMESPACE_MAP: Record<string, string> = {
 
 /**
  * Generate XML namespace declarations string from NAMESPACE_MAP
- */
+ * /
 export const XML_NAMESPACES = Object.entries(NAMESPACE_MAP)
     .map(([prefix, uri]) => `xmlns:${prefix}="${uri}"`)
     .join('\n    ');
+*/
 
 // LIB object with helper methods
 export const LIB = {
@@ -237,72 +241,91 @@ export const LIB = {
 
     /**
      * Wrap XML fragment with root element and namespace declarations
-     * @param xml - XML fragment (without root wrapper)
+     * Automatically detects namespace prefixes used in the XML and extracts their URIs
+     * from existing xmlns declarations in the content.
+     * 
+     * @param xml - XML fragment (may contain xmlns declarations)
      * @param options - Optional configuration
-     * @returns Complete XML document with namespace declarations
+     * @returns Complete XML document with namespace declarations on root element
+     * 
+     * @example
+     * // XML with existing namespace declarations
+     * const xml = '<pig:Item xmlns:pig="https://example.org/pig#">content</pig:Item>';
+     * const doc = makeXMLDoc(xml);
+     * // Returns: <pig:Package xmlns:pig="https://example.org/pig#">...</pig:Package>
+     * 
+     * @example
+     * // Provide explicit namespace mappings
+     * const xml = '<pig:Item>content</pig:Item>';
+     * const doc = makeXMLDoc(xml, {
+     *     namespaces: { 'pig': 'https://example.org/pig#' }
+     * });
      */
     makeXMLDoc(
         xml: string,
         options?: {
-            rootTag?: string;           // Custom root tag (default: 'pig:Package')
-            includeXmlDeclaration?: boolean;  // Include <?xml...?> declaration (default: false)
-            detectNamespaces?: boolean; // Only include namespaces actually used (default: true)
+            rootTag?: string;                        // Custom root tag (default: 'pig:Package')
+            includeXmlDeclaration?: boolean;         // Include <?xml...?> declaration (default: false)
+            namespaces?: Record<string, string>;     // Explicit namespace prefix -> URI mappings
+            warnOnMissing?: boolean;                 // Warn about prefixes without declarations (default: true)
         }
     ): string {
         const rootTag = options?.rootTag ?? 'pig:Package';
         const includeXmlDecl = options?.includeXmlDeclaration ?? false;
-        const detectNs = options?.detectNamespaces ?? true;
+        const explicitNamespaces = options?.namespaces ?? {};
+        const warnOnMissing = options?.warnOnMissing ?? true;
 
-        // Detect which namespace prefixes are actually used in the XML
-        let namespacesToInclude: Record<string, string>;
-        const unknownPrefixes: Set<string> = new Set();
+        // Extract all namespace declarations from the XML content
+        const extractedNamespaces: Record<string, string> = {};
+        const xmlnsPattern = /xmlns:(\w+)\s*=\s*["']([^"']+)["']/g;
+        let match;
+        while ((match = xmlnsPattern.exec(xml)) !== null) {
+            extractedNamespaces[match[1]] = match[2];
+        }
 
-        if (detectNs) {
-            namespacesToInclude = {};
-            const foundPrefixes = new Set<string>();
+        // Find all namespace prefixes used in the XML
+        const foundPrefixes = new Set<string>();
 
-            // Find namespace prefixes in element tags (opening and closing)
-            // Match: <prefix:localName or </prefix:localName
-            const elementPattern = /<\/?(\w+):/g;
-            let match;
-            while ((match = elementPattern.exec(xml)) !== null) {
-                foundPrefixes.add(match[1]);
+        // Find prefixes in element tags (opening and closing)
+        const elementPattern = /<\/?(\w+):/g;
+        while ((match = elementPattern.exec(xml)) !== null) {
+            foundPrefixes.add(match[1]);
+        }
+
+        // Find prefixes in attribute names
+        const attrPattern = /\s(\w+):\w+\s*=/g;
+        while ((match = attrPattern.exec(xml)) !== null) {
+            foundPrefixes.add(match[1]);
+        }
+
+        // Always include the root tag's namespace
+        const rootPrefix = rootTag.includes(':') ? rootTag.split(':')[0] : '';
+        if (rootPrefix) {
+            foundPrefixes.add(rootPrefix);
+        }
+
+        // Build final namespace declarations
+        const namespacesToInclude: Record<string, string> = {};
+        const missingPrefixes: Set<string> = new Set();
+
+        for (const prefix of foundPrefixes) {
+            // Priority: explicit > extracted > missing
+            if (explicitNamespaces[prefix]) {
+                namespacesToInclude[prefix] = explicitNamespaces[prefix];
+            } else if (extractedNamespaces[prefix]) {
+                namespacesToInclude[prefix] = extractedNamespaces[prefix];
+            } else {
+                missingPrefixes.add(prefix);
             }
+        }
 
-            // Find namespace prefixes in attribute names
-            // Match: prefix:attrName= (but not in attribute values)
-            const attrPattern = /\s(\w+):\w+\s*=/g;
-            while ((match = attrPattern.exec(xml)) !== null) {
-                foundPrefixes.add(match[1]);
-            }
-
-            // Always include the root tag's namespace
-            const rootPrefix = rootTag.includes(':') ? rootTag.split(':')[0] : '';
-            if (rootPrefix) {
-                foundPrefixes.add(rootPrefix);
-            }
-
-            // Check each found prefix against NAMESPACE_MAP
-            for (const prefix of foundPrefixes) {
-                if (NAMESPACE_MAP[prefix]) {
-                    namespacesToInclude[prefix] = NAMESPACE_MAP[prefix];
-                } else {
-                    unknownPrefixes.add(prefix);
-                }
-            }
-
-            // Log errors for unknown namespaces
-            if (unknownPrefixes.size > 0) {
-                const unknownList = Array.from(unknownPrefixes).join(', ');
-                LOG.error(
-                    `makeXMLDoc: Unknown namespace prefixes found: ${unknownList}. ` +
-                    `These prefixes are not defined in NAMESPACE_MAP and will not be declared in the XML document. ` +
-                    `Please add them to NAMESPACE_MAP in helpers.ts.`
-                );
-            }
-        } else {
-            // Include all namespaces
-            namespacesToInclude = { ...NAMESPACE_MAP };
+        // Warn about missing namespace declarations
+        if (warnOnMissing && missingPrefixes.size > 0) {
+            const missingList = Array.from(missingPrefixes).join(', ');
+            LOG.warn(
+                `makeXMLDoc: Namespace prefixes without URI declarations found: ${missingList}. ` +
+                `Provide URIs via options.namespaces or include xmlns declarations in the XML content.`
+            );
         }
 
         // Build namespace declarations string
@@ -310,9 +333,12 @@ export const LIB = {
             .map(([prefix, uri]) => `xmlns:${prefix}="${uri}"`)
             .join('\n    ');
 
+        // Remove existing xmlns declarations from content (will be on root element)
+        const cleanedXml = xml.replace(/\s+xmlns:\w+\s*=\s*["'][^"']+["']/g, '');
+
         // Build the complete document
         const xmlDeclaration = includeXmlDecl ? '<?xml version="1.0" encoding="UTF-8"?>\n' : '';
-        const wrappedXml = `${xmlDeclaration}<${rootTag} ${nsDeclarations}>${xml}</${rootTag}>`;
+        const wrappedXml = `${xmlDeclaration}<${rootTag}${nsDeclarations ? ' ' + nsDeclarations : ''}>${cleanedXml}</${rootTag}>`;
 
         return wrappedXml;
     },
@@ -370,7 +396,7 @@ export const LIB = {
             'image/jpeg',
             'image/jpg',
             'image/gif',
-            'image/svg+xml',
+            // 'image/svg+xml', ... not considered safe due to potential script content
             'image/webp',
             'video/mp4',
             'video/webm',
@@ -439,7 +465,8 @@ export const LIB = {
             'image/jpeg',
             'image/jpg',
             'image/gif',
-            'image/webp'
+            'image/webp',
+            'image/svg+xml'  // Safe in <img> tags only
         ]);
 
         // Process src and href attributes
@@ -512,16 +539,16 @@ export const LOG = {
     },
 
     /* eslint-disable no-console */
-    info: (...args: any[]) => {
+    info: (...args: unknown[]) => {
         if (LOG.isEnabled('info')) console.info(...args);
     },
-    warn: (...args: any[]) => {
+    warn: (...args: unknown[]) => {
         if (LOG.isEnabled('warn')) console.warn(...args);
     },
-    error: (...args: any[]) => {
+    error: (...args: unknown[]) => {
         if (LOG.isEnabled('error')) console.error(...args);
     },
-    debug: (...args: any[]) => {
+    debug: (...args: unknown[]) => {
         if (LOG.isEnabled('debug')) console.debug(...args);
     }
     /* eslint-enable no-console */
