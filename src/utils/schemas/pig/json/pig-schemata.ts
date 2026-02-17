@@ -59,11 +59,9 @@ const PROPERTY_SCHEMA = {
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
-//        datatype: { $ref: '#/$defs/xsDataType' },
+        //        datatype: { $ref: '#/$defs/xsDataType' },
         datatype: {
             type: 'string',
-            // accept xs: or xsd: datatypes (basic pattern); specific values validated in code
-//            pattern: '^(?:xs|xsd):[A-Za-z]+$'
             pattern: '^xs:[A-Za-z]+$'
         },
         minCount: { type: 'integer', minimum: 0 },
@@ -77,13 +75,38 @@ const PROPERTY_SCHEMA = {
         eligibleValue: {
             type: 'array',
             items: {
-                type: 'object',
-                required: ['id', 'title'],
-                properties: {
-                    id: { $ref: '#/$defs/idString' },
-                    title: { type: 'array', minItems: 1, items: { $ref: '#/$defs/LanguageText' } }
-                },
-                additionalProperties: false
+                oneOf: [
+                    {
+                        // For string datatypes: eligibleValue with multi-language title
+                        type: 'object',
+                        required: ['id', 'title'],
+                        properties: {
+                            id: { $ref: '#/$defs/idString' },
+                            title: {
+                                type: 'array',
+                                minItems: 1,
+                                items: { $ref: '#/$defs/LanguageText' }
+                            }
+                        },
+                        additionalProperties: false,
+                        description: 'Enumeration value with multi-language title (for xs:string)'
+                    },
+                    {
+                        // For numeric/other datatypes: eligibleValue with literal value
+                        type: 'object',
+                        required: ['id', 'value'],
+                        properties: {
+                            id: { $ref: '#/$defs/idString' },
+                            value: {
+                                type: 'string',
+                                minLength: 1,
+                                description: 'Literal value for numeric and other datatypes (stored as string)'
+                            }
+                        },
+                        additionalProperties: false,
+                        description: 'Enumeration value with literal value (for xs:integer, xs:double, etc.)'
+                    }
+                ]
             }
         },
         composedProperty: {
@@ -115,20 +138,20 @@ const PROPERTY_SCHEMA = {
                 },
                 lang: { type: 'string' }
             }
-    /*    },
-        xsDataType: {
-            type: 'string',
-            description: 'XSD/XMLSchema datatype',
-            enum: [
-                'xs:boolean',
-                'xs:integer',
-                'xs:double',
-                'xs:string',
-                'xs:anyURI',
-                'xs:dateTime',
-                'xs:duration',
-                'xs:complexType',
-            ] */
+            /*    },
+                xsDataType: {
+                    type: 'string',
+                    description: 'XSD/XMLSchema datatype',
+                    enum: [
+                        'xs:boolean',
+                        'xs:integer',
+                        'xs:double',
+                        'xs:string',
+                        'xs:anyURI',
+                        'xs:dateTime',
+                        'xs:duration',
+                        'xs:complexType',
+                    ] */
         }
     }
 };

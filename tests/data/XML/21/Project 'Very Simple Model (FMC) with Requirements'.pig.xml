@@ -485,7 +485,7 @@
                 <p>The data store MUST support a total volume up to 850 GB.</p>
             </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
-                <value>SpecIF:priorityHigh</value>
+                <idRef>SpecIF:priorityHigh</idRef>
             </pig:aProperty>
         </pig:anEntity>
 
@@ -496,7 +496,7 @@
                 <p>The data store MUST be consistent at all times.</p>
             </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
-                <value>SpecIF:priorityHigh</value>
+                <idRef>SpecIF:priorityHigh</idRef>
             </pig:aProperty>
         </pig:anEntity>
 
@@ -507,7 +507,7 @@
                 <p>The system SHOULD respond on user queries within 300 ms.</p>
             </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
-                <value>SpecIF:priorityMedium</value>
+                <idRef>SpecIF:priorityMedium</idRef>
             </pig:aProperty>
         </pig:anEntity>
 

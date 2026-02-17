@@ -25,9 +25,7 @@ describe('PIG Package Constraint Validation', () => {
                     {
                         "@id": "pig:Property",
                         "@type": "owl:DatatypeProperty",
-                        "pig:itemType": {
-                            "@id": "pig:Property"
-                        },
+                        'pig:itemType': { '@id': 'pig:Property' },
                         "dcterms:title": [
                             {
                                 "@value": "Property"
@@ -54,9 +52,7 @@ describe('PIG Package Constraint Validation', () => {
                     {
                         "@id": "pig:Link",
                         "@type": "owl:ObjectProperty",
-                        "pig:itemType": {
-                            "@id": "pig:Link"
-                        },
+                        "pig:itemType": { "@id": "pig:Link" },
                         "pig:eligibleEndpoint": [
                             {
                                 "@id": "pig:Entity"
@@ -90,9 +86,7 @@ describe('PIG Package Constraint Validation', () => {
                     {
                         "@id": "pig:Entity",
                         "@type": "owl:Class",
-                        "pig:itemType": {
-                            "@id": "pig:Entity"
-                        },
+                        "pig:itemType": { "@id": "pig:Entity" },
                         "dcterms:title": [
                             {
                                 "@value": "Entity"
@@ -453,7 +447,7 @@ describe('PIG Package Constraint Validation', () => {
             /*   if (pck.status().ok)
                    console.error('status:', pck.status()); */
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(679); // Error code for one or more failed item instantiations
+            expect(pkg.status().status).toBe(611); // Error code for one or more failed item instantiations
         });
     });
 
@@ -833,7 +827,7 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingEntityClass);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(679); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
         });
 
         test('should reject anEntity with hasClass pointing to non-existent Entity', () => {
@@ -997,7 +991,7 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingRelClass);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(679); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
         });
 
         test('should reject aRelationship with hasClass pointing to wrong type (Link instead of Relationship)', () => {
@@ -1078,7 +1072,7 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithWrongRelClassType);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(679); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
         });
     });
 });

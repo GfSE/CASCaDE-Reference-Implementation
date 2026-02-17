@@ -148,6 +148,16 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (op, act, exp) =>
             `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
     },
+    611: {
+        en: (op, act, exp) =>
+            `${op}: Created ${act} of ${exp} graph items`,
+        de: (op, act, exp) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
+        fr: (op, act, exp) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}`,
+        es: (op, act, exp) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
+    },
 
 /*  currently not used:
     // ID validation (620-629)
@@ -432,14 +442,14 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `La instancia '${instanceId}' tiene ${actualCount} ocurrencia(s) de la propiedad '${propClassId}' pero ${issue}: se esperaba ${expectedCount}`
     },
     679: {
-        en: (op, act, exp) =>
-            `${op}: Created ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe créés sur ${exp}`,
-        es: (op, act, exp) =>
-            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
+        en: (itemId, propIndex, propClassId, msg) =>
+            `Value range validation failed for item '${itemId}' property[${propIndex}] of class '${propClassId}': ${msg}`,
+        de: (itemId, propIndex, propClassId, msg) =>
+            `Wertebereich-Validierung fehlgeschlagen für Element '${itemId}' property[${propIndex}] der Klasse '${propClassId}': ${msg}`,
+        fr: (itemId, propIndex, propClassId, msg) =>
+            `Échec de la validation de la plage de valeurs pour l'élément '${itemId}' property[${propIndex}] de la classe '${propClassId}': ${msg}`,
+        es: (itemId, propIndex, propClassId, msg) =>
+            `Falló la validación del rango de valores para el elemento '${itemId}' property[${propIndex}] de la clase '${propClassId}': ${msg}`
     },
 
     // Schema validation (680-689)

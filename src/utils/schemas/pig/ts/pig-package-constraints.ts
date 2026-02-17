@@ -21,27 +21,28 @@
  *   ✅ aLink.hasClass → Link
  *   ✅ anEntity and aRelationship class references
  *   ✅ Entity and Relationship specializes references                                               
- *      Instances are consistent with their classes
+ *   ✅ Instances are consistent with their classes:
  *   ✅ - properties and links are eligible
  *   ✅ - occurrence (minCount, maxCount) with language-aware validation for xs:string
- *      - value range including reference to eligible values (enumerations)
+ *   ✅ - value range
+ *   ✅ - reference to eligible values (enumerations)
  * Phase 2 (important):
  *      namespace prefixes are defined in the context
- *      Enumeration value references
+ *      eligible values as defined comply with the restrictions of their own Property class
  *      eligibleProperty references
  *      eligibleEndpoint references
  *      Link endpoint compliance
  * Phase 3 (useful):
  *      No cyclic specialization
  *      No cyclic composition of properties
- *      Property value constraints
- *      Required properties check --> done by schema validation!
  *      Relationship structure
  * Phase 4 (optional):
- *      Orphaned items (warnings)
+ *      Orphaned items
+ *      - nodes without reference by an organizer AND
+ *      - nodes without reference by a relationship
  *      Language tag consistency
- *      Namespace usage
- *      Modification date validation
+ *      Namespace usage (covered by normalizeId)
+ *      Modification date validation (covered by normalizeDateTime)
  *
  * To be discussed:
  * - Handling (error responses vs log messages)
@@ -71,7 +72,8 @@ export enum ConstraintCheckType {
     PropertySpecializes = 'propertySpecializes',
     LinkSpecializes = 'linkSpecializes',
     EligibleProperties = 'eligibleProperties',
-    EligibleLinks = 'eligibleLinks'
+    EligibleLinks = 'eligibleLinks',
+    ValueRanges = 'valueRanges'
 }
 
 /**
@@ -88,7 +90,8 @@ const allConstraintChecks: ConstraintCheckType[] = [
     ConstraintCheckType.PropertySpecializes,
     ConstraintCheckType.LinkSpecializes,
     ConstraintCheckType.EligibleProperties,
-    ConstraintCheckType.EligibleLinks
+    ConstraintCheckType.EligibleLinks,
+    ConstraintCheckType.ValueRanges
 ];
 
 /**
@@ -173,6 +176,13 @@ export function checkConstraintsForPackage(
     // 6b. Check eligible links in anEntity and aRelationship instances
     if (checksSet.has(ConstraintCheckType.EligibleLinks)) {
         const rsp = checkEligibleLinks(pkg, classMap);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 7. Check value ranges for property values
+    if (checksSet.has(ConstraintCheckType.ValueRanges)) {
+        const propertyMap = buildPropertyMap(pkg);
+        const rsp = checkValueRanges(pkg, propertyMap);
         if (!rsp.ok) return rsp;
     }
 
@@ -951,4 +961,212 @@ function checkPropertyOrLinkReferences(
     }
 
     return rspOK;
+}
+
+/**
+* Check that all property values conform to their defined value ranges
+* - For xs:string: validates maxLength and pattern
+* - For numeric types: validates minInclusive and maxInclusive
+* - For all types: validates that values are in eligibleValue list if defined
+* @param pkg - Package to validate
+* @param propertyMap - Map of Property definitions
+* @returns IRsp (rspOK on success, error on constraint violation)
+*/
+function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        // ToDo: Should always be id
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Check anEntity and aRelationship instances
+        if (itemType === PigItemType.anEntity || itemType === PigItemType.aRelationship) {
+            const instance = item as TPigAnElement;
+
+            if (!instance.hasProperty || !Array.isArray(instance.hasProperty)) {
+                continue;
+            }
+
+        /*    let str = 'checkValueRanges - prop list: ';
+            instance.hasProperty.forEach(
+                (p) => str += `\n-${JSON.stringify(p,null,2)}`
+            );
+            LOG.debug(str); 
+            LOG.debug('checkValueRanges - prop list: ',instance.hasProperty.length); */
+
+            // Check each property value
+            for (let j = 0; j < instance.hasProperty.length; j++) {
+                const prop = instance.hasProperty[j];
+                const propClassId = prop.hasClass;
+
+                // LOG.debug(`checkValueRanges - prop[${j}]:`, JSON.stringify(prop, null, 2));
+
+                if (!propClassId) {
+                    continue; // validated by schema
+                }
+
+                const propDef = propertyMap.get(propClassId);
+                if (!propDef) {
+                    continue; // property definition not found, has been checked before
+                }
+
+                // Get the value to validate
+                const value = prop.value;
+                const idRef = prop.idRef;
+                if ((value === undefined || value === null) && (idRef === undefined || idRef === null)) {
+                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has neither value nor reference to eligible value`);
+                    continue; // neither value nor id - validated by schema
+                }
+
+                // Validate based on datatype
+                const datatype = propDef.datatype;
+                if (!datatype) {
+                    continue; // no datatype defined - validated by schema
+                }
+
+                // Extract actual value (handle language-tagged strings)
+                const actualValue = (typeof value === 'object' && value !== null && 'text' in value)
+                    ? (value as any).text : value;
+
+                // LOG.debug(`checkValueRanges - prop[${j}]:`, datatype, value, actualValue, idRef);
+
+                // Check eligible values (enumerations) - applies to all datatypes
+                if (propDef.eligibleValue !== undefined) {
+                    // A: aProperty instances must have references to eligible values ...
+
+                    // ToDo: eligibleValues is schema-checked and always a list
+                    const eligibleValues = Array.isArray(propDef.eligibleValue)
+                        ? propDef.eligibleValue
+                        : [propDef.eligibleValue];
+
+                    // Check if value is in eligible list
+                    const isEligible = eligibleValues.some((eV: any) => {
+                        // Handle both string values and object values with id
+                        // ToDo: should always have an id.
+                        const eligibleStr = typeof eV === 'object' && eV !== null && 'id' in eV
+                            ? eV['id']
+                            : String(eV);
+                        return eligibleStr === idRef;
+                    });
+
+                    // LOG.debug(`checkValueRanges - enum list: ${JSON.stringify(eligibleValues, null, 2)}`, idRef, isEligible);
+
+                    if (!isEligible) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `value '${idRef}' is not in eligibleValue list: [${eligibleValues.map((v: any) =>
+                                typeof v === 'object' && v !== null && 'id' in v ? v['id'] : String(v)
+                            ).join(', ')}]`
+                        );
+                    }
+                } else {
+                    // B: aProperty instances must have a literal value potentially with restrictions:
+
+                    // String validation
+                    if (datatype === 'xs:string' || datatype === 'xsd:string') {
+                        const stringValue = String(actualValue);
+
+                        // Check maxLength
+                        if (propDef.maxLength !== undefined && stringValue.length > propDef.maxLength) {
+                            return Msg.create(
+                                679,
+                                itemId,
+                                j,
+                                propClassId,
+                                `string length ${stringValue.length} exceeds maxLength ${propDef.maxLength}`
+                            );
+                        }
+
+                        // Check pattern
+                        if (propDef.pattern) {
+                            try {
+                                const regex = new RegExp(propDef.pattern);
+                                if (!regex.test(stringValue)) {
+                                    return Msg.create(
+                                        679,
+                                        itemId,
+                                        j,
+                                        propClassId,
+                                        `value '${stringValue}' does not match pattern '${propDef.pattern}'`
+                                    );
+                                }
+                            } catch (e) {
+                                LOG.warn(`Invalid regex pattern in property ${propClassId}: ${propDef.pattern}`);
+                            }
+                        }
+                    }
+
+                    // Numeric validation
+                    if (isNumericDatatype(datatype)) {
+                        const numValue = Number(actualValue);
+
+                        if (isNaN(numValue)) {
+                            return Msg.create(
+                                679,
+                                itemId,
+                                j,
+                                propClassId,
+                                `value '${actualValue}' is not a valid number for datatype ${datatype}`
+                            );
+                        }
+
+                        // Check minInclusive
+                        if (propDef.minInclusive !== undefined && numValue < propDef.minInclusive) {
+                            return Msg.create(
+                                679,
+                                itemId,
+                                j,
+                                propClassId,
+                                `value ${numValue} is less than minInclusive ${propDef.minInclusive}`
+                            );
+                        }
+
+                        // Check maxInclusive
+                        if (propDef.maxInclusive !== undefined && numValue > propDef.maxInclusive) {
+                            return Msg.create(
+                                679,
+                                itemId,
+                                j,
+                                propClassId,
+                                `value ${numValue} exceeds maxInclusive ${propDef.maxInclusive}`
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check if a datatype is numeric
+ * @param datatype - XSD datatype string
+ * @returns true if numeric type
+ */
+function isNumericDatatype(datatype: string): boolean {
+    const numericTypes = [
+        'xs:integer', 'xsd:integer',
+        'xs:int', 'xsd:int',
+        'xs:long', 'xsd:long',
+        'xs:short', 'xsd:short',
+        'xs:byte', 'xsd:byte',
+        'xs:decimal', 'xsd:decimal',
+        'xs:float', 'xsd:float',
+        'xs:double', 'xsd:double',
+        'xs:positiveInteger', 'xsd:positiveInteger',
+        'xs:negativeInteger', 'xsd:negativeInteger',
+        'xs:nonNegativeInteger', 'xsd:nonNegativeInteger',
+        'xs:nonPositiveInteger', 'xsd:nonPositiveInteger',
+        'xs:unsignedLong', 'xsd:unsignedLong',
+        'xs:unsignedInt', 'xsd:unsignedInt',
+        'xs:unsignedShort', 'xsd:unsignedShort',
+        'xs:unsignedByte', 'xsd:unsignedByte'
+    ];
+
+    return numericTypes.includes(datatype);
 }

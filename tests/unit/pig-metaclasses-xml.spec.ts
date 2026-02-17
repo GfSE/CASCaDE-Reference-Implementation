@@ -2,6 +2,10 @@
  * Unit tests for PIG metaclasses XML methods
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ * Note:
+ * - a roundtrip test via setXML() and getXML() and eligible (enumerated) values
+ *   is contained in pig-package-constraints-valueRanges.spec.ts
  */
 
 import {

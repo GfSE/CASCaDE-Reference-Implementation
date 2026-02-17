@@ -31,7 +31,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': 'pig:Property',
+                        'pig:specializes': { '@id': 'pig:Property' },
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -40,7 +40,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
+                        'pig:specializes': { '@id': 'pig:Entity' },
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -69,7 +69,9 @@ describe('PIG Package getHTML() Method', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(validPackageWithEntity, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD( validPackageWithEntity,
+                { checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass] }
+            );
             
             expect(pkg.status().ok).toBe(true);
 
@@ -127,7 +129,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Name',
-                        'pig:specializes': 'pig:Property',
+                        'pig:specializes': { '@id': 'pig:Property' },
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Name', '@language': 'en' }
@@ -170,7 +172,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': 'pig:Property',
+                        'pig:specializes': { '@id': 'pig:Property' },
                         'pig:itemType': { '@id': 'pig:Property' },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
@@ -179,7 +181,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Link_RefersTo',
-                        'pig:specializes': 'pig:Link',
+                        'pig:specializes': { '@id': 'pig:Link' },
                         'pig:itemType': { '@id': 'pig:Link' },
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
@@ -190,7 +192,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
+                        'pig:specializes': { '@id': 'pig:Entity' },
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -198,7 +200,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Relationship_Trace',
-                        'pig:specializes': 'pig:Relationship',
+                        'pig:specializes': { '@id': 'pig:Relationship' },
                         'pig:itemType': { '@id': 'pig:Relationship' },
                         'dcterms:title': [
                             { '@value': 'Trace', '@language': 'en' }
@@ -272,7 +274,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
+                        'pig:specializes': { '@id': 'pig:Entity' },
                         'pig:itemType': { '@id': 'pig:Entity' },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }

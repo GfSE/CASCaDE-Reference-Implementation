@@ -35,7 +35,7 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
     const xmlString = rsp.response as string;
     // LOG.info('importXML: loaded text length ' + xmlString.length);
 
-    // ✅ Optional: Pre-validate XML syntax
+    // Optional: Pre-validate XML syntax
     try {
         const parser = PIN.createDOMParser();
 
@@ -50,7 +50,7 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
         return Msg.create(690, 'XML', err?.message ?? err);
     }
     /*
-        // ✅ Validate entire XML document structure
+        // Validate entire XML document structure
         const isValidPackage = await SCH_XSD.validatePackageXML(doc);
         if (!isValidPackage) {
             const errors = await SCH_XSD.getValidatePackageXMLErrors();
