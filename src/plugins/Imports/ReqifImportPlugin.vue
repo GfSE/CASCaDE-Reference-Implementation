@@ -20,6 +20,7 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
+    // import { importReqif } from '../../utils/import/ReqIF/import-reqif';
 
     @Options({
         data() {

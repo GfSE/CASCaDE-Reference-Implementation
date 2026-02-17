@@ -205,7 +205,7 @@ export const PIN = {
     validateXML(xmlString: string): string | null {
         try {
             const doc = this.parseXML(xmlString);
-            const parseError = doc.querySelector('parsererror');
+            const parseError = this.getXmlParseError(doc);
 
             if (parseError) {
                 return parseError.textContent || 'XML parsing error';

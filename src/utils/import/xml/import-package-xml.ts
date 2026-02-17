@@ -87,7 +87,7 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
     
     let result: IRsp;
     if (actualCount === expectedCount) {
-        LOG.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
+        LOG.info(`importXML: successfully instantiated package with all ${actualCount} items`);
         result = rspOK;
     } else {
         let str = '\nErroneous items:';
@@ -96,9 +96,9 @@ export async function importXML(source: string | File | Blob): Promise<IRsp> {
             if (!st.ok)
                 str += `\n- graph[${i}]: (${st.status}) /${st.statusText}`;
         }
-        LOG.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items` + str);
+        LOG.warn(`importJXML: instantiated ${actualCount} of ${expectedCount} items` + str);
 
-        result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
+        result = Msg.create(691, 'XML', actualCount, expectedCount);
     }
 
     // Return all items (package + graph items)

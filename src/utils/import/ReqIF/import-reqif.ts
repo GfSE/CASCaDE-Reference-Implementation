@@ -141,5 +141,5 @@ function isValidReqIFDocument(xmlDoc: Document): boolean {
         rootElement.tagName === 'REQ-IF' ||
         rootElement.tagName === 'reqif:REQ-IF';
 
-    return hasReqIFNamespace || isReqIFRoot;
+    return hasReqIFNamespace && isReqIFRoot;
 }
