@@ -21,6 +21,7 @@
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
     import { importReqif } from '../../utils/import/ReqIF/import-reqif';
+    import { PIN } from '../../utils/lib/platform-independence';
 
     @Options({
         data() {
@@ -30,21 +31,19 @@
             };
         },
         methods: {
-            submitFiles() {
-                /*  OD: reqif2pig is outdated; use import-reqif.ts instead.
-                    A single file is expected, which needs to be handed in as stringXML.
-                    Use PIN.readFileAsText() to read the file and pass the content to the translator: */
-
-                /* something is wrong ... and produces a build error:
-                this.selectedFiles.forEach((file: File) => {
-                    const fileContent = await PIN.readFileAsText(file);
-                    const rsp = await importReqif(fileContent);
-                    if (rsp.ok) {
+            async submitFiles() {
+                for (const file of this.selectedFiles) {
+                    const readResponse = await PIN.readFileAsText(file)
+                    const rspContent = readResponse.response
+                    const importResponse = await importReqif(rspContent.response, file)
+                    if (importResponse.ok) {
                         // handle successful import, e.g., store the PIG items and update the UI
+                        const importPackage = importResponse.response
+                        console.log(typeof importPackage)
                     } else {
                         // handle import error, e.g., log/show an error message
                     }
-                }); */
+                }
 
                 // reset variables
                 this.dialog = false;

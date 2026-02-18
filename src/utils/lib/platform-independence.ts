@@ -247,7 +247,7 @@ export const PIN = {
      * Load text from Node file path, HTTP(S) URL or browser File/Blob
      */
 
-    async readFileAsText(source: string | File | Blob): Promise<IRsp<unknown>> {
+    async readFileAsText(source: string | File | Blob): Promise<IRsp<any>> {
         if (typeof source === 'string') {
             // string can be a URL or a Node filesystem path
             if (this.isHttpUrl(source)) {
