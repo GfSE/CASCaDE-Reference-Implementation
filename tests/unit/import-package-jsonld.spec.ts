@@ -10,7 +10,7 @@
  */
 
 import { importJSONLD } from '../../src/utils/import/jsonld/import-package-jsonld';
-import { PigItemType, TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
+import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 import path from 'path';
 import fs from 'fs';
 

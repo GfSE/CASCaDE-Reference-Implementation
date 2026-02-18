@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { markRaw, toRaw } from 'vue'
+import { /*markRaw,*/ toRaw } from 'vue'
 import { Options, Vue } from 'vue-class-component';
 import { importJSONLD } from '../../utils/import/jsonld/import-package-jsonld';
 import { TPigItem, APackage } from '../../utils/schemas/pig/ts/pig-metaclasses';

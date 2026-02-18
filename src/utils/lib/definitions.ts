@@ -1,16 +1,16 @@
-import { BUILD_INFO } from './build-info';
+import { BUILD_INFO } from '../../build-info';
 
 const PIG_DOMAIN = 'http://product-information-graph.org/';
 
 export const DEF = {
     defaultTime: 'T12:00:00',
     defaultTimezone: 'Z',
-    pigDomain: PIG_DOMAIN,
+    pigPath: PIG_DOMAIN,
+    jsonldSchemaPath: PIG_DOMAIN + 'schema/2026-02-18/jsonld/',
     // Default for local terms (names) without an explicit namespace
     defaultDataNamespace: PIG_DOMAIN + 'default/data#',  // for data instances with prefix d:
     defaultOntologyNamespace: PIG_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
     pigVersion: '2026-02-12',
-    appVersion: '0.1.0',
     ...BUILD_INFO
 };
 
