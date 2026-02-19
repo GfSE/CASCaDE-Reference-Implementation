@@ -1,6 +1,6 @@
 # CASCaDE-Reference-Implementation
 
-[CASCaDE](https://cascade.gfse.org) is a project to standardize collaboration in systems engineering with respect to data format and ontology.
+[CASCaRA](https://cascara.gfse.org) (formerly CASCaDE) is a project to standardize collaboration in systems engineering with respect to data format and ontology.
 A [Request for Proposal (RFP)](https://www.omg.org/cgi-bin/doc?mantis/24-12-03.pdf) has been accepted by OMG in December 2024.
 Information in different formats and from diverse sources are transformed and integrated to a common knowledge graph.
 
@@ -11,7 +11,7 @@ A joint effort on fundamental features (where differentiation isn't possible any
 improves quality and assures interoperability.
 
 The reference implementation addresses the following aspects:
-- Check data format and constraints according to the [Product Information Graph (PIG) meta-model](https://cascade.gfse.org/results/Latest%20Metamodel/) 
+- Check data format and constraints according to the [CascAra meta-model](https://cascaRA.gfse.org/results/Latest%20Metamodel/) 
 to assure data quality. 
 - Persistently store and retrieve PIG data using the standardized API (to be defined).
 - View and edit PIG data in a web-browser.
