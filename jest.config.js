@@ -8,10 +8,7 @@ module.exports = {
             preset: 'ts-jest',
             globals: {
                 'ts-jest': {
-                    tsconfig: {
-                        module: 'commonjs',   // ✅ Nur für Tests!
-                        esModuleInterop: true
-                    }
+                    tsconfig: './tsconfig.jest.json'
                 }
             }
         },

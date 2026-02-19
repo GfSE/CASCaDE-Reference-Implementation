@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "module": "esnext",     // ✅ Für Vue/Webpack
+    "module": "esnext",
     "strict": true,
     "jsx": "preserve",
     "moduleResolution": "node",

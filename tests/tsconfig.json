@@ -1,9 +1,0 @@
-{
-  "extends": "../tsconfig.json",
-  "compilerOptions": {
-    "module": "commonjs",            // ✅ CommonJS nur für Tests
-    "types": ["jest", "node", "@playwright/test"],
-    "noEmit": true
-  },
-  "include": ["./**/*"]
-}
