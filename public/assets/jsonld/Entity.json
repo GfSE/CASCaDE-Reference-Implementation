@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/Entity.json",
+    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/Entity.json",
     "title": "PIG Entity JSON-LD Schema",
     "description": "Validates <strong>Entity</strong> class definitions for individual information objects. Configures which properties (pig:eligibleProperty) and which outgoing links are allowed (pig:eligibleTargetLink). Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. Supports specialization hierarchies via pig:specializes and optional visual representation via pig:icon.",
     "type": "object",
@@ -54,7 +54,7 @@
                 "$ref": "#/$defs/idObject"
             }
         },
-        "pig:icon": {
+        "pig:Icon": {
             "type": "object",
             "description": "Optional icon representation for this Entity type",
             "properties": {
@@ -105,7 +105,8 @@
             "properties": {
                 "@value": {
                     "type": "string",
-                    "description": "The actual text content"
+                    "minLength": 1,
+                   "description": "The actual text content"
                 },
                 "@language": {
                     "type": "string",

@@ -6,13 +6,13 @@
             <v-card-actions>
                 <v-file-input
                     v-model='selectedFiles'
-                    accept='.jsonld'
+                    accept='.json,.jsonld,application/ld+json'
                     label='JSON-LD Input'
                     prepend-icon='mdi-folder-open'
                     multiple
                 ></v-file-input>
                 <v-btn color='red' @click='dialog = false'>Close</v-btn>
-                <v-btn color='blue' @click='submitFiles'>Submit</v-btn>
+                <v-btn color='blue' @click='onClick'>Submit</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -20,7 +20,9 @@
 
 <script lang="ts">
 import { Options, Vue } from 'vue-class-component';
-// import { jsonld2pig } from '../../utils/import/jsonld/jsonld2pig';
+import { importJSONLD } from '../../utils/import/jsonld/import-package-jsonld';
+import { TPigItem, APackage, stringHTML } from '../../utils/schemas/pig/ts/pig-metaclasses';
+import { useHtmlStore } from '@/stores/cacheStore' 
 
 @Options({
   data() {
@@ -30,17 +32,33 @@ import { Options, Vue } from 'vue-class-component';
     };
   },
   methods: {
-    submitFiles() {
-/*
-        const JsonldTranslator = new jsonld2pig();
-        let translatorResponse = JsonldTranslator.toPig(this.selectedFiles);
-        console.log(translatorResponse.ok);
-        console.log(translatorResponse.status);
+    async onClick() {
+        const store = useHtmlStore()
 
-        // reset variables
-        this.dialog = false;
-        this.selectedFiles = [];
-*/
+        const htmlArray = await this.submitFiles()
+        console.log(htmlArray)
+        store.htmlArray = htmlArray
+
+        await this.$router.push({
+            name: "Viewing"
+        })
+    },
+    async submitFiles() {
+        for (const file of this.selectedFiles) {
+            // extract HTML of object
+            const translatorResponse = await importJSONLD(file);
+            if (translatorResponse.ok) {
+                // handle successful import, e.g., store the PIG items and update the UI
+                const allItems = translatorResponse.response as TPigItem[];
+                const thePackage = allItems[0] as APackage;
+                
+                // TODO: this will only return the first file, need to update to return list of all HTML
+                const htmlArray = thePackage.getHTML() as stringHTML[]
+                return htmlArray
+            } else {
+                // handle import error, e.g., log/show an error message
+            }
+        }
     }
   },
 })

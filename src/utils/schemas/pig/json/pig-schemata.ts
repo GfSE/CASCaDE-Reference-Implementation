@@ -59,16 +59,14 @@ const PROPERTY_SCHEMA = {
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
-//        datatype: { $ref: '#/$defs/xsDataType' },
+        //        datatype: { $ref: '#/$defs/xsDataType' },
         datatype: {
             type: 'string',
-            // accept xs: or xsd: datatypes (basic pattern); specific values validated in code
-//            pattern: '^(?:xs|xsd):[A-Za-z]+$'
             pattern: '^xs:[A-Za-z]+$'
         },
         minCount: { type: 'integer', minimum: 0 },
-        maxCount: { type: 'integer', minimum: 0 },
-        maxLength: { type: 'integer', minimum: 0 },
+        maxCount: { type: 'integer', minimum: 1 },
+        maxLength: { type: 'integer', minimum: 1 },
         minInclusive: { type: 'number' },
         maxInclusive: { type: 'number' },
         pattern: { type: 'string' },
@@ -77,13 +75,38 @@ const PROPERTY_SCHEMA = {
         eligibleValue: {
             type: 'array',
             items: {
-                type: 'object',
-                required: ['id', 'title'],
-                properties: {
-                    id: { $ref: '#/$defs/idString' },
-                    title: { type: 'array', minItems: 1, items: { $ref: '#/$defs/LanguageText' } }
-                },
-                additionalProperties: false
+                oneOf: [
+                    {
+                        // For string datatypes: eligibleValue with multi-language title
+                        type: 'object',
+                        required: ['id', 'title'],
+                        properties: {
+                            id: { $ref: '#/$defs/idString' },
+                            title: {
+                                type: 'array',
+                                minItems: 1,
+                                items: { $ref: '#/$defs/LanguageText' }
+                            }
+                        },
+                        additionalProperties: false,
+                        description: 'Enumeration value with multi-language title (for xs:string)'
+                    },
+                    {
+                        // For numeric/other datatypes: eligibleValue with literal value
+                        type: 'object',
+                        required: ['id', 'value'],
+                        properties: {
+                            id: { $ref: '#/$defs/idString' },
+                            value: {
+                                type: 'string',
+                                minLength: 1,
+                                description: 'Literal value for numeric and other datatypes (stored as string)'
+                            }
+                        },
+                        additionalProperties: false,
+                        description: 'Enumeration value with literal value (for xs:integer, xs:double, etc.)'
+                    }
+                ]
             }
         },
         composedProperty: {
@@ -109,23 +132,26 @@ const PROPERTY_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
-    /*    },
-        xsDataType: {
-            type: 'string',
-            description: 'XSD/XMLSchema datatype',
-            enum: [
-                'xs:boolean',
-                'xs:integer',
-                'xs:double',
-                'xs:string',
-                'xs:anyURI',
-                'xs:dateTime',
-                'xs:duration',
-                'xs:complexType',
-            ] */
+            /*    },
+                xsDataType: {
+                    type: 'string',
+                    description: 'XSD/XMLSchema datatype',
+                    enum: [
+                        'xs:boolean',
+                        'xs:integer',
+                        'xs:double',
+                        'xs:string',
+                        'xs:anyURI',
+                        'xs:dateTime',
+                        'xs:duration',
+                        'xs:complexType',
+                    ] */
         }
     }
 };
@@ -179,7 +205,10 @@ const LINK_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -248,7 +277,10 @@ const ENTITY_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -314,7 +346,10 @@ const RELATIONSHIP_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -368,7 +403,10 @@ const ANENTITY_SCHEMA = {
                         enum: ['pig:aProperty']
                     },
                     hasClass: { $ref: '#/$defs/idString' },
-                    value: { type: 'string' },
+                    value: {
+                        type: 'string',
+                        minLength: 1
+                    },
                     idRef: { $ref: '#/$defs/idString' },
                     aComposedProperty: {
                         type: 'array',
@@ -425,7 +463,10 @@ const ANENTITY_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -478,7 +519,10 @@ const ARELATIONSHIP_SCHEMA = {
                         enum: ['pig:aProperty']
                     },
                     hasClass: { $ref: '#/$defs/idString' },
-                    value: { type: 'string' },
+                    value: {
+                        type: 'string',
+                        minLength: 1
+                    },
                     idRef: { $ref: '#/$defs/idString' },
                     aComposedProperty: {
                         type: 'array',
@@ -542,7 +586,10 @@ const ARELATIONSHIP_SCHEMA = {
             required: ['value'],
             additionalProperties: false,
             properties: {
-                value: { type: 'string' },
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
                 lang: { type: 'string' }
             }
         }
@@ -550,6 +597,80 @@ const ARELATIONSHIP_SCHEMA = {
 };
 const validateARelationshipSchema = ajv.compile(ARELATIONSHIP_SCHEMA);
 
+/* APACKAGE_SCHEMA: describes IAPackage (pig:aPackage) */
+const APACKAGE_SCHEMA = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    $id: 'https://gfse.org/schemas/pig/IAPackage',
+    type: 'object',
+    properties: {
+        context: {
+            type: 'array',
+        //    minItems: 1,
+            items: {
+                type: 'object',
+                description: 'Namespace definitions with tag and URI mappings',
+                properties: {
+                    tag: { type: 'string' },
+                    uri: { type: 'string', format: 'uri' }
+                },
+                additionalProperties: false
+            }
+        },
+        id: { $ref: '#/$defs/idString' },
+        itemType: {
+            type: 'string',
+            enum: ['pig:aPackage'],
+            description: 'The PigItemType for pig:aPackage'
+        },
+        title: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        description: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        modified: {
+            type: 'string',
+            format: 'date-time'
+        },
+        creator: { type: 'string' },
+        graph: {
+            type: 'array',
+            items: {
+                type: 'object',
+                description: 'Any PIG item in the package graph; items are checked individually before instantiation'
+            }
+        }
+    },
+    additionalProperties: false,
+    required: ['id', 'itemType', 'modified', 'graph'],
+    $defs: {
+        idString: {
+            type: 'string',
+            description: 'TPigId — term with namespace (prefix:local) or an URI',
+            pattern: ID_NAME_PATTERN
+        },
+        LanguageText: {
+            type: 'object',
+            required: ['value'],
+            additionalProperties: false,
+            properties: {
+                value: {
+                    type: 'string',
+                    minLength: 1
+                },
+                lang: { type: 'string' }
+            }
+        }
+    }
+};
+const validateAPackageSchema = ajv.compile(APACKAGE_SCHEMA);
+
+/** SCH: Exported schemata and validation functions for PIG items:
+*/
 export const SCH = {
     PROPERTY_SCHEMA,
     validatePropertySchema,
@@ -580,5 +701,10 @@ export const SCH = {
     validateARelationshipSchema,
     getValidateARelationshipErrors() {
         return ajv.errorsText(validateARelationshipSchema.errors, { separator: '; ' })
+    },
+    APACKAGE_SCHEMA,
+    validateAPackageSchema,
+    getValidateAPackageErrors() {
+        return ajv.errorsText(validateAPackageSchema.errors, { separator: '; ' })
     }
 };

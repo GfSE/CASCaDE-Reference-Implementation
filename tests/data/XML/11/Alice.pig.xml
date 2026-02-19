@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pig:aPackage 
+    xmlns:pig="https://product-information-graph.org/ontology/2026-01-20/foundation#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:schema="http://schema.org/"
+    xmlns:o="https://alice.org/ontology#"
+    xmlns:d="https://alice.org/data#"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+    xmlns:sh="http://www.w3.org/ns/shacl#"
+    id="d:example_Alice_worksFor_ACME">
+    
+    <dcterms:title xml:lang="en">Example: Alice works for ACME</dcterms:title>
+    <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
+    <dcterms:license>https://creativecommons.org/licenses/by-sa/4.0/</dcterms:license>
+    
+    <graph>
+        <!-- Metamodel: Entity Classes -->
+        <pig:Entity id="pig:Entity" pig.hasClass="owl:Class">
+            <dcterms:title>Entity</dcterms:title>
+            <dcterms:description>A PIG meta-model element used for entities (aka resources or artifacts).</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="pig:Organizer">
+            <pig:specializes>pig:Entity</pig:specializes>
+            <dcterms:title>Organizer</dcterms:title>
+            <dcterms:description>An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+        </pig:Entity>
+
+        <pig:Entity id="pig:HierarchyRoot">
+            <pig:specializes>pig:Organizer</pig:specializes>
+            <dcterms:title>Hierarchy Root</dcterms:title>
+            <dcterms:description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</dcterms:description>
+            <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
+        </pig:Entity>
+
+        <pig:Entity id="pig:Outline">
+            <pig:specializes>pig:Organizer</pig:specializes>
+            <dcterms:title>Outline</dcterms:title>
+            <dcterms:description>A subclass of PIG organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
+        </pig:Entity>
+
+        <pig:Entity id="pig:View">
+            <pig:specializes>pig:Organizer</pig:specializes>
+            <dcterms:title>View</dcterms:title>
+            <dcterms:description>A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:diagram</pig:eligibleProperty>
+            <pig:eligibleTargetLink>pig:shows</pig:eligibleTargetLink>
+            <pig:eligibleTargetLink>pig:depicts</pig:eligibleTargetLink>
+        </pig:Entity>
+
+        <!-- Metamodel: Relationship Class -->
+        <pig:Relationship id="pig:Relationship" pig:hasClass="owl:Class">
+            <dcterms:title>Relationship</dcterms:title>
+            <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
+            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:eligibleSourceLink>pig:SourceLink</pig:eligibleSourceLink>
+            <pig:eligibleTargetLink>pig:TargetLink</pig:eligibleTargetLink>
+        </pig:Relationship>
+
+        <!-- Metamodel: Properties -->
+        <pig:Property id="pig:Property" pig:hasClass="owl:DatatypeProperty">
+            <dcterms:title>Property</dcterms:title>
+            <dcterms:description>A PIG meta-model element used for properties (aka attributes).</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:anyType"/>
+            </xs:simpleType>
+        </pig:Property>
+
+        <pig:Property id="pig:icon">
+            <pig:specializes>pig:Property</pig:specializes>
+            <dcterms:title>has icon</dcterms:title>
+            <dcterms:description>Specifies an icon for a model element (entity or relationship).</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+
+        <pig:Property id="pig:category">
+            <pig:specializes>pig:Property</pig:specializes>
+            <dcterms:title>has category</dcterms:title>
+            <dcterms:description>Specifies a category for an element (entity, relationship or organizer).</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:maxLength>32</xs:maxLength>
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+
+        <!-- Metamodel: Links -->
+        <pig:Link id="pig:Link" pig:hasClass="owl:ObjectProperty">
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>linked with</dcterms:title>
+            <dcterms:description>Connects a reified relationship with its source or target. Also connects an organizer to a model element</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:SourceLink">
+            <pig:specializes>pig:Link</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>to source</dcterms:title>
+            <dcterms:description>Connects the source of a reified relationship.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:TargetLink">
+            <pig:specializes>pig:Link</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>to target</dcterms:title>
+            <dcterms:description>Connects the target of a reified relationship or an organizer.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:lists">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Organizer</pig:eligibleEndpoint>
+            <dcterms:title>lists</dcterms:title>
+            <dcterms:description>Lists an entity, a relationship or a subordinated organizer.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:shows">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <dcterms:title>shows</dcterms:title>
+            <dcterms:description>Shows an entity or a relationship.</dcterms:description>
+        </pig:Link>
+
+        <pig:Link id="pig:depicts">
+            <pig:specializes>pig:TargetLink</pig:specializes>
+            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <dcterms:title>depicts</dcterms:title>
+            <dcterms:description>Depicts an entity; inverse of uml:ownedDiagram.</dcterms:description>
+        </pig:Link>
+        
+        <!-- Schema.org Entity Classes -->
+        <pig:Entity id="schema:Person">
+            <pig:specializes>pig:Entity</pig:specializes>
+            <dcterms:title xml:lang="en">Person</dcterms:title>
+            <dcterms:description xml:lang="en">A person (alive, dead, undead, or fictional).</dcterms:description>
+            <pig:eligibleProperty>schema:familyName</pig:eligibleProperty>
+            <pig:eligibleProperty>schema:givenName</pig:eligibleProperty>
+            <pig:eligibleProperty>schema:birthDate</pig:eligibleProperty>
+        </pig:Entity>
+        
+        <pig:Entity id="schema:Organization">
+            <pig:specializes>pig:Entity</pig:specializes>
+            <dcterms:title xml:lang="en">Organization</dcterms:title>
+            <dcterms:description xml:lang="en">An organization such as a school, NGO, corporation, club, etc.</dcterms:description>
+            <pig:eligibleProperty>schema:legalName</pig:eligibleProperty>
+            <pig:eligibleProperty>schema:taxID</pig:eligibleProperty>
+        </pig:Entity>
+        
+        <!-- Schema.org Property Classes -->
+        <pig:Property id="schema:birthDate">
+            <pig:specializes>pig:Property</pig:specializes>
+            <dcterms:title xml:lang="en">birth date</dcterms:title>
+            <dcterms:description xml:lang="en">Date of birth.</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:date">
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+        
+        <pig:Property id="schema:familyName">
+            <pig:specializes>pig:Property</pig:specializes>
+            <dcterms:title xml:lang="en">family name</dcterms:title>
+            <dcterms:description xml:lang="en">Family name. In the U.S., the last name of a Person.</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+        
+        <pig:Property id="schema:givenName">
+            <pig:specializes>pig:Property</pig:specializes>
+            <dcterms:title xml:lang="en">given name</dcterms:title>
+            <dcterms:description xml:lang="en">Given name. In the U.S., the first name of a Person.</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+        
+        <pig:Property id="schema:legalName">
+            <pig:specializes>pig:Property</pig:specializes>
+            <dcterms:title xml:lang="en">legal name</dcterms:title>
+            <dcterms:description xml:lang="en">The official name of the organization, e.g. the registered company name.</dcterms:description>
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:minOccurs>0</xs:minOccurs>
+                    <xs:maxOccurs>1</xs:maxOccurs>
+                </xs:restriction>
+            </xs:simpleType>
+        </pig:Property>
+        
+        <pig:Property id="schema:taxID" pig:specializes="pig:Property">
+            <dcterms:title xml:lang="en">tax ID</dcterms:title>
+            <dcterms:description xml:lang="en">The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain.</dcterms:description>
+			<!-- the following datatype and restrictions don't come the preferred way, but we want to extract them anyways: -->
+            <sh:datatype>xs:string</sh:datatype>
+            <sh:minCount>0</sh:minCount>
+            <sh:maxCount>1</sh:maxCount>
+        </pig:Property>
+        
+        <!-- Schema.org Relationship Class -->
+        <pig:Relationship id="schema:WorksFor">
+            <pig:specializes>pig:Relationship</pig:specializes>
+            <dcterms:title xml:lang="en">works for</dcterms:title>
+            <dcterms:description xml:lang="en">Organizations that the person works for.</dcterms:description>
+            <pig:eligibleSourceLink>o:Employee</pig:eligibleSourceLink>
+            <pig:eligibleTargetLink>o:Employer</pig:eligibleTargetLink>
+        </pig:Relationship>
+        
+        <!-- Custom Link Classes -->
+        <pig:Link id="o:Employee" pig:specializes="pig:SourceLink">
+            <dcterms:title xml:lang="en">employee</dcterms:title>
+            <dcterms:description xml:lang="en">The employee in a 'worksFor' relationship</dcterms:description>
+            <pig:eligibleEndpoint>schema:Person</pig:eligibleEndpoint>
+        </pig:Link>
+        
+        <pig:Link id="o:Employer" pig:specializes="pig:TargetLink">
+            <dcterms:title xml:lang="en">employer</dcterms:title>
+            <dcterms:description xml:lang="en">The employer in a 'worksFor' relationship</dcterms:description>
+            <pig:eligibleEndpoint>schema:Organization</pig:eligibleEndpoint>
+        </pig:Link>
+        
+        <!-- Instances (Individuals) -->
+        <pig:anEntity id="d:ACME" pig:hasClass="schema:Organization" revision="1">
+            <dcterms:title xml:lang="en">ACME Corp.</dcterms:title>
+            <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
+            <pig:aProperty pig:hasClass="schema:legalName">
+                <value>ACME Corp.</value>
+            </pig:aProperty>
+            <pig:aProperty pig:hasClass="schema:taxID">
+                <value>DE_123456789</value>
+            </pig:aProperty>
+        </pig:anEntity>
+        
+        <pig:anEntity id="d:Alice" pig:hasClass="schema:Person" revision="1">
+            <dcterms:title xml:lang="en">Alice</dcterms:title>
+            <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
+            <pig:aProperty pig:hasClass="schema:familyName">
+                <value>Carpenter</value>
+            </pig:aProperty>
+            <pig:aProperty pig:hasClass="schema:givenName">
+                <value>Alice</value>
+            </pig:aProperty>
+        </pig:anEntity>
+        
+        <pig:aRelationship id="d:Alice_worksFor_ACME" pig:hasClass="schema:WorksFor" revision="1">
+            <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
+            <pig:aSourceLink pig:hasClass="o:Employee">
+                <idRef>d:Alice</idRef>
+            </pig:aSourceLink>
+            <pig:aTargetLink pig:hasClass="o:Employer">
+                <idRef>d:ACME</idRef>
+            </pig:aTargetLink>
+        </pig:aRelationship>
+    </graph>
+</pig:aPackage>

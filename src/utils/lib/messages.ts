@@ -32,6 +32,10 @@
  *      const doc = rsp.response as Document;
  *   };
  */
+import { LOG } from "./helpers";
+
+
+// type XMLHttpRequestResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text"
 export interface IRsp<T = unknown> {
     status: number;
     statusText?: string;
@@ -73,8 +77,11 @@ class Language {
 }
 export const language = new Language();
 
+// Type für Message-Funktionen - erlaubt beliebige Parameter, aber typsicher
+type MessageFunction = (...args: (string | number | boolean)[]) => string;
+
 // Message templates indexed by error code and language
-const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>> = {
+const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
     // Item validation (600-609)
     0: {
         en: () => 'OK',
@@ -83,406 +90,456 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
         es: () => 'OK'
     },
     600: {
-        en: (fromType: string, toType: string) => 
-            `Cannot change the itemType (tried to change from ${fromType} to ${toType})`,
-        de: (fromType: string, toType: string) => 
-            `Der itemType kann nicht geändert werden (Versuch von ${fromType} nach ${toType})`,
-        fr: (fromType: string, toType: string) => 
-            `Impossible de changer le itemType (tentative de ${fromType} vers ${toType})`,
-        es: (fromType: string, toType: string) => 
-            `No se puede cambiar el itemType (intento de ${fromType} a ${toType})`
+        en: (txt) => `Error: ${txt}`,
+        de: (txt) => `Fehler: ${txt}`,
+        fr: (txt) => `Erreur: ${txt}`,
+        es: (txt) => `Error: ${txt}`
     },
     601: {
-        en: (itemType: string) => 
+        en: (fromType, toType) => 
+            `Cannot change the itemType (tried to change from ${fromType} to ${toType})`,
+        de: (fromType, toType) => 
+            `Der itemType kann nicht geändert werden (Versuch von ${fromType} nach ${toType})`,
+        fr: (fromType, toType) => 
+            `Impossible de changer le itemType (tentative de ${fromType} vers ${toType})`,
+        es: (fromType, toType) => 
+            `No se puede cambiar el itemType (intento de ${fromType} a ${toType})`
+    },
+    602: {
+        en: (itemType) => 
             `'${itemType}' must have a hasClass reference`,
-        de: (itemType: string) => 
+        de: (itemType) => 
             `'${itemType}' muss eine hasClass-Referenz haben`,
-        fr: (itemType: string) => 
+        fr: (itemType) => 
             `'${itemType}' doit avoir une référence hasClass`,
-        es: (itemType: string) => 
+        es: (itemType) => 
             `'${itemType}' debe tener una referencia hasClass`
     },
 
     // Identifiable validation
-    602: {
-        en: (fromId: string, toId: string) => 
+    603: {
+        en: (fromId, toId) => 
             `Cannot change the id of an item (tried to change from ${fromId} to ${toId})`,
-        de: (fromId: string, toId: string) => 
+        de: (fromId, toId) => 
             `Die ID eines Elements kann nicht geändert werden (Versuch von ${fromId} nach ${toId})`,
-        fr: (fromId: string, toId: string) => 
+        fr: (fromId, toId) => 
             `Impossible de changer l'id d'un élément (tentative de ${fromId} vers ${toId})`,
-        es: (fromId: string, toId: string) => 
+        es: (fromId, toId) => 
             `No se puede cambiar el id de un elemento (intento de ${fromId} a ${toId})`
     },
-    603: {
-        en: (fromSpec: string, toSpec: string) => 
+    604: {
+        en: (fromSpec, toSpec) => 
             `Cannot change the specialization (tried to change from ${fromSpec} to ${toSpec})`,
-        de: (fromSpec: string, toSpec: string) => 
+        de: (fromSpec, toSpec) => 
             `Die Spezialisierung kann nicht geändert werden (Versuch von ${fromSpec} nach ${toSpec})`,
-        fr: (fromSpec: string, toSpec: string) => 
+        fr: (fromSpec, toSpec) => 
             `Impossible de changer la spécialisation (tentative de ${fromSpec} vers ${toSpec})`,
-        es: (fromSpec: string, toSpec: string) => 
+        es: (fromSpec, toSpec) => 
             `No se puede cambiar la especialización (intento de ${fromSpec} a ${toSpec})`
     },
 
-    // ID validation (620-629)
-    620: {
-        en: (fieldName: string) => `${fieldName} is missing`,
-        de: (fieldName: string) => `${fieldName} fehlt`,
-        fr: (fieldName: string) => `${fieldName} est manquant`,
-        es: (fieldName: string) => `${fieldName} falta`
+    610: {
+        en: (op, act, exp) =>
+            `${op}: Delivered ${act} of ${exp} graph items`,
+        de: (op, act, exp) =>
+            `${op}: ${act} von ${exp} Graph-Elementen geliefert`,
+        fr: (op, act, exp) =>
+            `${op}: ${act} éléments de graphe sur ${exp} livrés`,
+        es: (op, act, exp) =>
+            `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
     },
-    621: {
-        en: (fieldName: string) => `${fieldName} has no id`,
-        de: (fieldName: string) => `${fieldName} hat keine id`,
-        fr: (fieldName: string) => `${fieldName} n'a pas d'id`,
-        es: (fieldName: string) => `${fieldName} no tiene id`
-    },
-    622: {
-        en: (fieldName: string) => `${fieldName} has invalid type`,
-        de: (fieldName: string) => `${fieldName} hat einen ungültigen Typ`,
-        fr: (fieldName: string) => `${fieldName} a un type invalide`,
-        es: (fieldName: string) => `${fieldName} tiene un tipo inválido`
-    },
-    623: {
-        en: (fieldName: string) => `${fieldName} is missing id`,
-        de: (fieldName: string) => `${fieldName} fehlt die ID`,
-        fr: (fieldName: string) => `${fieldName} manque l'id`,
-        es: (fieldName: string) => `${fieldName} falta el id`
-    },
-    624: {
-        en: (fieldName: string) => `${fieldName} must be a non-empty string`,
-        de: (fieldName: string) => `${fieldName} muss eine nicht-leere Zeichenkette sein`,
-        fr: (fieldName: string) => `${fieldName} doit être une chaîne non vide`,
-        es: (fieldName: string) => `${fieldName} debe ser una cadena no vacía`
-    },
-    625: {
-        en: (fieldName: string) => 
-            `${fieldName} must be a string with a term having a namespace or an URI`,
-        de: (fieldName: string) => 
-            `${fieldName} muss eine Zeichenkette mit einem Begriff mit Namensraum oder eine URI sein`,
-        fr: (fieldName: string) => 
-            `${fieldName} doit être une chaîne avec un terme ayant un espace de noms ou un URI`,
-        es: (fieldName: string) => 
-            `${fieldName} debe ser una cadena con un término que tenga un espacio de nombres o un URI`
+    611: {
+        en: (op, act, exp) =>
+            `${op}: Created ${act} of ${exp} graph items`,
+        de: (op, act, exp) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
+        fr: (op, act, exp) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}`,
+        es: (op, act, exp) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
     },
 
+/*  currently not used:
+    // ID validation (620-629)
+    620: {
+        en: (fieldName) => `${fieldName} is missing`,
+        de: (fieldName) => `${fieldName} fehlt`,
+        fr: (fieldName) => `${fieldName} est manquant`,
+        es: (fieldName) => `${fieldName} falta`
+    },
+    621: {
+        en: (fieldName) => `${fieldName} has no id`,
+        de: (fieldName) => `${fieldName} hat keine id`,
+        fr: (fieldName) => `${fieldName} n'a pas d'id`,
+        es: (fieldName) => `${fieldName} no tiene id`
+    },
+    622: {
+        en: (fieldName) => `${fieldName} has invalid type`,
+        de: (fieldName) => `${fieldName} hat einen ungültigen Typ`,
+        fr: (fieldName) => `${fieldName} a un type invalide`,
+        es: (fieldName) => `${fieldName} tiene un tipo inválido`
+    },
+    624: {
+        en: (fieldName) => `${fieldName} must be a non-empty string`,
+        de: (fieldName) => `${fieldName} muss eine nicht-leere Zeichenkette sein`,
+        fr: (fieldName) => `${fieldName} doit être une chaîne non vide`,
+        es: (fieldName) => `${fieldName} debe ser una cadena no vacía`
+    },
+    625: {
+        en: (fieldName) => 
+            `${fieldName} must be a string with a term having a namespace or an URI`,
+        de: (fieldName) => 
+            `${fieldName} muss eine Zeichenkette mit einem Begriff mit Namensraum oder eine URI sein`,
+        fr: (fieldName) => 
+            `${fieldName} doit être une chaîne avec un terme ayant un espace de noms ou un URI`,
+        es: (fieldName) => 
+            `${fieldName} debe ser una cadena con un término que tenga un espacio de nombres o un URI`
+    },
+*/
     // Array validation (630-639)
     630: {
-        en: (fieldName: string) => `${fieldName} must be an array`,
-        de: (fieldName: string) => `${fieldName} muss ein Array sein`,
-        fr: (fieldName: string) => `${fieldName} doit être un tableau`,
-        es: (fieldName: string) => `${fieldName} debe ser un array`
+        en: (fieldName) => `${fieldName} must be an array`,
+        de: (fieldName) => `${fieldName} muss ein Array sein`,
+        fr: (fieldName) => `${fieldName} doit être un tableau`,
+        es: (fieldName) => `${fieldName} debe ser un array`
     },
     631: {
-        en: (fieldName: string, minCount: number) => 
+        en: (fieldName, minCount) => 
             `${fieldName} must contain at least ${minCount} element(s)`,
-        de: (fieldName: string, minCount: number) => 
+        de: (fieldName, minCount) => 
             `${fieldName} muss mindestens ${minCount} Element(e) enthalten`,
-        fr: (fieldName: string, minCount: number) => 
+        fr: (fieldName, minCount) => 
             `${fieldName} doit contenir au moins ${minCount} élément(s)`,
-        es: (fieldName: string, minCount: number) => 
+        es: (fieldName, minCount) => 
             `${fieldName} debe contener al menos ${minCount} elemento(s)`
     },
     632: {
-        en: (fieldName: string, index: number) => 
+        en: (fieldName, index) => 
             `${fieldName}[${index}] must be a valid id string`,
-        de: (fieldName: string, index: number) => 
+        de: (fieldName, index) => 
             `${fieldName}[${index}] muss eine gültige ID-Zeichenkette sein`,
-        fr: (fieldName: string, index: number) => 
+        fr: (fieldName, index) => 
             `${fieldName}[${index}] doit être une chaîne d'id valide`,
-        es: (fieldName: string, index: number) => 
+        es: (fieldName, index) => 
             `${fieldName}[${index}] debe ser una cadena de id válida`
     },
     633: {
-        en: (fieldName: string, index: number) => 
+        en: (fieldName, index) => 
             `${fieldName}[${index}] must be an object with an 'id' or '@id' string`,
-        de: (fieldName: string, index: number) => 
+        de: (fieldName, index) => 
             `${fieldName}[${index}] muss ein Objekt mit einer 'id'- oder '@id'-Zeichenkette sein`,
-        fr: (fieldName: string, index: number) => 
+        fr: (fieldName, index) => 
             `${fieldName}[${index}] doit être un objet avec une chaîne 'id' ou '@id'`,
-        es: (fieldName: string, index: number) => 
+        es: (fieldName, index) => 
             `${fieldName}[${index}] debe ser un objeto con una cadena 'id' o '@id'`
     },
     634: {
-        en: (fieldName: string, index: number) => 
+        en: (fieldName, index) => 
             `${fieldName}[${index}] must contain a valid 'id' or '@id' string`,
-        de: (fieldName: string, index: number) => 
+        de: (fieldName, index) => 
             `${fieldName}[${index}] muss eine gültige 'id'- oder '@id'-Zeichenkette enthalten`,
-        fr: (fieldName: string, index: number) => 
+        fr: (fieldName, index) => 
             `${fieldName}[${index}] doit contenir une chaîne 'id' ou '@id' valide`,
-        es: (fieldName: string, index: number) => 
+        es: (fieldName, index) => 
             `${fieldName}[${index}] debe contener una cadena 'id' o '@id' válida`
     },
     635: {
-        en: (fieldName: string, index: number) => 
+        en: (fieldName, index) => 
             `${fieldName}[${index}] must be an id-object with a single 'id' or '@id' property`,
-        de: (fieldName: string, index: number) => 
+        de: (fieldName, index) => 
             `${fieldName}[${index}] muss ein ID-Objekt mit einer einzelnen 'id'- oder '@id'-Eigenschaft sein`,
-        fr: (fieldName: string, index: number) => 
+        fr: (fieldName, index) => 
             `${fieldName}[${index}] doit être un objet-id avec une seule propriété 'id' ou '@id'`,
-        es: (fieldName: string, index: number) => 
+        es: (fieldName, index) => 
             `${fieldName}[${index}] debe ser un objeto-id con una única propiedad 'id' o '@id'`
     },
 
     // Multi-language text validation (640-649)
     640: {
-        en: (fieldName: string) => 
+        en: (fieldName) => 
             `Invalid ${fieldName}: expected an array of language-tagged texts`,
-        de: (fieldName: string) => 
+        de: (fieldName) => 
             `Ungültiges ${fieldName}: Array von sprachmarkierten Texten erwartet`,
-        fr: (fieldName: string) => 
+        fr: (fieldName) => 
             `${fieldName} invalide: tableau de textes marqués par langue attendu`,
-        es: (fieldName: string) => 
+        es: (fieldName) => 
             `${fieldName} inválido: se espera un array de textos etiquetados por idioma`
     },
     641: {
-        en: (fieldName: string) => 
+        en: (fieldName) => 
             `Invalid ${fieldName} entry: expected object with string 'value'`,
-        de: (fieldName: string) => 
+        de: (fieldName) => 
             `Ungültiger ${fieldName}-Eintrag: Objekt mit Zeichenkette 'value' erwartet`,
-        fr: (fieldName: string) => 
+        fr: (fieldName) => 
             `Entrée ${fieldName} invalide: objet avec chaîne 'value' attendu`,
-        es: (fieldName: string) => 
+        es: (fieldName) => 
             `Entrada ${fieldName} inválida: se espera objeto con cadena 'value'`
     },
     642: {
-        en: (fieldName: string) => 
+        en: (fieldName) => 
             `Invalid ${fieldName} entry: 'lang' must be a string when present`,
-        de: (fieldName: string) => 
+        de: (fieldName) => 
             `Ungültiger ${fieldName}-Eintrag: 'lang' muss, falls vorhanden, eine Zeichenkette sein`,
-        fr: (fieldName: string) => 
+        fr: (fieldName) => 
             `Entrée ${fieldName} invalide: 'lang' doit être une chaîne si présent`,
-        es: (fieldName: string) => 
+        es: (fieldName) => 
             `Entrada ${fieldName} inválida: 'lang' debe ser una cadena cuando esté presente`
     },
     643: {
-        en: (fieldName: string, index: number) => 
+        en: (fieldName, index) => 
             `Invalid ${fieldName}[${index}]: expected object with 'value' and 'lang'`,
-        de: (fieldName: string, index: number) => 
+        de: (fieldName, index) => 
             `Ungültiger ${fieldName}[${index}]: Objekt mit 'value' und 'lang' erwartet`,
-        fr: (fieldName: string, index: number) => 
+        fr: (fieldName, index) => 
             `Entrée ${fieldName}[${index}] invalide: objet avec 'value' et 'lang' attendu`,
-        es: (fieldName: string, index: number) => 
+        es: (fieldName, index) => 
             `Entrada ${fieldName}[${index}] inválida: se espera objeto con 'value' y 'lang'`
     },
     644: {
-        en: (fieldName: string, index: number) => 
+        en: (fieldName, index) => 
             `Invalid ${fieldName}[${index}]: 'value' must be a string`,
-        de: (fieldName: string, index: number) => 
+        de: (fieldName, index) => 
             `Ungültiger ${fieldName}[${index}]: 'value' muss eine Zeichenkette sein`,
-        fr: (fieldName: string, index: number) => 
+        fr: (fieldName, index) => 
             `Entrée ${fieldName}[${index}]: 'value' doit être une chaîne`,
-        es: (fieldName: string, index: number) => 
+        es: (fieldName, index) => 
             `Entrada ${fieldName}[${index}]: 'value' debe ser una cadena`
     },
     645: {
-        en: (fieldName: string, index: number) => 
+        en: (fieldName, index) => 
             `Invalid ${fieldName}[${index}]: 'lang' must be a non-empty string`,
-        de: (fieldName: string, index: number) => 
+        de: (fieldName, index) => 
             `Ungültiger ${fieldName}[${index}]: 'lang' muss eine nicht-leere Zeichenkette sein`,
-        fr: (fieldName: string, index: number) => 
+        fr: (fieldName, index) => 
             `Entrée ${fieldName}[${index}]: 'lang' doit être une chaîne non vide`,
-        es: (fieldName: string, index: number) => 
+        es: (fieldName, index) => 
             `Entrada ${fieldName}[${index}]: 'lang' debe ser una cadena no vacía`
     },
 
     // Item instantiation and validation (650-659)
     650: {
-        en: (op: string, field: string, id: string) => `${op}: Missing required field "${field}" in item with id "${id}"`,
-        de: (op: string, field: string, id: string) => `${op}: Pflichtfeld "${field}" fehlt bei Item mit ID "${id}"`,
-        fr: (op: string, field: string, id: string) => `${op}: Champ obligatoire "${field}" manquant dans l'élément avec id "${id}"`,
-        es: (op: string, field: string, id: string) => `${op}: Falta el campo obligatorio "${field}" en el elemento con id "${id}"`
+        en: (op, field, id) => `${op}: Missing required field "${field}" in item with id "${id}"`,
+        de: (op, field, id) => `${op}: Pflichtfeld "${field}" fehlt bei Item mit ID "${id}"`,
+        fr: (op, field, id) => `${op}: Champ obligatoire "${field}" manquant dans l'élément avec id "${id}"`,
+        es: (op, field, id) => `${op}: Falta el campo obligatorio "${field}" en el elemento con id "${id}"`
     },
 
     651: {
-        en: (op: string, field: string) => `${op}: Item type "${field}" is not allowed in package graph`,
-        de: (op: string, field: string) => `${op}: Elementtyp "${field}" ist im Package-Graph nicht erlaubt`,
-        fr: (op: string, field: string) => `${op}: Le type d'élément "${field}" n'est pas autorisé dans le graphe de package`,
-        es: (op: string, field: string) => `${op}: El tipo de elemento "${field}" no está permitido en el grafo del paquete`
+        en: (op, field) => `${op}: Item type "${field}" is not allowed in package graph`,
+        de: (op, field) => `${op}: Elementtyp "${field}" ist im Package-Graph nicht erlaubt`,
+        fr: (op, field) => `${op}: Le type d'élément "${field}" n'est pas autorisé dans le graphe de package`,
+        es: (op, field) => `${op}: El tipo de elemento "${field}" no está permitido en el grafo del paquete`
     },
 
     652: {
-        en: (op: string, field: string) => `${op}: Unable to create instance for itemType "${field}"`,
-        de: (op: string, field: string) => `${op}: Instanz für itemType "${field}" kann nicht erstellt werden`,
-        fr: (op: string, field: string) => `${op}: Impossible de créer une instance pour itemType "${field}"`,
-        es: (op: string, field: string) => `${op}: No se puede crear una instancia para itemType "${field}"`
+        en: (op, field) => `${op}: Unable to create instance for itemType "${field}"`,
+        de: (op, field) => `${op}: Instanz für itemType "${field}" kann nicht erstellt werden`,
+        fr: (op, field) => `${op}: Impossible de créer une instance pour itemType "${field}"`,
+        es: (op, field) => `${op}: No se puede crear una instancia para itemType "${field}"`
     },
 
     653: {
-        en: (op: string, field: string, id: string) => `${op}: Validation failed for ${field} with id "${id}"`,
-        de: (op: string, field: string, id: string) => `${op}: Validierung fehlgeschlagen für ${field} mit ID "${id}"`,
-        fr: (op: string, field: string, id: string) => `${op}: Échec de validation pour ${field} avec id "${id}"`,
-        es: (op: string, field: string, id: string) => `${op}: Falló la validación para ${field} con id "${id}"`
+        en: (op, field, id) => `${op}: Validation failed for ${field} with id "${id}"`,
+        de: (op, field, id) => `${op}: Validierung fehlgeschlagen für ${field} mit ID "${id}"`,
+        fr: (op, field, id) => `${op}: Échec de validation pour ${field} avec id "${id}"`,
+        es: (op, field, id) => `${op}: Falló la validación para ${field} con id "${id}"`
     },
 
     654: {
-        en: (op: string, field: string, err: string) => `${op}: Failed to instantiate ${field}: ${err}`,
-        de: (op: string, field: string, err: string) => `${op}: Instanziierung von ${field} fehlgeschlagen: ${err}`,
-        fr: (op: string, field: string, err: string) => `${op}: Échec d'instanciation de ${field}: ${err}`,
-        es: (op: string, field: string, err: string) => `${op}: Fallo al instanciar ${field}: ${err}`
+        en: (op, field, err) => `${op}: Failed to instantiate ${field}: ${err}`,
+        de: (op, field, err) => `${op}: Instanziierung von ${field} fehlgeschlagen: ${err}`,
+        fr: (op, field, err) => `${op}: Échec d'instanciation de ${field}: ${err}`,
+        es: (op, field, err) => `${op}: Fallo al instanciar ${field}: ${err}`
+    },
+
+    // Import and Transformation (660-669)
+    660: {
+        en: (format, msg) => `Failed to transform ${format}: ${msg}`,
+        de: (format, msg) => `Transformation von ${format} fehlgeschlagen: ${msg}`,
+        fr: (format, msg) => `Échec de transformation ${format}: ${msg}`,
+        es: (format, msg) => `Error al transformar ${format}: ${msg}`
     },
 
     // Package constraint validation (670-679)
     670: {
-        en: (index: number) =>
+        en: (index) =>
             `Package validation failed: item at index ${index} is missing id`,
-        de: (index: number) =>
+        de: (index) =>
             `Paket-Validierung fehlgeschlagen: Element mit Index ${index} hat keine id`,
-        fr: (index: number) =>
+        fr: (index) =>
             `Échec de la validation du package: élément à l'index ${index} n'a pas d'id`,
-        es: (index: number) =>
+        es: (index) =>
             `Error en la validación del paquete: elemento en índice ${index} no tiene id`
     },
     671: {
-        en: (id: string, firstIndex: number, secondIndex: number) =>
+        en: (id, firstIndex, secondIndex) =>
             `Package validation failed: duplicate ID '${id}' found at indices ${firstIndex} and ${secondIndex}`,
-        de: (id: string, firstIndex: number, secondIndex: number) =>
+        de: (id, firstIndex, secondIndex) =>
             `Paket-Validierung fehlgeschlagen: doppelte ID '${id}' bei Indizes ${firstIndex} und ${secondIndex} gefunden`,
-        fr: (id: string, firstIndex: number, secondIndex: number) =>
+        fr: (id, firstIndex, secondIndex) =>
             `Échec de la validation du package: ID dupliqué '${id}' trouvé aux indices ${firstIndex} et ${secondIndex}`,
-        es: (id: string, firstIndex: number, secondIndex: number) =>
+        es: (id, firstIndex, secondIndex) =>
             `Error en la validación del paquete: ID duplicado '${id}' encontrado en índices ${firstIndex} y ${secondIndex}`
     },
     672: {
-        en: (parentId: string, propIndex: number, msg: string) =>
+        en: (parentId, propIndex, msg) =>
             `Package validation failed: item '${parentId}' hasProperty[${propIndex}] has ${msg}`,
-        de: (parentId: string, propIndex: number, msg: string) =>
+        de: (parentId, propIndex, msg) =>
             `Paket-Validierung fehlgeschlagen: Element '${parentId}' hasProperty[${propIndex}] hat ${msg}`,
-        fr: (parentId: string, propIndex: number, msg: string) =>
+        fr: (parentId, propIndex, msg) =>
             `Échec de la validation du package: élément '${parentId}' hasProperty[${propIndex}] a ${msg}`,
-        es: (parentId: string, propIndex: number, msg: string) =>
+        es: (parentId, propIndex, msg) =>
             `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}] tiene ${msg}`
     },
     673: {
-        en: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+        en: (parentId, propIndex, hasClass, msg) =>
             `Package validation failed: item '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        de: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+        de: (parentId, propIndex, hasClass, msg) =>
             `Paket-Validierung fehlgeschlagen: Element '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        fr: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+        fr: (parentId, propIndex, hasClass, msg) =>
             `Échec de la validation du package: élément '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        es: (parentId: string, propIndex: number, hasClass: string, msg: string) =>
+        es: (parentId, propIndex, hasClass, msg) =>
             `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`
     },
     674: {
-        en: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
-            `Package validation failed: item '${parentId}' ${linkArrayName}[${linkIndex}] has ${msg}`,
-        de: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${linkArrayName}[${linkIndex}] hat ${msg}`,
-        fr: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
-            `Échec de la validation du package: élément '${parentId}' ${linkArrayName}[${linkIndex}] a ${msg}`,
-        es: (parentId: string, linkIndex: number, linkArrayName: string, msg: string) =>
-            `Error en la validación del paquete: elemento '${parentId}' ${linkArrayName}[${linkIndex}] tiene ${msg}`
+        en: (parentId, index, prpName, msg) =>
+            `Package validation failed: item '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+        de: (parentId, index, prpName, msg) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+        fr: (parentId, index, prpName, msg) =>
+            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+        es: (parentId, index, prpName, msg) =>
+            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName} - ${msg}`
     },
     675: {
-        en: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
-            `Package validation failed: item '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`,
-        de: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`,
-        fr: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
-            `Échec de la validation du package: élément '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`,
-        es: (parentId: string, linkIndex: number, linkArrayName: string, hasClass: string, msg: string) =>
-            `Error en la validación del paquete: elemento '${parentId}' ${linkArrayName}[${linkIndex}].hasClass='${hasClass}' - ${msg}`
+        en: (parentId, index, prpName, prpVal, msg) =>
+            `Package validation failed: item '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+        de: (parentId, index, prpName, prpVal, msg) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+        fr: (parentId, index, prpName, prpVal, msg) =>
+            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+        es: (parentId, index, prpName, prpVal, msg) =>
+            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`
+    },
+    676: {
+        en: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] uses '${linkClassId}' which is not eligible in class '${classId}'.`,
+        de: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] verwendet '${linkClassId}', der in Klasse '${classId}' nicht zulässig ist.`,
+        fr: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] utilise '${linkClassId}' qui n'est pas éligible dans la classe '${classId}'.`,
+        es: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] usa '${linkClassId}' que no es elegible en la clase '${classId}'.`
+    },
+    678: {
+        en: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `Instance '${instanceId}' has ${actualCount} occurrence(s) of property '${propClassId}' but ${issue}: expected ${expectedCount}`,
+        de: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `Instanz '${instanceId}' hat ${actualCount} Vorkommen von Property '${propClassId}', aber ${issue}: erwartet ${expectedCount}`,
+        fr: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `L'instance '${instanceId}' a ${actualCount} occurrence(s) de la propriété '${propClassId}' mais ${issue}: attendu ${expectedCount}`,
+        es: (instanceId, propClassId, actualCount, expectedCount, issue) =>
+            `La instancia '${instanceId}' tiene ${actualCount} ocurrencia(s) de la propiedad '${propClassId}' pero ${issue}: se esperaba ${expectedCount}`
     },
     679: {
-        en: (op: string, act: number, exp: number) =>
-            `${op}: Created ${act} of ${exp} graph items`,
-        de: (op: string, act: number, exp: number) =>
-            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
-        fr: (op: string, act: number, exp: number) =>
-            `${op}: ${act} éléments de graphe créés sur ${exp}`,
-        es: (op: string, act: number, exp: number) =>
-            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
+        en: (itemId, propIndex, propClassId, msg) =>
+            `Value range validation failed for item '${itemId}' property[${propIndex}] of class '${propClassId}': ${msg}`,
+        de: (itemId, propIndex, propClassId, msg) =>
+            `Wertebereich-Validierung fehlgeschlagen für Element '${itemId}' property[${propIndex}] der Klasse '${propClassId}': ${msg}`,
+        fr: (itemId, propIndex, propClassId, msg) =>
+            `Échec de la validation de la plage de valeurs pour l'élément '${itemId}' property[${propIndex}] de la classe '${propClassId}': ${msg}`,
+        es: (itemId, propIndex, propClassId, msg) =>
+            `Falló la validación del rango de valores para el elemento '${itemId}' property[${propIndex}] de la clase '${propClassId}': ${msg}`
     },
 
     // Schema validation (680-689)
     680: {
-        en: (id: string, datatype: string) =>
+        en: (id, datatype) =>
             `Property '${id}' has unsupported datatype '${datatype}'. It will be treated as 'xs:string'.`,
-        de: (id: string, datatype: string) =>
+        de: (id, datatype) =>
             `Eigenschaft '${id}' hat nicht unterstützten Datentyp '${datatype}'. Sie wird als 'xs:string' behandelt.`,
-        fr: (id: string, datatype: string) =>
+        fr: (id, datatype) =>
             `La propriété '${id}' a un type de données non supporté '${datatype}'. Elle sera traitée comme 'xs:string'.`,
-        es: (id: string, datatype: string) =>
+        es: (id, datatype) =>
             `La propiedad '${id}' tiene un tipo de datos no soportado '${datatype}'. Se tratará como 'xs:string'.`
     },
     681: {
-        en: (itemType: string, id: string, msg: string) =>
+        en: (itemType, id, msg) =>
             `Schema validation failed for ${itemType} '${id}': ${msg}`,
-        de: (itemType: string, id: string, msg: string) =>
+        de: (itemType, id, msg) =>
             `Schema-Validierung fehlgeschlagen für ${itemType} '${id}': ${msg}`,
-        fr: (itemType: string, id: string, msg: string) =>
+        fr: (itemType, id, msg) =>
             `Échec de la validation du schéma pour ${itemType} '${id}': ${msg}`,
-        es: (itemType: string, id: string, msg: string) =>
+        es: (itemType, id, msg) =>
             `Falló la validación del esquema para ${itemType} '${id}': ${msg}`
     },
     682: {
-        en: (itemType: string, id: string, msg: string) =>
+        en: (itemType, id, msg) =>
             `Schema validation error for ${itemType} '${id}': ${msg}`,
-        de: (itemType: string, id: string, msg: string) =>
+        de: (itemType, id, msg) =>
             `Schema-Validierungsfehler für ${itemType} '${id}': ${msg}`,
-        fr: (itemType: string, id: string, msg: string) =>
+        fr: (itemType, id, msg) =>
             `Erreur de validation du schéma pour ${itemType} '${id}': ${msg}`,
-        es: (itemType: string, id: string, msg: string) =>
+        es: (itemType, id, msg) =>
             `Error de validación del esquema para ${itemType} '${id}': ${msg}`
     },
 
     // General errors (690-699)
     690: {
-        en: (format: string, msg: string) => `Failed to parse ${format}: ${msg}`,
-        de: (format: string, msg: string) => `Parsing von ${format} fehlgeschlagen: ${msg}`,
-        fr: (format: string, msg: string) => `Échec de l'analyse ${format}: ${msg}`,
-        es: (format: string, msg: string) => `Error al analizar ${format}: ${msg}`
+        en: (format, msg) => `Failed to parse ${format}: ${msg}`,
+        de: (format, msg) => `Parsing von ${format} fehlgeschlagen: ${msg}`,
+        fr: (format, msg) => `Échec de l'analyse ${format}: ${msg}`,
+        es: (format, msg) => `Error al analizar ${format}: ${msg}`
     },
     691: {
-        en: (format: string, created: number, total: number) =>
+        en: (format, created, total) =>
             `Imported ${created} of ${total} items from ${format}`,
-        de: (format: string, created: number, total: number) =>
+        de: (format, created, total) =>
             `${created} von ${total} Elementen aus ${format} importiert`,
-        fr: (format: string, created: number, total: number) =>
+        fr: (format, created, total) =>
             `${created} éléments sur ${total} importés depuis ${format}`,
-        es: (format: string, created: number, total: number) =>
+        es: (format, created, total) =>
             `${created} de ${total} elementos importados desde ${format}`
     },
     692: {
-        en: (url: string, statusText: string) =>
+        en: (url, statusText) =>
             `Failed to fetch URL ${url}: ${statusText}`,
-        de: (url: string, statusText: string) =>
+        de: (url, statusText) =>
             `Fehler beim Abrufen der URL ${url}: ${statusText}`,
-        fr: (url: string, statusText: string) =>
+        fr: (url, statusText) =>
             `Échec de la récupération de l'URL ${url}: ${statusText}`,
-        es: (url: string, statusText: string) =>
+        es: (url, statusText) =>
             `Error al obtener la URL ${url}: ${statusText}`
     },
     693: {
-        en: (source: string, msg: string) =>
+        en: (source, msg) =>
             `Network error fetching ${source}: ${msg}`,
-        de: (source: string, msg: string) =>
+        de: (source, msg) =>
             `Netzwerkfehler beim Abrufen von ${source}: ${msg}`,
-        fr: (source: string, msg: string) =>
+        fr: (source, msg) =>
             `Erreur réseau lors de la récupération de ${source}: ${msg}`,
-        es: (source: string, msg: string) =>
+        es: (source, msg) =>
             `Error de red al obtener ${source}: ${msg}`
     },
     694: {
-        en: (source: string, msg: string) =>
+        en: (source, msg) =>
             `Failed to read file` + (source ? ` '${source}'` : '') + `: ${msg}`,
-        de: (source: string, msg: string) =>
+        de: (source, msg) =>
             `Fehler beim Lesen der Datei` + (source ? ` '${source}'` : '') + `: ${msg}`,
-        fr: (source: string, msg: string) =>
+        fr: (source, msg) =>
             `Échec de la lecture du fichier` + (source ? ` '${source}'` : '') + `: ${msg}`,
-        es: (source: string, msg: string) =>
+        es: (source, msg) =>
             `Error al leer el archivo` + (source ? ` '${source}'` : ``) + `: ${msg}`
     },
     695: {
         en: () =>
-            `String source provided but not an http(s) URL and not running in Node.`,
+            `Source provided is not an http(s) URL and not running in Node.`,
         de: () =>
-            `String-Quelle angegeben, aber keine http(s)-URL und nicht in Node-Umgebung.`,
+            `Quelle angegeben ist keine http(s)-URL und nicht in Node-Umgebung.`,
         fr: () =>
-            `Source de type chaîne fournie mais pas une URL http(s) et pas dans Node.`,
+            `Source fournie n'est pas une URL http(s) et pas dans Node.`,
         es: () =>
-            `Fuente de cadena proporcionada pero no es una URL http(s) y no se ejecuta en Node.`
+            `La fuente proporcionada no es una URL http(s) y no se ejecuta en Node.`
     },
     696: {
         en: () =>
@@ -495,27 +552,33 @@ const messages: Record<number, Record<LanguageCode, (...args: any[]) => string>>
             `Tipo de fuente no compatible al leer un archivo como texto`
     },
     697: {
-        en: (format: string, errors: string) =>
+        en: (format, errors) =>
             `${format} package validation failed: ${errors}`,
-        de: (format: string, errors: string) =>
+        de: (format, errors) =>
             `${format} Paket-Validierung fehlgeschlagen: ${errors}`,
-        fr: (format: string, errors: string) =>
+        fr: (format, errors) =>
             `Échec de la validation du package ${format}: ${errors}`,
-        es: (format: string, errors: string) =>
+        es: (format, errors) =>
             `Error en la validación del paquete ${format}: ${errors}`
     },
+    698: {
+        en: (func) => `${func} not yet implemented`,
+        de: (func) => `${func} ist noch nicht implementiert`,
+        fr: (func) => `${func} pas encore implémenté`,
+        es: (func) => `${func} aún no implementado`
+    },
     699: {
-        en: (func: string) => `${func} not yet implemented`,
-        de: (func: string) => `${func} ist noch nicht implementiert`,
-        fr: (func: string) => `${func} pas encore implémenté`,
-        es: (func: string) => `${func} aún no implementado`
+        en: (msg) => msg.toString(),
+        de: (msg) => msg.toString(),
+        fr: (msg) => msg.toString(),
+        es: (msg) => msg.toString()
     }
 };
 
 /**
  * Get message in current language with fallback to English
  */
-function getMessage(code: number, ...args: any[]): string {
+function getMessage(code: number, ...args: (string | number | boolean)[]): string {
     const msgTemplate = messages[code];
     if (!msgTemplate) {
         return `Unknown error code ${code}`;
@@ -541,11 +604,11 @@ export class Msg {
      * @param code - Error code (600-699 for PIG-specific errors)
      * @param args - Parameters for the message template
      */
-    static create(code: number, ...args: any[]): IRsp {
+    static create(code: number, ...args: (string | number | boolean)[]): IRsp {
         return {
             status: code,
             statusText: getMessage(code, ...args),
-            ok: code > 199 && code < 300 || code === 0
+            ok: code >= 0 && code < 300
         };
     }
 }
@@ -562,18 +625,31 @@ export class Rsp {
      * @param responseType - Type of response (e.g., 'json', 'document', 'text')
      * @param args - Parameters for the message template (if code has a message)
      */
-    static create<T = unknown>(
+    static create<T>(
         code: number,
         response: T,
         responseType?: XMLHttpRequestResponseType,
-        ...args: any[]
+        ...args: (string | number | boolean)[]
     ): IRsp<T> {
         return {
             status: code,
             statusText: getMessage(code, ...args),
             response,
             responseType,
-            ok: code > 199 && code < 300 || code === 0
+            ok: code >= 0 && code < 300
         };
+    }
+    static log<T>(
+        code: number,
+        response: T,
+        responseType?: XMLHttpRequestResponseType,
+        ...args: (string | number | boolean)[]
+    ): IRsp<T> {
+        const msg = this.create(code,response,responseType,...args);
+        if (msg.ok)
+            LOG.info(msg)
+        else
+            LOG.error(msg);
+        return msg;
     }
 }

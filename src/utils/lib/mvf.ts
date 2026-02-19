@@ -6,12 +6,12 @@
  */
 /** Product Information Graph (PIG) - Multi-Vocabulary Facility
  *  Handles mapping between different vocabulary representations (JSON-LD, XML, internal format)
- *  Dependencies: helpers.ts (for JsonValue types and logger)
+ *  Dependencies: helpers.ts (for JsonValue types and LOG)
  *  Authors: oskar.dungern@gfse.org, ..
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { LIB, JsonPrimitive, JsonValue, JsonObject, logger } from './helpers';
+import { LIB, JsonPrimitive, JsonValue, JsonObject, LOG } from './helpers';
 
 // Map PIG metamodel attributes to/from JSON-LD keys;
 // all other keys are derived from the ontology and handled dynamically:
@@ -21,30 +21,30 @@ const FROM_JSONLD = new Map<string, string>([
     ['@type', 'hasClass'],
     ['@value', 'value'],
     ['@language', 'lang'],
-    ['pig:revision', 'revision'],
-    ['pig:priorRevision', 'priorRevision'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     ['pig:specializes', 'specializes'],
-    ['pig:icon', 'icon'],
-    ['xs:simpleType', 'datatype'],
-    ['sh:datatype', 'datatype'],
-    ['xs:minOccurs', 'minCount'],
-    ['sh:minCount', 'minCount'],
-    ['xs:maxOccurs', 'maxCount'],
-    ['sh:maxCount', 'maxCount'],
-    ['xs:maxLength', 'maxLength'],
-    ['sh:maxLength', 'maxLength'],
-    ['xs:default', 'defaultValue'],
-    ['sh:defaultValue', 'defaultValue'],
-    ['xs:pattern', 'pattern'],
-    ['sh:pattern', 'pattern'],
     ['pig:itemType', 'itemType'],
+    ['pig:revision', 'revision'],
+    ['pig:priorRevision', 'priorRevision'],
     ['pig:eligibleProperty', 'eligibleProperty'],
     ['pig:eligibleSourceLink', 'eligibleSourceLink'],
     ['pig:eligibleTargetLink', 'eligibleTargetLink'],
     ['pig:eligibleEndpoint', 'eligibleEndpoint'],
     ['pig:eligibleValue', 'eligibleValue'],
+    ['pig:Icon', 'icon'],
+//    ['xs:simpleType', 'datatype'], ... doesn't make sense as long as rejected by the schema
+    ['sh:datatype', 'datatype'],
+//    ['xs:minOccurs', 'minCount'],
+    ['sh:minCount', 'minCount'],
+//    ['xs:maxOccurs', 'maxCount'],
+    ['sh:maxCount', 'maxCount'],
+//    ['xs:maxLength', 'maxLength'],
+    ['sh:maxLength', 'maxLength'],
+//    ['xs:default', 'defaultValue'],
+    ['sh:defaultValue', 'defaultValue'],
+//    ['xs:pattern', 'pattern'],
+    ['sh:pattern', 'pattern'],
     ['dcterms:title', 'title'],
     ['dcterms:description', 'description'],
     ['dcterms:created', 'created'],
@@ -64,10 +64,12 @@ const FROM_XML = new Map<string, string>([
     ['pig:revision', 'revision'],
     ['pig:priorRevision', 'priorRevision'],
     ['rdf:type', 'hasClass'],
+    ['pig:hasClass', 'hasClass'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     ['pig:specializes', 'specializes'],
-    ['pig:icon', 'icon'],
+    ['pig:icon', 'icon'],  // older files may use 'pig:icon' instead of 'pig:Icon'
+    ['pig:Icon', 'icon'],
     ['sh:datatype', 'datatype'],
     ['xs:simpleType', 'datatype'],
     ['sh:minCount', 'minCount'],
@@ -96,30 +98,35 @@ const TO_XML = new Map<string, string>(
     Array.from(FROM_XML.entries()).map(([a, b]) => [b, a])
 );
 
+// Map entries with the same keys: The second prevails.
+const FROM_REQIF = new Map<string, string>([
+]);
+const TO_REQIF = new Map<string, string>(
+    Array.from(FROM_REQIF.entries()).map(([a, b]) => [b, a])
+);
+
 /**
- * Multi-Vocabulary Facilities object
- * Provides mapping between different vocabulary representations
+ * Multi-Vocabulary Facility object
+ * Provides mapping between different vocabularies
  */
 export const MVF = {
     /**
-     * Mapping from internal format to JSON-LD
+     * Mapping between internal format and JSON-LD
      */
     toJSONLD: TO_JSONLD,
-
-    /**
-     * Mapping from JSON-LD to internal format
-     */
     fromJSONLD: FROM_JSONLD,
 
     /**
-     * Mapping from internal format to XML
+     * Mapping between internal format and XML
      */
     toXML: TO_XML,
+    fromXML: FROM_XML,
 
     /**
-     * Mapping from XML to internal format
+     * Mapping between internal format and ReqIF
      */
-    fromXML: FROM_XML,
+    toReqIF: TO_REQIF,
+    fromReqIF: FROM_REQIF,
 
     /**
      * Rename JSON object keys (tags) according to a mapping.
@@ -170,7 +177,7 @@ export const MVF = {
 
                 if (mappedKey !== key) {
                     if (Object.prototype.hasOwnProperty.call(src, mappedKey)) {
-                        logger.warn(`renameJsonTags: overwriting key '${mappedKey}' while renaming '${key}'`);
+                        LOG.warn(`renameJsonTags: overwriting key '${mappedKey}' while renaming '${key}'`);
                     }
                     src[mappedKey] = newValue;
                     delete src[key];

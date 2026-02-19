@@ -21,7 +21,7 @@
             "@value": "Project 'Very Simple Model (FMC) with Requirements'"
         }
     ],
-    "dcterms:modified": "2026-01-17T22:38:19.595Z",
+    "dcterms:modified": "2026-02-15T07:11:17.995Z",
     "@graph": [
         {
             "@id": "pig:Entity",
@@ -36,15 +36,15 @@
             ],
             "dcterms:description": [
                 {
-                    "@value": "A PIG meta-model element used for entities (aka resources or artifacts)."
+                    "@value": "A PIG meta-model item used for entities (aka resources or artifacts)."
                 }
             ],
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 },
                 {
-                    "@id": "pig:icon"
+                    "@id": "pig:Icon"
                 }
             ]
         },
@@ -68,12 +68,12 @@
             ],
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 }
             ]
         },
         {
-            "@id": "pig:HierarchyRoot",
+            "@id": "pig:Root",
             "pig:specializes": {
                 "@id": "pig:Organizer"
             },
@@ -82,12 +82,12 @@
             },
             "dcterms:title": [
                 {
-                    "@value": "Hierarchy Root"
+                    "@value": "Root"
                 }
             ],
             "dcterms:description": [
                 {
-                    "@value": "A subclass of PIG organizer serving as a root for hierarchically organized graph elements."
+                    "@value": "A subclass of pig:Organizer serving as a root for trees (hierarchically organized graph elements)."
                 }
             ],
             "pig:eligibleProperty": [
@@ -99,9 +99,38 @@
             ]
         },
         {
-            "@id": "pig:Outline",
+            "@id": "pig:Tree",
             "pig:specializes": {
                 "@id": "pig:Organizer"
+            },
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Tree"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A subclass of pig:Organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
+                }
+            ],
+            "pig:eligibleProperty": [
+                {
+                    "@id": "pig:Category"
+                }
+            ],
+            "pig:eligibleTargetLink": [
+                {
+                    "@id": "pig:lists"
+                }
+            ]
+        },
+        {
+            "@id": "pig:Outline",
+            "pig:specializes": {
+                "@id": "pig:Tree"
             },
             "pig:itemType": {
                 "@id": "pig:Entity"
@@ -113,12 +142,12 @@
             ],
             "dcterms:description": [
                 {
-                    "@value": "A subclass of PIG organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
+                    "@value": "A subclass of pig:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
                 }
             ],
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 }
             ],
             "pig:eligibleTargetLink": [
@@ -142,15 +171,21 @@
             ],
             "dcterms:description": [
                 {
-                    "@value": "A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements."
+                    "@value": "A subclass of pig:Organizer representing a model view (diagram) using a certain notation showing selected model elements."
                 }
             ],
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 },
                 {
-                    "@id": "pig:icon"
+                    "@id": "pig:Icon"
+                },
+                {
+                    "@id": "pig:Diagram"
+                },
+                {
+                    "@id": "pig:Notation"
                 }
             ],
             "pig:eligibleTargetLink": [
@@ -175,23 +210,17 @@
             ],
             "dcterms:description": [
                 {
-                    "@value": "A PIG meta-model element used for reified relationships (aka predicates)."
+                    "@value": "A PIG meta-model item used for reified relationships (aka predicates)."
                 }
             ],
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 },
                 {
-                    "@id": "pig:icon"
+                    "@id": "pig:Icon"
                 }
-            ],
-            "pig:eligibleSourceLink": {
-                "@id": "pig:SourceLink"
-            },
-            "pig:eligibleTargetLink": {
-                "@id": "pig:TargetLink"
-            }
+            ]
         },
         {
             "@id": "pig:Property",
@@ -206,7 +235,7 @@
             ],
             "dcterms:description": [
                 {
-                    "@value": "A PIG meta-model element used for properties (aka attributes)."
+                    "@value": "A PIG meta-model item used for properties (aka attributes)."
                 }
             ],
             "sh:datatype": {
@@ -214,7 +243,7 @@
             }
         },
         {
-            "@id": "pig:icon",
+            "@id": "pig:Icon",
             "pig:specializes": {
                 "@id": "pig:Property"
             },
@@ -238,9 +267,33 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "pig:category",
+            "@id": "pig:Diagram",
             "pig:specializes": {
-                "@id": "dcterms:type"
+                "@id": "pig:Property"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Diagram"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A diagram illustrating the resource or a link to a diagram."
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "pig:Category",
+            "pig:specializes": {
+                "@id": "pig:Property"
             },
             "pig:itemType": {
                 "@id": "pig:Property"
@@ -259,6 +312,30 @@
                 "@id": "xs:string"
             },
             "sh:maxLength": 32,
+            "sh:minCount": 0,
+            "sh:maxCount": 1
+        },
+        {
+            "@id": "pig:Notation",
+            "pig:specializes": {
+                "@id": "pig:Category"
+            },
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Notation"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A reference to a notation defining the syntax and semantics of a diagram."
+                }
+            ],
+            "sh:datatype": {
+                "@id": "xs:string"
+            },
             "sh:minCount": 0,
             "sh:maxCount": 1
         },
@@ -283,7 +360,7 @@
             ],
             "dcterms:description": [
                 {
-                    "@value": "Connects a reified relationship with its source or target. Also connects an organizer to a model element"
+                    "@value": "A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element."
                 }
             ]
         },
@@ -486,36 +563,6 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "SpecIF:Diagram",
-            "dcterms:title": [
-                {
-                    "@value": "Diagram",
-                    "@language": "en"
-                },
-                {
-                    "@value": "Diagramm",
-                    "@language": "de"
-                },
-                {
-                    "@value": "Diagramme",
-                    "@language": "fr"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "A diagram illustrating the resource or a link to a diagram.",
-                    "@language": "en"
-                }
-            ],
-            "@type": "owl:DatatypeProperty",
-            "pig:itemType": {
-                "@id": "pig:Property"
-            },
-            "sh:datatype": {
-                "@id": "xs:string"
-            }
-        },
-        {
             "@id": "SpecIF:Priority",
             "dcterms:title": [
                 {
@@ -599,6 +646,26 @@
             ]
         },
         {
+            "@id": "o:PC-Diagram-10199275557",
+            "dcterms:title": [
+                {
+                    "@value": "pig:Diagram"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "A diagram illustrating the resource or a link to a diagram."
+                }
+            ],
+            "@type": "owl:DatatypeProperty",
+            "pig:itemType": {
+                "@id": "pig:Property"
+            },
+            "sh:datatype": {
+                "@id": "xs:string"
+            }
+        },
+        {
             "@id": "SpecIF:Paragraph",
             "dcterms:title": [
                 {
@@ -629,10 +696,10 @@
             },
             "pig:eligibleProperty": [
                 {
-                    "@id": "SpecIF:Diagram"
+                    "@id": "pig:Diagram"
                 },
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 }
             ],
             "pig:eligibleTargetLink": [
@@ -674,12 +741,12 @@
             "pig:specializes": {
                 "@id": "pig:Entity"
             },
-            "pig:icon": {
+            "pig:Icon": {
                 "@value": "&#x25A1;"
             },
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 }
             ],
             "pig:eligibleTargetLink": [
@@ -721,12 +788,12 @@
             "pig:specializes": {
                 "@id": "pig:Entity"
             },
-            "pig:icon": {
+            "pig:Icon": {
                 "@value": "&#x25CB;"
             },
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 }
             ],
             "pig:eligibleTargetLink": [
@@ -768,12 +835,12 @@
             "pig:specializes": {
                 "@id": "pig:Entity"
             },
-            "pig:icon": {
+            "pig:Icon": {
                 "@value": "&#x2662;"
             },
             "pig:eligibleProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "pig:Category"
                 }
             ],
             "pig:eligibleTargetLink": [
@@ -815,12 +882,46 @@
             "pig:specializes": {
                 "@id": "pig:Entity"
             },
-            "pig:icon": {
+            "pig:Icon": {
                 "@value": "&#8623;"
             },
             "pig:eligibleProperty": [
                 {
                     "@id": "SpecIF:Priority"
+                }
+            ],
+            "pig:eligibleTargetLink": [
+            ],
+            "pig:itemType": {
+                "@id": "pig:Entity"
+            }
+        },
+        {
+            "@id": "o:RC-Paragraph-10199275588",
+            "dcterms:title": [
+                {
+                    "@value": "SpecIF:Paragraph"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
+                    "@language": "en"
+                },
+                {
+                    "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
+                    "@language": "de"
+                }
+            ],
+            "pig:specializes": {
+                "@id": "pig:Entity"
+            },
+            "pig:eligibleProperty": [
+                {
+                    "@id": "o:PC-Diagram-10199275557"
+                },
+                {
+                    "@id": "pig:Category"
                 }
             ],
             "pig:eligibleTargetLink": [
@@ -1174,7 +1275,7 @@
                     "@value": "IT-Integration: FiCo-Application and FiCo-Data"
                 }
             ],
-            "SpecIF:Diagram": [
+            "pig:Diagram": [
                 {
                     "@value": "<p class=\"inline-label\">Model Diagram:</p><p><object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object></p>",
                     "pig:itemType": {
@@ -1182,7 +1283,7 @@
                     }
                 }
             ],
-            "pig:category": [
+            "pig:Category": [
                 {
                     "@value": "FMC Block Diagram",
                     "pig:itemType": {
@@ -1403,11 +1504,11 @@
         },
         {
             "@id": "d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements",
-            "@type": "pig:HierarchyRoot",
+            "@type": "pig:Root",
             "pig:itemType": {
                 "@id": "pig:anEntity"
             },
-            "dcterms:modified": "2026-01-17T22:38:20.041Z",
+            "dcterms:modified": "2026-02-15T07:11:18.173Z",
             "dcterms:title": [
                 {
                     "@value": "Hierarchy Root"
@@ -1466,13 +1567,13 @@
         {
             "@id": "d:HR-Folder-Introduction",
             "@type": "pig:Outline",
-            "dcterms:modified": "2026-01-17T22:38:19.821Z",
+            "dcterms:modified": "2026-02-15T07:11:18.087Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:category": [
+            "pig:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
                     "pig:itemType": {
@@ -1528,13 +1629,13 @@
         {
             "@id": "d:HR-Folder-Requirements",
             "@type": "pig:Outline",
-            "dcterms:modified": "2026-01-17T22:38:19.821Z",
+            "dcterms:modified": "2026-02-15T07:11:18.087Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:category": [
+            "pig:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
                     "pig:itemType": {
@@ -1578,13 +1679,13 @@
         {
             "@id": "d:HR-Folder-SystemModel",
             "@type": "pig:Outline",
-            "dcterms:modified": "2026-01-17T22:38:19.821Z",
+            "dcterms:modified": "2026-02-15T07:11:18.087Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:category": [
+            "pig:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
                     "pig:itemType": {
@@ -1607,13 +1708,13 @@
         {
             "@id": "d:FolderGlossary-10875487071",
             "@type": "pig:Outline",
-            "dcterms:modified": "2026-01-17T22:38:13.953Z",
+            "dcterms:modified": "2026-02-15T07:11:11.045Z",
             "dcterms:title": [
                 {
                     "@value": "Model Elements (Glossary)"
                 }
             ],
-            "pig:category": [
+            "pig:Category": [
                 {
                     "@value": "SpecIF:Glossary",
                     "pig:itemType": {
@@ -1642,13 +1743,13 @@
         {
             "@id": "d:HR-FolderGlossary-10875487071",
             "@type": "pig:Outline",
-            "dcterms:modified": "2026-01-17T22:38:19.821Z",
+            "dcterms:modified": "2026-02-15T07:11:18.087Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:category": [
+            "pig:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
                     "pig:itemType": {

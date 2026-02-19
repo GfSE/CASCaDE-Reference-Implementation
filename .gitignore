@@ -4,6 +4,7 @@ node_modules
 
 /tests/e2e/videos/
 /tests/e2e/screenshots/
+/test-results/
 
 # local env files
 .env.local
@@ -24,3 +25,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Auto-generated build info
+# src/utils/lib/build-info.ts

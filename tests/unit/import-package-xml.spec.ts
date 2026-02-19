@@ -1,104 +1,95 @@
+/*!
+ * Unit tests for XML package import
+ * Dynamically discovers and tests all .xml files in tests/data/XML/
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 import { importXML } from '../../src/utils/import/xml/import-package-xml';
 import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 
+/**
+ * Recursively find all *.xml files in a directory and its subdirectories
+ * @param dir - Directory to search
+ * @param fileList - Accumulated list of files (for recursion)
+ * @returns Array of absolute file paths
+ */
+function findXmlFiles(dir: string, fileList: string[] = []): string[] {
+    const files = fs.readdirSync(dir);
+
+    files.forEach(file => {
+        const filePath = path.join(dir, file);
+        const stat = fs.statSync(filePath);
+
+        if (stat.isDirectory()) {
+            // Recursively search subdirectories
+            findXmlFiles(filePath, fileList);
+        } else if (file.endsWith('.xml')) {
+            // Add XML files to the list
+            fileList.push(filePath);
+        }
+    });
+
+    return fileList;
+}
+
 describe('importXML (file system)', () => {
-    // List of relative filenames (relative to this test file). Add more entries as needed.
-    const filenames: string[] = [
-        //"../data/XML/05/Project 'Requirement with Enumerated Property'.pig.xml",
-        //"../data/XML/11/Alice.pig.xml",
-        "../data/XML/21/Project 'Very Simple Model (FMC) with Requirements'.pig.xml",
-        //"../data/XML/22/Small Autonomous Vehicle.pig.xml"
-        // add more test files here, e.g.
-        // "../data/XML/another-sample.pig.xml"
-    ];
+    // Automatically discover all *.xml files in tests/data/XML and subdirectories
+    const testFilesDir = path.resolve(__dirname, '../data/XML');
+    const xmlFiles: string[] = findXmlFiles(testFilesDir);
+
     let processedCount = 0;
 
-    // Create a separate Jest test for each filename.
-    // If a file is missing we use test.skip so CI/test run remains stable.
-    filenames.forEach((filenameRel) => {
-        //    console.debug('filenameRel', filenameRel);
-        const testFile = path.resolve(__dirname, filenameRel);
-        const testName = path.basename(testFile);
-        const runner = fs.existsSync(testFile) ? test : test.skip;
-        //    console.debug('testFile', testFile, testName, runner);
+    // Log discovered files for debugging
+    beforeAll(() => {
+        let str = `${xmlFiles.length} XML test files:`;
+        xmlFiles.forEach(f => str += `\n  - ${path.relative(testFilesDir, f)}`);
+        console.log(str);
+    });
+    // Ensure console flush before test ends
+    afterEach(async () => {
+        await new Promise(resolve => setImmediate(resolve));
+    });
 
-        runner(`imports ${testName} and instantiates PIG classes`, async () => {
+    // Create a separate Jest test for each filename
+    xmlFiles.forEach((testFile) => {
+        const relativePath = path.relative(testFilesDir, testFile);
+        const testName = relativePath;
+
+        test(`imports ${testName} and instantiates PIG classes`, async () => {
             // import and test
             const rsp = await importXML(testFile);
             if (!rsp.ok)
-                console.warn('importXML', rsp.status, rsp.statusText);
-            // expect(rsp.ok).toBe(true);
-            // expect(rsp.status).toSatisfy((status: number) => [0, 691].includes(status)); ... needs jest-extended
-            // expect(rsp.status).toBeOneOf([0, 691]);  ... needs jest-extended
-            expect(rsp.status === 0 || rsp.status === 691).toBe(true); // some or all items have been processed
+                console.warn(`importXML ${testName}:`, rsp.status, rsp.statusText);
+
+            // expect status 0 (success) or 691 (partial success with warnings)
+            expect(rsp.status === 0 || rsp.status === 691).toBe(true);
+            expect(rsp.response).toBeDefined();
             processedCount++;
 
             const instances = rsp.response as TPigItem[];
-            //    console.debug('instances', instances);
 
             // basic expectations
             expect(Array.isArray(instances)).toBe(true);
             expect(instances.length).toBeGreaterThan(0);
 
-            // console.debug(`import-xml: `,instances);
+            // validate each instantiated item
             instances.forEach((itm, index) => {
-                //    console.info(`Instance ${index}:`, itm.status().statusText ?? itm.status().status);
-                // console.debug(JSON.stringify(itm.get(), null, 2));
                 expect(itm.status().ok).toBe(true);
-                // each instantiated item must have a successful status
-                // additional per-item assertions can be added here
-                //    expect(itm).toBeInstanceOf(Property);
-                //    expect(inst.id).toBe('dcterms:type');
-                //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
-                //    expect(inst.datatype).toBe('xs:string');
+                // Log any warnings for debugging
+                if (itm.status().status !== 0) {
+                    console.warn(`  Item ${index} (${itm.get()?.id}): ${itm.status().statusText}`);
+                }
             });
+
+            console.log(`  ✓ ${testName}: ${instances.length} items`);
         });
     });
-    test('Check the number of files processed', () => {
-        // Ensure that all files were processed:
-        expect(processedCount).toBe(filenames.length);
-    });
 
-    /*    test('reads XML from multiple files and instantiates PIG classes', async () => {
-            let processedCount = 0;
-    
-            for (const filenameRel of filenames) {
-                const testFile = path.resolve(__dirname, filenameRel);
-                if (!fs.existsSync(testFile)) {
-                    // Skip missing test files but warn so missing data is visible in CI logs
-                    // eslint-disable-next-line no-console
-                    console.warn(`import-xml test: file not found, skipping: ${testFile}`);
-                    continue;
-                }
-            //    console.debug('testFile', testFile);
-    
-                // import and test
-                // awaits the importer for each file in sequence
-                const rsp = await importXML(testFile);
-                const instances = rsp.response as TPigItem[];
-                console.debug('instances', instances);
-    
-                // basic expectations
-                expect(Array.isArray(instances)).toBe(true);
-                expect(instances.length).toBeGreaterThan(0);
-    
-                instances.forEach((itm, index) => {
-                    // each instantiated item must have a successful status
-                    expect(itm.status().ok).toBe(true);
-                    // further per-item assertions can be added here
-                    //    expect(itm).toBeInstanceOf(Property);
-                    //    expect(inst.id).toBe('dcterms:type');
-                    //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
-                    //    expect(inst.datatype).toBe('xs:string');
-                    console.debug(`Instance ${index}:`, itm);
-                });
-    
-                processedCount++;
-            }
-    
-            // Ensure that all files were processed:
-            expect(processedCount).toBe(filenames.length);
-        }); */
+    // Verify that all discovered files were processed
+    test('Check the number of files processed', () => {
+        expect(processedCount).toBe(xmlFiles.length);
+    });
 });

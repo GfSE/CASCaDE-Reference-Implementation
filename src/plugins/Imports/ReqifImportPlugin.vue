@@ -19,31 +19,40 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import { reqif2pig } from '../../utils/import/ReqIF/reqif2pig';
+    import { Options, Vue } from 'vue-class-component';
+    import { importReqif } from '../../utils/import/ReqIF/import-reqif';
+    import { PIN } from '../../utils/lib/platform-independence';
 
-@Options({
-  data() {
-    return {
-        dialog: false,
-        selectedFiles: []
-    };
-  },
-  methods: {
-    submitFiles() {
-        const ReqifTranslator = new reqif2pig();
-        let translatorResponse = ReqifTranslator.toPig(this.selectedFiles);
-        console.log(translatorResponse.ok);
-        console.log(translatorResponse.status);
+    @Options({
+        data() {
+            return {
+                dialog: false,
+                selectedFiles: []
+            };
+        },
+        methods: {
+            async submitFiles() {
+                for (const file of this.selectedFiles) {
+                    const readResponse = await PIN.readFileAsText(file)
+                    const rspContent = readResponse.response
+                    const importResponse = await importReqif(rspContent.response, file)
+                    if (importResponse.ok) {
+                        // handle successful import, e.g., store the PIG items and update the UI
+                        const importPackage = importResponse.response
+                        console.log(typeof importPackage)
+                    } else {
+                        // handle import error, e.g., log/show an error message
+                    }
+                }
 
-        // reset variables
-        this.dialog = false;
-        this.selectedFiles = [];
-    }
-  },
-})
+                // reset variables
+                this.dialog = false;
+                this.selectedFiles = [];
+            }
+        }
+    })
 
-export default class ReqifImportComponent extends Vue {}
+    export default class ReqifImportComponent extends Vue { }
 </script>
 
 <style scoped></style>

@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/aPackage.json",
+    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/aPackage.json",
     "title": "PIG APackage JSON-LD Schema",
     "description": "Validates complete JSON-LD package documents with @context (namespace and vocabulary definitions) as well as @graph (array of PIG items). The graph contains a mix of item classes (Property, Link, Entity, Relationship) and instances (anEntity, aRelationship). Package-level metadata includes optional dcterms:modified, dcterms:creator, dcterms:title, and dcterms:description. Validates each item against its corresponding schema based on pig:itemType.",
     "type": "object",
@@ -114,7 +114,7 @@
                             }
                         },
                         "then": {
-                            "$ref": "http://product-information-graph.org/schema/2026-01-12/jsonld/anEntity.json"
+                            "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/anEntity.json"
                         }
                     },
                     {
@@ -130,7 +130,7 @@
                             }
                         },
                         "then": {
-                            "$ref": "http://product-information-graph.org/schema/2026-01-12/jsonld/aRelationship.json"
+                            "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/aRelationship.json"
                         }
                     },
                     {
@@ -146,7 +146,7 @@
                             }
                         },
                         "then": {
-                            "$ref": "http://product-information-graph.org/schema/2026-01-12/jsonld/Property.json"
+                            "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Property.json"
                         }
                     },
                     {
@@ -162,7 +162,7 @@
                             }
                         },
                         "then": {
-                            "$ref": "http://product-information-graph.org/schema/2026-01-12/jsonld/Link.json"
+                            "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Link.json"
                         }
                     },
                     {
@@ -178,7 +178,7 @@
                             }
                         },
                         "then": {
-                            "$ref": "http://product-information-graph.org/schema/2026-01-12/jsonld/Entity.json"
+                            "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Entity.json"
                         }
                     },
                     {
@@ -194,7 +194,7 @@
                             }
                         },
                         "then": {
-                            "$ref": "http://product-information-graph.org/schema/2026-01-12/jsonld/Relationship.json"
+                            "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Relationship.json"
                         }
                     }
                 ]
@@ -215,6 +215,7 @@
       "properties": {
         "@value": {
           "type": "string",
+          "minLength": 1,
           "description": "The actual text content"
         },
         "@language": {

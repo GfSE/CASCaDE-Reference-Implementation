@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
 
@@ -16,7 +17,7 @@ const vuetify = createVuetify({
 
 const app = createApp(App);
 
-app.use(vuetify).use(router).use(ajvPlugin);
+app.use(vuetify).use(router).use(ajvPlugin).use(createPinia());
 
 // parameters: root, recursive, file to match
 const pluginFiles = require.context('./plugins', true, /\.ts$/);

@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/Link.json",
+    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/Link.json",
     "title": "PIG Link JSON-LD Schema",
     "description": "Validates Link class definitions that specify navigable connections between items. Defines eligible endpoint classes (pig:eligibleEndpoint) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., 'contains' / 'is contained by').",
     "type": "object",
@@ -89,6 +89,7 @@
             "properties": {
                 "@value": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "The actual text content"
                 },
                 "@language": {

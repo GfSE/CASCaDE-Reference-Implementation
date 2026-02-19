@@ -2,6 +2,10 @@
  * Unit tests for PIG metaclasses XML methods
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ * Note:
+ * - a roundtrip test via setXML() and getXML() and eligible (enumerated) values
+ *   is contained in pig-package-constraints-valueRanges.spec.ts
  */
 
 import {
@@ -120,9 +124,9 @@ describe('PIG Metaclasses XML Import', () => {
             expect(germanTitle?.value).toBe('hoch');
         });
 
-        it('should import pig:icon property', () => {
+        it('should import pig:Icon property', () => {
             const xmlInput = `
-                <pig:Property id="pig:icon">
+                <pig:Property id="pig:Icon">
                     <pig:specializes>pig:Property</pig:specializes>
                     <dcterms:title>has icon</dcterms:title>
                     <dcterms:description>Specifies an icon for a model element (entity or relationship).</dcterms:description>
@@ -227,8 +231,8 @@ describe('PIG Metaclasses XML Import', () => {
                 <pig:Entity id="pig:Entity" rdf:type="owl:Class">
                     <dcterms:title>Entity</dcterms:title>
                     <dcterms:description>A PIG meta-model element used for entities (aka resources or artifacts).</dcterms:description>
-                    <pig:eligibleProperty>pig:category</pig:eligibleProperty>
-                    <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+                    <pig:eligibleProperty>pig:Category</pig:eligibleProperty>
+                    <pig:eligibleProperty>pig:Icon</pig:eligibleProperty>
                 </pig:Entity>
             `;
 
@@ -268,8 +272,8 @@ describe('PIG Metaclasses XML Import', () => {
                         <p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p>
                     </dcterms:description>
                     <pig:specializes>pig:Entity</pig:specializes>
-                    <pig:icon>&#x25A1;</pig:icon>
-                    <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+                    <pig:Icon>&#x25A1;</pig:Icon>
+                    <pig:eligibleProperty>pig:Category</pig:eligibleProperty>
                 </pig:Entity>
             `;
 
@@ -291,7 +295,7 @@ describe('PIG Metaclasses XML Import', () => {
                         <p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform.</p>
                     </dcterms:description>
                     <pig:specializes>pig:Entity</pig:specializes>
-                    <pig:icon>&#8623;</pig:icon>
+                    <pig:Icon>&#8623;</pig:Icon>
                     <pig:eligibleProperty>SpecIF:Priority</pig:eligibleProperty>
                 </pig:Entity>
             `;
@@ -311,8 +315,8 @@ describe('PIG Metaclasses XML Import', () => {
                 <pig:Relationship id="pig:Relationship" rdf:type="owl:Class">
                     <dcterms:title>Relationship</dcterms:title>
                     <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
-                    <pig:eligibleProperty>pig:category</pig:eligibleProperty>
-                    <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+                    <pig:eligibleProperty>pig:Category</pig:eligibleProperty>
+                    <pig:eligibleProperty>pig:Icon</pig:eligibleProperty>
                     <pig:eligibleSourceLink>pig:SourceLink</pig:eligibleSourceLink>
                     <pig:eligibleTargetLink>pig:TargetLink</pig:eligibleTargetLink>
                 </pig:Relationship>
@@ -407,7 +411,7 @@ describe('PIG Metaclasses XML Import', () => {
                             </p>
                         </value>
                     </pig:aProperty>
-                    <pig:aProperty rdf:type="pig:category">
+                    <pig:aProperty rdf:type="pig:Category">
                         <value>FMC Block Diagram</value>
                     </pig:aProperty>
                     <pig:aTargetLink rdf:type="pig:shows">
@@ -428,7 +432,7 @@ describe('PIG Metaclasses XML Import', () => {
             expect(anEntity.status().ok).toBe(true);
 
             expect(anEntity.hasProperty?.length).toBe(2);
-            expect(anEntity.hasProperty[1].hasClass).toBe('pig:category');
+            expect(anEntity.hasProperty[1].hasClass).toBe('pig:Category');
 
         });
 

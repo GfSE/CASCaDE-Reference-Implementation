@@ -54,6 +54,7 @@
             <dcterms:description>A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.</dcterms:description>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
             <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:diagram</pig:eligibleProperty>
             <pig:eligibleTargetLink>pig:shows</pig:eligibleTargetLink>
             <pig:eligibleTargetLink>pig:depicts</pig:eligibleTargetLink>
         </pig:Entity>
@@ -64,8 +65,6 @@
             <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
             <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
-            <pig:eligibleSourceLink>pig:SourceLink</pig:eligibleSourceLink>
-            <pig:eligibleTargetLink>pig:TargetLink</pig:eligibleTargetLink>
         </pig:Relationship>
 
         <!-- Metamodel: Properties -->
@@ -90,7 +89,7 @@
         </pig:Property>
 
         <pig:Property id="pig:category">
-            <pig:specializes>dcterms:type</pig:specializes>
+            <pig:specializes>pig:Property</pig:specializes>
             <dcterms:title>has category</dcterms:title>
             <dcterms:description>Specifies a category for an element (entity, relationship or organizer).</dcterms:description>
             <xs:simpleType>
@@ -207,7 +206,7 @@
         </pig:Property>
 
         <!-- SpecIF Properties -->
-        <pig:Property id="SpecIF:Diagram" rdf:type="owl:DatatypeProperty">
+        <pig:Property id="pig:diagram" rdf:type="owl:DatatypeProperty">
             <dcterms:title xml:lang="en">Diagram</dcterms:title>
             <dcterms:title xml:lang="de">Diagramm</dcterms:title>
             <dcterms:title xml:lang="fr">Diagramme</dcterms:title>
@@ -254,7 +253,7 @@
                 <p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>
             </dcterms:description>
             <pig:specializes>pig:Entity</pig:specializes>
-            <pig:eligibleProperty>SpecIF:Diagram</pig:eligibleProperty>
+            <pig:eligibleProperty>pig:diagram</pig:eligibleProperty>
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
 
@@ -486,7 +485,7 @@
                 <p>The data store MUST support a total volume up to 850 GB.</p>
             </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
-                <value>SpecIF:priorityHigh</value>
+                <idRef>SpecIF:priorityHigh</idRef>
             </pig:aProperty>
         </pig:anEntity>
 
@@ -497,7 +496,7 @@
                 <p>The data store MUST be consistent at all times.</p>
             </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
-                <value>SpecIF:priorityHigh</value>
+                <idRef>SpecIF:priorityHigh</idRef>
             </pig:aProperty>
         </pig:anEntity>
 
@@ -508,7 +507,7 @@
                 <p>The system SHOULD respond on user queries within 300 ms.</p>
             </dcterms:description>
             <pig:aProperty rdf:type="SpecIF:Priority">
-                <value>SpecIF:priorityMedium</value>
+                <idRef>SpecIF:priorityMedium</idRef>
             </pig:aProperty>
         </pig:anEntity>
 
@@ -516,7 +515,7 @@
         <pig:anEntity id="d:Diagram-aec0df7900010000017001eaf53e8876" rdf:type="pig:View">
             <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
             <dcterms:title>IT-Integration: FiCo-Application and FiCo-Data</dcterms:title>
-            <pig:aProperty rdf:type="SpecIF:Diagram">
+            <pig:aProperty rdf:type="pig:diagram">
                 <value>
                     <p class="inline-label">Model Diagram:</p>
                     <p>

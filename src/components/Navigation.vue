@@ -8,6 +8,9 @@
     <v-navigation-drawer v-model="drawer" color="secondary">
       <v-list nav>
         <v-list-item border="md" href="/">
+            <v-list-item-title>Home</v-list-item-title>
+        </v-list-item>
+        <v-list-item border="md" href="/dashboards">
             <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
         <v-list-item border="md" href="/interfaces">
