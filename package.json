@@ -1,5 +1,5 @@
 {
-  "name": "cascade-pig",
+  "name": "CASCaRA_PIG-App",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -26,9 +26,7 @@
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.6.3",
-    "vuetify": "^3.10.5",
-    "xmldom": "^0.6.0",
-    "xslt3": "^2.7.0"
+    "vuetify": "^3.10.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",
@@ -64,5 +62,10 @@
   },
   "overrides": {
     "cross-spawn": ">=6.0.6"
+  },
+  "resolve": {
+    "alias": {
+      "xmldom": "@xmldom/xmldom"
+    }
   }
 }

@@ -32,6 +32,9 @@
  *      const doc = rsp.response as Document;
  *   };
  */
+import { LOG } from "./helpers";
+
+
 // type XMLHttpRequestResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text"
 export interface IRsp<T = unknown> {
     status: number;
@@ -87,6 +90,12 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: () => 'OK'
     },
     600: {
+        en: (txt) => `Error: ${txt}`,
+        de: (txt) => `Fehler: ${txt}`,
+        fr: (txt) => `Erreur: ${txt}`,
+        es: (txt) => `Error: ${txt}`
+    },
+    601: {
         en: (fromType, toType) => 
             `Cannot change the itemType (tried to change from ${fromType} to ${toType})`,
         de: (fromType, toType) => 
@@ -96,7 +105,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (fromType, toType) => 
             `No se puede cambiar el itemType (intento de ${fromType} a ${toType})`
     },
-    601: {
+    602: {
         en: (itemType) => 
             `'${itemType}' must have a hasClass reference`,
         de: (itemType) => 
@@ -108,7 +117,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
     },
 
     // Identifiable validation
-    602: {
+    603: {
         en: (fromId, toId) => 
             `Cannot change the id of an item (tried to change from ${fromId} to ${toId})`,
         de: (fromId, toId) => 
@@ -118,7 +127,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (fromId, toId) => 
             `No se puede cambiar el id de un elemento (intento de ${fromId} a ${toId})`
     },
-    603: {
+    604: {
         en: (fromSpec, toSpec) => 
             `Cannot change the specialization (tried to change from ${fromSpec} to ${toSpec})`,
         de: (fromSpec, toSpec) => 
@@ -127,6 +136,27 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `Impossible de changer la spécialisation (tentative de ${fromSpec} vers ${toSpec})`,
         es: (fromSpec, toSpec) => 
             `No se puede cambiar la especialización (intento de ${fromSpec} a ${toSpec})`
+    },
+
+    610: {
+        en: (op, act, exp) =>
+            `${op}: Delivered ${act} of ${exp} graph items`,
+        de: (op, act, exp) =>
+            `${op}: ${act} von ${exp} Graph-Elementen geliefert`,
+        fr: (op, act, exp) =>
+            `${op}: ${act} éléments de graphe sur ${exp} livrés`,
+        es: (op, act, exp) =>
+            `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
+    },
+    611: {
+        en: (op, act, exp) =>
+            `${op}: Created ${act} of ${exp} graph items`,
+        de: (op, act, exp) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
+        fr: (op, act, exp) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}`,
+        es: (op, act, exp) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
     },
 
 /*  currently not used:
@@ -412,14 +442,14 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `La instancia '${instanceId}' tiene ${actualCount} ocurrencia(s) de la propiedad '${propClassId}' pero ${issue}: se esperaba ${expectedCount}`
     },
     679: {
-        en: (op, act, exp) =>
-            `${op}: Created ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe créés sur ${exp}`,
-        es: (op, act, exp) =>
-            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
+        en: (itemId, propIndex, propClassId, msg) =>
+            `Value range validation failed for item '${itemId}' property[${propIndex}] of class '${propClassId}': ${msg}`,
+        de: (itemId, propIndex, propClassId, msg) =>
+            `Wertebereich-Validierung fehlgeschlagen für Element '${itemId}' property[${propIndex}] der Klasse '${propClassId}': ${msg}`,
+        fr: (itemId, propIndex, propClassId, msg) =>
+            `Échec de la validation de la plage de valeurs pour l'élément '${itemId}' property[${propIndex}] de la classe '${propClassId}': ${msg}`,
+        es: (itemId, propIndex, propClassId, msg) =>
+            `Falló la validación del rango de valores para el elemento '${itemId}' property[${propIndex}] de la clase '${propClassId}': ${msg}`
     },
 
     // Schema validation (680-689)
@@ -503,13 +533,13 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
     },
     695: {
         en: () =>
-            `String source provided but not an http(s) URL and not running in Node.`,
+            `Source provided is not an http(s) URL and not running in Node.`,
         de: () =>
-            `String-Quelle angegeben, aber keine http(s)-URL und nicht in Node-Umgebung.`,
+            `Quelle angegeben ist keine http(s)-URL und nicht in Node-Umgebung.`,
         fr: () =>
-            `Source de type chaîne fournie mais pas une URL http(s) et pas dans Node.`,
+            `Source fournie n'est pas une URL http(s) et pas dans Node.`,
         es: () =>
-            `Fuente de cadena proporcionada pero no es una URL http(s) y no se ejecuta en Node.`
+            `La fuente proporcionada no es una URL http(s) y no se ejecuta en Node.`
     },
     696: {
         en: () =>
@@ -578,7 +608,7 @@ export class Msg {
         return {
             status: code,
             statusText: getMessage(code, ...args),
-            ok: code > 199 && code < 300 || code === 0
+            ok: code >= 0 && code < 300
         };
     }
 }
@@ -595,7 +625,7 @@ export class Rsp {
      * @param responseType - Type of response (e.g., 'json', 'document', 'text')
      * @param args - Parameters for the message template (if code has a message)
      */
-    static create<T = unknown>(
+    static create<T>(
         code: number,
         response: T,
         responseType?: XMLHttpRequestResponseType,
@@ -606,7 +636,20 @@ export class Rsp {
             statusText: getMessage(code, ...args),
             response,
             responseType,
-            ok: code > 199 && code < 300 || code === 0
+            ok: code >= 0 && code < 300
         };
+    }
+    static log<T>(
+        code: number,
+        response: T,
+        responseType?: XMLHttpRequestResponseType,
+        ...args: (string | number | boolean)[]
+    ): IRsp<T> {
+        const msg = this.create(code,response,responseType,...args);
+        if (msg.ok)
+            LOG.info(msg)
+        else
+            LOG.error(msg);
+        return msg;
     }
 }

@@ -1,8 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/anEntity.json",
-    "title": "PIG AnEntity JSON-LD Schema",
-    "description": "Validates <strong>entity instances</strong> with actual property values and target link references. Includes mandatory metadata: @type (reference to Entity class), pig:revision, dcterms:modified timestamp, optional pig:priorRevision and dcterms:creator. Properties can have direct values (@value) or reference enumeration values (@id) as defined by its class. Target links reference other entity or relationship instances. Must have either dcterms:title or dcterms:description (or both) to convey meaning.",
+    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/aRelationship.json",
+    "title": "PIG ARelationship JSON-LD Schema",
+    "description": "Validates <strong>relationship instances</strong> representing directed, reified connections between items (i.e. entity or relationship instances). Similar metadata to entities, but additionally requires both source links (pig:aSourceLink) and target links (pig:aTargetLink) conforming to the class definition. Source and target links reference entity or relationship instances. Properties can carry contextual information about the relationship (e.g., traceability status, rationale, coverage analysis). Reification enables relationships to be first-class items with their own lifecycle and properties. Must have a dcterms:title and optionally a dcterms:description to convey meaning.",
     "type": "object",
     "properties": {
         "@id": {
@@ -10,7 +10,7 @@
         },
         "@type": {
             "$ref": "#/$defs/idString",
-            "description": "Reference to the Entity class this instance belongs to"
+            "description": "Reference to the Relationship class this instance belongs to"
         },
         "pig:itemType": {
             "type": "object",
@@ -18,8 +18,8 @@
             "properties": {
                 "@id": {
                     "type": "string",
-                    "enum": [ "pig:anEntity" ],
-                    "description": "The PigItemType for pig:anEntity"
+                    "enum": [ "pig:aRelationship" ],
+                    "description": "The PigItemType for pig:aRelationship"
                 }
             },
             "additionalProperties": false
@@ -42,11 +42,12 @@
         },
         "dcterms:creator": {
             "type": "string",
-            "description": "Creator/author of this entity instance"
+            "description": "Creator/author of this relationship instance"
         },
         "dcterms:title": {
             "type": "array",
             "description": "Multi-language titles",
+            "minItems": 1,
             "items": {
                 "$ref": "#/$defs/languageValue"
             }
@@ -54,6 +55,7 @@
         "dcterms:description": {
             "type": "array",
             "description": "Multi-language descriptions",
+            "minItems": 1,
             "items": {
                 "$ref": "#/$defs/languageValue"
             }
@@ -72,8 +74,8 @@
                         "properties": {
                             "@id": {
                                 "type": "string",
-                                "enum": [ "pig:aProperty", "pig:aTargetLink" ],
-                                "description": "Type of configurable item: property value or target link"
+                                "enum": [ "pig:aProperty", "pig:aSourceLink", "pig:aTargetLink" ],
+                                "description": "Type of configurable item: property value, source link, or target link"
                             }
                         },
                         "additionalProperties": false
@@ -84,7 +86,7 @@
                     },
                     "@id": {
                         "$ref": "#/$defs/idString",
-                        "description": "Reference ID for enumeration value or linked entity"
+                        "description": "Reference to enumeration value or linked entity/relationship"
                     }
                 },
                 "required": [ "pig:itemType" ],
@@ -127,13 +129,13 @@
                     },
                     {
                         "type": "object",
-                        "description": "aTargetLink to another entity or relationship",
+                        "description": "aSourceLink or aTargetLink to another entity or relationship",
                         "properties": {
                             "pig:itemType": {
                                 "type": "object",
                                 "properties": {
                                     "@id": {
-                                        "const": "pig:aTargetLink"
+                                        "enum": [ "pig:aSourceLink", "pig:aTargetLink" ]
                                     }
                                 }
                             }
@@ -153,28 +155,6 @@
         "pig:itemType",
         "@type",
         "dcterms:modified"
-    ],
-    "anyOf": [
-        {
-            "required": [ "dcterms:title" ],
-            "properties": {
-                "dcterms:title": {
-                    "type": "array",
-                    "minItems": 1
-                }
-            },
-            "description": "Must have at least one title"
-        },
-        {
-            "required": [ "dcterms:description" ],
-            "properties": {
-                "dcterms:description": {
-                    "type": "array",
-                    "minItems": 1
-                }
-            },
-            "description": "Must have at least one description"
-        }
     ],
     "additionalProperties": false,
     "$defs": {

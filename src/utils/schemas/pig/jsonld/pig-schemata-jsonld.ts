@@ -17,7 +17,10 @@
  * - use JSON Schema draft-07 (widely supported)
  * - use ajv for validation (fast, popular)
  * - these schemas validate JSON-LD documents (@graph, @context, @id, @type)
- * - schemata are loaded from external JSON files in the same directory
+ * - schemata are loaded from external JSON files in public/assets/jsonld/
+ * - Browser: fetches via HTTP from /assets/jsonld/
+ * - Node.js: reads from local public/assets/jsonld/ directory
+ * - Single source of truth: schema files stored only in public/assets/jsonld/
  *
  * Limitations:
  * - xs:datatype values are only pattern-validated here; specific accepted values are validated in code
@@ -37,23 +40,45 @@
 import { ajv } from '../../../../plugins/ajv';
 import { PIN } from '../../../lib/platform-independence';
 
-export const SCHEMA_PATH = 'http://product-information-graph.org/schema/2026-01-12/jsonld/';
+/**
+ * Get platform-appropriate base path for schema files
+ * - Browser: URL to public asset (/assets/jsonld/)
+ * - Node.js: Local filesystem path to public directory (public/assets/jsonld/)
+ * 
+ * @returns Base path for schema files
+ */
+function getSchemaBasePath(): string {
+    if (PIN.isBrowserEnv()) {
+        // Browser: fetch from public directory via HTTP
+        const baseUrl = window.location.origin;
+        return `${baseUrl}/assets/jsonld/`;
+    } else {
+        // Node.js: read from local public directory
+        return './public/assets/jsonld/';
+    }
+}
 
-// Local path for schema files (relative to project root)
-const SCHEMA_PATH_LOCAL = 'src/utils/schemas/pig/jsonld/';
-
-const SCHEMA_FILES = {
-    Property: new URL('./Property.json', import.meta.url).href,
-    Link: new URL('./Link.json', import.meta.url).href,
-    Entity: new URL('./Entity.json', import.meta.url).href,
-    Relationship: new URL('./Relationship.json', import.meta.url).href,
-    AnEntity: new URL('./anEntity.json', import.meta.url).href,
-    ARelationship: new URL('./aRelationship.json', import.meta.url).href,
-    APackage: new URL('./aPackage.json', import.meta.url).href
+// Schema files (paths constructed at runtime based on environment)
+const SCHEMA_FILE_NAMES = {
+    Property: 'Property.json',
+    Link: 'Link.json',
+    Entity: 'Entity.json',
+    Relationship: 'Relationship.json',
+    AnEntity: 'anEntity.json',
+    ARelationship: 'aRelationship.json',
+    APackage: 'aPackage.json'
 } as const;
 
+// Build full paths for schema files
+const SCHEMA_FILES = Object.fromEntries(
+    Object.entries(SCHEMA_FILE_NAMES).map(([key, filename]) => [
+        key,
+        `${getSchemaBasePath()}${filename}`
+    ])
+) as Record<keyof typeof SCHEMA_FILE_NAMES, string>;
+
 // Type for schema keys
-type SchemaKey = keyof typeof SCHEMA_FILES;
+type SchemaKey = keyof typeof SCHEMA_FILE_NAMES;
 
 // Cache for loaded schemas
 const schemaCache: Partial<Record<SchemaKey, any>> = {};
@@ -71,7 +96,7 @@ async function loadSchema(schemaKey: SchemaKey): Promise<any> {
 
     const schemaPath = SCHEMA_FILES[schemaKey];
     try {
-        // Use LIB.readFileAsText to support both Node and browser
+        // Use PIN.readFileAsText to support both Node and browser
         const rsp = await PIN.readFileAsText(schemaPath);
 
         if (!rsp.ok) {
@@ -97,7 +122,7 @@ async function loadSchema(schemaKey: SchemaKey): Promise<any> {
 async function loadAllSchemas(): Promise<Record<SchemaKey, any>> {
     const schemas = {} as Record<SchemaKey, any>;
 
-    for (const key of Object.keys(SCHEMA_FILES) as SchemaKey[]) {
+    for (const key of Object.keys(SCHEMA_FILE_NAMES) as SchemaKey[]) {
         schemas[key] = await loadSchema(key);
     }
 

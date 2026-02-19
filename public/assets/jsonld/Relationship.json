@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-01-12/jsonld/Relationship.json",
+    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/Relationship.json",
     "title": "PIG Relationship JSON-LD Schema",
     "description": "Validates <strong>Relationship</strong> class definitions for directed connections between entities. Configures which properties (pig:eligibleProperty), source links (pig:eligibleSourceLink) and target links (pig:eligibleTargetLink) are allowed. Relationships are reified connections that can carry their own properties, enabling rich traceability and dependency modeling (e.g., 'Refinement' relationships with rationale and traceability status). Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance. Supports specialization hierarchies and optional icons.",
     "type": "object",
@@ -55,7 +55,7 @@
       "$ref": "#/$defs/idObject",
       "description": "Link class reference that defines the target endpoint of this Relationship"
     },
-    "pig:icon": {
+    "pig:Icon": {
       "type": "object",
       "description": "Optional icon representation for this Relationship type",
       "properties": {

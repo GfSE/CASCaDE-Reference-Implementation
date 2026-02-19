@@ -43,7 +43,7 @@ interface JsonLdDocument {
  * @returns IRsp with array of TPigItem (first item is APackage, rest are graph items)
  */
 export async function importJSONLD(source: string | File | Blob): Promise<IRsp> {
-    LOG.debug('importJSONLD: starting import from source', source);
+    // LOG.debug('importJSONLD: starting import from source', source);
     const rsp = await PIN.readFileAsText(source);
     if (!rsp.ok)
         return rsp;
@@ -58,7 +58,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         return Msg.create(690, 'JSON-LD', errorMessage);
     }
 
-    // ✅ Validate entire JSON-LD document structure
+    // Validate entire JSON-LD document structure
     const isValidPackage = await SCH_LD.validatePackageLD(doc);
     if (!isValidPackage) {
         const errors = await SCH_LD.getValidatePackageLDErrors();
@@ -72,21 +72,21 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         const aPackage = new APackage().setJSONLD(
             doc,
             // some examples are incomplete, so we skip the tests for specializes:
-            [
+            {checkConstraints: [
                 ConstraintCheckType.UniqueIds,
                 ConstraintCheckType.aPropertyHasClass,
                 ConstraintCheckType.aLinkHasClass,
                 ConstraintCheckType.anEntityHasClass,
                 ConstraintCheckType.aRelationshipHasClass,
-            ]
+            ]}
         );
-    */
+    
     // Check if package was successfully created
     if (!aPackage.status().ok) {
         return aPackage.status();
-    }
+    } */
 
-    const allItems = aPackage.getAllItems();
+    const allItems = aPackage.getItems();
 
     // allItems[0] is the package itself, rest are graph items
 
@@ -95,11 +95,18 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
 
     let result: IRsp;
     if (actualCount === expectedCount) {
-        result = rspOK;
         LOG.info(`importJSONLD: successfully instantiated package with all ${actualCount} items`);
+        result = rspOK;
     } else {
+        let str = '\nErroneous items:';
+        for (let i = 1; i < allItems.length; i++) {
+            const st = allItems[i].status();
+            if(!st.ok)
+                str += `\n- graph[${i}]: (${st.status}) /${st.statusText}`;
+        }
+        LOG.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items` + str);
+
         result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
-        LOG.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items`);
     }
 
     // Return all items (package + graph items)

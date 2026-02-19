@@ -1,13 +1,19 @@
 /** Product Information Graph (PIG) Unit Tests - verification of the concrete classes in the PIG schema
-*   Dependencies: pig-metaclasses.ts
-*   Authors: chrissaenz@psg-inc.net, oskar.dungern@gfse.org
-*   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
-*   We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
-*
-*   Design Decisions:
-*   - Testing and verification of the concrete children in the PIG metaclasses,
-*       will provide test coverage for the abstract classes they inherit from.
-*/
+ *  Dependencies: pig-metaclasses.ts
+ *  Authors: chrissaenz@psg-inc.net, oskar.dungern@gfse.org
+ *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
+ *
+ *  Design Decisions:
+ *  - Testing and verification of the concrete children in the PIG metaclasses,
+ *    will provide test coverage for the abstract classes they inherit from.
+ * 
+ *  Note:
+ *  - a roundtrip test via set() and get() and eligible (enumerated) values
+ *    is contained in pig-package-constraints-valueRanges.spec.ts
+ *
+ *  Authors: oskar.dungern@gfse.org
+ */
 
 import { XsDataType, PigItemType, PigItemTypeValue,
     IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,

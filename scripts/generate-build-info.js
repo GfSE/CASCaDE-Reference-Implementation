@@ -2,6 +2,7 @@
  * Build Information Generator
  * 
  * Automatically generates build-info.ts with:
+ * - Application name and version (from package.json)
  * - Build timestamp
  * - Git commit hash
  * - Git branch name
@@ -13,6 +14,20 @@
 
 const fs = require('fs');
 const path = require('path');
+
+function getPackageInfo() {
+    try {
+        const packageJsonPath = path.join(__dirname, '../package.json');
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        return {
+            name: packageJson.name || 'unknown',
+            version: packageJson.version || '0.0.0'
+        };
+    } catch (error) {
+        console.warn('⚠ Could not read package.json:', error.message);
+        return { name: 'unknown', version: '0.0.0' };
+    }
+}
 
 function getGitInfoFromFiles() {
     try {
@@ -46,6 +61,7 @@ function getGitInfoFromFiles() {
 function generateBuildInfo() {
     console.log('\n🔧 Generating build information...');
 
+    const pkg = getPackageInfo();
     const git = getGitInfoFromFiles();
     const buildTime = new Date().toISOString();
 
@@ -53,6 +69,10 @@ function generateBuildInfo() {
 // Generated at: ${buildTime}
 
 export const BUILD_INFO = {
+    // from package.json:
+    appName: '${pkg.name}',
+    appVersion: '${pkg.version}',
+    // from Git:
     buildTime: '${buildTime}',
     gitCommit: '${git.commit}',
     gitBranch: '${git.branch}',
@@ -60,9 +80,9 @@ export const BUILD_INFO = {
 };
 `;
 
-    const outputPath = path.join(__dirname, '../src/utils/lib/build-info.ts');
+    const outputPath = path.join(__dirname, '../src/build-info.ts');
     fs.writeFileSync(outputPath, content, 'utf8');
-    console.log(`✓ Build info generated: ${outputPath}\n  Branch: ${git.branch}\n  Commit: ${git.commit}${git.isDirty ? ' (dirty)' : ''}\n  Time: ${buildTime}\n`);
+    console.log(`✓ Build info generated: ${outputPath}\n  App: ${pkg.name} v${pkg.version}\n  Branch: ${git.branch}\n  Commit: ${git.commit}${git.isDirty ? ' (dirty)' : ''}\n  Time: ${buildTime}\n`);
 }
 
 generateBuildInfo();

@@ -1,3 +1,10 @@
+/*!
+ * Unit tests for XML package import
+ * Dynamically discovers and tests all .xml files in tests/data/XML/
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
+
 import * as fs from 'fs';
 import * as path from 'path';
 import { importXML } from '../../src/utils/import/xml/import-package-xml';
@@ -30,23 +37,17 @@ function findXmlFiles(dir: string, fileList: string[] = []): string[] {
 
 describe('importXML (file system)', () => {
     // Automatically discover all *.xml files in tests/data/XML and subdirectories
-    const xmlDataDir = path.resolve(__dirname, '../data/XML');
-    const xmlFiles: string[] = findXmlFiles(xmlDataDir);
+    const testFilesDir = path.resolve(__dirname, '../data/XML');
+    const xmlFiles: string[] = findXmlFiles(testFilesDir);
 
     let processedCount = 0;
 
     // Log discovered files for debugging
     beforeAll(() => {
         let str = `${xmlFiles.length} XML test files:`;
-        xmlFiles.forEach(f => str += `\n  - ${path.relative(xmlDataDir, f)}`);
+        xmlFiles.forEach(f => str += `\n  - ${path.relative(testFilesDir, f)}`);
         console.log(str);
     });
-/*    beforeAll(() => {
-        console.log(`Found ${xmlFiles.length} XML test files:`);
-        xmlFiles.forEach(file => {
-            console.log(`  - ${path.relative(xmlDataDir, file)}`);
-        });
-    }); */
     // Ensure console flush before test ends
     afterEach(async () => {
         await new Promise(resolve => setImmediate(resolve));
@@ -54,7 +55,7 @@ describe('importXML (file system)', () => {
 
     // Create a separate Jest test for each filename
     xmlFiles.forEach((testFile) => {
-        const relativePath = path.relative(xmlDataDir, testFile);
+        const relativePath = path.relative(testFilesDir, testFile);
         const testName = relativePath;
 
         test(`imports ${testName} and instantiates PIG classes`, async () => {
@@ -65,6 +66,7 @@ describe('importXML (file system)', () => {
 
             // expect status 0 (success) or 691 (partial success with warnings)
             expect(rsp.status === 0 || rsp.status === 691).toBe(true);
+            expect(rsp.response).toBeDefined();
             processedCount++;
 
             const instances = rsp.response as TPigItem[];
