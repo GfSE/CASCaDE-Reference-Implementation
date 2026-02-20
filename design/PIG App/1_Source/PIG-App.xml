@@ -59,7 +59,7 @@ This model is authored with [Archi](https://www.archimatetool.com/) using the Ar
   </properties>
   <elements>
     <element identifier="id-f14471ea812b42a4a07fe91e76ef55e7" xsi:type="BusinessProcess">
-      <name xml:lang="en">CASCaDE Validation Process</name>
+      <name xml:lang="en">CASCaRA Validation Process</name>
     </element>
     <element identifier="id-158055adb9844d05910a6d248b34c331" xsi:type="BusinessProcess">
       <name xml:lang="en">Create Test-Data</name>
@@ -269,7 +269,7 @@ See example files:&#xD;
 &#xD;
 See example files:&#xD;
 - [Alice works for ACME](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Alice%20%5BPIG%20native%5D/7_RDF/Alice.pig.ttl)&#xD;
-- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/7_RDF/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.ttl)</documentation>
+- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/7_RDF/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.pig.ttl)</documentation>
     </element>
     <element identifier="id-e2d53372b50542dc89d25f91baf6da31" xsi:type="ApplicationFunction">
       <name xml:lang="en">Integrate Subgraph</name>
@@ -326,6 +326,14 @@ See example files:&#xD;
     <element identifier="id-77c086d455e64fb48357a98acb27515e" xsi:type="ApplicationFunction">
       <name xml:lang="en">Check CASCaRA XML Schema</name>
       <documentation xml:lang="en">Check input data with the CASCaRA XML Schemata.</documentation>
+    </element>
+    <element identifier="id-d563b06f80564ca7b6f3373201e3d523" xsi:type="ApplicationService">
+      <name xml:lang="en">JSON Schema Engine</name>
+      <documentation xml:lang="en">An engine checking a JSON or JSON-LD data set using [JSON Schema](https://json-schema.org/) declarations per CASCaRA Metamodel item type, see [[itemType.json]].</documentation>
+    </element>
+    <element identifier="id-e8ef41a3f818434186a124807e2fe514" xsi:type="DataObject">
+      <name xml:lang="en">itemType.json</name>
+      <documentation xml:lang="en">[JSON Schema](https://json-schema.org/) declaration per [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) item type, i.e. every block on the metamodel diagram. The latest CASCaRA schema files are published [here](https://product-information-graph.org/schema/latest/jsonld/). The web-service is CORS enabled, thus the schema files can be retrieved from any other web domain.</documentation>
     </element>
   </elements>
   <relationships>
@@ -532,6 +540,14 @@ See example files:&#xD;
     <relationship identifier="id-3cbba41ecd7a4a6ea8e2f9bcd1fd5dfb" source="id-77c086d455e64fb48357a98acb27515e" target="id-be92f0ceb73444409591b83ff25d1795" xsi:type="Flow">
       <name xml:lang="en">precedes</name>
     </relationship>
+    <relationship identifier="id-df4c2a11995c43e6b936ccdbd5d067aa" source="id-d563b06f80564ca7b6f3373201e3d523" target="id-de8f60557d7546dea886c485e70356a2" xsi:type="Serving" />
+    <relationship identifier="id-4234eb6e707b44daafb7576fb0726fa0" source="id-d563b06f80564ca7b6f3373201e3d523" target="id-00ded96758514fb1a9efe301f4d68054" xsi:type="Serving" />
+    <relationship identifier="id-a564f76712aa4ca2a57befb87d785dc3" source="id-e8ef41a3f818434186a124807e2fe514" target="id-76628f8d35584600ae79bf6736092854" xsi:type="Specialization">
+      <name xml:lang="en">specializes</name>
+    </relationship>
+    <relationship identifier="id-555372fe99804c6cb49b843b1eee77f6" source="id-d563b06f80564ca7b6f3373201e3d523" target="id-e8ef41a3f818434186a124807e2fe514" xsi:type="Access" accessType="Read">
+      <name xml:lang="en">reads</name>
+    </relationship>
   </relationships>
   <organizations>
     <item>
@@ -591,6 +607,8 @@ See example files:&#xD;
       <item identifierRef="id-76628f8d35584600ae79bf6736092854" />
       <item identifierRef="id-ae946a9cbb0549f7826d3032ff5bf031" />
       <item identifierRef="id-77c086d455e64fb48357a98acb27515e" />
+      <item identifierRef="id-d563b06f80564ca7b6f3373201e3d523" />
+      <item identifierRef="id-e8ef41a3f818434186a124807e2fe514" />
     </item>
     <item>
       <label xml:lang="en">Relations</label>
@@ -699,6 +717,10 @@ See example files:&#xD;
       <item identifierRef="id-208748f6ea2b44b0a9ee4c53cd9151a8" />
       <item identifierRef="id-ad7de9fb918a42bcbfc9e89a75ba10af" />
       <item identifierRef="id-3cbba41ecd7a4a6ea8e2f9bcd1fd5dfb" />
+      <item identifierRef="id-df4c2a11995c43e6b936ccdbd5d067aa" />
+      <item identifierRef="id-4234eb6e707b44daafb7576fb0726fa0" />
+      <item identifierRef="id-a564f76712aa4ca2a57befb87d785dc3" />
+      <item identifierRef="id-555372fe99804c6cb49b843b1eee77f6" />
     </item>
     <item>
       <label xml:lang="en">Views</label>
@@ -1714,7 +1736,7 @@ The input formats defined have different purpose or strength:&#xD;
               </font>
             </style>
           </node>
-          <node identifier="id-9fb84e5e281744bc9f4bbd043e656f24" elementRef="id-59cf774b7b2c4df497fd673fe7f732e5" xsi:type="Element" x="636" y="515" w="120" h="55">
+          <node identifier="id-9fb84e5e281744bc9f4bbd043e656f24" elementRef="id-59cf774b7b2c4df497fd673fe7f732e5" xsi:type="Element" x="492" y="600" w="120" h="55">
             <style>
               <fillColor r="181" g="255" b="255" a="100" />
               <lineColor r="92" g="92" b="92" a="100" />
@@ -1805,7 +1827,7 @@ The input formats defined have different purpose or strength:&#xD;
             </font>
           </style>
         </node>
-        <node identifier="id-9e92d931996349dd831598ea8a926741" elementRef="id-76628f8d35584600ae79bf6736092854" xsi:type="Element" x="912" y="36" w="120" h="36">
+        <node identifier="id-9e92d931996349dd831598ea8a926741" elementRef="id-76628f8d35584600ae79bf6736092854" xsi:type="Element" x="960" y="36" w="120" h="36">
           <style>
             <fillColor r="181" g="255" b="255" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
@@ -1815,6 +1837,24 @@ The input formats defined have different purpose or strength:&#xD;
           </style>
         </node>
         <node identifier="id-15ff1b90d7304179a4bf4b2b2c147e8f" elementRef="id-ae946a9cbb0549f7826d3032ff5bf031" xsi:type="Element" x="912" y="156" w="120" h="36">
+          <style>
+            <fillColor r="181" g="255" b="255" a="100" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </node>
+        <node identifier="id-6fe451d585d1418aa0cb7ae7830ba83f" elementRef="id-d563b06f80564ca7b6f3373201e3d523" xsi:type="Element" x="828" y="519" w="120" h="55">
+          <style>
+            <fillColor r="181" g="255" b="255" a="100" />
+            <lineColor r="92" g="92" b="92" a="100" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </node>
+        <node identifier="id-ebca7b2971774af284ed7bc1f56614fe" elementRef="id-e8ef41a3f818434186a124807e2fe514" xsi:type="Element" x="1080" y="255" w="120" h="36">
           <style>
             <fillColor r="181" g="255" b="255" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
@@ -1935,7 +1975,7 @@ The input formats defined have different purpose or strength:&#xD;
               <color r="0" g="0" b="0" />
             </font>
           </style>
-          <bendpoint x="888" y="60" />
+          <bendpoint x="912" y="60" />
         </connection>
         <connection identifier="id-5f7ec1d309f74808ad471f615116b8e7" relationshipRef="id-26caa7d9f1ca4c15957fd72d628d4ee5" xsi:type="Relationship" source="id-3cba07e13e4c49ba83fb0e5396fb1f52" target="id-e982c8a904924a76b2a748500cc350fa">
           <style>
@@ -1952,16 +1992,16 @@ The input formats defined have different purpose or strength:&#xD;
               <color r="0" g="0" b="0" />
             </font>
           </style>
-          <bendpoint x="1056" y="276" />
+          <bendpoint x="1056" y="288" />
         </connection>
-        <connection identifier="id-7c6044f3af334636a46018ce3be86dec" relationshipRef="id-bc2de1bb432d490b8322e56be49ccedf" xsi:type="Relationship" source="id-41ef738cec794de0b1232f3293cc4c3b" target="id-9e92d931996349dd831598ea8a926741">
+        <connection identifier="id-d5ed09458d22402ebf6fa04b180ffd0a" relationshipRef="id-bc2de1bb432d490b8322e56be49ccedf" xsi:type="Relationship" source="id-41ef738cec794de0b1232f3293cc4c3b" target="id-9e92d931996349dd831598ea8a926741">
           <style>
             <lineColor r="0" g="0" b="0" />
             <font name="Segoe UI" size="9">
               <color r="0" g="0" b="0" />
             </font>
           </style>
-          <bendpoint x="1056" y="60" />
+          <bendpoint x="1056" y="120" />
         </connection>
         <connection identifier="id-33263b950d52404595b6a2f5dfe4f0d4" relationshipRef="id-2dbd8ad766dc420a82e8d2ef9cbb0762" xsi:type="Relationship" source="id-7654bbb4fa5746ce978ac7bbe985a405" target="id-205371a661284d6d97fbd2de66903c53">
           <style>
@@ -2104,7 +2144,33 @@ The input formats defined have different purpose or strength:&#xD;
               <color r="0" g="0" b="0" />
             </font>
           </style>
-          <bendpoint x="972" y="96" />
+          <bendpoint x="984" y="120" />
+        </connection>
+        <connection identifier="id-971340d4b0a447d1862d5e8cd89f02f9" relationshipRef="id-df4c2a11995c43e6b936ccdbd5d067aa" xsi:type="Relationship" source="id-6fe451d585d1418aa0cb7ae7830ba83f" target="id-dc55956e9b4542e4aeb642332f523365">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-7939f414e86b4e188378cc78e9f29f08" relationshipRef="id-555372fe99804c6cb49b843b1eee77f6" xsi:type="Relationship" source="id-6fe451d585d1418aa0cb7ae7830ba83f" target="id-ebca7b2971774af284ed7bc1f56614fe">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <bendpoint x="1140" y="312" />
+        </connection>
+        <connection identifier="id-ae0d4ba69d5c460e8332c8f1ad3fff0a" relationshipRef="id-a564f76712aa4ca2a57befb87d785dc3" xsi:type="Relationship" source="id-ebca7b2971774af284ed7bc1f56614fe" target="id-9e92d931996349dd831598ea8a926741">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+          <bendpoint x="1140" y="60" />
         </connection>
       </view>
     </diagrams>

@@ -55,29 +55,43 @@
       <name xml:lang="en">User</name>
       <documentation xml:lang="en">Responsible for using (querying and even checking) the application data.</documentation>
     </element>
+    <element identifier="id-27b3cf2d2ad542449f869064b06c2331" xsi:type="BusinessProcess">
+      <name xml:lang="en">Ontology Definition</name>
+      <documentation xml:lang="en">In ontology-driven application development, the first step is to define the entities and their relationships of the application domain, called the application ontology.&#xD;
+&#xD;
+For example, the ontology of a simple library asset management system (or inventory management system of a library), would include the entities are book, author plus library and the relationships are written-by plus owned-by, where the former is restricted to book-author relationships and the latter is restricted to book-library relationships.</documentation>
+    </element>
+    <element identifier="id-cce33edfd25247eb809fb1f2a7c7b657" xsi:type="BusinessProcess">
+      <name xml:lang="en">Data Management</name>
+      <documentation xml:lang="en">Given a software application that manages the assets (inventory) of a library, the data of the books, their authors and the owning libraries is collected and entered.</documentation>
+    </element>
+    <element identifier="id-6da3ca2fd6bf4836bc45c25e36363e6f" xsi:type="BusinessProcess">
+      <name xml:lang="en">Data Use</name>
+      <documentation xml:lang="en">Given a software application that has a database of books, their authors and owning libraries, a book catalog with search capabilities may be displayed.</documentation>
+    </element>
     <element identifier="id-98c642d92ebc48969b5a440887ccb1ff" xsi:type="ApplicationComponent">
       <name xml:lang="en">PIG App</name>
       <documentation xml:lang="en">A web application for creating, reading, updating and deleting data elements per class. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. In this case, the PIG Editor is used both for defining the application ontology and the application data.</documentation>
     </element>
     <element identifier="id-c9fa68c1bfc449558cf431c9c8a9b55c" xsi:type="DataObject">
       <name xml:lang="en">Classes for Ontology [JSON-LD]</name>
-      <documentation xml:lang="en">A set of classes allowing to define an ontology. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+      <documentation xml:lang="en">A set of classes allowing to define an ontology. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-852e3b29b0f242d2bc8e8ddda7d076ee" xsi:type="DataObject">
       <name xml:lang="en">Classes for Application [JSON-LD]</name>
-      <documentation xml:lang="en">A set of classes allowing to manage application data. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+      <documentation xml:lang="en">A set of classes allowing to manage application data. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-82d925d89f5a4bfc9da93a338d9badac" xsi:type="DataObject">
       <name xml:lang="en">Application Ontology [JSON-LD]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-ad6609324578417f867c2e0471be1c54" xsi:type="DataObject">
       <name xml:lang="en">Application Data [JSON-LD]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-2ab7af85586b4c26b3d605e26f99e11c" xsi:type="DataObject">
       <name xml:lang="en">Application Data [Turtle]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel.</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-5f892d898e0f4c518143a72b9a4b1cc9" xsi:type="ApplicationComponent">
       <name xml:lang="en">Triple-Store</name>
@@ -85,7 +99,7 @@
     </element>
     <element identifier="id-eff21101fdf7483aa17d298c1558f1bb" xsi:type="DataObject">
       <name xml:lang="en">Application Data [RDF]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the *Product Information Graph* (PIG) metamodel, so that standard queries can be used.</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/), so that standard queries can be used.</documentation>
     </element>
   </elements>
   <relationships>
@@ -105,6 +119,14 @@
     <relationship identifier="id-2f50b6529ab3464fa935aa1c8ff812ce" source="id-10d869aef78c4b0e8213ea8b364511da" target="id-c93b7c0a36874f2ba48047df3b5f34b9" xsi:type="Assignment" />
     <relationship identifier="id-857f6341e6bb4576b45332ef7015b43c" source="id-4ce51ed000274d6bb00eaef0412e5e4a" target="id-9f9bc434882a4418a28500cc1d38e916" xsi:type="Flow" />
     <relationship identifier="id-aab296ab8d354a31986ccb5b8c02ae9b" source="id-9f9bc434882a4418a28500cc1d38e916" target="id-c93b7c0a36874f2ba48047df3b5f34b9" xsi:type="Flow" />
+    <relationship identifier="id-3666624fee2049449e8d1d80eadc5dd8" source="id-e46cf33dba2b4f088ec617cd23344dc1" target="id-27b3cf2d2ad542449f869064b06c2331" xsi:type="Assignment" />
+    <relationship identifier="id-936e7191da8d439b80d38f7c5f53569e" source="id-27b3cf2d2ad542449f869064b06c2331" target="id-4ce51ed000274d6bb00eaef0412e5e4a" xsi:type="Aggregation" />
+    <relationship identifier="id-ffe8ef6cdce74111bf75c97d10c9a51f" source="id-df98ec4e0818464f9e74c6a82fb8cd4e" target="id-cce33edfd25247eb809fb1f2a7c7b657" xsi:type="Assignment" />
+    <relationship identifier="id-09c26954286f497f830b1dca5df0b6b8" source="id-cce33edfd25247eb809fb1f2a7c7b657" target="id-9f9bc434882a4418a28500cc1d38e916" xsi:type="Aggregation" />
+    <relationship identifier="id-0b8c0c52e96c44fd9e20809bc5516750" source="id-10d869aef78c4b0e8213ea8b364511da" target="id-6da3ca2fd6bf4836bc45c25e36363e6f" xsi:type="Assignment" />
+    <relationship identifier="id-d6e507fee7f54c77a43cccc68d6c827f" source="id-6da3ca2fd6bf4836bc45c25e36363e6f" target="id-c93b7c0a36874f2ba48047df3b5f34b9" xsi:type="Aggregation" />
+    <relationship identifier="id-8960df1e0c9648a2bd4f1410595efe28" source="id-27b3cf2d2ad542449f869064b06c2331" target="id-cce33edfd25247eb809fb1f2a7c7b657" xsi:type="Flow" />
+    <relationship identifier="id-95a8baa87166428397ddf8e6cb539041" source="id-cce33edfd25247eb809fb1f2a7c7b657" target="id-6da3ca2fd6bf4836bc45c25e36363e6f" xsi:type="Flow" />
   </relationships>
   <organizations>
     <item>
@@ -115,6 +137,9 @@
       <item identifierRef="id-df98ec4e0818464f9e74c6a82fb8cd4e" />
       <item identifierRef="id-c93b7c0a36874f2ba48047df3b5f34b9" />
       <item identifierRef="id-10d869aef78c4b0e8213ea8b364511da" />
+      <item identifierRef="id-27b3cf2d2ad542449f869064b06c2331" />
+      <item identifierRef="id-cce33edfd25247eb809fb1f2a7c7b657" />
+      <item identifierRef="id-6da3ca2fd6bf4836bc45c25e36363e6f" />
     </item>
     <item>
       <label xml:lang="en">Application</label>
@@ -145,6 +170,14 @@
       <item identifierRef="id-2f50b6529ab3464fa935aa1c8ff812ce" />
       <item identifierRef="id-857f6341e6bb4576b45332ef7015b43c" />
       <item identifierRef="id-aab296ab8d354a31986ccb5b8c02ae9b" />
+      <item identifierRef="id-3666624fee2049449e8d1d80eadc5dd8" />
+      <item identifierRef="id-936e7191da8d439b80d38f7c5f53569e" />
+      <item identifierRef="id-ffe8ef6cdce74111bf75c97d10c9a51f" />
+      <item identifierRef="id-09c26954286f497f830b1dca5df0b6b8" />
+      <item identifierRef="id-0b8c0c52e96c44fd9e20809bc5516750" />
+      <item identifierRef="id-d6e507fee7f54c77a43cccc68d6c827f" />
+      <item identifierRef="id-8960df1e0c9648a2bd4f1410595efe28" />
+      <item identifierRef="id-95a8baa87166428397ddf8e6cb539041" />
     </item>
     <item>
       <label xml:lang="en">Views</label>
@@ -216,39 +249,36 @@ If you like, have a look at the demonstration:&#xD;
 &#xD;
 | Step | Libraries (Example ) | Develop your own example |&#xD;
 | --- | --- | --- |&#xD;
-| 1 | [Editor](https://specif.de/apps/edit#import="https://cascade.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif") with loaded classes for building an ontology and some terms. You can add terms of the library domain. | [Editor](https://specif.de/apps/edit#import="https://cascade.gfse.org/examples/data/Classes-for-Ontology.specif") with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
-| 2 | [Library Ontology as HTML](https://cascade.gfse.org/examples/libraries/Library-Ontology%20(Example).html)&lt;br/&gt;[Classes for Libraries](https://cascade.gfse.org/examples/libraries/data/Classes-for-Libraries.specif) to laod in the editor. | Export SpecIF Class Definitions (third option) to load in the next step. |&#xD;
-| 3 | [Editor](https://specif.de/apps/edit#import="https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).specif") with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | [Editor](https://specif.de/apps/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
-| 4 | [Library Data as HTML](https://cascade.gfse.org/examples/libraries/Libraries%20(Example).html)&lt;br/&gt;[Library Data as Turtle](https://cascade.gfse.org/examples/libraries/data/Libraries%20(Example).ttl) to load in the next step. | Export your application data  (Turtle) to load in the next step. |&#xD;
-| 5 | Load library data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). | Load your application data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). |&#xD;
+| 1 | Open an [Editor](https://specif.de/apps/edit#import="https://cascara.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif") with loaded classes for building an ontology and some terms. You can add terms of the library domain. | Open an [Editor](https://specif.de/apps/edit#import="https://cascara.gfse.org/examples/data/Classes-for-Ontology.specif") with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
+| 2 | Inspect the [Library Ontology as HTML](https://cascara.gfse.org/examples/libraries/Library-Ontology%20(Example).html).&lt;br/&gt;Download the [Classes for Libraries](https://cascara.gfse.org/examples/libraries/data/Classes-for-Libraries.specif) (as generated from the Library Ontology) to laod in the editor in the next step. | Export SpecIF Class Definitions (third option) to load in the next step. |&#xD;
+| 3 | Open an [Editor](https://specif.de/apps/edit#import="https://cascara.gfse.org/examples/libraries/data/Libraries%20(Example).specif") with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | Open an [Editor](https://specif.de/apps/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
+| 4 | Inspect the [Library Data as HTML](https://cascara.gfse.org/examples/libraries/Libraries%20(Example).html)&lt;br/&gt;Download the [Library Data as Turtle](https://cascara.gfse.org/examples/libraries/data/Libraries%20(Example).ttl) to load in the next step. | Export your application data  (Turtle) to load in the next step. |&#xD;
+| 5 | Load the library data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). | Load your application data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). |&#xD;
 &#xD;
-Please note: The demonstration uses the SpecIF tools until the PIG tools are available. If you like the approach, support our implementation team validating the [CASCaDE standard in preparation](https://cascade.gfse.org)!</documentation>
-        <node identifier="id-3f76edebc1034b0abb9ceec35071e37c" x="780" y="24" w="372" h="432" xsi:type="Container">
-          <label xml:lang="en">3. Data Use</label>
+Please note: The demonstration uses the SpecIF tools until the CASCaRA tools are available. If you like the approach, support our implementation team validating the [CASCaRA standard in preparation](https://cascara.gfse.org)!</documentation>
+        <node identifier="id-ccfc201365264debbdd45c0ae4c52cc4" elementRef="id-6da3ca2fd6bf4836bc45c25e36363e6f" xsi:type="Element" x="792" y="22" w="360" h="204">
           <style>
-            <fillColor r="233" g="235" b="235" a="100" />
+            <fillColor r="255" g="255" b="181" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
-            <font name="Segoe UI" size="9">
+            <font name="Segoe UI" size="11">
               <color r="0" g="0" b="0" />
             </font>
           </style>
         </node>
-        <node identifier="id-9a66b3765f474b34bac0045de75882bd" x="396" y="24" w="372" h="432" xsi:type="Container">
-          <label xml:lang="en">2. Data Management</label>
+        <node identifier="id-ef18714646e3479badde02bd016c6731" elementRef="id-cce33edfd25247eb809fb1f2a7c7b657" xsi:type="Element" x="408" y="24" w="361" h="202">
           <style>
-            <fillColor r="233" g="235" b="235" a="100" />
+            <fillColor r="255" g="255" b="181" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
-            <font name="Segoe UI" size="9">
+            <font name="Segoe UI" size="11">
               <color r="0" g="0" b="0" />
             </font>
           </style>
         </node>
-        <node identifier="id-b7587fac5ed54bd0bb27f9305390342b" x="12" y="24" w="372" h="432" xsi:type="Container">
-          <label xml:lang="en">1. Ontology Definition</label>
+        <node identifier="id-b32eb8b0435143e88dfd2ee91dfee2cd" elementRef="id-27b3cf2d2ad542449f869064b06c2331" xsi:type="Element" x="12" y="24" w="372" h="202">
           <style>
-            <fillColor r="233" g="235" b="235" a="100" />
+            <fillColor r="255" g="255" b="181" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
-            <font name="Segoe UI" size="9">
+            <font name="Segoe UI" size="11">
               <color r="0" g="0" b="0" />
             </font>
           </style>
@@ -257,7 +287,7 @@ Please note: The demonstration uses the SpecIF tools until the PIG tools are ava
           <style>
             <fillColor r="181" g="255" b="255" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
-            <font name="Segoe UI" size="9">
+            <font name="Segoe UI" size="11">
               <color r="0" g="0" b="0" />
             </font>
           </style>
@@ -266,7 +296,7 @@ Please note: The demonstration uses the SpecIF tools until the PIG tools are ava
           <style>
             <fillColor r="181" g="255" b="255" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
-            <font name="Segoe UI" size="9">
+            <font name="Segoe UI" size="11">
               <color r="0" g="0" b="0" />
             </font>
           </style>
@@ -320,7 +350,7 @@ Please note: The demonstration uses the SpecIF tools until the PIG tools are ava
           <style>
             <fillColor r="181" g="255" b="255" a="100" />
             <lineColor r="92" g="92" b="92" a="100" />
-            <font name="Segoe UI" size="9">
+            <font name="Segoe UI" size="11">
               <color r="0" g="0" b="0" />
             </font>
           </style>
@@ -388,6 +418,22 @@ Please note: The demonstration uses the SpecIF tools until the PIG tools are ava
             </font>
           </style>
         </node>
+        <connection identifier="id-0855c0cf99ce4ede89657b9367124fd5" relationshipRef="id-95a8baa87166428397ddf8e6cb539041" xsi:type="Relationship" source="id-ef18714646e3479badde02bd016c6731" target="id-ccfc201365264debbdd45c0ae4c52cc4">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
+        <connection identifier="id-74287309e6264e37ae80e4e742d53ec5" relationshipRef="id-8960df1e0c9648a2bd4f1410595efe28" xsi:type="Relationship" source="id-b32eb8b0435143e88dfd2ee91dfee2cd" target="id-ef18714646e3479badde02bd016c6731">
+          <style>
+            <lineColor r="0" g="0" b="0" />
+            <font name="Segoe UI" size="9">
+              <color r="0" g="0" b="0" />
+            </font>
+          </style>
+        </connection>
         <connection identifier="id-4e73cabb179d4de58328eb31ec5a8361" relationshipRef="id-639f850723ea41f482572664db7c27e8" xsi:type="Relationship" source="id-86f873d24e6f4e4a9300ba6b211d3e29" target="id-85e1def3920f496eb0b05b844d96eb86">
           <style>
             <lineColor r="0" g="0" b="0" />
