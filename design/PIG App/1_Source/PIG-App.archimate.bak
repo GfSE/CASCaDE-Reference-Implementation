@@ -227,7 +227,7 @@ See example files:&#xD;
       <documentation>An engine checking a JSON or JSON-LD data set using [JSON Schema](https://json-schema.org/) declarations per CASCaRA Metamodel item type, see [[itemType.json]].</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="itemType.json" id="id-e8ef41a3f818434186a124807e2fe514">
-      <documentation>[JSON Schema](https://json-schema.org/) declaration per [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) item type, i.e. every block on the metamodel diagram.</documentation>
+      <documentation>[JSON Schema](https://json-schema.org/) declaration per [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) item type, i.e. every block on the metamodel diagram. The latest CASCaRA schema files are published [here](https://product-information-graph.org/schema/latest/jsonld/). The web-service is CORS enabled, thus the schema files can be retrieved from any other web domain.</documentation>
     </element>
   </folder>
   <folder name="Technology &amp; Physical" id="id-08e808d213d942bba2d6969beeb80f5a" type="technology"/>
@@ -870,7 +870,7 @@ The input formats defined have different purpose or strength:&#xD;
 &#xD;
 | Category | Format | Purpose and Strength |&#xD;
 | --- | --- | ---|&#xD;
-| Processing | OO Classes | Data Processing, Version &amp; Configuration Management, Multi-user Operation |&#xD;
+| Processing | OO Classes | Data Processing, Version and Configuration Management, Multi-user Operation |&#xD;
 | Processing | JSON | Equivalent with the above for schema checking, storage |&#xD;
 | Exchange | PIG JSON-LD | Higher level graph language for API and LD-Processors: Entities and relationships as self-contained objects with URI, standardized type and designated values, explicit, easy to transform |&#xD;
 | Exchange | PIG XML | Equivalent with the above for users preferring the XML ecosystem |&#xD;
