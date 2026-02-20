@@ -89,7 +89,7 @@ Transformations may use:&#xD;
 - SPARQL in case of RDF source data&#xD;
 - Scripting&#xD;
 &#xD;
-The following transformations are planned for validating the approach (the standard tp submit):&#xD;
+The following transformations are planned for validating the approach (the standard to submit):&#xD;
 - [ReqIF](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/25)&#xD;
 - [SysML v1](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/26)&#xD;
 - [STEP](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/4)&#xD;
@@ -192,7 +192,7 @@ See example files:&#xD;
       <documentation>An engine performing a transformation using the SPARQL Protocol and RDF Query Language.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Transform to Subgraph (SPARQL)" id="id-a7c19dd2b55f4882a32504716d75e1f5">
-      <documentation>Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQ queries defined in [[reqif-to-pig.xsl]] are used.</documentation>
+      <documentation>Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQL queries defined in [[reqif-to-pig.xsl]] are used.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="input.pig.xml" id="id-93711964b9d7473180506ded406f8ac2">
       <documentation>Input data in XML format. A pattern compatible with the CASCaRA Metamodel is assumed. &#xD;
@@ -472,7 +472,7 @@ See example files:&#xD;
         <bounds x="864" y="356" width="185" height="102"/>
         <content>The associations with solid line and  open arrowhead denote a 'serves' relationship (from server to client). Direction of data flow is not implied and can occur in both directions.</content>
       </child>
-      <documentation>The top-level module architecture of the PIG App embedded in its sytem context.</documentation>
+      <documentation>The top-level module architecture of the PIG App embedded in its system context.</documentation>
     </element>
     <element xsi:type="archimate:ArchimateDiagramModel" name="_READ_ME_" id="id-1cafb05b01384aaf838df08a7c66579c">
       <child xsi:type="archimate:Note" id="id-eb46e551b0984bf6bbc91f6f8b6250f7" textAlignment="1" fillColor="#f6f6d8">
@@ -636,7 +636,7 @@ Report:View:Tag&#xD;
       <child xsi:type="archimate:DiagramObject" id="id-135217ebc20b485495af15b40de4b23c" targetConnections="id-b10df5389dd94c76833b8ddda9ab3f54 id-430b98e28d2b4e48a059b0a28e19df96 id-992ac44df3f8473693b1f726640c8e3e" textPosition="1" archimateElement="id-d44b441f59e24c06abcd5bf6b1bbb060">
         <bounds x="50" y="12" width="120" height="55"/>
       </child>
-      <documentation>A process to validate the conceptional and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
+      <documentation>A process to validate the conceptual and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
 &#xD;
 Subject to validation:&#xD;
 - Has the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) enough expressive power to deal with real-world data?&#xD;

@@ -89,7 +89,7 @@ Transformations may use:&#xD;
 - SPARQL in case of RDF source data&#xD;
 - Scripting&#xD;
 &#xD;
-The following transformations are planned for validating the approach (the standard tp submit):&#xD;
+The following transformations are planned for validating the approach (the standard to submit):&#xD;
 - [ReqIF](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/25)&#xD;
 - [SysML v1](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/26)&#xD;
 - [STEP](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/4)&#xD;
@@ -149,7 +149,7 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
     <element xsi:type="archimate:DataObject" name="reqif-to-pig.xsl" id="id-bd48a75cd11c4b81ac8e5282cb6db93d">
       <documentation>A XSL stylesheet to extract relevant data from a ReqIF file. It is assumed that the source file to transform complies with the OMG Standard [Requirements Interchange Format (ReqIF)](https://www.omg.org/reqif/) and with the Prostep ivip [Implementation Guideline ReqIF](https://www.prostep.org/shop/detail?ai%5Baction%5D=detail&amp;ai%5Bcontroller%5D=Catalog&amp;ai%5Bd_name%5D=reqif_ig_v1-7&amp;ai%5Bd_pos%5D=).&#xD;
 &#xD;
-The fact that the ReqIF Implementation Guideline proposes certain attribute names as a convention, but no names for the entities (called OBJECT-TYPES) themselves, is a challenge for semantic interoperability. However, daily practice has adopted a number of entity names which can be included in the [[any-to.pig.mvf]] to find appropriate ontology classes. It is advised to design the XSL stylesheet for ReqIF in a way that the LONG-NAME of all OBJECT-TYPES is taken as entity class name and to leave all mapping with ontology terms to a subsequent process step, see [[Assign Ontology Classes]].</documentation>
+The fact that the ReqIF Implementation Guideline proposes certain attribute names as a convention, but no names for the entities (called OBJECT-TYPES) themselves, is a challenge for semantic interoperability. However, daily practice has adopted a number of entity names which can be included in the [[any-to-pig.mvf]] to find appropriate ontology classes. It is advised to design the XSL stylesheet for ReqIF in a way that the LONG-NAME of all OBJECT-TYPES is taken as entity class name and to leave all mapping with ontology terms to a subsequent process step, see [[Assign Ontology Class]].</documentation>
     </element>
     <element xsi:type="archimate:ApplicationService" name="MVF Engine" id="id-808de729507c4dc181fb2bafb2bda148">
       <documentation>A Multi-Vocabulary-Facility mapping terms of multiple domain languages to the CASCaRA ontology terms and vice versa. The OMG Standard [Multiple Vocabulary Facility (MVF)](https://www.omg.org/spec/MVF/1.0/About-MVF) is partially implemented for that purpose.</documentation>
@@ -472,7 +472,7 @@ See example files:&#xD;
         <bounds x="864" y="356" width="185" height="102"/>
         <content>The associations with solid line and  open arrowhead denote a 'serves' relationship (from server to client). Direction of data flow is not implied and can occur in both directions.</content>
       </child>
-      <documentation>The top-level module architecture of the PIG App embedded in its sytem context.</documentation>
+      <documentation>The top-level module architecture of the PIG App embedded in its system context.</documentation>
     </element>
     <element xsi:type="archimate:ArchimateDiagramModel" name="_READ_ME_" id="id-1cafb05b01384aaf838df08a7c66579c">
       <child xsi:type="archimate:Note" id="id-eb46e551b0984bf6bbc91f6f8b6250f7" textAlignment="1" fillColor="#f6f6d8">
@@ -636,7 +636,7 @@ Report:View:Tag&#xD;
       <child xsi:type="archimate:DiagramObject" id="id-135217ebc20b485495af15b40de4b23c" targetConnections="id-b10df5389dd94c76833b8ddda9ab3f54 id-430b98e28d2b4e48a059b0a28e19df96 id-992ac44df3f8473693b1f726640c8e3e" textPosition="1" archimateElement="id-d44b441f59e24c06abcd5bf6b1bbb060">
         <bounds x="50" y="12" width="120" height="55"/>
       </child>
-      <documentation>A process to validate the conceptional and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
+      <documentation>A process to validate the conceptual and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
 &#xD;
 Subject to validation:&#xD;
 - Has the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) enough expressive power to deal with real-world data?&#xD;

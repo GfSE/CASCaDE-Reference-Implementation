@@ -163,7 +163,7 @@ Transformations may use:&#xD;
 - SPARQL in case of RDF source data&#xD;
 - Scripting&#xD;
 &#xD;
-The following transformations are planned for validating the approach (the standard tp submit):&#xD;
+The following transformations are planned for validating the approach (the standard to submit):&#xD;
 - [ReqIF](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/25)&#xD;
 - [SysML v1](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/26)&#xD;
 - [STEP](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/4)&#xD;
@@ -289,7 +289,7 @@ See example files:&#xD;
     </element>
     <element identifier="id-a7c19dd2b55f4882a32504716d75e1f5" xsi:type="ApplicationFunction">
       <name xml:lang="en">Transform to Subgraph (SPARQL)</name>
-      <documentation xml:lang="en">Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQ queries defined in [[reqif-to-pig.xsl]] are used.</documentation>
+      <documentation xml:lang="en">Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQL queries defined in [[reqif-to-pig.xsl]] are used.</documentation>
     </element>
     <element identifier="id-93711964b9d7473180506ded406f8ac2" xsi:type="DataObject">
       <name xml:lang="en">input.pig.xml</name>
@@ -781,7 +781,7 @@ See example files:&#xD;
     <diagrams>
       <view identifier="id-f73cd2ce3fb547f3a68dc93bec8f2bd8" xsi:type="Diagram" viewpoint="Application Structure">
         <name xml:lang="en">Module Architecture</name>
-        <documentation xml:lang="en">The top-level module architecture of the PIG App embedded in its sytem context.</documentation>
+        <documentation xml:lang="en">The top-level module architecture of the PIG App embedded in its system context.</documentation>
         <node identifier="id-d7f2525e752e415ca43adf371fdae6fb" elementRef="id-e172fd9964fa43ad8d12dbd7d3ab7dae" xsi:type="Element" x="228" y="24" w="613" h="325">
           <style>
             <fillColor r="181" g="255" b="255" a="100" />
@@ -1232,7 +1232,7 @@ Report:View:Tag&#xD;
       </view>
       <view identifier="id-a806fdf5705d4e11924dcd2dbd0c958d" xsi:type="Diagram" viewpoint="Application Usage">
         <name xml:lang="en">Validation Process</name>
-        <documentation xml:lang="en">A process to validate the conceptional and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
+        <documentation xml:lang="en">A process to validate the conceptual and technical choices made by the standard in preparation. This is preliminary and needs further discussion and detailing with the target users. Ultimately, the standard must satisfy their use-cases and needs in general.&#xD;
 &#xD;
 Subject to validation:&#xD;
 - Has the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) enough expressive power to deal with real-world data?&#xD;
