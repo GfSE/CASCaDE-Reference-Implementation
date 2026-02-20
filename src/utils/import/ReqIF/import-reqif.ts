@@ -58,6 +58,8 @@ export async function importReqif(
     filename: string
     //    options?: any
 ): Promise<IRsp<unknown>> {
+    LOG.debug(`importReqIF: starting import of file ${filename}`);
+
     // Check file extension
     if (!filename.toLowerCase().endsWith('.reqif')) {
         return Msg.create(660, filename, 'expected .reqif file extension');
