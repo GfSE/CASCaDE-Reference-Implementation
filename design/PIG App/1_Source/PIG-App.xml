@@ -237,7 +237,7 @@ The user-interface is class-driven, i.e.the details of the entity, relationship 
       <name xml:lang="en">reqif-to-pig.xsl</name>
       <documentation xml:lang="en">A XSL stylesheet to extract relevant data from a ReqIF file. It is assumed that the source file to transform complies with the OMG Standard [Requirements Interchange Format (ReqIF)](https://www.omg.org/reqif/) and with the Prostep ivip [Implementation Guideline ReqIF](https://www.prostep.org/shop/detail?ai%5Baction%5D=detail&amp;ai%5Bcontroller%5D=Catalog&amp;ai%5Bd_name%5D=reqif_ig_v1-7&amp;ai%5Bd_pos%5D=).&#xD;
 &#xD;
-The fact that the ReqIF Implementation Guideline proposes certain attribute names as a convention, but no names for the entities (called OBJECT-TYPES) themselves, is a challenge for semantic interoperability. However, daily practice has adopted a number of entity names which can be included in the [[any-to.pig.mvf]] to find appropriate ontology classes. It is advised to design the XSL stylesheet for ReqIF in a way that the LONG-NAME of all OBJECT-TYPES is taken as entity class name and to leave all mapping with ontology terms to a subsequent process step, see [[Assign Ontology Classes]].</documentation>
+The fact that the ReqIF Implementation Guideline proposes certain attribute names as a convention, but no names for the entities (called OBJECT-TYPES) themselves, is a challenge for semantic interoperability. However, daily practice has adopted a number of entity names which can be included in the [[any-to-pig.mvf]] to find appropriate ontology classes. It is advised to design the XSL stylesheet for ReqIF in a way that the LONG-NAME of all OBJECT-TYPES is taken as entity class name and to leave all mapping with ontology terms to a subsequent process step, see [[Assign Ontology Class]].</documentation>
     </element>
     <element identifier="id-808de729507c4dc181fb2bafb2bda148" xsi:type="ApplicationService">
       <name xml:lang="en">MVF Engine</name>
@@ -1567,7 +1567,7 @@ The input formats defined have different purpose or strength:&#xD;
 &#xD;
 | Category | Format | Purpose and Strength |&#xD;
 | --- | --- | ---|&#xD;
-| Processing | OO Classes | Data Processing, Version &amp; Configuration Management, Multi-user Operation |&#xD;
+| Processing | OO Classes | Data Processing, Version and Configuration Management, Multi-user Operation |&#xD;
 | Processing | JSON | Equivalent with the above for schema checking, storage |&#xD;
 | Exchange | PIG JSON-LD | Higher level graph language for API and LD-Processors: Entities and relationships as self-contained objects with URI, standardized type and designated values, explicit, easy to transform |&#xD;
 | Exchange | PIG XML | Equivalent with the above for users preferring the XML ecosystem |&#xD;
