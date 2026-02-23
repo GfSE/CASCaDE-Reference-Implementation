@@ -41,16 +41,6 @@ module.exports = {
             })
         ],
     },
-
-
-
-
-
-
-
-
-
-
     devServer: {
         headers: {
             'Content-Security-Policy': [
@@ -80,7 +70,5 @@ module.exports = {
             },
         },
     },
-
-
     publicPath: './',
 };
