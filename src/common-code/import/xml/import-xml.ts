@@ -24,10 +24,10 @@
  * - Browser: await XmlImporter.import(fileInput.files[0])
  */
 
-import { IRsp, Rsp, Msg, rspOK } from '../../../utils/lib/messages';
-import { LOG } from '../../../utils/lib/helpers';
-import { PIN } from '../../../utils/lib/platform-independence';
-import { APackage, TPigItem } from '../../../utils/schemas/pig/ts/pig-metaclasses';
+import { IRsp, Rsp, Msg, rspOK } from '../../lib/messages';
+import { LOG } from '../../lib/helpers';
+import { PIN } from '../../lib/platform-independence';
+import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
 
 /**
  * XML Importer

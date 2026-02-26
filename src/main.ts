@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
-import { LOG } from './utils/lib/helpers';
+import { LOG } from './common-code/lib/helpers';
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'

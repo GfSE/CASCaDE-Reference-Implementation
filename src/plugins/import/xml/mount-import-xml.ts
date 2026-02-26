@@ -50,14 +50,9 @@ export const xmlImportPlugin: Plugin = {
 };
 
 /**
- * Export component for direct import
- */
-export { XmlImportPlugin };
-
-/**
  * Export business logic for programmatic use
  */
-export { XmlImporter } from './import-xml';
+// export { XmlImporter } from '../../../common-code/import/xml/import-xml';
 
 /**
  * Type declarations for global properties

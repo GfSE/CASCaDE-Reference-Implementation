@@ -9,8 +9,8 @@
  * - add more tests as proposed in comments below - not clear yet whether expectations or processing are faulty
  */
 
-import { JsonldImporter } from '../../src/plugins/import/jsonld/import-jsonld';
-import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
+import { JsonldImporter } from '../../src/common-code/import/jsonld/import-jsonld';
+import { TPigItem } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
 import * as path from 'path';
 import * as fs from 'fs';
 

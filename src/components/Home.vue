@@ -42,7 +42,7 @@
 <script lang="ts">
     import { inject } from 'vue';
     import { Options, Vue } from 'vue-class-component';
-    import { DEF } from '@/utils/lib/definitions';
+    import { DEF } from '@/common-code/lib/definitions';
 
     @Options({
         props: {

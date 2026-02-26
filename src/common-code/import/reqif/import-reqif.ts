@@ -27,11 +27,11 @@
  * - Extend the constraint checks - very limited now.
  */
 
-import { LOG } from '../../../utils/lib/helpers';
-import { PIN } from '../../../utils/lib/platform-independence';
-import { IRsp, Msg, Rsp, rspOK } from '../../../utils/lib/messages';
-import { APackage, TPigItem } from '../../../utils/schemas/pig/ts/pig-metaclasses';
-import { ConstraintCheckType } from '../../../utils/schemas/pig/ts/pig-package-constraints';
+import { LOG } from '../../lib/helpers';
+import { PIN } from '../../lib/platform-independence';
+import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
+import { APackage /*, TPigItem*/ } from '../../schema/pig/ts/pig-metaclasses';
+import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
 
 /**
  * ReqIF Importer

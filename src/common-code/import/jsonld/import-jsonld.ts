@@ -24,11 +24,11 @@
  * - Browser: await JsonldImporter.import(fileInput.files[0])
  */
 
-import { IRsp, rspOK, Rsp, Msg } from '../../../utils/lib/messages';
-import { LOG } from '../../../utils/lib/helpers';
-import { PIN } from '../../../utils/lib/platform-independence';
-import { APackage, TPigItem } from '../../../utils/schemas/pig/ts/pig-metaclasses';
-import { SCH_LD } from '../../../utils/schemas/pig/jsonld/pig-schemata-jsonld';
+import { IRsp, rspOK, Rsp, Msg } from '../../lib/messages';
+import { LOG } from '../../lib/helpers';
+import { PIN } from '../../lib/platform-independence';
+import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
+import { SCH_LD } from '../../schema/pig/jsonld/pig-schemata-jsonld';
 
 /**
  * JSON-LD document structure

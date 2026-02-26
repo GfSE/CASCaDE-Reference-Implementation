@@ -60,10 +60,10 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
-    import { ReqifImporter } from './import-reqif';
-    import { TPigItem, APackage, stringHTML } from '@/utils/schemas/pig/ts/pig-metaclasses';
+    import { ReqifImporter } from '@/common-code/import/reqif/import-reqif';
+    import { TPigItem, APackage, stringHTML } from '@/common-code/schema/pig/ts/pig-metaclasses';
     import { useHtmlStore } from '@/stores/cacheStore';
-    import { Msg, IRsp } from '@/utils/lib/messages';
+    import { Msg, IRsp } from '@/common-code/lib/messages';
 
     @Options({
         data() {

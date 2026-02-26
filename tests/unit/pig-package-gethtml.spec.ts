@@ -4,8 +4,8 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { APackage } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
-import { ConstraintCheckType } from '../../src/utils/schemas/pig/ts/pig-package-constraints';
+import { APackage } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+import { ConstraintCheckType } from '../../src/common-code/schema/pig/ts/pig-package-constraints';
 
 describe('PIG Package getHTML() Method', () => {
     describe('Valid Package with Single Entity', () => {

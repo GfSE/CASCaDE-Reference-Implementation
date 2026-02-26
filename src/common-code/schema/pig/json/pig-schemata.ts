@@ -38,7 +38,7 @@ const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
 /* PROPERTY_SCHEMA: describes IProperty (pig:Property) */
 const PROPERTY_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IProperty',
+    $id: 'https://gfse.org/schema/pig/IProperty',
     type: 'object',
     properties: {
         id: { $ref: '#/$defs/idString' },
@@ -160,7 +160,7 @@ const validatePropertySchema = ajv.compile(PROPERTY_SCHEMA);
 /* LINK_SCHEMA: describes IReference (pig:Link) */
 const LINK_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IReference',
+    $id: 'https://gfse.org/schema/pig/IReference',
     type: 'object',
     properties: {
         id: { $ref: '#/$defs/idString' },
@@ -219,7 +219,7 @@ const validateLinkSchema = ajv.compile(LINK_SCHEMA);
 /* ENTITY_SCHEMA: describes IEntity (pig:Entity) */
 const ENTITY_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IEntity',
+    $id: 'https://gfse.org/schema/pig/IEntity',
     type: 'object',
     properties: {
         id: { $ref: '#/$defs/idString' },
@@ -291,7 +291,7 @@ const validateEntitySchema = ajv.compile(ENTITY_SCHEMA);
 /* RELATIONSHIP_SCHEMA: describes IRelationship (pig:Relationship) */
 const RELATIONSHIP_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IRelationship',
+    $id: 'https://gfse.org/schema/pig/IRelationship',
     type: 'object',
     properties: {
         id: { $ref: '#/$defs/idString' },
@@ -363,7 +363,7 @@ const validateRelationshipSchema = ajv.compile(RELATIONSHIP_SCHEMA);
  */
 const ANENTITY_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IAnEntity',
+    $id: 'https://gfse.org/schema/pig/IAnEntity',
     type: 'object',
     properties: {
         id: { $ref: '#/$defs/idString' },
@@ -477,7 +477,7 @@ const validateAnEntitySchema = ajv.compile(ANENTITY_SCHEMA);
 /* ARELATIONSHIP_SCHEMA: describes IARelationship (pig:aRelationship) */
 const ARELATIONSHIP_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IARelationship',
+    $id: 'https://gfse.org/schema/pig/IARelationship',
     type: 'object',
     properties: {
         id: { $ref: '#/$defs/idString' },
@@ -602,7 +602,7 @@ const validateARelationshipSchema = ajv.compile(ARELATIONSHIP_SCHEMA);
 /* APACKAGE_SCHEMA: describes IAPackage (pig:aPackage) */
 const APACKAGE_SCHEMA = {
     $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schemas/pig/IAPackage',
+    $id: 'https://gfse.org/schema/pig/IAPackage',
     type: 'object',
     properties: {
         context: {

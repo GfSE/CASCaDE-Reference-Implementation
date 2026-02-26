@@ -2723,7 +2723,7 @@ function getXmlElementText(xmlElement: ElementXML): string {
  * Check if a property name represents a multi-language text field
  * These fields must always be arrays of ILanguageText objects according to pig-schemata.ts
  * 
- * Multi-language fields found in schemas:
+ * Multi-language fields found in schemata:
  * - Property: title, description, eligibleValue.title // the latter is handled through recursive iteration
  * - Link: title, description
  * - Entity: title, description
@@ -2737,7 +2737,7 @@ function isMultiLanguageText(propertyName: string): boolean {
     // Remove namespace prefix for checking
     const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
 
-    // All multi-language fields from PIG schemas that use LanguageText[]
+    // All multi-language fields from PIG schemata that use LanguageText[]
     const multiLangFields = new Set([
         // Common fields across all PIG classes and instances
         'title',           // dcterms:title - used in Property, Link, Entity, Relationship, AnEntity, ARelationship

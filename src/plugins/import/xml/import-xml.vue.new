@@ -86,9 +86,7 @@
             <div class="item-statistics">
                 <h5>Item Types:</h5>
                 <div class="statistics-grid">
-                    <div v-for="(count, type) in itemTypeStats"
-                         :key="type"
-                         class="stat-item">
+                    <div v-for="(count, type) in itemTypeStats" :key="type" class="stat-item">
                         <span class="stat-label">{{ formatItemType(type) }}</span>
                         <span class="stat-count">{{ count }}</span>
                     </div>
@@ -122,22 +120,23 @@
     </div>
 </template>
 
-<script setup lang="ts">import { ref, computed } from 'vue';
-import { XmlImporter } from './import-xml';
-import type { TPigItem } from '@/utils/schemas/pig/ts/pig-metaclasses';
+<script setup lang="ts">
+    import { ref, computed } from 'vue';
+    import { XmlImporter } from './import-xml';
+    import type { TPigItem } from '@/common-code/schema/pig/ts/pig-metaclasses';
 
-// Reactive state
-const fileInput = ref<HTMLInputElement | null>(null);
-const selectedFileName = ref('');
-const isImporting = ref(false);
-const importSuccess = ref(false);
-const importError = ref('');
-const importWarning = ref('');
-const importedItems = ref<TPigItem[]>([]);
+    // Reactive state
+    const fileInput = ref<HTMLInputElement | null>(null);
+    const selectedFileName = ref('');
+    const isImporting = ref(false);
+    const importSuccess = ref(false);
+    const importError = ref('');
+    const importWarning = ref('');
+    const importedItems = ref<TPigItem[]>([]);
 
-// Computed properties
-const importedItemCount = computed(() =>
-    Math.max(0, importedItems.value.length - 1) // -1 for package
+    // Computed properties
+    const importedItemCount = computed(() =>
+        Math.max(0, importedItems.value.length - 1) // -1 for package
 );
 
 const graphItems = computed(() =>

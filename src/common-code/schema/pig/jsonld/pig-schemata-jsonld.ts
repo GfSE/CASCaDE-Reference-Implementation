@@ -3,7 +3,7 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 /** JSON-LD SCHEMATA for PIG items: Property, Link, Entity, Relationship, AnEntity, ARelationship
- *  These schemas validate the JSON-LD representation (with @id, @type, @value, etc.)
+ *  These schemata validate the JSON-LD representation (with @id, @type, @value, etc.)
  *
  *  Dependencies: ajv (Another JSON Schema Validator) https://ajv.js.org/
  *  Authors: oskar.dungern@gfse.org, ..
@@ -16,7 +16,7 @@
  * - this allows separate validation of incoming/outgoing JSON-LD documents
  * - use JSON Schema draft-07 (widely supported)
  * - use ajv for validation (fast, popular)
- * - these schemas validate JSON-LD documents (@graph, @context, @id, @type)
+ * - these schemata validate JSON-LD documents (@graph, @context, @id, @type)
  * - schemata are loaded from external JSON files in public/assets/jsonld/
  * - Browser: fetches via HTTP from /assets/jsonld/
  * - Node.js: reads from local public/assets/jsonld/ directory
@@ -80,7 +80,7 @@ export const SCHEMA_FILES = Object.fromEntries(
 // Type for schema keys
 type SchemaKey = keyof typeof SCHEMA_FILE_NAMES;
 
-// Cache for loaded schemas
+// Cache for loaded schemata
 const schemaCache: Partial<Record<SchemaKey, any>> = {};
 
 /**
@@ -116,42 +116,40 @@ async function loadSchema(schemaKey: SchemaKey): Promise<any> {
 }
 
 /**
- * Load all schemas from JSON files
- * @returns Promise resolving to an object with all loaded schemas
+ * Load all schemata from JSON files
+ * @returns Promise resolving to an object with all loaded schemata
  */
-async function loadAllSchemas(): Promise<Record<SchemaKey, any>> {
-    const schemas = {} as Record<SchemaKey, any>;
-
+async function loadAllSchemata(): Promise<Record<SchemaKey, any>> {
+    const schemata = {} as Record<SchemaKey, any>;
     for (const key of Object.keys(SCHEMA_FILE_NAMES) as SchemaKey[]) {
-        schemas[key] = await loadSchema(key);
+        schemata[key] = await loadSchema(key);
     }
 
-    return schemas;
+    return schemata;
 }
 
 /**
- * Initialize and register all schemas with AJV
+ * Initialize and register all schemata with AJV
  * Must be called before using any validators
  */
-async function initializeSchemas(): Promise<void> {
-    const schemas = await loadAllSchemas();
-
-    // Register all schemas with AJV
-    ajv.addSchema(schemas.Property);
-    ajv.addSchema(schemas.Link);
-    ajv.addSchema(schemas.Entity);
-    ajv.addSchema(schemas.Relationship);
-    ajv.addSchema(schemas.AnEntity);
-    ajv.addSchema(schemas.ARelationship);
-    ajv.addSchema(schemas.APackage);
+async function initializeSchemata(): Promise<void> {
+    const schemata = await loadAllSchemata();
+    // Register all schemata with AJV
+    ajv.addSchema(schemata.Property);
+    ajv.addSchema(schemata.Link);
+    ajv.addSchema(schemata.Entity);
+    ajv.addSchema(schemata.Relationship);
+    ajv.addSchema(schemata.AnEntity);
+    ajv.addSchema(schemata.ARelationship);
+    ajv.addSchema(schemata.APackage);
 }
 
-// Initialize schemas on module load
+// Initialize schemata on module load
 let initializationPromise: Promise<void> | null = null;
 
 function ensureInitialized(): Promise<void> {
     if (!initializationPromise) {
-        initializationPromise = initializeSchemas();
+        initializationPromise = initializeSchemata();
     }
     return initializationPromise;
 }
@@ -313,7 +311,7 @@ export const SCH_LD = {
         return ajv.errorsText(validator.errors, { separator: '; ' });
     },
 
-    // Utility: Ensure all schemas are loaded
+    // Utility: Ensure all schemata are loaded
     async initialize(): Promise<void> {
         await ensureInitialized();
     }
