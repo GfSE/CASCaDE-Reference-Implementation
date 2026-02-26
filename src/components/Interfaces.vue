@@ -1,28 +1,24 @@
 <template>
     <div>
-        <v-sheet
-          border="dashed md"
-          color="surface-light"
-          height="200"
-          rounded="lg"
-          width="100%"
-        >
+        <v-sheet border="dashed md"
+                 color="surface-light"
+                 height="200"
+                 rounded="lg"
+                 width="100%">
             <ul>
-                <li v-for="(component, name) in exportComponents" :key="name">
-                    <component :is="name"/>
+                <li v-for="(component, name) in importComponents" :key="name">
+                    <component :is="name" />
                 </li>
             </ul>
         </v-sheet>
-        <v-sheet
-          border="dashed md"
-          color="surface-light"
-          height="200"
-          rounded="lg"
-          width="100%"
-        >
+        <v-sheet border="dashed md"
+                 color="surface-light"
+                 height="200"
+                 rounded="lg"
+                 width="100%">
             <ul>
-                <li v-for="(component, name) in importComponents" :key="name">
-                    <component :is="name"/>
+                <li v-for="(component, name) in exportComponents" :key="name">
+                    <component :is="name" />
                 </li>
             </ul>
         </v-sheet>

@@ -5,19 +5,19 @@
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /** Product Information Graph (PIG) - Centralized error and status messages
-*   Dependencies: none (self-contained)
-*   Authors: oskar.dungern@gfse.org
-*   License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
-*
-*   Design Decisions:
-*   - All PIG validation and error messages centralized here
-*   - Status codes 600-699 reserved for PIG-specific messages
-*   - Messages are parameterized for flexibility
-*   - Self-contained with IRsp definition to avoid circular dependencies
-*   - Msg: for responses without payload (status/statusText only)
-*   - Rsp: for responses with payload (response/responseType)
-*   - Multi-language support: en, de, fr, es
-*/
+ *  Dependencies: none (self-contained)
+ *  Authors: oskar.dungern@gfse.org
+ *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ *  Design Decisions:
+ *  - All PIG validation and error messages centralized here
+ *  - Status codes 600-699 reserved for PIG-specific messages
+ *  - Messages are parameterized for flexibility
+ *  - Self-contained with IRsp definition to avoid circular dependencies
+ *  - Msg: for responses without payload (status/statusText only)
+ *  - Rsp: for responses with payload (response/responseType)
+ *  - Multi-language support: en, de, fr, es
+ */
 
 /** IRsp interface
  * An xhr-like object to return the result of the import;

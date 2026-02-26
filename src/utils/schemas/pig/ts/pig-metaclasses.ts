@@ -18,6 +18,8 @@
  *  - Both 'AProperty' and 'ALink' have no identifier and no revision history of their own.
  *  - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
  *    This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
+ *  - aRelationship.hasSourceLink is an array with maxCount=1 to have the same structure as anEntity.hasSourceLink.
+ *  - same for eligibleTargetLink
  *  - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
  *    before the items are instantiated here.
  *  - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
@@ -28,13 +30,19 @@
  *  - Programming errors result in exceptions, data errors in IMsg return values.
  *
  *  ToDo:
+ *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check? 
+ *  - implement 'composes' (formerly composedProperty) for Property and AProperty
  *  - Check use of normalizeId() in the setJSONLD() thread
  *  - normalizeId() shortly before validate() in set() ?
  *  - Check the result of normalizeId in the setXML() thread in case of eligible values: must be 'o:'
+ *  - Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed?
  *  - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
  *  - allow packages to be nested
  *  - Consider the storage of numeric and boolean values: should be string?
  *  - Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}?
+ *  - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
+ *    This code could just *ignore* additional properties.
+ *  - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -71,6 +79,18 @@ export const PigItemType = {
     aRelationship: 'pig:aRelationship'
 } as const;
 export type PigItemTypeValue = typeof PigItemType[keyof typeof PigItemType];
+export enum XsDataType {
+    anyType = 'xs:anyType',
+    Boolean = 'xs:boolean',
+    Integer = 'xs:integer',
+    Double = 'xs:double',
+    String = 'xs:string',
+    AnyURI = 'xs:anyURI',
+    Date = 'xs:date',
+    DateTime = 'xs:dateTime',
+    Duration = 'xs:duration',
+    ComplexType = 'xs:complexType'
+}
 
 const PIG_CLASSES = new Set<PigItemTypeValue>([
     PigItemType.Property,
@@ -207,21 +227,9 @@ export class PigItem {
         return (Object.values(XsDataType) as string[]).includes(norm);
     }
 }
-export enum XsDataType {
-    anyType = 'xs:anyType',
-    Boolean = 'xs:boolean',
-    Integer = 'xs:integer',
-    Double = 'xs:double',
-    String = 'xs:string',
-    AnyURI = 'xs:anyURI',
-    Date = 'xs:date',
-    DateTime = 'xs:dateTime',
-    Duration = 'xs:duration',
-    ComplexType = 'xs:complexType'
-}
 export interface INamespace {
     tag: string; // e.g. a namespace tag, e.g. "pig:"
-    uri: string; // e.g. a namespace value, e.g. "https://product-information-graph.gfse.org/"
+    uri: string; // e.g. a namespace value, e.g. "https://product-information-graph.org/"
 }
 export interface ILanguageText {
     value: string;
@@ -427,22 +435,12 @@ abstract class Element extends Identifiable implements IElement {
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
     }
-/*    protected validate(itm: IElement) {
-        // If eligibleProperty is not present, all properties are allowed;
-        // if present and empty, no properties are allowed.
-        // This is tested via schema at concrete class level.
-        //const rsp = validateIdStringArray(itm.eligibleProperty, 'eligibleProperty', { canBeUndefined: true, minCount: 0 });
-        //if (!rsp.ok) return rsp;
-        // ToDo: implement further validation logic
-        return super.validate(itm);
-    } */
     protected set(itm: IElement) {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
         super.set(itm);
         this.eligibleProperty = itm.eligibleProperty;
         this.icon = itm.icon;
-        // made chainable in concrete subclass
         return this;
     }
     protected get() {
@@ -515,7 +513,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
         return _itm;
     }
     setJSONLD(itm: any) {
-        // ... for all subclasses:
+        // ... not superseded by any subclass, thus *not* protected.
         const _itm = this.fromJSONLD(itm) as any;
         return this.set(_itm);
     }
@@ -544,7 +542,7 @@ export interface IProperty extends IIdentifiable {
     eligibleValue?: IEligibleValue[]; // array of allowed values, datatype-dependent
     defaultValue?: string;   // in PIG, values of all datatypes are strings
     unit?: string;  // according to SI units
-    composedProperty?: TPigId[];  // must be URI of another Property, no cyclic references
+    composes?: TPigId[];  // must be URI of another Property, no cyclic references
 }
 export class Property extends Identifiable implements IProperty {
     datatype!: string;
@@ -557,7 +555,7 @@ export class Property extends Identifiable implements IProperty {
     eligibleValue?: IEligibleValue[]; 
     defaultValue?: string;
     unit?: string;
-    composedProperty?: TPigId[];
+    composes?: TPigId[];
     constructor() {
         super({itemType:PigItemType.Property});
     }
@@ -603,7 +601,7 @@ export class Property extends Identifiable implements IProperty {
             this.eligibleValue = itm.eligibleValue;
             this.defaultValue = itm.defaultValue;
             this.unit = itm.unit;
-            this.composedProperty = itm.composedProperty;
+            this.composes = itm.composes;
         }
         return this; // make chainable
     }
@@ -621,7 +619,7 @@ export class Property extends Identifiable implements IProperty {
             eligibleValue: this.eligibleValue,
             defaultValue: this.defaultValue,
             unit: this.unit,
-            composedProperty: this.composedProperty
+            composes: this.composes
         });
     }
     fromJSONLD(itm: any) {
@@ -833,12 +831,12 @@ export class Relationship extends Element implements IRelationship {
 export interface IAProperty extends IItem {
     value?: string;       // a. Literal value (string, number, boolean, date - all as string)
     idRef?: TPigId;       // b. Reference to eligibleValue (for enumerations)
-    aComposedProperty?: TPigId[];
+    composes?: TPigId[];  // for composed properties: nests other properties, as properties have no id
 }
 export class AProperty extends Item implements IAProperty {
     value?: string;
     idRef?: TPigId;
-    aComposedProperty?: TPigId[];
+    composes?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.aProperty });
     }
@@ -854,7 +852,7 @@ export class AProperty extends Item implements IAProperty {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.aComposedProperty = itm.aComposedProperty;
+            this.composes = itm.composes;
             this.value = itm.value;
             this.idRef = itm.idRef;
         }
@@ -864,7 +862,7 @@ export class AProperty extends Item implements IAProperty {
         if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
-            aComposedProperty: this.aComposedProperty,
+            composes: this.composes,
             value: this.value,
             idRef: this.idRef
         });
@@ -1026,8 +1024,8 @@ export class AnEntity extends AnElement implements IAnEntity {
 }
 
 export interface IARelationship extends IAnElement {
-    hasSourceLink: IALink[];
-    hasTargetLink: IALink[];
+    hasSourceLink: IALink[];  // array must have exactly one element as checked by the JSON schema
+    hasTargetLink: IALink[];  // array must have exactly one element as checked by the JSON schema
 }
 export class ARelationship extends AnElement implements IARelationship {
     hasSourceLink!: ASourceLink[];
@@ -2111,7 +2109,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
                             // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
                             // itype == PigItemType.Link: idRef is mandatory
                             idRef: item.id,
-                            aComposedProperty: item.aComposedProperty
+                            composes: item.composes
                         });
                     delete obj[key]; // remove processed property
                     }
@@ -2131,7 +2129,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
                     // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
                     // itype == PigItemType.Link: idRef is mandatory
                     idRef: val.id,
-                    aComposedProperty: val.aComposedProperty
+                    composes: val.composes
                 });
                 delete obj[key]; // remove processed property
             }
@@ -2548,11 +2546,11 @@ function processConfigurableProperty(elem: ElementXML): JsonObject {
                 prop.idRef = childElement.textContent?.trim() as JsonValue;
             } else if (childTagName.endsWith('type')  || childTagName.endsWith('hasClass')) {
                 prop.hasClass = childElement.textContent?.trim() as JsonValue;
-            } else if (childTagName === 'aComposedProperty') {
-                if (!prop.aComposedProperty) {
-                    prop.aComposedProperty = [];
+            } else if (childTagName === 'composes') {
+                if (!prop.composes) {
+                    prop.composes = [];
                 }
-                (prop.aComposedProperty as string[]).push(childElement.textContent?.trim() || '');
+                (prop.composes as string[]).push(childElement.textContent?.trim() || '');
             }
         }
     }

@@ -58,7 +58,7 @@ describe('importXML (file system)', () => {
         const relativePath = path.relative(testFilesDir, testFile);
         const testName = relativePath;
 
-        test(`imports ${testName} and instantiates PIG classes`, async () => {
+        it(`imports ${testName} and instantiates PIG classes`, async () => {
             // import and test
             const rsp = await importXML(testFile);
             if (!rsp.ok)
@@ -89,7 +89,7 @@ describe('importXML (file system)', () => {
     });
 
     // Verify that all discovered files were processed
-    test('Check the number of files processed', () => {
+    it('Check the number of files processed', () => {
         expect(processedCount).toBe(xmlFiles.length);
     });
 });

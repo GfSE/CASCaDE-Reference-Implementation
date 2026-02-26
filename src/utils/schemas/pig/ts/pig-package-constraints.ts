@@ -28,6 +28,8 @@
  *   ✅ - reference to eligible values (enumerations)
  * Phase 2 (important):
  *      namespace prefixes are defined in the context
+ *      subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
+ *      subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
  *      eligible values as defined comply with the restrictions of their own Property class
  *      eligibleProperty references
  *      eligibleEndpoint references

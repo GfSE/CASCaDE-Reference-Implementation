@@ -540,6 +540,7 @@ const ARELATIONSHIP_SCHEMA = {
         hasSourceLink: {
             type: 'array',
             minItems: 1,
+            maxItems: 1,
             items: {
                 type: 'object',
                 properties: {
@@ -557,6 +558,7 @@ const ARELATIONSHIP_SCHEMA = {
         hasTargetLink: {
             type: 'array',
             minItems: 1,
+            maxItems: 1,
             items: {
                 type: 'object',
                 properties: {

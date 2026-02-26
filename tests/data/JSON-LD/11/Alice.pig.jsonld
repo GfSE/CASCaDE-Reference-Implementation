@@ -79,7 +79,7 @@
             ]
         },
         {
-            "@id": "pig:HierarchyRoot",
+            "@id": "pig:Root",
             "pig:specializes": {
                 "@id": "pig:Organizer"
             },
@@ -88,7 +88,7 @@
             },
             "dcterms:title": [
                 {
-                    "@value": "Hierarchy Root",
+                    "@value": "Tree Root",
                     "@language": "en"
                 }
             ],

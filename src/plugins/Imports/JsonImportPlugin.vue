@@ -46,10 +46,10 @@ import { useHtmlStore } from '@/stores/cacheStore'
     async submitFiles() {
         for (const file of this.selectedFiles) {
             // extract HTML of object
-            const translatorResponse = await importJSONLD(file);
-            if (translatorResponse.ok) {
+            const rsp = await importJSONLD(file);
+            if (rsp.ok) {
                 // handle successful import, e.g., store the PIG items and update the UI
-                const allItems = translatorResponse.response as TPigItem[];
+                const allItems = rsp.response as TPigItem[];
                 const thePackage = allItems[0] as APackage;
                 
                 // TODO: this will only return the first file, need to update to return list of all HTML
@@ -59,6 +59,9 @@ import { useHtmlStore } from '@/stores/cacheStore'
                 // handle import error, e.g., log/show an error message
             }
         }
+        // reset variables
+        this.dialog = false;
+        this.selectedFiles = [];
     }
   },
 })

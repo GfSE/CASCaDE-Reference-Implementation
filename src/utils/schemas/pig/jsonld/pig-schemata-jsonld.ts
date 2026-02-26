@@ -70,7 +70,7 @@ const SCHEMA_FILE_NAMES = {
 } as const;
 
 // Build full paths for schema files
-const SCHEMA_FILES = Object.fromEntries(
+export const SCHEMA_FILES = Object.fromEntries(
     Object.entries(SCHEMA_FILE_NAMES).map(([key, filename]) => [
         key,
         `${getSchemaBasePath()}${filename}`
@@ -318,6 +318,3 @@ export const SCH_LD = {
         await ensureInitialized();
     }
 };
-
-// Export schema path for external use
-export { SCHEMA_FILES };

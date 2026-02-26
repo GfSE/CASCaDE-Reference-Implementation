@@ -40,7 +40,7 @@
 
 
 <script lang="ts">
-import { Vue, Options} from 'vue-class-component'
+import { Vue, Options } from 'vue-class-component'
 import { useHtmlStore } from '@/stores/cacheStore'
 
 @Options({
@@ -54,7 +54,7 @@ import { useHtmlStore } from '@/stores/cacheStore'
     htmlArray(): string[] {
       const store = useHtmlStore()
       const value = store.htmlArray
-      console.log('value ' + value)
+      //LOG.debug('value ' + value)
 
       if (!value) return []
 

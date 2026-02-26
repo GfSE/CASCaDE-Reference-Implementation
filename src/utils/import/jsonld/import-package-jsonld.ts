@@ -19,7 +19,7 @@
  * - Browser: await importJsonLd(fileInput.files[0])
  */
 
-import { IRsp, rspOK, Msg } from '../../lib/messages';
+import { IRsp, rspOK, Rsp, Msg } from '../../lib/messages';
 import { LOG } from '../../lib/helpers';
 import { PIN } from '../../lib/platform-independence';
 import { APackage, TPigItem } from '../../schemas/pig/ts/pig-metaclasses';
@@ -106,7 +106,7 @@ export async function importJSONLD(source: string | File | Blob): Promise<IRsp> 
         }
         LOG.warn(`importJSONLD: instantiated ${actualCount} of ${expectedCount} items` + str);
 
-        result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
+        result = Rsp.create(691, 'JSON-LD', undefined, '', actualCount, expectedCount);
     }
 
     // Return all items (package + graph items)

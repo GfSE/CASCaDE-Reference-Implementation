@@ -10,6 +10,8 @@
  * 
  * Security note: Uses saxon-js which has a transitive dependency on @xmldom/xmldom
  * with known vulnerabilities. Input is validated and size-limited. See docs/SECURITY.md
+ * - The build configuration via package.json loads a newer version of xmldom without criticl vulnerability
+ *   replacing the dependency of saxon-js.
  *
  * Design Decisions:
  * - SEF stylesheet is loaded from public/assets/xslt/ in both environments
@@ -27,7 +29,7 @@
  * @returns IRsp containing the transformed XML document or error messages
  */
 
-import { LOG } from '../../lib/helpers';
+import { LIB, LOG } from '../../lib/helpers';
 import { PIN } from '../../lib/platform-independence';
 import { IRsp, /*Rsp,*/ Msg, rspOK } from '../../lib/messages';
 import { APackage, TPigItem, stringXML } from '../../schemas/pig/ts/pig-metaclasses';
@@ -53,17 +55,24 @@ function getStylesheetPath(): string {
     }
 }
 
-export async function importReqif(
-    xmlString: stringXML,
-    filename: string
-    //    options?: any
-): Promise<IRsp<unknown>> {
-    LOG.debug(`importReqIF: starting import of file ${filename}`);
+export async function importReqif( source: string | File /*, options?: any */ ): Promise<IRsp<unknown>> {
+
+// Extract filename for validation
+const filename = typeof source === 'string'
+    ? source
+    : source.name;
 
     // Check file extension
-    if (!filename.toLowerCase().endsWith('.reqif')) {
+    if (!filename.endsWith('.reqif')) {
         return Msg.create(660, filename, 'expected .reqif file extension');
     }
+
+    const rspRead = await PIN.readFileAsText(source);
+    if (!rspRead.ok)
+        return rspRead;
+    
+    const xmlString = rspRead.response as string;
+    // LOG.info('importXML: loaded text length ' + xmlString.length); 
 
     // Security: Size limit check
     if (xmlString.length > MAX_XML_SIZE) {
@@ -75,13 +84,8 @@ export async function importReqif(
         return Msg.create(660, filename, 'invalid XML structure');
     }
 
-    /*    const rspRead = await LIB.readFileAsText(source);
-        if (!rspRead.ok)
-            return rspRead;
-    
-        const xmlString = rspRead.response as string;
-        // LOG.info('importXML: loaded text length ' + xmlString.length); 
-    */
+    // LOG.debug(`importReqIF: starting import of file ${filename}`);
+
     const parser = PIN.createDOMParser();
     const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 

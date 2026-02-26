@@ -12,7 +12,7 @@
                     multiple
                 ></v-file-input>
                 <v-btn color='red' @click='dialog = false'>Close</v-btn>
-                <v-btn color='blue' @click='submitFiles'>Submit</v-btn>
+                <v-btn color='blue' @click='onClick'>Submit</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
@@ -21,7 +21,8 @@
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
     import { importReqif } from '../../utils/import/ReqIF/import-reqif';
-    import { PIN } from '../../utils/lib/platform-independence';
+    import { TPigItem, APackage, stringHTML } from '../../utils/schemas/pig/ts/pig-metaclasses';
+    import { useHtmlStore } from '@/stores/cacheStore' 
 
     @Options({
         data() {
@@ -31,15 +32,28 @@
             };
         },
         methods: {
+            async onClick() {
+                const store = useHtmlStore()
+
+                const htmlArray = await this.submitFiles()
+                // LOG.debug(htmlArray)
+                store.htmlArray = htmlArray
+
+                await this.$router.push({
+                    name: "Viewing"
+                })
+            },
             async submitFiles() {
                 for (const file of this.selectedFiles) {
-                    const readResponse = await PIN.readFileAsText(file)
-                    const rspContent = readResponse.response
-                    const importResponse = await importReqif(rspContent.response, file)
-                    if (importResponse.ok) {
+                    const rsp = await importReqif(file)
+                    if (rsp.ok) {
                         // handle successful import, e.g., store the PIG items and update the UI
-                        const importPackage = importResponse.response
-                        console.log(typeof importPackage)
+                        const allItems = rsp.response as TPigItem[];
+                        const thePackage = allItems[0] as APackage;
+
+                        // TODO: this will only return the first file, need to update to return list of all HTML
+                        const htmlArray = thePackage.getHTML() as stringHTML[]
+                        return htmlArray
                     } else {
                         // handle import error, e.g., log/show an error message
                     }

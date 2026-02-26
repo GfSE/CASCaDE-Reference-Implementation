@@ -11,8 +11,8 @@
 
 import { importJSONLD } from '../../src/utils/import/jsonld/import-package-jsonld';
 import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
-import path from 'path';
-import fs from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 
 function findTestFiles(dir: string, ext: string): string[] {
     if (!fs.existsSync(dir)) {

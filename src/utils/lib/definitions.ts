@@ -10,7 +10,7 @@ export const DEF = {
     // Default for local terms (names) without an explicit namespace
     defaultDataNamespace: PIG_DOMAIN + 'default/data#',  // for data instances with prefix d:
     defaultOntologyNamespace: PIG_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
-    pigVersion: '2026-02-12',
+    pigVersion: '2026-02-23',
     ...BUILD_INFO
 };
 
