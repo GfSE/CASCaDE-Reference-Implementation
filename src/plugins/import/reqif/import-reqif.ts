@@ -152,12 +152,14 @@ export class ReqifImporter {
             `ReqIFImporter: successfully imported ${filename} with ${allItems.length - 1} items`
         );
 
-        // Return success response with items
-        const result = rspOK;
-        result.response = allItems;
-        result.responseType = 'json';
+        // Return success response with items (clone rspOK to avoid shared-state mutation)
+        const result: IRsp<TPigItem[]> = {
+            ...rspOK,
+            response: allItems,
+            responseType: 'json'
+        };
 
-        return result as IRsp<TPigItem[]>;
+        return result;
     }
 
     /**
