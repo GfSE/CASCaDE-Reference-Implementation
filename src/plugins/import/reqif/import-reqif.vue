@@ -1,18 +1,18 @@
 <template>
-    <v-btn color='primary' @click='dialog = true'>Import JSON-LD</v-btn>
+    <v-btn color='primary' @click='dialog = true'>Import ReqIF</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-            <v-card-title>Select JSON-LD Files</v-card-title>
+            <v-card-title>Select ReqIF Files</v-card-title>
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.jsonld,.json'
-                              label='JSON-LD Input'
+                              accept='.reqif'
+                              label='ReqIF Input'
                               prepend-icon='mdi-folder-open'
                               multiple
                               :loading='isLoading'
                               :disabled='isLoading'
-                              hint='Select one or more JSON-LD files to import'
+                              hint='Select one or more ReqIF files to import'
                               persistent-hint></v-file-input>
 
                 <!-- Error Display -->
@@ -60,10 +60,10 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
-    import { importJSONLD } from '@/utils/import/jsonld/import-package-jsonld';
+    import { ReqifImporter } from './import-reqif';
     import { TPigItem, APackage, stringHTML } from '@/utils/schemas/pig/ts/pig-metaclasses';
     import { useHtmlStore } from '@/stores/cacheStore';
-    import { IRsp } from '@/utils/lib/messages';
+    import { Msg, IRsp } from '@/utils/lib/messages';
 
     @Options({
         data() {
@@ -94,10 +94,12 @@
                     const results = await this.importAllFiles();
 
                     // Separate successful and failed imports
+                    // ✅ Type annotation hinzugefügt
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
                     // Collect all HTML arrays from successful imports
+                    // ✅ Type annotation hinzugefügt
                     const allHtmlArrays = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
                         const thePackage = allItems[0] as APackage;
@@ -114,6 +116,7 @@
 
                         // Log failed imports
                         if (failed.length > 0) {
+                            // ✅ Type annotation hinzugefügt
                             this.errorMessages = failed.map((r: IRsp<unknown>) =>
                                 `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
                             );
@@ -147,16 +150,11 @@
 
                 for (const file of this.selectedFiles) {
                     try {
-                        const rsp = await importJSONLD(file);
+                        const rsp = await ReqifImporter.import(file);
                         results.push(rsp);
                     } catch (error: any) {
                         // Convert exception to IRsp format
-                        results.push({
-                            ok: false,
-                            status: 500,
-                            statusText: `${file.name}: ${error?.message || String(error)}`,
-                            responseType: 'json'
-                        });
+                        results.push(Msg.create(600, `${file.name}: ${error?.message || String(error)}`));
                     }
                 }
 
@@ -184,7 +182,7 @@
         }
     })
 
-    export default class JsonImportComponent extends Vue {
+    export default class ReqifImportComponent extends Vue {
         dialog!: boolean;
         selectedFiles!: File[];
         isLoading!: boolean;

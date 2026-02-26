@@ -1,18 +1,18 @@
 <template>
-    <v-btn color='primary' @click='dialog = true'>Import ReqIF</v-btn>
+    <v-btn color='primary' @click='dialog = true'>Import XML</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-            <v-card-title>Select ReqIF Files</v-card-title>
+            <v-card-title>Select XML Files</v-card-title>
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.reqif'
-                              label='ReqIF Input'
+                              accept='.xml'
+                              label='XML Input'
                               prepend-icon='mdi-folder-open'
                               multiple
                               :loading='isLoading'
                               :disabled='isLoading'
-                              hint='Select one or more ReqIF files to import'
+                              hint='Select one or more XML files to import'
                               persistent-hint></v-file-input>
 
                 <!-- Error Display -->
@@ -60,10 +60,10 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
-    import { importReqif } from '@/utils/import/ReqIF/import-reqif';
+    import { XmlImporter } from './import-xml';
     import { TPigItem, APackage, stringHTML } from '@/utils/schemas/pig/ts/pig-metaclasses';
     import { useHtmlStore } from '@/stores/cacheStore';
-    import { IRsp } from '@/utils/lib/messages';
+    import { Msg, IRsp } from '@/utils/lib/messages';
 
     @Options({
         data() {
@@ -150,16 +150,11 @@
 
                 for (const file of this.selectedFiles) {
                     try {
-                        const rsp = await importReqif(file);
+                        const rsp = await XmlImporter.import(file);
                         results.push(rsp);
                     } catch (error: any) {
                         // Convert exception to IRsp format
-                        results.push({
-                            ok: false,
-                            status: 500,
-                            statusText: `${file.name}: ${error?.message || String(error)}`,
-                            responseType: 'json'
-                        });
+                        results.push(Msg.create(600, `${file.name}: ${error?.message || String(error)}`));
                     }
                 }
 
@@ -187,7 +182,7 @@
         }
     })
 
-    export default class ReqifImportComponent extends Vue {
+    export default class XmlImportComponent extends Vue {
         dialog!: boolean;
         selectedFiles!: File[];
         isLoading!: boolean;

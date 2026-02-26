@@ -7,7 +7,7 @@
                  width="100%">
             <ul>
                 <li v-for="(component, name) in importComponents" :key="name">
-                    <component :is="name" />
+                    <component :is="component" />
                 </li>
             </ul>
         </v-sheet>
@@ -18,7 +18,7 @@
                  width="100%">
             <ul>
                 <li v-for="(component, name) in exportComponents" :key="name">
-                    <component :is="name" />
+                    <component :is="component" />
                 </li>
             </ul>
         </v-sheet>

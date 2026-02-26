@@ -9,7 +9,7 @@
  * - add more tests as proposed in comments below - not clear yet whether expectations or processing are faulty
  */
 
-import { importJSONLD } from '../../src/utils/import/jsonld/import-package-jsonld';
+import { JsonldImporter } from '../../src/plugins/import/jsonld/import-jsonld';
 import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -38,7 +38,7 @@ function findTestFiles(dir: string, ext: string): string[] {
 const testFilesDir = path.resolve(__dirname, '../data/JSON-LD');
 const ldFiles = findTestFiles(testFilesDir, '.jsonld');
 
-describe('importJSONLD - Dynamic Test Files', () => {
+describe('import JSONLD - Dynamic Test Files', () => {
     if (ldFiles.length === 0) {
         it.skip('No .jsonld test files found', () => {
             expect(true).toBe(true);
@@ -66,9 +66,9 @@ describe('importJSONLD - Dynamic Test Files', () => {
         it(`should import ${relativePath}`, async () => {
 
             // Import JSON-LD
-            const rsp = await importJSONLD(ldFile);
+            const rsp = await JsonldImporter.import(ldFile);
             if (!rsp.ok)
-                console.warn('importJSONLD', rsp.status, rsp.statusText);
+                console.warn('import JSONLD', rsp.status, rsp.statusText);
 
             // Basic validation
             expect(rsp.status === 0 || rsp.status === 691).toBe(true); // some or all items have been processed
@@ -116,27 +116,27 @@ describe('importJSONLD - Dynamic Test Files', () => {
     });
 });
 /*
-describe('importJSONLD - Error Handling', () => {
+describe('import JSONLD - Error Handling', () => {
     it('should reject non-JSON-LD files', async () => {
-        const rsp = await importJSONLD('{}');
+        const rsp = await JsonldImporter.import('{}');
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('.jsonld');
     });
 
     it('should reject invalid JSON', async () => {
-        const rsp = await importJSONLD('not valid json');
+        const rsp = await JsonldImporter.import('not valid json');
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('parse');
     });
 
     it('should reject files without @context', async () => {
-        const rsp = await importJSONLD('{"@graph": []}');
+        const rsp = await JsonldImporter.import('{"@graph": []}');
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('@context');
     });
 
     it('should reject files without @graph', async () => {
-        const rsp = await importJSONLD('{"@context": {}}');
+        const rsp = await JsonldImporter.import('{"@context": {}}');
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('@graph');
     });
@@ -144,7 +144,7 @@ describe('importJSONLD - Error Handling', () => {
     it('should reject oversized files', async () => {
         const largeJson = '{"@context": {}, "@graph": [' + '{},'
             .repeat(1000000) + '{}]}';
-        const rsp = await importJSONLD(largeJson);
+        const rsp = await JsonldImporter.import(largeJson);
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('too large');
     });

@@ -1,5 +1,5 @@
 import { App, Plugin } from 'vue';
-import ReqifImportComponent from "./ReqifImportPlugin.vue";
+import ReqifImportComponent from "./import-reqif.vue";
 
 const reqifImportPlugin: Plugin = {
     install(app: App) {

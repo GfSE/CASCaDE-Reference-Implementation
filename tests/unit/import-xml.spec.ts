@@ -7,7 +7,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { importXML } from '../../src/utils/import/xml/import-package-xml';
+import { XmlImporter } from '../../src/plugins/import/xml/import-xml';
 import { TPigItem } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
 
 /**
@@ -35,7 +35,7 @@ function findXmlFiles(dir: string, fileList: string[] = []): string[] {
     return fileList;
 }
 
-describe('importXML (file system)', () => {
+describe('import XML (file system)', () => {
     // Automatically discover all *.xml files in tests/data/XML and subdirectories
     const testFilesDir = path.resolve(__dirname, '../data/XML');
     const xmlFiles: string[] = findXmlFiles(testFilesDir);
@@ -60,9 +60,9 @@ describe('importXML (file system)', () => {
 
         it(`imports ${testName} and instantiates PIG classes`, async () => {
             // import and test
-            const rsp = await importXML(testFile);
+            const rsp = await XmlImporter.import(testFile);
             if (!rsp.ok)
-                console.warn(`importXML ${testName}:`, rsp.status, rsp.statusText);
+                console.warn(`import XML ${testName}:`, rsp.status, rsp.statusText);
 
             // expect status 0 (success) or 691 (partial success with warnings)
             expect(rsp.status === 0 || rsp.status === 691).toBe(true);

@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
+import { LOG } from './utils/lib/helpers';
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -35,9 +36,9 @@ pluginFiles.keys().forEach((filePath: string) => {
 const exportComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Export")));
 const importComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Import")));
 
-console.log(exportComponents);
-app.provide('exportComponents', exportComponents);
-console.log(importComponents);
+LOG.info("Mounted import components:", importComponents);
 app.provide('importComponents', importComponents);
+LOG.info("Mounted export components:", exportComponents);
+app.provide('exportComponents', exportComponents);
 
 app.mount('#app');

@@ -1,7 +1,7 @@
 import { App, Plugin } from 'vue';
-import JsonImportComponent from "./JsonImportPlugin.vue";
+import JsonExportComponent from "./export-jsonld.vue";
 
-const jsonImportPlugin: Plugin = {
+const jsonExportPlugin: Plugin = {
     install(app: App) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
@@ -12,8 +12,8 @@ const jsonImportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('JsonImportComponent', JsonImportComponent);
+        app.component('JsonExportComponent', JsonExportComponent);
     }
 }
 
-export default jsonImportPlugin;
+export default jsonExportPlugin;
