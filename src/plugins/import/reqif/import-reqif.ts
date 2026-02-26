@@ -59,8 +59,13 @@ export class ReqifImporter {
         // Extract filename for validation and logging
         const filename = typeof source === 'string' ? source : source.name;
 
+        // Normalize filename/URL for extension check:
+        // - Strip query/fragment (for URLs)
+        // - Make case-insensitive
+        const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
+
         // Validate file extension
-        if (!filename.endsWith('.reqif')) {
+        if (!normalized.endsWith('.reqif')) {
             return Msg.create(660, filename, 'expected .reqif file extension');
         }
 
