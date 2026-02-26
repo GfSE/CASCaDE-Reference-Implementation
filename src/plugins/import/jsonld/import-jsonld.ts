@@ -118,7 +118,7 @@ export class JsonldImporter {
                 `JsonldImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Rsp.create(691, 'JSON-LD', undefined, '', actualCount, expectedCount);
+            result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
         }
 
         // Attach items to response
