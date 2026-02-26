@@ -24,7 +24,7 @@
  * - Browser: await XmlImporter.import(fileInput.files[0])
  */
 
-import { IRsp, rspOK, Msg } from '../../../utils/lib/messages';
+import { IRsp, Rsp, Msg, rspOK } from '../../../utils/lib/messages';
 import { LOG } from '../../../utils/lib/helpers';
 import { PIN } from '../../../utils/lib/platform-independence';
 import { APackage, TPigItem } from '../../../utils/schemas/pig/ts/pig-metaclasses';
@@ -89,7 +89,7 @@ export class XmlImporter {
             LOG.info(
                 `XmlImporter: successfully imported package with all ${actualCount} items`
             );
-            result = rspOK;
+            result = Rsp.create(0, allItems, 'json');
         } else {
             // Log details about erroneous items
             const errorDetails = this.buildErrorReport(allItems);
@@ -97,12 +97,8 @@ export class XmlImporter {
                 `XmlImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Msg.create(691, 'XML', actualCount, expectedCount);
+            result = Rsp.create(691, allItems, 'json', 'XML', actualCount, expectedCount);
         }
-
-        // Attach items to response
-        result.response = allItems;
-        result.responseType = 'json';
 
         return result as IRsp<TPigItem[]>;
     }

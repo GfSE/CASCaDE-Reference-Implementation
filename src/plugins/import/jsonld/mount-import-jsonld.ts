@@ -12,7 +12,7 @@ const jsonImportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('JsonImportComponent', JsonImportComponent);
+        app.component('Import-JSONLD', JsonImportComponent);
     }
 }
 

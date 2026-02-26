@@ -12,7 +12,7 @@ const rdfExportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('RdfExportComponent', RdfExportComponent);
+        app.component('Export-TTL', RdfExportComponent);
     }
 }
 

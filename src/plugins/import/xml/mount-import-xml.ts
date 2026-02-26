@@ -20,7 +20,7 @@ import XmlImportPlugin from './import-xml.vue';
  */
 export interface XmlImportPluginOptions {
     /**
-     * Maximum file size in bytes (default: 10MB)
+     * Maximum file size in bytes (default: 6MB)
      */
     maxFileSize?: number;
 
@@ -43,7 +43,7 @@ export const xmlImportPlugin: Plugin = {
         };
 
         // Mount component globally
-        app.component('XmlImportPlugin', XmlImportPlugin);
+        app.component('Import-XML', XmlImportPlugin);
 
         // all mounted components are logged in main.ts ...
     }

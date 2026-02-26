@@ -1,29 +1,29 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Home from '@/components/Home.vue';
-import Dashboards from '@/components/Dashboards.vue';
-import Interfaces from '@/components/Interfaces.vue';
-import Viewing from '@/components/Viewing.vue';
+import AppHome from '@/components/Home.vue';
+import AppDashboards from '@/components/Dashboards.vue';
+import AppInterfaces from '@/components/Interfaces.vue';
+import AppView from '@/components/Viewing.vue';
 
 const routes: Array<RouteRecordRaw> = [
     {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: AppHome,
   },
   {
     path: '/dashboards',
     name: 'Dashboards',
-    component: Dashboards,
+    component: AppDashboards,
   },
   {
     path: '/interfaces',
     name: 'Interfaces',
-    component: Interfaces,
+    component: AppInterfaces,
   },
   {
     path: '/viewing',
     name: 'Viewing',
-    component: Viewing,
+    component: AppView,
   }
 ];
 

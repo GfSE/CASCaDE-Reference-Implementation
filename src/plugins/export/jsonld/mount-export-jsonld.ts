@@ -12,7 +12,7 @@ const jsonExportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('JsonExportComponent', JsonExportComponent);
+        app.component('Export-JSONLD', JsonExportComponent);
     }
 }
 

@@ -94,12 +94,11 @@
                     const results = await this.importAllFiles();
 
                     // Separate successful and failed imports
-                    // ✅ Type annotation hinzugefügt
+                    // ToDo: results with 691 status (partial success) should be handled separately, but for now we treat them as failures:
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
                     // Collect all HTML arrays from successful imports
-                    // ✅ Type annotation hinzugefügt
                     const allHtmlArrays = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
                         const thePackage = allItems[0] as APackage;

@@ -23,18 +23,19 @@
 
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
+    import { Options, Vue } from 'vue-class-component';
 
-@Options({
-  props: {
-    msg: String
-  },
-  data() {
-    return {drawer: false}
-  }
-})
+    @Options({
+        name: 'AppNav',
+        props: {
+            msg: String
+        },
+        data() {
+            return { drawer: false }
+        }
+    })
 
-export default class Home extends Vue {}
+    export default class AppNav extends Vue { }
 </script>
 
 

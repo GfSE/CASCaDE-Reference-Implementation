@@ -26,14 +26,15 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import { inject } from 'vue';
+    import { Options, Vue } from 'vue-class-component';
+    import { inject } from 'vue';
 
-@Options({
-    inject: ['importComponents', 'exportComponents']
-})
+    @Options({
+        name: 'AppInterfaces',
+        inject: ['importComponents', 'exportComponents']
+    })
 
-export default class Interfaces extends Vue {}
+    export default class AppInterfaces extends Vue { }
 </script>
 
 <style scoped>

@@ -12,7 +12,7 @@ const reqifImportPlugin: Plugin = {
         // };
 
         // global component
-        app.component('ReqifImportComponent', ReqifImportComponent);
+        app.component('Import-ReqIF', ReqifImportComponent);
     }
 }
 

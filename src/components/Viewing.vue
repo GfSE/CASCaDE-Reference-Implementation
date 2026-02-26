@@ -40,42 +40,43 @@
 
 
 <script lang="ts">
-import { Vue, Options } from 'vue-class-component'
-import { useHtmlStore } from '@/stores/cacheStore'
+    import { Vue, Options } from 'vue-class-component'
+    import { useHtmlStore } from '@/stores/cacheStore'
 
-@Options({
-  data() {
-    return {
-      selectedIndex: null as number | null
-    }
-  },
+    @Options({
+      name: 'AppView',
+      data() {
+                return {
+                    selectedIndex: null as number | null
+                }
+            },
 
-  computed: {
-    htmlArray(): string[] {
-      const store = useHtmlStore()
-      const value = store.htmlArray
-      //LOG.debug('value ' + value)
+        computed: {
+            htmlArray(): string[] {
+                const store = useHtmlStore()
+                const value = store.htmlArray
+                //LOG.debug('value ' + value)
 
-      if (!value) return []
+                if (!value) return []
 
-      return Array.isArray(value) ? value : [value]
-    },
+                return Array.isArray(value) ? value : [value]
+            },
 
-    selectedHtml(): string | null {
-      if (this.selectedIndex === null) return null
+            selectedHtml(): string | null {
+                if (this.selectedIndex === null) return null
 
-      return this.htmlArray[this.selectedIndex] ?? null
-    }
-  },
+                return this.htmlArray[this.selectedIndex] ?? null
+            }
+        },
 
-  methods: {
-    selectItem(index: number) {
-      this.selectedIndex = index
-    }
-  }
-})
+        methods: {
+            selectItem(index: number) {
+                this.selectedIndex = index
+            }
+        }
+    })
 
-export default class Viewing extends Vue {}
+    export default class AppView extends Vue { }
 </script>
 
 

@@ -1,9 +1,27 @@
 <template>
-    <div class="Home Page">
+    <div class="HomePage">
         <h1>{{ msg }}</h1>
         <p>
             Perform simple import and export functions for verification and validation of the PIG Metamodel using (near to) real-world examples.
         </p>
+
+        <!-- Mounted Plugins -->
+        <section>
+            <h3>Import Plugins</h3>
+            <ul>
+                <li v-for="(component, name) in importComponents" :key="name">
+                    {{ name }}
+                </li>
+            </ul>
+        <!--
+            <h3>Export Plugins</h3>
+            <ul>
+                <li v-for="(component, name) in exportComponents" :key="name">
+                    {{ name }}
+                </li>
+            </ul>  -->
+        </section>
+
         <!-- Build Information Table -->
         <section class="build-info">
             <h3>Build Information</h3>
@@ -18,12 +36,6 @@
                 <dd>{{ DEF.gitBranch }}</dd>
             </dl>
         </section>
-
-        <ul>
-            <li v-for="(component, name) in globalComponents" :key="name">
-                <component :is="name" />
-            </li>
-        </ul>
     </div>
 </template>
 
@@ -36,15 +48,15 @@
         props: {
             msg: String
         },
-        inject: ['globalComponents'],
+    //    inject: ['globalComponents'],
         computed: {
-            DEF() {
-                return DEF;
-            }
+            DEF() { return DEF; },
+            importComponents() { return inject('importComponents', {}); },
+            exportComponents() { return inject('exportComponents', {}); }
         }
     })
 
-    export default class Home extends Vue { }
+    export default class AppHome extends Vue { }
 </script>
 
 
@@ -89,15 +101,15 @@
         justify-content: center;
     }
 
-        .info-table dt {
-            font-weight: 400;
-            color: #495057;
-            text-align: right;
-        }
+    .info-table dt {
+        font-weight: 400;
+        color: #495057;
+        text-align: right;
+    }
 
-        .info-table dd {
-            margin: 0;
-            color: #212529;
-            text-align: left;
-        }
+    .info-table dd {
+        margin: 0;
+        color: #212529;
+        text-align: left;
+    }
 </style>

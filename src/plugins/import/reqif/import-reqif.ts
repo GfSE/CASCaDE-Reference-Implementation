@@ -29,7 +29,7 @@
 
 import { LOG } from '../../../utils/lib/helpers';
 import { PIN } from '../../../utils/lib/platform-independence';
-import { IRsp, Msg, rspOK } from '../../../utils/lib/messages';
+import { IRsp, Msg, Rsp, rspOK } from '../../../utils/lib/messages';
 import { APackage, TPigItem } from '../../../utils/schemas/pig/ts/pig-metaclasses';
 import { ConstraintCheckType } from '../../../utils/schemas/pig/ts/pig-package-constraints';
 
@@ -75,10 +75,10 @@ export class ReqifImporter {
             return rspRead;
         }
 
-        const xmlString = rspRead.response as string;
+        const xmlToTransform = rspRead.response as string;
 
         // Security: Size limit check
-        if (xmlString.length > this.MAX_XML_SIZE) {
+        if (xmlToTransform.length > this.MAX_XML_SIZE) {
             return Msg.create(
                 660,
                 filename,
@@ -87,14 +87,14 @@ export class ReqifImporter {
         }
 
         // Security: Basic XML structure validation
-        const trimmed = xmlString.trim();
+        const trimmed = xmlToTransform.trim();
         if (!trimmed.startsWith('<?xml') && !trimmed.startsWith('<')) {
             return Msg.create(660, filename, 'invalid XML structure');
         }
 
         // Parse XML document
         const parser = PIN.createDOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+        const xmlDoc = parser.parseFromString(xmlToTransform, 'text/xml');
 
         // Check for parsing errors
         const sourceError = PIN.getXmlParseError(xmlDoc);
@@ -119,7 +119,7 @@ export class ReqifImporter {
         const stylesheetPath = this.getStylesheetPath();
         LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
-        const rspTransform = await PIN.transformXSL(xmlString, stylesheetPath);
+        const rspTransform = await PIN.transformXSL(xmlToTransform, stylesheetPath);
         if (!rspTransform.ok) {
             return Msg.create(
                 660,
@@ -128,8 +128,10 @@ export class ReqifImporter {
             );
         }
 
+        const xmlString = rspTransform.response as string;
+
         // Instantiate APackage from transformed XML
-        const aPackage = new APackage().setXML(rspTransform.response as string, {
+        const aPackage = new APackage().setXML(xmlString, {
             checkConstraints: [
                 ConstraintCheckType.UniqueIds
                 // Input has only instances, so omit constraint checks on classes
@@ -148,17 +150,16 @@ export class ReqifImporter {
         // Get all items (package + graph items)
         const allItems = aPackage.getItems();
 
+        // Calculate import statistics
+        const expectedCount = aPackage.graph?.length || 0;
+        const actualCount = allItems.length - 1; // -1 for package itself
+
         LOG.info(
-            `ReqIFImporter: successfully imported ${filename} with ${allItems.length - 1} items`
+            `ReqIFImporter: successfully imported ${filename} with ${actualCount} of ${expectedCount} items`
         );
 
         // Return success response with items (clone rspOK to avoid shared-state mutation)
-        const result: IRsp<TPigItem[]> = {
-            ...rspOK,
-            response: allItems,
-            responseType: 'json'
-        };
-
+        const result = Rsp.create(0, allItems, 'json', 'ReqIF', actualCount, expectedCount);
         return result;
     }
 

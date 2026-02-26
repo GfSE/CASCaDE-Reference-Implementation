@@ -110,7 +110,7 @@ export class JsonldImporter {
             LOG.info(
                 `JsonldImporter: successfully imported package with all ${actualCount} items`
             );
-            result = rspOK;
+            result = Rsp.create(0, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
         } else {
             // Log details about erroneous items
             const errorDetails = this.buildErrorReport(allItems);
@@ -118,12 +118,8 @@ export class JsonldImporter {
                 `JsonldImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Msg.create(691, 'JSON-LD', actualCount, expectedCount);
+            result = Rsp.create(691, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
         }
-
-        // Attach items to response
-        result.response = allItems;
-        result.responseType = 'json';
 
         return result as IRsp<TPigItem[]>;
     }
