@@ -9,8 +9,8 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import { APackage } from '../../src/utils/schemas/pig/ts/pig-metaclasses';
-import { checkConstraintsForPackage, ConstraintCheckType } from '../../src/utils/schemas/pig/ts/pig-package-constraints';
+import { APackage } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+import { checkConstraintsForPackage, ConstraintCheckType } from '../../src/common-code/schema/pig/ts/pig-package-constraints';
 
 describe('PIG Package Constraints - Value Range Validation', () => {
 

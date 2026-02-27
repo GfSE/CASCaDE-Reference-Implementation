@@ -1,0 +1,492 @@
+<!--
+ * XML Import Plugin - Vue Component
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ -->
+<template>
+    <div class="xml-import-plugin">
+        <div class="plugin-header">
+            <h3>📄 XML Package Import</h3>
+            <p class="description">
+                Import PIG packages from XML format (.xml)
+            </p>
+        </div>
+
+        <!-- File Input Section -->
+        <div class="file-input-section">
+            <input ref="fileInput"
+                   type="file"
+                   accept=".xml"
+                   @change="handleFileSelect"
+                   style="display: none" />
+            <button @click="triggerFileSelect"
+                    class="btn-select-file"
+                    :disabled="isImporting">
+                📂 Select XML File
+            </button>
+            <span v-if="selectedFileName" class="selected-file">
+                {{ selectedFileName }}
+            </span>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div v-if="isImporting" class="progress-section">
+            <div class="spinner"></div>
+            <p>Importing XML package...</p>
+        </div>
+
+        <!-- Success Message -->
+        <div v-if="importSuccess && !isImporting" class="message success-message">
+            <div class="message-icon">✅</div>
+            <div class="message-content">
+                <strong>Import Successful</strong>
+                <p>Successfully imported {{ importedItemCount }} items</p>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div v-if="importError && !isImporting" class="message error-message">
+            <div class="message-icon">❌</div>
+            <div class="message-content">
+                <strong>Import Failed</strong>
+                <p>{{ importError }}</p>
+            </div>
+        </div>
+
+        <!-- Warning Message for Partial Success -->
+        <div v-if="importWarning && !isImporting" class="message warning-message">
+            <div class="message-icon">⚠️</div>
+            <div class="message-content">
+                <strong>Partial Import</strong>
+                <p>{{ importWarning }}</p>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div v-if="importedItems.length > 0 && !isImporting" class="preview-section">
+            <h4>Imported Items ({{ importedItems.length }})</h4>
+
+            <!-- Package Info -->
+            <div v-if="packageInfo" class="package-info">
+                <div class="info-row">
+                    <span class="label">Package ID:</span>
+                    <span class="value">{{ packageInfo.id }}</span>
+                </div>
+                <div class="info-row" v-if="packageInfo.title">
+                    <span class="label">Title:</span>
+                    <span class="value">{{ packageInfo.title }}</span>
+                </div>
+                <div class="info-row" v-if="packageInfo.modified">
+                    <span class="label">Modified:</span>
+                    <span class="value">{{ formatDate(packageInfo.modified) }}</span>
+                </div>
+            </div>
+
+            <!-- Item Statistics -->
+            <div class="item-statistics">
+                <h5>Item Types:</h5>
+                <div class="statistics-grid">
+                    <div v-for="(count, type) in itemTypeStats" :key="type" class="stat-item">
+                        <span class="stat-label">{{ formatItemType(type) }}</span>
+                        <span class="stat-count">{{ count }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Item List (first 10) -->
+            <div class="item-list">
+                <h5>Items Preview (first {{ Math.min(10, graphItems.length) }}):</h5>
+                <ul>
+                    <li v-for="(item, index) in previewItems" :key="item.id || index">
+                        <span class="item-type">{{ item.itemType }}</span>
+                        <span class="item-id">{{ item.id }}</span>
+                    </li>
+                </ul>
+                <p v-if="graphItems.length > 10" class="more-items">
+                    ... and {{ graphItems.length - 10 }} more items
+                </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button @click="resetImport" class="btn-secondary">
+                    Import Another File
+                </button>
+                <button @click="exportToJsonLD" class="btn-primary" :disabled="!canExport">
+                    Export to JSON-LD
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+    import { ref, computed } from 'vue';
+    import { XmlImporter } from './import-xml';
+    import type { TPigItem } from '@/common-code/schema/pig/ts/pig-metaclasses';
+
+    // Reactive state
+    const fileInput = ref<HTMLInputElement | null>(null);
+    const selectedFileName = ref('');
+    const isImporting = ref(false);
+    const importSuccess = ref(false);
+    const importError = ref('');
+    const importWarning = ref('');
+    const importedItems = ref<TPigItem[]>([]);
+
+    // Computed properties
+    const importedItemCount = computed(() =>
+        Math.max(0, importedItems.value.length - 1) // -1 for package
+);
+
+const graphItems = computed(() =>
+    importedItems.value.slice(1) // Skip package (first item)
+);
+
+const previewItems = computed(() =>
+    graphItems.value.slice(0, 10)
+);
+
+const packageInfo = computed(() => {
+    if (importedItems.value.length === 0) return null;
+    const pkg = importedItems.value[0];
+    const data = pkg.get();
+    return {
+        id: data?.id || 'Unknown',
+        title: data?.title?.[0]?.value || '',
+        modified: data?.modified || ''
+    };
+});
+
+const itemTypeStats = computed(() => {
+    const stats: Record<string, number> = {};
+    graphItems.value.forEach(item => {
+        const type = item.itemType || 'Unknown';
+        stats[type] = (stats[type] || 0) + 1;
+    });
+    return stats;
+});
+
+const canExport = computed(() =>
+    importedItems.value.length > 0 && importSuccess.value
+);
+
+// Methods
+function triggerFileSelect() {
+    fileInput.value?.click();
+}
+
+async function handleFileSelect(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (!file) return;
+
+    selectedFileName.value = file.name;
+
+    // Reset state
+    isImporting.value = true;
+    importSuccess.value = false;
+    importError.value = '';
+    importWarning.value = '';
+    importedItems.value = [];
+
+    try {
+        const result = await XmlImporter.import(file);
+
+        if (result.status === 0) {
+            // Full success
+            importedItems.value = result.response as TPigItem[];
+            importSuccess.value = true;
+        } else if (result.status === 691) {
+            // Partial success (some items failed)
+            importedItems.value = result.response as TPigItem[];
+            importWarning.value = result.statusText || 'Some items could not be imported';
+            importSuccess.value = true; // Still show as success with warning
+        } else {
+            // Failure
+            importError.value = result.statusText || 'Unknown error occurred';
+        }
+    } catch (err: any) {
+        importError.value = err?.message || String(err);
+    } finally {
+        isImporting.value = false;
+    }
+}
+
+function resetImport() {
+    selectedFileName.value = '';
+    importSuccess.value = false;
+    importError.value = '';
+    importWarning.value = '';
+    importedItems.value = [];
+    if (fileInput.value) {
+        fileInput.value.value = '';
+    }
+}
+
+function exportToJsonLD() {
+    // TODO: Implement JSON-LD export
+    console.log('Export to JSON-LD not yet implemented');
+    alert('Export to JSON-LD functionality will be implemented soon');
+}
+
+function formatDate(dateStr: string): string {
+    try {
+        return new Date(dateStr).toLocaleString();
+    } catch {
+        return dateStr;
+    }
+}
+
+function formatItemType(type: string): string {
+    return type.replace('pig:', '');
+}</script>
+
+<style scoped>
+    .xml-import-plugin {
+        padding: 1.5rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .plugin-header h3 {
+        margin: 0 0 0.5rem;
+        color: #2c3e50;
+    }
+
+    .description {
+        margin: 0 0 1.5rem;
+        color: #7f8c8d;
+        font-size: 0.95em;
+    }
+
+    .file-input-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-select-file {
+        padding: 0.75rem 1.5rem;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .btn-select-file:hover:not(:disabled) {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .btn-select-file:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+    .selected-file {
+        color: #7f8c8d;
+        font-size: 0.9em;
+    }
+
+    .progress-section {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #3498db;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .message {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    .message-icon {
+        font-size: 1.5em;
+    }
+
+    .message-content strong {
+        display: block;
+        margin-bottom: 0.25rem;
+    }
+
+    .success-message {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .warning-message {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+
+    .preview-section {
+        border-top: 2px solid #ecf0f1;
+        padding-top: 1.5rem;
+    }
+
+        .preview-section h4,
+        .preview-section h5 {
+            color: #2c3e50;
+            margin: 0 0 1rem;
+        }
+
+    .package-info {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-row {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+    .label {
+        font-weight: 600;
+        color: #7f8c8d;
+        min-width: 100px;
+    }
+
+    .value {
+        color: #2c3e50;
+    }
+
+    .item-statistics {
+        margin-bottom: 1.5rem;
+    }
+
+    .statistics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem;
+        background: #ecf0f1;
+        border-radius: 4px;
+    }
+
+    .stat-label {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .stat-count {
+        font-weight: 700;
+        color: #3498db;
+    }
+
+    .item-list ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .item-list li {
+        display: flex;
+        gap: 1rem;
+        padding: 0.75rem;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .item-type {
+        font-weight: 600;
+        color: #3498db;
+        min-width: 120px;
+    }
+
+    .item-id {
+        color: #7f8c8d;
+        font-family: monospace;
+    }
+
+    .more-items {
+        margin-top: 0.5rem;
+        color: #7f8c8d;
+        font-style: italic;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: #27ae60;
+        color: white;
+    }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #229954;
+        }
+
+        .btn-primary:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+    .btn-secondary {
+        background: #ecf0f1;
+        color: #2c3e50;
+    }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+</style>

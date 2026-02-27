@@ -1,28 +1,24 @@
 <template>
     <div>
-        <v-sheet
-          border="dashed md"
-          color="surface-light"
-          height="200"
-          rounded="lg"
-          width="100%"
-        >
+        <v-sheet border="dashed md"
+                 color="surface-light"
+                 height="200"
+                 rounded="lg"
+                 width="100%">
             <ul>
-                <li v-for="(component, name) in exportComponents" :key="name">
-                    <component :is="name"/>
+                <li v-for="(component, name) in importComponents" :key="name">
+                    <component :is="component" />
                 </li>
             </ul>
         </v-sheet>
-        <v-sheet
-          border="dashed md"
-          color="surface-light"
-          height="200"
-          rounded="lg"
-          width="100%"
-        >
+        <v-sheet border="dashed md"
+                 color="surface-light"
+                 height="200"
+                 rounded="lg"
+                 width="100%">
             <ul>
-                <li v-for="(component, name) in importComponents" :key="name">
-                    <component :is="name"/>
+                <li v-for="(component, name) in exportComponents" :key="name">
+                    <component :is="component" />
                 </li>
             </ul>
         </v-sheet>
@@ -30,14 +26,15 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import { inject } from 'vue';
+    import { Options, Vue } from 'vue-class-component';
+    import { inject } from 'vue';
 
-@Options({
-    inject: ['importComponents', 'exportComponents']
-})
+    @Options({
+        name: 'AppInterfaces',
+        inject: ['importComponents', 'exportComponents']
+    })
 
-export default class Interfaces extends Vue {}
+    export default class AppInterfaces extends Vue { }
 </script>
 
 <style scoped>

@@ -9,13 +9,9 @@
  */
 
 import {
-    Property,
-    Link,
-    Entity,
-    Relationship,
-    AnEntity,
-    ARelationship
-} from '../../src/utils/schemas/pig/ts/pig-metaclasses';
+    Property, Link, Entity, Relationship,
+    AnEntity, ARelationship
+} from '../../src/common-code/schema/pig/ts/pig-metaclasses';
 
 describe('PIG Metaclasses XML Import', () => {
     describe('Property.setXML()', () => {

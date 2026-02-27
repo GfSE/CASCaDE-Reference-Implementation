@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
+import { LOG } from './common-code/lib/helpers';
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -9,11 +10,42 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
 import router from './router';
+import '@/styles/main.css';
 
 const vuetify = createVuetify({
     components,
     directives,
-  })
+    theme: {
+        defaultTheme: 'cas',
+        themes: {
+            cas: {
+                colors: {
+                    primary: '#c83b05', // 75%
+                    secondary: '#e25505', // 50%
+
+                    // cas-100: '#ad0505',
+                    // cas-75: '#c83b05',
+                    // cas-50: '#e25505',
+                    // cas-25: '#fc7705',
+                    // cas-0: '#ff6d05',
+
+                    // vue standard colors:
+                    // primary: '#1976d2',
+                    // secondary: '#424242',
+                    success: '#4caf50',
+                    info: '#2196f3',
+                    warning: '#fb8c00',
+                    error: '#ff5252',
+                    background: '#f5f5f5',
+                    surface: '#ffffff'
+                },
+                variables: {
+                    'font-family': "'Roboto', Arial, sans-serif"
+                }
+            }
+        }
+    }
+});
 
 const app = createApp(App);
 
@@ -35,9 +67,9 @@ pluginFiles.keys().forEach((filePath: string) => {
 const exportComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Export")));
 const importComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Import")));
 
-console.log(exportComponents);
-app.provide('exportComponents', exportComponents);
-console.log(importComponents);
+LOG.info("Mounted import components:", importComponents);
 app.provide('importComponents', importComponents);
+LOG.info("Mounted export components:", exportComponents);
+app.provide('exportComponents', exportComponents);
 
 app.mount('#app');

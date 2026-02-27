@@ -29,7 +29,7 @@
             <pig:eligibleProperty>pig:category</pig:eligibleProperty>
         </pig:Entity>
 
-        <pig:Entity id="pig:HierarchyRoot">
+        <pig:Entity id="pig:Root">
             <pig:specializes>pig:Organizer</pig:specializes>
             <dcterms:title>Hierarchy Root</dcterms:title>
             <dcterms:description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</dcterms:description>
