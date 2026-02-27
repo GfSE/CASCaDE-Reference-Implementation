@@ -2,10 +2,10 @@
     <div>
         <v-app-bar class="gradient-banner">
             <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-            <v-app-bar-title><h2>{{msg}}</h2></v-app-bar-title>
+            <v-app-bar-title>{{msg}}</v-app-bar-title>
         </v-app-bar>
 
-        <v-navigation-drawer v-model="drawer" class="drawer-grey">
+        <v-navigation-drawer v-model="drawer" color="surface-light"> <!-- or grey-lighten-3 -->
             <v-list nav>
                 <v-list-item border="md" href="/">
                     <h3>Home</h3>
@@ -37,16 +37,12 @@
     export default class AppNav extends Vue { }
 </script>
 
-
-<style>
+<style scoped>
     .gradient-banner {
-        background: linear-gradient(135deg, #2c3e50, #3498db) !important;
+        background: linear-gradient(135deg, #ad0505, #ff6d05) !important;
         color: white !important;
     }
     .v-app-bar-title h2 {
         color: white !important;
-    }
-    .drawer-grey {
-        background-color: #D0D0D0 !important;
     }
 </style>

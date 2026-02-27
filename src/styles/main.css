@@ -1,0 +1,32 @@
+/* The google web-fonts Roboto and Montserrat must be loaded in the app's index.html */
+body, .v-application {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 400;
+}
+
+h1, h2, h3,
+.banner-title,
+.v-app-bar-title,
+.v-toolbar-title,
+.v-toolbar-title__placeholder {
+    font-family: 'Montserrat', 'Roboto', Arial, sans-serif !important;
+    font-weight: 400 !important;
+}
+
+h1 {
+    font-size: 1.8rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+}
+.banner-title,
+.v-app-bar-title,
+.v-toolbar-title,
+.v-toolbar-title__placeholder {
+    font-size: 1.8rem;
+}
