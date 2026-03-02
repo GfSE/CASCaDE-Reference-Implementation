@@ -27,6 +27,12 @@ const routes: Array<RouteRecordRaw> = [
   }
 ];
 
+/* Trial to set the current (subdirectory) path as base - doesn't work with vue3
+const base = window.location.pathname.replace(/\/[^/]*$/, '/');
+const router = createRouter({
+    history: createWebHistory(base),
+    routes,
+});*/
 const router = createRouter({
   history: createWebHistory(), // Use HTML5 History mode for cleaner URLs
   routes,

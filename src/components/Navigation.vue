@@ -42,7 +42,4 @@
         background: linear-gradient(135deg, #ad0505, #ff6d05) !important;
         color: white !important;
     }
-    .v-app-bar-title h2 {
-        color: white !important;
-    }
 </style>
