@@ -1,29 +1,29 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import AppHome from '@/components/Home.vue';
-import AppDashboards from '@/components/Dashboards.vue';
-import AppInterfaces from '@/components/Interfaces.vue';
-import AppView from '@/components/Viewing.vue';
+import PageHome from '@/components/PageHome.vue';
+import PageDashboards from '@/components/PageDashboards.vue';
+import PageInterfaces from '@/components/PageInterfaces.vue';
+import PageViewing from '@/components/PageViewing.vue';
 
 const routes: Array<RouteRecordRaw> = [
-    {
+  {
     path: '/',
     name: 'Home',
-    component: AppHome,
+    component: PageHome,
   },
   {
     path: '/dashboards',
     name: 'Dashboards',
-    component: AppDashboards,
+    component: PageDashboards,
   },
   {
     path: '/interfaces',
     name: 'Interfaces',
-    component: AppInterfaces,
+    component: PageInterfaces,
   },
   {
     path: '/viewing',
     name: 'Viewing',
-    component: AppView,
+    component: PageViewing,
   }
 ];
 

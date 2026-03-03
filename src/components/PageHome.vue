@@ -1,6 +1,5 @@
 <template>
     <div class="HomePage">
-        <h1>{{ msg }}</h1>
         <p>
             Perform simple import and export functions for verification and validation of the PIG Metamodel using (near to) real-world examples.
         </p>
@@ -45,9 +44,7 @@
     import { DEF } from '@/common-code/lib/definitions';
 
     @Options({
-        props: {
-            msg: String
-        },
+        name: 'PageHome',
     //    inject: ['globalComponents'],
         computed: {
             DEF() { return DEF; },
@@ -56,7 +53,7 @@
         }
     })
 
-    export default class AppHome extends Vue { }
+    export default class PageHome extends Vue { }
 </script>
 
 
@@ -70,11 +67,13 @@
     p {
         margin-bottom: 2rem;
         line-height: 1.6;
+        text-align: center;
     }
 
     ul {
         list-style-type: none;
         padding: 0;
+        text-align: center;
     }
 
     li {
@@ -82,6 +81,11 @@
         margin: 0 10px;
     }
 
+    .HomePage {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 4rem 2rem 2rem;
+    }
     /* Build Information Styling */
     .build-info {
         margin: 2rem auto;
@@ -101,15 +105,15 @@
         justify-content: center;
     }
 
-    .info-table dt {
-        font-weight: 400;
-        color: #495057;
-        text-align: right;
-    }
+        .info-table dt {
+            font-weight: 400;
+            color: #495057;
+            text-align: right;
+        }
 
-    .info-table dd {
-        margin: 0;
-        color: #212529;
-        text-align: left;
-    }
+        .info-table dd {
+            margin: 0;
+            color: #212529;
+            text-align: left;
+        }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='primary' @click='dialog = true'>Import JSON-LD</v-btn>
+    <v-btn color='secondary' @click='dialog = true'>Import JSON-LD</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Select JSON-LD Files</v-card-title>
@@ -61,7 +61,8 @@
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
     import { JsonldImporter } from '@/common-code/import/jsonld/import-jsonld';
-    import { TPigItem, APackage, stringHTML } from '@/common-code/schema/pig/ts/pig-metaclasses';
+    import { TPigItem, APackage } from '@/common-code/schema/pig/ts/pig-metaclasses';
+    import { stringHTML } from '@/common-code/export/html/exportHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
     import { IRsp } from '@/common-code/lib/messages';
 

@@ -1,10 +1,30 @@
 <template>
     <v-app>
-        <Navigation :msg="DEF.appName" />
+        <!-- App Bar / Banner -->
+        <v-app-bar app color="primary" dark>
+            <v-app-bar-nav-icon @click="drawer = !drawer" />
+            <v-toolbar-title>{{ DEF.appName }}</v-toolbar-title>
+        </v-app-bar>
 
+        <!-- Navigation Drawer -->
+        <v-navigation-drawer v-model="drawer" app color="surface-light">
+            <v-list nav>
+                <v-list-item border="md" href="/">
+                    <h3>Home</h3>
+                </v-list-item>
+                <v-list-item border="md" href="/dashboards">
+                    <h3>Dashboard</h3>
+                </v-list-item>
+                <v-list-item border="md" href="/interfaces">
+                    <h3>Interfaces</h3>
+                </v-list-item>
+            </v-list>
+        </v-navigation-drawer>
+
+        <!-- Main Content -->
         <v-main>
-            <v-container fluid>
-                <router-view></router-view>
+            <v-container fluid class="main-content pa-0">
+                <router-view />
             </v-container>
         </v-main>
     </v-app>
@@ -15,6 +35,11 @@
     import { DEF } from '@/common-code/lib/definitions';
 
     @Options({
+        data() {
+            return {
+                drawer: false
+            };
+        },
         computed: {
             DEF() {
                 return DEF;
@@ -24,12 +49,8 @@
     export default class App extends Vue { }
 </script>
 
-<style>
-    #app {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+<style scoped>
+    h3 {
         text-align: center;
-        color: #2c3e50;
-        margin-top: 60px;
     }
 </style>

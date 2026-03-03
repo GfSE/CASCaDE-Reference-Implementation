@@ -30,11 +30,11 @@
     import { inject } from 'vue';
 
     @Options({
-        name: 'AppInterfaces',
+        name: 'PageInterfaces',
         inject: ['importComponents', 'exportComponents']
     })
 
-    export default class AppInterfaces extends Vue { }
+    export default class PageInterfaces extends Vue { }
 </script>
 
 <style scoped>

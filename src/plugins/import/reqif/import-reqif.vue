@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='primary' @click='dialog = true'>Import ReqIF</v-btn>
+    <v-btn color='secondary' @click='dialog = true'>Import ReqIF</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Select ReqIF Files</v-card-title>
@@ -61,7 +61,8 @@
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
     import { ReqifImporter } from '@/common-code/import/reqif/import-reqif';
-    import { TPigItem, APackage, stringHTML } from '@/common-code/schema/pig/ts/pig-metaclasses';
+    import { TPigItem, APackage } from '@/common-code/schema/pig/ts/pig-metaclasses';
+    import { stringHTML } from '@/common-code/export/html/exportHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
     import { Msg, IRsp } from '@/common-code/lib/messages';
 

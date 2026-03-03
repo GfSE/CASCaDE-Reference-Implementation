@@ -140,7 +140,7 @@
 <script>
   import { Options, Vue } from 'vue-class-component';
 
-  export default class AppDashboards extends Vue {}
+  export default class PageDashboards extends Vue {}
 </script>
 
 

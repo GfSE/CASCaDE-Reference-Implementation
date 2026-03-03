@@ -1,3 +1,21 @@
+#app {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+}
+
+.v-application {
+    height: 100vh;
+    min-height: 0;
+}
+
 /* The google web-fonts Roboto and Montserrat must be loaded in the app's index.html */
 body, .v-application {
     font-family: 'Roboto', Arial, sans-serif;
@@ -29,4 +47,23 @@ h3 {
 .v-toolbar-title,
 .v-toolbar-title__placeholder {
     font-size: 1.8rem;
+    text-align: center;
+    .main-content {
+        height: 100%;
+        min-height: 0;
+        /* Kein overflow: hidden! */
+        /* Kein margin-top! */
+    }
+}
+.main-content {
+    height: 100%;
+    min-height: 0;
+    /* Kein overflow: hidden! */
+    /* Kein margin-top! */
+}
+.gradient-banner {
+    background: #ffd800 !important;
+    text-align: center;
+    /*background: linear-gradient(135deg, #ad0505, #ff6d05) !important;
+    color: white !important;*/
 }

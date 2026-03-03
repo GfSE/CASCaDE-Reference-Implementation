@@ -53,6 +53,7 @@ import { PIN, NodeType } from "../../../lib/platform-independence";
 import { JsonPrimitive, JsonValue, JsonArray, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage } from './pig-package-constraints';
+import { IOptionsHTML, stringHTML, toHTML } from '../../../export/html/exportHTML';
 
 export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
@@ -60,7 +61,6 @@ export type TPigClass = Property | Link | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
 export type TPigAnElement = AnEntity | ARelationship;
 export type TPigItem = APackage | TPigClass | TPigAnElement;
-export type stringHTML = string;  // contains HTML code
 export type stringXML = string;  // contains XML code
 export type ElementXML = globalThis.Element;  // DOM Element typ
 
@@ -238,12 +238,6 @@ export interface ILanguageText {
 export interface IText {
     value: string;
 }
-export interface IOptionsHTML {
-    widthMain?: string;  // width of the main column, e.g. '150px' or '67%'
-    itemType?: PigItemTypeValue[]; // itemTypes to include
-    lang?: tagIETF;
-}
-
 //////////////////////////////////////
 // The abstract classes:
 
@@ -639,9 +633,6 @@ export class Property extends Identifiable implements IProperty {
         //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
-    getHTML(options?: object): stringHTML {
-        return '<div>not implemented yet</div>';
-    }
 }
 export interface ILink extends IIdentifiable {
     eligibleEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
@@ -694,9 +685,6 @@ export class Link extends Identifiable implements ILink {
     getJSONLD() {
         //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
-    }
-    getHTML(options?: object): stringHTML {
-        return '<div>not implemented yet</div>';
     }
 }
 
@@ -974,52 +962,10 @@ export class AnEntity extends AnElement implements IAnEntity {
         return jld;
     }
     getHTML(options?: IOptionsHTML): stringHTML {
-        if (!this.lastStatus.ok) return '<div class="pig-error">Invalid entity</div>';
-
-        // Extract language preference from options, default to 'en-US'
-        const lang = options?.lang || 'en-US';
-        const widthMain = options?.widthMain || '67%';
-
-        const titleText = getLocalText(this.title, lang);
-        const descText = getLocalText(this.description, lang);
-
-        // Build properties HTML
-        let propertiesHTML = '';
-        if (this.hasProperty && this.hasProperty.length > 0) {
-            propertiesHTML = '<div class="pig-properties"><h3>Properties</h3><dl>';
-            for (const prop of this.hasProperty) {
-                const propData = prop.get();
-                if (propData && propData.hasClass) {
-                    const propValue = LIB.passifyHTML(propData.value || propData.idRef || '—');
-                    const propClass = LIB.passifyHTML(propData.hasClass);
-                    propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
-                }
-            }
-            propertiesHTML += '</dl></div>';
+        if (toHTML?.anEntity) {
+            return toHTML.anEntity(this, options);
         }
-
-        // Build metadata HTML with localized date
-        const metadataHTML = `<div class="pig-metadata">
-            <dl>
-                <dt>ID</dt><dd>${LIB.passifyHTML(this.id)}</dd>
-                <dt>Class</dt><dd>${LIB.passifyHTML(this.hasClass || '—')}</dd>
-                <dt>Revision</dt><dd>${LIB.passifyHTML(this.revision)}</dd>
-                <dt>Modified</dt><dd>${LIB.getLocalDate(this.modified, lang)}</dd>
-                ${this.creator ? `<dt>Creator</dt><dd>${LIB.passifyHTML(this.creator)}</dd>` : ''}
-                ${this.priorRevision && this.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${this.priorRevision.map(r => LIB.passifyHTML(r)).join(', ')}</dd>` : ''}
-            </dl>
-        </div>`;
-
-        return `<div class="pig-anentity" style="display: flex; gap: 1rem;">
-                    <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
-                        ${titleText ? `<h3>${titleText}</h3>` : ''}
-                        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
-                    </div>
-                    <div class="col-right" style="flex: 1; min-width: 0;">
-                        ${propertiesHTML}
-                        ${metadataHTML}
-                    </div>
-                </div>`;
+        return '<div class="pig-not-implemented">HTML export for anEntity not implemented</div>';
     }
 }
 
@@ -1089,9 +1035,11 @@ export class ARelationship extends AnElement implements IARelationship {
         //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
-    getHTML(options?: object): stringHTML {
-        // ToDo: implement a HTML representation of the relationship including its properties
-        return '<div>not implemented yet</div>';
+    getHTML(options?: IOptionsHTML): stringHTML {
+        if (toHTML?.aRelationship) {
+            return toHTML.aRelationship(this, options);
+        }
+        return '<div class="pig-not-implemented">HTML export for aRelationship not implemented</div>';
     }
 }
 // For packages:
@@ -1317,48 +1265,6 @@ export class APackage extends Identifiable implements IAPackage {
         // LOG.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
         return this;
     }
-    getHTML(options?: IOptionsHTML): stringHTML[] {
-        if (!this.lastStatus.ok) {
-            return [`<div class="pig-error">Invalid package; status: (${this.lastStatus.status}) ${LIB.passifyHTML(this.lastStatus.statusText || '')}</div>`];
-        }
-
-        const result: stringHTML[] = [];
-
-        // Extract language preference from options, default to 'en-US'
-        const lang = options?.lang ?? 'en-US';
-        const widthMain = options?.widthMain ?? '67%';
-        const includeItemTypes = options?.itemType ?? [PigItemType.anEntity];
-
-        // 1. Package metadata as first element with localization
-        const titleText = getLocalText(this.title, lang);
-        const descText = getLocalText(this.description, lang);
-
-        const pkgMetadata = `<div class="pig-apackage" style="display: flex; gap: 1rem;">
-                    <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
-                        <h3>${titleText || 'Untitled Package'}</h3>
-                        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
-                    </div>
-                    <div class="col-right" style="flex: 1; min-width: 0;">
-                        <dl>
-                            <dt>ID</dt><dd>${LIB.passifyHTML(this.id)}</dd>
-                            ${this.modified ? `<dt>Modified</dt><dd>${LIB.getLocalDate(this.modified, lang)}</dd>` : ''}
-                            ${this.creator ? `<dt>Creator</dt><dd>${LIB.passifyHTML(this.creator)}</dd>` : ''}
-                            <dt>Items in Graph</dt><dd>${this.graph.length}</dd>
-                        </dl>
-                    </div>
-                </div>`;
-        result.push(pkgMetadata);
-
-        // 2. Add HTML for all anEntity items (options are passed through)
-        for (const item of this.graph) {
-            if (includeItemTypes.includes(item.itemType)) {
-                const entityHTML = (item as AnEntity).getHTML(options);
-                result.push(entityHTML);
-            }
-        }
-
-        return result;
-    }
     /**
      * List all items from an instantiated APackage with status validation
      * Return an array with the package as first element (if valid), followed by the graph items
@@ -1449,6 +1355,12 @@ export class APackage extends Identifiable implements IAPackage {
         } */
 
         return result;
+    }
+    getHTML(options?: IOptionsHTML): stringHTML[] {
+        if (toHTML?.aPackage) {
+            return toHTML.aPackage(this, options);
+        }
+        return ['<div class="pig-not-implemented">HTML export for aPackage not implemented</div>'];
     }
 
     /**
@@ -2751,22 +2663,22 @@ function isMultiLanguageText(propertyName: string): boolean {
 }
 
 // Helper function to get localized text from multi-language array
-function getLocalText(texts?: ILanguageText[], lang?: TISODateString): string {
+export function getLocalText(texts?: ILanguageText[], lang?: tagIETF): string {
     if (!texts || texts.length === 0) return '';
 
     lang = lang ?? 'en-US';
 
     // Try to find exact language match
     const exact = texts.find(t => t.lang === lang);
-    if (exact) return LIB.passifyHTML(exact.value);
+    if (exact) return exact.value;
 
     // Try to find language prefix match (e.g., 'en' for 'en-US')
     const langPrefix = lang.split('-')[0];
     const prefixMatch = texts.find(t => t.lang?.startsWith(langPrefix));
-    if (prefixMatch) return LIB.passifyHTML(prefixMatch.value);
+    if (prefixMatch) return prefixMatch.value;
 
     // Fallback to first available text
-    return LIB.passifyHTML(texts[0].value);
+    return texts[0].value;
 }
 
 /**

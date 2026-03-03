@@ -76,6 +76,7 @@ describe('PIG Package getHTML() Method', () => {
             expect(pkg.status().ok).toBe(true);
 
             const htmlList = pkg.getHTML();
+            // console.debug('Generated HTML List:', htmlList);
 
             // Should return an array
             expect(Array.isArray(htmlList)).toBe(true);
