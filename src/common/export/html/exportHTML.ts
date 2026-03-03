@@ -33,7 +33,7 @@
  */
 
 
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, getLocalText, TPigInstance } from '../../schema/pig/ts/pig-metaclasses';
+import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, getLocalText /*, TPigInstance*/ } from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, LIB } from '../../lib/helpers';
 
 export type stringHTML = string;  // contains HTML code

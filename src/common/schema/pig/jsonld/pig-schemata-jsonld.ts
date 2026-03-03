@@ -81,14 +81,14 @@ export const SCHEMA_FILES = Object.fromEntries(
 type SchemaKey = keyof typeof SCHEMA_FILE_NAMES;
 
 // Cache for loaded schemata
-const schemaCache: Partial<Record<SchemaKey, any>> = {};
+const schemaCache: Partial<Record<SchemaKey, Record<string, unknown>>> = {};
 
 /**
  * Load a JSON schema from file
  * @param schemaKey - Key identifying the schema (e.g., 'Property', 'Link')
  * @returns Promise resolving to the schema object
  */
-async function loadSchema(schemaKey: SchemaKey): Promise<any> {
+async function loadSchema(schemaKey: SchemaKey): Promise<Record<string, unknown>> {
     // Return cached schema if available
     if (schemaCache[schemaKey]) {
         return schemaCache[schemaKey];
