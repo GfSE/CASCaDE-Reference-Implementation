@@ -18,7 +18,7 @@
 import { XsDataType, PigItemType, PigItemTypeValue,
     IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,
     Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, ASourceLink, ATargetLink
-} from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+} from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 describe("PIG Metaclasses", () => {
     let Property_input: IProperty;

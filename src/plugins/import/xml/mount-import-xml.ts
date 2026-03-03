@@ -52,7 +52,7 @@ export const xmlImportPlugin: Plugin = {
 /**
  * Export business logic for programmatic use
  */
-// export { XmlImporter } from '../../../common-code/import/xml/import-xml';
+// export { XmlImporter } from '../../../common/import/xml/import-xml';
 
 /**
  * Type declarations for global properties

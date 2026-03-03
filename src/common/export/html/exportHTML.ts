@@ -33,7 +33,7 @@
  */
 
 
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, getLocalText } from '../../schema/pig/ts/pig-metaclasses';
+import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, getLocalText, TPigInstance } from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, LIB } from '../../lib/helpers';
 
 export type stringHTML = string;  // contains HTML code
@@ -55,8 +55,6 @@ export const toHTML = {
             ];
         }
 
-
-
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang ?? 'en-US';
         const widthMain = options?.widthMain ?? '67%';
@@ -72,7 +70,8 @@ export const toHTML = {
                         ${descText ? `<div class="pig-description">${descText}</div>` : ''}
                     </div>
                     <div class="col-right" style="flex: 1; min-width: 0;">
-                        <dl>
+                        <dl class="dl-horizontal">
+                            <dt>Item Type</dt><dd>aPackage</dd>
                             <dt>ID</dt><dd>${passify(pkg.id)}</dd>
                             ${pkg.modified ? `<dt>Modified</dt><dd>${LIB.getLocalDate(pkg.modified, lang)}</dd>` : ''}
                             ${pkg.creator ? `<dt>Creator</dt><dd>${passify(pkg.creator)}</dd>` : ''}
@@ -107,10 +106,10 @@ export const toHTML = {
         const titleText = passify(getLocalText(entity.title, lang));
         const descText = passify(getLocalText(entity.description, lang));
 
-
         let propertiesHTML = '';
         if (entity.hasProperty?.length > 0) {
-            propertiesHTML = '<div class="pig-properties"><dl>';
+            propertiesHTML = '<div class="pig-properties"><dl class="dl-horizontal">';
+            // the configured properties:
             for (const prop of entity.hasProperty) {
                 const propData = prop.get();
                 if (propData && propData.hasClass) {
@@ -119,20 +118,9 @@ export const toHTML = {
                     propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
                 }
             }
+            propertiesHTML += metadataToHTML(entity, lang);
             propertiesHTML += '</dl></div>';
         }
-
-        // Build metadata HTML with localized date
-        const metadataHTML = `<div class="pig-metadata">
-            <dl>
-                <dt>ID</dt><dd>${passify(entity.id)}</dd>
-                <dt>Class</dt><dd>${passify(entity.hasClass || '—')}</dd>
-                <dt>Revision</dt><dd>${passify(entity.revision)}</dd>
-                <dt>Modified</dt><dd>${LIB.getLocalDate(entity.modified, lang)}</dd>
-                ${entity.creator ? `<dt>Creator</dt><dd>${passify(entity.creator)}</dd>` : ''}
-                ${entity.priorRevision && entity.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${entity.priorRevision.map(r => passify(r)).join(', ')}</dd>` : ''}
-            </dl>
-        </div>`;
 
         return `<div class="pig-anentity" style="display: flex; gap: 1rem;">
                     <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
@@ -141,7 +129,6 @@ export const toHTML = {
                     </div>
                     <div class="col-right" style="flex: 1; min-width: 0;">
                         ${propertiesHTML}
-                        ${metadataHTML}
                     </div>
                 </div>`;
     },
@@ -319,4 +306,15 @@ function passify(html: string): string {
     });
 
     return passified;
+}
+
+//function metadataToHTML(item: TPigInstance, lang: tagIETF): string { ... as soon as aPackage is extended from AnElement
+function metadataToHTML(item: AnEntity | ARelationship, lang: tagIETF): string {
+    return `<dt>Item Type</dt><dd>anEntity</dd>
+                <dt>ID</dt><dd>${passify(item.id)}</dd>
+                <dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>
+                <dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>
+                ${item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : ''}
+                ${item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : ''}
+                ${item.priorRevision && item.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${item.priorRevision.map((r: string) => passify(r)).join(', ')}</dd>` : ''}`
 }

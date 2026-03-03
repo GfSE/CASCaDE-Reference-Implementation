@@ -4,7 +4,7 @@
             <!-- LEFT PANE -->
             <v-col cols="3" class="fill-height">
                 <v-card class="pane-card">
-                    <v-card-title tag="h2">Document</v-card-title><!-- later: Title of tree root -->
+                    <v-card-title tag="h2">Document Outline</v-card-title><!-- later: Title of tree root -->
                     <v-divider />
                     <div class="pane-scroll pa-0">
                         <v-list>

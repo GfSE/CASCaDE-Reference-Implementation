@@ -60,11 +60,11 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
-    import { JsonldImporter } from '@/common-code/import/jsonld/import-jsonld';
-    import { TPigItem, APackage } from '@/common-code/schema/pig/ts/pig-metaclasses';
-    import { stringHTML } from '@/common-code/export/html/exportHTML';
+    import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
+    import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
+    import { stringHTML } from '@/common/export/html/exportHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
-    import { IRsp } from '@/common-code/lib/messages';
+    import { IRsp } from '@/common/lib/messages';
 
     @Options({
         data() {

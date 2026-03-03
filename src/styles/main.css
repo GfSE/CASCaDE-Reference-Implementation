@@ -67,3 +67,23 @@ h3 {
     /*background: linear-gradient(135deg, #ad0505, #ff6d05) !important;
     color: white !important;*/
 }
+.dl-horizontal {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1.5rem;
+    align-items: start;
+}
+.dl-horizontal dt {
+    font-style: italic;
+    font-size: 90%;
+    text-align: right;
+    margin: 0;
+    grid-column: 1;
+    margin: 0;
+}
+.dl-horizontal dd {
+    margin: 0;
+    grid-column: 2;
+    word-break: break-word;
+    white-space: normal;
+}

@@ -4,7 +4,7 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { APackage, AnEntity } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+import { APackage, AnEntity } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 describe('HTML Security - XSS Prevention', () => {
     describe('Script Injection and Event Handler Prevention', () => {

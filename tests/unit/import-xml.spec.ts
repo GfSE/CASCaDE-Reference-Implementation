@@ -7,8 +7,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { XmlImporter } from '../../src/common-code/import/xml/import-xml';
-import { TPigItem } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+import { XmlImporter } from '../../src/common/import/xml/import-xml';
+import { TPigItem } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 /**
  * Recursively find all *.xml files in a directory and its subdirectories

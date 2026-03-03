@@ -1,4 +1,4 @@
-/* import * as exportHTML from './common-code/export/html/exportHTML';
+/* import * as exportHTML from './common/export/html/exportHTML';
 // Add further Modul-Inits here, ...
 
 export function initAllModules() {

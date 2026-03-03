@@ -60,11 +60,11 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
-    import { ReqifImporter } from '@/common-code/import/reqif/import-reqif';
-    import { TPigItem, APackage } from '@/common-code/schema/pig/ts/pig-metaclasses';
-    import { stringHTML } from '@/common-code/export/html/exportHTML';
+    import { ReqifImporter } from '@/common/import/reqif/import-reqif';
+    import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
+    import { stringHTML } from '@/common/export/html/exportHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
-    import { Msg, IRsp } from '@/common-code/lib/messages';
+    import { Msg, IRsp } from '@/common/lib/messages';
 
     @Options({
         data() {

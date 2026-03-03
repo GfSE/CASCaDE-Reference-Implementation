@@ -43,6 +43,8 @@
  *  - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
  *    This code could just *ignore* additional properties.
  *  - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
+ *  - extend aPackage from AnElement to have revision history for packages as well
+ *    and then use metadataToHTML() for packages as well.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -99,14 +101,19 @@ const PIG_CLASSES = new Set<PigItemTypeValue>([
     PigItemType.Relationship
 ]);
 
-const PIG_INSTANCES = new Set<PigItemTypeValue>([
+const PIG_INSTANCE_ARRAY = [
     PigItemType.aPackage,
     // PigItemType.aProperty,
     // PigItemType.aSourceLink,
     // PigItemType.aTargetLink,
     PigItemType.anEntity,
     PigItemType.aRelationship
-]);
+] as const;
+
+export type TPigInstance = typeof PIG_INSTANCE_ARRAY[number];
+
+// Set für fast checks at runtime, e.g. in PigItemFactory.isInstance():
+const PIG_INSTANCES = new Set<PigItemTypeValue>(PIG_INSTANCE_ARRAY);
 
 /**
  * Factory class for creating PIG items based on itemType

@@ -32,7 +32,7 @@
 
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component';
-    import { DEF } from '@/common-code/lib/definitions';
+    import { DEF } from '@/common/lib/definitions';
 
     @Options({
         data() {

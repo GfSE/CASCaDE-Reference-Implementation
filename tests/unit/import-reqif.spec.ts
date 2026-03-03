@@ -6,7 +6,7 @@
  */
 
 // import { IRsp } from '../../src/utils/lib/messages';
-import { ReqifImporter } from '../../src/common-code/import/reqif/import-reqif';
+import { ReqifImporter } from '../../src/common/import/reqif/import-reqif';
 import * as path from 'path';
 import * as fs from 'fs';
 
