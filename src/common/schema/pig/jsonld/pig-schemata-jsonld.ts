@@ -37,6 +37,7 @@
  * - aPackage.json
 */
 
+import type { ValidateFunction } from 'ajv';
 import { ajv } from '../../../../plugins/ajv';
 import { PIN } from '../../../lib/platform-independence';
 
@@ -119,8 +120,8 @@ async function loadSchema(schemaKey: SchemaKey): Promise<Record<string, unknown>
  * Load all schemata from JSON files
  * @returns Promise resolving to an object with all loaded schemata
  */
-async function loadAllSchemata(): Promise<Record<SchemaKey, any>> {
-    const schemata = {} as Record<SchemaKey, any>;
+async function loadAllSchemata(): Promise<Record<SchemaKey, Record<string, unknown>>> {
+    const schemata = {} as Record<SchemaKey, Record<string, unknown>>;
     for (const key of Object.keys(SCHEMA_FILE_NAMES) as SchemaKey[]) {
         schemata[key] = await loadSchema(key);
     }
@@ -157,18 +158,18 @@ function ensureInitialized(): Promise<void> {
 /**
  * Compiled validators (lazy-loaded)
  */
-let validatePropertyLD: any = null;
-let validateLinkLD: any = null;
-let validateEntityLD: any = null;
-let validateRelationshipLD: any = null;
-let validateAnEntityLD: any = null;
-let validateARelationshipLD: any = null;
-let validatePackageLD: any = null;
+let validatePropertyLD: ValidateFunction | null = null;
+let validateLinkLD: ValidateFunction | null = null;
+let validateEntityLD: ValidateFunction | null = null;
+let validateRelationshipLD: ValidateFunction | null = null;
+let validateAnEntityLD: ValidateFunction | null = null;
+let validateARelationshipLD: ValidateFunction | null = null;
+let validatePackageLD: ValidateFunction | null = null;
 
 /**
  * Get or compile a validator
  */
-async function getValidator(schemaKey: SchemaKey): Promise<any> {
+async function getValidator(schemaKey: SchemaKey): Promise<ValidateFunction> {
     await ensureInitialized();
 
     const schema = await loadSchema(schemaKey);
