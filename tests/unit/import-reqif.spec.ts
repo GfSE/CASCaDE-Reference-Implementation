@@ -40,11 +40,11 @@ describe('ReqIF Import', () => {
         reqifFiles.forEach(f => str += `\n  - ${path.relative(testFilesDir, f)}`);
         console.log(str);
     });
+
     // Ensure console flush before test ends
     afterEach(async () => {
         await new Promise(resolve => setImmediate(resolve));
     });
-
     // Reliable error logging with synchronous write
     const logResponse = (context: string, response: any) => {
         if (!response.ok) {

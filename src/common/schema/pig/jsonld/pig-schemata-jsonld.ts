@@ -91,7 +91,7 @@ const schemaCache: Partial<Record<SchemaKey, Record<string, unknown>>> = {};
 async function loadSchema(schemaKey: SchemaKey): Promise<Record<string, unknown>> {
     // Return cached schema if available
     if (schemaCache[schemaKey]) {
-        return schemaCache[schemaKey];
+        return schemaCache[schemaKey]!;
     }
 
     const schemaPath = SCHEMA_FILES[schemaKey];

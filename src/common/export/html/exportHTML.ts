@@ -33,7 +33,7 @@
  */
 
 
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, getLocalText /*, TPigInstance*/ } from '../../schema/pig/ts/pig-metaclasses';
+import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, getLocalText /*, TPigInstance*/ } from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, LIB } from '../../lib/helpers';
 
 export type stringHTML = string;  // contains HTML code
@@ -107,20 +107,20 @@ export const toHTML = {
         const descText = passify(getLocalText(entity.description, lang));
 
         let propertiesHTML = '';
+        propertiesHTML = '<div class="pig-properties"><dl class="dl-horizontal">';
         if (entity.hasProperty?.length > 0) {
-            propertiesHTML = '<div class="pig-properties"><dl class="dl-horizontal">';
             // the configured properties:
             for (const prop of entity.hasProperty) {
-                const propData = prop.get();
+                const propData = prop.get() as IAProperty;
                 if (propData && propData.hasClass) {
-                    const propValue = passify(propData.value || propData.idRef || '—');
+                    const propValue = passify((propData.value || propData.idRef) as string); // one of the two must be present according to the schema
                     const propClass = passify(propData.hasClass);
                     propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
                 }
             }
-            propertiesHTML += metadataToHTML(entity, lang);
-            propertiesHTML += '</dl></div>';
         }
+        propertiesHTML += metadataToHTML(entity, lang);
+        propertiesHTML += '</dl></div>';
 
         return `<div class="pig-anentity" style="display: flex; gap: 1rem;">
                     <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
@@ -134,6 +134,8 @@ export const toHTML = {
     },
 
     aRelationship(rel: ARelationship, options?: IOptionsHTML): stringHTML {
+        // dummy operation to use options and avoid "unused variable" warning - to be removed when implementation is done
+        if (options?.itemType) return '';
         const relSt = rel.status();
         if (!relSt.ok) {
             return `<div class="pig-error">
@@ -313,8 +315,8 @@ function metadataToHTML(item: AnEntity | ARelationship, lang: tagIETF): string {
     return `<dt>Item Type</dt><dd>anEntity</dd>
                 <dt>ID</dt><dd>${passify(item.id)}</dd>
                 <dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>
-                <dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>
-                ${item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : ''}
-                ${item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : ''}
-                ${item.priorRevision && item.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${item.priorRevision.map((r: string) => passify(r)).join(', ')}</dd>` : ''}`
+                <dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>`
+                + (item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : '')
+                + (item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : '')
+                + (item.priorRevision && item.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${item.priorRevision.map((r: string) => passify(r)).join(', ')}</dd>` : '');
 }

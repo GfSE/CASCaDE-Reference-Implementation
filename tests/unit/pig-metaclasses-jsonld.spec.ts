@@ -14,6 +14,18 @@ import {
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 describe('PIG Metaclasses JSON-LD Import', () => {
+/*    // Ensure console flush before test ends
+    afterEach(async () => {
+        await new Promise(resolve => setImmediate(resolve));
+    });
+    // Reliable error logging with synchronous write
+    const logResponse = (context: string, response: any) => {
+        if (!response.ok) {
+            const msg = `\n❌ ${context} FAILED:\n${JSON.stringify(response, null, 2)}\n`;
+            process.stderr.write(msg);
+        }
+    };
+*/
     describe('Property.setJSONLD()', () => {
         it('should import dcterms:title property', () => {
             const jsonldInput = {

@@ -1253,8 +1253,9 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify package title
             expect(pkgOut.title).toBeDefined();
             expect(Array.isArray(pkgOut.title)).toBe(true);
-            expect(pkgOut.title[0].value).toBe('Fibonacci Estimation Example');
-            expect(pkgOut.title[0].lang).toBe('en');
+            expect(pkgOut.title!.length).toBe(1);
+            expect(pkgOut.title![0].value).toBe('Fibonacci Estimation Example');
+            expect(pkgOut.title![0].lang).toBe('en');
 
             // Verify graph items
             expect(pkgOut.graph).toBeDefined();

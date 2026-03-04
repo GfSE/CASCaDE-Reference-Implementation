@@ -285,9 +285,10 @@ abstract class Item implements IItem {
     }
     protected get() {
         return {
+        //    lastStatus: this.lastStatus,
             itemType: this.itemType,
             hasClass: this.hasClass
-        };
+        } as IItem;
     }
 }
 interface IIdentifiable extends IItem {
@@ -350,7 +351,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
             specializes: this.specializes,
             title: this.title,
             description: this.description
-        });
+        } as IIdentifiable);
     }
     protected fromJSONLD(itm: any) {
         let ld = { ...itm };
@@ -409,11 +410,10 @@ abstract class ALink extends Item implements IALink {
         return this;
     }
     protected get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
             idRef: this.idRef
-        });
+        }) as IALink;
     }
     protected setJSONLD(itm: any) {
         let _itm = MVF.renameJsonTags(itm as JsonValue, MVF.fromJSONLD, { mutate: false }) as any;
@@ -421,7 +421,6 @@ abstract class ALink extends Item implements IALink {
         return this.set(_itm);
     }
     protected getJSONLD() {
-        //        if (!this.lastStatus.ok) return undefined;
         const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
         return makeIdObjects(jld) as JsonObject;
     }
@@ -449,19 +448,19 @@ abstract class Element extends Identifiable implements IElement {
             ...super.get(),
             eligibleProperty: Array.isArray(this.eligibleProperty) ? this.eligibleProperty : undefined,
             icon: this.icon
-        };
+        } as IElement;
     }
 }
 
 interface IAnElement extends IIdentifiable {
-    revision: TRevision;
+    revision?: TRevision;
     priorRevision?: TRevision[];  // optional
     modified: TISODateString;
     creator?: string;
     hasProperty?: IAProperty[];
 }
 abstract class AnElement extends Identifiable implements IAnElement {
-    revision!: TRevision;
+    revision?: TRevision;
     priorRevision?: TRevision[];
     modified!: TISODateString;
     creator?: string;
@@ -489,15 +488,14 @@ abstract class AnElement extends Identifiable implements IAnElement {
         return this;
     }
     protected get() {
-    //    LOG.debug('anElement.get():', this/*.hasProperty, this.hasProperty.map(p => p.get())*/);
         return {
             ...super.get(),
             revision: this.revision,
             priorRevision: this.priorRevision,
             modified: this.modified,
             creator: this.creator,
-            hasProperty: this.hasProperty.map(p => p.get())
-        };
+            hasProperty: this.hasProperty.length>0? this.hasProperty.map(p => p.get()) : undefined
+        } as IAnElement;
     }
     protected fromJSONLD(itm: any) {
         const _itm = super.fromJSONLD(itm) as any;
@@ -529,8 +527,11 @@ abstract class AnElement extends Identifiable implements IAnElement {
 // The concrete classes:
 export interface IEligibleValue {
     id: TPigId;
-    // with lang for xs:string with multiple languages, optional for lang for xs:string with a single language, without otherwise:
-    value: ILanguageText[]; 
+    // Either title or value must be present, but not both; see schemata:
+    // with lang for xs:string with multiple languages, optional lang for xs:string with a single language:
+    title?: ILanguageText[];
+    // in PIG, values of all datatypes are strings; the datatype is defined in the respective Property
+    value?: string;  
 }
 export interface IProperty extends IIdentifiable {
     datatype: string; // must be of XsDataType
@@ -607,7 +608,6 @@ export class Property extends Identifiable implements IProperty {
         return this; // make chainable
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
             datatype: this.datatype,
@@ -621,7 +621,7 @@ export class Property extends Identifiable implements IProperty {
             defaultValue: this.defaultValue,
             unit: this.unit,
             composes: this.composes
-        });
+        }) as IProperty;
     }
     fromJSONLD(itm: any) {
         return super.fromJSONLD(itm) as any;
@@ -637,7 +637,6 @@ export class Property extends Identifiable implements IProperty {
         return this.set(_itm);
     }
     getJSONLD() {
-        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
 }
@@ -676,11 +675,10 @@ export class Link extends Identifiable implements ILink {
         return this;
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
             eligibleEndpoint: this.eligibleEndpoint
-        });
+        }) as ILink;
     }
     fromJSONLD(itm: any) {
         return super.fromJSONLD(itm) as any;
@@ -690,7 +688,6 @@ export class Link extends Identifiable implements ILink {
         return this.set(_itm);
     }
     getJSONLD() {
-        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
 }
@@ -737,11 +734,10 @@ export class Entity extends Element implements IEntity {
         return this;  // make chainable
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
             eligibleTargetLink: Array.isArray(this.eligibleTargetLink) ? this.eligibleTargetLink : undefined
-        });
+        }) as IEntity;
     }
     fromJSONLD(itm: any) {
         return super.fromJSONLD(itm) as any;
@@ -751,7 +747,6 @@ export class Entity extends Element implements IEntity {
         return this.set(_itm);
     }
     getJSONLD() {
-        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
 }
@@ -802,12 +797,11 @@ export class Relationship extends Element implements IRelationship {
         return this;
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
             eligibleSourceLink: this.eligibleSourceLink,
             eligibleTargetLink: this.eligibleTargetLink
-        });
+        }) as IRelationship;
     }
     fromJSONLD(itm: any) {
         return super.fromJSONLD(itm) as any;
@@ -817,7 +811,6 @@ export class Relationship extends Element implements IRelationship {
         return this.set(_itm);
     }
     getJSONLD() {
-        //        if (!this.lastStatus.ok) return undefined;
         return super.getJSONLD();
     }
 }
@@ -854,13 +847,12 @@ export class AProperty extends Item implements IAProperty {
         return this;
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
             composes: this.composes,
             value: this.value,
             idRef: this.idRef
-        });
+        } as IAProperty );
     }
 }
 export class ASourceLink extends ALink implements IALink {
@@ -883,7 +875,6 @@ export class ASourceLink extends ALink implements IALink {
         return this;
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return super.get();
     }
 }
@@ -907,7 +898,6 @@ export class ATargetLink extends ALink implements IALink {
         return this;
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return super.get();
     }
 }
@@ -942,7 +932,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         return super.validate(itm);
     }
     set(itm: IAnEntity) {
-        const _itm: IAnEntity = LIB.stripUndefined(itm);
+        const _itm = LIB.stripUndefined(itm) as IAnEntity;
 
         _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
 
@@ -955,14 +945,12 @@ export class AnEntity extends AnElement implements IAnEntity {
         return this;
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ... super.get(),
-            hasTargetLink: this.hasTargetLink.map(t => t.get())
+            hasTargetLink: this.hasTargetLink.length>0 ? this.hasTargetLink.map(t => t.get()) : undefined
         });
     }
     getJSONLD() {
-        //        if (!this.lastStatus.ok) return undefined;
         let jld = super.getJSONLD();
         jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
     //    LOG.debug('AnEntity.getJSONLD: ', out);
@@ -1008,7 +996,7 @@ export class ARelationship extends AnElement implements IARelationship {
         return super.validate(itm);
     }
     set(itm: IARelationship) {
-        const _itm: IARelationship = LIB.stripUndefined(itm);
+        const _itm = LIB.stripUndefined(itm) as IARelationship;
         //LOG.debug('ARelationship.set():', _itm);
         // id is normalized in the caller (setXML or setJSONLD)
         _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
@@ -1022,12 +1010,11 @@ export class ARelationship extends AnElement implements IARelationship {
         return this;
     }
     get() {
-        if (!this.lastStatus.ok) return undefined;
         return LIB.stripUndefined({
             ...super.get(),
-            hasSourceLink: this.hasSourceLink.map(s => s.get()),
-            hasTargetLink: this.hasTargetLink.map(t => t.get())
-        });
+            hasSourceLink: this.hasSourceLink.length > 0 ? this.hasSourceLink.map(s => s.get()) : undefined,
+            hasTargetLink: this.hasTargetLink.length > 0 ? this.hasTargetLink.map(t => t.get()) : undefined
+        }) as IARelationship;
     }
     fromJSONLD(itm: any) {
         const _itm = super.fromJSONLD(itm) as any;
@@ -1035,7 +1022,6 @@ export class ARelationship extends AnElement implements IARelationship {
         return _itm;
     }
     getJSONLD() {
-//        if (!this.lastStatus.ok) return undefined;
         let jld = super.getJSONLD();
         jld = addConfigurablesToJSONLD(jld, this, 'hasSourceLink');
         jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
@@ -1139,20 +1125,16 @@ export class APackage extends Identifiable implements IAPackage {
     }
 
     get() {
-        if (!this.lastStatus.ok) return undefined;
-        
         // Build complete package representation
         const pkg = {
             ...super.get(),
             context: this.context,
-            graph: this.graph.map(item => {
-                // LOG.debug(`APackage.get: processing item `, item);
+            graph: this.graph?.map(item => {
                 return item.get();
             }),
             modified: this.modified,
             creator: this.creator
         } as IAPackage;
-        
         return LIB.stripUndefined(pkg);
     }
 

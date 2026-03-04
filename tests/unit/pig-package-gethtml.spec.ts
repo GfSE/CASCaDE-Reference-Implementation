@@ -225,6 +225,7 @@ describe('PIG Package getHTML() Method', () => {
             expect(pkg.status().ok).toBe(true);
 
             const htmlList = pkg.getHTML();
+            // console.debug('Generated HTML List for Mixed Package:', htmlList);
 
             // Package metadata + 1 entity (ignoring Property, Link, Entity class, Relationship)
             expect(htmlList.length).toBe(2);

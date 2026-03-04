@@ -217,28 +217,37 @@ export const LIB = {
         if (throwOnInvalid) throw new Error(`LIB.stringToEnum: '${value}' is not a valid enum member`);
         return undefined;
     }, */
-    /**
-     * Remove all undefined values from an object or array recursively.
-     * @param value
-     * @returns
-     */
-    stripUndefined(value: any): any {
-        if (value === undefined) return undefined;
-        if (value === null) return null;
-        if (Array.isArray(value)) {
-            return value.map(v => this.stripUndefined(v));
-        }
-        if (typeof value === 'object') {
-            const out: Record<string, any> = {};
-            for (const k of Object.keys(value)) {
-                const v = this.stripUndefined((value as Record<string, any>)[k]);
-                if (v !== undefined) out[k] = v;
-            }
-            return out;
-        }
-        return value;
-    },
 
+    /**
+     * Entfernt rekursiv alle undefined-Werte aus beliebigen JSON-Strukturen.
+     * Gibt exakt denselben Typ zurück wie der Eingabewert.
+     */
+    stripUndefined<T>(value: T): T {
+        function strip(val: unknown): unknown {
+            if (val === undefined) return undefined;
+            if (val === null) return null;
+            if (Array.isArray(val)) {
+                return val
+                    .map(strip)
+                    .filter(v => v !== undefined);
+            }
+            if (typeof val === 'object' && val !== null) {
+                const out: Record<string, unknown> = {};
+                for (const k of Object.keys(val)) {
+                    const v = strip((val as Record<string, unknown>)[k]);
+                    if (v !== undefined) out[k] = v;
+                }
+                return out;
+            }
+            return val;
+        }
+        return strip(value) as T;
+    },
+/*    function stripUndefined(obj: Record<string, any>): Record<string, any> {
+        return Object.fromEntries(
+            Object.entries(obj).filter(([_, v]) => v !== undefined)
+        );
+    } */
     /**
      * Wrap XML fragment with root element and namespace declarations
      * Automatically detects namespace prefixes used in the XML and extracts their URIs
