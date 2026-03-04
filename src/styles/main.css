@@ -87,3 +87,18 @@ h3 {
     word-break: break-word;
     white-space: normal;
 }
+/* styles used in exportHTML: */
+.meta-error {
+    color: red;
+    background-color: #fcadad;
+}
+/*.meta-aPackage {
+    display: flex;
+    gap: 1rem;
+}
+.meta-title {
+    font-size: 1.8rem;
+}
+.meta-description {
+    font-size: 1rem;
+}*/

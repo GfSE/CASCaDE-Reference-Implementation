@@ -16,12 +16,13 @@
                               persistent-hint></v-file-input>
 
                 <!-- Error Display -->
-                <v-alert v-if='errorMessages.length > 0'
-                         type='error'
+                <v-alert v-if="errorMessages.length > 0"
+                         type="error"
                          dismissible
-                         class='mt-4'
-                         @click:close='errorMessages = []'>
-                    <div v-for='(error, index) in errorMessages' :key='index'>
+                         class="mt-4">
+                    <div v-for="(error, index) in errorMessages"
+                         :key="index"
+                         class="text-caption">
                         {{ error }}
                     </div>
                 </v-alert>
@@ -114,23 +115,16 @@
                         // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
 
-                        // Log failed imports
-                        if (failed.length > 0) {
-                            // ✅ Type annotation hinzugefügt
-                            this.errorMessages = failed.map((r: IRsp<unknown>) =>
-                                `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
-                            );
-                            console.error('Failed imports:', failed);
-                        }
+                        this.logFailedImports(failed);
 
-                        // Navigate to viewing page after short delay
+                        // Navigate to the document viewing page after short delay
                         setTimeout(async () => {
-                            await this.$router.push({ name: 'Viewing' });
+                            await this.$router.push({ name: 'Document' });
                             this.dialog = false;
                             this.onCancel();
                         }, 1500);
                     } else {
-                        this.errorMessages = ['No files were successfully imported'];
+                        this.logFailedImports(failed);
                     }
 
                 } catch (error: any) {
@@ -168,6 +162,15 @@
                 // Try to extract filename from statusText
                 const match = rsp.statusText?.match(/^([^:]+):/);
                 return match ? match[1] : 'Unknown file';
+            },
+
+            logFailedImports(failed: IRsp<unknown>[]) {
+                if (failed.length > 0) {
+                    this.errorMessages = failed.map((r: IRsp<unknown>) =>
+                        `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
+                    );
+                    // console.error('Failed imports:', failed);
+                }
             },
 
             /**

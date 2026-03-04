@@ -48,9 +48,8 @@ export const toHTML = {
         const pkgSt = pkg.status();
         if (!pkgSt.ok) {
             return [
-                `<div class="pig-error">
-                    Invalid aPackage; status: (${pkgSt.status})<br>
-                    ${pkgSt.statusText ?? ''}
+                `<div class="meta-error">
+                    Invalid aPackage with id ${pkg.id} - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
                 </div>`
             ];
         }
@@ -64,10 +63,10 @@ export const toHTML = {
         const titleText = passify(getLocalText(pkg.title, lang));
         const descText = passify(getLocalText(pkg.description, lang));
 
-        const pkgMetadata = `<div class="pig-apackage" style="display: flex; gap: 1rem;">
+        const pkgMetadata = `<div class="meta-aPackage" style="display: flex; gap: 1rem;">
                     <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
-                        <h3 class="pig-title">${titleText || 'Untitled Package'}</h3>
-                        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
+                        <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
+                        ${descText ? `<div class="meta-description">${descText}</div>` : ''}
                     </div>
                     <div class="col-right" style="flex: 1; min-width: 0;">
                         <dl class="dl-horizontal">
@@ -95,9 +94,8 @@ export const toHTML = {
     anEntity(entity: AnEntity, options?: IOptionsHTML): stringHTML {
         const enSt = entity.status();
         if (!enSt.ok) {
-            return `<div class="pig-error">
-                    Invalid anEntity; status: (${enSt.status})<br>
-                    ${enSt.statusText ?? ''}
+            return `<div class="meta-error">
+                    Invalid anEntity with id ${entity.id} - status: (${enSt.status}) ${enSt.statusText ?? ''}
                 </div>`;
         }
         const lang = options?.lang || 'en-US';
@@ -107,7 +105,7 @@ export const toHTML = {
         const descText = passify(getLocalText(entity.description, lang));
 
         let propertiesHTML = '';
-        propertiesHTML = '<div class="pig-properties"><dl class="dl-horizontal">';
+        propertiesHTML = '<div class="meta-aProperty"><dl class="dl-horizontal">';
         if (entity.hasProperty?.length > 0) {
             // the configured properties:
             for (const prop of entity.hasProperty) {
@@ -122,10 +120,10 @@ export const toHTML = {
         propertiesHTML += metadataToHTML(entity, lang);
         propertiesHTML += '</dl></div>';
 
-        return `<div class="pig-anentity" style="display: flex; gap: 1rem;">
+        return `<div class="meta-anEntity" style="display: flex; gap: 1rem;">
                     <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
-                        ${titleText ? `<h3 class="pig-title">${titleText}</h3>` : ''}
-                        ${descText ? `<div class="pig-description">${descText}</div>` : ''}
+                        ${titleText ? `<h3 class="meta-title">${titleText}</h3>` : ''}
+                        ${descText ? `<div class="meta-description">${descText}</div>` : ''}
                     </div>
                     <div class="col-right" style="flex: 1; min-width: 0;">
                         ${propertiesHTML}
@@ -138,13 +136,12 @@ export const toHTML = {
         if (options?.itemType) return '';
         const relSt = rel.status();
         if (!relSt.ok) {
-            return `<div class="pig-error">
-                    Invalid aRelationship; status: (${relSt.status})<br>
-                    ${relSt.statusText ?? ''}
+            return `<div class="meta-error">
+                    Invalid aRelationship with id ${rel.id} - status: (${relSt.status}) ${relSt.statusText ?? ''}
                 </div>`;
         }
         // ToDo: Implementiere eine HTML-Repräsentation für ARelationship
-        return '<div class="pig-not-implemented">HTML export for Relationship not implemented</div>';
+        return '<div class="meta-not-implemented">HTML export for Relationship not implemented</div>';
     }
 };
 

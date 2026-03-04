@@ -12,13 +12,13 @@
                     {{ name }}
                 </li>
             </ul>
-        <!--
-            <h3>Export Plugins</h3>
-            <ul>
-                <li v-for="(component, name) in exportComponents" :key="name">
-                    {{ name }}
-                </li>
-            </ul>  -->
+            <!--
+        <h3>Export Plugins</h3>
+        <ul>
+            <li v-for="(component, name) in exportComponents" :key="name">
+                {{ name }}
+            </li>
+        </ul>  -->
         </section>
 
         <!-- Build Information Table -->
@@ -35,6 +35,13 @@
                 <dd>{{ DEF.gitBranch }}</dd>
             </dl>
         </section>
+
+        <!-- Report Issue Button
+        <v-btn color="primary"
+               class="mt-4"
+               @click="openGithubIssue">
+            Report an Issue
+        </v-btn> -->
     </div>
 </template>
 
@@ -50,6 +57,12 @@
             DEF() { return DEF; },
             importComponents() { return inject('importComponents', {}); },
             exportComponents() { return inject('exportComponents', {}); }
+    /*    },
+        methods: {
+            openGithubIssue() {
+                // Repo-URL: https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/new
+                window.open('https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/new', '_blank')
+            } */
         }
     })
 

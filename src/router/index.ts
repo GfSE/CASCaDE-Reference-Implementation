@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import PageHome from '@/components/PageHome.vue';
 import PageDashboards from '@/components/PageDashboards.vue';
 import PageInterfaces from '@/components/PageInterfaces.vue';
-import PageViewing from '@/components/PageViewing.vue';
+import PageDocument from '@/components/PageDocument.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -21,9 +21,9 @@ const routes: Array<RouteRecordRaw> = [
     component: PageInterfaces,
   },
   {
-    path: '/viewing',
-    name: 'Viewing',
-    component: PageViewing,
+    path: '/document',
+    name: 'Document',
+    component: PageDocument,
   }
 ];
 

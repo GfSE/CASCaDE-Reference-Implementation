@@ -42,12 +42,12 @@
     import { useHtmlStore } from '@/stores/cacheStore'
 
     function extractTitle(html: string): string | null {
-        const match = html.match(/<[^>]*class=["'][^"']*pig-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);
+        const match = html.match(/<[^>]*class=["'][^"']*meta-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);
         return match ? match[1] : null;
     }
 
     @Options({
-        name: 'PageViewing',
+        name: 'PageDocument',
         data() {
             return {
                 selectedIndex: null as number | null
@@ -80,7 +80,7 @@
         }
     })
 
-    export default class PageViewing extends Vue { }
+    export default class PageDocument extends Vue { }
 </script>
 
 <style scoped>

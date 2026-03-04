@@ -960,7 +960,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         if (toHTML?.anEntity) {
             return toHTML.anEntity(this, options);
         }
-        return '<div class="pig-not-implemented">HTML export for anEntity not implemented</div>';
+        return '<div class="meta-not-implemented">HTML export for anEntity not implemented</div>';
     }
 }
 
@@ -1032,7 +1032,7 @@ export class ARelationship extends AnElement implements IARelationship {
         if (toHTML?.aRelationship) {
             return toHTML.aRelationship(this, options);
         }
-        return '<div class="pig-not-implemented">HTML export for aRelationship not implemented</div>';
+        return '<div class="meta-not-implemented">HTML export for aRelationship not implemented</div>';
     }
 }
 // For packages:
@@ -1349,7 +1349,7 @@ export class APackage extends Identifiable implements IAPackage {
         if (toHTML?.aPackage) {
             return toHTML.aPackage(this, options);
         }
-        return ['<div class="pig-not-implemented">HTML export for aPackage not implemented</div>'];
+        return ['<div class="meta-not-implemented">HTML export for aPackage not implemented</div>'];
     }
 
     /**
