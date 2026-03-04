@@ -123,8 +123,9 @@ export class XmlImporter {
             }
 
             return rspOK;
-        } catch (err: any) {
-            return Msg.create(690, 'XML', err?.message ?? String(err));
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            return Msg.create(690, 'JSON-LD', errorMessage);
         }
     }
 
