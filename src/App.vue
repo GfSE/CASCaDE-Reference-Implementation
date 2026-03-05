@@ -18,9 +18,10 @@
                 <v-list-item border="md" href="/interfaces">
                     <h3>Interfaces</h3>
                 </v-list-item>
-                <v-list-item border="md" href="/document">
-                    <h3>Document View</h3>
-                </v-list-item>
+                <!-- useless as long as the data is lost when leaving the page ..
+        <v-list-item border="md" href="/document">
+            <h3>Document View</h3>
+        </v-list-item> -->
                 <v-list-item border="md" @click="openGithubIssue">
                     <h3><v-icon start>mdi-github</v-icon>Report an Issue</h3>
                 </v-list-item>

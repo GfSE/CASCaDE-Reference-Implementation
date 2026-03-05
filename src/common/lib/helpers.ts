@@ -219,29 +219,48 @@ export const LIB = {
     }, */
 
     /**
-     * Entfernt rekursiv alle undefined-Werte aus beliebigen JSON-Strukturen.
-     * Gibt exakt denselben Typ zurück wie der Eingabewert.
+     * Recursively removes all undefined and null values from any JSON structure.
+     * Returns the exact same type as the input value.
      */
-    stripUndefined<T>(value: T): T {
+    stripUndefinedAndNull<T extends object>(obj: T): T {
+        if (obj === null || obj === undefined)
+            throw new Error('LIB.stripUndefinedAndNull: input object cannot be null or undefined');
+        const result: any = Array.isArray(obj) ? [] : {};
+        for (const key in obj) {
+            if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+            const value = (obj as any)[key];
+            if (value !== undefined && value !== null) {
+                if (typeof value === 'object' && value !== null) {
+                    result[key] = this.stripUndefinedAndNull(value);
+                } else {
+                    result[key] = value;
+                }
+            }
+        }
+        return result;
+    },
+/*    stripUndefinedAndNull<T extends object>(obj: T): T {
         function strip(val: unknown): unknown {
             if (val === undefined) return undefined;
             if (val === null) return null;
             if (Array.isArray(val)) {
                 return val
                     .map(strip)
-                    .filter(v => v !== undefined);
+                    .filter(v => v !== undefined && v !== null);
             }
             if (typeof val === 'object' && val !== null) {
                 const out: Record<string, unknown> = {};
                 for (const k of Object.keys(val)) {
                     const v = strip((val as Record<string, unknown>)[k]);
-                    if (v !== undefined) out[k] = v;
+                    if (v !== undefined && v !== null) out[k] = v;
                 }
                 return out;
             }
             return val;
         }
-        return strip(value) as T;
+        if (obj === null || obj === undefined)
+            throw new Error('LIB.stripUndefinedAndNull: input object cannot be null or undefined');
+        return strip(obj) as T;
     },
 /*    function stripUndefined(obj: Record<string, any>): Record<string, any> {
         return Object.fromEntries(

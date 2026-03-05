@@ -25,21 +25,10 @@
  */
 
 import { IRsp, rspOK, Rsp, Msg } from '../../lib/messages';
-import { LOG } from '../../lib/helpers';
+import { LOG, JsonObject, JsonArray } from '../../lib/helpers';
 import { PIN } from '../../lib/platform-independence';
 import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
 import { SCH_LD } from '../../schema/pig/jsonld/pig-schemata-jsonld';
-
-/**
- * JSON-LD document structure
- */
-interface JsonLdDocument {
-    '@context'?: unknown;
-    '@graph'?: unknown[];
-    '@id'?: string;
-    '@type'?: string | string[];
-    [key: string]: unknown;
-}
 
 /**
  * JSON-LD Importer
@@ -75,9 +64,9 @@ export class JsonldImporter {
         const text = rsp.response as string;
 
         // Parse JSON document
-        let doc: JsonLdDocument;
+        let doc: JsonObject;
         try {
-            doc = JSON.parse(text) as JsonLdDocument;
+            doc = JSON.parse(text) as JsonObject;
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : String(err);
             return Msg.create(690, 'JSON-LD', errorMessage);
@@ -101,7 +90,7 @@ export class JsonldImporter {
         const allItems = aPackage.getItems();
 
         // Calculate import statistics
-        const expectedCount = doc['@graph']?.length || 0;
+        const expectedCount = (doc['@graph'] as JsonArray)?.length || 0;
         const actualCount = allItems.length - 1; // -1 for package itself
 
         // Build result response
@@ -136,7 +125,7 @@ export class JsonldImporter {
      * @returns IRsp indicating success or error
      * @private
      */
-    private static async validateJsonLdDocument(doc: JsonLdDocument): Promise<IRsp> {
+    private static async validateJsonLdDocument(doc: JsonObject): Promise<IRsp> {
         // Validate entire JSON-LD document structure using schema
         const isValidPackage = await SCH_LD.validatePackageLD(doc);
 

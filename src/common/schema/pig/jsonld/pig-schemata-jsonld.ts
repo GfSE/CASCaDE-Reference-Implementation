@@ -37,6 +37,7 @@
  * - aPackage.json
 */
 
+import type { JsonObject } from '../../../lib/helpers';
 import type { ValidateFunction } from 'ajv';
 import { ajv } from '../../../../plugins/ajv';
 import { PIN } from '../../../lib/platform-independence';
@@ -253,31 +254,31 @@ export const SCH_LD = {
     },
 
     // Validation methods (async)
-    async validatePropertyLD(data: any): Promise<boolean> {
+    async validatePropertyLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('Property');
         return validator(data);
     },
-    async validateLinkLD(data: any): Promise<boolean> {
+    async validateLinkLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('Link');
         return validator(data);
     },
-    async validateEntityLD(data: any): Promise<boolean> {
+    async validateEntityLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('Entity');
         return validator(data);
     },
-    async validateRelationshipLD(data: any): Promise<boolean> {
+    async validateRelationshipLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('Relationship');
         return validator(data);
     },
-    async validateAnEntityLD(data: any): Promise<boolean> {
+    async validateAnEntityLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('AnEntity');
         return validator(data);
     },
-    async validateARelationshipLD(data: any): Promise<boolean> {
+    async validateARelationshipLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('ARelationship');
         return validator(data);
     },
-    async validatePackageLD(data: any): Promise<boolean> {
+    async validatePackageLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('APackage');
         return validator(data);
     },

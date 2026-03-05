@@ -597,7 +597,7 @@ function checkPropertyReferences(
                 }
 
                 // 2. Check minCount/maxCount constraints
-                const occurrenceResult = checkPropertyOccurrences(
+                const occurrenceResult = checkPropertyOccurrence(
                     itemId,
                     (item as TPigAnElement).hasProperty,
                     propertyMap
@@ -629,7 +629,7 @@ function checkPropertyReferences(
  * @param propertyMap - Map of Property definitions
  * @returns IRsp (rspOK on success, error on constraint violation)
  */
-function checkPropertyOccurrences(
+function checkPropertyOccurrence(
     instanceId: TPigId,
     properties: any[],
     propertyMap: Map<TPigId, any>
@@ -668,9 +668,11 @@ function checkPropertyOccurrences(
                 }
             }
 
-            const langMap = stringPropertyOccurrences.get(propClassId)!;
-            langMap.set(lang, (langMap.get(lang) || 0) + 1);
-        } else {
+            const langMap = stringPropertyOccurrences.get(propClassId);
+            if (langMap)
+                langMap.set(lang, (langMap.get(lang) || 0) + 1);
+        }
+        else {
             // For non-string properties, count total occurrences
             otherPropertyOccurrences.set(
                 propClassId,

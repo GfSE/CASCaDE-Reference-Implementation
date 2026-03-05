@@ -65,6 +65,7 @@
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { stringHTML } from '@/common/export/html/exportHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
+    import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
 
     @Options({
@@ -130,7 +131,7 @@
 
                 } catch (error: any) {
                     this.errorMessages = [`Import failed: ${error?.message || String(error)}`];
-                    console.error('Import error:', error);
+                    LOG.error('Import error:', error);
                 } finally {
                     this.isLoading = false;
                 }
@@ -170,7 +171,7 @@
                     this.errorMessages = failed.map((r: IRsp<unknown>) =>
                         `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
                     );
-                    // console.error('Failed imports:', failed);
+                    // LOG.error('Failed imports:', failed);
                 }
             },
 

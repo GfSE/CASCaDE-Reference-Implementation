@@ -142,11 +142,12 @@ describe('PIG Package Constraint Validation', () => {
             };
 
             const pkg = new APackage().setJSONLD(validPackageJsonLd);  // all constraint checks
-            const items = pkg.getItems();
-            
+            if (!pkg.status().ok)
+                console.error('pkg:', JSON.stringify(pkg, null, 2)); 
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBe(9);
 
+            const items = pkg.getItems();
+            expect(items.length).toBe(9);
         });
 
         test('should validate package with relationship containing source and target links', () => {
@@ -340,11 +341,12 @@ describe('PIG Package Constraint Validation', () => {
             };
 
             const pkg = new APackage().setJSONLD(packageWithRelationship);
-            const items = pkg.getItems();
-            
+            if (!pkg.status().ok)
+                console.error('pkg:', JSON.stringify(pkg,null,2)); 
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBe(13);
 
+            const items = pkg.getItems();
+            expect(items.length).toBe(13);
         });
     });
 

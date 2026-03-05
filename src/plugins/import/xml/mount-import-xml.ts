@@ -14,6 +14,7 @@
 
 import type { App, Plugin } from 'vue';
 import XmlImportPlugin from './import-xml.vue';
+import { LOG } from '@/common/lib/helpers';
 
 /**
  * Plugin configuration options
@@ -39,7 +40,7 @@ export const xmlImportPlugin: Plugin = {
         // Store options in app.config.globalProperties for component access
         app.config.globalProperties.$xmlImportOptions = {
             maxFileSize: options.maxFileSize || 6 * 1024 * 1024, // 6MB default
-            onError: options.onError || ((error: Error) => console.error('XML Import Error:', error))
+            onError: options.onError || ((error: Error) => LOG.error('XML Import Error:', error))
         };
 
         // Mount component globally

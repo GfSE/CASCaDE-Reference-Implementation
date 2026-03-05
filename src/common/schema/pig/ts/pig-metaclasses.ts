@@ -185,15 +185,15 @@ export class PigItem {
         PigItemType.aTargetLink    // Embedded in anEntity/aRelationship
 
      */
-    static isInstantiable(itype: any): boolean {
-        return [
+    static isInstantiable(itype: PigItemTypeValue): boolean {
+        return ([
             PigItemType.Property,
             PigItemType.Link,
             PigItemType.Entity,
             PigItemType.Relationship,
             PigItemType.anEntity,
             PigItemType.aRelationship
-        ].includes(itype);
+        ] as unknown as PigItemTypeValue).includes(itype);
     }
 
     /**
@@ -280,8 +280,9 @@ abstract class Item implements IItem {
             return Msg.create(601, this.itemType, itm.itemType);
         return rspOK;
     }
-    protected set(itm: IItem) {
+    protected set(itm: IItem): this {
         this.hasClass = itm.hasClass;
+        return this;
     }
     protected get() {
         return {
@@ -316,14 +317,15 @@ abstract class Identifiable extends Item implements IIdentifiable {
             return Msg.create(604, this.specializes, itm.specializes ?? '');
 
         // Runtime guards:
-        /* this is now checked in schema validation: */
+        // This is more constraining than the schema,
+        // as the presence of 'lang' is required when there are multiple values
         // Ensure title is a multi-language text (array of ILanguageText)
-        if (itm.title !== undefined) {
+        if (itm.title) {
             const tRes = validateMultiLanguageText(itm.title, 'title');
             if (!tRes.ok) return tRes;
         }
         // description is optional, but when present must be an array of ILanguageText
-        if (itm.description !== undefined) {
+        if (itm.description) {
             const dRes = validateMultiLanguageText(itm.description, 'description');
             if (!dRes.ok) return dRes;
         }
@@ -345,7 +347,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         return this;
     }
     protected get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             id: this.id,
             specializes: this.specializes,
@@ -357,7 +359,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         let ld = { ...itm };
 
         // 1. Rename JSON-LD tags to internal format
-        ld = MVF.renameJsonTags(ld as JsonValue, MVF.fromJSONLD, { mutate: false }) as any;
+        ld = MVF.renameJsonTags(ld, MVF.fromJSONLD, { mutate: false });
 
         // 2. Replace id-objects with id-strings
         ld = replaceIdObjects(ld);
@@ -404,20 +406,20 @@ abstract class ALink extends Item implements IALink {
         // - Check class reference; must be an existing Link URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
-    protected set(itm: IALink) {
+    protected set(itm: IALink): this {
         super.set(itm);
         this.idRef = itm.idRef;
         return this;
     }
     protected get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             idRef: this.idRef
         }) as IALink;
     }
-    protected setJSONLD(itm: any) {
-        let _itm = MVF.renameJsonTags(itm as JsonValue, MVF.fromJSONLD, { mutate: false }) as any;
-        _itm = replaceIdObjects(_itm);
+    protected setJSONLD(itm: any): this {
+        let _itm = MVF.renameJsonTags(itm, MVF.fromJSONLD, { mutate: false }) as any;
+        _itm = replaceIdObjects(_itm) as any;
         return this.set(_itm);
     }
     protected getJSONLD() {
@@ -590,7 +592,7 @@ export class Property extends Identifiable implements IProperty {
     }
     set(itm: IProperty): this {
         this.lastStatus = this.validate(itm);
-        // LOG.debug('Property.set: '+ JSON.stringify(this.lastStatus));
+        // LOG.debug('Property.set: '+ JSON.stringify(this,null,2));
         if (this.lastStatus.ok) {
             super.set(itm);
             this.datatype = itm.datatype;
@@ -608,7 +610,7 @@ export class Property extends Identifiable implements IProperty {
         return this; // make chainable
     }
     get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             datatype: this.datatype,
             minCount: this.minCount,
@@ -675,7 +677,7 @@ export class Link extends Identifiable implements ILink {
         return this;
     }
     get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             eligibleEndpoint: this.eligibleEndpoint
         }) as ILink;
@@ -734,7 +736,7 @@ export class Entity extends Element implements IEntity {
         return this;  // make chainable
     }
     get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             eligibleTargetLink: Array.isArray(this.eligibleTargetLink) ? this.eligibleTargetLink : undefined
         }) as IEntity;
@@ -797,7 +799,7 @@ export class Relationship extends Element implements IRelationship {
         return this;
     }
     get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             eligibleSourceLink: this.eligibleSourceLink,
             eligibleTargetLink: this.eligibleTargetLink
@@ -832,8 +834,6 @@ export class AProperty extends Item implements IAProperty {
         // itemType checked in superclass
         if (!itm.hasClass)
             return Msg.create(602, PigItemType.aProperty);
-        // ToDo: implement further validation logic
-        // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
     set(itm: IAProperty) {
@@ -847,7 +847,7 @@ export class AProperty extends Item implements IAProperty {
         return this;
     }
     get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             composes: this.composes,
             value: this.value,
@@ -927,12 +927,11 @@ export class AnEntity extends AnElement implements IAnEntity {
         // id and itemType checked in superclass
         if (!itm.hasClass)
             return Msg.create(602, PigItemType.anEntity);
-        // ToDo: implement further validation logic
-        // - Check class reference; must be an existing Entity URI (requires access to the cache to resolve the class -> do it through overall consistency check):
+
         return super.validate(itm);
     }
     set(itm: IAnEntity) {
-        const _itm = LIB.stripUndefined(itm) as IAnEntity;
+        const _itm = LIB.stripUndefinedAndNull(itm) as IAnEntity;
 
         _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
 
@@ -945,7 +944,7 @@ export class AnEntity extends AnElement implements IAnEntity {
         return this;
     }
     get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ... super.get(),
             hasTargetLink: this.hasTargetLink.length>0 ? this.hasTargetLink.map(t => t.get()) : undefined
         });
@@ -996,7 +995,7 @@ export class ARelationship extends AnElement implements IARelationship {
         return super.validate(itm);
     }
     set(itm: IARelationship) {
-        const _itm = LIB.stripUndefined(itm) as IARelationship;
+        const _itm = LIB.stripUndefinedAndNull(itm) as IARelationship;
         //LOG.debug('ARelationship.set():', _itm);
         // id is normalized in the caller (setXML or setJSONLD)
         _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
@@ -1010,7 +1009,7 @@ export class ARelationship extends AnElement implements IARelationship {
         return this;
     }
     get() {
-        return LIB.stripUndefined({
+        return LIB.stripUndefinedAndNull({
             ...super.get(),
             hasSourceLink: this.hasSourceLink.length > 0 ? this.hasSourceLink.map(s => s.get()) : undefined,
             hasTargetLink: this.hasTargetLink.length > 0 ? this.hasTargetLink.map(t => t.get()) : undefined
@@ -1092,14 +1091,15 @@ export class APackage extends Identifiable implements IAPackage {
         const errors: string[] = [];
     
         for (const item of _pkg.graph) {
+            // LOG.debug(`APackage.set: instantiating item ${JSON.stringify(item, null, 2)}`);
             const result = this.createItem(item, { defaultModified: _pkg.modified, source: 'any' });
-    
-            if (result.ok && result.response) {
+            if (result.response)
                 instantiatedGraph.push(result.response as TPigItem);
-            } else {
+
+            if (!result.ok) {
                 const errorMsg = result.statusText || 'Unknown instantiation error';
                 errors.push(errorMsg);
-                // LOG.debug(`APackage.set: failed to instantiate item: `, JSON.stringify(item, null, 2));
+                LOG.debug(`APackage.set: failed to instantiate item: `, JSON.stringify(item, null, 2));
                 LOG.warn(`APackage ${pkg.id}: ${errorMsg}`);
             }
         }
@@ -1135,7 +1135,7 @@ export class APackage extends Identifiable implements IAPackage {
             modified: this.modified,
             creator: this.creator
         } as IAPackage;
-        return LIB.stripUndefined(pkg);
+        return LIB.stripUndefinedAndNull(pkg);
     }
 
     setJSONLD(doc: any, options?:any): APackage {
@@ -1356,21 +1356,25 @@ export class APackage extends Identifiable implements IAPackage {
      * Transform an item in JSON-LD item to plain JSON format
      * Uses the same partial transformations as fromJSONLD()
      * 
-     * @param itemJsonLD - JSON-LD representation of item
+     * @param itemLD - JSON-LD representation of item
      * @returns Plain JSON object ready for instantiation
+     *
+     * ToDo: Rework the types JsonObject --> JsonObject
      */
-    ldToJson(itemJsonLD: any): any {
-        let json = { ...itemJsonLD };
+    ldToJson(itemLD: any): any {
+        let json = { ...itemLD };
 
         // 1. Rename JSON-LD tags to internal format (@id → id, etc.)
-        json = MVF.renameJsonTags(json as JsonValue, MVF.fromJSONLD, { mutate: false }) as any;
+        json = MVF.renameJsonTags(json as JsonValue, MVF.fromJSONLD, { mutate: false });
 
         // 2. Replace id-objects with id-strings
         json = replaceIdObjects(json);
 
         // 3. Normalize multi-language texts
-        json.title = normalizeMultiLanguageText(json.title);
-        json.description = normalizeMultiLanguageText(json.description);
+        if (json.title) 
+            json.title = normalizeMultiLanguageText(json.title);
+        if (json.description)
+            json.description = normalizeMultiLanguageText(json.description);
 
         // 4. Normalize datatype (Property-specific)
         if (json.datatype) {
@@ -1581,9 +1585,6 @@ export class APackage extends Identifiable implements IAPackage {
             // Check if instantiation was successful
             const status = (itm as any).status();
             if (!status || !status.ok) {
-            /*    LOG.error(
-                    `APackage.createItem: ${itype} '${item.id || 'unknown'}' failed validation: ${status?.statusText || 'unknown error'}`
-                ); */
                 return status || Msg.create(653, `Instantiation from ${source}`, itype, item.id || 'unknown');
             }
 
@@ -1919,8 +1920,8 @@ function normalizeLanguageText(src: any): ILanguageText {
     return { value: String(src) };
 }
 
-function normalizeMultiLanguageText(src: any): ILanguageText[] | undefined {
-    if (!src) return;
+function normalizeMultiLanguageText(src: any): ILanguageText[] | null {
+    if (!src) return null;
     if (Array.isArray(src)) return src.map(normalizeLanguageText);
     return [normalizeLanguageText(src)];
 }
@@ -2084,7 +2085,12 @@ function addConfigurablesToJSONLD(
         if (!grouped.has(key)) {
             grouped.set(key, []);
         }
-        grouped.get(key)!.push(propValue as JsonObject);
+
+        const gr = grouped.get(key);
+        if (Array.isArray(gr))
+            gr.push(propValue as JsonObject);
+        else
+            throw new Error(`Invalid group for key: ${key}`);
     }
 
     // Add grouped items to JSON-LD
