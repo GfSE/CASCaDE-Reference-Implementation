@@ -19,7 +19,7 @@
  *  - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
  *    This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
  *  - aRelationship.hasSourceLink is an array with maxCount=1 to have the same structure as anEntity.hasSourceLink.
- *  - same for eligibleTargetLink
+ *  - same for enumeratedTargetLink
  *  - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
  *    before the items are instantiated here.
  *  - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
@@ -34,7 +34,7 @@
  *  - implement 'composes' (formerly composedProperty) for Property and AProperty
  *  - Check use of normalizeId() in the setJSONLD() thread
  *  - normalizeId() shortly before validate() in set() ?
- *  - Check the result of normalizeId in the setXML() thread in case of eligible values: must be 'o:'
+ *  - Check the result of normalizeId in the setXML() thread in case of enumerated values: must be 'o:'
  *  - Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed?
  *  - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
  *  - allow packages to be nested
@@ -391,7 +391,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
 }
 
 interface IALink extends IItem {
-    idRef: TPigId;  // must point to an element according to eligibleTarget of the class
+    idRef: TPigId;  // must point to an element according to enumeratedTarget of the class
 }
 abstract class ALink extends Item implements IALink {
     idRef!: TPigId;
@@ -428,11 +428,11 @@ abstract class ALink extends Item implements IALink {
     }
 }
 interface IElement extends IIdentifiable {
-    eligibleProperty?: TPigId[];
+    enumeratedProperty?: TPigId[];
     icon?: IText;  // optional, default is undefined (no icon)
 }
 abstract class Element extends Identifiable implements IElement {
-    eligibleProperty?: TPigId[];
+    enumeratedProperty?: TPigId[];
     icon?: IText;
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
@@ -441,14 +441,14 @@ abstract class Element extends Identifiable implements IElement {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
         super.set(itm);
-        this.eligibleProperty = itm.eligibleProperty;
+        this.enumeratedProperty = itm.enumeratedProperty;
         this.icon = itm.icon;
         return this;
     }
     protected get() {
         return {
             ...super.get(),
-            eligibleProperty: Array.isArray(this.eligibleProperty) ? this.eligibleProperty : undefined,
+            enumeratedProperty: Array.isArray(this.enumeratedProperty) ? this.enumeratedProperty : undefined,
             icon: this.icon
         } as IElement;
     }
@@ -527,7 +527,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
 //////////////////////////////////////
 // The concrete classes:
-export interface IEligibleValue {
+export interface IenumeratedValue {
     id: TPigId;
     // Either title or value must be present, but not both; see schemata:
     // with lang for xs:string with multiple languages, optional lang for xs:string with a single language:
@@ -543,7 +543,7 @@ export interface IProperty extends IIdentifiable {
     pattern?: string;  // a RegExp pattern, only used for string datatype
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
-    eligibleValue?: IEligibleValue[]; // array of allowed values, datatype-dependent
+    enumeratedValue?: IenumeratedValue[]; // array of allowed values, datatype-dependent
     defaultValue?: string;   // in PIG, values of all datatypes are strings
     unit?: string;  // according to SI units
     composes?: TPigId[];  // must be URI of another Property, no cyclic references
@@ -556,7 +556,7 @@ export class Property extends Identifiable implements IProperty {
     pattern?: string;
     minInclusive?: number;
     maxInclusive?: number;
-    eligibleValue?: IEligibleValue[]; 
+    enumeratedValue?: IenumeratedValue[]; 
     defaultValue?: string;
     unit?: string;
     composes?: TPigId[];
@@ -602,7 +602,7 @@ export class Property extends Identifiable implements IProperty {
             this.pattern = itm.pattern;
             this.minInclusive = itm.minInclusive;
             this.maxInclusive = itm.maxInclusive;
-            this.eligibleValue = itm.eligibleValue;
+            this.enumeratedValue = itm.enumeratedValue;
             this.defaultValue = itm.defaultValue;
             this.unit = itm.unit;
             this.composes = itm.composes;
@@ -619,7 +619,7 @@ export class Property extends Identifiable implements IProperty {
             pattern: this.pattern,
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
-            eligibleValue: this.eligibleValue,
+            enumeratedValue: this.enumeratedValue,
             defaultValue: this.defaultValue,
             unit: this.unit,
             composes: this.composes
@@ -643,10 +643,10 @@ export class Property extends Identifiable implements IProperty {
     }
 }
 export interface ILink extends IIdentifiable {
-    eligibleEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
+    enumeratedEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
 }
 export class Link extends Identifiable implements ILink {
-    eligibleEndpoint!: TPigId[];
+    enumeratedEndpoint!: TPigId[];
     constructor() {
         super({ itemType: PigItemType.Link });
     }
@@ -664,7 +664,7 @@ export class Link extends Identifiable implements ILink {
 
         /*    // id and itemType checked in superclass
             // At metamodel level, simple id strings are listed:
-            const rsp = validateIdStringArray(itm.eligibleEndpoint, 'eligibleEndpoint');
+            const rsp = validateIdStringArray(itm.enumeratedEndpoint, 'enumeratedEndpoint');
             if (!rsp.ok) return rsp; */
         return super.validate(itm);
     }
@@ -672,14 +672,14 @@ export class Link extends Identifiable implements ILink {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.eligibleEndpoint = itm.eligibleEndpoint;
+            this.enumeratedEndpoint = itm.enumeratedEndpoint;
         }
         return this;
     }
     get() {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
-            eligibleEndpoint: this.eligibleEndpoint
+            enumeratedEndpoint: this.enumeratedEndpoint
         }) as ILink;
     }
     fromJSONLD(itm: any) {
@@ -695,10 +695,10 @@ export class Link extends Identifiable implements ILink {
 }
 
 export interface IEntity extends IElement {
-    eligibleTargetLink?: TPigId[];  // must hold Link URIs
+    enumeratedTargetLink?: TPigId[];  // must hold Link URIs
 }
 export class Entity extends Element implements IEntity {
-    eligibleTargetLink?: TPigId[];
+    enumeratedTargetLink?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.Entity });
     }
@@ -720,9 +720,9 @@ export class Entity extends Element implements IEntity {
         // id and itemType checked in superclass
         // check whether specializes is another Entity URI is done in overall consistency check
 
-        /*    // If eligibleTarget is not present, all references are allowed;
+        /*    // If enumeratedTarget is not present, all references are allowed;
             // if present and empty, no references are allowed:
-            const rsp = validateIdStringArray(itm.eligibleTargetLink, 'eligibleTargetLink', { canBeUndefined: true, minCount: 0 });
+            const rsp = validateIdStringArray(itm.enumeratedTargetLink, 'enumeratedTargetLink', { canBeUndefined: true, minCount: 0 });
             if (!rsp.ok) return rsp; */
         // ToDo: implement further validation logic
         return super.validate(itm);
@@ -731,14 +731,14 @@ export class Entity extends Element implements IEntity {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.eligibleTargetLink = itm.eligibleTargetLink;
+            this.enumeratedTargetLink = itm.enumeratedTargetLink;
         }
         return this;  // make chainable
     }
     get() {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
-            eligibleTargetLink: Array.isArray(this.eligibleTargetLink) ? this.eligibleTargetLink : undefined
+            enumeratedTargetLink: Array.isArray(this.enumeratedTargetLink) ? this.enumeratedTargetLink : undefined
         }) as IEntity;
     }
     fromJSONLD(itm: any) {
@@ -754,12 +754,12 @@ export class Entity extends Element implements IEntity {
 }
 
 export interface IRelationship extends IElement {
-    eligibleSourceLink?: TPigId;  // must hold Link URI
-    eligibleTargetLink?: TPigId;  // must hold Link URI
+    enumeratedSourceLink?: TPigId;  // must hold Link URI
+    enumeratedTargetLink?: TPigId;  // must hold Link URI
 }
 export class Relationship extends Element implements IRelationship {
-    eligibleSourceLink?: TPigId;
-    eligibleTargetLink?: TPigId;
+    enumeratedSourceLink?: TPigId;
+    enumeratedTargetLink?: TPigId;
     constructor() {
         super({ itemType: PigItemType.Relationship });
     }
@@ -780,11 +780,11 @@ export class Relationship extends Element implements IRelationship {
         // id and itemType checked in superclass
         // check whether specializes is another Relationship URI is done in overall consistency check
 
-        /*    // If eligibleSource/eligibleTarget are not present, sources resp. targets of all classes are allowed;
+        /*    // If enumeratedSource/enumeratedTarget are not present, sources resp. targets of all classes are allowed;
             // if present, at least one entry must be there, because a relationship without source or target makes no sense:
-            let rsp = validateIdStringArray(itm.eligibleSourceLink, 'eligibleSourceLink', { canBeUndefined: true, minCount: 1 });
+            let rsp = validateIdStringArray(itm.enumeratedSourceLink, 'enumeratedSourceLink', { canBeUndefined: true, minCount: 1 });
             if (!rsp.ok) return rsp;
-            rsp = validateIdStringArray(itm.eligibleTargetLink, 'eligibleTargetLink', { canBeUndefined: true, minCount: 1 });
+            rsp = validateIdStringArray(itm.enumeratedTargetLink, 'enumeratedTargetLink', { canBeUndefined: true, minCount: 1 });
             if (!rsp.ok) return rsp; */
         // ToDo: implement further validation logic
         return super.validate(itm);
@@ -793,16 +793,16 @@ export class Relationship extends Element implements IRelationship {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.eligibleSourceLink = itm.eligibleSourceLink;
-            this.eligibleTargetLink = itm.eligibleTargetLink;
+            this.enumeratedSourceLink = itm.enumeratedSourceLink;
+            this.enumeratedTargetLink = itm.enumeratedTargetLink;
         }
         return this;
     }
     get() {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
-            eligibleSourceLink: this.eligibleSourceLink,
-            eligibleTargetLink: this.eligibleTargetLink
+            enumeratedSourceLink: this.enumeratedSourceLink,
+            enumeratedTargetLink: this.enumeratedTargetLink
         }) as IRelationship;
     }
     fromJSONLD(itm: any) {
@@ -820,7 +820,7 @@ export class Relationship extends Element implements IRelationship {
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
     value?: string;       // a. Literal value (string, number, boolean, date - all as string)
-    idRef?: TPigId;       // b. Reference to eligibleValue (for enumerations)
+    idRef?: TPigId;       // b. Reference to enumeratedValue (for enumerations)
     composes?: TPigId[];  // for composed properties: nests other properties, as properties have no id
 }
 export class AProperty extends Item implements IAProperty {
@@ -1099,7 +1099,7 @@ export class APackage extends Identifiable implements IAPackage {
             if (!result.ok) {
                 const errorMsg = result.statusText || 'Unknown instantiation error';
                 errors.push(errorMsg);
-                LOG.debug(`APackage.set: failed to instantiate item: `, JSON.stringify(item, null, 2));
+                // LOG.debug(`APackage.set: failed to instantiate item: `, JSON.stringify(item, null, 2));
                 LOG.warn(`APackage ${pkg.id}: ${errorMsg}`);
             }
         }
@@ -1860,7 +1860,7 @@ function normalizeId(id: string, itemType: PigItemTypeValue): string {
     }
 
     // Determine prefix using optimized type guards
-    // ToDo: Check whether the namespaces for eligible value types are correctly normalized with 'o:'
+    // ToDo: Check whether the namespaces for enumerated value types are correctly normalized with 'o:'
     // and also their references in properties
     let prefix: string;
     if (PigItem.isClass(itemType)) {
@@ -2008,7 +2008,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
                             hasClass: key,
                             // itype == PigItemType.Property: value in case of a plain value 
                             value: item.value /*|| item['@value'] */,
-                            // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
+                            // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
                             // itype == PigItemType.Link: idRef is mandatory
                             idRef: item.id,
                             composes: item.composes
@@ -2028,7 +2028,7 @@ function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAPr
                     hasClass: key,
                     // itype == PigItemType.Property: value in case of a plain value 
                     value: val.value /*|| item['@value'] */,
-                    // itype == PigItemType.Property: idRef in case of an enumeration value(from eligibleValue),
+                    // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
                     // itype == PigItemType.Link: idRef is mandatory
                     idRef: val.id,
                     composes: val.composes
@@ -2193,7 +2193,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         if (attrName.startsWith('xmlns')) {
             continue;
         } else if (attrName === 'id') {
-            // normalize always, including eligible values
+            // normalize always, including enumerated values
             result.id = normalizeId(attrValue, tagName);
         } else if (attrName.endsWith('type') || attrName.endsWith('hasClass')) {
             // normalize if we have a valid PIG type
@@ -2386,8 +2386,8 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
  * Even when only a single element is present in XML
  * 
  * Note: Some properties are context-dependent:
- * - eligibleTargetLink: array for Entity, string for Relationship
- * - eligibleSourceLink: always string (Relationship only)
+ * - enumeratedTargetLink: array for Entity, string for Relationship
+ * - enumeratedSourceLink: always string (Relationship only)
  * 
  * Context detection is done via the parent element's itemType
  */
@@ -2397,9 +2397,9 @@ function requiresArray(propertyName: string, parentItemType?: PigItemTypeValue):
 
     // Properties that ALWAYS require arrays
     const alwaysArrayProps = new Set([
-        'eligibleValue',        // Property.eligibleValue: IEligibleValue[]
-        'eligibleEndpoint',     // Link.eligibleEndpoint: TPigId[]
-        'eligibleProperty',     // Entity/Relationship.eligibleProperty?: TPigId[]
+        'enumeratedValue',        // Property.enumeratedValue: IenumeratedValue[]
+        'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
+        'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
         'composedProperty',     // Property.composedProperty?: TPigId[]
         'priorRevision'         // AnElement.priorRevision?: TRevision[]
     ]);
@@ -2408,16 +2408,16 @@ function requiresArray(propertyName: string, parentItemType?: PigItemTypeValue):
         return true;
     }
 
-    // Context-dependent: eligibleTargetLink
-    if (localName === 'eligibleTargetLink') {
-        // Entity: eligibleTargetLink?: TPigId[] (array)
-        // Relationship: eligibleTargetLink?: TPigId (string)
+    // Context-dependent: enumeratedTargetLink
+    if (localName === 'enumeratedTargetLink') {
+        // Entity: enumeratedTargetLink?: TPigId[] (array)
+        // Relationship: enumeratedTargetLink?: TPigId (string)
         return parentItemType === PigItemType.Entity;
     }
 
-    // Context-dependent: eligibleSourceLink
-    if (localName === 'eligibleSourceLink') {
-        // Relationship: eligibleSourceLink?: TPigId (string)
+    // Context-dependent: enumeratedSourceLink
+    if (localName === 'enumeratedSourceLink') {
+        // Relationship: enumeratedSourceLink?: TPigId (string)
         return false; // Never an array
     }
 
@@ -2631,7 +2631,7 @@ function getXmlElementText(xmlElement: ElementXML): string {
  * These fields must always be arrays of ILanguageText objects according to pig-schemata.ts
  * 
  * Multi-language fields found in schemata:
- * - Property: title, description, eligibleValue.title // the latter is handled through recursive iteration
+ * - Property: title, description, enumeratedValue.title // the latter is handled through recursive iteration
  * - Link: title, description
  * - Entity: title, description
  * - Relationship: title, description
@@ -2650,8 +2650,8 @@ function isMultiLanguageText(propertyName: string): boolean {
         'title',           // dcterms:title - used in Property, Link, Entity, Relationship, AnEntity, ARelationship
         'description'      // dcterms:description - used in Property, Link, Entity, Relationship, AnEntity, ARelationship
 
-        // Note: eligibleValue.title is handled separately in xmlElementToJson()
-        // because it's nested within eligibleValue objects
+        // Note: enumeratedValue.title is handled separately in xmlElementToJson()
+        // because it's nested within enumeratedValue objects
     ]);
 
     return multiLangFields.has(localName);

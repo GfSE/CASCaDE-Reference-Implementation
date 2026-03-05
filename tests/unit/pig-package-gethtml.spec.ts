@@ -187,7 +187,7 @@ describe('PIG Package getHTML() Method', () => {
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },

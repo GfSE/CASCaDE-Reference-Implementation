@@ -85,7 +85,7 @@ describe('PIG JSON-LD Schema Validation', () => {
         "sh:datatype": {
           "@id": "xsd:string"
         },
-        "pig:eligibleValue": [
+        "pig:enumeratedValue": [
           {
             "@id": "ex:StatusActive",
             "dcterms:title": [
@@ -192,7 +192,7 @@ describe('PIG JSON-LD Schema Validation', () => {
   });
 
   describe('Link Schema', () => {
-    it('should validate a valid Link with eligible endpoints', () => {
+    it('should validate a valid Link with enumerated endpoints', () => {
       const validLink = {
         "@id": "ex:ContainsLink",
         "@type": "pig:Link",
@@ -215,7 +215,7 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@language": "en"
           }
         ],
-        "pig:eligibleEndpoint": [
+        "pig:enumeratedEndpoint": [
           {
             "@id": "ex:ComponentEntity"
           },
@@ -247,7 +247,7 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@language": "en"
           }
         ],
-        "pig:eligibleEndpoint": [
+        "pig:enumeratedEndpoint": [
           {
             "@id": "ex:ComponentEntity"
           }
@@ -285,7 +285,7 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@language": "en"
           }
         ],
-        "pig:eligibleProperty": [
+        "pig:enumeratedProperty": [
           {
             "@id": "ex:NameProperty"
           },
@@ -296,7 +296,7 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@id": "ex:EmailProperty"
           }
         ],
-        "pig:eligibleTargetLink": [
+        "pig:enumeratedTargetLink": [
           {
             "@id": "ex:WorksAtLink"
           },
@@ -352,7 +352,7 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@language": "en"
           }
         ],
-        "pig:eligibleProperty": [
+        "pig:enumeratedProperty": [
           {
             "@id": "ex:EmployeeIDProperty"
           },
@@ -393,13 +393,13 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@language": "en"
           }
         ],
-        "pig:eligibleSourceLink": {
+        "pig:enumeratedSourceLink": {
           "@id": "ex:EmployeeLink"
         },
-        "pig:eligibleTargetLink": {
+        "pig:enumeratedTargetLink": {
           "@id": "ex:EmployerLink"
         },
-        "pig:eligibleProperty": [
+        "pig:enumeratedProperty": [
           {
             "@id": "ex:StartDateProperty"
           },
@@ -432,10 +432,10 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@language": "en"
           }
         ],
-        "pig:eligibleSourceLink": {
+        "pig:enumeratedSourceLink": {
           "@id": "ex:SourceLink"
         },
-        "pig:eligibleTargetLink": {
+        "pig:enumeratedTargetLink": {
           "@id": "ex:TargetLink"
         }
       };
@@ -461,10 +461,10 @@ describe('PIG JSON-LD Schema Validation', () => {
             "@language": "en"
           }
         ],
-        "pig:eligibleSourceLink": {
+        "pig:enumeratedSourceLink": {
           "@id": "ex:EmployeeLink"
         },
-        "pig:eligibleTargetLink": {
+        "pig:enumeratedTargetLink": {
           "@id": "ex:EmployerLink"
         }
       };
@@ -767,7 +767,7 @@ describe('PIG JSON-LD Schema Validation', () => {
                 "@language": "en"
               }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
               {
                 "@id": "ex:NameProperty"
               }
@@ -892,7 +892,7 @@ describe('PIG JSON-LD Schema Validation', () => {
                 "@language": "en"
               }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
               {
                 "@id": "exlib:LocationProperty"
               }
@@ -929,7 +929,7 @@ describe('PIG JSON-LD Schema Validation', () => {
                 "@language": "en"
               }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
               {
                 "@id": "exlib:LibraryEntity"
               }

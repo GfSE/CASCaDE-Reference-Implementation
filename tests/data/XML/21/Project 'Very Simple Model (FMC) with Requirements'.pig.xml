@@ -22,49 +22,49 @@
         <pig:Entity id="pig:Entity" rdf:type="owl:Class">
             <dcterms:title>Entity</dcterms:title>
             <dcterms:description>A PIG meta-model element used for entities (aka resources or artifacts).</dcterms:description>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
-            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
+            <pig:enumeratedProperty>pig:icon</pig:enumeratedProperty>
         </pig:Entity>
 
         <pig:Entity id="pig:Organizer">
             <pig:specializes>pig:Entity</pig:specializes>
             <dcterms:title>Organizer</dcterms:title>
             <dcterms:description>An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.</dcterms:description>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
         </pig:Entity>
 
         <pig:Entity id="pig:HierarchyRoot">
             <pig:specializes>pig:Organizer</pig:specializes>
             <dcterms:title>Hierarchy Root</dcterms:title>
             <dcterms:description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</dcterms:description>
-            <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
+            <pig:enumeratedTargetLink>pig:lists</pig:enumeratedTargetLink>
         </pig:Entity>
 
         <pig:Entity id="pig:Outline">
             <pig:specializes>pig:Organizer</pig:specializes>
             <dcterms:title>Outline</dcterms:title>
             <dcterms:description>A subclass of PIG organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</dcterms:description>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
-            <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
+            <pig:enumeratedTargetLink>pig:lists</pig:enumeratedTargetLink>
         </pig:Entity>
 
         <pig:Entity id="pig:View">
             <pig:specializes>pig:Organizer</pig:specializes>
             <dcterms:title>View</dcterms:title>
             <dcterms:description>A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.</dcterms:description>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
-            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
-            <pig:eligibleProperty>pig:diagram</pig:eligibleProperty>
-            <pig:eligibleTargetLink>pig:shows</pig:eligibleTargetLink>
-            <pig:eligibleTargetLink>pig:depicts</pig:eligibleTargetLink>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
+            <pig:enumeratedProperty>pig:icon</pig:enumeratedProperty>
+            <pig:enumeratedProperty>pig:diagram</pig:enumeratedProperty>
+            <pig:enumeratedTargetLink>pig:shows</pig:enumeratedTargetLink>
+            <pig:enumeratedTargetLink>pig:depicts</pig:enumeratedTargetLink>
         </pig:Entity>
 
         <!-- Metamodel: Relationship Class -->
         <pig:Relationship id="pig:Relationship" rdf:type="owl:Class">
             <dcterms:title>Relationship</dcterms:title>
             <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
-            <pig:eligibleProperty>pig:icon</pig:eligibleProperty>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
+            <pig:enumeratedProperty>pig:icon</pig:enumeratedProperty>
         </pig:Relationship>
 
         <!-- Metamodel: Properties -->
@@ -103,48 +103,48 @@
 
         <!-- Metamodel: Links -->
         <pig:Link id="pig:Link" rdf:type="owl:ObjectProperty">
-            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+            <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
             <dcterms:title>linked with</dcterms:title>
             <dcterms:description>Connects a reified relationship with its source or target. Also connects an organizer to a model element</dcterms:description>
         </pig:Link>
 
         <pig:Link id="pig:SourceLink">
             <pig:specializes>pig:Link</pig:specializes>
-            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+            <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
             <dcterms:title>to source</dcterms:title>
             <dcterms:description>Connects the source of a reified relationship.</dcterms:description>
         </pig:Link>
 
         <pig:Link id="pig:TargetLink">
             <pig:specializes>pig:Link</pig:specializes>
-            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+            <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
             <dcterms:title>to target</dcterms:title>
             <dcterms:description>Connects the target of a reified relationship or an organizer.</dcterms:description>
         </pig:Link>
 
         <pig:Link id="pig:lists">
             <pig:specializes>pig:TargetLink</pig:specializes>
-            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
-            <pig:eligibleEndpoint>pig:Organizer</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+            <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
+            <pig:enumeratedEndpoint>pig:Organizer</pig:enumeratedEndpoint>
             <dcterms:title>lists</dcterms:title>
             <dcterms:description>Lists an entity, a relationship or a subordinated organizer.</dcterms:description>
         </pig:Link>
 
         <pig:Link id="pig:shows">
             <pig:specializes>pig:TargetLink</pig:specializes>
-            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-            <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+            <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
             <dcterms:title>shows</dcterms:title>
             <dcterms:description>Shows an entity or a relationship.</dcterms:description>
         </pig:Link>
 
         <pig:Link id="pig:depicts">
             <pig:specializes>pig:TargetLink</pig:specializes>
-            <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
             <dcterms:title>depicts</dcterms:title>
             <dcterms:description>Depicts an entity; inverse of uml:ownedDiagram.</dcterms:description>
         </pig:Link>
@@ -224,21 +224,21 @@
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
             </xs:simpleType>
-            <pig:eligibleValue id="SpecIF:priorityHigh">
+            <pig:enumeratedValue id="SpecIF:priorityHigh">
                 <dcterms:title xml:lang="en">high</dcterms:title>
                 <dcterms:title xml:lang="de">hoch</dcterms:title>
                 <dcterms:title xml:lang="fr">haut</dcterms:title>
-            </pig:eligibleValue>
-            <pig:eligibleValue id="SpecIF:priorityMedium">
+            </pig:enumeratedValue>
+            <pig:enumeratedValue id="SpecIF:priorityMedium">
                 <dcterms:title xml:lang="en">medium</dcterms:title>
                 <dcterms:title xml:lang="de">mittel</dcterms:title>
                 <dcterms:title xml:lang="fr">moyen</dcterms:title>
-            </pig:eligibleValue>
-            <pig:eligibleValue id="SpecIF:priorityLow">
+            </pig:enumeratedValue>
+            <pig:enumeratedValue id="SpecIF:priorityLow">
                 <dcterms:title xml:lang="en">low</dcterms:title>
                 <dcterms:title xml:lang="de">niedrig</dcterms:title>
                 <dcterms:title xml:lang="fr">bas</dcterms:title>
-            </pig:eligibleValue>
+            </pig:enumeratedValue>
         </pig:Property>
 
         <!-- Domain-Specific Entity Classes -->
@@ -253,8 +253,8 @@
                 <p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>
             </dcterms:description>
             <pig:specializes>pig:Entity</pig:specializes>
-            <pig:eligibleProperty>pig:diagram</pig:eligibleProperty>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:enumeratedProperty>pig:diagram</pig:enumeratedProperty>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
         </pig:Entity>
 
         <pig:Entity id="FMC:Actor">
@@ -275,7 +275,7 @@
             </dcterms:description>
             <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#x25A1;</pig:icon>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
         </pig:Entity>
 
         <pig:Entity id="FMC:State">
@@ -296,7 +296,7 @@
             </dcterms:description>
             <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#x25CB;</pig:icon>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
         </pig:Entity>
 
         <pig:Entity id="FMC:Event">
@@ -317,7 +317,7 @@
             </dcterms:description>
             <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#x2662;</pig:icon>
-            <pig:eligibleProperty>pig:category</pig:eligibleProperty>
+            <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>
         </pig:Entity>
 
         <pig:Entity id="IREB:Requirement">
@@ -389,7 +389,7 @@
             </dcterms:description>
             <pig:specializes>pig:Entity</pig:specializes>
             <pig:icon>&#8623;</pig:icon>
-            <pig:eligibleProperty>SpecIF:Priority</pig:eligibleProperty>
+            <pig:enumeratedProperty>SpecIF:Priority</pig:enumeratedProperty>
         </pig:Entity>
 
         <!-- Domain-Specific Relationship Classes -->
@@ -399,22 +399,22 @@
             <dcterms:title xml:lang="fr">écrit</dcterms:title>
             <dcterms:description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</dcterms:description>
             <pig:specializes>pig:Relationship</pig:specializes>
-            <pig:eligibleSourceLink>SpecIF:writes-toSource</pig:eligibleSourceLink>
-            <pig:eligibleTargetLink>SpecIF:writes-toTarget</pig:eligibleTargetLink>
+            <pig:enumeratedSourceLink>SpecIF:writes-toSource</pig:enumeratedSourceLink>
+            <pig:enumeratedTargetLink>SpecIF:writes-toTarget</pig:enumeratedTargetLink>
         </pig:Relationship>
 
         <pig:Link id="SpecIF:writes-toSource">
             <pig:specializes>pig:SourceLink</pig:specializes>
             <dcterms:title>SpecIF:writes to source</dcterms:title>
             <dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
-            <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>FMC:Actor</pig:enumeratedEndpoint>
         </pig:Link>
 
         <pig:Link id="SpecIF:writes-toTarget">
             <pig:specializes>pig:TargetLink</pig:specializes>
             <dcterms:title>SpecIF:writes to target</dcterms:title>
             <dcterms:description>Connects the target of SpecIF:writes</dcterms:description>
-            <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>FMC:State</pig:enumeratedEndpoint>
         </pig:Link>
 
         <pig:Relationship id="SpecIF:reads">
@@ -423,22 +423,22 @@
             <dcterms:title xml:lang="fr">lit</dcterms:title>
             <dcterms:description xml:lang="en">A [[FMC:Actor]] 'reads' a [[FMC:State]].</dcterms:description>
             <pig:specializes>pig:Relationship</pig:specializes>
-            <pig:eligibleSourceLink>SpecIF:reads-toSource</pig:eligibleSourceLink>
-            <pig:eligibleTargetLink>SpecIF:reads-toTarget</pig:eligibleTargetLink>
+            <pig:enumeratedSourceLink>SpecIF:reads-toSource</pig:enumeratedSourceLink>
+            <pig:enumeratedTargetLink>SpecIF:reads-toTarget</pig:enumeratedTargetLink>
         </pig:Relationship>
 
         <pig:Link id="SpecIF:reads-toSource">
             <pig:specializes>pig:SourceLink</pig:specializes>
             <dcterms:title>SpecIF:reads to source</dcterms:title>
             <dcterms:description>Connects the source of SpecIF:reads</dcterms:description>
-            <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>FMC:Actor</pig:enumeratedEndpoint>
         </pig:Link>
 
         <pig:Link id="SpecIF:reads-toTarget">
             <pig:specializes>pig:TargetLink</pig:specializes>
             <dcterms:title>SpecIF:reads to target</dcterms:title>
             <dcterms:description>Connects the target of SpecIF:reads</dcterms:description>
-            <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>FMC:State</pig:enumeratedEndpoint>
         </pig:Link>
 
         <pig:Relationship id="oslc_rm:satisfies">
@@ -458,23 +458,23 @@
                 </p>
             </dcterms:description>
             <pig:specializes>pig:Relationship</pig:specializes>
-            <pig:eligibleSourceLink>oslc_rm:satisfies-toSource</pig:eligibleSourceLink>
-            <pig:eligibleTargetLink>oslc_rm:satisfies-toTarget</pig:eligibleTargetLink>
+            <pig:enumeratedSourceLink>oslc_rm:satisfies-toSource</pig:enumeratedSourceLink>
+            <pig:enumeratedTargetLink>oslc_rm:satisfies-toTarget</pig:enumeratedTargetLink>
         </pig:Relationship>
 
         <pig:Link id="oslc_rm:satisfies-toSource">
             <pig:specializes>pig:SourceLink</pig:specializes>
             <dcterms:title>oslc_rm:satisfies to source</dcterms:title>
             <dcterms:description>Connects the source of oslc_rm:satisfies</dcterms:description>
-            <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
-            <pig:eligibleEndpoint>FMC:State</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>FMC:Actor</pig:enumeratedEndpoint>
+            <pig:enumeratedEndpoint>FMC:State</pig:enumeratedEndpoint>
         </pig:Link>
 
         <pig:Link id="oslc_rm:satisfies-toTarget">
             <pig:specializes>pig:TargetLink</pig:specializes>
             <dcterms:title>oslc_rm:satisfies to target</dcterms:title>
             <dcterms:description>Connects the target of oslc_rm:satisfies</dcterms:description>
-            <pig:eligibleEndpoint>IREB:Requirement</pig:eligibleEndpoint>
+            <pig:enumeratedEndpoint>IREB:Requirement</pig:enumeratedEndpoint>
         </pig:Link>
 
         <!-- Instance Data: Requirements -->

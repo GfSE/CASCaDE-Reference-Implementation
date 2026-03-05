@@ -43,7 +43,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:category"
                 },
@@ -72,7 +72,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:category"
                 }
@@ -98,8 +98,8 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedProperty": [],
+            "pig:enumeratedTargetLink": [
                 {
                     "@id": "pig:lists"
                 }
@@ -125,12 +125,12 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
                 {
                     "@id": "pig:lists"
                 }
@@ -156,7 +156,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:category"
                 },
@@ -164,7 +164,7 @@
                     "@id": "pig:icon"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
                 {
                     "@id": "pig:shows"
                 },
@@ -191,7 +191,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:category"
                 },
@@ -199,10 +199,10 @@
                     "@id": "pig:icon"
                 }
             ],
-            "pig:eligibleSourceLink": {
+            "pig:enumeratedSourceLink": {
                 "@id": "pig:SourceLink"
             },
-            "pig:eligibleTargetLink": {
+            "pig:enumeratedTargetLink": {
                 "@id": "pig:TargetLink"
             }
         },
@@ -283,7 +283,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -312,7 +312,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -341,7 +341,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -370,7 +370,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -402,7 +402,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -431,7 +431,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 }
@@ -469,7 +469,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "schema:familyName"
                 },
@@ -501,7 +501,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "schema:legalName"
                 },
@@ -660,11 +660,11 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleProperty": [],
-            "pig:eligibleSourceLink": {
+            "pig:enumeratedProperty": [],
+            "pig:enumeratedSourceLink": {
                 "@id": "o:Employee"
             },
-            "pig:eligibleTargetLink": {
+            "pig:enumeratedTargetLink": {
                 "@id": "o:Employer"
             }
         },
@@ -688,7 +688,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "schema:Person"
                 }
@@ -714,7 +714,7 @@
                     "@language": "en"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "schema:Organization"
                 }

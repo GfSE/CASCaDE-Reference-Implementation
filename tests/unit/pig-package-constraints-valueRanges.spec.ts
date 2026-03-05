@@ -701,7 +701,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
     // ========== Enumeration Validation Tests ==========
 
     describe('Enumeration value validation', () => {
-        it('should accept value from eligibleValue list', () => {
+        it('should accept value from enumeratedValue list', () => {
             const pkg = {
                 "id": "d:test-enum-string-valid",
                 "itemType": "pig:aPackage",
@@ -742,7 +742,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         }
                     ],
                     "datatype": "xs:string",
-                    "eligibleValue": [
+                    "enumeratedValue": [
                         {
                             "id": "IREB:priorityHigh",
                             "title": [
@@ -851,19 +851,19 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(propertyDef.datatype).toBe('xs:string');
             expect(propertyDef.specializes).toBe('pig:Property');
 
-            // Verify eligibleValue array
-            expect(propertyDef.eligibleValue).toBeDefined();
-            expect(Array.isArray(propertyDef.eligibleValue)).toBe(true);
-            expect(propertyDef.eligibleValue.length).toBe(3);
-            expect(propertyDef.eligibleValue[0].id).toBe('IREB:priorityHigh');
-            expect(propertyDef.eligibleValue[1].id).toBe('IREB:priorityMedium');
-            expect(propertyDef.eligibleValue[2].id).toBe('IREB:priorityLow');
+            // Verify enumeratedValue array
+            expect(propertyDef.enumeratedValue).toBeDefined();
+            expect(Array.isArray(propertyDef.enumeratedValue)).toBe(true);
+            expect(propertyDef.enumeratedValue.length).toBe(3);
+            expect(propertyDef.enumeratedValue[0].id).toBe('IREB:priorityHigh');
+            expect(propertyDef.enumeratedValue[1].id).toBe('IREB:priorityMedium');
+            expect(propertyDef.enumeratedValue[2].id).toBe('IREB:priorityLow');
 
-            // Verify multi-language titles in eligibleValue
-            expect(propertyDef.eligibleValue[0].title[0].value).toBe('high');
-            expect(propertyDef.eligibleValue[0].title[0].lang).toBe('en');
-            expect(propertyDef.eligibleValue[0].title[1].value).toBe('hoch');
-            expect(propertyDef.eligibleValue[0].title[1].lang).toBe('de');
+            // Verify multi-language titles in enumeratedValue
+            expect(propertyDef.enumeratedValue[0].title[0].value).toBe('high');
+            expect(propertyDef.enumeratedValue[0].title[0].lang).toBe('en');
+            expect(propertyDef.enumeratedValue[0].title[1].value).toBe('hoch');
+            expect(propertyDef.enumeratedValue[0].title[1].lang).toBe('de');
 
             // Verify anEntity instance (second graph item)
             const anEntity = pkgOut.graph[1] as any;
@@ -890,7 +890,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(aProperty.value).toBeUndefined(); // enumeration uses idRef, not value
         });
 
-        it('should reject value not in eligibleValue list', () => {
+        it('should reject value not in enumeratedValue list', () => {
             const pkg = {
                 "graph": [{
                     "id": "SpecIF:Priority",
@@ -909,7 +909,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     "specializes": "pig:Property",
                     "itemType": "pig:Property",
                     "datatype": "xs:string",
-                    "eligibleValue": [
+                    "enumeratedValue": [
                         {
                             "id": "SpecIF:priorityHigh",
                             "title": [
@@ -939,7 +939,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         }
                     ]
                 }, {
-                    "id": "d:Req-with-invalid-reference-to-eligible-value",
+                    "id": "d:Req-with-invalid-reference-to-enumerated-value",
                     "hasClass": "IREB:Requirement",
                     "modified": "2020-10-17T10:00:00+01:00",
                     "title": [
@@ -968,11 +968,11 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             expect(result.ok).toBe(false);
             expect(result.status).toBe(679);
-            expect(result.statusText).toContain('not in eligibleValue list');
+            expect(result.statusText).toContain('not in enumeratedValue list');
             expect(result.statusText).toContain("SpecIF:priorityHigh");
         });
 
-        it('should accept numeric value from eligibleValue list with JSON-LD input', () => {
+        it('should accept numeric value from enumeratedValue list with JSON-LD input', () => {
             const pkgJsonLD = {
                 "@context": {
                     "pig": "https://product-information-graph.org/v0.2/metamodel#",
@@ -1002,7 +1002,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                             }
                         ],
                         "sh:datatype": "xs:integer",
-                        "pig:eligibleValue": [
+                        "pig:enumeratedValue": [
                             {
                                 "@id": "o:Fibonacci-1",
                                 "@value": "1"
@@ -1086,16 +1086,16 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(fibonacciProp.datatype).toBe('xs:integer');
             expect(fibonacciProp.specializes).toBe('pig:Property');
 
-            // Verify eligibleValue array
-            expect(fibonacciProp.eligibleValue).toBeDefined();
-            expect(Array.isArray(fibonacciProp.eligibleValue)).toBe(true);
-            expect(fibonacciProp.eligibleValue.length).toBe(6);
-            expect(fibonacciProp.eligibleValue[0].id).toBe('o:Fibonacci-1');
-            expect(fibonacciProp.eligibleValue[0].value).toBe('1');
-            expect(fibonacciProp.eligibleValue[4].id).toBe('o:Fibonacci-8');
-            expect(fibonacciProp.eligibleValue[4].value).toBe('8');
-            expect(fibonacciProp.eligibleValue[5].id).toBe('o:Fibonacci-13');
-            expect(fibonacciProp.eligibleValue[5].value).toBe('13');
+            // Verify enumeratedValue array
+            expect(fibonacciProp.enumeratedValue).toBeDefined();
+            expect(Array.isArray(fibonacciProp.enumeratedValue)).toBe(true);
+            expect(fibonacciProp.enumeratedValue.length).toBe(6);
+            expect(fibonacciProp.enumeratedValue[0].id).toBe('o:Fibonacci-1');
+            expect(fibonacciProp.enumeratedValue[0].value).toBe('1');
+            expect(fibonacciProp.enumeratedValue[4].id).toBe('o:Fibonacci-8');
+            expect(fibonacciProp.enumeratedValue[4].value).toBe('8');
+            expect(fibonacciProp.enumeratedValue[5].id).toBe('o:Fibonacci-13');
+            expect(fibonacciProp.enumeratedValue[5].value).toBe('13');
 
             // Verify anEntity instance
             const taskInstance = pkgOut.graph[1] as any;
@@ -1123,7 +1123,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(directResult.ok).toBe(true);
         });
 
-        it('should reject numeric value not in eligibleValue list', () => {
+        it('should reject numeric value not in enumeratedValue list', () => {
             const pkg = {
                 "graph": [{
                     "id": "o:Fibonacci",
@@ -1135,7 +1135,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     "specializes": "pig:Property",
                     "itemType": "pig:Property",
                     "datatype": "xs:integer",
-                    "eligibleValue": [
+                    "enumeratedValue": [
                         {
                             "id": "o:Fibonacci-1",
                             "value": "1"
@@ -1182,11 +1182,11 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             expect(result.ok).toBe(false);
             expect(result.status).toBe(679);
-            expect(result.statusText).toContain('not in eligibleValue list');
+            expect(result.statusText).toContain('not in enumeratedValue list');
             expect(result.statusText).toContain("o:Fibonacci-5");
         });
 
-        it('should accept numeric value from eligibleValue list with XML input', () => {
+        it('should accept numeric value from enumeratedValue list with XML input', () => {
             const pkgXML = `<?xml version="1.0" encoding="UTF-8"?>
             <pig:aPackage xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
                           xmlns:o="https://product-information-graph.org/v0.2/ontology#"
@@ -1200,24 +1200,24 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         <dcterms:title xml:lang="en">Fibonacci Numbers</dcterms:title>
                         <dcterms:description xml:lang="en">Enumerated Fibonacci sequence values for estimation</dcterms:description>
                         <datatype>xs:integer</datatype>
-                        <eligibleValue id="o:Fibonacci-1">
+                        <enumeratedValue id="o:Fibonacci-1">
                             <value>1</value>
-                        </eligibleValue>
-                        <eligibleValue id="o:Fibonacci-2">
+                        </enumeratedValue>
+                        <enumeratedValue id="o:Fibonacci-2">
                             <value>2</value>
-                        </eligibleValue>
-                        <eligibleValue id="o:Fibonacci-3">
+                        </enumeratedValue>
+                        <enumeratedValue id="o:Fibonacci-3">
                             <value>3</value>
-                        </eligibleValue>
-                        <eligibleValue id="o:Fibonacci-5">
+                        </enumeratedValue>
+                        <enumeratedValue id="o:Fibonacci-5">
                             <value>5</value>
-                        </eligibleValue>
-                        <eligibleValue id="o:Fibonacci-8">
+                        </enumeratedValue>
+                        <enumeratedValue id="o:Fibonacci-8">
                             <value>8</value>
-                        </eligibleValue>
-                        <eligibleValue id="o:Fibonacci-13">
+                        </enumeratedValue>
+                        <enumeratedValue id="o:Fibonacci-13">
                             <value>13</value>
-                        </eligibleValue>
+                        </enumeratedValue>
                     </pig:Property>
         
                     <pig:anEntity id="d:Est-Task-4711" rdf:type="o:Estimate">
@@ -1274,19 +1274,19 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(fibonacciProp.title[0].lang).toBe('en');
             expect(fibonacciProp.description[0].value).toBe('Enumerated Fibonacci sequence values for estimation');
 
-            // Verify eligibleValue array with numeric values
-            expect(fibonacciProp.eligibleValue).toBeDefined();
-            expect(Array.isArray(fibonacciProp.eligibleValue)).toBe(true);
-            expect(fibonacciProp.eligibleValue.length).toBe(6);
+            // Verify enumeratedValue array with numeric values
+            expect(fibonacciProp.enumeratedValue).toBeDefined();
+            expect(Array.isArray(fibonacciProp.enumeratedValue)).toBe(true);
+            expect(fibonacciProp.enumeratedValue.length).toBe(6);
 
-            // Check eligible values
-            expect(fibonacciProp.eligibleValue[0].id).toBe('o:Fibonacci-1');
-            expect(fibonacciProp.eligibleValue[0].value).toBe('1');
-            expect(fibonacciProp.eligibleValue[0].title).toBeUndefined(); // Numeric enums have value, not title
-            expect(fibonacciProp.eligibleValue[3].id).toBe('o:Fibonacci-5');
-            expect(fibonacciProp.eligibleValue[3].value).toBe('5');
-            expect(fibonacciProp.eligibleValue[5].id).toBe('o:Fibonacci-13');
-            expect(fibonacciProp.eligibleValue[5].value).toBe('13');
+            // Check enumerated values
+            expect(fibonacciProp.enumeratedValue[0].id).toBe('o:Fibonacci-1');
+            expect(fibonacciProp.enumeratedValue[0].value).toBe('1');
+            expect(fibonacciProp.enumeratedValue[0].title).toBeUndefined(); // Numeric enums have value, not title
+            expect(fibonacciProp.enumeratedValue[3].id).toBe('o:Fibonacci-5');
+            expect(fibonacciProp.enumeratedValue[3].value).toBe('5');
+            expect(fibonacciProp.enumeratedValue[5].id).toBe('o:Fibonacci-13');
+            expect(fibonacciProp.enumeratedValue[5].value).toBe('13');
 
             // Verify anEntity instance
             const taskInstance = pkgOut.graph[1] as any;

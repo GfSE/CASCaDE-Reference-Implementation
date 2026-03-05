@@ -4,7 +4,7 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
  * Note:
- * - a roundtrip test via setXML() and getXML() and eligible (enumerated) values
+ * - a roundtrip test via setXML() and getXML() and enumerated (enumerated) values
  *   is contained in pig-package-constraints-valueRanges.spec.ts
  */
 
@@ -63,7 +63,7 @@ describe('PIG Metaclasses XML Import', () => {
             expect(prop.status().ok).toBe(true);
         });
 
-        it('should import SpecIF:Priority property with eligibleValues', () => {
+        it('should import SpecIF:Priority property with enumeratedValues', () => {
             const xmlInput = `
                 <pig:Property id="SpecIF:Priority" rdf:type="owl:ObjectProperty">
                     <dcterms:title xml:lang="en">Priority</dcterms:title>
@@ -73,21 +73,21 @@ describe('PIG Metaclasses XML Import', () => {
                     <xs:simpleType>
                         <xs:restriction base="xs:string"/>
                     </xs:simpleType>
-                    <pig:eligibleValue id="SpecIF:priorityHigh">
+                    <pig:enumeratedValue id="SpecIF:priorityHigh">
                         <dcterms:title xml:lang="en">high</dcterms:title>
                         <dcterms:title xml:lang="de">hoch</dcterms:title>
                         <dcterms:title xml:lang="fr">haut</dcterms:title>
-                    </pig:eligibleValue>
-                    <pig:eligibleValue id="SpecIF:priorityMedium">
+                    </pig:enumeratedValue>
+                    <pig:enumeratedValue id="SpecIF:priorityMedium">
                         <dcterms:title xml:lang="en">medium</dcterms:title>
                         <dcterms:title xml:lang="de">mittel</dcterms:title>
                         <dcterms:title xml:lang="fr">moyen</dcterms:title>
-                    </pig:eligibleValue>
-                    <pig:eligibleValue id="SpecIF:priorityLow">
+                    </pig:enumeratedValue>
+                    <pig:enumeratedValue id="SpecIF:priorityLow">
                         <dcterms:title xml:lang="en">low</dcterms:title>
                         <dcterms:title xml:lang="de">niedrig</dcterms:title>
                         <dcterms:title xml:lang="fr">bas</dcterms:title>
-                    </pig:eligibleValue>
+                    </pig:enumeratedValue>
                 </pig:Property>
             `;
 
@@ -101,13 +101,13 @@ describe('PIG Metaclasses XML Import', () => {
             // Get the property data
             const propData = prop.get();
 
-            // Verify eligibleValue structure exists
-            expect(propData?.eligibleValue).toBeDefined();
-            expect(Array.isArray(propData?.eligibleValue)).toBe(true);
-            expect(propData?.eligibleValue?.length).toBe(3);
+            // Verify enumeratedValue structure exists
+            expect(propData?.enumeratedValue).toBeDefined();
+            expect(Array.isArray(propData?.enumeratedValue)).toBe(true);
+            expect(propData?.enumeratedValue?.length).toBe(3);
 
             // Find SpecIF:priorityHigh
-            const priorityHigh = propData?.eligibleValue?.find((ev:any) => ev.id === 'SpecIF:priorityHigh');
+            const priorityHigh = propData?.enumeratedValue?.find((ev:any) => ev.id === 'SpecIF:priorityHigh');
             expect(priorityHigh).toBeDefined();
 
             // Verify title structure
@@ -148,8 +148,8 @@ describe('PIG Metaclasses XML Import', () => {
         it('should import pig:Link', () => {
             const xmlInput = `
                 <pig:Link id="pig:Link" rdf:type="owl:ObjectProperty">
-                    <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-                    <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+                    <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+                    <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
                     <dcterms:title>linked with</dcterms:title>
                     <dcterms:description>Connects a reified relationship with its source or target. Also connects an organizer to a model element</dcterms:description>
                 </pig:Link>
@@ -167,8 +167,8 @@ describe('PIG Metaclasses XML Import', () => {
             const xmlInput = `
                 <pig:Link id="pig:SourceLink">
                     <pig:specializes>pig:Link</pig:specializes>
-                    <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-                    <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
+                    <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+                    <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
                     <dcterms:title>to source</dcterms:title>
                     <dcterms:description>Connects the source of a reified relationship.</dcterms:description>
                 </pig:Link>
@@ -188,7 +188,7 @@ describe('PIG Metaclasses XML Import', () => {
                     <pig:specializes>pig:SourceLink</pig:specializes>
                     <dcterms:title>SpecIF:writes to source</dcterms:title>
                     <dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
-                    <pig:eligibleEndpoint>FMC:Actor</pig:eligibleEndpoint>
+                    <pig:enumeratedEndpoint>FMC:Actor</pig:enumeratedEndpoint>
                 </pig:Link>
             `;
 
@@ -204,9 +204,9 @@ describe('PIG Metaclasses XML Import', () => {
             const xmlInput = `
                 <pig:Link id="pig:lists">
                     <pig:specializes>pig:TargetLink</pig:specializes>
-                    <pig:eligibleEndpoint>pig:Entity</pig:eligibleEndpoint>
-                    <pig:eligibleEndpoint>pig:Relationship</pig:eligibleEndpoint>
-                    <pig:eligibleEndpoint>pig:Organizer</pig:eligibleEndpoint>
+                    <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
+                    <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
+                    <pig:enumeratedEndpoint>pig:Organizer</pig:enumeratedEndpoint>
                     <dcterms:title>lists</dcterms:title>
                     <dcterms:description>Lists an entity, a relationship or a subordinated organizer.</dcterms:description>
                 </pig:Link>
@@ -227,8 +227,8 @@ describe('PIG Metaclasses XML Import', () => {
                 <pig:Entity id="pig:Entity" rdf:type="owl:Class">
                     <dcterms:title>Entity</dcterms:title>
                     <dcterms:description>A PIG meta-model element used for entities (aka resources or artifacts).</dcterms:description>
-                    <pig:eligibleProperty>pig:Category</pig:eligibleProperty>
-                    <pig:eligibleProperty>pig:Icon</pig:eligibleProperty>
+                    <pig:enumeratedProperty>pig:Category</pig:enumeratedProperty>
+                    <pig:enumeratedProperty>pig:Icon</pig:enumeratedProperty>
                 </pig:Entity>
             `;
 
@@ -246,7 +246,7 @@ describe('PIG Metaclasses XML Import', () => {
                     <pig:specializes>pig:Organizer</pig:specializes>
                     <dcterms:title>Hierarchy Root</dcterms:title>
                     <dcterms:description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</dcterms:description>
-                    <pig:eligibleTargetLink>pig:lists</pig:eligibleTargetLink>
+                    <pig:enumeratedTargetLink>pig:lists</pig:enumeratedTargetLink>
                 </pig:Entity>
             `;
 
@@ -269,7 +269,7 @@ describe('PIG Metaclasses XML Import', () => {
                     </dcterms:description>
                     <pig:specializes>pig:Entity</pig:specializes>
                     <pig:Icon>&#x25A1;</pig:Icon>
-                    <pig:eligibleProperty>pig:Category</pig:eligibleProperty>
+                    <pig:enumeratedProperty>pig:Category</pig:enumeratedProperty>
                 </pig:Entity>
             `;
 
@@ -292,7 +292,7 @@ describe('PIG Metaclasses XML Import', () => {
                     </dcterms:description>
                     <pig:specializes>pig:Entity</pig:specializes>
                     <pig:Icon>&#8623;</pig:Icon>
-                    <pig:eligibleProperty>SpecIF:Priority</pig:eligibleProperty>
+                    <pig:enumeratedProperty>SpecIF:Priority</pig:enumeratedProperty>
                 </pig:Entity>
             `;
 
@@ -311,10 +311,10 @@ describe('PIG Metaclasses XML Import', () => {
                 <pig:Relationship id="pig:Relationship" rdf:type="owl:Class">
                     <dcterms:title>Relationship</dcterms:title>
                     <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
-                    <pig:eligibleProperty>pig:Category</pig:eligibleProperty>
-                    <pig:eligibleProperty>pig:Icon</pig:eligibleProperty>
-                    <pig:eligibleSourceLink>pig:SourceLink</pig:eligibleSourceLink>
-                    <pig:eligibleTargetLink>pig:TargetLink</pig:eligibleTargetLink>
+                    <pig:enumeratedProperty>pig:Category</pig:enumeratedProperty>
+                    <pig:enumeratedProperty>pig:Icon</pig:enumeratedProperty>
+                    <pig:enumeratedSourceLink>pig:SourceLink</pig:enumeratedSourceLink>
+                    <pig:enumeratedTargetLink>pig:TargetLink</pig:enumeratedTargetLink>
                 </pig:Relationship>
             `;
 
@@ -334,8 +334,8 @@ describe('PIG Metaclasses XML Import', () => {
                     <dcterms:title xml:lang="fr">écrit</dcterms:title>
                     <dcterms:description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</dcterms:description>
                     <pig:specializes>pig:Relationship</pig:specializes>
-                    <pig:eligibleSourceLink>SpecIF:writes-toSource</pig:eligibleSourceLink>
-                    <pig:eligibleTargetLink>SpecIF:writes-toTarget</pig:eligibleTargetLink>
+                    <pig:enumeratedSourceLink>SpecIF:writes-toSource</pig:enumeratedSourceLink>
+                    <pig:enumeratedTargetLink>SpecIF:writes-toTarget</pig:enumeratedTargetLink>
                 </pig:Relationship>
             `;
 
@@ -357,8 +357,8 @@ describe('PIG Metaclasses XML Import', () => {
                         <p>The object is satisfied by the subject.</p>
                     </dcterms:description>
                     <pig:specializes>pig:Relationship</pig:specializes>
-                    <pig:eligibleSourceLink>oslc_rm:satisfies-toSource</pig:eligibleSourceLink>
-                    <pig:eligibleTargetLink>oslc_rm:satisfies-toTarget</pig:eligibleTargetLink>
+                    <pig:enumeratedSourceLink>oslc_rm:satisfies-toSource</pig:enumeratedSourceLink>
+                    <pig:enumeratedTargetLink>oslc_rm:satisfies-toTarget</pig:enumeratedTargetLink>
                 </pig:Relationship>
             `;
 

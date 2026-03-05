@@ -25,7 +25,7 @@
  * Limitations:
  * - xs:datatype values are only pattern-validated here; specific accepted values are validated in code
  * - further constraints (e.g. maxCount >= minCount) are validated in code
- * - eligible values in Property only for string values; other datatypes to be implemented
+ * - enumerated values in Property only for string values; other datatypes to be implemented
  *
  * Schema files:
  * - Property.json

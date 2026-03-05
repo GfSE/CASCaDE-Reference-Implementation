@@ -19,7 +19,7 @@
  * Limitations:
  * - xs:datatype values are only pattern-validated here; specific accepted values are validated in code
  * - further constraints (e.g. maxCount >= minCount) are validated in code
- * - eligible values in Property only for string values; other datatypes to be implemented
+ * - enumerated values in Property only for string values; other datatypes to be implemented
 */
 
 import { ajv } from '../../../../plugins/ajv';
@@ -72,12 +72,12 @@ const PROPERTY_SCHEMA = {
         pattern: { type: 'string' },
         unit: { type: 'string' },
         defaultValue: { type: 'string' },
-        eligibleValue: {
+        enumeratedValue: {
             type: 'array',
             items: {
                 oneOf: [
                     {
-                        // For string datatypes: eligibleValue with multi-language title
+                        // For string datatypes: enumeratedValue with multi-language title
                         type: 'object',
                         required: ['id', 'title'],
                         properties: {
@@ -92,7 +92,7 @@ const PROPERTY_SCHEMA = {
                         description: 'Enumeration value with multi-language title (for xs:string)'
                     },
                     {
-                        // For numeric/other datatypes: eligibleValue with literal value
+                        // For numeric/other datatypes: enumeratedValue with literal value
                         type: 'object',
                         required: ['id', 'value'],
                         properties: {
@@ -181,14 +181,14 @@ const LINK_SCHEMA = {
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
-        eligibleEndpoint: {
+        enumeratedEndpoint: {
             type: 'array',
             minItems: 1,
             items: { $ref: '#/$defs/idString' }
         }
     },
     additionalProperties: false,
-    required: ['id', 'itemType', 'title', 'eligibleEndpoint'],
+    required: ['id', 'itemType', 'title', 'enumeratedEndpoint'],
     // One of 'hasClass' and 'specializes' must be there but not both:
     oneOf: [
         { required: ['hasClass'] },
@@ -230,11 +230,11 @@ const ENTITY_SCHEMA = {
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
-        eligibleProperty: {
+        enumeratedProperty: {
             type: 'array',
             items: { $ref: '#/$defs/idString' }
         },
-        eligibleTargetLink: {
+        enumeratedTargetLink: {
             type: 'array',
             items: { $ref: '#/$defs/idString' }
         },
@@ -302,12 +302,12 @@ const RELATIONSHIP_SCHEMA = {
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
-        eligibleProperty: {
+        enumeratedProperty: {
             type: 'array',
             items: { $ref: '#/$defs/idString' }
         },
-        eligibleSourceLink: { $ref: '#/$defs/idString' },
-        eligibleTargetLink: { $ref: '#/$defs/idString' },
+        enumeratedSourceLink: { $ref: '#/$defs/idString' },
+        enumeratedTargetLink: { $ref: '#/$defs/idString' },
         icon: {
             type: 'object',
             required: ['value'],

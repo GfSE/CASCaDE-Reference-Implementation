@@ -12,7 +12,7 @@
  * - Validity of hasClass references in aProperty instances
  * - Validity of hasClass references in aLink instances (aSourceLink, aTargetLink)
  * - Property occurrence validation (minCount, maxCount)
- * - Eligible properties and links validation
+ * - enumerated properties and links validation
  * 
  * List of constraint checks:
  * Phase 1 (critical):
@@ -22,17 +22,17 @@
  *   ✅ anEntity and aRelationship class references
  *   ✅ Entity and Relationship specializes references                                               
  *   ✅ Instances are consistent with their classes:
- *   ✅ - properties and links are eligible
+ *   ✅ - properties and links are enumerated
  *   ✅ - occurrence (minCount, maxCount) with language-aware validation for xs:string
  *   ✅ - value range
- *   ✅ - reference to eligible values (enumerations)
+ *   ✅ - reference to enumerated values (enumerations)
  * Phase 2 (important):
  *      namespace prefixes are defined in the context
  *      subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
  *      subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
- *      eligible values as defined comply with the restrictions of their own Property class
- *      eligibleProperty references
- *      eligibleEndpoint references
+ *      enumerated values as defined comply with the restrictions of their own Property class
+ *      enumeratedProperty references
+ *      enumeratedEndpoint references
  *      Link endpoint compliance
  * Phase 3 (useful):
  *      No cyclic specialization
@@ -73,8 +73,8 @@ export enum ConstraintCheckType {
     RelationshipSpecializes = 'relationshipSpecializes',
     PropertySpecializes = 'propertySpecializes',
     LinkSpecializes = 'linkSpecializes',
-    EligibleProperties = 'eligibleProperties',
-    EligibleLinks = 'eligibleLinks',
+    enumeratedProperties = 'enumeratedProperties',
+    enumeratedLinks = 'enumeratedLinks',
     ValueRanges = 'valueRanges'
 }
 
@@ -91,8 +91,8 @@ const allConstraintChecks: ConstraintCheckType[] = [
     ConstraintCheckType.RelationshipSpecializes,
     ConstraintCheckType.PropertySpecializes,
     ConstraintCheckType.LinkSpecializes,
-    ConstraintCheckType.EligibleProperties,
-    ConstraintCheckType.EligibleLinks,
+    ConstraintCheckType.enumeratedProperties,
+    ConstraintCheckType.enumeratedLinks,
     ConstraintCheckType.ValueRanges
 ];
 
@@ -169,15 +169,15 @@ export function checkConstraintsForPackage(
     const classMap = buildClassMap(pkg);
     // LOG.debug(`Built class map for eligibility checks: `, classMap);
 
-    // 6a. Check eligible properties in anEntity and aRelationship instances
-    if (checksSet.has(ConstraintCheckType.EligibleProperties)) {
-        const rsp = checkEligibleProperties(pkg, classMap);
+    // 6a. Check enumerated properties in anEntity and aRelationship instances
+    if (checksSet.has(ConstraintCheckType.enumeratedProperties)) {
+        const rsp = checkenumeratedProperties(pkg, classMap);
         if (!rsp.ok) return rsp;
     }
 
-    // 6b. Check eligible links in anEntity and aRelationship instances
-    if (checksSet.has(ConstraintCheckType.EligibleLinks)) {
-        const rsp = checkEligibleLinks(pkg, classMap);
+    // 6b. Check enumerated links in anEntity and aRelationship instances
+    if (checksSet.has(ConstraintCheckType.enumeratedLinks)) {
+        const rsp = checkenumeratedLinks(pkg, classMap);
         if (!rsp.ok) return rsp;
     }
 
@@ -265,7 +265,7 @@ function buildPropertyMap(pkg: IAPackage): Map<TPigId, any> {
 }
 
 /**
- * Build a map of class definitions with their eligibleProperty and eligibleTargetLink arrays
+ * Build a map of class definitions with their enumeratedProperty and enumeratedTargetLink arrays
  * @param pkg - Package to process
  * @returns Map from class ID to class definition
  */
@@ -286,13 +286,13 @@ function buildClassMap(pkg: IAPackage): Map<TPigId, any> {
 }
 
 /**
- * Resolve the full list of eligible properties for a class, including inherited ones
+ * Resolve the full list of enumerated properties for a class, including inherited ones
  * @param classId - ID of the class to resolve
  * @param classMap - Map of all class definitions
  * @param visited - Set to track visited classes (prevents infinite loops)
- * @returns Array of eligible property IDs (empty array if eligibleProperty is undefined)
+ * @returns Array of enumerated property IDs (empty array if enumeratedProperty is undefined)
  */
-function resolveEligibleProperties(
+function resolveenumeratedProperties(
     classId: TPigId,
     classMap: Map<TPigId, any>,
     visited: Set<TPigId> = new Set()
@@ -308,41 +308,41 @@ function resolveEligibleProperties(
         return [];
     }
 
-    // Start with this class's eligibleProperty (undefined means all properties allowed)
-    const directEligible = classDef.eligibleProperty;
+    // Start with this class's enumeratedProperty (undefined means all properties allowed)
+    const directenumerated = classDef.enumeratedProperty;
 
-    // If eligibleProperty is undefined, all properties are allowed (return special marker)
-    if (directEligible === undefined) {
+    // If enumeratedProperty is undefined, all properties are allowed (return special marker)
+    if (directenumerated === undefined) {
         return ['*']; // Special marker for "all properties allowed"
     }
 
-    // Initialize with direct eligible properties
-    let allEligible: TPigId[] = Array.isArray(directEligible) ? [...directEligible] : [];
+    // Initialize with direct enumerated properties
+    let allenumerated: TPigId[] = Array.isArray(directenumerated) ? [...directenumerated] : [];
 
     // Resolve parent class if specializes is present
     if (classDef.specializes) {
-        const parentEligible = resolveEligibleProperties(classDef.specializes, classMap, visited);
+        const parentenumerated = resolveenumeratedProperties(classDef.specializes, classMap, visited);
 
         // If parent allows all properties, keep current restrictions
-        if (parentEligible.includes('*')) {
-            // Keep only direct eligibleProperty restrictions
+        if (parentenumerated.includes('*')) {
+            // Keep only direct enumeratedProperty restrictions
         } else {
-            // Merge parent's eligible properties
-            allEligible = [...new Set([...allEligible, ...parentEligible])];
+            // Merge parent's enumerated properties
+            allenumerated = [...new Set([...allenumerated, ...parentenumerated])];
         }
     }
 
-    return allEligible;
+    return allenumerated;
 }
 
 /**
- * Resolve the full list of eligible target links for a class, including inherited ones
+ * Resolve the full list of enumerated target links for a class, including inherited ones
  * @param classId - ID of the class to resolve
  * @param classMap - Map of all class definitions
  * @param visited - Set to track visited classes (prevents infinite loops)
- * @returns Array of eligible link IDs (empty array if eligibleTargetLink is undefined)
+ * @returns Array of enumerated link IDs (empty array if enumeratedTargetLink is undefined)
  */
-function resolveEligibleTargetLinks(
+function resolveenumeratedTargetLinks(
     classId: TPigId,
     classMap: Map<TPigId, any>,
     visited: Set<TPigId> = new Set()
@@ -358,40 +358,40 @@ function resolveEligibleTargetLinks(
         return [];
     }
 
-    // Get direct eligible target links (undefined means all links allowed)
-    const directEligible = classDef.eligibleTargetLink;
-    // LOG.debug(`resolveEligibleTargetLinks: class ${classId} has direct eligibleTargetLink = ${JSON.stringify(directEligible)}`);
+    // Get direct enumerated target links (undefined means all links allowed)
+    const directenumerated = classDef.enumeratedTargetLink;
+    // LOG.debug(`resolveenumeratedTargetLinks: class ${classId} has direct enumeratedTargetLink = ${JSON.stringify(directenumerated)}`);
 
-    // If eligibleTargetLink is undefined, all links are allowed
-    if (directEligible === undefined) {
+    // If enumeratedTargetLink is undefined, all links are allowed
+    if (directenumerated === undefined) {
         return ['*'];
     }
 
-    // Initialize with direct eligible links
+    // Initialize with direct enumerated links
     // .. is an array in case of anEntity and a single value in case of aRelationship, normalize to array
-    let allEligible: TPigId[] = Array.isArray(directEligible) ?
-        [...directEligible]
-        : (typeof directEligible === 'string' ? [directEligible] : []);
+    let allenumerated: TPigId[] = Array.isArray(directenumerated) ?
+        [...directenumerated]
+        : (typeof directenumerated === 'string' ? [directenumerated] : []);
 
     // Resolve parent class if specializes is present
     if (classDef.specializes) {
-        const parentEligible = resolveEligibleTargetLinks(classDef.specializes, classMap, visited);
+        const parentenumerated = resolveenumeratedTargetLinks(classDef.specializes, classMap, visited);
 
-        if (parentEligible.includes('*')) {
+        if (parentenumerated.includes('*')) {
             // Parent allows all links, keep current restrictions
         } else {
-            // Merge parent's eligible links
-            allEligible = [...new Set([...allEligible, ...parentEligible])];
+            // Merge parent's enumerated links
+            allenumerated = [...new Set([...allenumerated, ...parentenumerated])];
         }
     }
 
-    return allEligible;
+    return allenumerated;
 }
 
 /**
- * Resolve eligible source links for Relationship classes
+ * Resolve enumerated source links for Relationship classes
  */
-function resolveEligibleSourceLinks(
+function resolveenumeratedSourceLinks(
     classId: TPigId,
     classMap: Map<TPigId, any>,
     visited: Set<TPigId> = new Set()
@@ -406,35 +406,35 @@ function resolveEligibleSourceLinks(
         return [];
     }
 
-    const directEligible = classDef.eligibleSourceLink;
-    if (directEligible === undefined) {
+    const directenumerated = classDef.enumeratedSourceLink;
+    if (directenumerated === undefined) {
         return ['*'];
     }
-    // LOG.debug(`resolveEligibleSourceLinks: class ${classId} has direct eligibleSourceLink = ${JSON.stringify(directEligible)}`);
+    // LOG.debug(`resolveenumeratedSourceLinks: class ${classId} has direct enumeratedSourceLink = ${JSON.stringify(directenumerated)}`);
 
-    // Initialize with direct eligible links
+    // Initialize with direct enumerated links
     // .. exists only for aRelationship and is a single value, normalize to array:
-    let allEligible: TPigId[] = Array.isArray(directEligible) ? [...directEligible] : [directEligible];
+    let allenumerated: TPigId[] = Array.isArray(directenumerated) ? [...directenumerated] : [directenumerated];
 
     if (classDef.specializes) {
-        const parentEligible = resolveEligibleSourceLinks(classDef.specializes, classMap, visited);
-        if (parentEligible.includes('*')) {
+        const parentenumerated = resolveenumeratedSourceLinks(classDef.specializes, classMap, visited);
+        if (parentenumerated.includes('*')) {
             // Keep current restrictions
         } else {
-            allEligible = [...new Set([...allEligible, ...parentEligible])];
+            allenumerated = [...new Set([...allenumerated, ...parentenumerated])];
         }
     }
 
-    return allEligible;
+    return allenumerated;
 }
 
 /**
- * Check that all properties in anEntity and aRelationship instances are declared as eligible in their classes
+ * Check that all properties in anEntity and aRelationship instances are declared as enumerated in their classes
  * @param pkg - Package to validate
  * @param classMap - Map of class definitions
  * @returns IRsp (rspOK on success, error on invalid property)
  */
-function checkEligibleProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
+function checkenumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
         const itemType = (item as any).itemType;
@@ -449,15 +449,15 @@ function checkEligibleProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IR
                 continue; // hasClass is validated elsewhere
             }
 
-            // Resolve eligible properties for this class
-            const eligibleProperties = resolveEligibleProperties(classId, classMap);
+            // Resolve enumerated properties for this class
+            const enumeratedProperties = resolveenumeratedProperties(classId, classMap);
 
             // If no properties are defined, check if class allows properties
             if (!instance.hasProperty || !Array.isArray(instance.hasProperty)) {
                 continue; // No properties to validate
             }
 
-            // Check each property against eligible properties
+            // Check each property against enumerated properties
             for (let j = 0; j < instance.hasProperty.length; j++) {
                 const prop = instance.hasProperty[j];
                 const propClassId = prop.hasClass;
@@ -466,13 +466,13 @@ function checkEligibleProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IR
                         continue; // hasClass is validated elsewhere
                     } */
 
-                // If eligibleProperty is undefined ('*'), all properties are allowed
-                if (eligibleProperties.includes('*')) {
+                // If enumeratedProperty is undefined ('*'), all properties are allowed
+                if (enumeratedProperties.includes('*')) {
                     continue;
                 }
 
-                // Check if this property class is in the eligible list
-                if (!eligibleProperties.includes(propClassId)) {
+                // Check if this property class is in the enumerated list
+                if (!enumeratedProperties.includes(propClassId)) {
                     return Msg.create(676, itemId, itemType, 'hasProperty', j, propClassId, classId);
                 }
             }
@@ -483,12 +483,12 @@ function checkEligibleProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IR
 }
 
 /**
- * Check that all links in anEntity and aRelationship instances are declared as eligible in their classes
+ * Check that all links in anEntity and aRelationship instances are declared as enumerated in their classes
  * @param pkg - Package to validate
  * @param classMap - Map of class definitions
  * @returns IRsp (rspOK on success, error on invalid link)
  */
-function checkEligibleLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
+function checkenumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
         const itemType = (item as any).itemType;
@@ -502,8 +502,8 @@ function checkEligibleLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
                 continue;
             }
 
-            const eligibleLinks = resolveEligibleTargetLinks(classId, classMap);
-            // LOG.debug(`Checking eligible links for ${itemType} ${itemId}: eligibleTargetLinks = ${JSON.stringify(eligibleTargetLinks)}`);
+            const enumeratedLinks = resolveenumeratedTargetLinks(classId, classMap);
+            // LOG.debug(`Checking enumerated links for ${itemType} ${itemId}: enumeratedTargetLinks = ${JSON.stringify(enumeratedTargetLinks)}`);
 
             if ((item as TPigAnElement).hasTargetLink && Array.isArray((item as TPigAnElement).hasTargetLink)) {
                 for (let j = 0; j < (item as TPigAnElement).hasTargetLink.length; j++) {
@@ -514,10 +514,10 @@ function checkEligibleLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
                                 continue;
                             } */
 
-                    if (eligibleLinks.includes('*'))  // set by resolveEligibleLinks() for "all links allowed"
+                    if (enumeratedLinks.includes('*'))  // set by resolveenumeratedLinks() for "all links allowed"
                         continue;
 
-                    if (!eligibleLinks.includes(linkClassId)) {
+                    if (!enumeratedLinks.includes(linkClassId)) {
                         return Msg.create(676, itemId, itemType, 'hasTargetLink', j, linkClassId, classId);
                     }
                 }
@@ -533,10 +533,10 @@ function checkEligibleLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
                 continue;
             }
 
-            const eligibleSourceLinks = resolveEligibleSourceLinks(classId, classMap);
+            const enumeratedSourceLinks = resolveenumeratedSourceLinks(classId, classMap);
 
-            // LOG.debug(`Checking eligible links for aRelationship`,JSON.stringify(rel,null,2));
-            // LOG.debug(`Checking eligible links for aRelationship ${itemId}: eligibleSourceLinks = ${JSON.stringify(eligibleSourceLinks)}}`);
+            // LOG.debug(`Checking enumerated links for aRelationship`,JSON.stringify(rel,null,2));
+            // LOG.debug(`Checking enumerated links for aRelationship ${itemId}: enumeratedSourceLinks = ${JSON.stringify(enumeratedSourceLinks)}}`);
 
             // Check source links
             if (rel.hasSourceLink && Array.isArray(rel.hasSourceLink)) {
@@ -548,10 +548,10 @@ function checkEligibleLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
                                 continue;
                             } */
 
-                    if (eligibleSourceLinks.includes('*'))  // set by resolveEligibleLinks() for "all links allowed"
+                    if (enumeratedSourceLinks.includes('*'))  // set by resolveenumeratedLinks() for "all links allowed"
                         continue;
 
-                    if (!eligibleSourceLinks.includes(linkClassId)) {
+                    if (!enumeratedSourceLinks.includes(linkClassId)) {
                         return Msg.create(676, itemId, itemType, 'hasSourceLink', j, linkClassId, classId);
                     }
                 }
@@ -971,7 +971,7 @@ function checkPropertyOrLinkReferences(
 * Check that all property values conform to their defined value ranges
 * - For xs:string: validates maxLength and pattern
 * - For numeric types: validates minInclusive and maxInclusive
-* - For all types: validates that values are in eligibleValue list if defined
+* - For all types: validates that values are in enumeratedValue list if defined
 * @param pkg - Package to validate
 * @param propertyMap - Map of Property definitions
 * @returns IRsp (rspOK on success, error on constraint violation)
@@ -1018,7 +1018,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                 const value = prop.value;
                 const idRef = prop.idRef;
                 if ((value === undefined || value === null) && (idRef === undefined || idRef === null)) {
-                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has neither value nor reference to eligible value`);
+                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has neither value nor reference to enumerated value`);
                     continue; // neither value nor id - validated by schema
                 }
 
@@ -1034,34 +1034,34 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
 
                 // LOG.debug(`checkValueRanges - prop[${j}]:`, datatype, value, actualValue, idRef);
 
-                // Check eligible values (enumerations) - applies to all datatypes
-                if (propDef.eligibleValue !== undefined) {
-                    // A: aProperty instances must have references to eligible values ...
+                // Check enumerated values (enumerations) - applies to all datatypes
+                if (propDef.enumeratedValue !== undefined) {
+                    // A: aProperty instances must have references to enumerated values ...
 
-                    // ToDo: eligibleValues is schema-checked and always a list
-                    const eligibleValues = Array.isArray(propDef.eligibleValue)
-                        ? propDef.eligibleValue
-                        : [propDef.eligibleValue];
+                    // ToDo: enumeratedValues is schema-checked and always a list
+                    const enumeratedValues = Array.isArray(propDef.enumeratedValue)
+                        ? propDef.enumeratedValue
+                        : [propDef.enumeratedValue];
 
-                    // Check if value is in eligible list
-                    const isEligible = eligibleValues.some((eV: any) => {
+                    // Check if value is in enumerated list
+                    const isenumerated = enumeratedValues.some((eV: any) => {
                         // Handle both string values and object values with id
                         // ToDo: should always have an id.
-                        const eligibleStr = typeof eV === 'object' && eV !== null && 'id' in eV
+                        const enumeratedStr = typeof eV === 'object' && eV !== null && 'id' in eV
                             ? eV['id']
                             : String(eV);
-                        return eligibleStr === idRef;
+                        return enumeratedStr === idRef;
                     });
 
-                    // LOG.debug(`checkValueRanges - enum list: ${JSON.stringify(eligibleValues, null, 2)}`, idRef, isEligible);
+                    // LOG.debug(`checkValueRanges - enum list: ${JSON.stringify(enumeratedValues, null, 2)}`, idRef, isenumerated);
 
-                    if (!isEligible) {
+                    if (!isenumerated) {
                         return Msg.create(
                             679,
                             itemId,
                             j,
                             propClassId,
-                            `value '${idRef}' is not in eligibleValue list: [${eligibleValues.map((v: any) =>
+                            `value '${idRef}' is not in enumeratedValue list: [${enumeratedValues.map((v: any) =>
                                 typeof v === 'object' && v !== null && 'id' in v ? v['id'] : String(v)
                             ).join(', ')}]`
                         );

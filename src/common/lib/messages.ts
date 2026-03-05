@@ -423,7 +423,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
     },
     676: {
         en: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
-            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] uses '${linkClassId}' which is not eligible in class '${classId}'.`,
+            `${itemType} '${itemId}' ${arrayName}[${linkIndex}] uses '${linkClassId}' which is not enumerated in class '${classId}'.`,
         de: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
             `${itemType} '${itemId}' ${arrayName}[${linkIndex}] verwendet '${linkClassId}', der in Klasse '${classId}' nicht zulässig ist.`,
         fr: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>

@@ -187,7 +187,7 @@
                             May include datatype specifications (string, integer, double, boolean, dateTime, etc.), cardinality constraints 
                             (<code>sh:minCount</code>, <code>sh:maxCount</code>), value constraints (<code>sh:minInclusive</code>, 
                             <code>sh:maxInclusive</code>, <code>sh:maxLength</code>, <code>sh:pattern</code>), enumeration values 
-                            (<code>pig:eligibleValue</code>), default values, measurement units, and support for composed properties.
+                            (<code>pig:enumeratedValue</code>), default values, measurement units, and support for composed properties.
                         </div>
                         <div class="owl-mapping">→ OWL mapping: <code>owl:DatatypeProperty</code></div>
                     </li>
@@ -195,7 +195,7 @@
                         <a href="Link.json">Link.json</a>
                         <div class="description">
                             Validates <strong>Link</strong> class definitions that specify navigable connections between items. 
-                            Defines eligible endpoint classes (<code>pig:eligibleEndpoint</code>) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., "contains" / "is contained by").
+                            Defines enumerated endpoint classes (<code>pig:enumeratedEndpoint</code>) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., "contains" / "is contained by").
                         </div>
                         <div class="owl-mapping">→ OWL mapping: <code>owl:ObjectProperty</code></div>
                     </li>
@@ -203,8 +203,8 @@
                         <a href="Entity.json">Entity.json</a>
                         <div class="description">
                             Validates <strong>Entity</strong> class definitions for individual information objects. 
-                            Configures which properties (<code>pig:eligibleProperty</code>) and which outgoing 
-                            links are allowed (<code>pig:eligibleTargetLink</code>). 
+                            Configures which properties (<code>pig:enumeratedProperty</code>) and which outgoing 
+                            links are allowed (<code>pig:enumeratedTargetLink</code>). 
 							Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. Supports specialization hierarchies via <code>pig:specializes</code> and optional visual representation 
                             via <code>pig:icon</code>.
                         </div>
@@ -214,8 +214,8 @@
                         <a href="Relationship.json">Relationship.json</a>
                         <div class="description">
                             Validates <strong>Relationship</strong> class definitions for directed connections between entities. 
-                            Configures which properties (<code>pig:eligibleProperty</code>), source links 
-                            (<code>pig:eligibleSourceLink</code>) and target links (<code>pig:eligibleTargetLink</code>) are allowed. 
+                            Configures which properties (<code>pig:enumeratedProperty</code>), source links 
+                            (<code>pig:enumeratedSourceLink</code>) and target links (<code>pig:enumeratedTargetLink</code>) are allowed. 
                             Relationships are reified connections that can carry their own properties, enabling rich traceability and dependency modeling (e.g., "Refinement" relationships with rationale and traceability status). 
 							Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance.
                             Supports specialization hierarchies and optional icons.

@@ -53,7 +53,7 @@ describe('PIG Package Constraint Validation', () => {
                         "@id": "pig:Link",
                         "@type": "owl:ObjectProperty",
                         "pig:itemType": { "@id": "pig:Link" },
-                        "pig:eligibleEndpoint": [
+                        "pig:enumeratedEndpoint": [
                             {
                                 "@id": "pig:Entity"
                             },
@@ -79,7 +79,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -198,7 +198,7 @@ describe('PIG Package Constraint Validation', () => {
                         "pig:itemType": {
                             "@id": "pig:Link"
                         },
-                        "pig:eligibleEndpoint": [
+                        "pig:enumeratedEndpoint": [
                             {
                                 "@id": "pig:Entity"
                             },
@@ -224,7 +224,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -235,7 +235,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -532,7 +532,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -696,7 +696,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -707,7 +707,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
