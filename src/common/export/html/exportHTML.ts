@@ -28,7 +28,7 @@
  *
  * Design Decisions:
  * - Combine all HTML export logic in a single module for better maintainability.
- * - Prefer calls of helpers from genuine getHTML methods instead of additions to the metamodel protitypes
+ * - Prefer calls of helpers from genuine getHTML methods instead of additions to the metamodel prototypes
  *   and type merging - because the latter appears to be rather fragile.
  */
 
