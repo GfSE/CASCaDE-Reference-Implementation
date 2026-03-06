@@ -634,6 +634,13 @@ const APACKAGE_SCHEMA = {
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
+        revision: { type: 'string' },
+        priorRevision: {
+            type: 'array',
+            minItems: 1,
+            maxItems: 2,
+            items: { type: 'string' }
+        },
         modified: {
             type: 'string',
             format: 'date-time'

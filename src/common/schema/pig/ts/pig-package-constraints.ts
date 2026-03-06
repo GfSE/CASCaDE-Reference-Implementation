@@ -58,7 +58,7 @@
 
 import { IRsp, rspOK, Msg } from '../../../lib/messages';
 import { LOG } from "../../../lib/helpers";
-import { IAPackage, PigItemType, PigItemTypeValue, TPigAnElement, TPigId } from './pig-metaclasses';
+import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigId } from './pig-metaclasses';
 
 /**
  * Available constraint check types
@@ -1014,25 +1014,19 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                     continue; // property definition not found, has been checked before
                 }
 
-                // Get the value to validate
-                const value = prop.value;
-                const idRef = prop.idRef;
-                if ((value === undefined || value === null) && (idRef === undefined || idRef === null)) {
-                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has neither value nor reference to enumerated value`);
-                    continue; // neither value nor id - validated by schema
-                }
-
                 // Validate based on datatype
                 const datatype = propDef.datatype;
                 if (!datatype) {
                     continue; // no datatype defined - validated by schema
                 }
 
-                // Extract actual value (handle language-tagged strings)
-                const actualValue = (typeof value === 'object' && value !== null && 'text' in value)
-                    ? (value as any).text : value;
-
-                // LOG.debug(`checkValueRanges - prop[${j}]:`, datatype, value, actualValue, idRef);
+                // Get the value resp. idRef to validate
+                let pVal = prop.value as string | undefined;
+                const idRef = prop.idRef as TPigId | undefined;
+                if ((pVal === undefined || pVal === null) && (idRef === undefined || idRef === null)) {
+                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has neither value nor reference to enumerated value`);
+                    continue; // neither value nor id - validated by schema
+                }
 
                 // Check enumerated values (enumerations) - applies to all datatypes
                 if (propDef.enumeratedValue !== undefined) {
@@ -1066,21 +1060,23 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                             ).join(', ')}]`
                         );
                     }
-                } else {
+                }
+                else {
                     // B: aProperty instances must have a literal value potentially with restrictions:
+                    pVal = pVal ?? ''; // satisfy the TypeScript compiler - actually the schema-check assures there is a value.
 
                     // String validation
-                    if (datatype === 'xs:string' || datatype === 'xsd:string') {
-                        const stringValue = String(actualValue);
-
+                    // Here (native item.hasProperty), all elements of a multi-language text are listed flat with all other properties.
+                    if (PigItem.isSupportedStringDatatype(datatype)) {
+                        // Perform validation for each language-tagged value
                         // Check maxLength
-                        if (propDef.maxLength !== undefined && stringValue.length > propDef.maxLength) {
+                        if (propDef.maxLength !== undefined && pVal.length > propDef.maxLength) {
                             return Msg.create(
                                 679,
                                 itemId,
                                 j,
                                 propClassId,
-                                `string length ${stringValue.length} exceeds maxLength ${propDef.maxLength}`
+                                `string length ${pVal.length} exceeds maxLength ${propDef.maxLength}`
                             );
                         }
 
@@ -1088,13 +1084,13 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                         if (propDef.pattern) {
                             try {
                                 const regex = new RegExp(propDef.pattern);
-                                if (!regex.test(stringValue)) {
+                                if (!regex.test(pVal)) {
                                     return Msg.create(
                                         679,
                                         itemId,
                                         j,
                                         propClassId,
-                                        `value '${stringValue}' does not match pattern '${propDef.pattern}'`
+                                        `value '${pVal}' does not match pattern '${propDef.pattern}'`
                                     );
                                 }
                             } catch (e) {
@@ -1104,8 +1100,8 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                     }
 
                     // Numeric validation
-                    if (isNumericDatatype(datatype)) {
-                        const numValue = Number(actualValue);
+                    else if (PigItem.isSupportedNumericDatatype(datatype)) {
+                        const numValue = Number(pVal);
 
                         if (isNaN(numValue)) {
                             return Msg.create(
@@ -1113,7 +1109,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                                 itemId,
                                 j,
                                 propClassId,
-                                `value '${actualValue}' is not a valid number for datatype ${datatype}`
+                                `value '${pVal}' is not a valid number for datatype ${datatype}`
                             );
                         }
 
@@ -1139,6 +1135,15 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                             );
                         }
                     }
+                    else {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `Unsupported datatype ${datatype}`
+                        );
+                    }
                 }
             }
         }
@@ -1147,30 +1152,3 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
     return rspOK;
 }
 
-/**
- * Check if a datatype is numeric
- * @param datatype - XSD datatype string
- * @returns true if numeric type
- */
-function isNumericDatatype(datatype: string): boolean {
-    const numericTypes = [
-        'xs:integer', 'xsd:integer',
-        'xs:int', 'xsd:int',
-        'xs:long', 'xsd:long',
-        'xs:short', 'xsd:short',
-        'xs:byte', 'xsd:byte',
-        'xs:decimal', 'xsd:decimal',
-        'xs:float', 'xsd:float',
-        'xs:double', 'xsd:double',
-        'xs:positiveInteger', 'xsd:positiveInteger',
-        'xs:negativeInteger', 'xsd:negativeInteger',
-        'xs:nonNegativeInteger', 'xsd:nonNegativeInteger',
-        'xs:nonPositiveInteger', 'xsd:nonPositiveInteger',
-        'xs:unsignedLong', 'xsd:unsignedLong',
-        'xs:unsignedInt', 'xsd:unsignedInt',
-        'xs:unsignedShort', 'xsd:unsignedShort',
-        'xs:unsignedByte', 'xsd:unsignedByte'
-    ];
-
-    return numericTypes.includes(datatype);
-}

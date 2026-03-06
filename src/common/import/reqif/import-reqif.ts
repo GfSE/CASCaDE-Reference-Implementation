@@ -117,7 +117,7 @@ export class ReqifImporter {
 
         // Get stylesheet path and transform document
         const stylesheetPath = this.getStylesheetPath();
-        LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
+        // LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
         const rspTransform = await PIN.transformXSL(xmlToTransform, stylesheetPath);
         if (!rspTransform.ok) {

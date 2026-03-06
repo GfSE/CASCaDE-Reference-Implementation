@@ -131,7 +131,6 @@ describe('ReqIF Import', () => {
                     logResponse(`import ReqIF for ${testFile}`, result);
 
                 expect(result.status).toBe(0);
-                expect(result.response).toBeTruthy();
                 expect(Array.isArray(result.response)).toBe(true);
 
                 const items = result.response as any[];

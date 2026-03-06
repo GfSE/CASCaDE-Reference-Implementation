@@ -45,6 +45,7 @@
  *  - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  *  - extend aPackage from AnElement to have revision history for packages as well
  *    and then use metadataToHTML() for packages as well.
+ *  - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -146,12 +147,10 @@ export class PigItem {
                 return new AnEntity();
             case PigItemType.aRelationship:
                 return new ARelationship();
-
-            // Package
             case PigItemType.aPackage:
                 return new APackage();
 
-        /*    // Embedded types (not typically instantiated standalone)
+        /*    // Embedded instances (not typically instantiated standalone)
             case PigItemType.aProperty:
                 return new AProperty();
             case PigItemType.aSourceLink:
@@ -163,6 +162,14 @@ export class PigItem {
                 LOG.error(`PigItemFactory.create: unknown itemType '${itemType}'`);
                 return null;
         }
+    }
+    /**
+     * Check if a string is a valid ID
+     * @param input - String to check
+     * @returns true if valid ID
+     */
+    static isValidIdString(input: string): boolean {
+        return typeof (input) == 'string' && (RE.termWithNamespace.test(input) || RE.uri.test(input));
     }
     /**
      * Check if itemType is a PIG class (Property, Link, Entity, Relationship)
@@ -214,24 +221,97 @@ export class PigItem {
         return Object.values(PigItemType);
     }
 
-    /** Simple runtime type-guard
-     * Usage:
-     * if (PigItem.isType(obj, PigItemType.Property)) {
-     *   // obj is Property
-     * }
-     * /
-    isType<T extends PigItemTypeValue>(
-        obj: Identifiable,
-        type: T
-    ): obj is Extract<TPigItem, { itemType: T }> {
-        return !!obj && obj.itemType === type;
-    } */
+    /**
+     * Check if a datatype is a string type
+     * @param datatype - XSD datatype as string
+     * @returns true if string type
+     */
+    static isSupportedStringDatatype(datatype: string): boolean {
+        const stringTypes = ['xs:string', 'xsd:string'];
+        return stringTypes.includes(datatype);
+    }
 
-    // Type guard: checks whether a value is one of the XsDataType values
+    /**
+     * Check if a datatype is numeric
+     * @param datatype - XSD datatype as string
+     * @returns true if numeric type
+     */
+    static isSupportedNumericDatatype(datatype: string): boolean {
+        const numericTypes = [
+            'xs:integer', 'xsd:integer',
+            'xs:int', 'xsd:int',
+            'xs:long', 'xsd:long',
+            'xs:short', 'xsd:short',
+            'xs:byte', 'xsd:byte',
+            'xs:decimal', 'xsd:decimal',
+            'xs:float', 'xsd:float',
+            'xs:double', 'xsd:double',
+            'xs:positiveInteger', 'xsd:positiveInteger',
+            'xs:negativeInteger', 'xsd:negativeInteger',
+            'xs:nonNegativeInteger', 'xsd:nonNegativeInteger',
+            'xs:nonPositiveInteger', 'xsd:nonPositiveInteger',
+            'xs:unsignedLong', 'xsd:unsignedLong',
+            'xs:unsignedInt', 'xsd:unsignedInt',
+            'xs:unsignedShort', 'xsd:unsignedShort',
+            'xs:unsignedByte', 'xsd:unsignedByte'
+        ];
+    
+        return numericTypes.includes(datatype);
+    }
+
+    /**
+     *  Type guard: checks whether a value is one of the XsDataType values
+     */
     static isSupportedDataType(value: unknown): value is XsDataType {
         if (typeof value !== 'string') return false;
         const norm = value.replace(/^xsd:/, 'xs:');
         return (Object.values(XsDataType) as string[]).includes(norm);
+    }
+
+    /**
+     * Check if a property name represents a multi-language text field
+     * These fields must always be arrays of ILanguageText objects according to pig-schemata.ts
+     * 
+     * Multi-language fields found in schemata:
+     * - Property: title, description, enumeratedValue.title
+     * - Link: title, description
+     * - Entity: title, description
+     * - Relationship: title, description
+     * - AnEntity: title, description
+     * - ARelationship: title, description
+     *
+     * ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
+     */
+    static isMultiLanguageText(propertyName: string, value?: unknown): boolean {
+
+        // 1. Name-based: title or description
+        // Remove namespace prefix for checking
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // All multi-language fields from PIG schemata that use LanguageText[]
+        const multiLangFields = new Set([
+            'title',
+            'description'
+        ]);
+        if (multiLangFields.has(localName)) {
+            return true;
+        }
+
+        // 2. Structure-based: Array of ILanguageText
+        if (Array.isArray(value) && value.length > 0) {
+            return value.every(
+                v =>
+                    typeof v === 'object' &&
+                    v !== null &&
+                    typeof (v as any).value === 'string' &&
+                    (
+                        (v as any).lang === undefined ||
+                        typeof (v as any).lang === 'string'
+                    )
+            );
+        }
+
+        return false;
     }
 }
 export interface INamespace {
@@ -506,8 +586,8 @@ abstract class AnElement extends Identifiable implements IAnElement {
         // collect them here in a hasProperty array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
 
-        _itm.hasProperty = collectConfigurablesFromJSONLD(_itm, PigItemType.aProperty) as IAProperty[];
-        _itm.hasTargetLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
+        _itm.hasProperty = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aProperty) as IAProperty[];
+        _itm.hasTargetLink = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
         //    LOG.debug('AnElement.setJSONLD: '+ JSON.stringify(_itm, null, 2));
 
         // Set the normalized object in the concrete subclass
@@ -521,7 +601,145 @@ abstract class AnElement extends Identifiable implements IAnElement {
     protected getJSONLD() {
         const jld = super.getJSONLD();
 
-        return addConfigurablesToJSONLD(jld, this, 'hasProperty');
+        return this.addConfigurablesToJSONLD(jld, this, 'hasProperty');
+    }
+    /**
+     * Collect configurable properties and references from a JSON-LD object.
+     * In JSON-LD, configurable properties have an ID-string as key (namespace:name or URI)
+     * and their value is an array of objects with itemType 'pig:aProperty'.
+     * This function extracts those properties and transforms them into a hasProperty array,
+     * where the original key becomes the 'hasClass' field of each property.
+     * 
+     * @param obj - The input object (typically from JSON-LD)
+     * @returns Array of IAProperty objects, or undefined if no properties found
+     */
+    protected collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAProperty[] | IALink[] | undefined {
+        if (!obj || typeof obj !== 'object') return undefined;
+
+        const properties: IAProperty[] = [];
+
+        // Standard PIG fields that should NOT be collected as properties;
+        // the tags have already been renamed with MVF.renameJsonTags( ..., MVF.fromJSONLD):
+        const skipKeys = new Set(MVF.toJSONLD.keys());
+
+        //LOG.debug('collect 1',obj,itype);
+        for (const key of Object.keys(obj)) {
+            // Skip known metadata keys and standard PIG fields
+            if (skipKeys.has(key)) continue;
+
+            // Check if key is a valid ID string (namespace:name or URI)
+            if (!PigItem.isValidIdString(key)) continue;
+
+            const val = obj[key];
+            //LOG.debug('collect 2', key,val);
+
+            // Handle array of property values
+            if (Array.isArray(val)) {
+                for (const item of val) {
+                    if (item && typeof item === 'object') {
+                        // Check if it has itemType 'pig:aProperty' (may be an id-object)
+                        // the tags have already been renamed:
+                        const itemTypeValue = item.itemType /* || (item['pig:itemType'] && extractId(item['pig:itemType'])) */;
+
+                        if (itemTypeValue === itype /* || !itemTypeValue*/) {
+                            // Add the property with the key as its hasClass reference
+                            properties.push({
+                                itemType: itype,
+                                hasClass: key,
+                                // itype == PigItemType.Property: value in case of a plain value 
+                                value: item.value /*|| item['@value'] */,
+                                // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
+                                // itype == PigItemType.Link: idRef is mandatory
+                                idRef: item.id,
+                                composes: item.composes
+                            });
+                            delete obj[key]; // remove processed property
+                        }
+                    }
+                }
+            }
+            // Handle single property value (non-array)
+            else if (val && typeof val === 'object') {
+                const itemTypeValue = val.itemType || (val['pig:itemType'] && extractId(val['pig:itemType']));
+
+                if (itemTypeValue === itype /* || !itemTypeValue */) {
+                    properties.push({
+                        itemType: itype,
+                        hasClass: key,
+                        // itype == PigItemType.Property: value in case of a plain value 
+                        value: val.value /*|| item['@value'] */,
+                        // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
+                        // itype == PigItemType.Link: idRef is mandatory
+                        idRef: val.id,
+                        composes: val.composes
+                    });
+                    delete obj[key]; // remove processed property
+                }
+            }
+            // Handle primitive values (string, number, boolean) - create simple properties
+            else if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
+                properties.push({
+                    itemType: itype,
+                    hasClass: key,
+                    value: String(val)
+                });
+                delete obj[key]; // remove processed property
+            }
+        }
+
+        return properties;
+    }
+    /**
+     * Add hasProperty, hasSourceLink or hasTargetLink arrays to JSON-LD output
+     */
+    protected addConfigurablesToJSONLD(
+        jld: JsonObject,
+        anEl: IAnElement | AnEntity | ARelationship,
+        hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
+    ): JsonObject {
+        const items = (anEl as any)[hasX];
+        //    LOG.debug('addConfigurablesToJSONLD:', jld, anEl, hasX, items);
+
+        if (!Array.isArray(items)) {
+            return jld;
+        }
+
+        const grouped = new Map<TPigId, JsonObject[]>();
+
+        for (const item of items) {
+            const propValue: Record<string, JsonValue> = {
+                ['pig:itemType']: { ['@id']: item.itemType } as JsonObject
+            };
+
+            // Add value if present (only for AProperty)
+            if ('value' in item && item.value !== undefined) {
+                propValue['@value'] = item.value;
+            }
+
+            // Add idRef if present
+            if (item.idRef !== undefined) {
+                propValue['@id'] = item.idRef;
+            }
+
+            const key = item.hasClass as TPigId;
+            if (!grouped.has(key)) {
+                grouped.set(key, []);
+            }
+
+            const gr = grouped.get(key);
+            if (Array.isArray(gr))
+                gr.push(propValue as JsonObject);
+            else
+                throw new Error(`Invalid group for key: ${key}`);
+        }
+
+        // Add grouped items to JSON-LD
+        for (const [key, values] of grouped) {
+            jld[key] = values as JsonValue;
+        }
+
+        delete jld[hasX];
+        return jld;
     }
 }
 
@@ -951,7 +1169,7 @@ export class AnEntity extends AnElement implements IAnEntity {
     }
     getJSONLD() {
         let jld = super.getJSONLD();
-        jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
+        jld = this.addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
     //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
@@ -1017,13 +1235,13 @@ export class ARelationship extends AnElement implements IARelationship {
     }
     fromJSONLD(itm: any) {
         const _itm = super.fromJSONLD(itm) as any;
-        _itm.hasSourceLink = collectConfigurablesFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
+        _itm.hasSourceLink = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
         return _itm;
     }
     getJSONLD() {
         let jld = super.getJSONLD();
-        jld = addConfigurablesToJSONLD(jld, this, 'hasSourceLink');
-        jld = addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
+        jld = this.addConfigurablesToJSONLD(jld, this, 'hasSourceLink');
+        jld = this.addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
         //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
@@ -1035,17 +1253,13 @@ export class ARelationship extends AnElement implements IARelationship {
     }
 }
 // For packages:
-export interface IAPackage extends IIdentifiable {
+export interface IAPackage extends IAnElement {
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[];
-    modified?: TISODateString;
-    creator?: string;
 }
-export class APackage extends Identifiable implements IAPackage {
+export class APackage extends AnElement implements IAPackage {
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[] = [];
-    modified?: TISODateString;
-    creator?: string;
 
     constructor() {
         super({ itemType: PigItemType.aPackage });
@@ -1062,7 +1276,7 @@ export class APackage extends Identifiable implements IAPackage {
                 return Msg.create(681, 'aPackage', pkg.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'aRelationship', pkg.id, err?.message ?? String(err));
+            return Msg.create(682, 'aPackage', pkg.id, err?.message ?? String(err));
         }
 
         // Call parent validation
@@ -1085,7 +1299,7 @@ export class APackage extends Identifiable implements IAPackage {
     set(pkg: IAPackage, options?:any): this {
         const _pkg = { ...pkg };
         // ToDo: strip?
-
+        _pkg.modified = normalizeDateTime(_pkg.modified) || new Date().toISOString();
         // Instantiate each graph item:
         const instantiatedGraph: TPigItem[] = [];
         const errors: string[] = [];
@@ -1116,8 +1330,6 @@ export class APackage extends Identifiable implements IAPackage {
                 super.set(_pkg);
                 this.context = _pkg.context;
                 this.graph = instantiatedGraph;
-                this.modified = _pkg.modified;
-                this.creator = _pkg.creator;
             }
         }
 
@@ -1131,20 +1343,18 @@ export class APackage extends Identifiable implements IAPackage {
             context: this.context,
             graph: this.graph?.map(item => {
                 return item.get();
-            }),
-            modified: this.modified,
-            creator: this.creator
+            })
         } as IAPackage;
         return LIB.stripUndefinedAndNull(pkg);
     }
 
-    setJSONLD(doc: any, options?:any): APackage {
+    setJSONLD(doc: any, options?:any) {
         // ToDo: Perhaps we must normalize the ids like in XML import to assure they have a namespace or are an URI
         // Extract @context
-        const ctx = this.extractContextJSONLD(doc);
+        const ctx = this.extractContextLD(doc);
         
         // Extract package metadata
-        const meta = this.extractMetadataJSONLD(doc);
+        const meta = this.extractMetadataLD(doc);
         
         // Extract and process @graph
         const graph: any[] = Array.isArray(doc['@graph']) 
@@ -1158,16 +1368,12 @@ export class APackage extends Identifiable implements IAPackage {
         // Transform the items to native JSON:
         const graphJson = graph.map(itm => this.ldToJson(itm));
 
-        // Call set to validate and return all items including package
+        // Call set to validate and set all items including package
         this.set({
+            ...meta,
             itemType: PigItemType.aPackage,
-            id: meta.id,
-            title: meta.title,
-            description: meta.description,
             context: ctx,
-            graph: graphJson,
-            modified: meta.modified,
-            creator: meta.creator
+            graph: graphJson
         } as IAPackage, options);
 
         // LOG.debug(`APackage.setJSONLD: package ${JSON.stringify(this, null, 2)} set with status`, this.lastStatus);
@@ -1221,10 +1427,9 @@ export class APackage extends Identifiable implements IAPackage {
         }
 
         const doc = parsed.response as JsonObject;
-        doc.modified = normalizeDateTime(doc.modified) || new Date().toISOString();
         // LOG.debug('APackage.setXML: parsed XML to JSON', doc);
 
-        // 2. Extract namespaces (if needed in future)
+        // 2. Extract namespaces
         const ctx = this.extractContextXML(xmlString, doc.id as string);
 
         // 3. Extract package metadata
@@ -1247,6 +1452,8 @@ export class APackage extends Identifiable implements IAPackage {
             description: doc.description,
             context: ctx,
             graph: graph,
+            revision: doc.revision,
+            priorRevision: doc.priorRevision,
             modified: doc.modified,
             creator: doc.creator
         } as unknown as IAPackage, options);
@@ -1384,11 +1591,11 @@ export class APackage extends Identifiable implements IAPackage {
         // 5. Collect configurable properties from JSON-LD format
         // In JSON-LD, configurable properties have ID-string as tag
         if ([PigItemType.anEntity, PigItemType.aRelationship].includes(json.itemType)) {
-            json.hasProperty = collectConfigurablesFromJSONLD(json, PigItemType.aProperty) as IAProperty[];
-            json.hasTargetLink = collectConfigurablesFromJSONLD(json, PigItemType.aTargetLink) as IALink[];
+            json.hasProperty = this.collectConfigurablesFromJSONLD(json, PigItemType.aProperty) as IAProperty[];
+            json.hasTargetLink = this.collectConfigurablesFromJSONLD(json, PigItemType.aTargetLink) as IALink[];
         }
         if ([PigItemType.aRelationship].includes(json.itemType)) {
-            json.hasSourceLink = collectConfigurablesFromJSONLD(json, PigItemType.aSourceLink) as IALink[];
+            json.hasSourceLink = this.collectConfigurablesFromJSONLD(json, PigItemType.aSourceLink) as IALink[];
         }
 
         return json;
@@ -1398,9 +1605,9 @@ export class APackage extends Identifiable implements IAPackage {
      * @param doc - Parsed JSON-LD document
      * @returns Context as INamespace[], string, Record<string, string>, or undefined
      */
-    private extractContextJSONLD(doc: any): INamespace[]{
+    private extractContextLD(doc: any): INamespace[]{
         const ctx = doc['@context'] || doc.context;
-        // LOG.debug('extractContextJSONLD (1): ',ctx);
+        // LOG.debug('extractContextLD (1): ',ctx);
 
         if (!ctx) {
             LOG.warn(`JSON-LD Package ${doc.id || 'unknown' }: no @context found`);
@@ -1503,7 +1710,7 @@ export class APackage extends Identifiable implements IAPackage {
      * @param doc - Parsed JSON-LD document
      * @returns Metadata object with id, modified, creator, title, and description
      */
-    private extractMetadataJSONLD(doc: any): {
+    private extractMetadataLD(doc: any): {
         id: TPigId;
         modified?: TISODateString;
         creator?: string;
@@ -1512,6 +1719,8 @@ export class APackage extends Identifiable implements IAPackage {
     } {
         const metadata = {
             id: normalizeId(doc['@id'] || doc.id, PigItemType.aPackage),
+            revision: doc.revision,
+            priorRevision: doc.priorRevision,
             modified: normalizeDateTime(doc['dcterms:modified'] || doc.modified) || new Date().toISOString(), // TISODateString
             creator: doc['dcterms:creator'] || doc.creator, // string
             title: undefined as ILanguageText[] | undefined, // to be extracted
@@ -1624,17 +1833,14 @@ function extractId(obj: unknown): string | undefined {
         if (input.trim().length < 1) {
             Msg.create(624, fieldName);
         }
-        if (isValidIdString(input))
+        if (PigItem.isValidIdString(input))
             return rspOK;
     }
     return Msg.create(625, fieldName);
 } */
-function isValidIdString(input: string): boolean {
-    return typeof(input) == 'string' && (RE.termWithNamespace.test(input) || RE.uri.test(input));
-}
 /**
  * Validate that a value is a non-empty array whose elements are id-strings.
- * - id-string: a string accepted by `isValidIdString`
+ * - id-string: a string accepted by `PigItem.isValidIdString`
  * @param input  value to check
  * @param fieldName  name used in error messages
  * @returns IRsp (rspOK on success, error IRsp on failure)
@@ -1658,7 +1864,7 @@ export function validateIdStringArray(
     }
 
     for (let i = 0; i < input.length; i++) {
-        if (!isValidIdString(input[i])) {
+        if (!PigItem.isValidIdString(input[i])) {
             return Msg.create(632, fieldName, i);
         }
     }
@@ -1690,7 +1896,7 @@ export function validateIdStringArray(
 /**
  * Validate that a value is a non-empty array whose elements are id-objects.
  * - id-object = plain object (not array) with a single string property 'id' or '@id'
- *   whose value matches `isValidIdString`.
+ *   whose value matches `PigItem.isValidIdString`.
  * @param input  value to check
  * @param fieldName  name used in error messages
  * @returns IRsp (rspOK on success, error IRsp on failure)
@@ -1710,7 +1916,7 @@ function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
         }
         const obj = el as Record<string, unknown>;
         const candidate = Object.prototype.hasOwnProperty.call(obj, '@id') ? obj['@id'] : obj['id'];
-        if (typeof candidate !== 'string' || !isValidIdString(candidate)) {
+        if (typeof candidate !== 'string' || !PigItem.isValidIdString(candidate)) {
             return Msg.create(634, fieldName, i);
         }
         const keys = Object.keys(obj);
@@ -1740,7 +1946,7 @@ function makeIdObjects(
     // primitives
     if (node === null || node === undefined) return node;
     if (typeof node === 'string') {
-        return isValidIdString(node) ? ({ [idKey]: node } as JsonObject) : node;
+        return PigItem.isValidIdString(node) ? ({ [idKey]: node } as JsonObject) : node;
     }
     if (typeof node === 'number' || typeof node === 'boolean') return node;
 
@@ -1767,7 +1973,7 @@ function makeIdObjects(
             if (k === idKey) {
                 // keep the actual id property unchanged
                 obj[k] = v;
-            } else if (typeof v === 'string' && isValidIdString(v)) {
+            } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
                 obj[k] = { [idKey]: v } as unknown as JsonValue;
             } else {
                 obj[k] = makeIdObjects(v, options);
@@ -1782,7 +1988,7 @@ function makeIdObjects(
         if (k === idKey) {
             // preserve '@id' raw value
             out[k] = v;
-        } else if (typeof v === 'string' && isValidIdString(v)) {
+        } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
             out[k] = { [idKey]: v } as unknown as JsonValue;
         } else {
             out[k] = makeIdObjects(v, options);
@@ -1855,7 +2061,7 @@ function normalizeId(id: string, itemType: PigItemTypeValue): string {
     }
 
     // Already has namespace or is URI?
-    if (isValidIdString(id)) {
+    if (PigItem.isValidIdString(id)) {
         return id;
     }
 
@@ -1962,144 +2168,6 @@ function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
         }
     }
     return rspOK;
-}
-/**
- * Collect configurable properties and references from a JSON-LD object.
- * In JSON-LD, configurable properties have an ID-string as key (namespace:name or URI)
- * and their value is an array of objects with itemType 'pig:aProperty'.
- * This function extracts those properties and transforms them into a hasProperty array,
- * where the original key becomes the 'hasClass' field of each property.
- * 
- * @param obj - The input object (typically from JSON-LD)
- * @returns Array of IAProperty objects, or undefined if no properties found
- */
-function collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAProperty[] | IALink[] | undefined {
-    if (!obj || typeof obj !== 'object') return undefined;
-
-    const properties: IAProperty[] = [];
-
-    // Standard PIG fields that should NOT be collected as properties;
-    // the tags have already been renamed with MVF.renameJsonTags( ..., MVF.fromJSONLD):
-    const skipKeys = new Set(MVF.toJSONLD.keys());
-
-    //LOG.debug('collect 1',obj,itype);
-    for (const key of Object.keys(obj)) {
-        // Skip known metadata keys and standard PIG fields
-        if (skipKeys.has(key)) continue;
-
-        // Check if key is a valid ID string (namespace:name or URI)
-        if (!isValidIdString(key)) continue;
-
-        const val = obj[key];
-        //LOG.debug('collect 2', key,val);
-
-        // Handle array of property values
-        if (Array.isArray(val)) {
-            for (const item of val) {
-                if (item && typeof item === 'object') {
-                    // Check if it has itemType 'pig:aProperty' (may be an id-object)
-                    // the tags have already been renamed:
-                    const itemTypeValue = item.itemType /* || (item['pig:itemType'] && extractId(item['pig:itemType'])) */;
-
-                    if (itemTypeValue === itype /* || !itemTypeValue*/) {
-                        // Add the property with the key as its hasClass reference
-                        properties.push({
-                            itemType: itype,
-                            hasClass: key,
-                            // itype == PigItemType.Property: value in case of a plain value 
-                            value: item.value /*|| item['@value'] */,
-                            // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
-                            // itype == PigItemType.Link: idRef is mandatory
-                            idRef: item.id,
-                            composes: item.composes
-                        });
-                    delete obj[key]; // remove processed property
-                    }
-                }
-            }
-        }
-        // Handle single property value (non-array)
-        else if (val && typeof val === 'object') {
-            const itemTypeValue = val.itemType || (val['pig:itemType'] && extractId(val['pig:itemType']));
-
-            if (itemTypeValue === itype /* || !itemTypeValue */) {
-                properties.push({
-                    itemType: itype,
-                    hasClass: key,
-                    // itype == PigItemType.Property: value in case of a plain value 
-                    value: val.value /*|| item['@value'] */,
-                    // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
-                    // itype == PigItemType.Link: idRef is mandatory
-                    idRef: val.id,
-                    composes: val.composes
-                });
-                delete obj[key]; // remove processed property
-            }
-        }
-        // Handle primitive values (string, number, boolean) - create simple properties
-        else if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
-            properties.push({
-                itemType: itype,
-                hasClass: key,
-                value: String(val)
-            });
-            delete obj[key]; // remove processed property
-        }
-    }
-
-    return properties;
-}
-/**
- * Add hasProperty, hasSourceLink or hasTargetLink arrays to JSON-LD output
- */
-function addConfigurablesToJSONLD(
-    jld: JsonObject,
-    anEl: IAnElement | AnEntity | ARelationship,
-    hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
-): JsonObject {
-    const items = (anEl as any)[hasX];
-//    LOG.debug('addConfigurablesToJSONLD:', jld, anEl, hasX, items);
-
-    if (!Array.isArray(items)) {
-        return jld;
-    }
-
-    const grouped = new Map<TPigId, JsonObject[]>();
-
-    for (const item of items) {
-        const propValue: Record<string, JsonValue> = {
-            ['pig:itemType']: { ['@id']: item.itemType } as JsonObject
-        };
-
-        // Add value if present (only for AProperty)
-        if ('value' in item && item.value !== undefined) {
-            propValue['@value'] = item.value;
-        }
-
-        // Add idRef if present
-        if (item.idRef !== undefined) {
-            propValue['@id'] = item.idRef;
-        }
-
-        const key = item.hasClass as TPigId;
-        if (!grouped.has(key)) {
-            grouped.set(key, []);
-        }
-
-        const gr = grouped.get(key);
-        if (Array.isArray(gr))
-            gr.push(propValue as JsonObject);
-        else
-            throw new Error(`Invalid group for key: ${key}`);
-    }
-
-    // Add grouped items to JSON-LD
-    for (const [key, values] of grouped) {
-        jld[key] = values as JsonValue;
-    }
-
-    delete jld[hasX];
-    return jld;
 }
 /**
  * Parse XML string and convert to JSON object
@@ -2286,7 +2354,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         const propertyName = MVF.mapTerm(tagName, MVF.fromXML) as string;
 
         // Check if this property is a multi-language text field
-        const isMultiLang = isMultiLanguageText(propertyName);
+        const isMultiLang = PigItem.isMultiLanguageText(propertyName);
 
         // Check if this property needs IText wrapping (e.g. icon)
         const needsTextWrapper = requiresIText(propertyName);
@@ -2626,37 +2694,6 @@ function getXmlElementText(xmlElement: ElementXML): string {
     }
 }
 
-/**
- * Check if a property name represents a multi-language text field
- * These fields must always be arrays of ILanguageText objects according to pig-schemata.ts
- * 
- * Multi-language fields found in schemata:
- * - Property: title, description, enumeratedValue.title // the latter is handled through recursive iteration
- * - Link: title, description
- * - Entity: title, description
- * - Relationship: title, description
- * - AnEntity: title, description
- * - ARelationship: title, description
- *
- * ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
- */
-function isMultiLanguageText(propertyName: string): boolean {
-    // Remove namespace prefix for checking
-    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-    // All multi-language fields from PIG schemata that use LanguageText[]
-    const multiLangFields = new Set([
-        // Common fields across all PIG classes and instances
-        'title',           // dcterms:title - used in Property, Link, Entity, Relationship, AnEntity, ARelationship
-        'description'      // dcterms:description - used in Property, Link, Entity, Relationship, AnEntity, ARelationship
-
-        // Note: enumeratedValue.title is handled separately in xmlElementToJson()
-        // because it's nested within enumeratedValue objects
-    ]);
-
-    return multiLangFields.has(localName);
-}
-
 // Helper function to get localized text from multi-language array
 export function getLocalText(texts?: ILanguageText[], lang?: tagIETF): string {
     if (!texts || texts.length === 0) return '';
@@ -2679,7 +2716,7 @@ export function getLocalText(texts?: ILanguageText[], lang?: tagIETF): string {
 /**
  * Replace top-level string values that are valid id-strings with id-objects.
  * - Non-recursive (flat): only replaces direct properties of the provided object.
- * - Uses existing `isValidIdString` to decide whether a string is an ID.
+ * - Uses existing `PigItem.isValidIdString` to decide whether a string is an ID.
  * - options.idKey: property name for the id-object (default '@id')
  * - options.mutate: if true, modify the input object in-place; otherwise return a shallow copy
  *
@@ -2694,7 +2731,7 @@ function makeIdObjects(
     for (const k of Object.keys(obj)) {
         const v = obj[k];
         // replace all id-strings except for the '@id' property itself:
-        if (k !== idKey && typeof v === 'string' && isValidIdString(v)) {
+        if (k !== idKey && typeof v === 'string' && PigItem.isValidIdString(v)) {
             // replace string by an id-object, using the configured idKey
             target[k] = { [idKey]: v } as unknown as JsonValue;
         } else if (!mutate) {
