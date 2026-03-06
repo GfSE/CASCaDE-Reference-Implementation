@@ -125,7 +125,7 @@ export class XmlImporter {
             return rspOK;
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : String(err);
-            return Msg.create(690, 'JSON-LD', errorMessage);
+            return Msg.create(690, 'XML', errorMessage);
         }
     }
 

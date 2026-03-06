@@ -61,6 +61,30 @@ h3 {
     /*background: linear-gradient(135deg, #ad0505, #ff6d05) !important;
     color: white !important;*/
 }
+/* styles used in exportHTML: */
+.meta-error {
+    color: red;
+    background-color: #fcadad;
+}
+.meta-aPackage,
+.meta-anEntity,
+.meta-aRelationship {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.col-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 50%;
+}
+.col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
 .dl-horizontal {
     display: grid;
     grid-template-columns: max-content 1fr;
@@ -75,33 +99,12 @@ h3 {
     grid-column: 1;
     margin: 0;
 }
+
 .dl-horizontal dd {
     margin: 0;
     grid-column: 2;
     word-break: break-word;
     white-space: normal;
-}
-/* styles used in exportHTML: */
-.meta-error {
-    color: red;
-    background-color: #fcadad;
-}
-.col-main {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 0;
-}
-.col-right {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-.meta-aPackage
-.meta-anEntity
-.meta-aRelationship {
-    display: flex;
-    gap: 1rem;
 }
 /*.meta-aProperty {
     flex: 1;

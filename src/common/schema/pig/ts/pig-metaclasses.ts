@@ -43,8 +43,6 @@
  *  - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
  *    This code could just *ignore* additional properties.
  *  - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
- *  - extend aPackage from AnElement to have revision history for packages as well
- *    and then use metadataToHTML() for packages as well.
  *  - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
  */
 
