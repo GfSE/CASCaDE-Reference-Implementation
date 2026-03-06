@@ -33,7 +33,7 @@
  */
 
 
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, getLocalText /*, TPigInstance*/ } from '../../schema/pig/ts/pig-metaclasses';
+import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, getLocalText, TPigAnElement } from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, LIB } from '../../lib/helpers';
 
 export type stringHTML = string;  // contains HTML code
@@ -63,17 +63,14 @@ export const toHTML = {
         const titleText = passify(getLocalText(pkg.title, lang));
         const descText = passify(getLocalText(pkg.description, lang));
 
-        const pkgMetadata = `<div class="meta-aPackage" style="display: flex; gap: 1rem;">
-                    <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
+        const pkgMetadata = `<div class="meta-aPackage">
+                    <div class="col-main" style="flex: 0 0 ${widthMain};">
                         <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
                         ${descText ? `<div class="meta-description">${descText}</div>` : ''}
                     </div>
-                    <div class="col-right" style="flex: 1; min-width: 0;">
+                    <div class="col-right">
                         <dl class="dl-horizontal">
-                            <dt>Item Type</dt><dd>aPackage</dd>
-                            <dt>ID</dt><dd>${passify(pkg.id)}</dd>
-                            ${pkg.modified ? `<dt>Modified</dt><dd>${LIB.getLocalDate(pkg.modified, lang)}</dd>` : ''}
-                            ${pkg.creator ? `<dt>Creator</dt><dd>${passify(pkg.creator)}</dd>` : ''}
+                            ${metadataToHTML(pkg, lang)}
                             <dt>Items in Graph</dt><dd>${pkg.graph.length}</dd>
                         </dl>
                     </div>
@@ -105,7 +102,7 @@ export const toHTML = {
         const descText = passify(getLocalText(entity.description, lang));
 
         let propertiesHTML = '';
-        propertiesHTML = '<div class="meta-aProperty"><dl class="dl-horizontal">';
+        propertiesHTML = '<div class="col-right"><dl class="dl-horizontal">';
         if (entity.hasProperty?.length > 0) {
             // the configured properties:
             for (const prop of entity.hasProperty) {
@@ -120,12 +117,12 @@ export const toHTML = {
         propertiesHTML += metadataToHTML(entity, lang);
         propertiesHTML += '</dl></div>';
 
-        return `<div class="meta-anEntity" style="display: flex; gap: 1rem;">
-                    <div class="col-main" style="flex: 0 0 ${widthMain}; min-width: 0;">
+        return `<div class="meta-anEntity">
+                    <div class="col-main" style="flex: 0 0 ${widthMain};">
                         ${titleText ? `<h3 class="meta-title">${titleText}</h3>` : ''}
                         ${descText ? `<div class="meta-description">${descText}</div>` : ''}
                     </div>
-                    <div class="col-right" style="flex: 1; min-width: 0;">
+                    <div class="col-right" >
                         ${propertiesHTML}
                     </div>
                 </div>`;
@@ -307,10 +304,16 @@ function passify(html: string): string {
     return passified;
 }
 
-//function metadataToHTML(item: TPigInstance, lang: tagIETF): string { ... as soon as aPackage is extended from AnElement
-function metadataToHTML(item: AnEntity | ARelationship, lang: tagIETF): string {
-    return `<dt>Item Type</dt><dd>anEntity</dd>
-                <dt>ID</dt><dd>${passify(item.id)}</dd>
+/**
+ * Convert metadata of a PIG element to HTML representation
+ * - the caller must provide a frame <div><dl>...</dl></div>
+ * @param item - PIG instance
+ * @param lang - Language tag for localization
+ * @returns HTML string representing the metadata
+ */
+function metadataToHTML(item: TPigAnElement, lang: tagIETF): string {
+    return `<dt>Item Type</dt><dd>${item.itemType}</dd>
+                <dt>ID</dt><dd>${item.id}</dd>
                 <dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>
                 <dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>`
                 + (item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : '')

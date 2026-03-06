@@ -92,9 +92,26 @@ h3 {
     color: red;
     background-color: #fcadad;
 }
-/*.meta-aPackage {
+.col-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+.col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.meta-aPackage
+.meta-anEntity
+.meta-aRelationship {
     display: flex;
     gap: 1rem;
+}
+/*.meta-aProperty {
+    flex: 1;
+    min-width: 0;
 }
 .meta-title {
     font-size: 1.8rem;

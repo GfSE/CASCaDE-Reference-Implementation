@@ -62,8 +62,8 @@ export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. '
 export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
 export type TPigClass = Property | Link | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
-export type TPigAnElement = AnEntity | ARelationship;
-export type TPigItem = APackage | TPigClass | TPigAnElement;
+export type TPigAnElement = APackage | AnEntity | ARelationship;
+export type TPigItem = TPigClass | TPigAnElement;
 export type stringXML = string;  // contains XML code
 export type ElementXML = globalThis.Element;  // DOM Element typ
 
@@ -1760,7 +1760,7 @@ export class APackage extends AnElement implements IAPackage {
      * @returns IRsp with instantiated TPigItem in response, or error status
      */
     private createItem(item: any, options?: any): IRsp<unknown> {
-        const source = options?.source || 'unknown source';
+        const source = options?.source || 'unknown';
         const id = item.id ?? 'unknown';
 
         // Validate item has required itemType
@@ -2567,7 +2567,7 @@ function processConfigurableLink(elem: ElementXML, itemType: PigItemTypeValue): 
 }
 
 /**
- * Check if a property name needs IText wrapper ({ value: "..." })
+ * Check if a property needs IText wrapper ({ value: "..." })
  * Currently only 'icon' according to IElement interface
  */
 function requiresIText(propertyName: string): boolean {
