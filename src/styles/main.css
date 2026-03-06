@@ -48,12 +48,6 @@ h3 {
 .v-toolbar-title__placeholder {
     font-size: 1.8rem;
     text-align: center;
-    .main-content {
-        height: 100%;
-        min-height: 0;
-        /* Kein overflow: hidden! */
-        /* Kein margin-top! */
-    }
 }
 .main-content {
     height: 100%;

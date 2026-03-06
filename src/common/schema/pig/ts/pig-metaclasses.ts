@@ -540,6 +540,7 @@ interface IAnElement extends IIdentifiable {
     modified: TISODateString;
     creator?: string;
     hasProperty?: IAProperty[];
+    hasTargetLink?: IALink[];  // array must have exactly one element as checked by the JSON schema
 }
 abstract class AnElement extends Identifiable implements IAnElement {
     revision?: TRevision;
@@ -547,6 +548,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
     modified!: TISODateString;
     creator?: string;
     hasProperty!: AProperty[]; // instantiated AProperty items
+    hasTargetLink!: ATargetLink[];  // array must have exactly one element as checked by the JSON schema
     protected constructor(itm: IItem) {
         super(itm);
     }
@@ -565,6 +567,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
         this.creator = itm.creator;
 
         this.hasProperty = itm.hasProperty ? itm.hasProperty.map(p => new AProperty().set(p)) : [];
+        this.hasTargetLink = itm.hasTargetLink ? itm.hasTargetLink.map(t => new ATargetLink().set(t)) : [];
     //    LOG.debug('anEl.set 9',itm.hasProperty, this.hasProperty);
         // made chainable in concrete subclass
         return this;
@@ -576,7 +579,8 @@ abstract class AnElement extends Identifiable implements IAnElement {
             priorRevision: this.priorRevision,
             modified: this.modified,
             creator: this.creator,
-            hasProperty: this.hasProperty.length>0? this.hasProperty.map(p => p.get()) : undefined
+            hasProperty: this.hasProperty.length>0? this.hasProperty.map(p => p.get()) : undefined,
+            hasTargetLink: this.hasTargetLink.length > 0 ? this.hasTargetLink.map(t => t.get()) : undefined
         } as IAnElement;
     }
     protected fromJSONLD(itm: any) {
@@ -599,9 +603,10 @@ abstract class AnElement extends Identifiable implements IAnElement {
         return this.set(_itm);
     }
     protected getJSONLD() {
-        const jld = super.getJSONLD();
+        let jld = super.getJSONLD();
 
-        return this.addConfigurablesToJSONLD(jld, this, 'hasProperty');
+        jld = this.addConfigurablesToJSONLD(jld, 'hasProperty');
+        return this.addConfigurablesToJSONLD(jld, 'hasTargetLink');
     }
     /**
      * Collect configurable properties and references from a JSON-LD object.
@@ -694,12 +699,10 @@ abstract class AnElement extends Identifiable implements IAnElement {
      */
     protected addConfigurablesToJSONLD(
         jld: JsonObject,
-        anEl: IAnElement | AnEntity | ARelationship,
         hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
     ): JsonObject {
-        const items = (anEl as any)[hasX];
-        //    LOG.debug('addConfigurablesToJSONLD:', jld, anEl, hasX, items);
-
+        const items = (this as any)[hasX];
+        //    LOG.debug('addConfigurablesToJSONLD:', jld, this, hasX, items);
         if (!Array.isArray(items)) {
             return jld;
         }
@@ -745,7 +748,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
 //////////////////////////////////////
 // The concrete classes:
-export interface IenumeratedValue {
+export interface IEnumeratedValue {
     id: TPigId;
     // Either title or value must be present, but not both; see schemata:
     // with lang for xs:string with multiple languages, optional lang for xs:string with a single language:
@@ -761,7 +764,7 @@ export interface IProperty extends IIdentifiable {
     pattern?: string;  // a RegExp pattern, only used for string datatype
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
-    enumeratedValue?: IenumeratedValue[]; // array of allowed values, datatype-dependent
+    enumeratedValue?: IEnumeratedValue[]; // array of allowed values, datatype-dependent
     defaultValue?: string;   // in PIG, values of all datatypes are strings
     unit?: string;  // according to SI units
     composes?: TPigId[];  // must be URI of another Property, no cyclic references
@@ -774,7 +777,7 @@ export class Property extends Identifiable implements IProperty {
     pattern?: string;
     minInclusive?: number;
     maxInclusive?: number;
-    enumeratedValue?: IenumeratedValue[]; 
+    enumeratedValue?: IEnumeratedValue[]; 
     defaultValue?: string;
     unit?: string;
     composes?: TPigId[];
@@ -1120,11 +1123,9 @@ export class ATargetLink extends ALink implements IALink {
     }
 }
 
-export interface IAnEntity extends IAnElement {
-    hasTargetLink?: IALink[];  // optional, must hold anEntity or aRelationship URIs
-}
-export class AnEntity extends AnElement implements IAnEntity {
-    hasTargetLink!: ATargetLink[];
+export type IAnEntity = IAnElement;
+// export interface IAnEntity extends IAnElement {}
+export class AnEntity extends AnElement implements IAnElement {
     constructor() {
         super({ itemType: PigItemType.anEntity });
     }
@@ -1164,12 +1165,10 @@ export class AnEntity extends AnElement implements IAnEntity {
     get() {
         return LIB.stripUndefinedAndNull({
             ... super.get(),
-            hasTargetLink: this.hasTargetLink.length>0 ? this.hasTargetLink.map(t => t.get()) : undefined
         });
     }
     getJSONLD() {
-        let jld = super.getJSONLD();
-        jld = this.addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
+        const jld = super.getJSONLD();
     //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
@@ -1183,11 +1182,9 @@ export class AnEntity extends AnElement implements IAnEntity {
 
 export interface IARelationship extends IAnElement {
     hasSourceLink: IALink[];  // array must have exactly one element as checked by the JSON schema
-    hasTargetLink: IALink[];  // array must have exactly one element as checked by the JSON schema
 }
 export class ARelationship extends AnElement implements IARelationship {
     hasSourceLink!: ASourceLink[];
-    hasTargetLink!: ATargetLink[];
     constructor() {
         super({ itemType: PigItemType.aRelationship });
     }
@@ -1222,7 +1219,6 @@ export class ARelationship extends AnElement implements IARelationship {
         if (this.lastStatus.ok) {
             super.set(_itm);
             this.hasSourceLink = _itm.hasSourceLink ? _itm.hasSourceLink.map(s => new ASourceLink().set(s)) : [];
-            this.hasTargetLink = _itm.hasTargetLink ? _itm.hasTargetLink.map(t => new ATargetLink().set(t)) : [];
         }
         return this;
     }
@@ -1230,7 +1226,6 @@ export class ARelationship extends AnElement implements IARelationship {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
             hasSourceLink: this.hasSourceLink.length > 0 ? this.hasSourceLink.map(s => s.get()) : undefined,
-            hasTargetLink: this.hasTargetLink.length > 0 ? this.hasTargetLink.map(t => t.get()) : undefined
         }) as IARelationship;
     }
     fromJSONLD(itm: any) {
@@ -1240,8 +1235,7 @@ export class ARelationship extends AnElement implements IARelationship {
     }
     getJSONLD() {
         let jld = super.getJSONLD();
-        jld = this.addConfigurablesToJSONLD(jld, this, 'hasSourceLink');
-        jld = this.addConfigurablesToJSONLD(jld, this, 'hasTargetLink');
+        jld = this.addConfigurablesToJSONLD(jld, 'hasSourceLink');
         //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
@@ -2465,7 +2459,7 @@ function requiresArray(propertyName: string, parentItemType?: PigItemTypeValue):
 
     // Properties that ALWAYS require arrays
     const alwaysArrayProps = new Set([
-        'enumeratedValue',        // Property.enumeratedValue: IenumeratedValue[]
+        'enumeratedValue',        // Property.enumeratedValue: IEnumeratedValue[]
         'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
         'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
         'composedProperty',     // Property.composedProperty?: TPigId[]
