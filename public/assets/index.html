@@ -3,11 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Product Information Graph (PIG) - A universal graph metamodel for integrated product data">
+    <title>CASCaRA Graph for Integrated Product Data | GfSE</title>
+    <meta name="description" content="A Universal Graph Metamodel and Ontology for Integrated Product Data">
     <meta name="author" content="Dr. Oskar von Dungern | Gesellschaft für Systems Engineering e.V. (GfSE)">
-    <meta name="keywords" content="Product Information Graph, PIG, Knowledge Graph, Systems Engineering, Ontology, RDF, JSON-LD">
-    <title>Product Information Graph (PIG) | CASCaRA | GfSE</title>
+    <meta name="keywords" content="CASCaRA Graph, Knowledge Graph, Property Graph, Systems Engineering, Ontology, RDF, JSON-LD">
     <style>
+		:root {
+			--github-icon: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEQUlEQVRYR+1WbUiVZxi+jt+oKOjykzQh01yo1Q8Hzsppc7ko8ZPpKZtNtCylrbUm9muYbmWaRS1qToNOH1rqJGEiy4/8kayTqMuZQU4FCZyg6Px2u+8X3pdzXs95zzn9iUEXPPDyPvdzP9dzf6v+JeAtQvWOwP/KAisrK+ju7kZnRwcGBwfx98SEED3u7u7YFBSEqB07EBERAWtra7OjyqwYWFpaws2aGly9cgVjY2OKyn19fXHk6FEczMyEnZ2dSSImCfBLc3NyMPD8uUllugLBmzfjx2vXEBwcrHhOkUBXVxcyDxzAzMyMRZeLws7Ozqgmy30YFWX0vFECfX192L9vH/6ZnX2jy8VDjo6OqG9sRFhYmEE9BgnM0qUx0dEYHh4WDn26dy/SMzLwCym6X1eH5eVlg8o4+BKTkrA/IQG19+6hsaFBkPPz98dvjx6BLSKHQQKlJSWoKC+XZM+XlUFNrmAMDAygv78fIeTj99atE/5NUDb8Sf/Z3+9v2SL8u3vnDgry8yUd+fRdWFRkmsD09DS2hYfr+b28ogKfpadb5Iq62locy8uTzjg5OUHb0wNXV1c9PWssoLl1C1+eOKEn9F1xMbKzsy0iUFNdjW9OndI7c/7CBajVamUC2YcPo6mpSRIKCAhAx+PHsLW1tYgAF63oXbvwgtJYBMfST1VVygQ+oEo2/OqVJPTVyZP4WvYSc5lUkOtKz56VxP03bMATqqS6WOMC//XrsbCwIMlUXr6M1NRUc+/Uk6uvr8cRKmIi7O3t8dfoqDIBb09P6I4IZeS3DJnfzGUjzwSVSoXx16+VCWzauBGcCSKOHT+OojNnzL1TT+770lKU0wNEuLi44MXLl8oEPo6NRW9vryQURLnd1t4OZm8J2IqxMTH4g2qGiNDQULS0tioT+Pb0afwsi9TKS5eQmpZmyf1CxcyjrqiLz7OyUEJWUQxC7vUpycl6QtxWiymauRyb6vWcfhqNBkWFhXrBzApriRTPDIoEVldXsZO619DQkOD7kJAQoaJNTk7Cz88PcXFxiN29Gzspx3XR1taG1pYW/EprdGRkjbUCAwPR3tkJKysrZQK829zcjKxDhwRB7gM+Pj5Q0+uZHENz+zY+Iv/qop3iJC0lxaibqqgyxsfHr9k32Iw4gDh/G6ibubm54XetFlpazQ8fwsvLCzm5ueCc1sXc3BwCqOsZQgJ1x6s0nBgKZKPzALfkpMRE9Dx7hk/27MEP587Bw8NDqhFyZTy2cRETrSQSCd+6FfcfPAA3I0NQnIimpqYEV/BkxL7zpNfP00t7KbXkvWFxcVEgoFvEIiMjwaaXd0DFIJSz5OGj8uJFYc3PzwvbIzSYygdOLt9MgOHg4ID8ggJh2djYGI0L3jA5lIqnx8fHceP6dWifPkUdmVSejpx+yeSybdu34wtq3d7e3ooXi5tmEzBL2xsIvSPw1i3wH6uc+bDyAyWeAAAAAElFTkSuQmCC");
+		}
+
+		.icon-github {
+			background-image: var(--github-icon);
+			width: 32px;
+			height: 32px;
+			margin-right: 8px;
+			background-size: contain;
+			background-repeat: no-repeat;
+			display: inline-block;
+		}
+
         * {
             margin: 0;
             padding: 0;
@@ -17,7 +31,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
+            color: #303030;
             background-color: #f5f5f5;
             padding: 20px;
         }
@@ -32,8 +46,7 @@
         }
 
         header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
+            background: #ffd800;
             padding: 40px 30px;
             text-align: center;
         }
@@ -41,13 +54,13 @@
         header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
-            font-weight: 300;
+            font-weight: 400;
         }
 
         header p {
             font-size: 1.1em;
             opacity: 0.9;
-            font-weight: 300;
+            font-weight: 400;
         }
 
         .content {
@@ -55,16 +68,27 @@
         }
 
         h2 {
-            color: #3498db;
+            color: #303030;
             margin: 36px 0 10px;
-            border-top: 2px solid #3498db;
+            border-top: 2px solid #303030;
             font-weight: 400;
         }
 
         h3 {
-            color: #3498db;
+            color: #303030;
             margin: 24px 0 10px;
             font-weight: 400;
+        }
+
+        a {
+            color: #2c3e50;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        a:hover {
+            color: #3498db;
         }
 
         .card-grid {
@@ -75,8 +99,7 @@
         }
 
         .card {
-            background: #fff;
-            border: 1px solid #e0e0e0;
+            background: #f8f9fa;
             border-radius: 8px;
             padding: 30px;
             transition: all 0.3s ease;
@@ -84,26 +107,12 @@
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            border-color: #3498db;
+            background: #e9ecef;
         }
 
         .card h3 {
             margin-top: 0;
             color: #2c3e50;
-        }
-
-        .card a {
-            display: inline-block;
-            color: #3498db;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .card a:hover {
-            color: #2980b9;
-            text-decoration: underline;
         }
 
         .resources-list {
@@ -115,25 +124,13 @@
             margin: 10px 0;
             padding: 15px;
             background: #f8f9fa;
-            border-left: 4px solid #3498db;
+            border-left: 4px solid #ffd800;
             border-radius: 4px;
             transition: background 0.2s;
         }
 
         .resources-list li:hover {
             background: #e9ecef;
-        }
-
-        .resources-list a {
-            color: #2c3e50;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-        }
-
-        .resources-list a:hover {
-            color: #3498db;
         }
 
         .resources-list .description {
@@ -183,8 +180,7 @@
         }
 
         .cta {
-            background: linear-gradient(135deg, #2980b9, #3498db);
-            color: white;
+            background: #ffd800;
             padding: 40px;
             border-radius: 8px;
             text-align: center;
@@ -192,48 +188,32 @@
         }
 
         .cta h3 {
-            color: white;
             margin-bottom: 15px;
         }
 
         .cta p {
-            font-size: 1.1em;
             margin-bottom: 25px;
         }
 
         .cta a {
             display: inline-block;
             background: white;
-            color: #3498db;
             padding: 15px 40px;
             border-radius: 5px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 1.1em;
             transition: all 0.3s;
             margin: 10px;
         }
 
         .cta a:hover {
-            background: #f8f9fa;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            background: #e9ecef;
         }
 
         footer {
-            background: #2c3e50;
-            color: white;
+            background: #ffd800;
             padding: 30px;
             text-align: center;
-        }
-
-        footer a {
-            color: #3498db;
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
         }
 
         @media (max-width: 768px) {
@@ -258,25 +238,32 @@
 <body>
     <div class="container">
         <header>
-            <h1>Product Information Graph</h1>
-            <p>A Universal Graph Metamodel for Integrated Product Data</p>
+            <h1>CASCaRA Graph</h1>
+            <p>A Universal Graph Metamodel and Ontology for Integrated Product Data</p>
         </header>
 
         <div class="content">
-			<p><strong>Product Information Graph (PIG)</strong> is a metamodel for representing and integrating product information from diverse sources into a knowledge graph. PIG enables seamless collaboration between different tools and domains throughout the entire product lifecycle.</p>
-			<p>This site publishes documentation and serves schemata with CORS enabled.</p>
+			<p>The <strong>CASCaRA Graph</strong> is defined by a metamodel and ontology for representing and integrating product information from diverse sources into a knowledge graph. It enables seamless collaboration between different tools and domains throughout the entire product lifecycle.</p>
+			<p>This site publishes documentation and serves the schemata as well as the ontology with CORS enabled.</p>
 
             <section>
                 <h2>Content</h2>
                 <ul class="resources-list">
                     <li>
-                        <p><strong>PIG Documentation:</strong> The latest revision as agreed by the CASCaRA Submission Team.<br/>
+                        <p><strong>Documentation:</strong> The latest revision as agreed by the CASCaRA Submission Team.<br/>
 							• <a href="./doc/metamodel/latest/">Metamodel</a><br/>
 							• Ontology <i>(in preparation)</i><br/>
 						</p>
                     </li>
                     <li>
-                        <p><strong>JSON-LD Schemata:</strong> The versions as agreed by the CASCaRA Submission Team.<br/>
+                        <p><strong>Reference Implementation:</strong> In development for verification and validation before standard submission.<br/>
+							• Release <i>(in preparation)</i><br/>
+							• Development "beta" Release <i>(in preparation)</i><br/>
+							• <a href="https://app-alpha.product-information-graph.org/" target="_blank">Development "alpha" Release</a><br/>
+						</p>
+                    </li>
+                    <li>
+                        <p><strong>JSON-LD Schemata:</strong> The versions as developed by the CASCaRA Submission Team.<br/>
 							• <a href="./schema/2026-02-18/jsonld/">Latest</a><br/>
 							• <a href="./schema/2026-02-18/jsonld/">2026-02-18</a><br/>
 							• <a href="./schema/2026-01-12/jsonld/">2026-01-12</a><br/>
@@ -291,14 +278,12 @@
                 <h2>Key Features</h2>
 				<div class="features">
 					<ul>
-						<li><strong>Separation of Concerns:</strong> Syntax and Semantics are separated, so that no software updates are needed, when the ontology evolves over time.</li>
-						<li><strong>Design for transformation:</strong> The PIG metamodel assures loss-less transformation between OWL/RDF (Knowledge Graphs), GQL (Property Graphs) and Object-oriented Programming.</li>
-						<li><strong>Federation:</strong> JSON-LD supports dataspaces with federated data under full control of the respective owners.</li>
-						<li><strong>Multi-Format Support:</strong> JSON-LD, RDF/Turtle, and Property Graphs</li>
-						<li><strong>Strict Validation:</strong> JSON Schema Draft-07 and SHACL-based validation</li>
-						<li><strong>Multi-Language Support:</strong> Built-in support for multilingual content with IETF language tags</li>
-						<li><strong>Versioning:</strong> Built-in revision control with <code>pig:revision</code> and <code>pig:priorRevision</code></li>
-						<li><strong>Specialization:</strong> Class hierarchies through <code>pig:specializes</code></li>
+						<li><strong>Separation of Concerns:</strong> Syntax and Semantics are separated, so that no software update is needed, when the ontology evolves over time.</li>
+						<li><strong>Transformation:</strong> The CASCaRA Metamodel assures loss-less transformation between Knowledge Graphs, Property Graphs and Object-oriented Programming.</li>
+						<li><strong>Federation:</strong> Supports dataspaces with federated data under full control of the respective owners.</li>
+						<li><strong>Versioning:</strong> Built-in revision control at the level of individual artifacts (entities) and their relationships.</li>
+						<li><strong>Specialization:</strong> Supports semantic class hierarchies.</li>
+						<li><strong>Multi-Language Support:</strong> Built-in support for multilingual content.</li>
 					</ul>
 				</div>
             </section>
@@ -309,29 +294,14 @@
                     <li>
                         <a href="./pig/schema/2026-01-12/jsonld/">JSON-LD Schemata (Draft-07)</a>
                         <div class="description">Complete JSON Schema validation for all PIG metamodel classes and instances</div>
-																																								
-
-   
-  
- 
-						
                     </li>
                     <li>
                         <a href="./pig/schema/2026-01-12/rdf/">RDF/Turtle Schemata with SHACL</a>
                         <div class="description">SHACL shapes for validating RDF-based PIG data</div>
-																																											  
-																																											 
-																																												 
                     </li>
                     <li>
                         <a href="./results/">Latest Results</a>
                         <div class="description">Metamodel implementation in RDF/Turtle and JSON-LD with JSON Schema (2026-01-12)</div>
-														 
-												 
-																																										  
-																																																																																																																								
-							  
-																									   
                     </li>
                 </ul>
             </section>
@@ -382,35 +352,38 @@
 -->
             <section>
                 <h2>Project and Community</h2>
-                <p>PIG is being developed as part of the <strong>CASCaRA</strong> project (Collaborative Artifact, Specification, Context and Resource Access), an initiative by:</p>
+                <p>The CACaRA Graph is being developed as part of the <a href="https://cascara.gfse.org/">CASCaRA project</a> (Collaborative Artifact, Specification, Context and Resource Access), an initiative by:</p>
                 
                 <ul class="resources-list">
                     <li>
-                        <a href="https://gfse.org" target="_blank">GfSE e.V.</a>
+                        <a href="https://gfse.org" target="_blank">Gesellschaft für Systems Engineering e.V. (GfSE)</a>
                         <div class="description">German Society for Systems Engineering</div>
                     </li>
                     <li>
-                        <a href="https://www.prostep.org" target="_blank">prostep ivip</a>
-                        <div class="description">Association for Product Development</div>
+                        <a href="https://www.prostep.org" target="_blank">prostep ivip e.V.</a>
+                        <div class="description">Association for the Advancement of International Product Data Standards</div>
                     </li>
                     <li>
                         <a href="https://www.omg.org" target="_blank">OMG</a>
-                        <div class="description">Object Management Group - CASCaRA RFP approved (2024-12-13)</div>
+                        <div class="description">Object Management Group</div>
                     </li>
                 </ul>
+				<p>A Request of Proposal for a standard (RFP) has been accepted by the OMG in December 2024. The final standard submission is planned for 2026.</p>
             </section>
 
             <section>
                 <h2>News</h2>
                 <ul class="resources-list">
                     <li>
-                        <span class="badge new">2026-01-12</span>
-                        <a href="https://cascade.gfse.org/results/#2026-01-12-metamodel-implemented-in-rdfturtle-and-json-ld-with-json-schema"><strong>Metamodel Implementation</strong></a>
-                        <div class="description">Complete implementation in RDF/Turtle and JSON-LD with JSON Schema. Validation with real-world examples successfully completed.</div>
+                        <span class="badge draft">2026-01-12</span>
+                        <a href="https://cascade.gfse.org/results/#2026-01-12-metamodel-implemented-in-rdfturtle-and-json-ld-with-json-schema">
+						<strong>Metamodel Implementation</strong></a>
+                        <div class="description">Complete implementation in JSON-LD with JSON Schema. Validation with real-world examples is starting.</div>
                     </li>
                     <li>
                         <span class="badge draft">2025-12-08</span>
-                        <a href="https://cascade.gfse.org/results/#2025-12-08-cascara-initial-standard-submission-at-omg"><strong>CASCaRA Initial Submission</strong></a>
+                        <a href="https://cascade.gfse.org/results/#2025-12-08-cascara-initial-standard-submission-at-omg">
+						<strong>CASCaRA Initial Submission</strong></a>
                         <div class="description">Initial standard submission to OMG completed. Strong interest from other OMG initiatives.</div>
                     </li>
                     <li>
@@ -423,11 +396,11 @@
 
             <section>
                 <h2>Contact and Contribute</h2>
-                <p>Interested in PIG? We're looking for support from companies and software developers!</p>
+                <p>Interested in the CASCaRA Graph? We're looking for support from companies and software developers!</p>
                 
                 <div class="card-grid">
                     <div class="card">
-                        <h3>📧 Contact</h3>
+                        <h3>👤 Contact</h3>
                         <p>
                             <strong>Uwe Kaufmann</strong><br>
                             <a href="mailto:uwe.kaufmann@gfse.org">Uwe.Kaufmann@gfse.org</a> | 
@@ -436,7 +409,7 @@
                     </div>
 
                     <div class="card">
-                        <h3>📧 Technical Lead</h3>
+                        <h3>👤 Technical Lead</h3>
                         <p>
                             <strong>Dr.-Ing. Oskar von Dungern</strong><br>
                             <a href="mailto:oskar.dungern@gfse.org">Oskar.Dungern@gfse.org</a> | 
@@ -450,10 +423,14 @@
                     </div>
 
                     <div class="card">
-                        <h3>🐙 Repository</h3>
+                        <div style="display:flex; ">
+							<span class="icon-github"></span><h3>Repositories</h3>
+						</div>
                         <p>
-                            <a href="https://github.com/GfSE/CASCaDE-Pages" target="_blank">GitHub: CASCaDE-Pages</a><br>
-                            <a href="https://github.com/GfSE/CASCaDE-Verification-and-Validation" target="_blank">GitHub: Validation</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Pages" target="_blank">Home-Page</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Metamodel" target="_blank">Metamodel</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Ontology" target="_blank">Ontology</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Verification-and-Validation" target="_blank">Validation</a><br>
                             <a href="https://github.com/GfSE/CASCaDE-Pages/discussions" target="_blank">Discussions</a>
                         </p>
                     </div>
@@ -463,15 +440,15 @@
 
         <footer>
             <p>
-                <strong>Product Information Graph (PIG)</strong><br>
-                Developed by the <a href="https://cascade.gfse.org">CASCaRA (CASCaDE) Initiative</a><br>
+                <strong>CASCaRA Graph for Integrated Product Data</strong><br>
+                Developed by the <a href="https://cascara.gfse.org" target="_blank">CASCaRA Initiative (formerly CASCaDE)</a><br>
                 Copyright © 2025 <a href="https://gfse.org" target="_blank">GfSE - Gesellschaft für Systems Engineering e.V.</a><br>
                 Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache 2.0</a>
             </p>
             <p style="margin-top: 20px; font-size: 0.9em;">
                 <a href="https://github.com/GfSE/CASCaDE-Pages" target="_blank">GitHub</a> |
                 <a href="https://github.com/GfSE/CASCaDE-Pages/issues" target="_blank">Report Issues</a> |
-                <a href="./literature/">Literature</a>
+                <a href="https://cascara.gfse.org/literature/" target="_blank">Literature</a>
             </p>
         </footer>
     </div>
