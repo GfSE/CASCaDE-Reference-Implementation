@@ -161,6 +161,7 @@ export class PigItem {
                 return null;
         }
     }
+    static isValidItemType = (item: string): boolean => Object.values(PigItemType).includes(item as PigItemTypeValue);
     /**
      * Check if a string is a valid ID
      * @param input - String to check
@@ -289,7 +290,8 @@ export class PigItem {
         // All multi-language fields from PIG schemata that use LanguageText[]
         const multiLangFields = new Set([
             'title',
-            'description'
+            'description',
+            'definition'
         ]);
         if (multiLangFields.has(localName)) {
             return true;
@@ -376,12 +378,14 @@ interface IIdentifiable extends IItem {
     // Any one or both of the following must be present and have at least one item; see schemata:
     title?: ILanguageText[];
     description?: ILanguageText[];
+    definition?: ILanguageText[]; // mandatory for classes, not allowed for instances as controlled be the schemata
 }
 abstract class Identifiable extends Item implements IIdentifiable {
     id!: TPigId;
     specializes?: TPigId;
     title?: ILanguageText[];
     description?: ILanguageText[];
+    definition?: ILanguageText[];
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
     }
@@ -397,7 +401,8 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // Runtime guards:
         // This is more constraining than the schema,
         // as the presence of 'lang' is required when there are multiple values
-        // Ensure title is a multi-language text (array of ILanguageText)
+        // Ensure title is a multi-language text (array of ILanguageText),
+        // title is optional only for anEntity:
         if (itm.title) {
             const tRes = validateMultiLanguageText(itm.title, 'title');
             if (!tRes.ok) return tRes;
@@ -405,6 +410,12 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // description is optional, but when present must be an array of ILanguageText
         if (itm.description) {
             const dRes = validateMultiLanguageText(itm.description, 'description');
+            if (!dRes.ok) return dRes;
+        }
+
+        // definition is mandatory for classes:
+        if (itm.definition) {
+            const dRes = validateMultiLanguageText(itm.definition, 'definition');
             if (!dRes.ok) return dRes;
         }
 
@@ -420,6 +431,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         this.specializes = itm.specializes;
         this.title = itm.title;
         this.description = itm.description;
+        this.definition = itm.definition;
 //        LOG.debug('Identifiable.set o: ', this);
         // made chainable in concrete subclass
         return this;
@@ -430,7 +442,8 @@ abstract class Identifiable extends Item implements IIdentifiable {
             id: this.id,
             specializes: this.specializes,
             title: this.title,
-            description: this.description
+            description: this.description,
+            definition: this.definition
         } as IIdentifiable);
     }
     protected fromJSONLD(itm: any) {
@@ -443,8 +456,13 @@ abstract class Identifiable extends Item implements IIdentifiable {
         ld = replaceIdObjects(ld);
 
         // 3. Normalize multi-language texts (from abstract normalize)
-        ld.title = normalizeMultiLanguageText(ld.title);
-        ld.description = normalizeMultiLanguageText(ld.description);
+        //    Not all are necessarily present - this is checked by the schemata.
+        if (ld.title)
+            ld.title = normalizeMultiLanguageText(ld.title);
+        if (ld.description)
+            ld.description = normalizeMultiLanguageText(ld.description);
+        if (ld.definition)
+            ld.definition = normalizeMultiLanguageText(ld.definition);
 
         // Set the normalized object in the concrete subclass
         return ld;
@@ -810,8 +828,8 @@ export class Property extends Identifiable implements IProperty {
         return super.validate(itm);
     }
     set(itm: IProperty): this {
+        LOG.debug('Property.set: '+ JSON.stringify(itm,null,2));
         this.lastStatus = this.validate(itm);
-        // LOG.debug('Property.set: '+ JSON.stringify(this,null,2));
         if (this.lastStatus.ok) {
             super.set(itm);
             this.datatype = itm.datatype;
@@ -1569,11 +1587,14 @@ export class APackage extends AnElement implements IAPackage {
         // 2. Replace id-objects with id-strings
         json = replaceIdObjects(json);
 
+        // LOG.debug('ldToJson after tag renaming and id replacement: ', JSON.stringify(json, null, 2));
         // 3. Normalize multi-language texts
         if (json.title) 
             json.title = normalizeMultiLanguageText(json.title);
         if (json.description)
             json.description = normalizeMultiLanguageText(json.description);
+        if (json.definition)
+            json.definition = normalizeMultiLanguageText(json.definition);
 
         // 4. Normalize datatype (Property-specific)
         if (json.datatype) {
@@ -2238,9 +2259,8 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
 
     // 1. Extract itemType from element tag name (only for valid PIG types)
     const tagName = xmlElement.tagName as PigItemTypeValue;
-    // ✅ Check if this is a valid PIG element
-    const isValidPigElement = Object.values(PigItemType).includes(tagName);
-
+    // Check if this is a valid PIG element
+    const isValidPigElement = PigItem.isValidItemType(tagName);
     if (isValidPigElement) {
         result.itemType = tagName;
     }

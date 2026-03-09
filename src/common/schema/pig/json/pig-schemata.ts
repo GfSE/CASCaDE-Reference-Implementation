@@ -59,6 +59,11 @@ const PROPERTY_SCHEMA = {
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
+        definition: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
         //        datatype: { $ref: '#/$defs/xsDataType' },
         datatype: {
             type: 'string',
@@ -181,6 +186,11 @@ const LINK_SCHEMA = {
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
         },
+        definition: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
         enumeratedEndpoint: {
             type: 'array',
             minItems: 1,
@@ -256,6 +266,11 @@ const ENTITY_SCHEMA = {
             type: 'array',
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }
+        },
+        definition: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
         }
     },
     additionalProperties: false,
@@ -323,6 +338,11 @@ const RELATIONSHIP_SCHEMA = {
             items: { $ref: '#/$defs/LanguageText' }
         },
         description: {
+            type: 'array',
+            minItems: 1,
+            items: { $ref: '#/$defs/LanguageText' }
+        },
+        definition: {
             type: 'array',
             minItems: 1,
             items: { $ref: '#/$defs/LanguageText' }

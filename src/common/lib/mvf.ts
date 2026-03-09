@@ -49,7 +49,8 @@ const FROM_JSONLD = new Map<string, string>([
     ['dcterms:description', 'description'],
     ['dcterms:created', 'created'],
     ['dcterms:modified', 'modified'],
-    ['dcterms:creator', 'creator']
+    ['dcterms:creator', 'creator'],
+    ['skos:definition', 'definition']
 ]);
 
 // Create Reverse-Map once
@@ -92,7 +93,8 @@ const FROM_XML = new Map<string, string>([
     ['dcterms:description', 'description'],
     ['dcterms:created', 'created'],
     ['dcterms:modified', 'modified'],
-    ['dcterms:creator', 'creator']
+    ['dcterms:creator', 'creator'],
+    ['skos:definition', 'definition']
 ]);
 const TO_XML = new Map<string, string>(
     Array.from(FROM_XML.entries()).map(([a, b]) => [b, a])

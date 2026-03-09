@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CASCaRA JSON-LD Schemata | GfSE</title>
-    <meta name="description" content="Product Information Graph (PIG) JSON-LD Schema Repository">
+    <meta name="description" content="CASCaRA Graph for Integrated Product Data - JSON-LD Schemata">
     <meta name="author" content="Dr. Oskar von Dungern | Gesellschaft für Systems Engineering e.V. (GfSE)">
+    <meta name="keywords" content="CASCaRA Graph, Systems Engineering, Knowledge Graph, Schema, JSON-LD">
     <style>
         * {
             margin: 0;
@@ -229,55 +230,60 @@
 
         <div class="content">
             <section>
-				<p>These schemata validate the JSON-LD representation of PIG items corresponding to the 
-				<a href="https://product-information-graph.org/doc/metamodel/latest/" target="_blank">PIG Metamodel</a>. 
-				Each schema enforces structural constraints, data types, and cardinalities defined in the PIG metamodel, 
+				<p>These schemata validate the JSON-LD representation of the items defined by the 
+				<a href="https://product-information-graph.org/doc/metamodel/latest/" target="_blank">CASCaRA Metamodel</a>. 
+				Each schema enforces structural constraints, data types, and cardinalities defined in the metamodel, 
 				ensuring interoperability and semantic consistency across different tools and organizations.</p>
 
 				<h2>Schemata</h2>
-                <h3>PIG Metamodel Class Items</h3>
-                <p>These schemata validate PIG class definitions. Classes are derived from the ontology. 
+                <h3>CASCaRA Metamodel Class Items</h3>
+                <p>These schemata validate the class definitions as derived from the CASCaRA Ontology.
                 In general, each concept in the ontology results in a class of either Property, Link, Entity, or Relationship. 
-                A class definition must conform to its respective schema and must have a <code>dcterms:title</code> and optionally a <code>dcterms:description</code> to convey meaning.</p>
+                A class must conform to its respective schema and must have <code>dcterms:title</code>, <code>skos:definition</code> and 
+				optionally <code>dcterms:description</code> properties to convey meaning.</p>
                 
                 <ul class="resources-list">
                     <li>
-                        <p><a href="Property.json">Property.json</a></p>
+                        <p><a href="Property.json"><strong>Property.json</strong></a></p>
                         <div class="description">
                             Validates <strong>Property</strong> class definitions that specify attributes for entities and relationships. 
                             May include datatype specifications (string, integer, double, boolean, dateTime, etc.), cardinality constraints 
                             (<code>sh:minCount</code>, <code>sh:maxCount</code>), value constraints (<code>sh:minInclusive</code>, 
                             <code>sh:maxInclusive</code>, <code>sh:maxLength</code>, <code>sh:pattern</code>), enumeration values 
-                            (<code>pig:enumeratedValue</code>), default values, measurement units, and support for composed properties.
+                            (<code>cas-meta:enumeratedValue</code>), default values, measurement units, and support for composed properties.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:DatatypeProperty</code></div>
                     </li>
                     <li>
-                        <p><a href="Link.json">Link.json</a></p>
+                        <p><a href="Link.json"><strong>Link.json</strong></a></p>
                         <div class="description">
                             Validates <strong>Link</strong> class definitions that specify navigable connections between items. 
-                            Defines enumerated endpoint classes (<code>pig:enumeratedEndpoint</code>) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., "contains" / "is contained by").
+                            Defines enumerated endpoint classes (<code>cas-meta:enumeratedEndpoint</code>) which determine which Entity or Relationship classes 
+							can be connected via this link type. Links enable traversal of the information graph and 
+							support bi-directional relationships when paired (e.g., "contains" / "is contained by").
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:ObjectProperty</code></div>
                     </li>
                     <li>
-                        <p><a href="Entity.json">Entity.json</a></p>
+                        <p><a href="Entity.json"><strong>Entity.json</strong></a></p>
                         <div class="description">
                             Validates <strong>Entity</strong> class definitions for individual information objects. 
-                            Configures which properties (<code>pig:enumeratedProperty</code>) and which outgoing 
-                            links are allowed (<code>pig:enumeratedTargetLink</code>). 
-							Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. Supports specialization hierarchies via <code>pig:specializes</code> and optional visual representation 
-                            via <code>pig:icon</code>.
+                            Configures which properties (<code>cas-meta:enumeratedProperty</code>) and which outgoing 
+                            links are allowed (<code>cas-meta:enumeratedTargetLink</code>). 
+							Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. 
+							Supports specialization hierarchies via <code>cas-meta:specializes</code> and optional visual representation 
+                            via <code>cas-meta:icon</code>.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:Class</code></div>
                     </li>
                     <li>
-                        <p><a href="Relationship.json">Relationship.json</a></p>
+                        <p><a href="Relationship.json"><strong>Relationship.json</strong></a></p>
                         <div class="description">
                             Validates <strong>Relationship</strong> class definitions for directed connections between entities. 
-                            Configures which properties (<code>pig:enumeratedProperty</code>), source links 
-                            (<code>pig:enumeratedSourceLink</code>) and target links (<code>pig:enumeratedTargetLink</code>) are allowed. 
-                            Relationships are reified connections that can carry their own properties, enabling rich traceability and dependency modeling (e.g., "Refinement" relationships with rationale and traceability status). 
+                            Configures which properties (<code>cas-meta:enumeratedProperty</code>), source links 
+                            (<code>cas-meta:enumeratedSourceLink</code>) and target links (<code>cas-meta:enumeratedTargetLink</code>) are allowed. 
+                            Relationships are reified connections that can carry their own properties, enabling rich traceability and 
+							dependency modeling (e.g., "Refinement" relationships with rationale and traceability status). 
 							Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance.
                             Supports specialization hierarchies and optional icons.
                         </div>
@@ -285,46 +291,52 @@
                     </li>
                 </ul>
 
-                <h3>PIG Metamodel Instance Items</h3>
-                <p>These schemata validate PIG instances (project data or "payload"). Instances represent actual data 
-                conforming to the class definitions above. They include revision control, modification tracking, and 
+                <h3>CASCaRA Metamodel Instance Items</h3>
+                <p>These schemata validate the instances, i.e. the project data ("payload"). Instances represent actual data 
+                conforming to the respective classes above. They include revision control, modification tracking, and 
                 properties/links as configured by their respective classes.</p>
                 
                 <ul class="resources-list">
                     <li>
-                        <p><a href="anEntity.json">anEntity.json</a></p>
+                        <p><a href="anEntity.json"><strong>anEntity.json</strong></a></p>
                         <div class="description">
                             Validates <strong>entity instances</strong> with actual property values and target link references. 
-                            Includes mandatory metadata: <code>@type</code> (reference to Entity class), <code>pig:revision</code>, 
-                            <code>dcterms:modified</code> timestamp, optional <code>pig:priorRevision</code> and 
-                            <code>dcterms:creator</code>. Properties can have direct values (<code>@value</code>) or reference enumeration values (<code>@id</code>) as defined by its class. Target links reference other entity or relationship instances. 
+                            Includes mandatory metadata: <code>@type</code> (reference to Entity class), <code>cas-meta:revision</code>, 
+                            <code>dcterms:modified</code> timestamp, optional <code>cas-meta:priorRevision</code> and 
+                            <code>dcterms:creator</code>. Properties can have direct values (<code>@value</code>) or 
+							reference enumeration values (<code>@id</code>) as defined by its class. Target links reference other entity or relationship instances. 
                             Must have either <code>dcterms:title</code> or <code>dcterms:description</code> (or both) to convey meaning.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:NamedIndividual</code></div>
                     </li>
                     <li>
-                        <p><a href="aRelationship.json">aRelationship.json</a></p>
+                        <p><a href="aRelationship.json"><strong>aRelationship.json</strong></a></p>
                         <div class="description">
                             Validates <strong>relationship instances</strong> representing directed, reified connections between items (i.e. entity or relationship instances). 
-                            Similar metadata to entities, but additionally requires both source links (<code>pig:aSourceLink</code>) and target links (<code>pig:aTargetLink</code>) conforming to the class definition. Source and target links reference entity or relationship instances. Properties can carry contextual information about the relationship (e.g., traceability status, rationale, coverage analysis). Reification enables relationships to be first-class items with their own lifecycle and properties.
+                            Similar metadata to entities, but additionally requires both source links (<code>cas-meta:aSourceLink</code>) 
+							and target links (<code>cas-meta:aTargetLink</code>) conforming to the class definition. 
+							Source and target links reference entity or relationship instances. 
+							Properties can carry contextual information about the relationship (e.g., traceability status, rationale, coverage analysis). 
+							Reification enables relationships to be first-class items with their own lifecycle and properties.
 							Must have a <code>dcterms:title</code> and optionally a <code>dcterms:description</code> to convey meaning.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:NamedIndividual</code> (reified predicate)</div>
                     </li>
                 </ul>
 
-                <h3>PIG Package Item</h3>
-                <p>This schema validates complete PIG data packages. A package contains a subset of the product information 
-                graph bundled for specific purposes such as customer-supplier agreements, milestone deliverables, or 
-                change requests. Packages include their own context definitions and maintain referential integrity.</p>
+                <h3>CASCaRA Metamodel Package Item</h3>
+                <p>This schema validates complete CASCaRA data packages. A package contains a subset of a CASCaRA graph 
+				bundled for specific purposes such as customer-supplier agreements, milestone deliverables, or change requests. 
+				Packages include their own context definitions and maintain referential integrity.</p>
 				<ul class="resources-list">
                     <li>
-                        <p><a href="aPackage.json">aPackage.json</a></p>
+                        <p><a href="aPackage.json"><strong>aPackage.json</strong></a></p>
                         <div class="description">
-                            Validates <strong>complete JSON-LD package documents</strong> with <code>@context</code> (namespace and vocabulary definitions) as well as <code>@graph</code> (array of PIG items). The graph contains a mix of item classes (Property, Link, Entity, Relationship) 
+                            Validates <strong>complete JSON-LD package documents</strong> with <code>@context</code> (namespace and vocabulary definitions) 
+							as well as <code>@graph</code> (array of CASCaRA items). The graph contains a mix of classes (Property, Link, Entity, Relationship) 
                             and instances (anEntity, aRelationship). Package-level metadata includes optional 
                             <code>dcterms:modified</code>, <code>dcterms:creator</code>, <code>dcterms:title</code>, and 
-                            <code>dcterms:description</code>. Validates each item against its corresponding schema based on <code>pig:itemType</code>.
+                            <code>dcterms:description</code>. Validates each item against its corresponding schema based on <code>cas-meta:itemType</code>.
                         </div>
                         <div class="description">→ OWL mapping: Self-contained RDF graph with ontology and instance data</div>
                     </li>

@@ -35,12 +35,6 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': 'Titel', '@language': 'de' },
                     { '@value': 'Titre', '@language': 'fr' }
                 ],
-                'dcterms:description': [
-                    {
-                        '@value': '<p>A name given to the resource. <small>(<i>source: <a href="http://purl.org/dc/elements/1.1/title">DCMI</a></i>)</small></p><p>Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML \'span\' element. <small>(<i>source: <a href="http://open-services.net/">OSLC</a></i>)</small></p>',
-                        '@language': 'en'
-                    }
-                ],
                 '@type': 'owl:DatatypeProperty',
                 'pig:itemType': { '@id': 'pig:Property' },
                 'sh:datatype': { '@id': 'xs:string' },

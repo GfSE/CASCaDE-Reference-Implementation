@@ -158,6 +158,3 @@ export class JsonldImporter {
         return errorReport;
     }
 }
-
-// Export convenience function for backward compatibility
-// export const importJSONLD = JsonldImporter.import.bind(JsonldImporter);
