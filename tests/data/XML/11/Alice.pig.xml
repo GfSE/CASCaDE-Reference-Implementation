@@ -15,7 +15,7 @@
     
     <graph>
         <!-- Metamodel: Entity Classes -->
-        <pig:Entity id="pig:Entity" pig.hasClass="owl:Class">
+        <pig:Entity id="pig:Entity" pig:hasClass="owl:Class">
             <dcterms:title>Entity</dcterms:title>
             <dcterms:description>A PIG meta-model element used for entities (aka resources or artifacts).</dcterms:description>
             <pig:enumeratedProperty>pig:category</pig:enumeratedProperty>

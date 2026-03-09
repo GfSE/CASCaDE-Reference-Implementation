@@ -72,8 +72,8 @@ export class JsonldImporter {
             return Msg.create(690, 'JSON-LD', errorMessage);
         }
 
-        // Validate JSON-LD document structure
-        const validationResult = await this.validateJsonLdDocument(doc);
+        // Check JSON-LD document structure
+        const validationResult = await this.checkJsonLdDocument(doc);
         if (!validationResult.ok) {
             return validationResult;
         }
@@ -125,7 +125,7 @@ export class JsonldImporter {
      * @returns IRsp indicating success or error
      * @private
      */
-    private static async validateJsonLdDocument(doc: JsonObject): Promise<IRsp> {
+    private static async checkJsonLdDocument(doc: JsonObject): Promise<IRsp> {
         // Validate entire JSON-LD document structure using schema
         const isValidPackage = await SCH_LD.validatePackageLD(doc);
 

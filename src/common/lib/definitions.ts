@@ -3,15 +3,17 @@ import { BUILD_INFO } from '../../build-info';
 const PIG_DOMAIN = 'http://product-information-graph.org/';
 
 export const DEF = {
+    pigVersion: '2026-02-23',
     defaultTime: 'T12:00:00',
     defaultTimezone: 'Z',
     pigPath: PIG_DOMAIN,
     jsonldSchemaPath: PIG_DOMAIN + 'schema/2026-02-18/jsonld/',
+    xslPath: 'assets/xslt/',
     // Default for local terms (names) without an explicit namespace
     defaultDataNamespace: PIG_DOMAIN + 'default/data#',  // for data instances with prefix d:
     defaultOntologyNamespace: PIG_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
-    pigVersion: '2026-02-23',
-    ...BUILD_INFO
+    ...BUILD_INFO,
+    minIdLength: 3
 };
 
 export const RE = {

@@ -32,9 +32,9 @@
  *  ToDo:
  *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check? 
  *  - implement 'composes' (formerly composedProperty) for Property and AProperty
- *  - Check use of normalizeId() in the setJSONLD() thread
- *  - normalizeId() shortly before validate() in set() ?
- *  - Check the result of normalizeId in the setXML() thread in case of enumerated values: must be 'o:'
+ *  - Check use of PigItem.normalizeId() in the setJSONLD() thread
+ *  - PigItem.normalizeId() shortly before validate() in set() ?
+ *  - Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values: must be 'o:'
  *  - Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed?
  *  - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
  *  - allow packages to be nested
@@ -185,7 +185,6 @@ export class PigItem {
     /**
      * Check if item type is allowed for instantiation.
      * The following types are not allowed in a graph:
-        PigItemType.aPackage,      // Packages cannot be nested
         PigItemType.aProperty,     // Embedded in anEntity/aRelationship
         PigItemType.aSourceLink,   // Embedded in aRelationship
         PigItemType.aTargetLink    // Embedded in anEntity/aRelationship
@@ -198,7 +197,8 @@ export class PigItem {
             PigItemType.Entity,
             PigItemType.Relationship,
             PigItemType.anEntity,
-            PigItemType.aRelationship
+            PigItemType.aRelationship,
+            PigItemType.aPackage
         ] as unknown as PigItemTypeValue).includes(itype);
     }
 
@@ -312,6 +312,36 @@ export class PigItem {
         }
 
         return false;
+    }
+    /**
+     * Normalize ID by adding namespace prefix if missing
+     */
+    static normalizeId(id: string, itemType: PigItemTypeValue): string {
+        if (!id || typeof id !== 'string') {
+            return id;
+        }
+
+        // Already has namespace or is URI?
+        if (PigItem.isValidIdString(id)) {
+            return id;
+        }
+
+        // Determine prefix using optimized type guards
+        // ToDo: Check whether the namespaces for enumerated value types are correctly normalized with 'o:'
+        // and also their references in properties
+        let prefix: string;
+        if (PigItem.isClass(itemType)) {
+            prefix = 'o:';
+            //    else if (PigItem.isInstance(itemType)) {
+            //        prefix = 'd:';
+        } else {
+            prefix = 'd:'; // Default for unknown
+        }
+
+        const normalized = `${prefix}${id}`;
+        LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
+
+        return normalized;
     }
 }
 export interface INamespace {
@@ -809,7 +839,7 @@ export class Property extends Identifiable implements IProperty {
                 return Msg.create(681, 'Property', itm.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'Property', itm.id, err?.message ?? String(err));
+            return Msg.create(681, 'Property', itm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
@@ -828,7 +858,7 @@ export class Property extends Identifiable implements IProperty {
         return super.validate(itm);
     }
     set(itm: IProperty): this {
-        LOG.debug('Property.set: '+ JSON.stringify(itm,null,2));
+        // LOG.debug('Property.set: '+ JSON.stringify(itm,null,2));
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
@@ -896,7 +926,7 @@ export class Link extends Identifiable implements ILink {
                 return Msg.create(681, 'Link', itm.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'Link', itm.id, err?.message ?? String(err));
+            return Msg.create(681, 'Link', itm.id, err?.message ?? String(err));
         }
 
         /*    // id and itemType checked in superclass
@@ -947,10 +977,10 @@ export class Entity extends Element implements IEntity {
             const ok = SCH.validateEntitySchema(itm);
             if (!ok) {
                 const msg = SCH.getValidateEntityErrors();
-                return Msg.create(682, 'Entity', itm.id, msg);
+                return Msg.create(681, 'Entity', itm.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(683, 'Entity', itm.id, err?.message ?? String(err));
+            return Msg.create(681, 'Entity', itm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
@@ -1010,7 +1040,7 @@ export class Relationship extends Element implements IRelationship {
                 return Msg.create(681, 'Relationship', itm.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'Relationship', itm.id, err?.message ?? String(err));
+            return Msg.create(681, 'Relationship', itm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
@@ -1155,7 +1185,7 @@ export class AnEntity extends AnElement implements IAnElement {
                 return Msg.create(681, 'anEntity', itm.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'anEntity', itm.id, err?.message ?? String(err));
+            return Msg.create(681, 'anEntity', itm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
@@ -1214,7 +1244,7 @@ export class ARelationship extends AnElement implements IARelationship {
                 return Msg.create(681, 'aRelationship', itm.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'aRelationship', itm.id, err?.message ?? String(err));
+            return Msg.create(681, 'aRelationship', itm.id, err?.message ?? String(err));
         }
 
         // Runtime guards:
@@ -1286,7 +1316,7 @@ export class APackage extends AnElement implements IAPackage {
                 return Msg.create(681, 'aPackage', pkg.id, msg);
             }
         } catch (err: any) {
-            return Msg.create(682, 'aPackage', pkg.id, err?.message ?? String(err));
+            return Msg.create(681, 'aPackage', pkg.id, err?.message ?? String(err));
         }
 
         // Call parent validation
@@ -1731,7 +1761,7 @@ export class APackage extends AnElement implements IAPackage {
         description?: ILanguageText[];
     } {
         const metadata = {
-            id: normalizeId(doc['@id'] || doc.id, PigItemType.aPackage),
+            id: PigItem.normalizeId(doc['@id'] || doc.id, PigItemType.aPackage),
             revision: doc.revision,
             priorRevision: doc.priorRevision,
             modified: normalizeDateTime(doc['dcterms:modified'] || doc.modified) || new Date().toISOString(), // TISODateString
@@ -2065,36 +2095,6 @@ function replaceIdObjects(
  * @returns Normalized ID with namespace prefix
  */
 
-/**
- * Normalize ID by adding namespace prefix if missing
- */
-function normalizeId(id: string, itemType: PigItemTypeValue): string {
-    if (!id || typeof id !== 'string') {
-        return id;
-    }
-
-    // Already has namespace or is URI?
-    if (PigItem.isValidIdString(id)) {
-        return id;
-    }
-
-    // Determine prefix using optimized type guards
-    // ToDo: Check whether the namespaces for enumerated value types are correctly normalized with 'o:'
-    // and also their references in properties
-    let prefix: string;
-    if (PigItem.isClass(itemType)) {
-        prefix = 'o:';
-//    else if (PigItem.isInstance(itemType)) {
-//        prefix = 'd:';
-    } else {
-        prefix = 'd:'; // Default for unknown
-    }
-
-    const normalized = `${prefix}${id}`;
-    LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
-
-    return normalized;
-}
 // Normalize dateTime strings by ensuring they are in ISO format (e.g. '2024-06-01T12:00:00Z')
 function normalizeDateTime(dateStr: any): string | undefined {
     // return if it is already a valid ISO string:
@@ -2139,8 +2139,8 @@ function normalizeLanguageText(src: any): ILanguageText {
     return { value: String(src) };
 }
 
-function normalizeMultiLanguageText(src: any): ILanguageText[] | null {
-    if (!src) return null;
+function normalizeMultiLanguageText(src: any): ILanguageText[] | undefined {
+    if (!src) return undefined;
     if (Array.isArray(src)) return src.map(normalizeLanguageText);
     return [normalizeLanguageText(src)];
 }
@@ -2274,16 +2274,16 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             continue;
         } else if (attrName === 'id') {
             // normalize always, including enumerated values
-            result.id = normalizeId(attrValue, tagName);
+            result.id = PigItem.normalizeId(attrValue, tagName);
         } else if (attrName.endsWith('type') || attrName.endsWith('hasClass')) {
             // normalize if we have a valid PIG type
             result.hasClass = isValidPigElement
-                ? normalizeId(attrValue, tagName)
+                ? PigItem.normalizeId(attrValue, tagName)
                 : attrValue;
         } else if (attrName.endsWith('specializes')) {
             // normalize if we have a valid PIG type
             result.specializes = isValidPigElement
-                ? normalizeId(attrValue, tagName)
+                ? PigItem.normalizeId(attrValue, tagName)
                 : attrValue;
         } else {
             result[attrName] = attrValue;

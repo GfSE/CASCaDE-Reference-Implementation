@@ -474,14 +474,14 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `Falló la validación del esquema para ${itemType} '${id}': ${msg}`
     },
     682: {
-        en: (itemType, id, msg) =>
-            `Schema validation error for ${itemType} '${id}': ${msg}`,
-        de: (itemType, id, msg) =>
-            `Schema-Validierungsfehler für ${itemType} '${id}': ${msg}`,
-        fr: (itemType, id, msg) =>
-            `Erreur de validation du schéma pour ${itemType} '${id}': ${msg}`,
-        es: (itemType, id, msg) =>
-            `Error de validación del esquema para ${itemType} '${id}': ${msg}`
+        en: (tags) =>
+            `Not instantiable item(s) found: ${tags}`,
+        de: (tags) =>
+            `Nicht instantiierbare(s) Item(s) gefunden: ${tags}`,
+        fr: (tags) =>
+            `Élément(s) non instanciable(s) trouvé(s): ${tags}`,
+        es: (tags) =>
+            `Elemento(s) no instanciable(s) encontrado(s): ${tags}`
     },
 
     // General errors (690-699)

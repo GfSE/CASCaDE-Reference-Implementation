@@ -27,10 +27,12 @@
  * - Extend the constraint checks - very limited now.
  */
 
+import { DEF } from '../../lib/definitions';
 import { LOG } from '../../lib/helpers';
 import { PIN } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
 import { APackage /*, TPigItem*/ } from '../../schema/pig/ts/pig-metaclasses';
+import { XmlImporter } from '../xml/import-xml';
 import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
 
 /**
@@ -130,13 +132,19 @@ export class ReqifImporter {
 
         const xmlString = rspTransform.response as string;
 
+        // check schema
+        const schemaResult = XmlImporter.checkXmlSchema(xmlString);
+        if (!schemaResult.ok) {
+            return schemaResult;
+        }
+
         // Instantiate APackage from transformed XML
         const aPackage = new APackage().setXML(xmlString, {
             checkConstraints: [
-                ConstraintCheckType.UniqueIds
+                ConstraintCheckType.UniqueIds,
                 // Input has only instances, so omit constraint checks on classes
-                //    ConstraintCheckType.aPropertyHasClass,
-                //    ConstraintCheckType.aLinkHasClass,
+                ConstraintCheckType.aPropertyHasClass,
+                ConstraintCheckType.aLinkHasClass
                 //    ConstraintCheckType.anEntityHasClass,
                 //    ConstraintCheckType.aRelationshipHasClass,
             ] as ConstraintCheckType[]
@@ -170,13 +178,14 @@ export class ReqifImporter {
      * @private
      */
     private static getStylesheetPath(): string {
+        const reqifToPigSef = 'ReqIF-to-PIG.sef.json';
         if (PIN.isBrowserEnv()) {
             // Browser: fetch from public directory via HTTP
             const baseUrl = window.location.origin;
-            return `${baseUrl}/assets/xslt/ReqIF-to-PIG.sef.json`;
+            return `${baseUrl}/${DEF.xslPath}${reqifToPigSef}`;
         } else {
             // Node.js: read from local public directory
-            return './public/assets/xslt/ReqIF-to-PIG.sef.json';
+            return `./public/${DEF.xslPath}${reqifToPigSef}`;
         }
     }
 
