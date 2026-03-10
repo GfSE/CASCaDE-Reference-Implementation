@@ -4,8 +4,8 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { APackage } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
-import { ConstraintCheckType } from '../../src/common-code/schema/pig/ts/pig-package-constraints';
+import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
+import { ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
 
 describe('PIG Package Constraint Validation', () => {
     describe('Positive Tests - Valid Packages', () => {
@@ -53,7 +53,7 @@ describe('PIG Package Constraint Validation', () => {
                         "@id": "pig:Link",
                         "@type": "owl:ObjectProperty",
                         "pig:itemType": { "@id": "pig:Link" },
-                        "pig:eligibleEndpoint": [
+                        "pig:enumeratedEndpoint": [
                             {
                                 "@id": "pig:Entity"
                             },
@@ -79,7 +79,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -142,11 +142,12 @@ describe('PIG Package Constraint Validation', () => {
             };
 
             const pkg = new APackage().setJSONLD(validPackageJsonLd);  // all constraint checks
-            const items = pkg.getItems();
-            
+            if (!pkg.status().ok)
+                console.error('pkg:', JSON.stringify(pkg, null, 2)); 
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBe(9);
 
+            const items = pkg.getItems();
+            expect(items.length).toBe(9);
         });
 
         test('should validate package with relationship containing source and target links', () => {
@@ -197,7 +198,7 @@ describe('PIG Package Constraint Validation', () => {
                         "pig:itemType": {
                             "@id": "pig:Link"
                         },
-                        "pig:eligibleEndpoint": [
+                        "pig:enumeratedEndpoint": [
                             {
                                 "@id": "pig:Entity"
                             },
@@ -223,7 +224,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -234,7 +235,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -340,11 +341,12 @@ describe('PIG Package Constraint Validation', () => {
             };
 
             const pkg = new APackage().setJSONLD(packageWithRelationship);
-            const items = pkg.getItems();
-            
+            if (!pkg.status().ok)
+                console.error('pkg:', JSON.stringify(pkg,null,2)); 
             expect(pkg.status().ok).toBe(true);
-            expect(items.length).toBe(13);
 
+            const items = pkg.getItems();
+            expect(items.length).toBe(13);
         });
     });
 
@@ -530,7 +532,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -694,7 +696,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Source', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -705,7 +707,7 @@ describe('PIG Package Constraint Validation', () => {
                         'dcterms:title': [
                             { '@value': 'Target', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },

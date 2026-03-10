@@ -4,8 +4,8 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { APackage } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
-import { ConstraintCheckType } from '../../src/common-code/schema/pig/ts/pig-package-constraints';
+import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
+import { ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
 
 describe('PIG Package getHTML() Method', () => {
     describe('Valid Package with Single Entity', () => {
@@ -76,6 +76,7 @@ describe('PIG Package getHTML() Method', () => {
             expect(pkg.status().ok).toBe(true);
 
             const htmlList = pkg.getHTML();
+            // console.debug('Generated HTML List:', htmlList);
 
             // Should return an array
             expect(Array.isArray(htmlList)).toBe(true);
@@ -86,7 +87,7 @@ describe('PIG Package getHTML() Method', () => {
             // First element: Package metadata
             const packageHTML = htmlList[0];
             expect(typeof packageHTML).toBe('string');
-            expect(packageHTML).toContain('pig-apackage');
+            expect(packageHTML).toContain('meta-aPackage');
             expect(packageHTML).toContain('Test Package');
             expect(packageHTML).toContain('A test package for HTML generation');
             expect(packageHTML).toContain('d:test-package-html');
@@ -101,7 +102,7 @@ describe('PIG Package getHTML() Method', () => {
             // Second element: Entity HTML
             const entityHTML = htmlList[1];
             expect(typeof entityHTML).toBe('string');
-            expect(entityHTML).toContain('pig-anentity');
+            expect(entityHTML).toContain('meta-anEntity');
             expect(entityHTML).toContain('System shall be secure');
             expect(entityHTML).toContain('The system must implement security measures');
             expect(entityHTML).toContain('d:REQ-001');
@@ -186,7 +187,7 @@ describe('PIG Package getHTML() Method', () => {
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:eligibleEndpoint': [
+                        'pig:enumeratedEndpoint': [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
@@ -224,6 +225,7 @@ describe('PIG Package getHTML() Method', () => {
             expect(pkg.status().ok).toBe(true);
 
             const htmlList = pkg.getHTML();
+            // console.debug('Generated HTML List for Mixed Package:', htmlList);
 
             // Package metadata + 1 entity (ignoring Property, Link, Entity class, Relationship)
             expect(htmlList.length).toBe(2);

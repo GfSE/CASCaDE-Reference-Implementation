@@ -9,7 +9,7 @@
  *    will provide test coverage for the abstract classes they inherit from.
  * 
  *  Note:
- *  - a roundtrip test via set() and get() and eligible (enumerated) values
+ *  - a roundtrip test via set() and get() and enumerated (enumerated) values
  *    is contained in pig-package-constraints-valueRanges.spec.ts
  *
  *  Authors: oskar.dungern@gfse.org
@@ -18,7 +18,7 @@
 import { XsDataType, PigItemType, PigItemTypeValue,
     IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,
     Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, ASourceLink, ATargetLink
-} from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+} from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 describe("PIG Metaclasses", () => {
     let Property_input: IProperty;
@@ -80,7 +80,7 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "shows", lang: "en" }],
             description: [{ value: "This is a class for a reference used by anEntity", lang: "en" }],
 
-            eligibleEndpoint: ["o:Entity_Diagram"]
+            enumeratedEndpoint: ["o:Entity_Diagram"]
         };
         Link_shows_input_JSONLD = {
             ['@id']: "pig:shows",
@@ -89,7 +89,7 @@ describe("PIG Metaclasses", () => {
             ['dcterms:title']: [{ ['@value']: "shows", ['@language']: "en" }],
             ['dcterms:description']: [{ ['@value']: "This is a class for a reference used by anEntity", ['@language']: "en" }],
 
-            ['pig:eligibleEndpoint']: [{ ['@id']: "o:Entity_Diagram" }]
+            ['pig:enumeratedEndpoint']: [{ ['@id']: "o:Entity_Diagram" }]
         };
 
         // Entity with class:
@@ -101,8 +101,8 @@ describe("PIG Metaclasses", () => {
             description: [{ value: "Description of o:Entity_Diagram" }],
 
             icon: { value: "&#x2662;" },
-            eligibleTargetLink: ["pig:shows"],
-            eligibleProperty: ["dcterms:type"]
+            enumeratedTargetLink: ["pig:shows"],
+            enumeratedProperty: ["dcterms:type"]
         };
         entityClass_ModelElement_input = {
             id: "o:Entity_ModelElement",
@@ -112,7 +112,7 @@ describe("PIG Metaclasses", () => {
             description: [{ value: "Description of o:Entity_ModelElement" }],
 
             icon: { value: "&#x2662;" },
-            eligibleProperty: ["dcterms:type"]
+            enumeratedProperty: ["dcterms:type"]
         };
 
         anEntity_actor_input = {
@@ -196,7 +196,7 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "to actor", lang: "en" }],
             description: [{ value: "This is a class for a link to the source of o:Relationship_mutates", lang: "en" }],
 
-            eligibleEndpoint: ["o:Entity_Actor"]
+            enumeratedEndpoint: ["o:Entity_Actor"]
         };
         Link_mutates_toState = {
             id: "o:Link_mutates_toState",
@@ -205,7 +205,7 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "to state" }],
             description: [{ value: "This is a class for a link to the target of o:Relationship_mutates" }],
 
-            eligibleEndpoint: ["o:Entity_State"]
+            enumeratedEndpoint: ["o:Entity_State"]
         };
         Relationship_mutates_input = {
             id: "o:Relationship_mutates",
@@ -214,9 +214,9 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "Title of o:Relationship_mutates", lang: "en" }],
             description: [{ value: "Description of o:Relationship_mutates", lang: "en" }],
 
-            eligibleProperty: ["dcterms:type"],
-            eligibleSourceLink: "o:Link_mutates_toActor",
-            eligibleTargetLink: "o:Link_mutates_toState"
+            enumeratedProperty: ["dcterms:type"],
+            enumeratedSourceLink: "o:Link_mutates_toActor",
+            enumeratedTargetLink: "o:Link_mutates_toState"
         };
         aRelationship_mutates_input = {
             id: "d:aRelationship_mutates_1",
@@ -292,7 +292,7 @@ describe("PIG Metaclasses", () => {
         expect(inst.description).toEqual([{ value: "This is a class for a reference used by anEntity", lang: "en" }]);
 
         expect(inst.itemType).toBe(PigItemType.Link);
-        expect(inst.eligibleEndpoint).toStrictEqual(['o:Entity_Diagram']);
+        expect(inst.enumeratedEndpoint).toStrictEqual(['o:Entity_Diagram']);
 
         // check the output as JSON:
         const refClass_output = inst.get();
@@ -340,7 +340,7 @@ describe("PIG Metaclasses", () => {
         expect(inst.description).toEqual([{ value: 'Description of o:Entity_Diagram' }]);
 
         expect(inst.itemType).toBe(PigItemType.Entity);
-        expect(inst.eligibleProperty).toStrictEqual(["dcterms:type"]);
+        expect(inst.enumeratedProperty).toStrictEqual(["dcterms:type"]);
 
         // check the output:
         const entityClass_output = inst.get();
@@ -371,9 +371,9 @@ describe("PIG Metaclasses", () => {
         expect(inst.description).toEqual([{ value: 'Description of o:Relationship_mutates', lang: "en" }]);
 
         expect(inst.itemType).toBe(PigItemType.Relationship);
-        expect(inst.eligibleSourceLink).toBe('o:Link_mutates_toActor');
-        expect(inst.eligibleTargetLink).toBe('o:Link_mutates_toState');
-        expect(inst.eligibleProperty).toStrictEqual(["dcterms:type"]);
+        expect(inst.enumeratedSourceLink).toBe('o:Link_mutates_toActor');
+        expect(inst.enumeratedTargetLink).toBe('o:Link_mutates_toState');
+        expect(inst.enumeratedProperty).toStrictEqual(["dcterms:type"]);
 
         // check the output:
         const relationshipClass_output = inst.get();

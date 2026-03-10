@@ -2,58 +2,65 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/Link.json",
     "title": "PIG Link JSON-LD Schema",
-    "description": "Validates Link class definitions that specify navigable connections between items. Defines eligible endpoint classes (pig:eligibleEndpoint) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., 'contains' / 'is contained by').",
+    "description": "Validates Link class definitions that specify navigable connections between items. Defines enumerated endpoint classes (pig:enumeratedEndpoint) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., 'contains' / 'is contained by').",
     "type": "object",
-    "properties": {
-        "@id": {
-            "$ref": "#/$defs/idString"
-        },
-        "@type": {
-            "$ref": "#/$defs/idString"
-        },
-        "pig:specializes": {
-            "$ref": "#/$defs/idObject"
-        },
-        "pig:itemType": {
-            "type": "object",
-            "required": [ "@id" ],
-            "properties": {
-                "@id": {
-                    "type": "string",
-                    "enum": [ "pig:Link" ],
-                    "description": "The PigItemType for pig:Link"
-                }
-            },
-            "additionalProperties": false
-        },
-        "dcterms:title": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "$ref": "#/$defs/languageValue"
-            }
-        },
-        "dcterms:description": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "$ref": "#/$defs/languageValue"
-            }
-        },
-        "pig:eligibleEndpoint": {
-            "type": "array",
-            "minItems": 1,
-            "description": "Array of Entity or Relationship class references that can be endpoints for this link",
-            "items": {
-                "$ref": "#/$defs/idObject"
-            }
-        }
+  "properties": {
+    "@id": {
+      "$ref": "#/$defs/idString"
     },
+    "@type": {
+      "$ref": "#/$defs/idString"
+    },
+    "pig:specializes": {
+      "$ref": "#/$defs/idObject"
+    },
+    "pig:itemType": {
+      "type": "object",
+      "required": [ "@id" ],
+      "properties": {
+        "@id": {
+          "type": "string",
+          "enum": [ "pig:Link" ],
+          "description": "The PigItemType for pig:Link"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dcterms:title": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "dcterms:description": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "dcterms:definition": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "pig:enumeratedEndpoint": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Array of Entity or Relationship class references that can be endpoints for this link",
+      "items": {
+        "$ref": "#/$defs/idObject"
+      }
+    }
+  },
     "required": [
         "@id",
         "pig:itemType",
         "dcterms:title",
-        "pig:eligibleEndpoint"
+        "pig:enumeratedEndpoint"
     ],
     "oneOf": [
         {

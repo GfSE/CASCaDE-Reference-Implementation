@@ -123,7 +123,7 @@
 <script setup lang="ts">
     import { ref, computed } from 'vue';
     import { XmlImporter } from './import-xml';
-    import type { TPigItem } from '@/common-code/schema/pig/ts/pig-metaclasses';
+    import type { TPigItem } from '@/common/schema/pig/ts/pig-metaclasses';
 
     // Reactive state
     const fileInput = ref<HTMLInputElement | null>(null);

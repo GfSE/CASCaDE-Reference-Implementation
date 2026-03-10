@@ -4,16 +4,28 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
  * Note:
- * - a roundtrip test via setJSONLD() and getJSONLD() and eligible (enumerated) values
+ * - a roundtrip test via setJSONLD() and getJSONLD() and enumerated (enumerated) values
  *   is contained in pig-package-constraints-valueRanges.spec.ts
  */
 
 import {
     Property, Link, Entity, Relationship,
     AnEntity, ARelationship
-} from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+} from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 describe('PIG Metaclasses JSON-LD Import', () => {
+/*    // Ensure console flush before test ends
+    afterEach(async () => {
+        await new Promise(resolve => setImmediate(resolve));
+    });
+    // Reliable error logging with synchronous write
+    const logResponse = (context: string, response: any) => {
+        if (!response.ok) {
+            const msg = `\n❌ ${context} FAILED:\n${JSON.stringify(response, null, 2)}\n`;
+            process.stderr.write(msg);
+        }
+    };
+*/
     describe('Property.setJSONLD()', () => {
         it('should import dcterms:title property', () => {
             const jsonldInput = {
@@ -22,12 +34,6 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': 'Title', '@language': 'en' },
                     { '@value': 'Titel', '@language': 'de' },
                     { '@value': 'Titre', '@language': 'fr' }
-                ],
-                'dcterms:description': [
-                    {
-                        '@value': '<p>A name given to the resource. <small>(<i>source: <a href="http://purl.org/dc/elements/1.1/title">DCMI</a></i>)</small></p><p>Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML \'span\' element. <small>(<i>source: <a href="http://open-services.net/">OSLC</a></i>)</small></p>',
-                        '@language': 'en'
-                    }
                 ],
                 '@type': 'owl:DatatypeProperty',
                 'pig:itemType': { '@id': 'pig:Property' },
@@ -72,7 +78,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(prop.status().ok).toBe(true);
         });
 
-        it('should import SpecIF:Priority property with eligibleValues', () => {
+        it('should import SpecIF:Priority property with enumeratedValues', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:Priority',
                 'dcterms:title': [
@@ -86,7 +92,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@type': 'owl:ObjectProperty',
                 'pig:itemType': { '@id': 'pig:Property' },
                 'sh:datatype': { '@id': 'xs:string' },
-                'pig:eligibleValue': [
+                'pig:enumeratedValue': [
                     {
                         '@id': 'SpecIF:priorityHigh',
                         'dcterms:title': [
@@ -124,13 +130,13 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             // Get the property data
             const propData = prop.get();
 
-            // Verify eligibleValue structure exists
-            expect(propData?.eligibleValue).toBeDefined();
-            expect(Array.isArray(propData?.eligibleValue)).toBe(true);
-            expect(propData?.eligibleValue?.length).toBe(3);
+            // Verify enumeratedValue structure exists
+            expect(propData?.enumeratedValue).toBeDefined();
+            expect(Array.isArray(propData?.enumeratedValue)).toBe(true);
+            expect(propData?.enumeratedValue?.length).toBe(3);
 
             // Find SpecIF:priorityHigh
-            const priorityHigh = propData?.eligibleValue?.find((ev: any) => ev.id === 'SpecIF:priorityHigh');
+            const priorityHigh = propData?.enumeratedValue?.find((ev: any) => ev.id === 'SpecIF:priorityHigh');
             expect(priorityHigh).toBeDefined();
 
             // Verify title structure
@@ -198,7 +204,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': 'pig:Link',
                 '@type': 'owl:ObjectProperty',
                 'pig:itemType': { '@id': 'pig:Link' },
-                'pig:eligibleEndpoint': [
+                'pig:enumeratedEndpoint': [
                     { '@id': 'pig:Entity' },
                     { '@id': 'pig:Relationship' }
                 ],
@@ -223,7 +229,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': 'pig:SourceLink',
                 'pig:specializes': { '@id': 'pig:Link' },
                 'pig:itemType': { '@id': 'pig:Link' },
-                'pig:eligibleEndpoint': [
+                'pig:enumeratedEndpoint': [
                     { '@id': 'pig:Entity' },
                     { '@id': 'pig:Relationship' }
                 ],
@@ -254,7 +260,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': 'Connects the source of SpecIF:writes' }
                 ],
-                'pig:eligibleEndpoint': [
+                'pig:enumeratedEndpoint': [
                     { '@id': 'FMC:Actor' }
                 ]
             };
@@ -272,7 +278,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': 'pig:lists',
                 'pig:specializes': { '@id': 'pig:TargetLink' },
                 'pig:itemType': { '@id': 'pig:Link' },
-                'pig:eligibleEndpoint': [
+                'pig:enumeratedEndpoint': [
                     { '@id': 'pig:Entity' },
                     { '@id': 'pig:Relationship' },
                     { '@id': 'pig:Organizer' }
@@ -306,7 +312,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': 'A PIG meta-model element used for entities (aka resources or artifacts).' }
                 ],
-                'pig:eligibleProperty': [
+                'pig:enumeratedProperty': [
                     { '@id': 'pig:Category' },
                     { '@id': 'pig:Icon' }
                 ]
@@ -331,8 +337,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': 'A subclass of PIG organizer serving as a root for hierarchically organized graph elements.' }
                 ],
-                'pig:eligibleProperty': [],
-                'pig:eligibleTargetLink': [
+                'pig:enumeratedProperty': [],
+                'pig:enumeratedTargetLink': [
                     { '@id': 'pig:lists' }
                 ]
             };
@@ -369,10 +375,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ],
                 'pig:specializes': { '@id': 'pig:Entity' },
                 'pig:Icon': { '@value': '□' },
-                'pig:eligibleProperty': [
+                'pig:enumeratedProperty': [
                     { '@id': 'pig:Category' }
                 ],
-                'pig:eligibleTargetLink': [],
+                'pig:enumeratedTargetLink': [],
                 'pig:itemType': { '@id': 'pig:Entity' }
             };
 
@@ -400,10 +406,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ],
                 'pig:specializes': { '@id': 'pig:Entity' },
                 'pig:Icon': { '@value': '↯' },
-                'pig:eligibleProperty': [
+                'pig:enumeratedProperty': [
                     { '@id': 'SpecIF:Priority' }
                 ],
-                'pig:eligibleTargetLink': [],
+                'pig:enumeratedTargetLink': [],
                 'pig:itemType': { '@id': 'pig:Entity' }
             };
 
@@ -428,12 +434,12 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': 'A PIG meta-model element used for reified relationships (aka predicates).' }
                 ],
-                'pig:eligibleProperty': [
+                'pig:enumeratedProperty': [
                     { '@id': 'pig:Category' },
                     { '@id': 'pig:Icon' }
                 ],
-                'pig:eligibleSourceLink': { '@id': 'pig:SourceLink' },
-                'pig:eligibleTargetLink': { '@id': 'pig:TargetLink' }
+                'pig:enumeratedSourceLink': { '@id': 'pig:SourceLink' },
+                'pig:enumeratedTargetLink': { '@id': 'pig:TargetLink' }
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
@@ -456,10 +462,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].", '@language': 'en' }
                 ],
                 'pig:specializes': { '@id': 'pig:Relationship' },
-                'pig:eligibleProperty': [],
+                'pig:enumeratedProperty': [],
                 'pig:itemType': { '@id': 'pig:Relationship' },
-                'pig:eligibleSourceLink': { '@id': 'SpecIF:writes-toSource' },
-                'pig:eligibleTargetLink': { '@id': 'SpecIF:writes-toTarget' }
+                'pig:enumeratedSourceLink': { '@id': 'SpecIF:writes-toSource' },
+                'pig:enumeratedTargetLink': { '@id': 'SpecIF:writes-toTarget' }
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
@@ -485,10 +491,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     }
                 ],
                 'pig:specializes': { '@id': 'pig:Relationship' },
-                'pig:eligibleProperty': [],
+                'pig:enumeratedProperty': [],
                 'pig:itemType': { '@id': 'pig:Relationship' },
-                'pig:eligibleSourceLink': { '@id': 'oslc_rm:satisfies-toSource' },
-                'pig:eligibleTargetLink': { '@id': 'oslc_rm:satisfies-toTarget' }
+                'pig:enumeratedSourceLink': { '@id': 'oslc_rm:satisfies-toSource' },
+                'pig:enumeratedTargetLink': { '@id': 'oslc_rm:satisfies-toTarget' }
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);

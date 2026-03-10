@@ -39,7 +39,7 @@
                     "@value": "A PIG meta-model item used for entities (aka resources or artifacts)."
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 },
@@ -66,7 +66,7 @@
                     "@value": "An element organizing model elements. An example is a list of requirements or a diagram using a certain notation."
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 }
@@ -90,9 +90,9 @@
                     "@value": "A subclass of pig:Organizer serving as a root for trees (hierarchically organized graph elements)."
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
                 {
                     "@id": "pig:lists"
                 }
@@ -116,12 +116,12 @@
                     "@value": "A subclass of pig:Organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
                 {
                     "@id": "pig:lists"
                 }
@@ -145,12 +145,12 @@
                     "@value": "A subclass of pig:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
                 {
                     "@id": "pig:lists"
                 }
@@ -174,7 +174,7 @@
                     "@value": "A subclass of pig:Organizer representing a model view (diagram) using a certain notation showing selected model elements."
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 },
@@ -188,7 +188,7 @@
                     "@id": "pig:Notation"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
                 {
                     "@id": "pig:shows"
                 },
@@ -213,7 +213,7 @@
                     "@value": "A PIG meta-model item used for reified relationships (aka predicates)."
                 }
             ],
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 },
@@ -345,7 +345,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -372,7 +372,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -399,7 +399,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -426,7 +426,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -456,7 +456,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 },
@@ -483,7 +483,7 @@
             "pig:itemType": {
                 "@id": "pig:Link"
             },
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "pig:Entity"
                 }
@@ -591,7 +591,7 @@
             "sh:datatype": {
                 "@id": "xs:string"
             },
-            "pig:eligibleValue": [
+            "pig:enumeratedValue": [
                 {
                     "@id": "SpecIF:priorityHigh",
                     "dcterms:title": [
@@ -694,7 +694,7 @@
             "pig:specializes": {
                 "@id": "pig:Entity"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Diagram"
                 },
@@ -702,7 +702,7 @@
                     "@id": "pig:Category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
             ],
             "pig:itemType": {
                 "@id": "pig:Entity"
@@ -744,12 +744,12 @@
             "pig:Icon": {
                 "@value": "&#x25A1;"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
             ],
             "pig:itemType": {
                 "@id": "pig:Entity"
@@ -791,12 +791,12 @@
             "pig:Icon": {
                 "@value": "&#x25CB;"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
             ],
             "pig:itemType": {
                 "@id": "pig:Entity"
@@ -838,12 +838,12 @@
             "pig:Icon": {
                 "@value": "&#x2662;"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "pig:Category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
             ],
             "pig:itemType": {
                 "@id": "pig:Entity"
@@ -885,12 +885,12 @@
             "pig:Icon": {
                 "@value": "&#8623;"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "SpecIF:Priority"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
             ],
             "pig:itemType": {
                 "@id": "pig:Entity"
@@ -916,7 +916,7 @@
             "pig:specializes": {
                 "@id": "pig:Entity"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
                 {
                     "@id": "o:PC-Diagram-10199275557"
                 },
@@ -924,7 +924,7 @@
                     "@id": "pig:Category"
                 }
             ],
-            "pig:eligibleTargetLink": [
+            "pig:enumeratedTargetLink": [
             ],
             "pig:itemType": {
                 "@id": "pig:Entity"
@@ -955,15 +955,15 @@
             "pig:specializes": {
                 "@id": "pig:Relationship"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
             ],
             "pig:itemType": {
                 "@id": "pig:Relationship"
             },
-            "pig:eligibleSourceLink": {
+            "pig:enumeratedSourceLink": {
                 "@id": "SpecIF:writes-toSource"
             },
-            "pig:eligibleTargetLink": {
+            "pig:enumeratedTargetLink": {
                 "@id": "SpecIF:writes-toTarget"
             }
         },
@@ -985,7 +985,7 @@
                     "@value": "Connects the source of SpecIF:writes"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "FMC:Actor"
                 }
@@ -1009,7 +1009,7 @@
                     "@value": "Connects the target of SpecIF:writes"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "FMC:State"
                 }
@@ -1040,15 +1040,15 @@
             "pig:specializes": {
                 "@id": "pig:Relationship"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
             ],
             "pig:itemType": {
                 "@id": "pig:Relationship"
             },
-            "pig:eligibleSourceLink": {
+            "pig:enumeratedSourceLink": {
                 "@id": "SpecIF:reads-toSource"
             },
-            "pig:eligibleTargetLink": {
+            "pig:enumeratedTargetLink": {
                 "@id": "SpecIF:reads-toTarget"
             }
         },
@@ -1070,7 +1070,7 @@
                     "@value": "Connects the source of SpecIF:reads"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "FMC:Actor"
                 }
@@ -1094,7 +1094,7 @@
                     "@value": "Connects the target of SpecIF:reads"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "FMC:State"
                 }
@@ -1125,15 +1125,15 @@
             "pig:specializes": {
                 "@id": "pig:Relationship"
             },
-            "pig:eligibleProperty": [
+            "pig:enumeratedProperty": [
             ],
             "pig:itemType": {
                 "@id": "pig:Relationship"
             },
-            "pig:eligibleSourceLink": {
+            "pig:enumeratedSourceLink": {
                 "@id": "oslc_rm:satisfies-toSource"
             },
-            "pig:eligibleTargetLink": {
+            "pig:enumeratedTargetLink": {
                 "@id": "oslc_rm:satisfies-toTarget"
             }
         },
@@ -1155,7 +1155,7 @@
                     "@value": "Connects the source of oslc_rm:satisfies"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "FMC:Actor"
                 },
@@ -1182,7 +1182,7 @@
                     "@value": "Connects the target of oslc_rm:satisfies"
                 }
             ],
-            "pig:eligibleEndpoint": [
+            "pig:enumeratedEndpoint": [
                 {
                     "@id": "IREB:Requirement"
                 }

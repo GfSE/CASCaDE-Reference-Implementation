@@ -8,8 +8,8 @@
  *   similar from aPackage.get(). Some properties irrelevant in this context are however missing.
  */
 
-import { checkConstraintsForPackage, ConstraintCheckType } from '../../src/common-code/schema/pig/ts/pig-package-constraints';
-import { IAPackage, APackage, PigItemType } from '../../src/common-code/schema/pig/ts/pig-metaclasses';
+import { checkConstraintsForPackage, ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
+import { IAPackage, APackage, PigItemType } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 describe('PIG Package Constraints - Property Occurrence Validation (minCount/maxCount)', () => {
     // Helper to create a minimal valid package

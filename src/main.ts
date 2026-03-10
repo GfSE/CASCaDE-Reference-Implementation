@@ -2,7 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
-import { LOG } from './common-code/lib/helpers';
+import { LOG } from './common/lib/helpers';
+// import { initModules } from './module-init-browser';
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -20,8 +21,8 @@ const vuetify = createVuetify({
         themes: {
             cas: {
                 colors: {
-                    primary: '#c83b05', // 75%
-                    secondary: '#e25505', // 50%
+                    primary: '#ffd800',
+                    secondary: '#fbe25a',
 
                     // cas-100: '#ad0505',
                     // cas-75: '#c83b05',
@@ -71,5 +72,7 @@ LOG.info("Mounted import components:", importComponents);
 app.provide('importComponents', importComponents);
 LOG.info("Mounted export components:", exportComponents);
 app.provide('exportComponents', exportComponents);
+
+// initModules();
 
 app.mount('#app');

@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='primary' @click='dialog = true'>Import XML</v-btn>
+    <v-btn color='secondary' @click='dialog = true'>Import XML</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Select XML Files</v-card-title>
@@ -16,12 +16,13 @@
                               persistent-hint></v-file-input>
 
                 <!-- Error Display -->
-                <v-alert v-if='errorMessages.length > 0'
-                         type='error'
+                <v-alert v-if="errorMessages.length > 0"
+                         type="error"
                          dismissible
-                         class='mt-4'
-                         @click:close='errorMessages = []'>
-                    <div v-for='(error, index) in errorMessages' :key='index'>
+                         class="mt-4">
+                    <div v-for="(error, index) in errorMessages"
+                         :key="index"
+                         class="text-caption">
                         {{ error }}
                     </div>
                 </v-alert>
@@ -60,10 +61,12 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
-    import { XmlImporter } from '@/common-code/import/xml/import-xml';
-    import { TPigItem, APackage, stringHTML } from '@/common-code/schema/pig/ts/pig-metaclasses';
+    import { XmlImporter } from '@/common/import/xml/import-xml';
+    import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
+    import { stringHTML } from '@/common/export/html/exportHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
-    import { Msg, IRsp } from '@/common-code/lib/messages';
+    import { LOG } from '@/common/lib/helpers';
+    import { Msg, IRsp } from '@/common/lib/messages';
 
     @Options({
         data() {
@@ -113,28 +116,21 @@
                         // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
 
-                        // Log failed imports
-                        if (failed.length > 0) {
-                            // ✅ Type annotation hinzugefügt
-                            this.errorMessages = failed.map((r: IRsp<unknown>) =>
-                                `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
-                            );
-                            console.error('Failed imports:', failed);
-                        }
+                        this.logFailedImports(failed);
 
-                        // Navigate to viewing page after short delay
+                        // Navigate to the document viewing page after short delay
                         setTimeout(async () => {
-                            await this.$router.push({ name: 'Viewing' });
+                            await this.$router.push({ name: 'Document' });
                             this.dialog = false;
                             this.onCancel();
                         }, 1500);
                     } else {
-                        this.errorMessages = ['No files were successfully imported'];
+                        this.logFailedImports(failed);
                     }
 
                 } catch (error: any) {
                     this.errorMessages = [`Import failed: ${error?.message || String(error)}`];
-                    console.error('Import error:', error);
+                    LOG.error('Import error:', error);
                 } finally {
                     this.isLoading = false;
                 }
@@ -167,6 +163,15 @@
                 // Try to extract filename from statusText
                 const match = rsp.statusText?.match(/^([^:]+):/);
                 return match ? match[1] : 'Unknown file';
+            },
+
+            logFailedImports(failed: IRsp<unknown>[]) {
+                if (failed.length > 0) {
+                    this.errorMessages = failed.map((r: IRsp<unknown>) =>
+                        `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
+                    );
+                    // LOG.error('Failed imports:', failed);
+                }
             },
 
             /**
