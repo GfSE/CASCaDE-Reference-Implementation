@@ -89,7 +89,7 @@ For example, the ontology of a simple library asset management system (or invent
     <element xsi:type="archimate:FlowRelationship" id="id-95a8baa87166428397ddf8e6cb539041" source="id-cce33edfd25247eb809fb1f2a7c7b657" target="id-6da3ca2fd6bf4836bc45c25e36363e6f"/>
   </folder>
   <folder name="Views" id="id-73874aa7ad544bbba8034d4348d44e9d" type="diagrams">
-    <element xsi:type="archimate:ArchimateDiagramModel" name="Application Usage" id="id-b8bb462b82264ebbb2b499354c12d4bf" viewpoint="application_usage">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="From Ontology Definition to Data Management and Data Use" id="id-b8bb462b82264ebbb2b499354c12d4bf" viewpoint="application_usage">
       <child xsi:type="archimate:DiagramObject" id="id-ccfc201365264debbdd45c0ae4c52cc4" targetConnections="id-0855c0cf99ce4ede89657b9367124fd5" font="1|Segoe UI|11.25|0|WINDOWS|1|-15|0|0|0|400|0|0|0|0|3|2|1|34|Segoe UI" archimateElement="id-6da3ca2fd6bf4836bc45c25e36363e6f">
         <bounds x="792" y="22" width="360" height="204"/>
       </child>

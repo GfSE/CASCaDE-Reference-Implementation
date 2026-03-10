@@ -235,7 +235,7 @@ For example, the ontology of a simple library asset management system (or invent
   <views>
     <diagrams>
       <view identifier="id-b8bb462b82264ebbb2b499354c12d4bf" xsi:type="Diagram" viewpoint="Application Usage">
-        <name xml:lang="en">Application Usage</name>
+        <name xml:lang="en">From Ontology Definition to Data Management and Data Use</name>
         <documentation xml:lang="en">A process for ontology-based applications with three steps is shown:&#xD;
 1. The application ontology is edited using the PIG classes for ontologies. For example the terms (concepts) for *library*, *book* and *author* plus their relationships *owned-by* and *written-by* are defined.&#xD;
 2. The application data is edited using the classes for application as generated from the application ontology. For example, libraries, books and authors are defined with their relationships.&#xD;
