@@ -105,7 +105,7 @@ The following transformations are planned for validating the approach (the stand
 - viewer, &#xD;
 - editor by forms or diagramming.&#xD;
 &#xD;
-The user-interface is class-driven, i.e.the details of the entity, relationship or organizer classes with their respective property classes determine the UI. For example, an editing form for a class with three property classes will have 3 fields expecting input according to its dataype and range. Or a graphical editor for a UML interaction diagram will will present a tailored pallette with drawing rules for interaction diagrams.</documentation>
+The user-interface is class-driven, i.e. the details of the entity, relationship or organizer classes with their respective property classes determine the UI. For example, an editing form for a class with three property classes will have 3 fields expecting input according to its datatype and range. Or a graphical editor for a UML interaction diagram will present a tailored pallette with drawing rules for interaction diagrams.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Validation Plugin" id="id-8c69d3bb010d4fe4ba7487020c8da50a">
       <documentation>Validates a package or a collection of packages, with&#xD;
@@ -192,7 +192,7 @@ See example files:&#xD;
       <documentation>An engine performing a transformation using the SPARQL Protocol and RDF Query Language.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Transform to Subgraph (SPARQL)" id="id-a7c19dd2b55f4882a32504716d75e1f5">
-      <documentation>Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQ queries defined in [[reqif-to-pig.xsl]] are used.</documentation>
+      <documentation>Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQL queries defined in [[any-to-pig.sparql]] are used.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="input.pig.xml" id="id-93711964b9d7473180506ded406f8ac2">
       <documentation>Input data in XML format. A pattern compatible with the CASCaRA Metamodel is assumed. &#xD;
