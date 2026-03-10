@@ -1,5 +1,11 @@
 :root {
 	--github-icon: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAEQUlEQVRYR+1WbUiVZxi+jt+oKOjykzQh01yo1Q8Hzsppc7ko8ZPpKZtNtCylrbUm9muYbmWaRS1qToNOH1rqJGEiy4/8kayTqMuZQU4FCZyg6Px2u+8X3pdzXs95zzn9iUEXPPDyPvdzP9dzf6v+JeAtQvWOwP/KAisrK+ju7kZnRwcGBwfx98SEED3u7u7YFBSEqB07EBERAWtra7OjyqwYWFpaws2aGly9cgVjY2OKyn19fXHk6FEczMyEnZ2dSSImCfBLc3NyMPD8uUllugLBmzfjx2vXEBwcrHhOkUBXVxcyDxzAzMyMRZeLws7Ozqgmy30YFWX0vFECfX192L9vH/6ZnX2jy8VDjo6OqG9sRFhYmEE9BgnM0qUx0dEYHh4WDn26dy/SMzLwCym6X1eH5eVlg8o4+BKTkrA/IQG19+6hsaFBkPPz98dvjx6BLSKHQQKlJSWoKC+XZM+XlUFNrmAMDAygv78fIeTj99atE/5NUDb8Sf/Z3+9v2SL8u3vnDgry8yUd+fRdWFRkmsD09DS2hYfr+b28ogKfpadb5Iq62locy8uTzjg5OUHb0wNXV1c9PWssoLl1C1+eOKEn9F1xMbKzsy0iUFNdjW9OndI7c/7CBajVamUC2YcPo6mpSRIKCAhAx+PHsLW1tYgAF63oXbvwgtJYBMfST1VVygQ+oEo2/OqVJPTVyZP4WvYSc5lUkOtKz56VxP03bMATqqS6WOMC//XrsbCwIMlUXr6M1NRUc+/Uk6uvr8cRKmIi7O3t8dfoqDIBb09P6I4IZeS3DJnfzGUjzwSVSoXx16+VCWzauBGcCSKOHT+OojNnzL1TT+770lKU0wNEuLi44MXLl8oEPo6NRW9vryQURLnd1t4OZm8J2IqxMTH4g2qGiNDQULS0tioT+Pb0afwsi9TKS5eQmpZmyf1CxcyjrqiLz7OyUEJWUQxC7vUpycl6QtxWiymauRyb6vWcfhqNBkWFhXrBzApriRTPDIoEVldXsZO619DQkOD7kJAQoaJNTk7Cz88PcXFxiN29Gzspx3XR1taG1pYW/EprdGRkjbUCAwPR3tkJKysrZQK829zcjKxDhwRB7gM+Pj5Q0+uZHENz+zY+Iv/qop3iJC0lxaibqqgyxsfHr9k32Iw4gDh/G6ibubm54XetFlpazQ8fwsvLCzm5ueCc1sXc3BwCqOsZQgJ1x6s0nBgKZKPzALfkpMRE9Dx7hk/27MEP587Bw8NDqhFyZTy2cRETrSQSCd+6FfcfPAA3I0NQnIimpqYEV/BkxL7zpNfP00t7KbXkvWFxcVEgoFvEIiMjwaaXd0DFIJSz5OGj8uJFYc3PzwvbIzSYygdOLt9MgOHg4ID8ggJh2djYGI0L3jA5lIqnx8fHceP6dWifPkUdmVSejpx+yeSybdu34wtq3d7e3ooXi5tmEzBL2xsIvSPw1i3wH6uc+bDyAyWeAAAAAElFTkSuQmCC");
+	--primary: #ffd800;
+	--grey-light: #f8f9fa;
+	--grey-hover: #e9ecef;
+	--font-text: #303030;
+	--font-title: #2c3e50;
+	--font-light: #7f8c8d;
 }
 
 .icon-github {
@@ -21,7 +27,7 @@
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
 	line-height: 1.6;
-	color: #303030;
+	color: var(--font-text);
 	background-color: #f5f5f5;
 	padding: 20px;
 }
@@ -36,7 +42,7 @@ body {
 }
 
 header {
-	background: #ffd800;
+	background: var(--primary);
 	padding: 40px 30px;
 	text-align: center;
 }
@@ -58,20 +64,20 @@ header p {
 }
 
 h2 {
-	color: #303030;
+	color: var(--font-text);
 	margin: 36px 0 10px;
-	border-top: 2px solid #303030;
+	border-top: 2px solid var(--font-text);
 	font-weight: 400;
 }
 
 h3 {
-	color: #303030;
+	color: var(--font-text);
 	margin: 24px 0 10px;
 	font-weight: 400;
 }
 
 a {
-	color: #2c3e50;
+	color: var(--font-title);
 	text-decoration: none;
 	font-weight: 500;
 	margin-bottom: 8px;
@@ -89,7 +95,7 @@ a:hover {
 }
 
 .card {
-	background: #f8f9fa;
+	background: var(--grey-light);
 	border-radius: 8px;
 	padding: 30px;
 	transition: all 0.3s ease;
@@ -97,12 +103,12 @@ a:hover {
 }
 
 .card:hover {
-	background: #e9ecef;
+	background: var(--grey-hover);
 }
 
 .card h3 {
 	margin-top: 0;
-	color: #2c3e50;
+	color: var(--font-title);
 }
 
 .resources-list {
@@ -113,18 +119,18 @@ a:hover {
 .resources-list li {
 	margin: 10px 0;
 	padding: 15px;
-	background: #f8f9fa;
-	border-left: 4px solid #ffd800;
+	background: var(--grey-light);
+	border-left: 4px solid var(--primary);
 	border-radius: 4px;
 	transition: background 0.2s;
 }
 
 .resources-list li:hover {
-	background: #e9ecef;
+	background: var(--grey-hover);
 }
 
 .resources-list .description {
-	color: #7f8c8d;
+	color: var(--font-light);
 	font-size: 0.95em;
 	margin-top: 5px;
 }
@@ -155,7 +161,7 @@ a:hover {
 }
 
 .features {
-	background: #f8f9fa;
+	background: var(--grey-light);
 	padding: 20px;
 	border-radius: 4px;
 	margin: 30px 0;
@@ -170,7 +176,7 @@ a:hover {
 }
 
 .cta {
-	background: #ffd800;
+	background: var(--primary);
 	padding: 40px;
 	border-radius: 8px;
 	text-align: center;
@@ -197,11 +203,11 @@ a:hover {
 }
 
 .cta a:hover {
-	background: #e9ecef;
+	background: var(--grey-hover);
 }
 
 footer {
-	background: #ffd800;
+	background: var(--primary);
 	padding: 30px;
 	text-align: center;
 }
