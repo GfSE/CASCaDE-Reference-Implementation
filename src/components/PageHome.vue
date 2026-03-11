@@ -1,7 +1,15 @@
 <template>
-    <div class="HomePage">
+    <div class="pageHome">
         <p>
-            Perform simple import and export functions for verification and validation of the PIG Metamodel using (near to) real-world examples.
+            <a href="https://cascara.gfse.org" target="_blank">CASCaRA</a> (formerly CASCaDE) is a project
+            under <a href="https://www.omg.org/" target="_blank">OMG</a> to facilitate collaboration
+            in the mechatronic product lifecycle through a standardized data format and ontology.
+        </p>
+        <p>
+            This is the CASCaRA Reference Implementation. It is designed to
+            validate the concepts of the upcoming CASCaRA Standard using real-world data and to
+            provide a common foundation for enterprise software, ensuring interoperability through
+            standardized data formats and transformations.
         </p>
 
         <!-- Mounted Plugins -->
@@ -22,7 +30,7 @@
         </section>
 
         <!-- Build Information Table -->
-        <section class="build-info">
+        <section class="boxInfo">
             <h3>Build Information</h3>
             <dl class="info-table">
                 <dt>Version</dt>
@@ -37,11 +45,11 @@
         </section>
 
         <!-- Report Issue Button
-        <v-btn color="primary"
-               class="mt-4"
-               @click="openGithubIssue">
-            Report an Issue
-        </v-btn> -->
+    <v-btn color="primary"
+           class="mt-4"
+           @click="openGithubIssue">
+        Report an Issue
+    </v-btn> -->
     </div>
 </template>
 
@@ -72,13 +80,14 @@
 
 <style scoped>
     h3 {
-        margin-top: 0.8rem;
+        margin-top: 1.6rem;
         margin-bottom: 0.4rem;
         text-align: center;
     }
 
     p {
-        margin-bottom: 2rem;
+        margin-top: 0.8rem;
+        margin-bottom: 0.4rem;
         line-height: 1.6;
         text-align: center;
     }
@@ -94,39 +103,18 @@
         margin: 0 10px;
     }
 
-    .HomePage {
+    .pageHome {
         max-width: 800px;
         margin: 0 auto;
         padding: 4rem 2rem 2rem;
     }
     /* Build Information Styling */
-    .build-info {
+    .boxInfo {
         margin: 2rem auto;
-        padding: 1.5rem;
+        padding: 0 0 1.6rem;
         background-color: #f8f9fa;
         border-radius: 8px;
         border: 1px solid #dee2e6;
         max-width: 400px;
     }
-
-    /* Definition List as Centered Table */
-    .info-table {
-        display: grid;
-        grid-template-columns: auto auto;
-        gap: 0.75rem 1.5rem;
-        margin: 0 auto;
-        justify-content: center;
-    }
-
-        .info-table dt {
-            font-weight: 400;
-            color: #495057;
-            text-align: right;
-        }
-
-        .info-table dd {
-            margin: 0;
-            color: #212529;
-            text-align: left;
-        }
 </style>
