@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CASCaRA JSON-LD Schemata | GfSE</title>
+    <meta name="description" content="CASCaRA Graph for Integrated Product Data - JSON-LD Schemata" />
+    <meta name="author" content="Dr. Oskar von Dungern | Gesellschaft für Systems Engineering e.V. (GfSE)" />
+    <meta name="keywords" content="CASCaRA Graph, Systems Engineering, Knowledge Graph, Schema, JSON-LD" />
+    <link rel="stylesheet" type="text/css" href="../../../assets/styles/about.css" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CASCaRA JSON-LD Schemata</h1>
+            <p>Product Information Graph - JSON Schema Validation (Draft-07)</p>
+        </header>
+
+        <div class="content">
+            <section>
+				<p>These schemata validate the JSON-LD representation of the items defined by the 
+				<a href="https://product-information-graph.org/doc/metamodel/latest/" target="_blank">CASCaRA Metamodel</a>. 
+				Each schema enforces structural constraints, data types, and cardinalities defined in the metamodel, 
+				ensuring interoperability and semantic consistency across different tools and organizations.</p>
+
+				<h2>Schemata</h2>
+                <h3>CASCaRA Metamodel Class Items</h3>
+                <p>These schemata validate the class definitions as derived from the CASCaRA Ontology.
+                In general, each concept in the ontology results in a class of either Property, Link, Entity, or Relationship. 
+                A class must conform to its respective schema and must have <code>dcterms:title</code>, <code>skos:definition</code> and 
+				optionally <code>dcterms:description</code> properties to convey meaning.</p>
+                
+                <ul class="resources-list">
+                    <li>
+                        <p><a href="Property.json"><strong>Property.json</strong></a></p>
+                        <div class="description">
+                            Validates <strong>Property</strong> class definitions that specify attributes for entities and relationships. 
+                            May include datatype specifications (string, integer, double, boolean, dateTime, etc.), cardinality constraints 
+                            (<code>sh:minCount</code>, <code>sh:maxCount</code>), value constraints (<code>sh:minInclusive</code>, 
+                            <code>sh:maxInclusive</code>, <code>sh:maxLength</code>, <code>sh:pattern</code>), enumeration values 
+                            (<code>cas-meta:enumeratedValue</code>), default values, measurement units, and support for composed properties.
+                        </div>
+                        <div class="description">→ OWL mapping: <code>owl:DatatypeProperty</code></div>
+                    </li>
+                    <li>
+                        <p><a href="Link.json"><strong>Link.json</strong></a></p>
+                        <div class="description">
+                            Validates <strong>Link</strong> class definitions that specify navigable connections between items. 
+                            Defines enumerated endpoint classes (<code>cas-meta:enumeratedEndpoint</code>) which determine which Entity or Relationship classes 
+							can be connected via this link type. Links enable traversal of the information graph and 
+							support bi-directional relationships when paired (e.g., "contains" / "is contained by").
+                        </div>
+                        <div class="description">→ OWL mapping: <code>owl:ObjectProperty</code></div>
+                    </li>
+                    <li>
+                        <p><a href="Entity.json"><strong>Entity.json</strong></a></p>
+                        <div class="description">
+                            Validates <strong>Entity</strong> class definitions for individual information objects. 
+                            Configures which properties (<code>cas-meta:enumeratedProperty</code>) and which outgoing 
+                            links are allowed (<code>cas-meta:enumeratedTargetLink</code>). 
+							Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. 
+							Supports specialization hierarchies via <code>cas-meta:specializes</code> and optional visual representation 
+                            via <code>cas-meta:icon</code>.
+                        </div>
+                        <div class="description">→ OWL mapping: <code>owl:Class</code></div>
+                    </li>
+                    <li>
+                        <p><a href="Relationship.json"><strong>Relationship.json</strong></a></p>
+                        <div class="description">
+                            Validates <strong>Relationship</strong> class definitions for directed connections between entities. 
+                            Configures which properties (<code>cas-meta:enumeratedProperty</code>), source links 
+                            (<code>cas-meta:enumeratedSourceLink</code>) and target links (<code>cas-meta:enumeratedTargetLink</code>) are allowed. 
+                            Relationships are reified connections that can carry their own properties, enabling rich traceability and 
+							dependency modeling (e.g., "Refinement" relationships with rationale and traceability status). 
+							Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance.
+                            Supports specialization hierarchies and optional icons.
+                        </div>
+                        <div class="description">→ OWL mapping: <code>owl:Class</code> with constrained <code>owl:ObjectProperty</code> endpoints</div>
+                    </li>
+                </ul>
+
+                <h3>CASCaRA Metamodel Instance Items</h3>
+                <p>These schemata validate the instances, i.e. the project data ("payload"). Instances represent actual data 
+                conforming to the respective classes above. They include revision control, modification tracking, and 
+                properties/links as configured by their respective classes.</p>
+                
+                <ul class="resources-list">
+                    <li>
+                        <p><a href="anEntity.json"><strong>anEntity.json</strong></a></p>
+                        <div class="description">
+                            Validates <strong>entity instances</strong> with actual property values and target link references. 
+                            Includes mandatory metadata: <code>@type</code> (reference to Entity class), <code>cas-meta:revision</code>, 
+                            <code>dcterms:modified</code> timestamp, optional <code>cas-meta:priorRevision</code> and 
+                            <code>dcterms:creator</code>. Properties can have direct values (<code>@value</code>) or 
+							reference enumeration values (<code>@id</code>) as defined by its class. Target links reference other entity or relationship instances. 
+                            Must have either <code>dcterms:title</code> or <code>dcterms:description</code> (or both) to convey meaning.
+                        </div>
+                        <div class="description">→ OWL mapping: <code>owl:NamedIndividual</code></div>
+                    </li>
+                    <li>
+                        <p><a href="aRelationship.json"><strong>aRelationship.json</strong></a></p>
+                        <div class="description">
+                            Validates <strong>relationship instances</strong> representing directed, reified connections between items (i.e. entity or relationship instances). 
+                            Similar metadata to entities, but additionally requires both source links (<code>cas-meta:aSourceLink</code>) 
+							and target links (<code>cas-meta:aTargetLink</code>) conforming to the class definition. 
+							Source and target links reference entity or relationship instances. 
+							Properties can carry contextual information about the relationship (e.g., traceability status, rationale, coverage analysis). 
+							Reification enables relationships to be first-class items with their own lifecycle and properties.
+							Must have a <code>dcterms:title</code> and optionally a <code>dcterms:description</code> to convey meaning.
+                        </div>
+                        <div class="description">→ OWL mapping: <code>owl:NamedIndividual</code> (reified predicate)</div>
+                    </li>
+                </ul>
+
+                <h3>CASCaRA Metamodel Package Item</h3>
+                <p>This schema validates complete CASCaRA data packages. A package contains a subset of a CASCaRA graph 
+				bundled for specific purposes such as customer-supplier agreements, milestone deliverables, or change requests. 
+				Packages include their own context definitions and maintain referential integrity.</p>
+				<ul class="resources-list">
+                    <li>
+                        <p><a href="aPackage.json"><strong>aPackage.json</strong></a></p>
+                        <div class="description">
+                            Validates <strong>complete JSON-LD package documents</strong> with <code>@context</code> (namespace and vocabulary definitions) 
+							as well as <code>@graph</code> (array of CASCaRA items). The graph contains a mix of classes (Property, Link, Entity, Relationship) 
+                            and instances (anEntity, aRelationship). Package-level metadata includes optional 
+                            <code>dcterms:modified</code>, <code>dcterms:creator</code>, <code>dcterms:title</code>, and 
+                            <code>dcterms:description</code>. Validates each item against its corresponding schema based on <code>cas-meta:itemType</code>.
+                        </div>
+                        <div class="description">→ OWL mapping: Self-contained RDF graph with ontology and instance data</div>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Key Features</h2>
+				<div class="features">
+					<ul>
+						<li><strong>Federation:</strong> JSON-LD supports dataspaces with federated data under full control of the respective owners.</li>
+						<li><strong>Multi-user Operation:</strong> JSON-LD lends itself for traceable multi-user access and versioning.</li>
+						<li><strong>Wide technology support:</strong> Good support by many programming languages including JavaScript, Python, Java and C#.</li>
+						<li><strong>Multi-language support:</strong> IETF language tags (<code>@language</code>) for internationalization.</li>
+						<li><strong>Modular design:</strong> Reusable definitions for each metamodel item type.</li>
+						<li><strong>Package validation:</strong> Complete graph validation with both class and instance items.</li>
+						<li><strong>Format validation:</strong> Simple datatypes with optinal range limitation, ISO 8601 date-time, URI patterns and CURIE namespace syntax.</li>
+						<li><strong>JSON Schema Draft-07 compliant:</strong> Industry-standard validation with wide tooling support.</li>
+					</ul>
+				</div>
+            </section>
+        </div>
+
+        <footer>
+            <p>
+                <strong>CASCaRA Graph for Integrated Product Data</strong><br>
+                Developed by the <a href="https://cascara.gfse.org" target="_blank">CASCaRA (CASCaDE) Initiative</a><br>
+                Copyright © 2025 <a href="https://gfse.org" target="_blank">GfSE - Gesellschaft für Systems Engineering e.V.</a><br>
+                Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache 2.0</a>
+            </p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                Author: <a href="mailto:Oskar.Dungern@gfse.org" >Dr. Oskar von Dungern, GfSE</a> | 
+                <a href="https://github.com/GfSE/CASCaDE-Reference-Implementation" target="_blank">GitHub Repository</a> | 
+                <a href="https://github.com/GfSE/CASCaDE-Reference-Implementation/issues" target="_blank">Report Issues</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

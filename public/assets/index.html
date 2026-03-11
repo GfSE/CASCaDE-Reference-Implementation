@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CASCaRA Graph for Integrated Product Data | GfSE</title>
+    <meta name="description" content="A Universal Graph Metamodel and Ontology for Integrated Product Data" />
+    <meta name="author" content="Dr. Oskar von Dungern | Gesellschaft für Systems Engineering e.V. (GfSE)" />
+    <meta name="keywords" content="CASCaRA Graph, Systems Engineering, Knowledge Graph, Property Graph, Ontology, RDF, JSON-LD" />
+    <link rel="stylesheet" type="text/css" href="./assets/styles/about.css" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CASCaRA Graph</h1>
+            <p>A Universal Graph Metamodel and Ontology for Integrated Product Data</p>
+        </header>
+
+        <div class="content">
+			<p>The <strong>CASCaRA Graph</strong> is defined by a metamodel and ontology for representing and integrating product information from diverse sources into a knowledge graph. It enables seamless collaboration between different tools and domains throughout the entire product lifecycle.</p>
+			<p>This site publishes documentation and serves the schemata, the semantic infrastructure as well as the ontology with CORS enabled.</p>
+
+            <section>
+                <h2>Content</h2>
+                <ul class="resources-list">
+                    <li>
+                        <p><strong>Documentation:</strong> The latest revision as agreed by the CASCaRA Submission Team:<br/>
+							• <a href="./doc/metamodel/latest/">Metamodel</a><br/>
+							• Semantic Infrastructure <i>(in preparation)</i><br/>
+							• Ontology <i>(in preparation)</i>
+						</p>
+                    </li>
+                    <li>
+                        <p><strong>JSON-LD Schemata:</strong> The versions as developed by the CASCaRA Submission Team:<br/>
+							• <a href="./schema/2026-02-18/jsonld/">Latest</a><br/>
+							• <a href="./schema/2026-02-18/jsonld/">2026-02-18</a><br/>
+							• <a href="./schema/2026-01-12/jsonld/">2026-01-12</a>
+						</p>
+						<!-- Don't forget to update .htaccess in ./schema/latest/ -->
+                    </li>
+                    <li>
+                        <p><strong>Transformations:</strong> The transformations from source formats to the CASCaRA Graph:<br/>
+							• ReqIF <i>(in preparation)</i><br/>
+							• UML/SysML v1 via XMI <i>(in preparation)</i><br/>
+							• FMI/SSP <i>(in preparation)</i><br/>
+							• LOTAR <i>(in preparation)</i>
+						</p>
+                    </li>
+                    <li>
+                        <p><strong>Reference Implementation:</strong> In development for verification and validation before standard submission.<br/>
+							• Release <i>(in preparation)</i><br/>
+							• Development "beta" Release <i>(in preparation)</i><br/>
+							• <a href="https://app-alpha.product-information-graph.org/" target="_blank">Development "alpha" Release</a><br/>
+						</p>
+                    </li>
+                </ul>
+                
+            </section>
+
+            <section>
+                <h2>Key Features</h2>
+				<div class="features">
+					<ul>
+						<li><strong>Separation of Concerns:</strong> Syntax and Semantics are separated, so that no software update is needed, when the ontology evolves over time.</li>
+						<li><strong>Transformation:</strong> The CASCaRA Metamodel assures loss-less transformation between Knowledge Graphs, Property Graphs and Object-oriented Programming.</li>
+						<li><strong>Federation:</strong> Supports dataspaces with federated data under full control of the respective owners.</li>
+						<li><strong>Versioning:</strong> Built-in revision control at the level of individual artifacts (entities) and their relationships.</li>
+						<li><strong>Specialization:</strong> Supports semantic class hierarchies.</li>
+						<li><strong>Multi-Language Support:</strong> Built-in support for multilingual content.</li>
+					</ul>
+				</div>
+            </section>
+<!--
+            <section>
+                <h2>Formats and Schemata</h2>
+                <ul class="resources-list">
+                    <li>
+                        <a href="./pig/schema/2026-01-12/jsonld/">JSON-LD Schemata (Draft-07)</a>
+                        <div class="description">Complete JSON Schema validation for all PIG metamodel classes and instances</div>
+                    </li>
+                    <li>
+                        <a href="./pig/schema/2026-01-12/rdf/">RDF/Turtle Schemata with SHACL</a>
+                        <div class="description">SHACL shapes for validating RDF-based PIG data</div>
+                    </li>
+                    <li>
+                        <a href="./results/">Latest Results</a>
+                        <div class="description">Metamodel implementation in RDF/Turtle and JSON-LD with JSON Schema (2026-01-12)</div>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Examples and Validation</h2>
+                <p>Demonstration examples showcase practical applications of the PIG metamodel:</p>
+                
+                <ul class="resources-list">
+                    <li>
+                        <a href="./examples/libraries/">Library Management Ontology</a>
+                        <div class="description">Example of an ontology-based application with libraries, books, and authors</div>
+                    </li>
+                    <li>
+                        <a href="./validation/">Validation Examples</a>
+                        <div class="description">
+                            Validated examples:<br>
+                            • Very Simple Model with Requirements (FMC)<br>
+                            • Small Autonomous Vehicle (SysML v1)<br>
+                            • Dimmer (FMC)
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Standards and Ontologies</h2>
+                <p>PIG is built on established standards and ontologies:</p>
+                
+                <div class="features">
+                    <ul>
+                        <li><strong>W3C Standards:</strong> RDF, JSON-LD, SHACL, Dublin Core</li>
+                        <li><strong>JSON Schema:</strong> Draft-07 for structural validation</li>
+                        <li><strong>ISO/IEC:</strong> 15288 (Systems Engineering), 21838-1 (Top-level Ontologies)</li>
+                        <li><strong>OMG:</strong> SysML, UML, Commons Ontology Library</li>
+                        <li><strong>Domain Ontologies:</strong> BFO, IOF (Industrial Ontologies Foundry)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <div class="cta">
+                <h3>Get Started with PIG</h3>
+                <p>Explore the schemata, examples, and documentation</p>
+                <a href="./pig/schema/2026-01-12/jsonld/">JSON-LD Schemata</a>
+                <a href="https://github.com/GfSE/CASCaDE-Verification-and-Validation" target="_blank">GitHub Repository</a>
+                <a href="./literature/">Literature</a>
+            </div>
+-->
+            <section>
+                <h2>Project and Community</h2>
+                <p>The CACaRA Graph is being developed as part of the <a href="https://cascara.gfse.org/">CASCaRA project</a> (Collaborative Artifact, Specification, Context and Resource Access), an initiative by:</p>
+                
+                <ul class="resources-list">
+                    <li>
+                        <a href="https://gfse.org" target="_blank">Gesellschaft für Systems Engineering e.V. (GfSE)</a>
+                        <div class="description">German Society for Systems Engineering</div>
+                    </li>
+                    <li>
+                        <a href="https://www.prostep.org" target="_blank">prostep ivip e.V.</a>
+                        <div class="description">Association for the Advancement of International Product Data Standards</div>
+                    </li>
+                    <li>
+                        <a href="https://www.omg.org" target="_blank">OMG</a>
+                        <div class="description">Object Management Group</div>
+                    </li>
+                </ul>
+				<p>A Request of Proposal for a standard (RFP) has been accepted by the OMG in December 2024. The final standard submission is planned for 2026.</p>
+            </section>
+
+            <section>
+                <h2>News</h2>
+                <ul class="resources-list">
+                    <li>
+                        <span class="badge draft">2026-01-12</span>
+                        <a href="https://cascade.gfse.org/results/#2026-01-12-metamodel-implemented-in-rdfturtle-and-json-ld-with-json-schema">
+						<strong>Metamodel Implementation</strong></a>
+                        <div class="description">Complete implementation in JSON-LD with JSON Schema. Validation with real-world examples is starting.</div>
+                    </li>
+                    <li>
+                        <span class="badge draft">2025-12-08</span>
+                        <a href="https://cascade.gfse.org/results/#2025-12-08-cascara-initial-standard-submission-at-omg">
+						<strong>CASCaRA Initial Submission</strong></a>
+                        <div class="description">Initial standard submission to OMG completed. Strong interest from other OMG initiatives.</div>
+                    </li>
+                    <li>
+                        <span class="badge draft">2024-12-13</span>
+                        <a href="https://cascade.gfse.org/results/#2024-12-13-omg-approves-rfp"><strong>OMG RFP Approved</strong></a>
+                        <div class="description">Request for Proposal approved by OMG Architecture Board and Technical Committee.</div>
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Contact and Contribute</h2>
+                <p>Interested in the CASCaRA Graph? We're looking for support from companies and software developers!</p>
+                
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>👤 Contact</h3>
+                        <p>
+                            <strong>Uwe Kaufmann</strong><br>
+                            <a href="mailto:uwe.kaufmann@gfse.org">Uwe.Kaufmann@gfse.org</a> | 
+                            <a href="https://www.linkedin.com/in/uwekaufmann/" target="_blank">LinkedIn</a>
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <h3>👤 Technical Lead</h3>
+                        <p>
+                            <strong>Dr.-Ing. Oskar von Dungern</strong><br>
+                            <a href="mailto:oskar.dungern@gfse.org">Oskar.Dungern@gfse.org</a> | 
+                            <a href="https://www.linkedin.com/in/odungern/" target="_blank">LinkedIn</a> | <a href="https://github.com/odungern" target="_blank">GitHub</a>
+                        </p>
+                        <p>
+                            <strong>Michael Kirsch</strong><br>
+                            <a href="mailto:Michael.Kirsch@em.ag">Michael.Kirsch@em.ag</a> | 
+                            <a href="https://www.linkedin.com/in/michael-kirsch-58859454/" target="_blank">LinkedIn</a>
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <div style="display:flex; ">
+							<span class="icon-github"></span><h3>Repositories</h3>
+						</div>
+                        <p>
+                            <a href="https://github.com/GfSE/CASCaDE-Pages" target="_blank">Home-Page</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Metamodel" target="_blank">Metamodel</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Ontology" target="_blank">Ontology</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Verification-and-Validation" target="_blank">Validation</a><br>
+                            <a href="https://github.com/GfSE/CASCaDE-Pages/discussions" target="_blank">Discussions</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>
+                <strong>CASCaRA Graph for Integrated Product Data</strong><br>
+                Developed by the <a href="https://cascara.gfse.org" target="_blank">CASCaRA Initiative (formerly CASCaDE)</a><br>
+                Copyright © 2025 <a href="https://gfse.org" target="_blank">GfSE - Gesellschaft für Systems Engineering e.V.</a><br>
+                Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache 2.0</a>
+            </p>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                <a href="https://github.com/GfSE/CASCaDE-Pages" target="_blank">GitHub</a> |
+                <a href="https://github.com/GfSE/CASCaDE-Pages/issues" target="_blank">Report Issues</a> |
+                <a href="https://cascara.gfse.org/literature/" target="_blank">Literature</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

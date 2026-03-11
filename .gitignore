@@ -25,3 +25,6 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Auto-generated build info
+# src/utils/lib/build-info.ts
