@@ -4,6 +4,7 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
+import { DEF } from '../../src/common/lib/definitions';
 import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
 import { ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
 
@@ -12,14 +13,14 @@ describe('PIG Package getHTML() Method', () => {
         test('should return array of HTML strings with package metadata and entity', () => {
             const validPackageWithEntity = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-package-html',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 'dcterms:title': [
                     { '@value': 'Test Package', '@language': 'en' }
                 ],
@@ -31,8 +32,8 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': { '@id': 'pig:Property' },
-                        'pig:itemType': { '@id': 'pig:Property' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
                         ],
@@ -40,8 +41,8 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': { '@id': 'pig:Entity' },
-                        'pig:itemType': { '@id': 'pig:Entity' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
@@ -49,8 +50,8 @@ describe('PIG Package getHTML() Method', () => {
                     {
                         '@id': 'd:REQ-001',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
                         'dcterms:modified': '2025-01-30T10:00:00Z',
                         'dcterms:creator': 'John Doe',
                         'dcterms:title': [
@@ -61,7 +62,7 @@ describe('PIG Package getHTML() Method', () => {
                         ],
                         'o:Property_Status': [
                             {
-                                'pig:itemType': { '@id': 'pig:aProperty' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
                                 '@value': 'Draft'
                             }
                         ]
@@ -116,13 +117,13 @@ describe('PIG Package getHTML() Method', () => {
         test('should return only package metadata when no entities present', () => {
             const packageWithoutEntities = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/'
                 },
                 '@id': 'd:package-no-entities',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 'dcterms:title': [
                     { '@value': 'Empty Package', '@language': 'en' }
                 ],
@@ -130,8 +131,8 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Name',
-                        'pig:specializes': { '@id': 'pig:Property' },
-                        'pig:itemType': { '@id': 'pig:Property' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         'dcterms:title': [
                             { '@value': 'Name', '@language': 'en' }
                         ],
@@ -158,14 +159,14 @@ describe('PIG Package getHTML() Method', () => {
         test('should ignore non-entity items (Property, Link, Relationship)', () => {
             const packageWithMixedItems = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:package-mixed',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 'dcterms:title': [
                     { '@value': 'Mixed Package', '@language': 'en' }
                 ],
@@ -173,8 +174,8 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': { '@id': 'pig:Property' },
-                        'pig:itemType': { '@id': 'pig:Property' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         'dcterms:title': [
                             { '@value': 'Status', '@language': 'en' }
                         ],
@@ -182,27 +183,27 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Link_RefersTo',
-                        'pig:specializes': { '@id': 'pig:Link' },
-                        'pig:itemType': { '@id': 'pig:Link' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         'dcterms:title': [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:enumeratedEndpoint': [
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': { '@id': 'pig:Entity' },
-                        'pig:itemType': { '@id': 'pig:Entity' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Relationship_Trace',
-                        'pig:specializes': { '@id': 'pig:Relationship' },
-                        'pig:itemType': { '@id': 'pig:Relationship' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         'dcterms:title': [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
@@ -210,8 +211,8 @@ describe('PIG Package getHTML() Method', () => {
                     {
                         '@id': 'd:REQ-002',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
                         'dcterms:modified': '2025-01-30T10:00:00Z',
                         'dcterms:title': [
                             { '@value': 'Test Entity', '@language': 'en' }
@@ -240,10 +241,10 @@ describe('PIG Package getHTML() Method', () => {
         test('should be accepted', () => {
             const invalidPackage = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/'
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                 },
                 '@id': 'd:invalid-package',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 '@graph': [] // Empty graph
             };
 
@@ -261,14 +262,14 @@ describe('PIG Package getHTML() Method', () => {
         test('should return HTML for all entities in package', () => {
             const packageWithMultipleEntities = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:package-multiple',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 'dcterms:title': [
                     { '@value': 'Multi-Entity Package', '@language': 'en' }
                 ],
@@ -276,8 +277,8 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': { '@id': 'pig:Entity' },
-                        'pig:itemType': { '@id': 'pig:Entity' },
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
@@ -285,8 +286,8 @@ describe('PIG Package getHTML() Method', () => {
                     {
                         '@id': 'd:REQ-001',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
                         'dcterms:modified': '2025-01-30T10:00:00Z',
                         'dcterms:title': [
                             { '@value': 'First Requirement', '@language': 'en' }
@@ -295,8 +296,8 @@ describe('PIG Package getHTML() Method', () => {
                     {
                         '@id': 'd:REQ-002',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.1',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.1',
                         'dcterms:modified': '2025-01-30T11:00:00Z',
                         'dcterms:title': [
                             { '@value': 'Second Requirement', '@language': 'en' }
@@ -305,8 +306,8 @@ describe('PIG Package getHTML() Method', () => {
                     {
                         '@id': 'd:REQ-003',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '2.0',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '2.0',
                         'dcterms:modified': '2025-01-30T12:00:00Z',
                         'dcterms:title': [
                             { '@value': 'Third Requirement', '@language': 'en' }

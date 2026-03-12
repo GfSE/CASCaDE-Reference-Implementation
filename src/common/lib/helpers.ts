@@ -16,6 +16,8 @@
  *  -
  */
 
+import { DEF } from './definitions';
+
 /**
  * JSON helper types
  */
@@ -292,13 +294,13 @@ export const LIB = {
     makeXMLDoc(
         xml: string,
         options?: {
-            rootTag?: string;                        // Custom root tag (default: 'pig:Package')
+            rootTag?: string;                        // Custom root tag (default: `${DEF.pfxNsMeta}Package`)   
             includeXmlDeclaration?: boolean;         // Include <?xml...?> declaration (default: false)
             namespaces?: Record<string, string>;     // Explicit namespace prefix -> URI mappings
             warnOnMissing?: boolean;                 // Warn about prefixes without declarations (default: true)
         }
     ): string {
-        const rootTag = options?.rootTag ?? 'pig:Package';
+        const rootTag = options?.rootTag ?? `${DEF.pfxNsMeta}Package`;
         const includeXmlDecl = options?.includeXmlDeclaration ?? false;
         const explicitNamespaces = options?.namespaces ?? {};
         const warnOnMissing = options?.warnOnMissing ?? true;

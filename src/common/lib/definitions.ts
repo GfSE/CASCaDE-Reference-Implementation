@@ -1,6 +1,9 @@
 import { BUILD_INFO } from '../../build-info';
 
 const PIG_DOMAIN = 'http://product-information-graph.org/';
+const PREFIX_NS_META = 'pig:' // later 'cas-meta:';
+const PREFIX_NS_SEMI = 'pig:' // later 'cas-semi:';
+const PREFIX_NS_DCMI = 'dct:'; // later 'cas-data:';
 
 export const DEF = {
     pigVersion: '2026-02-23',
@@ -13,7 +16,11 @@ export const DEF = {
     defaultDataNamespace: PIG_DOMAIN + 'default/data#',  // for data instances with prefix d:
     defaultOntologyNamespace: PIG_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
     ...BUILD_INFO,
-    minIdLength: 3
+    minLengthId: 3,
+    maxSizeXML: 4 * 1024 * 1024, // 4MB
+    pfxNsMeta: PREFIX_NS_META,
+    pfxNsSemi: PREFIX_NS_SEMI,
+    pfxNsDcmi: PREFIX_NS_DCMI,
 };
 
 export const RE = {

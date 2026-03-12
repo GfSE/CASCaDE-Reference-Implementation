@@ -121,6 +121,7 @@
 </template>
 
 <script setup lang="ts">
+    import { DEF } from '@/common/lib/definitions';
     import { ref, computed } from 'vue';
     import { XmlImporter } from './import-xml';
     import type { TPigItem } from '@/common/schema/pig/ts/pig-metaclasses';
@@ -240,7 +241,7 @@ function formatDate(dateStr: string): string {
 }
 
 function formatItemType(type: string): string {
-    return type.replace('pig:', '');
+    return type.replace(DEF.pfxNsMeta, '');
 }</script>
 
 <style scoped>

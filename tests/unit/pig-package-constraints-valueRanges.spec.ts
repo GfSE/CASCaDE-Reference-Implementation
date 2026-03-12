@@ -8,6 +8,7 @@
  *   similar from aPackage.get(). Some properties irrelevant in this context are however missing.
  */
 
+import { DEF } from '../../src/common/lib/definitions';
 import { describe, it, expect } from '@jest/globals';
 import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
 import { checkConstraintsForPackage, ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
@@ -20,21 +21,21 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept string within maxLength', () => {
             const pkg = {
                 'id': 'd:test-string-valid',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'o:propName',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:string',
                         'maxLength': 50
                     },
                     {
                         'id': 'o:component',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'd:component-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'o:component',
                         'hasProperty': [
                             {
@@ -58,21 +59,21 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject string exceeding maxLength', () => {
             const pkg = {
                 'id': 'd:test-string-too-long',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:name',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:string',
                         'maxLength': 10
                     },
                     {
                         'id': 'ent:component',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:component-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:component',
                         'hasProperty': [
                             {
@@ -97,21 +98,21 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept language-tagged string within maxLength', () => {
             const pkg = {
                 'id': 'd:test-mlstring-valid',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:description',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:string',
                         'maxLength': 100
                     },
                     {
                         'id': 'ent:component',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:component-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:component',
                         'hasProperty': [
                             {
@@ -138,21 +139,21 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept string matching pattern', () => {
             const pkg = {
                 'id': 'd:test-pattern-valid',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:email',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:string',
                         'pattern': '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
                     },
                     {
                         'id': 'ent:person',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:person-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:person',
                         'hasProperty': [
                             {
@@ -174,21 +175,21 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject string not matching pattern', () => {
             const pkg = {
                 'id': 'd:test-pattern-invalid',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:email',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:string',
                         'pattern': '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
                     },
                     {
                         'id': 'ent:person',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:person-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:person',
                         'hasProperty': [
                             {
@@ -212,22 +213,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should handle both maxLength and pattern constraints', () => {
             const pkg = {
                 'id': 'd:test-pattern-and-length',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:code',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:string',
                         'maxLength': 10,
                         'pattern': '^[A-Z0-9]+$'
                     },
                     {
                         'id': 'ent:product',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:product-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:product',
                         'hasProperty': [
                             {
@@ -253,22 +254,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept integer within range', () => {
             const pkg = {
                 'id': 'd:test-int-valid',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
                         'maxInclusive': 100
                     },
                     {
                         'id': 'ent:inventory',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:inventory-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:inventory',
                         'hasProperty': [
                             {
@@ -290,22 +291,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept integer at minInclusive boundary', () => {
             const pkg = {
                 'id': 'd:test-int-min-boundary',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
                         'maxInclusive': 100
                     },
                     {
                         'id': 'ent:inventory',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:inventory-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:inventory',
                         'hasProperty': [
                             {
@@ -327,22 +328,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject integer below minInclusive', () => {
             const pkg = {
                 'id': 'd:test-int-too-small',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
                         'maxInclusive': 100
                     },
                     {
                         'id': 'ent:inventory',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:inventory-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:inventory',
                         'hasProperty': [
                             {
@@ -366,22 +367,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject integer above maxInclusive', () => {
             const pkg = {
                 'id': 'd:test-int-too-large',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
                         'maxInclusive': 100
                     },
                     {
                         'id': 'ent:inventory',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:inventory-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:inventory',
                         'hasProperty': [
                             {
@@ -405,22 +406,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject non-numeric value for integer property', () => {
             const pkg = {
                 'id': 'd:test-int-invalid-value',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
                         'maxInclusive': 100
                     },
                     {
                         'id': 'ent:inventory',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:inventory-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:inventory',
                         'hasProperty': [
                             {
@@ -448,22 +449,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept double within range', () => {
             const pkg = {
                 'id': 'd:test-double-valid',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:temperature',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:double',
                         'minInclusive': -273.15,
                         'maxInclusive': 1000.0
                     },
                     {
                         'id': 'ent:sensor',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:sensor-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:sensor',
                         'hasProperty': [
                             {
@@ -485,22 +486,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject double below minInclusive', () => {
             const pkg = {
                 'id': 'd:test-double-too-small',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:temperature',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:double',
                         'minInclusive': -273.15,
                         'maxInclusive': 1000.0
                     },
                     {
                         'id': 'ent:sensor',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:sensor-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:sensor',
                         'hasProperty': [
                             {
@@ -524,22 +525,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject double above maxInclusive', () => {
             const pkg = {
                 'id': 'd:test-double-too-large',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:temperature',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:double',
                         'minInclusive': -273.15,
                         'maxInclusive': 1000.0
                     },
                     {
                         'id': 'ent:sensor',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:sensor-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:sensor',
                         'hasProperty': [
                             {
@@ -563,22 +564,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept double with high precision', () => {
             const pkg = {
                 'id': 'd:test-double-precision',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:ratio',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:double',
                         'minInclusive': 0.0,
                         'maxInclusive': 1.0
                     },
                     {
                         'id': 'ent:measurement',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:measurement-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:measurement',
                         'hasProperty': [
                             {
@@ -604,35 +605,35 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should validate multiple properties with different datatypes', () => {
             const pkg = {
                 'id': 'd:test-multiple-properties',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:name',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:string',
                         'maxLength': 50
                     },
                     {
                         'id': 'prop:count',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
                         'maxInclusive': 100
                     },
                     {
                         'id': 'prop:ratio',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:double',
                         'minInclusive': 0.0,
                         'maxInclusive': 1.0
                     },
                     {
                         'id': 'ent:product',
-                        'itemType': 'pig:Entity'
+                        'itemType': `${DEF.pfxNsMeta}Entity`
                     },
                     {
                         'id': 'inst:product-1',
-                        'itemType': 'pig:anEntity',
+                        'itemType': `${DEF.pfxNsMeta}anEntity`,
                         'hasClass': 'ent:product',
                         'hasProperty': [
                             {
@@ -662,23 +663,23 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should validate aRelationship properties', () => {
             const pkg = {
                 'id': 'd:test-relationship-properties',
-                'itemType': 'pig:Package',
+                'itemType': `${DEF.pfxNsMeta}Package`,
                 'graph': [
                     {
                         'id': 'prop:weight',
-                        'itemType': 'pig:Property',
+                        'itemType': `${DEF.pfxNsMeta}Property`,
                         'datatype': 'xs:double',
                         'minInclusive': 0.0,
                         'maxInclusive': 1.0
                     },
                     {
                         'id': 'rel:dependency',
-                        'itemType': 'pig:Relationship'
+                        'itemType': `${DEF.pfxNsMeta}Relationship`
                         // some mandatory properties are omitted (no schema test applied)
                     },
                     {
                         'id': 'inst:dependency-1',
-                        'itemType': 'pig:aRelationship',
+                        'itemType': `${DEF.pfxNsMeta}aRelationship`,
                         'hasClass': 'rel:dependency',
                         'hasProperty': [
                             {
@@ -704,7 +705,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept value from enumeratedValue list', () => {
             const pkg = {
                 "id": "d:test-enum-string-valid",
-                "itemType": "pig:aPackage",
+                "itemType": `${DEF.pfxNsMeta}aPackage`,
                 "modified": "2026-02-16T12:00:00Z",
                 "context": [
                     {
@@ -723,8 +724,8 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                 ],
                 "graph": [{
                     "id": "IREB:Priority",
-                    "itemType": "pig:Property",
-                    "specializes": "pig:Property",
+                    "itemType": `${DEF.pfxNsMeta}Property`,
+                    "specializes": `${DEF.pfxNsMeta}Property`,
                     "title": [
                         {
                             "value": "Priority",
@@ -785,7 +786,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     ]
                 }, {
                     "id": "d:Req-1a8016e2872e78ecadc50feddc00029b",
-                    "itemType": "pig:anEntity",
+                    "itemType": `${DEF.pfxNsMeta}anEntity`,
                     "hasClass": "IREB:Requirement",
                     "modified": "2020-10-17T10:00:00+01:00",
                     "title": [
@@ -802,7 +803,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         {
                             "idRef": "IREB:priorityHigh",
                             "hasClass": "IREB:Priority",
-                            "itemType": "pig:aProperty"
+                            "itemType": `${DEF.pfxNsMeta}aProperty`
                         }
                     ]
                 }]
@@ -831,7 +832,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify complete package structure
             expect(pkgOut).toBeDefined();
             expect(pkgOut.id).toBe('d:test-enum-string-valid');
-            expect(pkgOut.itemType).toBe('pig:aPackage');
+            expect(pkgOut.itemType).toBe(`${DEF.pfxNsMeta}aPackage`);
             expect(pkgOut.modified).toBe('2026-02-16T12:00:00Z');
 
             // Verify context preservation
@@ -847,9 +848,9 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify Property definition (first graph item)
             const propertyDef = pkgOut.graph[0] as any;
             expect(propertyDef.id).toBe('IREB:Priority');
-            expect(propertyDef.itemType).toBe('pig:Property');
+            expect(propertyDef.itemType).toBe(`${DEF.pfxNsMeta}Property`);
             expect(propertyDef.datatype).toBe('xs:string');
-            expect(propertyDef.specializes).toBe('pig:Property');
+            expect(propertyDef.specializes).toBe(`${DEF.pfxNsMeta}Property`);
 
             // Verify enumeratedValue array
             expect(propertyDef.enumeratedValue).toBeDefined();
@@ -868,7 +869,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify anEntity instance (second graph item)
             const anEntity = pkgOut.graph[1] as any;
             expect(anEntity.id).toBe('d:Req-1a8016e2872e78ecadc50feddc00029b');
-            expect(anEntity.itemType).toBe('pig:anEntity');
+            expect(anEntity.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
             expect(anEntity.hasClass).toBe('IREB:Requirement');
             expect(anEntity.modified).toBe('2020-10-17T10:00:00+01:00');
 
@@ -884,7 +885,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(anEntity.hasProperty.length).toBe(1);
 
             const aProperty = anEntity.hasProperty[0];
-            expect(aProperty.itemType).toBe('pig:aProperty');
+            expect(aProperty.itemType).toBe(`${DEF.pfxNsMeta}aProperty`);
             expect(aProperty.hasClass).toBe('IREB:Priority');
             expect(aProperty.idRef).toBe('IREB:priorityHigh');
             expect(aProperty.value).toBeUndefined(); // enumeration uses idRef, not value
@@ -906,8 +907,8 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                             lang: "en"
                         }
                     ],
-                    "specializes": "pig:Property",
-                    "itemType": "pig:Property",
+                    "specializes": `${DEF.pfxNsMeta}Property`,
+                    "itemType": `${DEF.pfxNsMeta}Property`,
                     "datatype": "xs:string",
                     "enumeratedValue": [
                         {
@@ -958,7 +959,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                             "hasClass": "SpecIF:Priority"
                         }
                     ],
-                    "itemType": "pig:anEntity"
+                    "itemType": `${DEF.pfxNsMeta}anEntity`
                 }]
             } as unknown as APackage;
 
@@ -982,13 +983,13 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
                 },
                 "@id": "d:test-enum-numeric-jsonld",
-                "pig:itemType": { "@id": "pig:aPackage" },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 "dcterms:modified": "2026-02-16T12:00:00Z",
                 "@graph": [
                     {
                         "@id": "o:Fibonacci",
-                        "pig:itemType": { "@id": "pig:Property" },
-                        "pig:specializes": { "@id": "pig:Property" },
+                        [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsMeta}specializes`]: { "@id": `${DEF.pfxNsMeta}Property` },
                         "dcterms:title": [
                             {
                                 "@value": "Fibonacci Numbers",
@@ -1002,7 +1003,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                             }
                         ],
                         "sh:datatype": "xs:integer",
-                        "pig:enumeratedValue": [
+                        [`${DEF.pfxNsMeta}enumeratedValue`]: [
                             {
                                 "@id": "o:Fibonacci-1",
                                 "@value": "1"
@@ -1031,7 +1032,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         "@id": "d:Est-Task-4711",
-                        "pig:itemType": { "@id": "pig:anEntity" },
+                        [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}anEntity` },
                         "@type": "o:Estimate",
                         "dcterms:modified": "2026-01-15T14:30:00Z",
                         "dcterms:title": [
@@ -1048,7 +1049,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         ],
                         "o:Fibonacci": [
                             {
-                                "pig:itemType": { "@id": "pig:aProperty" },
+                                [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}aProperty` },
                                 "@id": "o:Fibonacci-8"
                             }
                         ]
@@ -1072,7 +1073,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify package structure
             expect(pkgOut).toBeDefined();
             expect(pkgOut.id).toBe('d:test-enum-numeric-jsonld');
-            expect(pkgOut.itemType).toBe('pig:aPackage');
+            expect(pkgOut.itemType).toBe(`${DEF.pfxNsMeta}aPackage`);
             expect(pkgOut.modified).toBe('2026-02-16T12:00:00Z');
 
             // Verify graph items
@@ -1082,9 +1083,9 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify Fibonacci Property definition
             const fibonacciProp = pkgOut.graph[0] as any;
             expect(fibonacciProp.id).toBe('o:Fibonacci');
-            expect(fibonacciProp.itemType).toBe('pig:Property');
+            expect(fibonacciProp.itemType).toBe(`${DEF.pfxNsMeta}Property`);
             expect(fibonacciProp.datatype).toBe('xs:integer');
-            expect(fibonacciProp.specializes).toBe('pig:Property');
+            expect(fibonacciProp.specializes).toBe(`${DEF.pfxNsMeta}Property`);
 
             // Verify enumeratedValue array
             expect(fibonacciProp.enumeratedValue).toBeDefined();
@@ -1100,7 +1101,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify anEntity instance
             const taskInstance = pkgOut.graph[1] as any;
             expect(taskInstance.id).toBe('d:Est-Task-4711');
-            expect(taskInstance.itemType).toBe('pig:anEntity');
+            expect(taskInstance.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
             expect(taskInstance.hasClass).toBe('o:Estimate');
             expect(taskInstance.title[0].value).toBe('Implement User Authentication');
             expect(taskInstance.description[0].value).toContain('OAuth2');
@@ -1111,7 +1112,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(taskInstance.hasProperty.length).toBe(1);
 
             const estimateProp = taskInstance.hasProperty[0];
-            expect(estimateProp.itemType).toBe('pig:aProperty');
+            expect(estimateProp.itemType).toBe(`${DEF.pfxNsMeta}aProperty`);
             expect(estimateProp.hasClass).toBe('o:Fibonacci');
             expect(estimateProp.idRef).toBe('o:Fibonacci-8'); // Reference to Fibonacci value
             expect(estimateProp.value).toBeUndefined(); // Enumeration uses idRef, not value
@@ -1132,8 +1133,8 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                             "value": "Fibonacci Numbers"
                         }
                     ],
-                    "specializes": "pig:Property",
-                    "itemType": "pig:Property",
+                    "specializes": `${DEF.pfxNsMeta}Property`,
+                    "itemType": `${DEF.pfxNsMeta}Property`,
                     "datatype": "xs:integer",
                     "enumeratedValue": [
                         {
@@ -1172,7 +1173,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                             "hasClass": "o:Fibonacci"
                         }
                     ],
-                    "itemType": "pig:anEntity"
+                    "itemType": `${DEF.pfxNsMeta}anEntity`
                 }]
             } as unknown as APackage;
 
@@ -1188,7 +1189,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
         it('should accept numeric value from enumeratedValue list with XML input', () => {
             const pkgXML = `<?xml version="1.0" encoding="UTF-8"?>
-            <pig:aPackage xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
+            <${DEF.pfxNsMeta}aPackage xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
                           xmlns:o="https://product-information-graph.org/v0.2/ontology#"
                           xmlns:d="https://product-information-graph.org/examples/fibonacci.zip#"
                           xmlns:dcterms="http://purl.org/dc/terms/"
@@ -1196,7 +1197,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                 <dcterms:modified>2026-02-16T12:00:00Z</dcterms:modified>
                 <dcterms:title xml:lang="en">Fibonacci Estimation Example</dcterms:title>
                 <graph>
-                    <pig:Property id="o:Fibonacci" pig:specializes="pig:Property">
+                    <${DEF.pfxNsMeta}Property id="o:Fibonacci" ${DEF.pfxNsMeta}specializes="${DEF.pfxNsMeta}Property">
                         <dcterms:title xml:lang="en">Fibonacci Numbers</dcterms:title>
                         <dcterms:description xml:lang="en">Enumerated Fibonacci sequence values for estimation</dcterms:description>
                         <datatype>xs:integer</datatype>
@@ -1218,18 +1219,18 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         <enumeratedValue id="o:Fibonacci-13">
                             <value>13</value>
                         </enumeratedValue>
-                    </pig:Property>
+                    </${DEF.pfxNsMeta}Property>
         
-                    <pig:anEntity id="d:Est-Task-4711" rdf:type="o:Estimate">
+                    <${DEF.pfxNsMeta}anEntity id="d:Est-Task-4711" rdf:type="o:Estimate">
                         <dcterms:modified>2026-01-15T14:30:00Z</dcterms:modified>
                         <dcterms:title xml:lang="en">Implement User Authentication</dcterms:title>
                         <dcterms:description xml:lang="en"><![CDATA[<p>Task requires implementation of OAuth2 authentication</p>]]></dcterms:description>
-                        <pig:aProperty rdf:type="o:Fibonacci">
+                        <${DEF.pfxNsMeta}aProperty rdf:type="o:Fibonacci">
                             <idRef>o:Fibonacci-8</idRef>
-                        </pig:aProperty>
-                    </pig:anEntity>
+                        </${DEF.pfxNsMeta}aProperty>
+                    </${DEF.pfxNsMeta}anEntity>
                 </graph>
-            </pig:aPackage>`;
+            </${DEF.pfxNsMeta}aPackage>`;
 
             // A. Test with XML input via setXML
             const rsp = new APackage().setXML(pkgXML, {
@@ -1247,7 +1248,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify package structure
             expect(pkgOut).toBeDefined();
             expect(pkgOut.id).toBe('d:test-enum-numeric-xml');
-            expect(pkgOut.itemType).toBe('pig:aPackage');
+            expect(pkgOut.itemType).toBe(`${DEF.pfxNsMeta}aPackage`);
             expect(pkgOut.modified).toBe('2026-02-16T12:00:00Z');
 
             // Verify package title
@@ -1265,9 +1266,9 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify Fibonacci Property definition
             const fibonacciProp = pkgOut.graph[0] as any;
             expect(fibonacciProp.id).toBe('o:Fibonacci');
-            expect(fibonacciProp.itemType).toBe('pig:Property');
+            expect(fibonacciProp.itemType).toBe(`${DEF.pfxNsMeta}Property`);
             expect(fibonacciProp.datatype).toBe('xs:integer');
-            expect(fibonacciProp.specializes).toBe('pig:Property');
+            expect(fibonacciProp.specializes).toBe(`${DEF.pfxNsMeta}Property`);
 
             // Verify Property title and description
             expect(fibonacciProp.title[0].value).toBe('Fibonacci Numbers');
@@ -1291,7 +1292,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // Verify anEntity instance
             const taskInstance = pkgOut.graph[1] as any;
             expect(taskInstance.id).toBe('d:Est-Task-4711');
-            expect(taskInstance.itemType).toBe('pig:anEntity');
+            expect(taskInstance.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
             expect(taskInstance.hasClass).toBe('o:Estimate');
             expect(taskInstance.modified).toBe('2026-01-15T14:30:00Z');
 
@@ -1306,7 +1307,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(taskInstance.hasProperty.length).toBe(1);
 
             const estimateProp = taskInstance.hasProperty[0];
-            expect(estimateProp.itemType).toBe('pig:aProperty');
+            expect(estimateProp.itemType).toBe(`${DEF.pfxNsMeta}aProperty`);
             expect(estimateProp.hasClass).toBe('o:Fibonacci');
             expect(estimateProp.idRef).toBe('o:Fibonacci-8'); // Reference to Fibonacci value
             expect(estimateProp.value).toBeUndefined(); // Enumeration uses idRef, not value

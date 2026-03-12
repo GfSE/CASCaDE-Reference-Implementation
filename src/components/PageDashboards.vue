@@ -138,7 +138,7 @@
 
 
 <script>
-  import { Options, Vue } from 'vue-class-component';
+  import { /* Options,*/ Vue } from 'vue-class-component';
 
   export default class PageDashboards extends Vue {}
 </script>

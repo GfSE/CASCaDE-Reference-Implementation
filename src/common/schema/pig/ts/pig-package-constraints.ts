@@ -56,6 +56,7 @@
  * Authors: oskar.dungern@gfse.org
  */
 
+import { DEF } from '../../../lib/definitions';
 import { IRsp, rspOK, Msg } from '../../../lib/messages';
 import { LOG } from "../../../lib/helpers";
 import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigId } from './pig-metaclasses';
@@ -781,7 +782,7 @@ function checkPropertyHasClass(
     }
 
     if (targetType !== PigItemType.Property) {
-        return Msg.create(673, parentId, propIndex, prop.hasClass, `expected pig:Property, found ${targetType}`);
+        return Msg.create(673, parentId, propIndex, prop.hasClass, `expected ${DEF.pfxNsMeta}Property, found ${targetType}`);
     }
 
     return rspOK;
@@ -861,7 +862,7 @@ function checkLinkHasClass(
     }
 
     if (targetType !== PigItemType.Link) {
-        return Msg.create(675, parentId, linkIndex, linkArrayName, link.hasClass, `expected pig:Link, found ${targetType}`);
+        return Msg.create(675, parentId, linkIndex, linkArrayName, link.hasClass, `expected ${DEF.pfxNsMeta}Link, found ${targetType}`);
     }
 
     return rspOK;

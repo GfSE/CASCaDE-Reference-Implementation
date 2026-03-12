@@ -28,6 +28,8 @@
  *  - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
  *  - The 'set' methods are chainable to allow concise code when creating new instances.
  *  - Programming errors result in exceptions, data errors in IMsg return values.
+ *  - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
+ *  - and now pfxNsMeta: 'cas-meta:' for the metamodel and pfxNsSemi: 'cas-semi:' for the semantic infrastructure.
  *
  *  ToDo:
  *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check? 
@@ -66,18 +68,18 @@ export type stringXML = string;  // contains XML code
 export type ElementXML = globalThis.Element;  // DOM Element typ
 
 export const PigItemType = {
-    aPackage: 'pig:aPackage',
+    aPackage: `${DEF.pfxNsMeta}aPackage`,
     // PIG classes:
-    Property: 'pig:Property',
-    Link: 'pig:Link', 
-    Entity: 'pig:Entity',
-    Relationship: 'pig:Relationship',
+    Property: `${DEF.pfxNsMeta}Property`,
+    Link: `${DEF.pfxNsMeta}Link`, 
+    Entity: `${DEF.pfxNsMeta}Entity`,
+    Relationship: `${DEF.pfxNsMeta}Relationship`,
     // PIG instances/individuals:
-    aProperty: 'pig:aProperty',
-    aSourceLink: 'pig:aSourceLink',
-    aTargetLink: 'pig:aTargetLink',
-    anEntity: 'pig:anEntity',
-    aRelationship: 'pig:aRelationship'
+    aProperty: `${DEF.pfxNsMeta}aProperty`,
+    aSourceLink: `${DEF.pfxNsMeta}aSourceLink`,
+    aTargetLink: `${DEF.pfxNsMeta}aTargetLink`,
+    anEntity: `${DEF.pfxNsMeta}anEntity`,
+    aRelationship: `${DEF.pfxNsMeta}aRelationship`
 } as const;
 export type PigItemTypeValue = typeof PigItemType[keyof typeof PigItemType];
 export enum XsDataType {
@@ -711,7 +713,8 @@ abstract class AnElement extends Identifiable implements IAnElement {
             }
             // Handle single property value (non-array)
             else if (val && typeof val === 'object') {
-                const itemTypeValue = val.itemType || (val['pig:itemType'] && extractId(val['pig:itemType']));
+                const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                const itemTypeValue = val.itemType || (val[nameItemType] && extractId(val[nameItemType]));
 
                 if (itemTypeValue === itype /* || !itemTypeValue */) {
                     properties.push({
@@ -757,7 +760,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
         for (const item of items) {
             const propValue: Record<string, JsonValue> = {
-                ['pig:itemType']: { ['@id']: item.itemType } as JsonObject
+                [`${DEF.pfxNsMeta}itemType`]: { ['@id']: item.itemType } as JsonObject
             };
 
             // Add value if present (only for AProperty)
@@ -2306,15 +2309,15 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             const childTagName = childElement.tagName;
 
             // Special handling for configurable properties and links
-            if (childTagName === 'pig:aProperty') {
+            if (childTagName === PigItemType.aProperty) {
                 configurableProperties.push(processConfigurableProperty(childElement));
                 continue;
             }
-            if (childTagName === 'pig:aSourceLink') {
+            if (childTagName === PigItemType.aSourceLink) {
                 configurableSourceLinks.push(processConfigurableLink(childElement, PigItemType.aSourceLink));
                 continue;
             }
-            if (childTagName === 'pig:aTargetLink') {
+            if (childTagName === PigItemType.aTargetLink) {
                 configurableTargetLinks.push(processConfigurableLink(childElement, PigItemType.aTargetLink));
                 continue;
             }
@@ -2339,7 +2342,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     for (const [tagName, elements] of childElementsByTag) {
 
         // Special handling for 'graph' - always array of heterogeneous items
-        if (tagName === 'graph' || tagName === 'pig:graph') {
+        if (tagName === 'graph' || tagName === `${DEF.pfxNsMeta}graph`) {
             result.graph = elements.flatMap(graphContainer => {
                 // Get all direct children of <graph> container
                 // ✅ Use childNodes instead of children for @xmldom compatibility
@@ -2516,7 +2519,7 @@ function processConfigurableProperty(elem: ElementXML): JsonObject {
     };
 
     // Extract rdf:type and pig:hasClass as hasClass
-    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute('pig:hasClass') || elem.getAttribute('hasClass');
+    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
         prop.hasClass = rdfType;
     }
@@ -2558,7 +2561,7 @@ function processConfigurableLink(elem: ElementXML, itemType: PigItemTypeValue): 
     };
 
     // Extract rdf:type and pig:hasClass as hasClass
-    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute('pig:hasClass') || elem.getAttribute('hasClass');
+    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
         link.hasClass = rdfType;
     }

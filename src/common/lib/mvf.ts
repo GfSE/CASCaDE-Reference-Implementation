@@ -11,6 +11,7 @@
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
+import { DEF } from './definitions';
 import { LIB, JsonPrimitive, JsonValue, JsonObject, LOG } from './helpers';
 
 // Map PIG metamodel attributes to/from JSON-LD keys;
@@ -23,16 +24,16 @@ const FROM_JSONLD = new Map<string, string>([
     ['@language', 'lang'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
-    ['pig:specializes', 'specializes'],
-    ['pig:itemType', 'itemType'],
-    ['pig:revision', 'revision'],
-    ['pig:priorRevision', 'priorRevision'],
-    ['pig:enumeratedProperty', 'enumeratedProperty'],
-    ['pig:enumeratedSourceLink', 'enumeratedSourceLink'],
-    ['pig:enumeratedTargetLink', 'enumeratedTargetLink'],
-    ['pig:enumeratedEndpoint', 'enumeratedEndpoint'],
-    ['pig:enumeratedValue', 'enumeratedValue'],
-    ['pig:Icon', 'icon'],
+    [`${DEF.pfxNsMeta}specializes`, 'specializes'],
+    [`${DEF.pfxNsMeta}itemType`, 'itemType'],
+    [`${DEF.pfxNsMeta}revision`, 'revision'],
+    [`${DEF.pfxNsMeta}priorRevision`, 'priorRevision'],
+    [`${DEF.pfxNsMeta}enumeratedProperty`, 'enumeratedProperty'],
+    [`${DEF.pfxNsMeta}enumeratedSourceLink`, 'enumeratedSourceLink'],
+    [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
+    [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
+    [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
+    [`${DEF.pfxNsMeta}Icon`, 'icon'],
 //    ['xs:simpleType', 'datatype'], ... doesn't make sense as long as rejected by the schema
     ['sh:datatype', 'datatype'],
 //    ['xs:minOccurs', 'minCount'],
@@ -62,15 +63,15 @@ const TO_JSONLD = new Map<string, string>(
 const FROM_XML = new Map<string, string>([
     //    ['@value', 'value'],
     //    ['@language', 'lang'],
-    ['pig:revision', 'revision'],
-    ['pig:priorRevision', 'priorRevision'],
+    [`${DEF.pfxNsMeta}revision`, 'revision'],
+    [`${DEF.pfxNsMeta}priorRevision`, 'priorRevision'],
     ['rdf:type', 'hasClass'],
-    ['pig:hasClass', 'hasClass'],
+    [`${DEF.pfxNsMeta}hasClass`, 'hasClass'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
-    ['pig:specializes', 'specializes'],
-    ['pig:icon', 'icon'],  // older files may use 'pig:icon' instead of 'pig:Icon'
-    ['pig:Icon', 'icon'],
+    [`${DEF.pfxNsMeta}specializes`, 'specializes'],
+    [`${DEF.pfxNsMeta}icon`, 'icon'],  // older files may use 'pig:icon' instead of 'pig:Icon'
+    [`${DEF.pfxNsMeta}Icon`, 'icon'],
     ['sh:datatype', 'datatype'],
     ['xs:simpleType', 'datatype'],
     ['sh:minCount', 'minCount'],
@@ -83,12 +84,12 @@ const FROM_XML = new Map<string, string>([
     ['xs:default', 'defaultValue'],
     ['sh:pattern', 'pattern'],
     ['xs:pattern', 'pattern'],
-    ['pig:itemType', 'itemType'],
-    ['pig:enumeratedProperty', 'enumeratedProperty'],
-    ['pig:enumeratedSourceLink', 'enumeratedSourceLink'],
-    ['pig:enumeratedTargetLink', 'enumeratedTargetLink'],
-    ['pig:enumeratedEndpoint', 'enumeratedEndpoint'],
-    ['pig:enumeratedValue', 'enumeratedValue'],
+    [`${DEF.pfxNsMeta}itemType`, 'itemType'],
+    [`${DEF.pfxNsMeta}enumeratedProperty`, 'enumeratedProperty'],
+    [`${DEF.pfxNsMeta}enumeratedSourceLink`, 'enumeratedSourceLink'],
+    [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
+    [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
+    [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
     ['dcterms:title', 'title'],
     ['dcterms:description', 'description'],
     ['dcterms:created', 'created'],

@@ -4,6 +4,7 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
+import { DEF } from '../../src/common/lib/definitions';
 import { APackage, AnEntity } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 describe('HTML Security - XSS Prevention', () => {
@@ -11,19 +12,19 @@ describe('HTML Security - XSS Prevention', () => {
         test('should remove onHover event and embedded script from description', () => {
             const maliciousPackageJsonLd = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-xss-security',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 'dcterms:modified': '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
@@ -31,8 +32,8 @@ describe('HTML Security - XSS Prevention', () => {
                     {
                         '@id': 'd:REQ-XSS-001',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
                         'dcterms:modified': '2025-02-04T10:00:00Z',
                         'dcterms:title': [
                             { '@value': 'Malicious Requirement', '@language': 'en' }
@@ -56,7 +57,7 @@ describe('HTML Security - XSS Prevention', () => {
             const entityItem = items.find(item => item.id === 'd:REQ-XSS-001');
             
             expect(entityItem).toBeDefined();
-            expect(entityItem?.itemType).toBe('pig:anEntity');
+            expect(entityItem?.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
 
             const entity = entityItem as AnEntity;
             const htmlOutput = entity.getHTML();
@@ -78,19 +79,19 @@ describe('HTML Security - XSS Prevention', () => {
         test('should sanitize XSS vectors while preserving legitimate object tags', () => {
             const mixedContentPackage = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-mixed-content',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 'dcterms:modified': '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
@@ -98,8 +99,8 @@ describe('HTML Security - XSS Prevention', () => {
                     {
                         '@id': 'd:REQ-MIXED-CONTENT',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
                         'dcterms:modified': '2025-02-04T10:00:00Z',
                         'dcterms:title': [
                             { '@value': 'Mixed Content Test', '@language': 'en' }
@@ -148,19 +149,19 @@ describe('HTML Security - XSS Prevention', () => {
         test('should block malicious object tags with dangerous data sources', () => {
             const maliciousObjectPackage = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-malicious-object',
-                'pig:itemType': { '@id': 'pig:aPackage' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 'dcterms:modified': '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         'dcterms:title': [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
@@ -168,8 +169,8 @@ describe('HTML Security - XSS Prevention', () => {
                     {
                         '@id': 'd:REQ-MALICIOUS-OBJ',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
                         'dcterms:modified': '2025-02-04T10:00:00Z',
                         'dcterms:title': [
                             { '@value': 'Malicious Object Test', '@language': 'en' }

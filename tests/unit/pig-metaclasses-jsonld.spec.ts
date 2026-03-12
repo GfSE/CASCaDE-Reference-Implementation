@@ -8,6 +8,7 @@
  *   is contained in pig-package-constraints-valueRanges.spec.ts
  */
 
+import { DEF } from '../../src/common/lib/definitions';
 import {
     Property, Link, Entity, Relationship,
     AnEntity, ARelationship
@@ -36,7 +37,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': 'Titre', '@language': 'fr' }
                 ],
                 '@type': 'owl:DatatypeProperty',
-                'pig:itemType': { '@id': 'pig:Property' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' },
                 'sh:maxCount': 1,
                 'sh:maxLength': 256
@@ -65,7 +66,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     }
                 ],
                 '@type': 'owl:DatatypeProperty',
-                'pig:itemType': { '@id': 'pig:Property' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' },
                 'sh:maxCount': 1
             };
@@ -90,9 +91,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': "Enumerated values for the 'Priority' of the resource.", '@language': 'en' }
                 ],
                 '@type': 'owl:ObjectProperty',
-                'pig:itemType': { '@id': 'pig:Property' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' },
-                'pig:enumeratedValue': [
+                [`${DEF.pfxNsMeta}enumeratedValue`]: [
                     {
                         '@id': 'SpecIF:priorityHigh',
                         'dcterms:title': [
@@ -149,11 +150,11 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(germanTitle?.value).toBe('hoch');
         });
 
-        it('should import pig:Icon property', () => {
+        it(`should import ${DEF.pfxNsMeta}Icon property`, () => {
             const jsonldInput = {
-                '@id': 'pig:Icon',
-                'pig:specializes': { '@id': 'pig:Property' },
-                'pig:itemType': { '@id': 'pig:Property' },
+                '@id': `${DEF.pfxNsMeta}Icon`,
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'dcterms:title': [
                     { '@value': 'has icon' }
                 ],
@@ -185,7 +186,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': 'A diagram illustrating the resource or a link to a diagram.', '@language': 'en' }
                 ],
                 '@type': 'owl:DatatypeProperty',
-                'pig:itemType': { '@id': 'pig:Property' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' }
             };
 
@@ -199,14 +200,14 @@ describe('PIG Metaclasses JSON-LD Import', () => {
     });
 
     describe('Link.setJSONLD()', () => {
-        it('should import pig:Link', () => {
+        it(`should import ${DEF.pfxNsMeta}Link`, () => {
             const jsonldInput = {
-                '@id': 'pig:Link',
+                '@id': `${DEF.pfxNsMeta}Link`,
                 '@type': 'owl:ObjectProperty',
-                'pig:itemType': { '@id': 'pig:Link' },
-                'pig:enumeratedEndpoint': [
-                    { '@id': 'pig:Entity' },
-                    { '@id': 'pig:Relationship' }
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                    { '@id': `${DEF.pfxNsMeta}Entity` },
+                    { '@id': `${DEF.pfxNsMeta}Relationship` }
                 ],
                 'dcterms:title': [
                     { '@value': 'linked with' }
@@ -224,14 +225,14 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(link.status().ok).toBe(true);
         });
 
-        it('should import pig:SourceLink', () => {
+        it(`should import ${DEF.pfxNsMeta}SourceLink`, () => {
             const jsonldInput = {
-                '@id': 'pig:SourceLink',
-                'pig:specializes': { '@id': 'pig:Link' },
-                'pig:itemType': { '@id': 'pig:Link' },
-                'pig:enumeratedEndpoint': [
-                    { '@id': 'pig:Entity' },
-                    { '@id': 'pig:Relationship' }
+                '@id': `${DEF.pfxNsMeta}SourceLink`,
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                    { '@id': `${DEF.pfxNsMeta}Entity` },
+                    { '@id': `${DEF.pfxNsMeta}Relationship` }
                 ],
                 'dcterms:title': [
                     { '@value': 'to source' }
@@ -252,15 +253,15 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import SpecIF:writes-toSource', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:writes-toSource',
-                'pig:itemType': { '@id': 'pig:Link' },
-                'pig:specializes': { '@id': 'pig:SourceLink' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}SourceLink` },
                 'dcterms:title': [
                     { '@value': 'SpecIF:writes to source' }
                 ],
                 'dcterms:description': [
                     { '@value': 'Connects the source of SpecIF:writes' }
                 ],
-                'pig:enumeratedEndpoint': [
+                [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                     { '@id': 'FMC:Actor' }
                 ]
             };
@@ -273,15 +274,15 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(link.status().ok).toBe(true);
         });
 
-        it('should import pig:lists', () => {
+        it(`should import ${DEF.pfxNsMeta}lists`, () => {
             const jsonldInput = {
-                '@id': 'pig:lists',
-                'pig:specializes': { '@id': 'pig:TargetLink' },
-                'pig:itemType': { '@id': 'pig:Link' },
-                'pig:enumeratedEndpoint': [
-                    { '@id': 'pig:Entity' },
-                    { '@id': 'pig:Relationship' },
-                    { '@id': 'pig:Organizer' }
+                '@id': `${DEF.pfxNsMeta}lists`,
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}TargetLink` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                    { '@id': `${DEF.pfxNsMeta}Entity` },
+                    { '@id': `${DEF.pfxNsMeta}Relationship` },
+                    { '@id': `${DEF.pfxNsSemi}Organizer` }
                 ],
                 'dcterms:title': [
                     { '@value': 'lists' }
@@ -301,20 +302,20 @@ describe('PIG Metaclasses JSON-LD Import', () => {
     });
 
     describe('Entity.setJSONLD()', () => {
-        it('should import pig:Entity', () => {
+        it(`should import ${DEF.pfxNsMeta}Entity`, () => {
             const jsonldInput = {
-                '@id': 'pig:Entity',
+                '@id': `${DEF.pfxNsMeta}Entity`,
                 '@type': 'owl:Class',
-                'pig:itemType': { '@id': 'pig:Entity' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                 'dcterms:title': [
                     { '@value': 'Entity' }
                 ],
                 'dcterms:description': [
                     { '@value': 'A PIG meta-model element used for entities (aka resources or artifacts).' }
                 ],
-                'pig:enumeratedProperty': [
-                    { '@id': 'pig:Category' },
-                    { '@id': 'pig:Icon' }
+                [`${DEF.pfxNsMeta}enumeratedProperty`]: [
+                    { '@id': `${DEF.pfxNsMeta}Category` },
+                    { '@id': `${DEF.pfxNsMeta}Icon` }
                 ]
             };
 
@@ -326,20 +327,20 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(entity.status().ok).toBe(true);
         });
 
-        it('should import pig:HierarchyRoot', () => {
+        it(`should import ${DEF.pfxNsMeta}HierarchyRoot`, () => {
             const jsonldInput = {
-                '@id': 'pig:HierarchyRoot',
-                'pig:specializes': { '@id': 'pig:Organizer' },
-                'pig:itemType': { '@id': 'pig:Entity' },
+                '@id': `${DEF.pfxNsMeta}HierarchyRoot`,
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsSemi}Organizer` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                 'dcterms:title': [
                     { '@value': 'Hierarchy Root' }
                 ],
                 'dcterms:description': [
                     { '@value': 'A subclass of PIG organizer serving as a root for hierarchically organized graph elements.' }
                 ],
-                'pig:enumeratedProperty': [],
-                'pig:enumeratedTargetLink': [
-                    { '@id': 'pig:lists' }
+                [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [
+                    { '@id': `${DEF.pfxNsMeta}lists` }
                 ]
             };
 
@@ -373,13 +374,13 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         '@language': 'fr'
                     }
                 ],
-                'pig:specializes': { '@id': 'pig:Entity' },
-                'pig:Icon': { '@value': '□' },
-                'pig:enumeratedProperty': [
-                    { '@id': 'pig:Category' }
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                [`${DEF.pfxNsMeta}Icon`]: { '@value': '□' },
+                [`${DEF.pfxNsMeta}enumeratedProperty`]: [
+                    { '@id': `${DEF.pfxNsMeta}Category` }
                 ],
-                'pig:enumeratedTargetLink': [],
-                'pig:itemType': { '@id': 'pig:Entity' }
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` }
             };
 
             const entity = new Entity().setJSONLD(jsonldInput);
@@ -404,13 +405,13 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         '@language': 'en'
                     }
                 ],
-                'pig:specializes': { '@id': 'pig:Entity' },
-                'pig:Icon': { '@value': '↯' },
-                'pig:enumeratedProperty': [
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                [`${DEF.pfxNsMeta}Icon`]: { '@value': '↯' },
+                [`${DEF.pfxNsMeta}enumeratedProperty`]: [
                     { '@id': 'SpecIF:Priority' }
                 ],
-                'pig:enumeratedTargetLink': [],
-                'pig:itemType': { '@id': 'pig:Entity' }
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` }
             };
 
             const entity = new Entity().setJSONLD(jsonldInput);
@@ -423,23 +424,23 @@ describe('PIG Metaclasses JSON-LD Import', () => {
     });
 
     describe('Relationship.setJSONLD()', () => {
-        it('should import pig:Relationship', () => {
+        it(`should import ${DEF.pfxNsMeta}Relationship`, () => {
             const jsonldInput = {
-                '@id': 'pig:Relationship',
+                '@id': `${DEF.pfxNsMeta}Relationship`,
                 '@type': 'owl:Class',
-                'pig:itemType': { '@id': 'pig:Relationship' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                 'dcterms:title': [
                     { '@value': 'Relationship' }
                 ],
                 'dcterms:description': [
                     { '@value': 'A PIG meta-model element used for reified relationships (aka predicates).' }
                 ],
-                'pig:enumeratedProperty': [
-                    { '@id': 'pig:Category' },
-                    { '@id': 'pig:Icon' }
+                [`${DEF.pfxNsMeta}enumeratedProperty`]: [
+                    { '@id': `${DEF.pfxNsMeta}Category` },
+                    { '@id': `${DEF.pfxNsMeta}Icon` }
                 ],
-                'pig:enumeratedSourceLink': { '@id': 'pig:SourceLink' },
-                'pig:enumeratedTargetLink': { '@id': 'pig:TargetLink' }
+                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: { '@id': `${DEF.pfxNsMeta}SourceLink` },
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: { '@id': `${DEF.pfxNsMeta}TargetLink` }
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
@@ -461,11 +462,11 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].", '@language': 'en' }
                 ],
-                'pig:specializes': { '@id': 'pig:Relationship' },
-                'pig:enumeratedProperty': [],
-                'pig:itemType': { '@id': 'pig:Relationship' },
-                'pig:enumeratedSourceLink': { '@id': 'SpecIF:writes-toSource' },
-                'pig:enumeratedTargetLink': { '@id': 'SpecIF:writes-toTarget' }
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: { '@id': 'SpecIF:writes-toSource' },
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: { '@id': 'SpecIF:writes-toTarget' }
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
@@ -490,11 +491,11 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         '@language': 'en'
                     }
                 ],
-                'pig:specializes': { '@id': 'pig:Relationship' },
-                'pig:enumeratedProperty': [],
-                'pig:itemType': { '@id': 'pig:Relationship' },
-                'pig:enumeratedSourceLink': { '@id': 'oslc_rm:satisfies-toSource' },
-                'pig:enumeratedTargetLink': { '@id': 'oslc_rm:satisfies-toTarget' }
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: { '@id': 'oslc_rm:satisfies-toSource' },
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: { '@id': 'oslc_rm:satisfies-toTarget' }
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
@@ -521,10 +522,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'SpecIF:Priority': [
                     {
                         '@id': 'SpecIF:priorityHigh',
-                        'pig:itemType': { '@id': 'pig:aProperty' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` }
                     }
                 ],
-                'pig:itemType': { '@id': 'pig:anEntity' }
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` }
             };
 
             const anEntity = new AnEntity().setJSONLD(jsonldInput);
@@ -538,7 +539,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import diagram entity with properties and links', () => {
             const jsonldInput = {
                 '@id': 'd:Diagram-aec0df7900010000017001eaf53e8876',
-                '@type': 'pig:View',
+                '@type': `${DEF.pfxNsMeta}View`,
                 'dcterms:modified': '2020-03-06T08:32:00+01:00',
                 'dcterms:title': [
                     { '@value': 'IT-Integration: FiCo-Application and FiCo-Data' }
@@ -546,32 +547,32 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'SpecIF:Diagram': [
                     {
                         '@value': '<p class="inline-label">Model Diagram:</p><p><object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object></p>',
-                        'pig:itemType': { '@id': 'pig:aProperty' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` }
                     }
                 ],
-                'pig:Category': [
+                [`${DEF.pfxNsMeta}Category`]: [
                     {
                         '@value': 'FMC Block Diagram',
-                        'pig:itemType': { '@id': 'pig:aProperty' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` }
                     }
                 ],
-                'pig:itemType': { '@id': 'pig:anEntity' },
-                'pig:shows': [
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                [`${DEF.pfxNsMeta}shows`]: [
                     {
                         '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
-                        'pig:itemType': { '@id': 'pig:aTargetLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
                     },
                     {
                         '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
-                        'pig:itemType': { '@id': 'pig:aTargetLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
                     },
                     {
                         '@id': 'd:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
-                        'pig:itemType': { '@id': 'pig:aTargetLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
                     },
                     {
                         '@id': 'd:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
-                        'pig:itemType': { '@id': 'pig:aTargetLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
                     }
                 ]
             };
@@ -584,7 +585,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(anEntity.status().ok).toBe(true);
 
             expect(anEntity.hasProperty?.length).toBe(2);
-            expect(anEntity.hasProperty[1].hasClass).toBe('pig:Category');
+            expect(anEntity.hasProperty[1].hasClass).toBe(`${DEF.pfxNsMeta}Category`);
         });
 
         it('should import FMC:Actor entity', () => {
@@ -598,7 +599,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': '<p>IT-Application for Finance and Controlling.</p>' }
                 ],
-                'pig:itemType': { '@id': 'pig:anEntity' }
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` }
             };
 
             const anEntity = new AnEntity().setJSONLD(jsonldInput);
@@ -619,17 +620,17 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': "'FiCo-Application' writes 'FiCo-Data'" }
                 ],
-                'pig:itemType': { '@id': 'pig:aRelationship' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                 'SpecIF:writes-toSource': [
                     {
                         '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
-                        'pig:itemType': { '@id': 'pig:aSourceLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` }
                     }
                 ],
                 'SpecIF:writes-toTarget': [
                     {
                         '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
-                        'pig:itemType': { '@id': 'pig:aTargetLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
                     }
                 ]
             };
@@ -650,17 +651,17 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'dcterms:description': [
                     { '@value': "'FiCo-Data' satisfies 'Data Volume'" }
                 ],
-                'pig:itemType': { '@id': 'pig:aRelationship' },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                 'oslc_rm:satisfies-toSource': [
                     {
                         '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
-                        'pig:itemType': { '@id': 'pig:aSourceLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` }
                     }
                 ],
                 'oslc_rm:satisfies-toTarget': [
                     {
                         '@id': 'd:Req-1a8016e2872e78ecadc50feddc00029b',
-                        'pig:itemType': { '@id': 'pig:aTargetLink' }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
                     }
                 ]
             };

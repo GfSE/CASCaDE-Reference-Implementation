@@ -35,6 +35,8 @@ import { APackage, TPigItem, PigItem, PigItemType, PigItemTypeValue } from '../.
  * Static class for importing and parsing PIG XML documents
  */
 export class XmlImporter {
+    private static readonly maxSizeInput = DEF.maxSizeXML;
+
     /**
      * Import XML document and instantiate PIG items
      * 
@@ -62,6 +64,15 @@ export class XmlImporter {
         }
 
         const xmlString = rsp.response as string;
+
+        // Security: Size limit check
+        if (xmlString.length > this.maxSizeInput) {
+            return Msg.create(
+                660,
+                typeof(source) === 'string'? source : 'unknown',
+                `file too large (max ${this.maxSizeInput / 1024 / 1024}MB)`
+            );
+        }
 
         // Validate XML syntax
         const validationResult = this.checkXmlSyntax(xmlString);
@@ -167,7 +178,7 @@ export class XmlImporter {
         // At this stage we expect only a string like in JSON-LD schema ... the id is normalized later
         const pkgId = root.getAttribute('id');
         //    if (!pkgId || !PigItem.isValidIdString(pkgId)) {
-        if (typeof pkgId !== 'string' || pkgId.length<DEF.minIdLength) {
+        if (typeof pkgId !== 'string' || pkgId.length<DEF.minLengthId) {
             invalidIds.push(`aPackage: ${pkgId ?? '(missing)'}`);
         }
 
@@ -196,7 +207,7 @@ export class XmlImporter {
                         // At this stage we expect only a string like in JSON-LD schema ... the id is normalized later
                         const elId = elem.getAttribute('id');
                         // if (!elId || !PigItem.isValidIdString(elId)) {
-                        if (typeof elId !== 'string' || elId.length < DEF.minIdLength) {
+                        if (typeof elId !== 'string' || elId.length < DEF.minLengthId) {
                             invalidIds.push(`${tag}: ${elId ?? '(missing)'}`);
                         }
                         else {
@@ -207,39 +218,39 @@ export class XmlImporter {
                                 // XML is more tolerant than JSON-LD, as it allows both pig and RDF/OWL terms for specialization and classification
                                 // The MVF must however map both to the same internal keys
                                 // LOG.debug('import-xml 1', elem.getAttribute('pig:specializes'), elem.getAttribute('owl:subClassOf'), elem.getAttribute('pig:hasClass'), elem.getAttribute('rdf:type') );
-                                const specializesAttr = elem.getAttribute('pig:specializes') || elem.getAttribute('owl:subClassOf');  // don't use '??'
-                                const hasClassAttr = elem.getAttribute('pig:hasClass') || elem.getAttribute('rdf:type');  // don't use '??'
+                                const specializesAttr = elem.getAttribute(`${DEF.pfxNsMeta}specializes`) || elem.getAttribute('owl:subClassOf');  // don't use '??'
+                                const hasClassAttr = elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('rdf:type');  // don't use '??'
                                 let specializesChild = false;
                                 let hasClassChild = false;
                                 for (let j = 0; j < elem.childNodes.length; j++) {
                                     const child = elem.childNodes[j];
                                     if (child.nodeType === 1) {
                                         const childTag = (child as Element).tagName;
-                                        if (['pig:specializes', 'owl:subClassOf'].includes(childTag)) specializesChild = true;
-                                        if (['pig:hasClass', 'rdf:type'].includes(childTag)) hasClassChild = true;
+                                        if ([`${DEF.pfxNsMeta}specializes`, 'owl:subClassOf'].includes(childTag)) specializesChild = true;
+                                        if ([`${DEF.pfxNsMeta}hasClass`, 'rdf:type'].includes(childTag)) hasClassChild = true;
                                     }
                                 }
                                 // LOG.debug('import-xml 2', specializesAttr, hasClassAttr, specializesChild, hasClassChild);
                                 if (!(specializesAttr || hasClassAttr || specializesChild || hasClassChild)) {
-                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires either 'pig:specializes' or 'pig:hasClass'`);
+                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires either '${DEF.pfxNsMeta}specializes' or '${DEF.pfxNsMeta}hasClass'`);
                                 }
                             }
                             // Check for instance requirements
                             else if (PigItem.isInstance(tag)) {
                                 // Must have 'pig:hasClass' as attribute or child and a child 'dcterms:modified'
-                                const hasClassAttr = elem.getAttribute('pig:hasClass') || elem.getAttribute('rdf:type');  // don't use '??'
+                                const hasClassAttr = elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('rdf:type');  // don't use '??'
                                 let hasClassChild = false;
                                 let modifiedChild = false;
                                 for (let j = 0; j < elem.childNodes.length; j++) {
                                     const child = elem.childNodes[j];
                                     if (child.nodeType === 1) {
                                         const childTag = (child as Element).tagName;
-                                        if (['pig:hasClass', 'rdf:type'].includes(childTag)) hasClassChild = true;
+                                        if ([`${DEF.pfxNsMeta}hasClass`, 'rdf:type'].includes(childTag)) hasClassChild = true;
                                         if (childTag === 'dcterms:modified') modifiedChild = true;
                                     }
                                 }
                                 if (!(hasClassAttr || hasClassChild)) {
-                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires 'pig:hasClass'`);
+                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsMeta}hasClass'`);
                                 }
                                 if (!modifiedChild) {
                                     missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires 'dcterms:modified'`);

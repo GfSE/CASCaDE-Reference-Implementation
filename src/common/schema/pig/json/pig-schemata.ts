@@ -22,6 +22,7 @@
  * - enumerated values in Property only for string values; other datatypes to be implemented
 */
 
+import { DEF } from '../../../lib/definitions';
 import { ajv } from '../../../../plugins/ajv';
 
 const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
@@ -44,8 +45,8 @@ const PROPERTY_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:Property'],
-            description: 'The PigItemType for pig:Property'
+            enum: [`${DEF.pfxNsMeta}Property`],
+            description: `The PigItemType for ${DEF.pfxNsMeta}Property`
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
@@ -171,8 +172,8 @@ const LINK_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:Link'],
-            description: 'The PigItemType for pig:Link'
+            enum: [`${DEF.pfxNsMeta}Link`],
+            description: `The PigItemType for ${DEF.pfxNsMeta}Link`
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
@@ -235,8 +236,8 @@ const ENTITY_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:Entity'],
-            description: 'The PigItemType for pig:Entity'
+            enum: [`${DEF.pfxNsMeta}Entity`],
+            description: `The PigItemType for ${DEF.pfxNsMeta}Entity`
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
@@ -312,8 +313,8 @@ const RELATIONSHIP_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:Relationship'],
-            description: 'The PigItemType for pig:Relationship'
+            enum: [`${DEF.pfxNsMeta}Relationship`],
+            description: `The PigItemType for ${DEF.pfxNsMeta}Relationship`
         },
         hasClass: { $ref: '#/$defs/idString' },
         specializes: { $ref: '#/$defs/idString' },
@@ -389,8 +390,8 @@ const ANENTITY_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:anEntity'],
-            description: 'The PigItemType for pig:anEntity'
+            enum: [`${DEF.pfxNsMeta}anEntity`],
+            description: `The PigItemType for ${DEF.pfxNsMeta}anEntity`
         },
         hasClass: { $ref: '#/$defs/idString' },
         title: {
@@ -420,7 +421,7 @@ const ANENTITY_SCHEMA = {
                 properties: {
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aProperty']
+                        enum: [`${DEF.pfxNsMeta}aProperty`]
                     },
                     hasClass: { $ref: '#/$defs/idString' },
                     value: {
@@ -449,7 +450,7 @@ const ANENTITY_SCHEMA = {
                 properties: {
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aTargetLink']
+                        enum: [`${DEF.pfxNsMeta}aTargetLink`]
                     },
                     hasClass: { $ref: '#/$defs/idString' },
                     idRef: { $ref: '#/$defs/idString' }
@@ -503,8 +504,8 @@ const ARELATIONSHIP_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:aRelationship'],
-            description: 'The PigItemType for pig:aRelationship'
+            enum: [`${DEF.pfxNsMeta}aRelationship`],
+            description: `The PigItemType for ${DEF.pfxNsMeta}aRelationship`
         },
         hasClass: { $ref: '#/$defs/idString' },
         title: {
@@ -536,7 +537,7 @@ const ARELATIONSHIP_SCHEMA = {
                 properties: {
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aProperty']
+                        enum: [`${DEF.pfxNsMeta}aProperty`]
                     },
                     hasClass: { $ref: '#/$defs/idString' },
                     value: {
@@ -566,7 +567,7 @@ const ARELATIONSHIP_SCHEMA = {
                 properties: {
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aSourceLink']
+                        enum: [`${DEF.pfxNsMeta}aSourceLink`]
                     },
                     hasClass: { $ref: '#/$defs/idString' },
                     idRef: { $ref: '#/$defs/idString' }
@@ -584,7 +585,8 @@ const ARELATIONSHIP_SCHEMA = {
                 properties: {
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aTargetLink']
+                        enum: [`${DEF.pfxNsMeta}aTargetLink`],
+                        description: `The PigItemType for ${DEF.pfxNsMeta}aTargetLink`
                     },
                     hasClass: { $ref: '#/$defs/idString' },
                     idRef: { $ref: '#/$defs/idString' }
@@ -641,8 +643,8 @@ const APACKAGE_SCHEMA = {
         id: { $ref: '#/$defs/idString' },
         itemType: {
             type: 'string',
-            enum: ['pig:aPackage'],
-            description: 'The PigItemType for pig:aPackage'
+            enum: [`${DEF.pfxNsMeta}aPackage`],
+            description: `The PigItemType for ${DEF.pfxNsMeta}aPackage`
         },
         title: {
             type: 'array',

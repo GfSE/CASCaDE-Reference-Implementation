@@ -40,7 +40,7 @@ import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints
  * Static class for importing and transforming ReqIF documents to PIG format
  */
 export class ReqifImporter {
-    private static readonly MAX_XML_SIZE = 4 * 1024 * 1024; // 4MB
+    private static readonly maxSizeInput = DEF.maxSizeXML;
 
     /**
      * Import ReqIF document and transform to PIG items
@@ -80,18 +80,12 @@ export class ReqifImporter {
         const xmlToTransform = rspRead.response as string;
 
         // Security: Size limit check
-        if (xmlToTransform.length > this.MAX_XML_SIZE) {
+        if (xmlToTransform.length > this.maxSizeInput) {
             return Msg.create(
                 660,
                 filename,
-                `file too large (max ${this.MAX_XML_SIZE / 1024 / 1024}MB)`
+                `file too large (max ${this.maxSizeInput / 1024 / 1024}MB)`
             );
-        }
-
-        // Security: Basic XML structure validation
-        const trimmed = xmlToTransform.trim();
-        if (!trimmed.startsWith('<?xml') && !trimmed.startsWith('<')) {
-            return Msg.create(660, filename, 'invalid XML structure');
         }
 
         // Parse XML document
