@@ -90,7 +90,7 @@ describe('import JSONLD - Dynamic Test Files', () => {
                 // each instantiated item must have a successful status
                 // additional per-item assertions can be added here
                 //    expect(itm).toBeInstanceOf(Property);
-                //    expect(inst.id).toBe('dcterms:type');
+                //    expect(inst.id).toBe(`${DEF.pfxNsDcmi}type`);
                 //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
                 //    expect(inst.datatype).toBe('xs:string');
             });

@@ -21,20 +21,20 @@ describe('PIG Package getHTML() Method', () => {
                 },
                 '@id': 'd:test-package-html',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Test Package', '@language': 'en' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'A test package for HTML generation', '@language': 'en' }
                 ],
-                'dcterms:modified': '2025-01-30T10:00:00Z',
-                'dcterms:creator': 'Test Creator',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T10:00:00Z',
+                [`${DEF.pfxNsDcmi}creator`]: 'Test Creator',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -43,7 +43,7 @@ describe('PIG Package getHTML() Method', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -52,12 +52,12 @@ describe('PIG Package getHTML() Method', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-30T10:00:00Z',
-                        'dcterms:creator': 'John Doe',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}creator`]: 'John Doe',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'System shall be secure', '@language': 'en' }
                         ],
-                        'dcterms:description': [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             { '@value': 'The system must implement security measures', '@language': 'en' }
                         ],
                         'o:Property_Status': [
@@ -124,16 +124,16 @@ describe('PIG Package getHTML() Method', () => {
                 },
                 '@id': 'd:package-no-entities',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Empty Package', '@language': 'en' }
                 ],
-                'dcterms:modified': '2025-01-30T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Name',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Name', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -167,16 +167,16 @@ describe('PIG Package getHTML() Method', () => {
                 },
                 '@id': 'd:package-mixed',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Mixed Package', '@language': 'en' }
                 ],
-                'dcterms:modified': '2025-01-30T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -185,7 +185,7 @@ describe('PIG Package getHTML() Method', () => {
                         '@id': 'o:Link_RefersTo',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -196,7 +196,7 @@ describe('PIG Package getHTML() Method', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -204,7 +204,7 @@ describe('PIG Package getHTML() Method', () => {
                         '@id': 'o:Relationship_Trace',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
                     },
@@ -213,8 +213,8 @@ describe('PIG Package getHTML() Method', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-30T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Entity', '@language': 'en' }
                         ]
                     }
@@ -270,16 +270,16 @@ describe('PIG Package getHTML() Method', () => {
                 },
                 '@id': 'd:package-multiple',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Multi-Entity Package', '@language': 'en' }
                 ],
-                'dcterms:modified': '2025-01-30T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -288,8 +288,8 @@ describe('PIG Package getHTML() Method', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-30T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'First Requirement', '@language': 'en' }
                         ]
                     },
@@ -298,8 +298,8 @@ describe('PIG Package getHTML() Method', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.1',
-                        'dcterms:modified': '2025-01-30T11:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T11:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Second Requirement', '@language': 'en' }
                         ]
                     },
@@ -308,8 +308,8 @@ describe('PIG Package getHTML() Method', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '2.0',
-                        'dcterms:modified': '2025-01-30T12:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-30T12:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Third Requirement', '@language': 'en' }
                         ]
                     }

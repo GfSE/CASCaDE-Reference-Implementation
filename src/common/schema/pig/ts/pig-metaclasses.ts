@@ -1767,14 +1767,14 @@ export class APackage extends AnElement implements IAPackage {
             id: PigItem.normalizeId(doc['@id'] || doc.id, PigItemType.aPackage),
             revision: doc.revision,
             priorRevision: doc.priorRevision,
-            modified: normalizeDateTime(doc['dcterms:modified'] || doc.modified) || new Date().toISOString(), // TISODateString
-            creator: doc['dcterms:creator'] || doc.creator, // string
+            modified: normalizeDateTime(doc[`${DEF.pfxNsDcmi}modified`] || doc.modified) || new Date().toISOString(), // TISODateString
+            creator: doc[`${DEF.pfxNsDcmi}creator`] || doc.creator, // string
             title: undefined as ILanguageText[] | undefined, // to be extracted
             description: undefined as ILanguageText[] | undefined // to be extracted
         };
 
         // Extract dcterms:title (first language value)
-        const titleArray = doc['dcterms:title'] || doc.title;
+        const titleArray = doc[`${DEF.pfxNsDcmi}title`] || doc.title;
         if (Array.isArray(titleArray) && titleArray.length > 0) {
             metadata.title = [{
                 value: titleArray[0]['@value'] || titleArray[0].value || titleArray[0],
@@ -1785,7 +1785,7 @@ export class APackage extends AnElement implements IAPackage {
         }
 
         // Extract dcterms:description (first language value)
-        const descArray = doc['dcterms:description'] || doc.description;
+        const descArray = doc[`${DEF.pfxNsDcmi}description`] || doc.description;
         if (Array.isArray(descArray) && descArray.length > 0) {
             metadata.description = [{
                 value: descArray[0]['@value'] || descArray[0].value || descArray[0],

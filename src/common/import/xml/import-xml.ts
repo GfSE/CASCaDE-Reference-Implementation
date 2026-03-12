@@ -246,14 +246,14 @@ export class XmlImporter {
                                     if (child.nodeType === 1) {
                                         const childTag = (child as Element).tagName;
                                         if ([`${DEF.pfxNsMeta}hasClass`, 'rdf:type'].includes(childTag)) hasClassChild = true;
-                                        if (childTag === 'dcterms:modified') modifiedChild = true;
+                                        if (childTag === `${DEF.pfxNsDcmi}modified`) modifiedChild = true;
                                     }
                                 }
                                 if (!(hasClassAttr || hasClassChild)) {
                                     missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsMeta}hasClass'`);
                                 }
                                 if (!modifiedChild) {
-                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires 'dcterms:modified'`);
+                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsDcmi}modified'`);
                                 }
                             }
                             else

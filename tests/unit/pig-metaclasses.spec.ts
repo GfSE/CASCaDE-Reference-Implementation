@@ -42,11 +42,11 @@ describe("PIG Metaclasses", () => {
 
         // Property with class:
         Property_input = {
-            id: "dcterms:type",
+            id: `${DEF.pfxNsDcmi}type`,
             hasClass: "owl:DatatypeProperty",
             itemType: PigItemType.Property,
             title: [{ value: "The type or category", lang: "en" }],
-            description: [{ value: "This is a class for a property named dcterms:type used by anEntity or aRelationship", lang: "en" }],
+            description: [{ value: `This is a class for a property named ${DEF.pfxNsDcmi}type used by anEntity or aRelationship`, lang: "en" }],
 
             datatype: XsDataType.String,
             minCount: 0,
@@ -55,12 +55,11 @@ describe("PIG Metaclasses", () => {
             defaultValue: "default_category"
         };
         Property_input_JSONLD = {
-            ['@id']: "dcterms:type",
+            ['@id']: `${DEF.pfxNsDcmi}type`,
             ["@type"]: { ['@id']: "owl:DatatypeProperty" },
             [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.Property },
-            ['dcterms:title']: [{ ['@value']: "The type or category", ['@language']: "en" }],
-            ['dcterms:description']: [{ ['@value']: "This is a class for a property named dcterms:type used by anEntity or aRelationship", ['@language']: "en" }],
-
+            [`${DEF.pfxNsDcmi}title`]: [{ ['@value']: "The type or category", ['@language']: "en" }],
+            [`${DEF.pfxNsDcmi}description`]: [{ ['@value']: `This is a class for a property named ${DEF.pfxNsDcmi}type used by anEntity or aRelationship`, ['@language']: "en" }],
             ['sh:datatype']: { ['@id']: XsDataType.String },
             ['sh:minCount']: 0,
             ['sh:maxCount']: 1,
@@ -69,7 +68,7 @@ describe("PIG Metaclasses", () => {
         };
         aProperty_input = {
             itemType: PigItemType.aProperty,
-            hasClass: "dcterms:type",
+            hasClass: `${DEF.pfxNsDcmi}type`,
             value: "A category"   // usually a property belongs to a certain entity or relationship
         };
 
@@ -87,8 +86,8 @@ describe("PIG Metaclasses", () => {
             ['@id']: `${DEF.pfxNsMeta}shows`,
             [`${DEF.pfxNsMeta}specializes`]: { ['@id']: PigItemType.Link },
             [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.Link },
-            ['dcterms:title']: [{ ['@value']: "shows", ['@language']: "en" }],
-            ['dcterms:description']: [{ ['@value']: "This is a class for a reference used by anEntity", ['@language']: "en" }],
+            [`${DEF.pfxNsDcmi}title`]: [{ ['@value']: "shows", ['@language']: "en" }],
+            [`${DEF.pfxNsDcmi}description`]: [{ ['@value']: "This is a class for a reference used by anEntity", ['@language']: "en" }],
 
             [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [{ ['@id']: "o:Entity_Diagram" }]
         };
@@ -103,7 +102,7 @@ describe("PIG Metaclasses", () => {
 
             icon: { value: "&#x2662;" },
             enumeratedTargetLink: [`${DEF.pfxNsMeta}shows`],
-            enumeratedProperty: ["dcterms:type"]
+            enumeratedProperty: [`${DEF.pfxNsDcmi}type`]
         };
         entityClass_ModelElement_input = {
             id: "o:Entity_ModelElement",
@@ -113,7 +112,7 @@ describe("PIG Metaclasses", () => {
             description: [{ value: "Description of o:Entity_ModelElement" }],
 
             icon: { value: "&#x2662;" },
-            enumeratedProperty: ["dcterms:type"]
+            enumeratedProperty: [`${DEF.pfxNsDcmi}type`]
         };
 
         anEntity_actor_input = {
@@ -128,7 +127,7 @@ describe("PIG Metaclasses", () => {
             hasClass: "o:Entity_Actor",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: "dcterms:type",
+                hasClass: `${DEF.pfxNsDcmi}type`,
                 value: "Category of d:anEntity_Actor"
             }]
         };
@@ -144,7 +143,7 @@ describe("PIG Metaclasses", () => {
             hasClass: "o:Entity_State",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: "dcterms:type",
+                hasClass: `${DEF.pfxNsDcmi}type`,
                 value: "Category of d:anEntity_State"
             }]
         };
@@ -161,7 +160,7 @@ describe("PIG Metaclasses", () => {
             description: [{ value: "An Entity instance that has a reference to another Entity instance", lang: "en" }],
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: "dcterms:type",
+                hasClass: `${DEF.pfxNsDcmi}type`,
                 value: "Category (notation) of d:anEntity_Diagram"
             }],
             hasTargetLink: [{
@@ -175,11 +174,11 @@ describe("PIG Metaclasses", () => {
             ['@type']: { ['@id']: "o:Entity_Diagram" },
             [`${DEF.pfxNsMeta}revision`]: "v1.0",
             [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.anEntity },
-            ['dcterms:modified']: '2025-12-20T00:00:00Z',
-            ['dcterms:creator']: "test_user",
-            ['dcterms:title']: [{ ['@value']: "a Diagram", ['@language']: "en" }],
-            ['dcterms:description']: [{ ['@value']: "An Entity instance that has a reference to another Entity instance", ['@language']: "en" }],
-            ["dcterms:type"]: [{
+            [`${DEF.pfxNsDcmi}modified`]: '2025-12-20T00:00:00Z',
+            [`${DEF.pfxNsDcmi}creator`]: "test_user",
+            [`${DEF.pfxNsDcmi}title`]: [{ ['@value']: "a Diagram", ['@language']: "en" }],
+            [`${DEF.pfxNsDcmi}description`]: [{ ['@value']: "An Entity instance that has a reference to another Entity instance", ['@language']: "en" }],
+            [`${DEF.pfxNsDcmi}type`]: [{
                 [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.aProperty },
                 ['@value']: "Category (notation) of d:anEntity_Diagram"
             }],
@@ -215,7 +214,7 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "Title of o:Relationship_mutates", lang: "en" }],
             description: [{ value: "Description of o:Relationship_mutates", lang: "en" }],
 
-            enumeratedProperty: ["dcterms:type"],
+            enumeratedProperty: [`${DEF.pfxNsDcmi}type`],
             enumeratedSourceLink: "o:Link_mutates_toActor",
             enumeratedTargetLink: "o:Link_mutates_toState"
         };
@@ -231,7 +230,7 @@ describe("PIG Metaclasses", () => {
 
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: "dcterms:type",
+                hasClass: `${DEF.pfxNsDcmi}type`,
                 value: "Category of d:aRelationship_mutates_1"
             }],
             hasSourceLink: [{ "itemType": `${DEF.pfxNsMeta}aSourceLink`, "hasClass": "o:Link_mutates_toActor", "idRef": "d:anEntity_Actor" }],
@@ -246,7 +245,7 @@ describe("PIG Metaclasses", () => {
         if (!inst.status().ok)
             console.error('status:', inst.status());
         expect(inst.status().ok).toBe(true);
-        expect(inst.id).toBe("dcterms:type");
+        expect(inst.id).toBe(`${DEF.pfxNsDcmi}type`);
         expect(inst.title).toEqual(Property_input.title);
         expect(inst.description).toEqual(Property_input.description);
 
@@ -322,7 +321,7 @@ describe("PIG Metaclasses", () => {
 
         // check the attribute values:
     //    expect(inst.itemType).toBe(PigItemType.aProperty);
-        expect(inst.hasClass).toBe('dcterms:type');
+        expect(inst.hasClass).toBe(`${DEF.pfxNsDcmi}type`);
         expect(inst.value).toBe("A category");  // usually a property belongs to a certain entity or relationship
 
     });
@@ -341,7 +340,7 @@ describe("PIG Metaclasses", () => {
         expect(inst.description).toEqual([{ value: 'Description of o:Entity_Diagram' }]);
 
         expect(inst.itemType).toBe(PigItemType.Entity);
-        expect(inst.enumeratedProperty).toStrictEqual(["dcterms:type"]);
+        expect(inst.enumeratedProperty).toStrictEqual([`${DEF.pfxNsDcmi}type`]);
 
         // check the output:
         const entityClass_output = inst.get();
@@ -374,7 +373,7 @@ describe("PIG Metaclasses", () => {
         expect(inst.itemType).toBe(PigItemType.Relationship);
         expect(inst.enumeratedSourceLink).toBe('o:Link_mutates_toActor');
         expect(inst.enumeratedTargetLink).toBe('o:Link_mutates_toState');
-        expect(inst.enumeratedProperty).toStrictEqual(["dcterms:type"]);
+        expect(inst.enumeratedProperty).toStrictEqual([`${DEF.pfxNsDcmi}type`]);
 
         // check the output:
         const relationshipClass_output = inst.get();
@@ -413,7 +412,7 @@ describe("PIG Metaclasses", () => {
         // check hasProperty:
         expect(inst.hasProperty).toHaveLength(1);
         expect(inst.hasProperty[0]).toBeInstanceOf(AProperty);
-        expect(inst.hasProperty[0].hasClass).toBe('dcterms:type');
+        expect(inst.hasProperty[0].hasClass).toBe(`${DEF.pfxNsDcmi}type`);
         expect(inst.hasProperty[0].value).toBe("Category (notation) of d:anEntity_Diagram");
      //   expect(inst.hasProperty[0].value).toBe(anEntity_with_ref_input.hasProperty[0].value);
         expect(inst.hasProperty[0].itemType).toBe(PigItemType.aProperty);

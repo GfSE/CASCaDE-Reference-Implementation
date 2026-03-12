@@ -984,19 +984,19 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                 },
                 "@id": "d:test-enum-numeric-jsonld",
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                "dcterms:modified": "2026-02-16T12:00:00Z",
+                [`${DEF.pfxNsDcmi}modified`]: "2026-02-16T12:00:00Z",
                 "@graph": [
                     {
                         "@id": "o:Fibonacci",
                         [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}specializes`]: { "@id": `${DEF.pfxNsMeta}Property` },
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Fibonacci Numbers",
                                 "@language": "en"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "Enumerated Fibonacci sequence values for estimation",
                                 "@language": "en"
@@ -1034,14 +1034,14 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         "@id": "d:Est-Task-4711",
                         [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}anEntity` },
                         "@type": "o:Estimate",
-                        "dcterms:modified": "2026-01-15T14:30:00Z",
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}modified`]: "2026-01-15T14:30:00Z",
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Implement User Authentication",
                                 "@language": "en"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "<p>Task requires implementation of OAuth2 authentication</p>",
                                 "@language": "en"
@@ -1194,12 +1194,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                           xmlns:d="https://product-information-graph.org/examples/fibonacci.zip#"
                           xmlns:dcterms="http://purl.org/dc/terms/"
                           id="d:test-enum-numeric-xml">
-                <dcterms:modified>2026-02-16T12:00:00Z</dcterms:modified>
-                <dcterms:title xml:lang="en">Fibonacci Estimation Example</dcterms:title>
+                <${DEF.pfxNsDcmi}modified>2026-02-16T12:00:00Z</${DEF.pfxNsDcmi}modified>
+                <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Estimation Example</${DEF.pfxNsDcmi}title>
                 <graph>
                     <${DEF.pfxNsMeta}Property id="o:Fibonacci" ${DEF.pfxNsMeta}specializes="${DEF.pfxNsMeta}Property">
-                        <dcterms:title xml:lang="en">Fibonacci Numbers</dcterms:title>
-                        <dcterms:description xml:lang="en">Enumerated Fibonacci sequence values for estimation</dcterms:description>
+                        <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Numbers</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}description xml:lang="en">Enumerated Fibonacci sequence values for estimation</${DEF.pfxNsDcmi}description>
                         <datatype>xs:integer</datatype>
                         <enumeratedValue id="o:Fibonacci-1">
                             <value>1</value>
@@ -1222,9 +1222,9 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     </${DEF.pfxNsMeta}Property>
         
                     <${DEF.pfxNsMeta}anEntity id="d:Est-Task-4711" rdf:type="o:Estimate">
-                        <dcterms:modified>2026-01-15T14:30:00Z</dcterms:modified>
-                        <dcterms:title xml:lang="en">Implement User Authentication</dcterms:title>
-                        <dcterms:description xml:lang="en"><![CDATA[<p>Task requires implementation of OAuth2 authentication</p>]]></dcterms:description>
+                        <${DEF.pfxNsDcmi}modified>2026-01-15T14:30:00Z</${DEF.pfxNsDcmi}modified>
+                        <${DEF.pfxNsDcmi}title xml:lang="en">Implement User Authentication</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}description xml:lang="en"><![CDATA[<p>Task requires implementation of OAuth2 authentication</p>]]></${DEF.pfxNsDcmi}description>
                         <${DEF.pfxNsMeta}aProperty rdf:type="o:Fibonacci">
                             <idRef>o:Fibonacci-8</idRef>
                         </${DEF.pfxNsMeta}aProperty>

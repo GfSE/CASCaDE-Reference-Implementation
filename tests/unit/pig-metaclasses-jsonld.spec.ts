@@ -28,10 +28,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
     };
 */
     describe('Property.setJSONLD()', () => {
-        it('should import dcterms:title property', () => {
+        it(`should import ${DEF.pfxNsDcmi}title property`, () => {
             const jsonldInput = {
-                '@id': 'dcterms:title',
-                'dcterms:title': [
+                '@id': `${DEF.pfxNsDcmi}title`,
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Title', '@language': 'en' },
                     { '@value': 'Titel', '@language': 'de' },
                     { '@value': 'Titre', '@language': 'fr' }
@@ -51,15 +51,15 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(prop.status().ok).toBe(true);
         });
 
-        it('should import dcterms:description property', () => {
+        it(`should import ${DEF.pfxNsDcmi}description property`, () => {
             const jsonldInput = {
-                '@id': 'dcterms:description',
-                'dcterms:title': [
+                '@id': `${DEF.pfxNsDcmi}description`,
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Description', '@language': 'en' },
                     { '@value': 'Beschreibung', '@language': 'de' },
                     { '@value': 'Description', '@language': 'fr' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     {
                         '@value': '<p>An account of the resource. <small>(<i>source: <a href="http://purl.org/dc/elements/1.1/description">DCMI</a></i>)</small></p><p>Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML \'div\' element. <small>(<i>source: <a href="http://open-services.net/">OSLC</a></i>)</small></p>',
                         '@language': 'en'
@@ -82,12 +82,12 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import SpecIF:Priority property with enumeratedValues', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:Priority',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Priority', '@language': 'en' },
                     { '@value': 'Priorität', '@language': 'de' },
                     { '@value': 'Priorité', '@language': 'fr' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "Enumerated values for the 'Priority' of the resource.", '@language': 'en' }
                 ],
                 '@type': 'owl:ObjectProperty',
@@ -96,7 +96,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 [`${DEF.pfxNsMeta}enumeratedValue`]: [
                     {
                         '@id': 'SpecIF:priorityHigh',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'high', '@language': 'en' },
                             { '@value': 'hoch', '@language': 'de' },
                             { '@value': 'haut', '@language': 'fr' }
@@ -104,7 +104,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     },
                     {
                         '@id': 'SpecIF:priorityMedium',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'medium', '@language': 'en' },
                             { '@value': 'mittel', '@language': 'de' },
                             { '@value': 'moyen', '@language': 'fr' }
@@ -112,7 +112,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     },
                     {
                         '@id': 'SpecIF:priorityLow',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'low', '@language': 'en' },
                             { '@value': 'niedrig', '@language': 'de' },
                             { '@value': 'bas', '@language': 'fr' }
@@ -155,10 +155,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': `${DEF.pfxNsMeta}Icon`,
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'has icon' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'Specifies an icon for a model element (entity or relationship).' }
                 ],
                 'sh:datatype': { '@id': 'xs:string' },
@@ -177,12 +177,12 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import SpecIF:Diagram property', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:Diagram',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Diagram', '@language': 'en' },
                     { '@value': 'Diagramm', '@language': 'de' },
                     { '@value': 'Diagramme', '@language': 'fr' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'A diagram illustrating the resource or a link to a diagram.', '@language': 'en' }
                 ],
                 '@type': 'owl:DatatypeProperty',
@@ -209,10 +209,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@id': `${DEF.pfxNsMeta}Entity` },
                     { '@id': `${DEF.pfxNsMeta}Relationship` }
                 ],
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'linked with' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'Connects a reified relationship with its source or target. Also connects an organizer to a model element' }
                 ]
             };
@@ -234,10 +234,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@id': `${DEF.pfxNsMeta}Entity` },
                     { '@id': `${DEF.pfxNsMeta}Relationship` }
                 ],
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'to source' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'Connects the source of a reified relationship.' }
                 ]
             };
@@ -255,10 +255,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': 'SpecIF:writes-toSource',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}SourceLink` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'SpecIF:writes to source' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'Connects the source of SpecIF:writes' }
                 ],
                 [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -284,10 +284,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@id': `${DEF.pfxNsMeta}Relationship` },
                     { '@id': `${DEF.pfxNsSemi}Organizer` }
                 ],
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'lists' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'Lists an entity, a relationship or a subordinated organizer.' }
                 ]
             };
@@ -307,10 +307,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': `${DEF.pfxNsMeta}Entity`,
                 '@type': 'owl:Class',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Entity' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'A PIG meta-model element used for entities (aka resources or artifacts).' }
                 ],
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
@@ -332,10 +332,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': `${DEF.pfxNsMeta}HierarchyRoot`,
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsSemi}Organizer` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Hierarchy Root' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'A subclass of PIG organizer serving as a root for hierarchically organized graph elements.' }
                 ],
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
@@ -355,22 +355,22 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import FMC:Actor', () => {
             const jsonldInput = {
                 '@id': 'FMC:Actor',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Actor', '@language': 'en' },
                     { '@value': 'Akteur', '@language': 'de' },
                     { '@value': 'Acteur', '@language': 'fr' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     {
-                        '@value': "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The  particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>",
+                        '@value': "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The  particular use or original type is specified with a dcterms:type property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>",
                         '@language': 'en'
                     },
                     {
-                        '@value': "<p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>",
+                        '@value': "<p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer dcterms:type Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>",
                         '@language': 'de'
                     },
                     {
-                        '@value': "<p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>",
+                        '@value': "<p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété dcterms:type de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>",
                         '@language': 'fr'
                     }
                 ],
@@ -394,12 +394,12 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import IREB:Requirement', () => {
             const jsonldInput = {
                 '@id': 'IREB:Requirement',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Requirement', '@language': 'en' },
                     { '@value': 'Anforderung', '@language': 'de' },
                     { '@value': 'Exigence', '@language': 'fr' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     {
                         '@value': "<p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>",
                         '@language': 'en'
@@ -429,10 +429,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 '@id': `${DEF.pfxNsMeta}Relationship`,
                 '@type': 'owl:Class',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Relationship' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'A PIG meta-model element used for reified relationships (aka predicates).' }
                 ],
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
@@ -454,12 +454,12 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import SpecIF:writes', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:writes',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'writes', '@language': 'en' },
                     { '@value': 'schreibt', '@language': 'de' },
                     { '@value': 'écrit', '@language': 'fr' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].", '@language': 'en' }
                 ],
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
@@ -480,12 +480,12 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import oslc_rm:satisfies', () => {
             const jsonldInput = {
                 '@id': 'oslc_rm:satisfies',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'satisfies', '@language': 'en' },
                     { '@value': 'erfüllt', '@language': 'de' },
                     { '@value': 'satisfait', '@language': 'fr' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     {
                         '@value': "<p>The object is satisfied by the subject. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p><p>SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.</p>",
                         '@language': 'en'
@@ -512,11 +512,11 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:Req-1a8016e2872e78ecadc50feddc00029b',
                 '@type': 'IREB:Requirement',
-                'dcterms:modified': '2020-10-17T10:00:00+01:00',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}modified`]: '2020-10-17T10:00:00+01:00',
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Data Volume' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': '<p>The data store MUST support a total volume up to 850 GB.</p>' }
                 ],
                 'SpecIF:Priority': [
@@ -540,8 +540,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:Diagram-aec0df7900010000017001eaf53e8876',
                 '@type': `${DEF.pfxNsMeta}View`,
-                'dcterms:modified': '2020-03-06T08:32:00+01:00',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T08:32:00+01:00',
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'IT-Integration: FiCo-Application and FiCo-Data' }
                 ],
                 'SpecIF:Diagram': [
@@ -592,11 +592,11 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
                 '@type': 'FMC:Actor',
-                'dcterms:modified': '2020-03-06T09:04:00+01:00',
-                'dcterms:title': [
+                [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T09:04:00+01:00',
+                [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'FiCo-Application' }
                 ],
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': '<p>IT-Application for Finance and Controlling.</p>' }
                 ],
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` }
@@ -616,8 +616,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
                 '@type': 'SpecIF:writes',
-                'dcterms:modified': '2020-03-06T09:05:00+01:00',
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T09:05:00+01:00',
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "'FiCo-Application' writes 'FiCo-Data'" }
                 ],
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
@@ -647,8 +647,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b',
                 '@type': 'oslc_rm:satisfies',
-                'dcterms:modified': '2020-10-17T10:00:00+01:00',
-                'dcterms:description': [
+                [`${DEF.pfxNsDcmi}modified`]: '2020-10-17T10:00:00+01:00',
+                [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "'FiCo-Data' satisfies 'Data Volume'" }
                 ],
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },

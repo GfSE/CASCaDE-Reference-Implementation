@@ -21,18 +21,18 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-001',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         "@id": `${DEF.pfxNsMeta}Property`,
                         "@type": "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Property"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for properties (aka attributes)."
                             }
@@ -45,7 +45,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Property_Status',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -62,12 +62,12 @@ describe('PIG Package Constraint Validation', () => {
                                 "@id": `${DEF.pfxNsMeta}Relationship`
                             }
                         ],
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "linked with"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "Connects a reified relationship with its source or target. Also connects an organizer to a model element"
                             }
@@ -77,7 +77,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Link_RefersTo',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -88,12 +88,12 @@ describe('PIG Package Constraint Validation', () => {
                         "@id": `${DEF.pfxNsMeta}Entity`,
                         "@type": "owl:Class",
                         [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}Entity` },
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Entity"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for entities (aka resources or artifacts)."
                             }
@@ -103,7 +103,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -112,8 +112,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Requirement', '@language': 'en' }
                         ],
                         'o:Property_Status': [
@@ -134,8 +134,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Another Requirement', '@language': 'en' }
                         ]
                     }
@@ -162,18 +162,18 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-002',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         "@id": `${DEF.pfxNsMeta}Property`,
                         "@type": "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Property"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for properties (aka attributes)."
                             }
@@ -186,7 +186,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Property_Rationale',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Rationale', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -203,12 +203,12 @@ describe('PIG Package Constraint Validation', () => {
                                 "@id": `${DEF.pfxNsMeta}Relationship`
                             }
                         ],
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "linked with"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "Connects a reified relationship with its source or target. Also connects an organizer to a model element"
                             }
@@ -218,7 +218,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Link_Source',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ],
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -229,7 +229,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Link_Target',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ],
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -240,12 +240,12 @@ describe('PIG Package Constraint Validation', () => {
                         "@id": `${DEF.pfxNsMeta}Entity`,
                         "@type": "owl:Class",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Entity"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for entities (aka resources or artifacts)."
                             }
@@ -255,12 +255,12 @@ describe('PIG Package Constraint Validation', () => {
                         "@id": `${DEF.pfxNsMeta}Relationship`,
                         "@type": "owl:Class",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Relationship"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for reified relationships (aka predicates)."
                             }
@@ -270,7 +270,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Relationship_Trace',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
                     },
@@ -278,7 +278,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -287,8 +287,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
@@ -297,8 +297,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target Requirement', '@language': 'en' }
                         ]
                     },
@@ -307,8 +307,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Relationship_Trace',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace Link', '@language': 'en' }
                         ],
                         'o:Property_Rationale': [
@@ -355,13 +355,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-duplicate-id',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -370,7 +370,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_duplicateId_nok',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -378,7 +378,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_duplicateId_nok', // ❌ Duplicate ID
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Another Entity', '@language': 'en' }
                         ]
                     }
@@ -413,13 +413,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-missing-id',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -428,7 +428,7 @@ describe('PIG Package Constraint Validation', () => {
                         // ❌ Missing @id
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity Without ID', '@language': 'en' }
                         ]
                     }
@@ -458,13 +458,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-invalid-prop',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -473,8 +473,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Requirement with property having an invalid class', '@language': 'en' }
                         ],
                         'o:Property_NonExistent': [ // ❌ References non-existent Property
@@ -516,13 +516,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-wrong-type',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_RefersTo', // This is a Link, not a Property!
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -533,7 +533,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -542,8 +542,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Requirement', '@language': 'en' }
                         ],
                         'o:Link_RefersTo': [ // ❌ Used as Property but it's a Link!
@@ -587,13 +587,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-invalid-link',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': `${DEF.pfxNsMeta}Entity`,
                         '@type': 'owl:class',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity', '@language': 'en' }
                         ]
                     },
@@ -601,7 +601,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': `${DEF.pfxNsSemi}Organizer`,
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Organizer', '@language': 'en' }
                         ]
                     },
@@ -609,7 +609,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_Folder',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsSemi}Organizer`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Folder', '@language': 'en' }
                         ]
                     },
@@ -618,8 +618,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Folder',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Folder with a target link having an invalid (missing) class', '@language': 'en' }
                         ],
                         'o:Link_NonExistent': [ // ❌ References non-existent Link
@@ -634,8 +634,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target Requirement', '@language': 'en' }
                         ]
                     }
@@ -671,13 +671,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-wrong-link-type',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Rationale',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Rationale', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -686,7 +686,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Link_Source',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ],
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -697,7 +697,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Link_Target',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ],
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -708,7 +708,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Relationship_Refinement',
                         '@type': `${DEF.pfxNsMeta}Relationship`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'refines', '@language': 'en' }
                         ]
                     },
@@ -716,7 +716,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -725,8 +725,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
@@ -735,8 +735,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target Requirement', '@language': 'en' }
                         ]
                     },
@@ -745,8 +745,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Relationship_Trace',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace Link', '@language': 'en' }
                         ],
                         'o:Property_Rationale': [ // ❌ Used as Link but it's a Property!
@@ -795,13 +795,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-missing-entity-class',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -810,8 +810,8 @@ describe('PIG Package Constraint Validation', () => {
                         // ❌ Missing @type (which maps to hasClass)
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity without class', '@language': 'en' }
                         ]
                     }
@@ -836,13 +836,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-invalid-entity-class',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -851,8 +851,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_NonExistent', // ❌ References non-existent Entity class
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity with invalid class', '@language': 'en' }
                         ]
                     }
@@ -877,13 +877,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-wrong-entity-class-type',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -893,8 +893,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Property_Status', // ❌ References Property instead of Entity
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity with Property as class', '@language': 'en' }
                         ]
                     }
@@ -919,13 +919,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-missing-rel-class',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_Source',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ]
                     },
@@ -933,7 +933,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Link_Target',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ]
                     },
@@ -941,7 +941,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Relationship_Trace',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
                     },
@@ -949,7 +949,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -958,8 +958,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
@@ -968,8 +968,8 @@ describe('PIG Package Constraint Validation', () => {
                         // ❌ Missing @type (which maps to hasClass)
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Relationship without class', '@language': 'en' }
                         ],
                         'o:Link_Source': [
@@ -1000,13 +1000,13 @@ describe('PIG Package Constraint Validation', () => {
                 },
                 '@id': 'd:test-wrong-rel-class-type',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_Source',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ]
                     },
@@ -1014,7 +1014,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Link_Target',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ]
                     },
@@ -1022,7 +1022,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Relationship_Trace',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
                     },
@@ -1030,7 +1030,7 @@ describe('PIG Package Constraint Validation', () => {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -1039,8 +1039,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
@@ -1049,8 +1049,8 @@ describe('PIG Package Constraint Validation', () => {
                         '@type': 'o:Link_Source', // ❌ References Link instead of Relationship
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Relationship with Link as class', '@language': 'en' }
                         ],
                         'o:Link_Source': [

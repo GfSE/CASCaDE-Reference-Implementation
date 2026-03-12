@@ -19,13 +19,13 @@ describe('HTML Security - XSS Prevention', () => {
                 },
                 '@id': 'd:test-xss-security',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-02-04T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -34,11 +34,11 @@ describe('HTML Security - XSS Prevention', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-02-04T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Malicious Requirement', '@language': 'en' }
                         ],
-                        'dcterms:description': [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 '@value': '<div onmouseover="alert(\'XSS Attack!\')">Hover over me!</div><script>console.log("Injected script");</script><p>Normal text content</p>',
                                 '@language': 'en'
@@ -86,13 +86,13 @@ describe('HTML Security - XSS Prevention', () => {
                 },
                 '@id': 'd:test-mixed-content',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-02-04T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -101,11 +101,11 @@ describe('HTML Security - XSS Prevention', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-02-04T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Mixed Content Test', '@language': 'en' }
                         ],
-                        'dcterms:description': [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 '@value': '<img src="x" onerror="alert(\'XSS\')"><a href="javascript:void(0)" onclick="malicious()">Click me</a><iframe src="evil.com"></iframe><object data="image.png" type="image/png">Valid image</object><object data="video.mp4" type="video/mp4">Valid video</object>',
                                 '@language': 'en'
@@ -156,13 +156,13 @@ describe('HTML Security - XSS Prevention', () => {
                 },
                 '@id': 'd:test-malicious-object',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
-                'dcterms:modified': '2025-02-04T10:00:00Z',
+                [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
@@ -171,11 +171,11 @@ describe('HTML Security - XSS Prevention', () => {
                         '@type': 'o:Entity_Requirement',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
-                        'dcterms:modified': '2025-02-04T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Malicious Object Test', '@language': 'en' }
                         ],
-                        'dcterms:description': [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 '@value': '<object data="malware.swf" type="application/x-shockwave-flash"></object><object data="exploit.pdf" type="application/pdf"></object><object data="safe-image.jpg" type="image/jpeg">Safe image</object>',
                                 '@language': 'en'

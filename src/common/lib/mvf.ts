@@ -46,11 +46,11 @@ const FROM_JSONLD = new Map<string, string>([
     ['sh:defaultValue', 'defaultValue'],
 //    ['xs:pattern', 'pattern'],
     ['sh:pattern', 'pattern'],
-    ['dcterms:title', 'title'],
-    ['dcterms:description', 'description'],
-    ['dcterms:created', 'created'],
-    ['dcterms:modified', 'modified'],
-    ['dcterms:creator', 'creator'],
+    [`${DEF.pfxNsDcmi}title`, 'title'],
+    [`${DEF.pfxNsDcmi}description`, 'description'],
+    [`${DEF.pfxNsDcmi}created`, 'created'],
+    [`${DEF.pfxNsDcmi}modified`, 'modified'],
+    [`${DEF.pfxNsDcmi}creator`, 'creator'],
     ['skos:definition', 'definition']
 ]);
 
@@ -90,11 +90,11 @@ const FROM_XML = new Map<string, string>([
     [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
     [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
     [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
-    ['dcterms:title', 'title'],
-    ['dcterms:description', 'description'],
-    ['dcterms:created', 'created'],
-    ['dcterms:modified', 'modified'],
-    ['dcterms:creator', 'creator'],
+    [`${DEF.pfxNsDcmi}title`, 'title'],
+    [`${DEF.pfxNsDcmi}description`, 'description'],
+    [`${DEF.pfxNsDcmi}created`, 'created'],
+    [`${DEF.pfxNsDcmi}modified`, 'modified'],
+    [`${DEF.pfxNsDcmi}creator`, 'creator'],
     ['skos:definition', 'definition']
 ]);
 const TO_XML = new Map<string, string>(

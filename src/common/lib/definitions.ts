@@ -3,7 +3,7 @@ import { BUILD_INFO } from '../../build-info';
 const PIG_DOMAIN = 'http://product-information-graph.org/';
 const PREFIX_NS_META = 'pig:' // later 'cas-meta:';
 const PREFIX_NS_SEMI = 'pig:' // later 'cas-semi:';
-const PREFIX_NS_DCMI = 'dct:'; // later 'cas-data:';
+const PREFIX_NS_DCMI = 'dcterms:'; // later 'dct:';
 
 export const DEF = {
     pigVersion: '2026-02-23',
