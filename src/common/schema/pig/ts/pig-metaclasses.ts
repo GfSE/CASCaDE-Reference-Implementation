@@ -52,7 +52,7 @@ import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
 import { DEF, RE } from "../../../lib/definitions";
 import { LIB, LOG } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
-import { PIN, NodeType } from "../../../lib/platform-independence";
+import { PLI, NodeType } from "../../../lib/platform-independence";
 import { JsonPrimitive, JsonValue, JsonArray, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage } from './pig-package-constraints';
@@ -2194,11 +2194,11 @@ function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
  */
 function xmlToJson(xml: stringXML): IRsp<unknown> {
     try {
-        const parser = PIN.createDOMParser();
+        const parser = PLI.createDOMParser();
 
         // Try 1: Parse without wrapper
         const doc = parser.parseFromString(xml, 'text/xml');
-        const parserError = PIN.getXmlParseError(doc);
+        const parserError = PLI.getXmlParseError(doc);
 
         if (!parserError && doc.documentElement) {
             // Success without wrapper
@@ -2217,7 +2217,7 @@ function xmlToJson(xml: stringXML): IRsp<unknown> {
         const wrapped = LIB.makeXMLDoc(xml);
         const wrappedDoc = parser.parseFromString(wrapped, 'text/xml');
 
-        const wrappedError = PIN.getXmlParseError(wrappedDoc);
+        const wrappedError = PLI.getXmlParseError(wrappedDoc);
         if (wrappedError) {
             const errorMessage = wrappedError.textContent || 'Unknown XML parsing error';
             LOG.error('xmlToJson: XML parsing failed even with wrapper:', errorMessage);
@@ -2702,7 +2702,7 @@ function getXmlElementText(xmlElement: ElementXML): string {
         /* In the browser, we could use:
         return xmlElement.innerHTML?.trim() || ''; */
         // return serializeXmlContent(xmlElement);
-        return PIN.innerHTML(xmlElement) || '';
+        return PLI.innerHTML(xmlElement) || '';
     } else {
         // Return plain text content
         return xmlElement.textContent?.trim() || '';

@@ -16,7 +16,7 @@
  * - saxon-js (for XSLT transformations, works in both environments)
  *
  * Design Decisions
- * - Instead of shims, specific functions are implemented such as PIN.innerHTML(),
+ * - Instead of shims, specific functions are implemented such as PLI.innerHTML(),
  *   because it is considered more robust than fiddling around with prototypes provided by 3rd parties
  * 
  * Authors: oskar.dungern@gfse.org
@@ -56,7 +56,7 @@ interface NodeProcess {
 let cachedDOMParser: typeof DOMParser | null = null;
 let cachedXMLSerializer: typeof XMLSerializer | null = null;
 
-export const PIN = {
+export const PLI = {
     /**
      * Transform XML using XSLT with Saxon-JS
      * Works in both Node.js and browser environments
@@ -71,11 +71,11 @@ export const PIN = {
     ): Promise<IRsp<unknown>> {
         try {
             // Load compiled XSLT stylesheet
-            const sefResult = await PIN.readFileAsText(sefPath);
+            const sefResult = await PLI.readFileAsText(sefPath);
             if (!sefResult.ok)
                 return sefResult;
 
-        //    LOG.debug(`PIN.transformXSL: loaded SEF stylesheet from ${sefPath}`);
+        //    LOG.debug(`PLI.transformXSL: loaded SEF stylesheet from ${sefPath}`);
             const output = await SaxonJS.transform(
                 {
                     stylesheetText: sefResult.response as string,
@@ -85,7 +85,7 @@ export const PIN = {
                 'async'
             );
 
-        //    LOG.debug(`PIN.transformXSL: transformation completed successfully`, output);
+        //    LOG.debug(`PLI.transformXSL: transformation completed successfully`, output);
             return Rsp.create(0, output.principalResult as string, 'text');
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
@@ -226,7 +226,7 @@ export const PIN = {
      * 
      * @example
      * const doc = parser.parseFromString(xml, 'text/xml');
-     * const error = PIN.getXmlParseError(doc);
+     * const error = PLI.getXmlParseError(doc);
      * if (error) {
      *     console.error('Parse error:', error.textContent);
      * }
@@ -311,7 +311,7 @@ export const PIN = {
      * 
      * @example
      * // Browser and Node.js compatible
-     * const html = PIN.innerHTML(element);
+     * const html = PLI.innerHTML(element);
      * console.log(html); // "<p>Hello</p><span>World</span>"
      */
     innerHTML(element: Element): string {
@@ -333,7 +333,7 @@ export const PIN = {
             return parts.join('').trim();
         } catch (e) {
             // Ultimate fallback: return text content
-            LOG.warn('PIN.innerHTML: XMLSerializer failed, falling back to textContent');
+            LOG.warn('PLI.innerHTML: XMLSerializer failed, falling back to textContent');
             return element.textContent || '';
         }
     /*    } catch(e) {
@@ -373,9 +373,9 @@ export const PIN = {
  * @returns HTML content as string (unescaped)
  * /
 function serializeXmlContent(element: ElementXML): string {
-    // ✅ Use PIN.getXMLSerializer() for platform independence
+    // ✅ Use PLI.getXMLSerializer() for platform independence
     try {
-        const SerializerClass = PIN.getXMLSerializer();
+        const SerializerClass = PLI.getXMLSerializer();
         const serializer = new SerializerClass();
         const children: string[] = [];
 

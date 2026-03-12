@@ -29,7 +29,7 @@
 
 import { DEF } from '../../lib/definitions';
 import { LOG } from '../../lib/helpers';
-import { PIN } from '../../lib/platform-independence';
+import { PLI } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
 import { APackage /*, TPigItem*/ } from '../../schema/pig/ts/pig-metaclasses';
 import { XmlImporter } from '../xml/import-xml';
@@ -72,7 +72,7 @@ export class ReqifImporter {
         }
 
         // Read file content
-        const rspRead = await PIN.readFileAsText(source);
+        const rspRead = await PLI.readFileAsText(source);
         if (!rspRead.ok) {
             return rspRead;
         }
@@ -89,11 +89,11 @@ export class ReqifImporter {
         }
 
         // Parse XML document
-        const parser = PIN.createDOMParser();
+        const parser = PLI.createDOMParser();
         const xmlDoc = parser.parseFromString(xmlToTransform, 'text/xml');
 
         // Check for parsing errors
-        const sourceError = PIN.getXmlParseError(xmlDoc);
+        const sourceError = PLI.getXmlParseError(xmlDoc);
         if (sourceError) {
             return Msg.create(
                 660,
@@ -115,7 +115,7 @@ export class ReqifImporter {
         const stylesheetPath = this.getStylesheetPath();
         // LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
-        const rspTransform = await PIN.transformXSL(xmlToTransform, stylesheetPath);
+        const rspTransform = await PLI.transformXSL(xmlToTransform, stylesheetPath);
         if (!rspTransform.ok) {
             return Msg.create(
                 660,
@@ -173,7 +173,7 @@ export class ReqifImporter {
      */
     private static getStylesheetPath(): string {
         const reqifToPigSef = 'ReqIF-to-PIG.sef.json';
-        if (PIN.isBrowserEnv()) {
+        if (PLI.isBrowserEnv()) {
             // Browser: fetch from public directory via HTTP
             const baseUrl = window.location.origin;
             return `${baseUrl}/${DEF.xslPath}${reqifToPigSef}`;

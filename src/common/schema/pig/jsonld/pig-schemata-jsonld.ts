@@ -40,7 +40,7 @@
 import type { JsonObject } from '../../../lib/helpers';
 import type { ValidateFunction } from 'ajv';
 import { ajv } from '../../../../plugins/ajv';
-import { PIN } from '../../../lib/platform-independence';
+import { PLI } from '../../../lib/platform-independence';
 
 /**
  * Get platform-appropriate base path for schema files
@@ -50,7 +50,7 @@ import { PIN } from '../../../lib/platform-independence';
  * @returns Base path for schema files
  */
 function getSchemaBasePath(): string {
-    if (PIN.isBrowserEnv()) {
+    if (PLI.isBrowserEnv()) {
         // Browser: fetch from public directory via HTTP
         const baseUrl = window.location.origin;
         return `${baseUrl}/assets/jsonld/`;
@@ -98,8 +98,8 @@ async function loadSchema(schemaKey: SchemaKey): Promise<Record<string, unknown>
 
     const schemaPath = SCHEMA_FILES[schemaKey];
     try {
-        // Use PIN.readFileAsText to support both Node and browser
-        const rsp = await PIN.readFileAsText(schemaPath);
+        // Use PLI.readFileAsText to support both Node and browser
+        const rsp = await PLI.readFileAsText(schemaPath);
 
         if (!rsp.ok) {
             throw new Error(`Failed to load schema ${schemaPath}: ${rsp.statusText}`);

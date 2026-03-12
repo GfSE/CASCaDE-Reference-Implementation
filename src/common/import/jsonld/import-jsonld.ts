@@ -26,7 +26,7 @@
 
 import { IRsp, rspOK, Rsp, Msg } from '../../lib/messages';
 import { LOG, JsonObject, JsonArray } from '../../lib/helpers';
-import { PIN } from '../../lib/platform-independence';
+import { PLI } from '../../lib/platform-independence';
 import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
 import { SCH_LD } from '../../schema/pig/jsonld/pig-schemata-jsonld';
 
@@ -56,7 +56,7 @@ export class JsonldImporter {
      */
     static async import(source: string | File | Blob): Promise<IRsp> {
         // Read file content
-        const rsp = await PIN.readFileAsText(source);
+        const rsp = await PLI.readFileAsText(source);
         if (!rsp.ok) {
             return rsp;
         }

@@ -27,7 +27,7 @@
 import { DEF } from '../../lib/definitions';
 import { IRsp, Rsp, Msg, rspOK } from '../../lib/messages';
 import { LOG } from '../../lib/helpers';
-import { PIN } from '../../lib/platform-independence';
+import { PLI } from '../../lib/platform-independence';
 import { APackage, TPigItem, PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
 
 /**
@@ -58,7 +58,7 @@ export class XmlImporter {
      */
     static async import(source: string | File | Blob): Promise<IRsp> {
         // Read file content
-        const rsp = await PIN.readFileAsText(source);
+        const rsp = await PLI.readFileAsText(source);
         if (!rsp.ok) {
             return rsp;
         }
@@ -130,9 +130,9 @@ export class XmlImporter {
      */
     static checkXmlSyntax(xmlString: string): IRsp {
         try {
-            const parser = PIN.createDOMParser();
+            const parser = PLI.createDOMParser();
             const doc = parser.parseFromString(xmlString, 'text/xml');
-            const parserError = PIN.getXmlParseError(doc);
+            const parserError = PLI.getXmlParseError(doc);
 
             if (parserError) {
                 const errorMessage =
@@ -153,9 +153,9 @@ export class XmlImporter {
      * @returns IRsp
      */
     static checkXmlSchema(xmlString: string): IRsp {
-        const parser = PIN.createDOMParser();
+        const parser = PLI.createDOMParser();
         const doc = parser.parseFromString(xmlString, 'text/xml');
-        const parserError = PIN.getXmlParseError(doc);
+        const parserError = PLI.getXmlParseError(doc);
         if (parserError) {
             return Msg.create(690, 'XML', parserError.textContent || 'Unknown XML parsing error');
         }
