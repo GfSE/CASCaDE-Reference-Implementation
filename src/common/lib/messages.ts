@@ -392,34 +392,34 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}] tiene ${msg}`
     },
     673: {
-        en: (parentId, propIndex, hasClass, msg) =>
-            `Package validation failed: item '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        de: (parentId, propIndex, hasClass, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        fr: (parentId, propIndex, hasClass, msg) =>
-            `Échec de la validation du package: élément '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        es: (parentId, propIndex, hasClass, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`
+        en: (parentId, prp, className, msg) =>
+            `Package validation failed: item '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        de: (parentId, prp, className, msg) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        fr: (parentId, prp, className, msg) =>
+            `Échec de la validation du package: élément '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        es: (parentId, prp, className, msg) =>
+            `Error en la validación del paquete: elemento '${parentId}' ${prp}.hasClass='${className}' - ${msg}`
     },
     674: {
         en: (parentId, index, prpName, msg) =>
-            `Package validation failed: item '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Package validation failed: graph[${index}] with item '${parentId}' ${prpName} - ${msg}`,
         de: (parentId, index, prpName, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Paket-Validierung fehlgeschlagen: graph[${index}] mit Element '${parentId}' ${prpName} - ${msg}`,
         fr: (parentId, index, prpName, msg) =>
-            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Échec de la validation du package: graph[${index}] avec l'élément '${parentId}' ${prpName} - ${msg}`,
         es: (parentId, index, prpName, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName} - ${msg}`
+            `Error en la validación del paquete: graph[${index}] con el elemento '${parentId}' ${prpName} - ${msg}`
     },
     675: {
         en: (parentId, index, prpName, prpVal, msg) =>
-            `Package validation failed: item '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Package validation failed: graph[${index}] with item '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         de: (parentId, index, prpName, prpVal, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Paket-Validierung fehlgeschlagen: graph[${index}] mit Element '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         fr: (parentId, index, prpName, prpVal, msg) =>
-            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Échec de la validation du package: graph[${index}] avec l'élément '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         es: (parentId, index, prpName, prpVal, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`
+            `Error en la validación del paquete: graph[${index}] con el elemento '${parentId}' ${prpName}: ${prpVal} - ${msg}`
     },
     676: {
         en: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>

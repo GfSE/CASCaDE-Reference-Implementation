@@ -778,11 +778,11 @@ function checkPropertyHasClass(
 
     const targetType = itemTypeMap.get(prop.hasClass);
     if (!targetType) {
-        return Msg.create(673, parentId, propIndex, prop.hasClass, 'not found in package');
+        return Msg.create(673, parentId, `hasProperty[${propIndex}]`, prop.hasClass, 'not found in package');
     }
 
     if (targetType !== PigItemType.Property) {
-        return Msg.create(673, parentId, propIndex, prop.hasClass, `expected ${DEF.pfxNsMeta}Property, found ${targetType}`);
+        return Msg.create(673, parentId, `hasProperty[${propIndex}]`, `expected ${DEF.pfxNsMeta}Property, found ${targetType}`);
     }
 
     return rspOK;
@@ -858,11 +858,11 @@ function checkLinkHasClass(
 
     const targetType = itemTypeMap.get(link.hasClass);
     if (!targetType) {
-        return Msg.create(675, parentId, linkIndex, linkArrayName, link.hasClass, 'not found in package');
+        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.hasClass, 'not found in package');
     }
 
     if (targetType !== PigItemType.Link) {
-        return Msg.create(675, parentId, linkIndex, linkArrayName, link.hasClass, `expected ${DEF.pfxNsMeta}Link, found ${targetType}`);
+        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.hasClass, `expected ${DEF.pfxNsMeta}Link, found ${targetType}`);
     }
 
     return rspOK;

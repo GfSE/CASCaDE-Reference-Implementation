@@ -111,7 +111,7 @@ export class XmlImporter {
         let result: IRsp;
         if (actualCount === expectedCount) {
             LOG.info(
-                `XmlImporter: successfully imported package with all ${actualCount} items`
+                `XmlImporter: successfully imported package with ${actualCount} items`
             );
             result = Rsp.create(0, allItems, 'json');
         } else {
