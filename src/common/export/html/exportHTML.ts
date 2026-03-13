@@ -45,39 +45,38 @@ export interface IOptionsHTML {
 
 export const toHTML = {
     aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
-        const pkgSt = pkg.status();
-        if (!pkgSt.ok) {
-            return [
-                `<div class="meta-error">
-                    Invalid aPackage with id ${pkg.id} - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
-                </div>`
-            ];
-        }
-
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang ?? 'en-US';
         const widthMain = options?.widthMain ?? '67%';
         const includeItemTypes = options?.itemType ?? [PigItemType.anEntity];
+        const pkgSt = pkg.status();
 
         // 1. Package metadata as first element with localization
+        const errHTML: stringHTML = pkgSt.ok ? ''
+              : `<div class="meta-error">
+                    Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
+                </div>`;
+            
         const titleText = passify(getLocalText(pkg.title, lang));
         const descText = passify(getLocalText(pkg.description, lang));
 
-        const pkgMetadata = `<div class="meta-aPackage">
-                    <div class="col-main" style="flex: 0 0 ${widthMain};">
-                        <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
-                        ${descText ? `<div class="meta-description">${descText}</div>` : ''}
-                    </div>
-                    <div class="col-right">
-                        <dl class="dl-horizontal">
-                            ${metadataToHTML(pkg, lang)}
-                            <dt>Items in Graph</dt><dd>${pkg.graph.length}</dd>
-                        </dl>
-                    </div>
-                </div>`;
+        const pkgHTML = `<div class="meta-aPackage">
+                <div class="col-main" style="flex: 0 0 ${widthMain};">
+                    <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
+                    ${descText ? `<div class="meta-description">${descText}</div>` : ''}
+                    ${errHTML}
+                </div>
+                <div class="col-right">
+                    <dl class="dl-horizontal">
+                        ${metadataToHTML(pkg, lang)}
+                        <dt>Items in Graph</dt><dd>${pkg.graph.length}</dd>
+                    </dl>
+                </div>
+            </div>`;
+            
+        const result: stringHTML[] = [pkgHTML];
 
-        const result: stringHTML[] = [pkgMetadata];
-
+        // 2. Graph items - filter by type
         for (const item of pkg.graph) {
             if (includeItemTypes.includes(item.itemType) && typeof toHTML.anEntity === 'function') {
                 // call directly the helper function instead of the getHTML method of the item:
@@ -137,7 +136,7 @@ export const toHTML = {
                     Invalid aRelationship with id ${rel.id} - status: (${relSt.status}) ${relSt.statusText ?? ''}
                 </div>`;
         }
-        // ToDo: Implementiere eine HTML-Repräsentation für ARelationship
+        // @ToDo: Implementiere eine HTML-Repräsentation für ARelationship
         return '<div class="meta-not-implemented">HTML export for Relationship not implemented</div>';
     }
 };

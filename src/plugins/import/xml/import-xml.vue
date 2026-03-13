@@ -110,7 +110,7 @@
                     const results = await this.importAllFiles();
 
                     // Separate successful and failed imports
-                    // ToDo: results with 691 status (partial success) should be handled separately, but for now we treat them as failures:
+                    // @ToDo: results with 691 status (partial success) should be handled separately, but for now we treat them as failures:
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 

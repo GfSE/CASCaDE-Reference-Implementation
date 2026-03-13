@@ -31,7 +31,7 @@
  *  - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
  *  - and now pfxNsMeta: 'cas-meta:' for the metamodel and pfxNsSemi: 'cas-semi:' for the semantic infrastructure.
  *
- *  ToDo:
+ *  @ToDo:
  *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check? 
  *  - implement 'composes' (formerly composedProperty) for Property and AProperty
  *  - Check use of PigItem.normalizeId() in the setJSONLD() thread
@@ -59,7 +59,7 @@ import { checkConstraintsForPackage } from './pig-package-constraints';
 import { IOptionsHTML, stringHTML, toHTML } from '../../../export/html/exportHTML';
 
 export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
-export type TRevision = string;  // ToDo: should be better described using a pattern (RegExp)
+export type TRevision = string;  // @ToDo: should be better described using a pattern (RegExp)
 export type TPigClass = Property | Link | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
 export type TPigAnElement = APackage | AnEntity | ARelationship;
@@ -281,7 +281,7 @@ export class PigItem {
      * - AnEntity: title, description
      * - ARelationship: title, description
      *
-     * ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
+     * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
      */
     static isMultiLanguageText(propertyName: string, value?: unknown): boolean {
 
@@ -329,7 +329,7 @@ export class PigItem {
         }
 
         // Determine prefix using optimized type guards
-        // ToDo: Check whether the namespaces for enumerated value types are correctly normalized with 'o:'
+        // @ToDo: Check whether the namespaces for enumerated value types are correctly normalized with 'o:'
         // and also their references in properties
         let prefix: string;
         if (PigItem.isClass(itemType)) {
@@ -451,7 +451,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
             if (!dRes.ok) return dRes;
         }
 
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         return super.validate(itm);
     }
     protected set(itm: IIdentifiable): this {
@@ -530,7 +530,7 @@ abstract class ALink extends Item implements IALink {
         // id and itemType checked in superclass
         if (!itm.hasClass)
             return Msg.create(602, itm.itemType);
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Link URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
@@ -601,7 +601,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
         super(itm);
     }
 /*    protected validate(itm: IAnElement) {
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         return super.validate(itm);
     } */
     protected set(itm: IAnElement): this {
@@ -857,7 +857,7 @@ export class Property extends Identifiable implements IProperty {
             //            return msg */
         }
 
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         return super.validate(itm);
     }
     set(itm: IProperty): this {
@@ -994,7 +994,7 @@ export class Entity extends Element implements IEntity {
             // if present and empty, no references are allowed:
             const rsp = validateIdStringArray(itm.enumeratedTargetLink, 'enumeratedTargetLink', { canBeUndefined: true, minCount: 0 });
             if (!rsp.ok) return rsp; */
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         return super.validate(itm);
     }
     set(itm: IEntity) {
@@ -1056,7 +1056,7 @@ export class Relationship extends Element implements IRelationship {
             if (!rsp.ok) return rsp;
             rsp = validateIdStringArray(itm.enumeratedTargetLink, 'enumeratedTargetLink', { canBeUndefined: true, minCount: 1 });
             if (!rsp.ok) return rsp; */
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         return super.validate(itm);
     }
     set(itm: IRelationship) {
@@ -1133,7 +1133,7 @@ export class ASourceLink extends ALink implements IALink {
         // itemType checked in superclass
         if (!itm.hasClass)
             return Msg.create(602, PigItemType.aSourceLink);
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
@@ -1156,7 +1156,7 @@ export class ATargetLink extends ALink implements IALink {
         // itemType checked in superclass
         if (!itm.hasClass)
             return Msg.create(602, PigItemType.aTargetLink);
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
@@ -1254,7 +1254,7 @@ export class ARelationship extends AnElement implements IARelationship {
         // id and itemType checked in superclass
         if (!itm.hasClass)
             return Msg.create(602, PigItemType.aRelationship);
-        // ToDo: implement further validation logic
+        // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Relationship URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
@@ -1331,7 +1331,6 @@ export class APackage extends AnElement implements IAPackage {
         rsp = checkConstraintsForPackage(pkg, options);
         // if (pkg.id == 'd:test-invalid-prop')
         // LOG.debug(`APackage.validate: validating package `, pkg, rsp);
-
         if (!rsp.ok) {
             return rsp;
         }
@@ -1341,7 +1340,7 @@ export class APackage extends AnElement implements IAPackage {
 
     set(pkg: IAPackage, options?:any): this {
         const _pkg = { ...pkg };
-        // ToDo: strip?
+        // @ToDo: strip?
         _pkg.modified = normalizeDateTime(_pkg.modified) || new Date().toISOString();
         // Instantiate each graph item:
         const instantiatedGraph: TPigItem[] = [];
@@ -1361,7 +1360,7 @@ export class APackage extends AnElement implements IAPackage {
             }
         }
 
-        // ToDo: Rework the logic: Instantiate the package even with faulty items
+        // @ToDo: Rework the logic: Instantiate the package even with faulty items
         if (errors.length > 0) {
             LOG.warn(`APackage ${pkg.id}: ${errors.length} item(s) failed instantiation`);
             this.lastStatus = Msg.create(611, 'Package Import', instantiatedGraph.length, _pkg.graph.length);
@@ -1369,11 +1368,10 @@ export class APackage extends AnElement implements IAPackage {
         } else {
             // id is normalized in the caller (setXML or setJSONLD)
             this.lastStatus = this.validate(_pkg, options);
-            if (this.lastStatus.ok) {
-                super.set(_pkg);
-                this.context = _pkg.context;
-                this.graph = instantiatedGraph;
-            }
+            // set the package properties and the instantiated graph, even if some constraints are violated:
+            super.set(_pkg);
+            this.context = _pkg.context;
+            this.graph = instantiatedGraph;
         }
 
         return this;
@@ -1392,7 +1390,7 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     setJSONLD(doc: any, options?:any) {
-        // ToDo: Perhaps we must normalize the ids like in XML import to assure they have a namespace or are an URI
+        // @ToDo: Perhaps we must normalize the ids like in XML import to assure they have a namespace or are an URI
         // Extract @context
         const ctx = this.extractContextLD(doc);
         
@@ -1526,7 +1524,7 @@ export class APackage extends AnElement implements IAPackage {
         // Check package status
         const pkgStatus = this.status();
         if (!pkgStatus) {
-            // ToDo: throw instead?
+            // @ToDo: throw instead?
             LOG.error(
                 `APackage '${this.id || 'unknown'}' is corrupt`
             );
@@ -1536,7 +1534,6 @@ export class APackage extends AnElement implements IAPackage {
             LOG.warn(
                 `APackage '${this.id || 'unknown'}' caused an error: ${pkgStatus?.statusText || 'unknown error'}`
             );
-            return [(this as TPigItem)];
         }
         else if (!Array.isArray(this.graph)) {
             LOG.warn(
@@ -1544,10 +1541,10 @@ export class APackage extends AnElement implements IAPackage {
             );
             return [(this as TPigItem)];
         }
-        else {
-            // Package is valid, add it as first element
-            result.push(this as TPigItem);
-        }
+        // Package may be valid or invalid but has a graph array, so we proceed to check the items:
+
+        // Add package as first element
+        result.push(this as TPigItem);
 
         // Filter and validate graph items
         let validCount = 0;
@@ -1609,7 +1606,7 @@ export class APackage extends AnElement implements IAPackage {
      * @param itemLD - JSON-LD representation of item
      * @returns Plain JSON object ready for instantiation
      *
-     * ToDo: Rework the types JsonObject --> JsonObject
+     * @ToDo: Rework the types JsonObject --> JsonObject
      */
     ldToJson(itemLD: any): any {
         let json = { ...itemLD };

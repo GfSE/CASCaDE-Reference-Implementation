@@ -981,7 +981,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
         const itemType = (item as any).itemType;
-        // ToDo: Should always be id
+        // @ToDo: Should always be id
         const itemId = (item as any)['@id'] ?? (item as any).id;
 
         // Check anEntity and aRelationship instances
@@ -1033,7 +1033,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                 if (propDef.enumeratedValue !== undefined) {
                     // A: aProperty instances must have references to enumerated values ...
 
-                    // ToDo: enumeratedValues is schema-checked and always a list
+                    // @ToDo: enumeratedValues is schema-checked and always a list
                     const enumeratedValues = Array.isArray(propDef.enumeratedValue)
                         ? propDef.enumeratedValue
                         : [propDef.enumeratedValue];
@@ -1041,7 +1041,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
                     // Check if value is in enumerated list
                     const isenumerated = enumeratedValues.some((eV: any) => {
                         // Handle both string values and object values with id
-                        // ToDo: should always have an id.
+                        // @ToDo: should always have an id.
                         const enumeratedStr = typeof eV === 'object' && eV !== null && 'id' in eV
                             ? eV['id']
                             : String(eV);

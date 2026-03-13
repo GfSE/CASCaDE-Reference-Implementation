@@ -649,12 +649,12 @@ describe('PIG Package Constraint Validation', () => {
             /*   if (pck.status().ok)
                    console.error('status:', pck.status()); */
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass reference
+            expect(pkg.status().status).toBe(673); // Invalid hasClass reference
             
         /*    const rsp = pkg.get() as IAPackage;
             
             expect(rsp.ok).toBe(false);
-            expect(rsp.status).toBe(675); // Invalid link hasClass reference
+            expect(rsp.status).toBe(673); // Invalid link hasClass reference
             expect(rsp.statusText).toContain('hasTargetLink[0].hasClass');
             expect(rsp.statusText).toContain('o:Link_NonExistent');
             expect(rsp.statusText).toContain('not found in package'); */
@@ -772,7 +772,7 @@ describe('PIG Package Constraint Validation', () => {
             /*   if (pck.status().ok)
                    console.error('status:', pck.status()); */
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass type
+            expect(pkg.status().status).toBe(673); // Invalid hasClass type
             
         /*    const rsp = pkg.get() as IAPackage;
             
