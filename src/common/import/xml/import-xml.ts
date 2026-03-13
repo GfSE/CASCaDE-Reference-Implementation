@@ -41,6 +41,8 @@ export class XmlImporter {
      * Import XML document and instantiate PIG items
      * 
      * @param source - File path (Node.js), URL, or File/Blob object (Browser)
+     * @param options - Optional parameters
+     *     - sef: SEF stylesheet for transformation (*.sef.json)
      * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
      * 
      * @example
@@ -56,14 +58,16 @@ export class XmlImporter {
      * // URL
      * const result = await XmlImporter.import('https://example.org/data.xml');
      */
-    static async import(source: string | File | Blob): Promise<IRsp> {
+    static async import(source: string | File | Blob, options?: any): Promise<IRsp> {
+        // LOG.debug(`XmlImporter: Source: ${typeof source === 'string' ? source : JSON.stringify(source)}`);
+        // LOG.debug(`XmlImporter: Options: ${JSON.stringify(options)}`);
         // Read file content
         const rsp = await PLI.readFileAsText(source);
         if (!rsp.ok) {
             return rsp;
         }
 
-        const xmlString = rsp.response as string;
+        let xmlString = rsp.response as string;
 
         // Security: Size limit check
         if (xmlString.length > this.maxSizeInput) {
@@ -74,17 +78,19 @@ export class XmlImporter {
             );
         }
 
-        // Validate XML syntax
-        const validationResult = this.checkXmlSyntax(xmlString);
-        if (!validationResult.ok) {
-            return validationResult;
+        // optionally transform the source with a user-supplied XSL stylesheet before parsing:
+        if (options?.sef) {
+            const transformed = await PLI.transformXSL(xmlString, options.sef);
+            if (!transformed.ok)
+                return transformed;
+
+            xmlString = transformed.response as string;
         }
 
         // check schema
         const schemaResult = this.checkXmlSchema(xmlString);
-        if (!schemaResult.ok) {
+        if (!schemaResult.ok)
             return schemaResult;
-        }
 
         // Instantiate APackage directly from XML string
         // APackage.setXML() handles:
@@ -127,7 +133,7 @@ export class XmlImporter {
      * @param xmlString - XML string to validate
      * @returns IRsp indicating success or error
      * @private
-     */
+     * /
     static checkXmlSyntax(xmlString: string): IRsp {
         try {
             const parser = PLI.createDOMParser();
@@ -145,7 +151,7 @@ export class XmlImporter {
             const errorMessage = err instanceof Error ? err.message : String(err);
             return Msg.create(690, 'XML', errorMessage);
         }
-    }
+    } */
 
     /**
      * Check schema

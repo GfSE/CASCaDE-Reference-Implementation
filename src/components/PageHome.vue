@@ -1,7 +1,7 @@
 <template>
     <div class="pageHome">
         <p>
-            <a href="https://cascara.gfse.org" target="_blank">CASCaRA</a> (formerly CASCaDE) is a project
+            <a href="https://cascara.gfse.org" target="_blank">CASCaRA</a> (formerly CASCaDE) is an initiative
             under <a href="https://www.omg.org/" target="_blank">OMG</a> to facilitate collaboration
             in the mechatronic product lifecycle through a standardized data format and ontology.
         </p>

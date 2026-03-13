@@ -55,7 +55,7 @@ export class ReqifImporter {
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await ReqIFImporter.import(file);
+     * const result = await ReqifImporter.import(file);
      */
     static async import(source: string | File): Promise<IRsp<unknown>> {
         // Extract filename for validation and logging
@@ -116,21 +116,15 @@ export class ReqifImporter {
         // LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
         const rspTransform = await PLI.transformXSL(xmlToTransform, stylesheetPath);
-        if (!rspTransform.ok) {
-            return Msg.create(
-                660,
-                filename,
-                rspTransform.statusText ?? 'Transformation failed'
-            );
-        }
+        if (!rspTransform.ok)
+            return rspTransform;
 
         const xmlString = rspTransform.response as string;
 
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
-        if (!schemaResult.ok) {
+        if (!schemaResult.ok)
             return schemaResult;
-        }
 
         // Instantiate APackage from transformed XML
         const aPackage = new APackage().setXML(xmlString, {
@@ -157,7 +151,7 @@ export class ReqifImporter {
         const actualCount = allItems.length - 1; // -1 for package itself
 
         LOG.info(
-            `ReqIFImporter: successfully imported ${filename} with ${actualCount} of ${expectedCount} items`
+            `ReqifImporter: successfully imported ${filename} with ${actualCount} of ${expectedCount} items`
         );
 
         // Return success response with items (clone rspOK to avoid shared-state mutation)

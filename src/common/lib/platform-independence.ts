@@ -69,13 +69,14 @@ export const PLI = {
         xmlContent: string,
         sefPath: string
     ): Promise<IRsp<unknown>> {
+        // LOG.debug('PLI.transformXSL 0',xmlContent,sefPath);
         try {
             // Load compiled XSLT stylesheet
             const sefResult = await PLI.readFileAsText(sefPath);
             if (!sefResult.ok)
                 return sefResult;
+            // LOG.debug(`PLI.transformXSL: loaded SEF stylesheet from ${sefPath}`,sefResult);
 
-        //    LOG.debug(`PLI.transformXSL: loaded SEF stylesheet from ${sefPath}`);
             const output = await SaxonJS.transform(
                 {
                     stylesheetText: sefResult.response as string,
@@ -85,7 +86,7 @@ export const PLI = {
                 'async'
             );
 
-        //    LOG.debug(`PLI.transformXSL: transformation completed successfully`, output);
+            // LOG.debug(`PLI.transformXSL 9: transformation completed successfully`, output);
             return Rsp.create(0, output.principalResult as string, 'text');
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);

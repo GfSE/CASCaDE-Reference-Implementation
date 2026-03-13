@@ -5,7 +5,7 @@
             <v-card-title>Select XML Files</v-card-title>
 
             <v-card-text>
-                <v-file-input v-model='selectedFiles'
+                <v-file-input v-model='selectedXmlFiles'
                               accept='.xml'
                               label='XML Input'
                               prepend-icon='mdi-folder-open'
@@ -13,7 +13,18 @@
                               :loading='isLoading'
                               :disabled='isLoading'
                               hint='Select one or more XML files to import'
-                              persistent-hint></v-file-input>
+                              persistent-hint>
+                </v-file-input>
+                <v-file-input v-model="selectedSefFile"
+                              accept=".sef.json"
+                              label="Optional SEF Input"
+                              prepend-icon="mdi-file-code"
+                              :loading="isLoading"
+                              :disabled="isLoading"
+                              hint="Optionally select a SEF file for XSL-Transformation"
+                              persistent-hint
+                              :multiple="false">
+                </v-file-input>
 
                 <!-- Error Display -->
                 <v-alert v-if="errorMessages.length > 0"
@@ -40,7 +51,8 @@
                 <v-progress-linear v-if='isLoading'
                                    indeterminate
                                    color='primary'
-                                   class='mt-4'></v-progress-linear>
+                                   class='mt-4'>
+                </v-progress-linear>
             </v-card-text>
 
             <v-card-actions>
@@ -50,7 +62,7 @@
                 </v-btn>
                 <v-btn color='primary'
                        @click='onSubmit'
-                       :disabled='!selectedFiles.length || isLoading'
+                       :disabled='!selectedXmlFiles.length || isLoading'
                        :loading='isLoading'>
                     Import
                 </v-btn>
@@ -72,7 +84,8 @@
         data() {
             return {
                 dialog: false,
-                selectedFiles: [] as File[],
+                selectedXmlFiles: [] as File[],
+                selectedSefFile: null as File | null,
                 isLoading: false,
                 errorMessages: [] as string[],
                 successMessage: ''
@@ -83,7 +96,7 @@
              * Handle submit button click
              */
             async onSubmit() {
-                if (!this.selectedFiles.length) {
+                if (!this.selectedXmlFiles.length) {
                     this.errorMessages = ['Please select at least one file'];
                     return;
                 }
@@ -142,17 +155,17 @@
              */
             async importAllFiles(): Promise<IRsp<unknown>[]> {
                 const results: IRsp<unknown>[] = [];
+                let sefContent: string | undefined = undefined;
 
-                for (const file of this.selectedFiles) {
+                for (const file of this.selectedXmlFiles) {
                     try {
-                        const rsp = await XmlImporter.import(file);
+                        const options = this.selectedSefFile ? { sef: this.selectedSefFile } : undefined;
+                        const rsp = await XmlImporter.import(file, options);
                         results.push(rsp);
                     } catch (error: any) {
-                        // Convert exception to IRsp format
                         results.push(Msg.create(600, `${file.name}: ${error?.message || String(error)}`));
                     }
                 }
-
                 return results;
             },
 
@@ -179,7 +192,8 @@
              */
             onCancel() {
                 this.dialog = false;
-                this.selectedFiles = [];
+                this.selectedXmlFiles = [];
+                this.selectedSefFile = null;
                 this.errorMessages = [];
                 this.successMessage = '';
             }
@@ -188,7 +202,7 @@
 
     export default class XmlImportComponent extends Vue {
         dialog!: boolean;
-        selectedFiles!: File[];
+        selectedXmlFiles!: File[];
         isLoading!: boolean;
         errorMessages!: string[];
         successMessage!: string;
