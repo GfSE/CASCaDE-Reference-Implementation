@@ -155,7 +155,6 @@
              */
             async importAllFiles(): Promise<IRsp<unknown>[]> {
                 const results: IRsp<unknown>[] = [];
-                let sefContent: string | undefined = undefined;
 
                 for (const file of this.selectedXmlFiles) {
                     try {

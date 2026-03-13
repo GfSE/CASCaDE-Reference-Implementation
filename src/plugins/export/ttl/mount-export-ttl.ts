@@ -2,7 +2,7 @@ import { App, Plugin } from 'vue';
 import RdfExportComponent from "./export-ttl.vue";
 
 const rdfExportPlugin: Plugin = {
-    install(app: App, options?) {
+    install(app: App /*, options?*/) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
 

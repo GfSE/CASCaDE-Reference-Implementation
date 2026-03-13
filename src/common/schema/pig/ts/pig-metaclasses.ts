@@ -1547,34 +1547,34 @@ export class APackage extends AnElement implements IAPackage {
         result.push(this as TPigItem);
 
         // Filter and validate graph items
-        let validCount = 0;
-        let invalidCount = 0;
+        // let validCount = 0;
+        // let invalidCount = 0;
 
         for (const item of this.graph) {
             // LOG.debug(`LIB.allItems: processing graph item `, item);
 
             if (!item || typeof item !== 'object') {
                 LOG.error(`APackage ${ this.id || 'unknown' }: encountered invalid graph item (not an object)`);
-                invalidCount++;
+                // invalidCount++;
                 continue;
             }
 
             // Check if item has status() method
             if (typeof (item as any).status !== 'function') {
                 LOG.error(`APackage ${this.id || 'unknown' }: graph item '${(item as any).id || 'unknown'}' has no status() method`);
-                invalidCount++;
+                // invalidCount++;
                 continue;
             }
 
             // Check item status
             const itemStatus = (item as any).status();
             if (itemStatus.ok) {
-                validCount++;
+                // validCount++;
             } else {
                 LOG.warn(
                     `APackage ${this.id || 'unknown' }: graph item '${(item as any).id || 'unknown'}' (${(item as any).itemType || 'unknown type'}) has invalid status: ${itemStatus?.statusText || 'unknown error'}`
                 );
-                invalidCount++;
+                // invalidCount++;
                 if (validItemsOnly)
                     continue;
             }
