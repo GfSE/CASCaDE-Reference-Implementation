@@ -68,13 +68,16 @@ export type stringXML = string;  // contains XML code
 export type ElementXML = globalThis.Element;  // DOM Element typ
 
 export const PigItemType = {
-    aPackage: `${DEF.pfxNsMeta}aPackage`,
     // PIG classes:
+    Package: `${DEF.pfxNsMeta}Package`,
+    Ontology: `${DEF.pfxNsMeta}Ontology`,
     Property: `${DEF.pfxNsMeta}Property`,
     Link: `${DEF.pfxNsMeta}Link`, 
     Entity: `${DEF.pfxNsMeta}Entity`,
     Relationship: `${DEF.pfxNsMeta}Relationship`,
     // PIG instances/individuals:
+    aPackage: `${DEF.pfxNsMeta}aPackage`,
+    anOntology: `${DEF.pfxNsMeta}anOntology`,
     aProperty: `${DEF.pfxNsMeta}aProperty`,
     aSourceLink: `${DEF.pfxNsMeta}aSourceLink`,
     aTargetLink: `${DEF.pfxNsMeta}aTargetLink`,

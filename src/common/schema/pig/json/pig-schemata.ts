@@ -34,13 +34,13 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}Property`],
                     description: `The PigItemType for ${DEF.pfxNsMeta}Property`
                 },
-                hasClass: { $ref: '#/$defs/idString' },
-                specializes: { $ref: '#/$defs/idString' },
                 title: {
                     type: 'array',
                     minItems: 1,
@@ -109,11 +109,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['id', 'itemType', 'title', 'datatype'],
-            oneOf: [
-                { required: ['hasClass'] },
-                { required: ['specializes'] }
-            ],
+            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'],
             $defs: this.getDefs()
         };
     }
@@ -125,13 +121,13 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}Link`],
                     description: `The PigItemType for ${DEF.pfxNsMeta}Link`
                 },
-                hasClass: { $ref: '#/$defs/idString' },
-                specializes: { $ref: '#/$defs/idString' },
                 title: {
                     type: 'array',
                     minItems: 1,
@@ -154,11 +150,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['id', 'itemType', 'title', 'enumeratedEndpoint'],
-            oneOf: [
-                { required: ['hasClass'] },
-                { required: ['specializes'] }
-            ],
+            required: ['id', 'hasClass', 'itemType', 'title', 'enumeratedEndpoint'],
             $defs: this.getDefs()
         };
     }
@@ -170,13 +162,13 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}Entity`],
                     description: `The PigItemType for ${DEF.pfxNsMeta}Entity`
                 },
-                hasClass: { $ref: '#/$defs/idString' },
-                specializes: { $ref: '#/$defs/idString' },
                 enumeratedProperty: {
                     type: 'array',
                     items: { $ref: '#/$defs/idString' }
@@ -211,11 +203,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['id', 'itemType', 'title'],
-            oneOf: [
-                { required: ['hasClass'] },
-                { required: ['specializes'] }
-            ],
+            required: ['id', 'hasClass', 'itemType', 'title'],
             $defs: this.getDefs()
         };
     }
@@ -227,13 +215,13 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}Relationship`],
                     description: `The PigItemType for ${DEF.pfxNsMeta}Relationship`
                 },
-                hasClass: { $ref: '#/$defs/idString' },
-                specializes: { $ref: '#/$defs/idString' },
                 enumeratedProperty: {
                     type: 'array',
                     items: { $ref: '#/$defs/idString' }
@@ -266,11 +254,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['id', 'itemType', 'title'],
-            oneOf: [
-                { required: ['hasClass'] },
-                { required: ['specializes'] }
-            ],
+            required: ['id', 'hasClass', 'itemType', 'title'],
             $defs: this.getDefs()
         };
     }
@@ -282,12 +266,12 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}anEntity`],
                     description: `The PigItemType for ${DEF.pfxNsMeta}anEntity`
                 },
-                hasClass: { $ref: '#/$defs/idString' },
                 title: {
                     type: 'array',
                     items: { $ref: '#/$defs/LanguageText' }
@@ -313,11 +297,11 @@ class PigSchemaFactory {
                     items: {
                         type: 'object',
                         properties: {
+                            hasClass: { $ref: '#/$defs/idString' },
                             itemType: {
                                 type: 'string',
                                 enum: [`${DEF.pfxNsMeta}aProperty`]
                             },
-                            hasClass: { $ref: '#/$defs/idString' },
                             value: {
                                 type: 'string',
                                 minLength: 1
@@ -341,11 +325,11 @@ class PigSchemaFactory {
                     items: {
                         type: 'object',
                         properties: {
+                            hasClass: { $ref: '#/$defs/idString' },
                             itemType: {
                                 type: 'string',
                                 enum: [`${DEF.pfxNsMeta}aTargetLink`]
                             },
-                            hasClass: { $ref: '#/$defs/idString' },
                             idRef: { $ref: '#/$defs/idString' }
                         },
                         required: ['itemType', 'hasClass', 'idRef'],
@@ -354,7 +338,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['id', 'itemType', 'hasClass', 'modified'],
+            required: ['id', 'hasClass', 'itemType', 'modified'],
             anyOf: [
                 {
                     required: ['title'],
@@ -376,12 +360,12 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}aRelationship`],
                     description: `The PigItemType for ${DEF.pfxNsMeta}aRelationship`
                 },
-                hasClass: { $ref: '#/$defs/idString' },
                 title: {
                     type: 'array',
                     minItems: 1,
@@ -409,11 +393,11 @@ class PigSchemaFactory {
                     items: {
                         type: 'object',
                         properties: {
+                            hasClass: { $ref: '#/$defs/idString' },
                             itemType: {
                                 type: 'string',
                                 enum: [`${DEF.pfxNsMeta}aProperty`]
                             },
-                            hasClass: { $ref: '#/$defs/idString' },
                             value: {
                                 type: 'string',
                                 minLength: 1
@@ -439,11 +423,11 @@ class PigSchemaFactory {
                     items: {
                         type: 'object',
                         properties: {
+                            hasClass: { $ref: '#/$defs/idString' },
                             itemType: {
                                 type: 'string',
                                 enum: [`${DEF.pfxNsMeta}aSourceLink`]
                             },
-                            hasClass: { $ref: '#/$defs/idString' },
                             idRef: { $ref: '#/$defs/idString' }
                         },
                         required: ['itemType', 'hasClass', 'idRef'],
@@ -457,12 +441,12 @@ class PigSchemaFactory {
                     items: {
                         type: 'object',
                         properties: {
+                            hasClass: { $ref: '#/$defs/idString' },
                             itemType: {
                                 type: 'string',
                                 enum: [`${DEF.pfxNsMeta}aTargetLink`],
                                 description: `The PigItemType for ${DEF.pfxNsMeta}aTargetLink`
                             },
-                            hasClass: { $ref: '#/$defs/idString' },
                             idRef: { $ref: '#/$defs/idString' }
                         },
                         required: ['itemType', 'hasClass', 'idRef'],
@@ -471,7 +455,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['id', 'itemType', 'hasClass', 'modified', 'hasSourceLink', 'hasTargetLink'],
+            required: ['id', 'hasClass', 'itemType', 'modified', 'hasSourceLink', 'hasTargetLink'],
             $defs: this.getDefs()
         };
     }
@@ -495,6 +479,7 @@ class PigSchemaFactory {
                     }
                 },
                 id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}aPackage`],
@@ -531,7 +516,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['id', 'itemType', 'modified', 'graph'],
+            required: ['context', 'id', 'hasClass', 'itemType', 'modified', 'graph'],
             $defs: this.getDefs()
         };
     }

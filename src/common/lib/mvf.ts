@@ -217,6 +217,6 @@ export const MVF = {
         if (typeof term !== 'string') {
             return term;
         }
-        return mapping.get(term) ?? term; // ✅ SUPER EINFACH!
+        return mapping.get(term) ?? term;
     }
 };
