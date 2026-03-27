@@ -1,7 +1,0 @@
-# Reroute all subfolders to index.html, so that the routing of the Vue app works:
-RewriteEngine On
-RewriteBase /
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
