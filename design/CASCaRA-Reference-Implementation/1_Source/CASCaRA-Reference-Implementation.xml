@@ -313,7 +313,7 @@ See example files:&#xD;
 - and many more.</documentation>
     </element>
     <element identifier="id-00ded96758514fb1a9efe301f4d68054" xsi:type="ApplicationFunction">
-      <name xml:lang="en">Check CASCaRA  JSON-LD Schema</name>
+      <name xml:lang="en">Check CASCaRA JSON-LD Schema</name>
       <documentation xml:lang="en">Check input data with the [CASCaRA JSON-LD Schemata](https://product-information-graph.org/schema/latest/jsonld/).</documentation>
     </element>
     <element identifier="id-76628f8d35584600ae79bf6736092854" xsi:type="DataObject">
@@ -337,7 +337,7 @@ See example files:&#xD;
     </element>
     <element identifier="id-428f0ce997ed4df3977e87919d3df832" xsi:type="ApplicationComponent">
       <name xml:lang="en">CASCaRA Server</name>
-      <documentation xml:lang="en">A server-side IT appllication that may serve as a collaboration hub along the product lifecycle and as a standardized knowledge base for AI. Integrated product information is shared as a graph with create, read, update and delete function for individual nodes (entities) and edges (relationships) as well as packages containing a certain sub-graph. The [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) defines the graph structure. Import formats are .cas.ttl, .cas.jesonl and .cas.xml. Any .xml file can be imported, if a XSL stylesheet is provided for transformation to .cas.xml. Export formats are .cas.ttl, .cas.jesonl, .cas.xml and .html.</documentation>
+      <documentation xml:lang="en">A server-side IT application that may serve as a collaboration hub along the product lifecycle and as a standardized knowledge base for AI. Integrated product information is shared as a graph with create, read, update and delete function for individual nodes (entities) and edges (relationships) as well as packages containing a certain sub-graph. The [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) defines the graph structure. Import formats are .cas.ttl, .cas.jsonld and .cas.xml. Any .xml file can be imported, if a XSL stylesheet is provided for transformation to .cas.xml. Export formats are .cas.ttl, .cas.jesonl, .cas.xml and .html.</documentation>
     </element>
     <element identifier="id-6144b1f4bb32487386426d82d2bb8b8c" xsi:type="ApplicationInterface">
       <name xml:lang="en">Native API</name>
@@ -381,7 +381,7 @@ Typical use cases:&#xD;
 - Sharing user preferences or history between multiple AI services.&#xD;
 - Coordinating multi-step reasoning or workflows across several models.&#xD;
 &#xD;
-Source: Github Copilot.</documentation>
+Source: GitHub Copilot.</documentation>
     </element>
     <element identifier="id-ff1cca13088045d98f0ddf650c0387f6" xsi:type="DataObject">
       <name xml:lang="en">Cache</name>
@@ -2259,7 +2259,7 @@ The input formats defined have different purpose or strength:&#xD;
       </view>
       <view identifier="id-b7ec524340804d4c953ac8ba570e45f1" xsi:type="Diagram" viewpoint="Application Cooperation">
         <name xml:lang="en">Server</name>
-        <documentation xml:lang="en">The module architecture of a CACaRA Server for collaboration along the product lifecycle and as a standardized knowledge base for AI.</documentation>
+        <documentation xml:lang="en">The module architecture of a CASCaRA Server for collaboration along the product lifecycle and as a standardized knowledge base for AI.</documentation>
         <node identifier="id-e421132863704c20bff19569e3733885" elementRef="id-428f0ce997ed4df3977e87919d3df832" xsi:type="Element" x="24" y="24" w="433" h="321">
           <style>
             <fillColor r="181" g="255" b="255" a="100" />

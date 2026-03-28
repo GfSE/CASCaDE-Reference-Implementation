@@ -213,7 +213,7 @@ See example files:&#xD;
 - Completeness of namespace definitions&#xD;
 - and many more.</documentation>
     </element>
-    <element xsi:type="archimate:ApplicationFunction" name="Check CASCaRA  JSON-LD Schema" id="id-00ded96758514fb1a9efe301f4d68054">
+    <element xsi:type="archimate:ApplicationFunction" name="Check CASCaRA JSON-LD Schema" id="id-00ded96758514fb1a9efe301f4d68054">
       <documentation>Check input data with the [CASCaRA JSON-LD Schemata](https://product-information-graph.org/schema/latest/jsonld/).</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="Configuration Data" id="id-76628f8d35584600ae79bf6736092854"/>
@@ -230,7 +230,7 @@ See example files:&#xD;
       <documentation>[JSON Schema](https://json-schema.org/) declaration per [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) item type, i.e. every block on the metamodel diagram. The latest CASCaRA schema files are published [here](https://product-information-graph.org/schema/latest/jsonld/). The web-service is CORS enabled, thus the schema files can be retrieved from any other web domain.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="CASCaRA Server" id="id-428f0ce997ed4df3977e87919d3df832">
-      <documentation>A server-side IT appllication that may serve as a collaboration hub along the product lifecycle and as a standardized knowledge base for AI. Integrated product information is shared as a graph with create, read, update and delete function for individual nodes (entities) and edges (relationships) as well as packages containing a certain sub-graph. The [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) defines the graph structure. Import formats are .cas.ttl, .cas.jesonl and .cas.xml. Any .xml file can be imported, if a XSL stylesheet is provided for transformation to .cas.xml. Export formats are .cas.ttl, .cas.jesonl, .cas.xml and .html.</documentation>
+      <documentation>A server-side IT application that may serve as a collaboration hub along the product lifecycle and as a standardized knowledge base for AI. Integrated product information is shared as a graph with create, read, update and delete function for individual nodes (entities) and edges (relationships) as well as packages containing a certain sub-graph. The [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) defines the graph structure. Import formats are .cas.ttl, .cas.jsonld and .cas.xml. Any .xml file can be imported, if a XSL stylesheet is provided for transformation to .cas.xml. Export formats are .cas.ttl, .cas.jesonl, .cas.xml and .html.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationInterface" name="Native API" id="id-6144b1f4bb32487386426d82d2bb8b8c">
       <documentation>Extends the methods of the [[Common Lib]] to a REST API.</documentation>
@@ -268,7 +268,7 @@ Typical use cases:&#xD;
 - Sharing user preferences or history between multiple AI services.&#xD;
 - Coordinating multi-step reasoning or workflows across several models.&#xD;
 &#xD;
-Source: Github Copilot.</documentation>
+Source: GitHub Copilot.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="Cache" id="id-ff1cca13088045d98f0ddf650c0387f6"/>
   </folder>
@@ -975,7 +975,7 @@ The input formats defined have different purpose or strength:&#xD;
         <bounds x="540" y="192" width="185" height="102"/>
         <content>The associations with solid line and  open arrowhead denote a 'serves' relationship (from server to client). Direction of data flow is not implied and can occur in both directions.</content>
       </child>
-      <documentation>The module architecture of a CACaRA Server for collaboration along the product lifecycle and as a standardized knowledge base for AI.</documentation>
+      <documentation>The module architecture of a CASCaRA Server for collaboration along the product lifecycle and as a standardized knowledge base for AI.</documentation>
     </element>
   </folder>
   <property key="Report:Model:Hide:Business" value="false"/>
