@@ -31,7 +31,7 @@ Initially, test-data should be small and cover relevant and typical aspects of t
     </element>
   </folder>
   <folder name="Application" id="id-cbf67432f6114c379ba95a8834ae3937" type="application">
-    <element xsi:type="archimate:ApplicationComponent" name="PIG App" id="id-e172fd9964fa43ad8d12dbd7d3ab7dae">
+    <element xsi:type="archimate:ApplicationComponent" name="CASCaRA App" id="id-e172fd9964fa43ad8d12dbd7d3ab7dae">
       <documentation>A web application for creating, reading, updating and deleting data elements. The app is configured by the classes loaded at initialization time. The classes govern the choice and the dialog layout for modifying the data. Thus, the same software is used for more or less complex applications. &#xD;
 &#xD;
 The architecture includes a plugin mechanism to allow the deployment of new transformations or storage adapters without building and deploying a complete new image, for details see ['Design Plugin Mechanism'](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/21).&#xD;
@@ -73,7 +73,7 @@ Is usually provided by the application framework. An option is to implement an e
       <documentation>Store a subgraph in or retrieve it from any other storage system as required.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Export Plugin" id="id-a3381ffbd2dd42c8a672a7c134cf4703">
-      <documentation>Transforms a selected subgraph from the internal data format according to the PIG metamodel to a desired output format.&#xD;
+      <documentation>Transforms a selected subgraph from the internal data format according to the CASCaRA Metamodel to a desired output format.&#xD;
 &#xD;
 The following transformations are planned for validating the approach (i.e. the standard to submit):&#xD;
 - [JSON-LD](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/27)&#xD;
@@ -117,10 +117,10 @@ The user-interface is class-driven, i.e. the details of the entity, relationship
       <documentation>A standard web-server used for publication and exchange of information.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="Source Data" id="id-de2a0c4d32014e2bad914f6e07e01e07">
-      <documentation>The most general term for data ingested by the PIG App from previous processing steps.</documentation>
+      <documentation>The most general term for data ingested by the CASCaRA App from previous processing steps.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="Sink Data" id="id-49ce19aceed240fe98c63f87eee0ba79">
-      <documentation>The most general term for data produced by the PIG App for further processing.</documentation>
+      <documentation>The most general term for data produced by the CASCaRA App for further processing.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationComponent" name="Triple-Store" id="id-8c4227da3d8a4c73b28af7fecb62ef6d">
       <documentation>A standard database for knowledge graphs, e.g. Apache Fuseki.</documentation>
@@ -146,21 +146,21 @@ The user-interface is class-driven, i.e. the details of the entity, relationship
     <element xsi:type="archimate:ApplicationService" name="XSLT Engine" id="id-47f4558873214bdb9eed44c4d2cfde59">
       <documentation>An engine performing a transformation using the Extensible Stylesheet Language (XSL).</documentation>
     </element>
-    <element xsi:type="archimate:DataObject" name="reqif-to-pig.xsl" id="id-bd48a75cd11c4b81ac8e5282cb6db93d">
+    <element xsi:type="archimate:DataObject" name="reqif-to-cas.xsl" id="id-bd48a75cd11c4b81ac8e5282cb6db93d">
       <documentation>A XSL stylesheet to extract relevant data from a ReqIF file. It is assumed that the source file to transform complies with the OMG Standard [Requirements Interchange Format (ReqIF)](https://www.omg.org/reqif/) and with the Prostep ivip [Implementation Guideline ReqIF](https://www.prostep.org/shop/detail?ai%5Baction%5D=detail&amp;ai%5Bcontroller%5D=Catalog&amp;ai%5Bd_name%5D=reqif_ig_v1-7&amp;ai%5Bd_pos%5D=).&#xD;
 &#xD;
-The fact that the ReqIF Implementation Guideline proposes certain attribute names as a convention, but no names for the entities (called OBJECT-TYPES) themselves, is a challenge for semantic interoperability. However, daily practice has adopted a number of entity names which can be included in the [[any-to-pig.mvf]] to find appropriate ontology classes. It is advised to design the XSL stylesheet for ReqIF in a way that the LONG-NAME of all OBJECT-TYPES is taken as entity class name and to leave all mapping with ontology terms to a subsequent process step, see [[Assign Ontology Class]].</documentation>
+The fact that the ReqIF Implementation Guideline proposes certain attribute names as a convention, but no names for the entities (called OBJECT-TYPES) themselves, is a challenge for semantic interoperability. However, daily practice has adopted a number of entity names which can be included in the [[any-to-cas.mvf]] to find appropriate ontology classes. It is advised to design the XSL stylesheet for ReqIF in a way that the LONG-NAME of all OBJECT-TYPES is taken as entity class name and to leave all mapping with ontology terms to a subsequent process step, see [[Assign Ontology Class]].</documentation>
     </element>
     <element xsi:type="archimate:ApplicationService" name="MVF Engine" id="id-808de729507c4dc181fb2bafb2bda148">
       <documentation>A Multi-Vocabulary-Facility mapping terms of multiple domain languages to the CASCaRA ontology terms and vice versa. The OMG Standard [Multiple Vocabulary Facility (MVF)](https://www.omg.org/spec/MVF/1.0/About-MVF) is partially implemented for that purpose.</documentation>
     </element>
-    <element xsi:type="archimate:DataObject" name="any-to-pig.mvf" id="id-e4b1a8b02b5441bbab7c11cdab7426ef">
-      <documentation>The data for the Multi-Vocabulary-Facility (MVF). It contains multiple vocabularies in domain and national languages plus standardized terms called 'concepts' with their synonym and antonym relationships. The concepts correspond to the classes of the CASCaRA Ontology. The relationships can be used for any-to-pig matching as well as the inverse.</documentation>
+    <element xsi:type="archimate:DataObject" name="any-to-cas.mvf" id="id-e4b1a8b02b5441bbab7c11cdab7426ef">
+      <documentation>The data for the Multi-Vocabulary-Facility (MVF). It contains multiple vocabularies in domain and national languages plus standardized terms called 'concepts' with their synonym and antonym relationships. The concepts correspond to the classes of the CASCaRA Ontology. The relationships can be used for any-to-cas matching as well as the inverse.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="Graph" id="id-b1ab44daf02143058e79c70a1c1ef78d">
       <documentation>The CASCaRA Graph integrating partial information from different sources. It complies with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
-    <element xsi:type="archimate:DataObject" name="input.pig.jsonld" id="id-fcb0615e1c1c4102a3e1f663da66d1a3">
+    <element xsi:type="archimate:DataObject" name="input.cas.jsonld" id="id-fcb0615e1c1c4102a3e1f663da66d1a3">
       <documentation>Input data in XML format. A pattern compatible with the CASCaRA Metamodel is assumed. More precisely: It must comply with the [CASCaRA JSON-LD Schemata](https://product-information-graph.org/schema/latest/jsonld/).&#xD;
 &#xD;
 See example files:&#xD;
@@ -171,7 +171,7 @@ See example files:&#xD;
     <element xsi:type="archimate:ApplicationFunction" name="Transform to Subgraph (XSLT)" id="id-4a90157ebfd241cba08c2f2966eb937b">
       <documentation>Transform the input data with its original XML format (such as ReqIF) to a CASCaRA compliant subgraph. A stylesheet per input format such as [[reqif-to-pig.xsl]] is used. It is advised that the stylesheet is designed to keep the original terminology, so that the transformation is as generally applicable as possible and to assign CASCaRA Ontology classes in a subsequent process step.</documentation>
     </element>
-    <element xsi:type="archimate:DataObject" name="input.pig.ttl" id="id-41e0ec3a4a7a4114b702e6efaffb07d6">
+    <element xsi:type="archimate:DataObject" name="input.cas.ttl" id="id-41e0ec3a4a7a4114b702e6efaffb07d6">
       <documentation>Input data in RDF Turtle format. A pattern compatible with the CASCaRA Metamodel is assumed to fully interpret the data. &#xD;
 &#xD;
 See example files:&#xD;
@@ -194,7 +194,7 @@ See example files:&#xD;
     <element xsi:type="archimate:ApplicationFunction" name="Transform to Subgraph (SPARQL)" id="id-a7c19dd2b55f4882a32504716d75e1f5">
       <documentation>Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQL queries defined in [[any-to-pig.sparql]] are used.</documentation>
     </element>
-    <element xsi:type="archimate:DataObject" name="input.pig.xml" id="id-93711964b9d7473180506ded406f8ac2">
+    <element xsi:type="archimate:DataObject" name="input.cas.xml" id="id-93711964b9d7473180506ded406f8ac2">
       <documentation>Input data in XML format. A pattern compatible with the CASCaRA Metamodel is assumed. &#xD;
 &#xD;
 See example files:&#xD;
@@ -217,8 +217,8 @@ See example files:&#xD;
       <documentation>Check input data with the [CASCaRA JSON-LD Schemata](https://product-information-graph.org/schema/latest/jsonld/).</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="Configuration Data" id="id-76628f8d35584600ae79bf6736092854"/>
-    <element xsi:type="archimate:DataObject" name="any-to-pig.sparql" id="id-ae946a9cbb0549f7826d3032ff5bf031">
-      <documentation>A set of SPARQL Protocol and RDF Query Language queries to extract relevant information from RDF data having a pattern conforming with the [CASCARA metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
+    <element xsi:type="archimate:DataObject" name="any-to-cas.sparql" id="id-ae946a9cbb0549f7826d3032ff5bf031">
+      <documentation>A set of SPARQL Protocol and RDF Query Language queries to extract relevant information from RDF data having a pattern conforming with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Check CASCaRA XML Schema" id="id-77c086d455e64fb48357a98acb27515e">
       <documentation>Check input data with the CASCaRA XML Schemata.</documentation>
@@ -229,6 +229,9 @@ See example files:&#xD;
     <element xsi:type="archimate:DataObject" name="itemType.json" id="id-e8ef41a3f818434186a124807e2fe514">
       <documentation>[JSON Schema](https://json-schema.org/) declaration per [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) item type, i.e. every block on the metamodel diagram. The latest CASCaRA schema files are published [here](https://product-information-graph.org/schema/latest/jsonld/). The web-service is CORS enabled, thus the schema files can be retrieved from any other web domain.</documentation>
     </element>
+    <element xsi:type="archimate:ApplicationComponent" name="CASCaRA Server" id="id-428f0ce997ed4df3977e87919d3df832"/>
+    <element xsi:type="archimate:ApplicationComponent" name="Storage Plugin Document-DB" id="id-db4be4ee59844b539773ad7db3326c5d"/>
+    <element xsi:type="archimate:ApplicationComponent" name="Storage Plugin Graph-DB" id="id-739597534e6b455cbeeed0f3bc26783b"/>
   </folder>
   <folder name="Technology &amp; Physical" id="id-08e808d213d942bba2d6969beeb80f5a" type="technology"/>
   <folder name="Motivation" id="id-9da0ae5e2d00493baa36be1099cd4a34" type="motivation"/>
@@ -344,6 +347,8 @@ See example files:&#xD;
     <element xsi:type="archimate:ServingRelationship" id="id-4234eb6e707b44daafb7576fb0726fa0" source="id-d563b06f80564ca7b6f3373201e3d523" target="id-00ded96758514fb1a9efe301f4d68054"/>
     <element xsi:type="archimate:SpecializationRelationship" name="specializes" id="id-a564f76712aa4ca2a57befb87d785dc3" source="id-e8ef41a3f818434186a124807e2fe514" target="id-76628f8d35584600ae79bf6736092854"/>
     <element xsi:type="archimate:AccessRelationship" name="reads" id="id-555372fe99804c6cb49b843b1eee77f6" source="id-d563b06f80564ca7b6f3373201e3d523" target="id-e8ef41a3f818434186a124807e2fe514" accessType="1"/>
+    <element xsi:type="archimate:CompositionRelationship" id="id-a1513f6108054329b5a0972e55c80e1d" source="id-428f0ce997ed4df3977e87919d3df832" target="id-db4be4ee59844b539773ad7db3326c5d"/>
+    <element xsi:type="archimate:CompositionRelationship" id="id-f1ab6db135e84401a7ebaef4a79a8047" source="id-428f0ce997ed4df3977e87919d3df832" target="id-739597534e6b455cbeeed0f3bc26783b"/>
   </folder>
   <folder name="Views" id="id-c0b1cf8b9b244a5d87e2441e9fb0ac3b" type="diagrams">
     <element xsi:type="archimate:ArchimateDiagramModel" name="Module Architecture" id="id-f73cd2ce3fb547f3a68dc93bec8f2bd8" viewpoint="application_structure">
@@ -890,7 +895,7 @@ The input formats defined have different purpose or strength:&#xD;
   <property key="Report:Model:Hide:Relations" value="false"/>
   <property key="Report:Model:Hide:Views" value="false"/>
   <property key="Report:Model:Hide:ViewNumbering" value="true"/>
-  <purpose>This is the concept and design of the PIG App which is a CASCaRA reference implementation used to validate the standard in preparation. &#xD;
+  <purpose>This is the concept and design of the CASCaRA App which is a reference implementation used to validate the standard in preparation. &#xD;
 &#xD;
 The model gives an overview of the use-cases and the architecture, whereas further details are developed via [GitHub issues](https://github.com/GfSE/CASCaDE-Reference-Implementation/issues). The planning is done with a [GitHub project](https://github.com/orgs/GfSE/projects/5/views/1). &#xD;
 &#xD;
@@ -900,7 +905,7 @@ A publicly available reference implementation shall validate the concepts of the
 &#xD;
 The reference implementation addresses the following aspects:&#xD;
 - Check data format and constraints according to the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) to assure data quality. &#xD;
-- Persistently store and retrieve PIG data using the standardized API (to be defined).&#xD;
+- Persistently store and retrieve CASCaRA Graph data using the standardized API (to be defined).&#xD;
 - View and edit CASCaRA data in a web-browser.&#xD;
 - Transform input data with the formats ReqIF, SysML v1 and v2, STEP and FMI/SSP. Other input formats may follow.&#xD;
 - Integrate input data with different formats to an interwoven knowledge graph.&#xD;
@@ -910,12 +915,12 @@ The reference implementation addresses the following aspects:&#xD;
 &#xD;
 Major requirements (capabilities and characteristics) must be satisfied:&#xD;
 - **Separation of Concerns**: Syntax and Semantics are separated, so that no software updates are needed, when the ontology evolves over time.&#xD;
-- **Design for transformation**: The PIG metamodel (‘magic tetrahedron’) assures loss-less transformation between RDF/OWL (Knowledge Graphs), GQL (Property Graphs) and Object-oriented Programming.&#xD;
+- **Design for transformation**: The CASCaRA Metamodel (‘magic tetrahedron’) assures loss-less transformation between RDF/OWL (Knowledge Graphs), GQL (Property Graphs) and Object-oriented Programming.&#xD;
 - **Federation**: RDF and JSON-LD support dataspaces with federated data under full control of the respective owners.&#xD;
 - **Multi-Format Support**: JSON-LD, XML, RDF/Turtle and GQL/Cypher supporting in a wide range of technologies.&#xD;
 - Comply with web-technology and avoid proprietary formats.&#xD;
 - Extend the software using a documented, if possible standardized plug-in mechanism.&#xD;
 &#xD;
-This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The PIG App will support a similar workflow (among others) for the source data formats chosen.&#xD;
+This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The CASCaRA App will support a similar workflow (among others) for the source data formats chosen.&#xD;
 </purpose>
 </archimate:model>

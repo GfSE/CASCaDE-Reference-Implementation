@@ -164,19 +164,19 @@ The fact that the ReqIF Implementation Guideline proposes certain attribute name
       <documentation>Input data in XML format. A pattern compatible with the CASCaRA Metamodel is assumed. More precisely: It must comply with the [CASCaRA JSON-LD Schemata](https://product-information-graph.org/schema/latest/jsonld/).&#xD;
 &#xD;
 See example files:&#xD;
-- [Alice works for ACME](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Alice%20%5BPIG%20native%5D/6_JSONLD/Alice.pig.jsonld)&#xD;
-- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/6_JSONLD/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.pig.jsonld)&#xD;
+- [Alice works for ACME](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Alice%20%5BCASCaRA%20native%5D/6_JSONLD/Alice.cas.jsonld)&#xD;
+- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/6_JSONLD/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.cas.jsonld)&#xD;
 </documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Transform to Subgraph (XSLT)" id="id-4a90157ebfd241cba08c2f2966eb937b">
-      <documentation>Transform the input data with its original XML format (such as ReqIF) to a CASCaRA compliant subgraph. A stylesheet per input format such as [[reqif-to-pig.xsl]] is used. It is advised that the stylesheet is designed to keep the original terminology, so that the transformation is as generally applicable as possible and to assign CASCaRA Ontology classes in a subsequent process step.</documentation>
+      <documentation>Transform the input data with its original XML format (such as ReqIF) to a CASCaRA compliant subgraph. A stylesheet per input format such as [[reqif-to-cas.xsl]] is used. It is advised that the stylesheet is designed to keep the original terminology, so that the transformation is as generally applicable as possible and to assign CASCaRA Ontology classes in a subsequent process step.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="input.cas.ttl" id="id-41e0ec3a4a7a4114b702e6efaffb07d6">
       <documentation>Input data in RDF Turtle format. A pattern compatible with the CASCaRA Metamodel is assumed to fully interpret the data. &#xD;
 &#xD;
 See example files:&#xD;
-- [Alice works for ACME](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Alice%20%5BPIG%20native%5D/7_RDF/Alice.pig.ttl)&#xD;
-- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/7_RDF/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.pig.ttl)&#xD;
+- [Alice works for ACME](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Alice%20%5BCASCaRA%20native%5D/7_RDF/Alice.cas.ttl)&#xD;
+- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/7_RDF/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.cas.ttl)&#xD;
 </documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Integrate Subgraph" id="id-e2d53372b50542dc89d25f91baf6da31">
@@ -186,20 +186,20 @@ See example files:&#xD;
       <documentation>The subgraph with assigned ontology classes is checked to comply with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Assign Ontology Class" id="id-51c8a62756054cb683e5421cc95dbfc0">
-      <documentation>Input data compliant with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) are matched with the CASCaRA Ontology using a [[MVF Engine]] using the synonyms and antonyms defined in [[any-to-pig.mvf]].</documentation>
+      <documentation>Input data compliant with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) are matched with the CASCaRA Ontology using a [[MVF Engine]] using the synonyms and antonyms defined in [[any-to-cas.mvf]].</documentation>
     </element>
     <element xsi:type="archimate:ApplicationService" name="SPARQL Engine" id="id-3fa1a24dc84044029b48bbda96de74ed">
       <documentation>An engine performing a transformation using the SPARQL Protocol and RDF Query Language.</documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Transform to Subgraph (SPARQL)" id="id-a7c19dd2b55f4882a32504716d75e1f5">
-      <documentation>Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQL queries defined in [[any-to-pig.sparql]] are used.</documentation>
+      <documentation>Transform the input data with its original Turtle format to a CASCaRA compliant subgraph. SPARQL queries defined in [[any-to-cas.sparql]] are used.</documentation>
     </element>
     <element xsi:type="archimate:DataObject" name="input.cas.xml" id="id-93711964b9d7473180506ded406f8ac2">
       <documentation>Input data in XML format. A pattern compatible with the CASCaRA Metamodel is assumed. &#xD;
 &#xD;
 See example files:&#xD;
-- [Alice works for ACME](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Alice%20%5BPIG%20native%5D/5_XML/Alice.pig.xml)&#xD;
-- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/5_XML/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.pig.xml)&#xD;
+- [Alice works for ACME](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Alice%20%5BCASCaRA%20native%5D/5_XML/Alice.cas.xml)&#xD;
+- [Very Simple Model with Requirements (FMC)](https://github.com/GfSE/CASCaDE-Verification-and-Validation/blob/main/Very-simple-Model-with-Requirements%20%5BFMC%20-%20SpecIF%5D/5_XML/Project%20'Very%20Simple%20Model%20(FMC)%20with%20Requirements'.cas.xml)&#xD;
 </documentation>
     </element>
     <element xsi:type="archimate:ApplicationFunction" name="Transform XML to JSON" id="id-be92f0ceb73444409591b83ff25d1795">
@@ -229,9 +229,48 @@ See example files:&#xD;
     <element xsi:type="archimate:DataObject" name="itemType.json" id="id-e8ef41a3f818434186a124807e2fe514">
       <documentation>[JSON Schema](https://json-schema.org/) declaration per [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) item type, i.e. every block on the metamodel diagram. The latest CASCaRA schema files are published [here](https://product-information-graph.org/schema/latest/jsonld/). The web-service is CORS enabled, thus the schema files can be retrieved from any other web domain.</documentation>
     </element>
-    <element xsi:type="archimate:ApplicationComponent" name="CASCaRA Server" id="id-428f0ce997ed4df3977e87919d3df832"/>
-    <element xsi:type="archimate:ApplicationComponent" name="Storage Plugin Document-DB" id="id-db4be4ee59844b539773ad7db3326c5d"/>
-    <element xsi:type="archimate:ApplicationComponent" name="Storage Plugin Graph-DB" id="id-739597534e6b455cbeeed0f3bc26783b"/>
+    <element xsi:type="archimate:ApplicationComponent" name="CASCaRA Server" id="id-428f0ce997ed4df3977e87919d3df832">
+      <documentation>A server-side IT appllication that may serve as a collaboration hub along the product lifecycle and as a standardized knowledge base for AI. Integrated product information is shared as a graph with create, read, update and delete function for individual nodes (entities) and edges (relationships) as well as packages containing a certain sub-graph. The [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/) defines the graph structure. Import formats are .cas.ttl, .cas.jesonl and .cas.xml. Any .xml file can be imported, if a XSL stylesheet is provided for transformation to .cas.xml. Export formats are .cas.ttl, .cas.jesonl, .cas.xml and .html.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationInterface" name="Native API" id="id-6144b1f4bb32487386426d82d2bb8b8c">
+      <documentation>Extends the methods of the [[Common Lib]] to a REST API.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Common Lib" id="id-be2b0111d9ca48f681ab2fc8a90efdef">
+      <documentation>Shared by different CASCaRA Deployment Packages such as Browser App and Server.&#xD;
+&#xD;
+Offers the following functions:&#xD;
+- graph cache with setters and getters&#xD;
+- [[XSLT Engine]], [[SPARQL Engine]], [[MVF Engine]] and [[JSON Schema Engine]]&#xD;
+- import transformations from cas.jsonld, cas.xml and cas.ttl&#xD;
+- export transformations to cas.jsonld, cas.xml, cas.ttl and HTML</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationInterface" name="API4KP" id="id-657f3867a9e04ccead366e0b9859aa10">
+      <documentation>Implements a REST API as designed in [APIs for Knowledge Platforms - API4KP](https://www.omg.org/spec/API4KP/1.0/About-API4KP).</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Storage Plugin Document-DB" id="id-db4be4ee59844b539773ad7db3326c5d">
+      <documentation>Interfaces a document database, either embedded or in an external container.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Storage Plugin Graph-DB" id="id-739597534e6b455cbeeed0f3bc26783b">
+      <documentation>Interfaces a graph database, either embedded or in an external container.</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationInterface" name="MCP API" id="id-2f6b79aa0a9d4c69b9d86c46f733d181">
+      <documentation>A Model Context Protocol (MCP) API is an interface designed to manage and exchange context information between AI models, agents, or services. Its main purpose is to standardize how context—such as user intent, conversation history, environment variables, or task state—is represented, shared, and updated during interactions with or between AI systems.&#xD;
+&#xD;
+Key features of a Model Context Protocol API:&#xD;
+- Context Representation: Defines a structured format (often JSON or similar) for context data relevant to AI models.&#xD;
+- Context Exchange: Provides endpoints or methods to retrieve, update, and synchronize context between clients, models, and other services.&#xD;
+- Session Management: Supports tracking and managing context across sessions or conversations.&#xD;
+- Interoperability: Ensures that different models or agents can understand and use shared context, enabling more coherent and personalized AI behavior.&#xD;
+- Extensibility: Allows for custom context fields or domain-specific extensions.&#xD;
+&#xD;
+Typical use cases:&#xD;
+- Maintaining conversation state in chatbots or virtual assistants.&#xD;
+- Sharing user preferences or history between multiple AI services.&#xD;
+- Coordinating multi-step reasoning or workflows across several models.&#xD;
+&#xD;
+Source: Github Copilot.</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Cache" id="id-ff1cca13088045d98f0ddf650c0387f6"/>
   </folder>
   <folder name="Technology &amp; Physical" id="id-08e808d213d942bba2d6969beeb80f5a" type="technology"/>
   <folder name="Motivation" id="id-9da0ae5e2d00493baa36be1099cd4a34" type="motivation"/>
@@ -347,8 +386,18 @@ See example files:&#xD;
     <element xsi:type="archimate:ServingRelationship" id="id-4234eb6e707b44daafb7576fb0726fa0" source="id-d563b06f80564ca7b6f3373201e3d523" target="id-00ded96758514fb1a9efe301f4d68054"/>
     <element xsi:type="archimate:SpecializationRelationship" name="specializes" id="id-a564f76712aa4ca2a57befb87d785dc3" source="id-e8ef41a3f818434186a124807e2fe514" target="id-76628f8d35584600ae79bf6736092854"/>
     <element xsi:type="archimate:AccessRelationship" name="reads" id="id-555372fe99804c6cb49b843b1eee77f6" source="id-d563b06f80564ca7b6f3373201e3d523" target="id-e8ef41a3f818434186a124807e2fe514" accessType="1"/>
+    <element xsi:type="archimate:CompositionRelationship" id="id-171719bb32144ce7a92a4458e2656ba9" source="id-428f0ce997ed4df3977e87919d3df832" target="id-6144b1f4bb32487386426d82d2bb8b8c"/>
+    <element xsi:type="archimate:CompositionRelationship" id="id-3828da65e38647b9a40e6a06b29ee37c" source="id-428f0ce997ed4df3977e87919d3df832" target="id-be2b0111d9ca48f681ab2fc8a90efdef"/>
+    <element xsi:type="archimate:CompositionRelationship" id="id-bab055ec388e4a4f9b2f626f0c28ba4f" source="id-428f0ce997ed4df3977e87919d3df832" target="id-657f3867a9e04ccead366e0b9859aa10"/>
     <element xsi:type="archimate:CompositionRelationship" id="id-a1513f6108054329b5a0972e55c80e1d" source="id-428f0ce997ed4df3977e87919d3df832" target="id-db4be4ee59844b539773ad7db3326c5d"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-d9d286a25ed0485a96ad4266d7451b04" source="id-db4be4ee59844b539773ad7db3326c5d" target="id-be2b0111d9ca48f681ab2fc8a90efdef"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-1dcd6894001f4748b96b0f0f3bb263d5" source="id-be2b0111d9ca48f681ab2fc8a90efdef" target="id-657f3867a9e04ccead366e0b9859aa10"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-cf7b56b87c7348e6a1b673a5ba437c35" source="id-be2b0111d9ca48f681ab2fc8a90efdef" target="id-6144b1f4bb32487386426d82d2bb8b8c"/>
     <element xsi:type="archimate:CompositionRelationship" id="id-f1ab6db135e84401a7ebaef4a79a8047" source="id-428f0ce997ed4df3977e87919d3df832" target="id-739597534e6b455cbeeed0f3bc26783b"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-6dbca1e2e8ff4cea87bc7b8c8b4b0c54" source="id-739597534e6b455cbeeed0f3bc26783b" target="id-be2b0111d9ca48f681ab2fc8a90efdef"/>
+    <element xsi:type="archimate:CompositionRelationship" id="id-96f250e5379447e29dd6be2ffc3397ed" source="id-428f0ce997ed4df3977e87919d3df832" target="id-2f6b79aa0a9d4c69b9d86c46f733d181"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-36a25150cd74417b8b5cf3a8c589ee3b" source="id-be2b0111d9ca48f681ab2fc8a90efdef" target="id-2f6b79aa0a9d4c69b9d86c46f733d181"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-b3f31bb9853c4201ae9fdb7ad86ea270" source="id-be2b0111d9ca48f681ab2fc8a90efdef" target="id-ff1cca13088045d98f0ddf650c0387f6" accessType="3"/>
   </folder>
   <folder name="Views" id="id-c0b1cf8b9b244a5d87e2441e9fb0ac3b" type="diagrams">
     <element xsi:type="archimate:ArchimateDiagramModel" name="Module Architecture" id="id-f73cd2ce3fb547f3a68dc93bec8f2bd8" viewpoint="application_structure">
@@ -477,7 +526,7 @@ See example files:&#xD;
         <bounds x="864" y="356" width="185" height="102"/>
         <content>The associations with solid line and  open arrowhead denote a 'serves' relationship (from server to client). Direction of data flow is not implied and can occur in both directions.</content>
       </child>
-      <documentation>The top-level module architecture of the PIG App embedded in its system context.</documentation>
+      <documentation>The top-level module architecture of the CASCaRA App embedded in its system context.</documentation>
     </element>
     <element xsi:type="archimate:ArchimateDiagramModel" name="_READ_ME_" id="id-1cafb05b01384aaf838df08a7c66579c">
       <child xsi:type="archimate:Note" id="id-eb46e551b0984bf6bbc91f6f8b6250f7" textAlignment="1" fillColor="#f6f6d8">
@@ -869,21 +918,64 @@ Subject to validation:&#xD;
           <bendpoint startY="-213" endX="120" endY="6"/>
         </sourceConnection>
       </child>
-      <documentation>Different paths of import processing of the [[PIG App]] are shown. They correspond to the edges of the Magic Tetrahedron, which defines the sweet spot where round-trip transformations between RDF, JSON-LD, Object-oriented Data and GQL are possible without loss of information.&#xD;
+      <documentation>Different paths of import processing of the [[CASCaRA App]] are shown. They correspond to the edges of the Magic Tetrahedron, which defines the sweet spot where round-trip transformations between RDF, JSON-LD, Object-oriented Data and GQL are possible without loss of information.&#xD;
 &#xD;
 The input formats defined have different purpose or strength:&#xD;
 &#xD;
 | Category | Format | Purpose and Strength |&#xD;
 | --- | --- | ---|&#xD;
 | Processing | OO Classes | Data Processing, Version and Configuration Management, Multi-user Operation |&#xD;
-| Processing | JSON | Equivalent with the above for schema checking, storage |&#xD;
-| Exchange | PIG JSON-LD | Higher level graph language for API and LD-Processors: Entities and relationships as self-contained objects with URI, standardized type and designated values, explicit, easy to transform |&#xD;
-| Exchange | PIG XML | Equivalent with the above for users preferring the XML ecosystem |&#xD;
-| Knowledge Graph | RDF/OWL Turtle | For use in the RDF ecosystem: Triple-Stores, SPARQL, SHACL, reasoning, visualization, elegant, compact, needs reasoning to uncover implicit meaning, low level graph („Graph Assembly Language“) |&#xD;
-| Knowledge Graph | RDF/OWL JSON-LD | Not planned, as it is redundant with the above |&#xD;
-| Knowledge Graph | RDF/OWL XML | Equivalent with the above for users preferring the XML ecosystem |&#xD;
-| Property Graph | GQL, Cypher | For use in the ecosystem of Labelled Property Graphs: Graph Databases, superior performance, visualization |&#xD;
+| Processing | .json| Equivalent with the above for schema checking, storage |&#xD;
+| Exchange | .cas.jsonld | Higher level graph language for API and LD-Processors: Entities and relationships as self-contained objects with URI, standardized type and designated values, explicit, easy to transform |&#xD;
+| Exchange | .cas.xml | Equivalent with the above for users preferring the XML ecosystem |&#xD;
+| Knowledge Graph | .cas.ttl | For use in the RDF/OWL ecosystem: Triple-Stores, SPARQL, SHACL, reasoning, visualization, elegant, compact, needs reasoning to uncover implicit meaning, low level graph („Graph Assembly Language“) |&#xD;
+| Knowledge Graph | .jsonld | Not planned, as it is redundant with the above |&#xD;
+| Knowledge Graph | .xml | Not planned, either |&#xD;
+| Property Graph | .gql, .cyp | For use in the ecosystem of Labelled Property Graphs: Graph Databases, superior performance, visualization |&#xD;
 </documentation>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="Server" id="id-b7ec524340804d4c953ac8ba570e45f1" viewpoint="application_cooperation">
+      <child xsi:type="archimate:DiagramObject" id="id-e421132863704c20bff19569e3733885" font="1|Segoe UI|14.25|0|WINDOWS|1|-19|0|0|0|400|0|0|0|0|3|2|1|34|Segoe UI" archimateElement="id-428f0ce997ed4df3977e87919d3df832">
+        <bounds x="24" y="24" width="433" height="321"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-da3d3578ab13409e86047caefd0a7fe9" source="id-e421132863704c20bff19569e3733885" target="id-ffa43f3b09b4499f8548d8cf333618f8" archimateRelationship="id-171719bb32144ce7a92a4458e2656ba9"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-0fc37cf9620346be9eb3c1d830bbe7a2" source="id-e421132863704c20bff19569e3733885" target="id-8943bed4137c47cb8bbeb9b3514ef166" archimateRelationship="id-3828da65e38647b9a40e6a06b29ee37c"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-45d37496942143e4bb4e9cbdd1c95fbb" source="id-e421132863704c20bff19569e3733885" target="id-083822cbaf52497abc936e5a289b5e07" archimateRelationship="id-bab055ec388e4a4f9b2f626f0c28ba4f"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-597643dab0d44595961a9449bfa3f54a" source="id-e421132863704c20bff19569e3733885" target="id-40102ee723194881bbe56868f41f812f" archimateRelationship="id-a1513f6108054329b5a0972e55c80e1d"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-981729ee3ecb48f7ba0cd63f87e5e981" source="id-e421132863704c20bff19569e3733885" target="id-9bc3f040a3aa4bb89295ea627e84fe32" archimateRelationship="id-f1ab6db135e84401a7ebaef4a79a8047"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-967f6da9eef54d389ba3b7c68189867c" source="id-e421132863704c20bff19569e3733885" target="id-931a590a740f48b18b456d7751c8cb47" archimateRelationship="id-96f250e5379447e29dd6be2ffc3397ed"/>
+        <child xsi:type="archimate:DiagramObject" id="id-ffa43f3b09b4499f8548d8cf333618f8" targetConnections="id-da3d3578ab13409e86047caefd0a7fe9 id-5d063d6da9814c49a0d612e66665e209" archimateElement="id-6144b1f4bb32487386426d82d2bb8b8c">
+          <bounds x="12" y="48" width="120" height="55"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-8943bed4137c47cb8bbeb9b3514ef166" targetConnections="id-0fc37cf9620346be9eb3c1d830bbe7a2 id-66faa8903f1244d99544370d7ace6749 id-147150e018c140278364557a45e6bb0b" archimateElement="id-be2b0111d9ca48f681ab2fc8a90efdef">
+          <bounds x="72" y="132" width="265" height="90"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-e9909a692e844022a7f0c6a7383e4e39" source="id-8943bed4137c47cb8bbeb9b3514ef166" target="id-083822cbaf52497abc936e5a289b5e07" archimateRelationship="id-1dcd6894001f4748b96b0f0f3bb263d5"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-5d063d6da9814c49a0d612e66665e209" source="id-8943bed4137c47cb8bbeb9b3514ef166" target="id-ffa43f3b09b4499f8548d8cf333618f8" archimateRelationship="id-cf7b56b87c7348e6a1b673a5ba437c35"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-d5114310f2c3481ba59f9b98655aceb7" source="id-8943bed4137c47cb8bbeb9b3514ef166" target="id-931a590a740f48b18b456d7751c8cb47" archimateRelationship="id-36a25150cd74417b8b5cf3a8c589ee3b"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-3e25efca090d4b1bb25149ebb1f19922" source="id-8943bed4137c47cb8bbeb9b3514ef166" target="id-54826c4af45c4328acddfc768d0ba93a" archimateRelationship="id-b3f31bb9853c4201ae9fdb7ad86ea270"/>
+          <child xsi:type="archimate:DiagramObject" id="id-54826c4af45c4328acddfc768d0ba93a" targetConnections="id-3e25efca090d4b1bb25149ebb1f19922" archimateElement="id-ff1cca13088045d98f0ddf650c0387f6">
+            <bounds x="72" y="36" width="120" height="39"/>
+          </child>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-083822cbaf52497abc936e5a289b5e07" targetConnections="id-45d37496942143e4bb4e9cbdd1c95fbb id-e9909a692e844022a7f0c6a7383e4e39" archimateElement="id-657f3867a9e04ccead366e0b9859aa10">
+          <bounds x="144" y="48" width="120" height="55"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-40102ee723194881bbe56868f41f812f" targetConnections="id-597643dab0d44595961a9449bfa3f54a" archimateElement="id-db4be4ee59844b539773ad7db3326c5d">
+          <bounds x="12" y="252" width="120" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-66faa8903f1244d99544370d7ace6749" source="id-40102ee723194881bbe56868f41f812f" target="id-8943bed4137c47cb8bbeb9b3514ef166" archimateRelationship="id-d9d286a25ed0485a96ad4266d7451b04"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-9bc3f040a3aa4bb89295ea627e84fe32" targetConnections="id-981729ee3ecb48f7ba0cd63f87e5e981" archimateElement="id-739597534e6b455cbeeed0f3bc26783b">
+          <bounds x="144" y="252" width="120" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-147150e018c140278364557a45e6bb0b" source="id-9bc3f040a3aa4bb89295ea627e84fe32" target="id-8943bed4137c47cb8bbeb9b3514ef166" archimateRelationship="id-6dbca1e2e8ff4cea87bc7b8c8b4b0c54"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-931a590a740f48b18b456d7751c8cb47" targetConnections="id-967f6da9eef54d389ba3b7c68189867c id-d5114310f2c3481ba59f9b98655aceb7" archimateElement="id-2f6b79aa0a9d4c69b9d86c46f733d181">
+          <bounds x="276" y="48" width="120" height="55"/>
+        </child>
+      </child>
+      <child xsi:type="archimate:Note" id="id-9e21879987e341bea65dc88ad8a5af43" textAlignment="1">
+        <bounds x="540" y="192" width="185" height="102"/>
+        <content>The associations with solid line and  open arrowhead denote a 'serves' relationship (from server to client). Direction of data flow is not implied and can occur in both directions.</content>
+      </child>
+      <documentation>The module architecture of a CACaRA Server for collaboration along the product lifecycle and as a standardized knowledge base for AI.</documentation>
     </element>
   </folder>
   <property key="Report:Model:Hide:Business" value="false"/>
