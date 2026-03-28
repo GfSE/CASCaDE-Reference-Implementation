@@ -1,0 +1,63 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - '**/**'
+  pull_request:
+    branches:
+      - main
+      - dev
+      - docs
+      - design
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [24.4.0]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Build and Test Node.js v. ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build
+    - run: npm run test:unit
+    # - run: npm run test:e2e --if-present
+
+    - name: Set Up Pages
+      id: pages
+      uses: actions/configure-pages@v5
+
+    - name: Upload Artifacts
+      uses: actions/upload-pages-artifact@v4
+      with:
+        path: ./public
+
+  # # Deploy web app to GitHub Pages
+  # deploy:
+  #   name: Product Information Graph Application
+  #   needs: build
+
+  #   permissions:
+  #     pages: write      # Grants write permission to deploy to Pages.
+  #     id-token: write   # Grants write permission to verify the deployment source.
+      
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deployment.outputs.page_url }}  # Retrieves the deployment URL from the previous deployment step.
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Deploy to GitHub Pages
+  #       id: deployment
+  #       uses: actions/deploy-pages@v4

@@ -1,0 +1,118 @@
+#app {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #2c3e50;
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+}
+
+.v-application {
+    height: 100vh;
+    min-height: 0;
+}
+
+/* The google web-fonts Roboto and Montserrat must be loaded in the app's index.html */
+body, .v-application {
+    font-family: 'Roboto', Arial, sans-serif;
+    font-weight: 400;
+}
+
+h1, h2, h3,
+.banner-title,
+.v-app-bar-title,
+.v-toolbar-title,
+.v-toolbar-title__placeholder {
+    font-family: 'Montserrat', 'Roboto', Arial, sans-serif !important;
+    font-weight: 400 !important;
+}
+
+h1 {
+    font-size: 1.8rem;
+}
+
+h2 {
+    font-size: 1.5rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+}
+.banner-title,
+.v-app-bar-title,
+.v-toolbar-title,
+.v-toolbar-title__placeholder {
+    font-size: 1.8rem;
+    text-align: center;
+}
+.main-content {
+    height: 100%;
+    min-height: 0;
+    /* Kein overflow: hidden! */
+    /* Kein margin-top! */
+}
+.gradient-banner {
+    background: #ffd800 !important;
+    text-align: center;
+    /*background: linear-gradient(135deg, #ad0505, #ff6d05) !important;
+    color: white !important;*/
+}
+/* styles used in exportHTML: */
+.meta-error {
+    color: red;
+    background-color: #fcadad;
+}
+.meta-aPackage,
+.meta-anEntity,
+.meta-aRelationship {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.col-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 50%;
+}
+.col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 0;
+}
+.dl-horizontal {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1.5rem;
+    align-items: start;
+}
+.dl-horizontal dt {
+    font-style: italic;
+    font-size: 90%;
+    text-align: right;
+    margin: 0;
+    grid-column: 1;
+    margin: 0;
+}
+
+.dl-horizontal dd {
+    margin: 0;
+    grid-column: 2;
+    word-break: break-word;
+    white-space: normal;
+}
+/*.meta-aProperty {
+    flex: 1;
+    min-width: 0;
+}
+.meta-title {
+    font-size: 1.8rem;
+}
+.meta-description {
+    font-size: 1rem;
+}*/
