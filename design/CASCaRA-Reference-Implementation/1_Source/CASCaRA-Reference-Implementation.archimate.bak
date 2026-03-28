@@ -975,7 +975,7 @@ The input formats defined have different purpose or strength:&#xD;
         <bounds x="540" y="192" width="185" height="102"/>
         <content>The associations with solid line and  open arrowhead denote a 'serves' relationship (from server to client). Direction of data flow is not implied and can occur in both directions.</content>
       </child>
-      <documentation>The module architecture of a CACaRA Server for collaboration along the product lifecycle and as a standardized knowledge base for AI.</documentation>
+      <documentation>The module architecture of a CASCaRA Server for collaboration along the product lifecycle and as a standardized knowledge base for AI.</documentation>
     </element>
   </folder>
   <property key="Report:Model:Hide:Business" value="false"/>
