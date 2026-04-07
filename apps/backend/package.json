@@ -2,22 +2,27 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "compilerOptions": {
+    "baseUrl": "./src"
+  },
+  "include": [
+    "src"
+  ],
   "dependencies": {
+    "cors": "^2.8.6",
     "express": "^5.2.1",
     "pg": "^8.20.0"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^25.5.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^6.0.2"
   }
 }

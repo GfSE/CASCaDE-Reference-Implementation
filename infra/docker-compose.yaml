@@ -23,11 +23,14 @@ services:
     image: postgres
     restart: always
     env_file: "postgres.env"
+    volumes:
+      - ../db/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U", "cas_user"]
-      interval: 1s
+      test: ["CMD-SHELL", "pg_isready -U cas_user -d cascara_db"]
+      interval: 30s
       timeout: 5s
       retries: 10
+    command: ["postgres", "-c", "log_connections=on", "-c", "log_disconnections=on"]
  
   adminer:
     image: adminer

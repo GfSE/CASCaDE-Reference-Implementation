@@ -1,20 +1,47 @@
 <template>
-  <h1>{{ message }}</h1>
+  <v-btn color='secondary' @click=loadData :disabled="isLoading">{{ isLoading ? 'Loading...' : 'Get JSON Data' }}</v-btn>
+  <div v-if="message">
+    <h3>{{ message }}</h3>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { getHelloMessage } from "./services/api";
+<script lang="ts">
+  import { Options, Vue } from 'vue-class-component';
+  import { getHelloMessage } from "../services/api";
 
-const message = ref("Loading...");
+  @Options({
 
-onMounted(async () => {
-  try {
-    const data = await getHelloMessage();
-    message.value = data.message;
-  } catch (err) {
-    message.value = "Error contacting API";
-    console.error(err);
-  }
-});
+    name: 'APIComponent',
+
+    data() {
+      return {
+        message: 'Loading...',
+        apiData: null as any,
+        isLoading: false
+      }
+    },
+
+    mounted() {
+      this.loadData();
+    },
+
+    methods: {
+      async loadData() {
+        try {
+          const data = await getHelloMessage();
+          this.apiData = data;
+          this.message = data.message;
+        } catch (err) {
+          this.message = "Error contacting API";
+          console.error(err);
+        }
+      }
+    }
+
+  })
+
+  export default class PageAPI extends Vue {}
+
 </script>
+
+<style scoped></style>

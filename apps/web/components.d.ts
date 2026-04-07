@@ -15,6 +15,7 @@ declare module 'vue' {
     PageDocument: typeof import('./src/components/PageDocument.vue')['default']
     PageHome: typeof import('./src/components/PageHome.vue')['default']
     PageInterfaces: typeof import('./src/components/PageInterfaces.vue')['default']
+    PageTempAPI: typeof import('./src/components/PageTempAPI.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
