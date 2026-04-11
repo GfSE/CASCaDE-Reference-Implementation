@@ -1,0 +1,452 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="160.24999999980002mm" height="120.37499999980001mm" viewBox="0.0 0.0 160.24999999980002 120.37499999980001" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events" version="1.1">
+	<g class="diagram" id="5a6cdea50000bca80137d6b2d6e8a3a0" >
+		<desc>Flush-mounted Dimmer, fmc.bd, 5a6cdea50000bca80137d6b2d6e8a3a0</desc>
+		<g class="clickEl 5a489c300000bca80137ee1373c16844">
+			<desc>Flush-mounted Dimmer, fmc.bd.storage, 5a6cecf70000bca8013745c560b09550</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 5.1249999999,110.1249999999 A 10.0 10.0 0 0 0 15.1249999999,120.1249999999 L 145.1249999999,120.1249999999 A 10.0 10.0 0 0 0 155.1249999999,110.1249999999 L 155.1249999999,15.124999999900002 A 10.0 10.0 0 0 0 145.1249999999,5.124999999900002 L 15.1249999999,5.124999999900002 A 10.0 10.0 0 0 0 5.1249999999,15.1249999999 z" fill="rgb(241,253,227)"/>
+				<path d="M 5.1249999999,110.1249999999 A 10.0 10.0 0 0 0 15.1249999999,120.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="15.1249999999" y1="120.1249999999" x2="145.1249999999" y2="120.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<path d="M 145.1249999999,120.1249999999 A 10.0 10.0 0 0 0 155.1249999999,110.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="155.1249999999" y1="110.1249999999" x2="155.1249999999" y2="15.124999999899998" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<path d="M 155.1249999999,15.124999999900002 A 10.0 10.0 0 0 0 145.1249999999,5.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="145.1249999999" y1="5.124999999900002" x2="15.124999999900012" y2="5.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<path d="M 15.1249999999,5.124999999900002 A 10.0 10.0 0 0 0 5.1249999999,15.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="5.1249999999" y1="15.1249999999" x2="5.1249999999" y2="110.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="127.62499999990001" y="11.024999999900002" textLength="32.78" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.913333333333334">Flush-mounted</text>
+					<text x="127.62499999990001" y="16.524999999900004" textLength="17.306666666666665" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.913333333333334">Dimmer</text>
+				</g>
+			</g>
+		</g>
+		<g class="clickEl 5a71c4800000bca80137f2aaa7b63000">
+			<desc>Double Button, fmc.bd.agent, 5a71b0c20000bca8013769e6d7a34be3</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d=" M 60.1249999999,35.1249999999 L 100.1249999999,35.1249999999 L 100.1249999999,25.1249999999 L 60.1249999999,25.1249999999 z" fill="rgb(203,227,244)"/>
+				<line x1="60.1249999999" y1="35.1249999999" x2="100.1249999999" y2="35.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="100.1249999999" y1="35.1249999999" x2="100.1249999999" y2="25.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="100.1249999999" y1="25.1249999999" x2="60.1249999999" y2="25.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="60.1249999999" y1="25.1249999999" x2="60.1249999999" y2="35.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="80.1249999999" y="31.624999999899998" textLength="28.266666666666655" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.466666666666665">Double Button</text>
+				</g>
+			</g>
+		</g>
+		<g class="clickEl 5a752ccc0000bca80137479a2e8bab30">
+			<desc>Dimmer Module, fmc.bd.agent, 5a751cc50000bca801376783bb39aed3</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d=" M 60.1249999999,90.1249999999 L 100.1249999999,90.1249999999 L 100.1249999999,75.1249999999 L 60.1249999999,75.1249999999 z" fill="rgb(224,251,193)"/>
+				<line x1="60.1249999999" y1="90.1249999999" x2="100.1249999999" y2="90.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="100.1249999999" y1="90.1249999999" x2="100.1249999999" y2="75.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="100.1249999999" y1="75.1249999999" x2="60.1249999999" y2="75.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="60.1249999999" y1="75.1249999999" x2="60.1249999999" y2="90.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="80.1249999999" y="84.1249999999" textLength="31.53333333333333" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.466666666666667">Dimmer Module</text>
+				</g>
+			</g>
+		</g>
+		<g class="clickEl 5a76365c0000bca8013776e91afd1e8e">
+			<desc>Assembly Frame, fmc.bd.agent, 5a761d030000bca801374640a9e8d46d</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d=" M 50.1249999999,115.1249999999 L 110.1249999999,115.1249999999 L 110.1249999999,90.1249999999 L 105.1249999999,90.1249999999 L 105.1249999999,105.1249999999 L 55.1249999999,105.1249999999 L 55.1249999999,90.1249999999 L 50.1249999999,90.1249999999 z" fill="rgb(203,227,244)"/>
+				<line x1="50.1249999999" y1="115.1249999999" x2="110.1249999999" y2="115.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="110.1249999999" y1="115.1249999999" x2="110.1249999999" y2="90.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="110.1249999999" y1="90.1249999999" x2="105.1249999999" y2="90.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="105.1249999999" y1="90.1249999999" x2="105.1249999999" y2="105.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="105.1249999999" y1="105.1249999999" x2="55.1249999999" y2="105.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="55.1249999999" y1="105.1249999999" x2="55.1249999999" y2="90.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="55.1249999999" y1="90.1249999999" x2="50.1249999999" y2="90.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="50.1249999999" y1="90.1249999999" x2="50.1249999999" y2="115.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="80.1249999999" y="111.6249999999" textLength="33.666666666666664" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.466666666666667">Assembly Frame</text>
+				</g>
+			</g>
+		</g>
+		<g class="clickEl 5a77385f0000bca80137e1c7dc0b1721">
+			<desc>Spring Clips, fmc.bd.channel, 5a772b260000bca8013790344a1605ad</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 80.1249999999,40.1249999999 A 2.5 2.5 0 0 0 77.6249999999,42.6249999999 L 77.6249999999,42.6249999999 A 2.5 2.5 0 0 0 80.1249999999,45.1249999999 L 80.1249999999,45.1249999999 A 2.5 2.5 0 0 0 82.6249999999,42.6249999999 L 82.6249999999,42.6249999999 A 2.5 2.5 0 0 0 80.1249999999,40.1249999999 z" fill="rgb(203,227,244)"/>
+				<path d="M 80.1249999999,40.1249999999 A 2.5 2.5 0 0 0 77.6249999999,42.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 77.6249999999,42.6249999999 A 2.5 2.5 0 0 0 80.1249999999,45.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 80.1249999999,45.1249999999 A 2.5 2.5 0 0 0 82.6249999999,42.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 82.6249999999,42.6249999999 A 2.5 2.5 0 0 0 80.1249999999,40.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="76.1249999999" y="41.8249999999" textLength="10.293333333333333" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Spring</text>
+					<text x="76.1249999999" y="45.8249999999" textLength="7.946666666666666" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Clips</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538020000c3a80141b99e1401f5ff</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="80.1249999999" y1="40.0312499999" x2="80.1249999999" y2="35.218749999899984" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538020000c3a80141b99dbc6172e6</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="80.1249999999" y1="50.0312499999" x2="80.1249999999" y2="45.21874999990001" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g class="clickEl 5a7776c50000bca8013765ae93af9209">
+			<desc>Actuator Rods, fmc.bd.channel, 5a774ab70000bca80137380aa5e1bd3c</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 95.1249999999,40.12499999990001 A 2.5 2.5 0 0 0 92.6249999999,42.62499999990001 L 92.6249999999,42.62499999990001 A 2.5 2.5 0 0 0 95.1249999999,45.12499999990001 L 95.1249999999,45.12499999990001 A 2.5 2.5 0 0 0 97.6249999999,42.62499999990001 L 97.6249999999,42.62499999990001 A 2.5 2.5 0 0 0 95.1249999999,40.12499999990001 z" fill="rgb(203,227,244)"/>
+				<path d="M 95.1249999999,40.12499999990001 A 2.5 2.5 0 0 0 92.6249999999,42.62499999990001" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 92.6249999999,42.62499999990001 A 2.5 2.5 0 0 0 95.1249999999,45.12499999990001" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 95.1249999999,45.12499999990001 A 2.5 2.5 0 0 0 97.6249999999,42.62499999990001" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 97.6249999999,42.62499999990001 A 2.5 2.5 0 0 0 95.1249999999,40.12499999990001" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="99.1249999999" y="41.824999999900015" textLength="13.333333333333334" lengthAdjust="spacingAndGlyphs" text-anchor="start" font-family="Arial" font-size="3.5733333333333333">Actuator</text>
+					<text x="99.1249999999" y="45.824999999900015" textLength="8.32" lengthAdjust="spacingAndGlyphs" text-anchor="start" font-family="Arial" font-size="3.5733333333333333">Rods</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538040000c3a80141674ea77ede48</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="95.1249999999" y1="38.80312499990002" x2="95.1249999999" y2="35.2187499999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 95.2902343749,40.007555667243125 A 0.19079622177125463 0.19079622177125458 0 0 1 94.9597656249,40.007555667243125 L 94.21549209200397,38.71843609353843 A 0.2002757149077535 0.20027571490777843 0 0 1 94.4872431672431,38.44381026286408 L 94.48724316724311,38.44381026286408 A 1.299265788597936 1.2992657885979368 0 0 0 95.76275683255689,38.44381026286408 L 95.7627568325569,38.44381026286408 A 0.20027571490775353 0.20027571490777843 0 0 1 96.03450790779603,38.71843609353843 z"/>
+			</g>
+		</g>
+		<g>
+			<desc>up, fmc.bd.storage, 5a95ef300000bca801377f44cda6446e</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 60.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 65.1249999999,20.1249999999 L 70.1249999999,20.1249999999 A 5.0 5.0 0 0 0 75.1249999999,15.124999999900002 L 75.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 70.1249999999,10.124999999900002 L 65.1249999999,10.124999999900002 A 5.0 5.0 0 0 0 60.1249999999,15.124999999900002 z" fill="rgb(203,227,244)"/>
+				<path d="M 60.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 65.1249999999,20.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="65.1249999999" y1="20.1249999999" x2="70.1249999999" y2="20.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<path d="M 70.1249999999,20.1249999999 A 5.0 5.0 0 0 0 75.1249999999,15.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 75.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 70.1249999999,10.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="70.1249999999" y1="10.124999999900002" x2="65.1249999999" y2="10.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<path d="M 65.1249999999,10.124999999900002 A 5.0 5.0 0 0 0 60.1249999999,15.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="67.6249999999" y="16.6249999999" textLength="4.933333333333334" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.466666666666667">up</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>down, fmc.bd.storage, 5a96362e0000bca801376c708d0ee6f5</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 85.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 90.1249999999,20.1249999999 L 95.1249999999,20.1249999999 A 5.0 5.0 0 0 0 100.1249999999,15.124999999900002 L 100.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 95.1249999999,10.124999999900002 L 90.1249999999,10.124999999900002 A 5.0 5.0 0 0 0 85.1249999999,15.124999999900002 z" fill="rgb(203,227,244)"/>
+				<path d="M 85.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 90.1249999999,20.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="90.1249999999" y1="20.1249999999" x2="95.1249999999" y2="20.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<path d="M 95.1249999999,20.1249999999 A 5.0 5.0 0 0 0 100.1249999999,15.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 100.1249999999,15.124999999900002 A 5.0 5.0 0 0 0 95.1249999999,10.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<line x1="95.1249999999" y1="10.124999999900002" x2="90.1249999999" y2="10.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<path d="M 90.1249999999,10.124999999900002 A 5.0 5.0 0 0 0 85.1249999999,15.124999999900002" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="92.6249999999" y="16.6249999999" textLength="10.533333333333331" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.466666666666667">down</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 5a96a2770000bca801374a01b3cd9b8f</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="67.6249999999" y1="20.2187499999" x2="67.6249999999" y2="23.803124999900003" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 67.7902343749,25.007555667243118 A 0.19079622177125463 0.19079622177125458 0 0 1 67.4597656249,25.007555667243118 L 66.71549209200397,23.718436093538404 A 0.20027571490776586 0.20027571490777143 0 0 1 66.98724316724311,23.44381026286407 L 66.98724316724311,23.44381026286407 A 1.2992657885979422 1.299265788597943 0 0 0 68.26275683255689,23.44381026286407 L 68.26275683255689,23.44381026286407 A 0.20027571490776583 0.20027571490777146 0 0 1 68.53450790779603,23.718436093538404 z"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 5a96b6550000bca801377a1bf81e4b0c</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="92.6249999999" y1="20.2187499999" x2="92.6249999999" y2="23.803124999900003" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 92.7902343749,25.007555667243118 A 0.19079622177125463 0.19079622177125458 0 0 1 92.4597656249,25.007555667243118 L 91.71549209200397,23.718436093538404 A 0.20027571490776586 0.20027571490777143 0 0 1 91.98724316724311,23.44381026286407 L 91.98724316724311,23.44381026286407 A 1.2992657885979422 1.299265788597943 0 0 0 93.26275683255689,23.44381026286407 L 93.26275683255689,23.44381026286407 A 0.20027571490776583 0.20027571490777146 0 0 1 93.53450790779603,23.718436093538404 z"/>
+			</g>
+		</g>
+		<g class="clickEl 5a9888810000bca801375410ce1cc142">
+			<desc>Supply Cable, fmc.bd.channel, 5a9862e80000bca8013727fbae88bef8</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 20.124999999899998,67.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,70.1249999999 L 22.624999999899998,70.1249999999 A 2.5 2.5 0 0 0 25.124999999899998,67.6249999999 L 25.124999999899998,67.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,65.1249999999 L 22.624999999899998,65.1249999999 A 2.5 2.5 0 0 0 20.124999999899998,67.6249999999 z" fill="rgb(255,232,232)"/>
+				<path d="M 20.124999999899998,67.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,70.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 22.624999999899998,70.1249999999 A 2.5 2.5 0 0 0 25.124999999899998,67.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 25.124999999899998,67.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,65.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 22.624999999899998,65.1249999999 A 2.5 2.5 0 0 0 20.124999999899998,67.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="22.624999999899998" y="74.8249999999" textLength="21.173333333333332" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="3.5733333333333333">Supply Cable</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538060000c3a801410bff51e1b0ac</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="25.218749999899998" y1="67.6249999999" x2="37.6249999999" y2="67.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 37.6249999999,67.6249999999 A 2.5 2.5 0 0 1 40.1249999999,70.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" fill="none" stroke-linecap="round"/>
+				<line x1="40.1249999999" y1="70.1249999999" x2="40.1249999999" y2="77.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 40.1249999999,77.6249999999 A 2.5 2.5 0 0 0 42.6249999999,80.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" fill="none" stroke-linecap="round"/>
+				<line x1="42.6249999999" y1="80.1249999999" x2="60.0312499999" y2="80.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538050000c3a80141e107f074832f</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="0.2187499999" y1="67.6249999999" x2="20.031249999899998" y2="67.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g class="clickEl 5a9929510000bca80137d23c81f1ca54">
+			<desc>Load Cable, fmc.bd.channel, 5a98e4460000bca80137cc371de8a94d</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 132.6249999999,82.6249999999 A 2.5 2.5 0 0 0 135.1249999999,85.1249999999 L 135.1249999999,85.1249999999 A 2.5 2.5 0 0 0 137.6249999999,82.6249999999 L 137.6249999999,82.6249999999 A 2.5 2.5 0 0 0 135.1249999999,80.1249999999 L 135.1249999999,80.1249999999 A 2.5 2.5 0 0 0 132.6249999999,82.6249999999 z" fill="rgb(255,232,232)"/>
+				<path d="M 132.6249999999,82.6249999999 A 2.5 2.5 0 0 0 135.1249999999,85.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 135.1249999999,85.1249999999 A 2.5 2.5 0 0 0 137.6249999999,82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 137.6249999999,82.6249999999 A 2.5 2.5 0 0 0 135.1249999999,80.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 135.1249999999,80.1249999999 A 2.5 2.5 0 0 0 132.6249999999,82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="135.1249999999" y="89.8249999999" textLength="18.186666666666667" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="3.5733333333333333">Load Cable</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538070000c3a801418ae0522619c0</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="137.7187499999" y1="82.6249999999" x2="160.0312499999" y2="82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538070000c3a801418adf4c396aef</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="100.2187499999" y1="82.6249999999" x2="132.5312499999" y2="82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g class="clickEl 5a99c89c0000bca801375d44cf9a50ca">
+			<desc>Ground Cable, fmc.bd.channel, 5a99b9cd0000bca80137a109b6f04b39</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 20.124999999899998,97.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,100.1249999999 L 22.624999999899998,100.1249999999 A 2.5 2.5 0 0 0 25.124999999899998,97.6249999999 L 25.124999999899998,97.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,95.1249999999 L 22.624999999899998,95.1249999999 A 2.5 2.5 0 0 0 20.124999999899998,97.6249999999 z" fill="rgb(255,232,232)"/>
+				<path d="M 20.124999999899998,97.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,100.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 22.624999999899998,100.1249999999 A 2.5 2.5 0 0 0 25.124999999899998,97.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 25.124999999899998,97.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,95.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 22.624999999899998,95.1249999999 A 2.5 2.5 0 0 0 20.124999999899998,97.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="22.624999999899998" y="104.8249999999" textLength="22.133333333333333" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="3.5733333333333333">Ground Cable</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538090000c3a80141e72deb47f59b</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="25.218749999899998" y1="97.6249999999" x2="37.6249999999" y2="97.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 37.6249999999,97.6249999999 A 2.5 2.5 0 0 0 40.1249999999,95.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" fill="none" stroke-linecap="round"/>
+				<line x1="40.1249999999" y1="95.1249999999" x2="40.1249999999" y2="87.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 40.1249999999,87.6249999999 A 2.5 2.5 0 0 1 42.6249999999,85.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" fill="none" stroke-linecap="round"/>
+				<line x1="42.6249999999" y1="85.1249999999" x2="60.0312499999" y2="85.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538090000c3a80141e72c2e1d9a1a</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="0.2187499999" y1="97.6249999999" x2="20.031249999899998" y2="97.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g class="clickEl 5a9b7a9b0000bca80137d768644696b7">
+			<desc>Wireless Module, fmc.bd.agent, 5a9af3150000bca801377e1a90ba6224</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d=" M 60.1249999999,60.1249999999 L 100.1249999999,60.1249999999 L 100.1249999999,50.1249999999 L 60.1249999999,50.1249999999 z" fill="rgb(224,251,193)"/>
+				<line x1="60.1249999999" y1="60.1249999999" x2="100.1249999999" y2="60.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="100.1249999999" y1="60.1249999999" x2="100.1249999999" y2="50.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="100.1249999999" y1="50.1249999999" x2="60.1249999999" y2="50.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<line x1="60.1249999999" y1="50.1249999999" x2="60.1249999999" y2="60.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="80.1249999999" y="56.6249999999" textLength="33.13333333333333" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="4.466666666666667">Wireless Module</text>
+				</g>
+			</g>
+		</g>
+		<g class="clickEl 5a9ce0310000bca801378176dc4744e8">
+			<desc>Control Signals, fmc.bd.channel, 5a9ca2190000bca80137efdc8f40eefd</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 95.1249999999,65.1249999999 A 2.5 2.5 0 0 0 92.6249999999,67.6249999999 L 92.6249999999,67.6249999999 A 2.5 2.5 0 0 0 95.1249999999,70.1249999999 L 95.1249999999,70.1249999999 A 2.5 2.5 0 0 0 97.6249999999,67.6249999999 L 97.6249999999,67.6249999999 A 2.5 2.5 0 0 0 95.1249999999,65.1249999999 z" fill="rgb(224,251,193)"/>
+				<path d="M 95.1249999999,65.1249999999 A 2.5 2.5 0 0 0 92.6249999999,67.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 92.6249999999,67.6249999999 A 2.5 2.5 0 0 0 95.1249999999,70.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 95.1249999999,70.1249999999 A 2.5 2.5 0 0 0 97.6249999999,67.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 97.6249999999,67.6249999999 A 2.5 2.5 0 0 0 95.1249999999,65.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="99.1249999999" y="66.8249999999" textLength="11.466666666666667" lengthAdjust="spacingAndGlyphs" text-anchor="start" font-family="Arial" font-size="3.5733333333333333">Control</text>
+					<text x="99.1249999999" y="70.8249999999" textLength="11.733333333333333" lengthAdjust="spacingAndGlyphs" text-anchor="start" font-family="Arial" font-size="3.5733333333333333">Signals</text>
+				</g>
+			</g>
+		</g>
+		<g class="clickEl 5a77385f0000bca80137e1c7dc0b1721">
+			<desc>Spring Clips, fmc.bd.channel, 5a9e8a640000bca80137d0b67d2e62a8</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 80.1249999999,65.12499999989998 A 2.5 2.5 0 0 0 77.6249999999,67.62499999989998 L 77.6249999999,67.62499999989998 A 2.5 2.5 0 0 0 80.1249999999,70.12499999989998 L 80.1249999999,70.12499999989998 A 2.5 2.5 0 0 0 82.6249999999,67.62499999989998 L 82.6249999999,67.62499999989998 A 2.5 2.5 0 0 0 80.1249999999,65.12499999989998 z" fill="rgb(203,227,244)"/>
+				<path d="M 80.1249999999,65.12499999989998 A 2.5 2.5 0 0 0 77.6249999999,67.62499999989998" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 77.6249999999,67.62499999989998 A 2.5 2.5 0 0 0 80.1249999999,70.12499999989998" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 80.1249999999,70.12499999989998 A 2.5 2.5 0 0 0 82.6249999999,67.62499999989998" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 82.6249999999,67.62499999989998 A 2.5 2.5 0 0 0 80.1249999999,65.12499999989998" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="76.1249999999" y="66.82499999989999" textLength="10.293333333333333" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Spring</text>
+					<text x="76.1249999999" y="70.82499999989999" textLength="7.946666666666666" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Clips</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 4295380c0000c3a80141ba7d4440ff36</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="80.1249999999" y1="65.03124999989998" x2="80.1249999999" y2="60.218749999899984" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 4295380c0000c3a80141ba7ca13fdb0b</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="80.1249999999" y1="75.03124999989998" x2="80.1249999999" y2="70.2187499999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g class="clickEl 5a77385f0000bca80137e1c7dc0b1721">
+			<desc>Spring Clips, fmc.bd.channel, 5a9ea36f0000bca80137a8cad79d49a8</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 80.1249999999,95.1249999999 A 2.5 2.5 0 0 0 77.6249999999,97.6249999999 L 77.6249999999,97.6249999999 A 2.5 2.5 0 0 0 80.1249999999,100.1249999999 L 80.1249999999,100.1249999999 A 2.5 2.5 0 0 0 82.6249999999,97.6249999999 L 82.6249999999,97.6249999999 A 2.5 2.5 0 0 0 80.1249999999,95.1249999999 z" fill="rgb(203,227,244)"/>
+				<path d="M 80.1249999999,95.1249999999 A 2.5 2.5 0 0 0 77.6249999999,97.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 77.6249999999,97.6249999999 A 2.5 2.5 0 0 0 80.1249999999,100.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 80.1249999999,100.1249999999 A 2.5 2.5 0 0 0 82.6249999999,97.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 82.6249999999,97.6249999999 A 2.5 2.5 0 0 0 80.1249999999,95.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="76.1249999999" y="96.8249999999" textLength="10.293333333333333" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Spring</text>
+					<text x="76.1249999999" y="100.8249999999" textLength="7.946666666666666" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Clips</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 4295380e0000c3a801415e46998941d2</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="80.1249999999" y1="95.0312499999" x2="80.1249999999" y2="90.2187499999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 4295380e0000c3a801415e450cb40f76</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="80.1249999999" y1="105.0312499999" x2="80.1249999999" y2="100.21874999990001" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g class="clickEl 5c29fb8e0000bca80137eb9734c99bfd">
+			<desc>Neutral Cable, fmc.bd.channel, 5c29aa4a0000bca8013763c59e3387fc</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 20.124999999899998,82.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,85.1249999999 L 22.624999999899998,85.1249999999 A 2.5 2.5 0 0 0 25.124999999899998,82.6249999999 L 25.124999999899998,82.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,80.1249999999 L 22.624999999899998,80.1249999999 A 2.5 2.5 0 0 0 20.124999999899998,82.6249999999 z" fill="rgb(255,232,232)"/>
+				<path d="M 20.124999999899998,82.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,85.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 22.624999999899998,85.1249999999 A 2.5 2.5 0 0 0 25.124999999899998,82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 25.124999999899998,82.6249999999 A 2.5 2.5 0 0 0 22.624999999899998,80.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 22.624999999899998,80.1249999999 A 2.5 2.5 0 0 0 20.124999999899998,82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="22.624999999899998" y="89.8249999999" textLength="21.76" lengthAdjust="spacingAndGlyphs" text-anchor="middle" font-family="Arial" font-size="3.5733333333333333">Neutral Cable</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538100000c3a80141a662d612b7e1</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="25.218749999899998" y1="82.6249999999" x2="60.0312499999" y2="82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 429538100000c3a80141a661bf768fe6</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="0.2187499999" y1="82.6249999999" x2="20.031249999899998" y2="82.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, 463230b50000c3a80141bf0d1e6caa88</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="40.1249999999" y1="45.2187499999" x2="40.1249999999" y2="52.6249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 40.1249999999,52.6249999999 A 2.5 2.5 0 0 0 42.6249999999,55.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" fill="none" stroke-linecap="round"/>
+				<line x1="42.6249999999" y1="55.1249999999" x2="58.80312499989999" y2="55.1249999999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 60.00755566724311,54.9597656249 A 0.1907962217712546 0.19079622177125463 0 0 1 60.00755566724311,55.290234374899995 L 58.718436093538386,56.03450790779603 A 0.2002757149077653 0.20027571490777554 0 0 1 58.44381026286406,55.76275683255688 L 58.44381026286406,55.76275683255689 A 1.2992657885979553 1.2992657885979555 0 0 0 58.44381026286406,54.48724316724311 L 58.44381026286406,54.487243167243115 A 0.2002757149077653 0.20027571490777554 0 0 1 58.718436093538386,54.21549209200396 z"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, dab21cd70000c3a80146a7823d856c75</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="95.1249999999" y1="48.80312499989999" x2="95.1249999999" y2="45.21874999990001" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 95.2902343749,50.00755566724311 A 0.19079622177125463 0.19079622177125458 0 0 1 94.9597656249,50.00755566724311 L 94.21549209200397,48.71843609353839 A 0.20027571490776586 0.20027571490777143 0 0 1 94.48724316724311,48.44381026286406 L 94.48724316724311,48.44381026286406 A 1.2992657885979544 1.2992657885979555 0 0 0 95.76275683255689,48.44381026286406 L 95.76275683255689,48.44381026286406 A 0.20027571490776583 0.20027571490777146 0 0 1 96.03450790779603,48.71843609353839 z"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, dab232790000c3a80146bf2d43da5452</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="95.1249999999" y1="63.80312499989999" x2="95.1249999999" y2="60.2187499999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 95.2902343749,65.00755566724311 A 0.19079622177125463 0.19079622177125458 0 0 1 94.9597656249,65.00755566724311 L 94.21549209200397,63.71843609353839 A 0.20027571490776586 0.20027571490777143 0 0 1 94.48724316724311,63.44381026286406 L 94.48724316724311,63.44381026286406 A 1.2992657885979544 1.2992657885979555 0 0 0 95.76275683255689,63.44381026286406 L 95.76275683255689,63.44381026286406 A 0.20027571490776583 0.20027571490777146 0 0 1 96.03450790779603,63.71843609353839 z"/>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, dab2453e0000c3a80146716c03aefa3f</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="95.1249999999" y1="73.80312499989999" x2="95.1249999999" y2="70.2187499999" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 95.2902343749,75.00755566724311 A 0.19079622177125463 0.19079622177125458 0 0 1 94.9597656249,75.00755566724311 L 94.21549209200397,73.71843609353841 A 0.20027571490774995 0.20027571490779084 0 0 1 94.4872431672431,73.44381026286406 L 94.48724316724311,73.44381026286406 A 1.2992657885979482 1.299265788597949 0 0 0 95.76275683255689,73.44381026286406 L 95.7627568325569,73.44381026286406 A 0.20027571490774998 0.20027571490779084 0 0 1 96.03450790779603,73.71843609353841 z"/>
+			</g>
+		</g>
+		<g class="clickEl 463289cd0000c3a80141be3fc417034a">
+			<desc>Wireless Network, fmc.bd.channel, dcc6f5730000c3a8014628248c133522</desc>
+			<g>
+				<desc>null, figure.plane, null</desc>
+				<path d="M 40.1249999999,40.1249999999 A 2.5 2.5 0 0 0 37.6249999999,42.6249999999 L 37.6249999999,42.6249999999 A 2.5 2.5 0 0 0 40.1249999999,45.1249999999 L 40.1249999999,45.1249999999 A 2.5 2.5 0 0 0 42.6249999999,42.6249999999 L 42.6249999999,42.6249999999 A 2.5 2.5 0 0 0 40.1249999999,40.1249999999 z" fill="rgb(255,255,255)"/>
+				<path d="M 40.1249999999,40.1249999999 A 2.5 2.5 0 0 0 37.6249999999,42.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 37.6249999999,42.6249999999 A 2.5 2.5 0 0 0 40.1249999999,45.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 40.1249999999,45.1249999999 A 2.5 2.5 0 0 0 42.6249999999,42.6249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<path d="M 42.6249999999,42.6249999999 A 2.5 2.5 0 0 0 40.1249999999,40.1249999999" stroke="rgb(0,0,0)" stroke-width="0.499999999999999" fill="none" stroke-linecap="round"/>
+				<g>
+					<desc>null, supplement, null</desc>
+					<text x="36.1249999999" y="41.8249999999" textLength="13.866666666666667" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Wireless</text>
+					<text x="36.1249999999" y="45.8249999999" textLength="13.013333333333334" lengthAdjust="spacingAndGlyphs" text-anchor="end" font-family="Arial" font-size="3.5733333333333333">Network</text>
+				</g>
+			</g>
+		</g>
+		<g>
+			<desc>, fmc.bd.storageaccess, dcc6f5730000c3a801462826f080269a</desc>
+			<g>
+				<desc>null, figure.lineshape, null</desc>
+				<line x1="40.1249999999" y1="38.80312499990001" x2="40.1249999999" y2="0.21874999989999822" stroke="rgb(0,0,0)" stroke-width="0.2500000000000008" stroke-linecap="round"/>
+				<path d="M 40.290234374899995,40.00755566724311 A 0.19079622177125463 0.19079622177125458 0 0 1 39.9597656249,40.00755566724311 L 39.21549209200397,38.718436093538415 A 0.20027571490774995 0.20027571490778462 0 0 1 39.48724316724309,38.44381026286407 L 39.48724316724311,38.44381026286407 A 1.299265788597936 1.2992657885979368 0 0 0 40.76275683255689,38.44381026286407 L 40.7627568325569,38.44381026286407 A 0.20027571490774998 0.20027571490778465 0 0 1 41.034507907796026,38.718436093538415 z"/>
+			</g>
+		</g>
+	</g>
+</svg>

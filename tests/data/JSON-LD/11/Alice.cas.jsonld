@@ -2,19 +2,20 @@
     "@context": {
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+		"skos": "https://www.w3.org/TR/skos-reference/",
         "owl": "http://www.w3.org/2002/07/owl#",
         "sh": "http://www.w3.org/ns/shacl#",
         "xs": "http://www.w3.org/2001/XMLSchema#",
         "dcterms": "http://purl.org/dc/terms/",
         "schema": "http://schema.org/",
-        "pig": "https://product-information-graph.org/ontology/2026-01-20/foundation#",
+        "cas": "https://product-information-graph.org/ontology/2026-01-20/foundation#",
         "o": "https://alice.org/ontology#",
         "d": "https://alice.org/data#"
     },
     "@id": "d:example_Alice_worksFor_ACME",
-    "@type": "pig:Package",
-    "pig:itemType": {
-        "@id": "pig:aPackage"
+    "@type": "cas:Package",
+    "cas:itemType": {
+        "@id": "cas:aPackage"
     },
     "dcterms:title": [
         {
@@ -26,10 +27,10 @@
     "dcterms:license": "https://creativecommons.org/licenses/by-sa/4.0/",
     "@graph": [
         {
-            "@id": "pig:Entity",
+            "@id": "cas:Entity",
             "@type": "owl:Class",
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
@@ -37,28 +38,28 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A PIG meta-model item used for entities (aka resources or artifacts).",
+                    "@value": "A CASCaRA meta-model item used for entities (aka resources or artifacts).",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "cas:Category"
                 },
                 {
-                    "@id": "pig:icon"
+                    "@id": "cas:Icon"
                 }
             ]
         },
         {
-            "@id": "pig:Organizer",
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "@id": "cas:Organizer",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
@@ -66,52 +67,52 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "cas:Category"
                 }
             ]
         },
         {
-            "@id": "pig:Root",
-            "pig:specializes": {
-                "@id": "pig:Organizer"
+            "@id": "cas:Root",
+            "cas:specializes": {
+                "@id": "cas:Organizer"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
-                    "@value": "Tree Root",
+                    "@value": "Package Root",
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A subclass of PIG organizer serving as a root for hierarchically organized graph elements.",
+                    "@value": "A subclass of CASCaRA organizer serving as a root for trees and tables.",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [],
-            "pig:enumeratedTargetLink": [
+            "cas:enumeratedProperty": [],
+            "cas:enumeratedTargetLink": [
                 {
-                    "@id": "pig:lists"
+                    "@id": "cas:lists"
                 }
             ]
         },
         {
-            "@id": "pig:Outline",
-            "pig:specializes": {
-                "@id": "pig:Organizer"
+            "@id": "cas:Outline",
+            "cas:specializes": {
+                "@id": "cas:Organizer"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
@@ -119,65 +120,28 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A subclass of PIG organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.",
+                    "@value": "A subclass of CASCaRA organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "cas:Category"
                 }
             ],
-            "pig:enumeratedTargetLink": [
+            "cas:enumeratedTargetLink": [
                 {
-                    "@id": "pig:lists"
+                    "@id": "cas:lists"
                 }
             ]
         },
         {
-            "@id": "pig:View",
-            "pig:specializes": {
-                "@id": "pig:Organizer"
-            },
-            "pig:itemType": {
-                "@id": "pig:Entity"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "View",
-                    "@language": "en"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "A subclass of PIG organizer representing a model view (diagram) using a certain notation showing selected model elements.",
-                    "@language": "en"
-                }
-            ],
-            "pig:enumeratedProperty": [
-                {
-                    "@id": "pig:category"
-                },
-                {
-                    "@id": "pig:icon"
-                }
-            ],
-            "pig:enumeratedTargetLink": [
-                {
-                    "@id": "pig:shows"
-                },
-                {
-                    "@id": "pig:depicts"
-                }
-            ]
-        },
-        {
-            "@id": "pig:Relationship",
+            "@id": "cas:Relationship",
             "@type": "owl:Class",
-            "pig:itemType": {
-                "@id": "pig:Relationship"
+            "cas:itemType": {
+                "@id": "cas:Relationship"
             },
             "dcterms:title": [
                 {
@@ -185,32 +149,32 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A PIG meta-model item used for reified relationships (aka predicates).",
+                    "@value": "A CASCaRA meta-model item used for reified relationships (aka predicates).",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:category"
+                    "@id": "cas:Category"
                 },
                 {
-                    "@id": "pig:icon"
+                    "@id": "cas:Icon"
                 }
             ],
-            "pig:enumeratedSourceLink": {
-                "@id": "pig:SourceLink"
+            "cas:enumeratedSourceLink": {
+                "@id": "cas:SourceLink"
             },
-            "pig:enumeratedTargetLink": {
-                "@id": "pig:TargetLink"
+            "cas:enumeratedTargetLink": {
+                "@id": "cas:TargetLink"
             }
         },
         {
-            "@id": "pig:Property",
+            "@id": "cas:Property",
             "@type": "owl:DatatypeProperty",
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
@@ -218,9 +182,9 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A PIG meta-model item used for properties (aka attributes).",
+                    "@value": "A CASCaRA meta-model item used for properties (aka attributes).",
                     "@language": "en"
                 }
             ],
@@ -229,19 +193,19 @@
             }
         },
         {
-            "@id": "pig:icon",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "@id": "cas:Icon",
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
                     "@value": "has icon"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Specifies an icon for a model element (entity or relationship)."
                 }
@@ -253,19 +217,19 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "pig:category",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "@id": "cas:Category",
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
                     "@value": "has category"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Specifies a category for an element (entity, relationship or organizer)."
                 }
@@ -278,17 +242,17 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "pig:Link",
+            "@id": "cas:Link",
             "@type": "owl:ObjectProperty",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -297,27 +261,27 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element",
+                    "@value": "A CASCaRA meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element",
                     "@language": "en"
                 }
             ]
         },
         {
-            "@id": "pig:SourceLink",
-            "pig:specializes": {
-                "@id": "pig:Link"
+            "@id": "cas:SourceLink",
+            "cas:specializes": {
+                "@id": "cas:Link"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -326,7 +290,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Connects the source of a reified relationship.",
                     "@language": "en"
@@ -334,19 +298,19 @@
             ]
         },
         {
-            "@id": "pig:TargetLink",
-            "pig:specializes": {
-                "@id": "pig:Link"
+            "@id": "cas:TargetLink",
+            "cas:specializes": {
+                "@id": "cas:Link"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -355,7 +319,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Connects the target of a reified relationship or an organizer.",
                     "@language": "en"
@@ -363,22 +327,22 @@
             ]
         },
         {
-            "@id": "pig:lists",
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "@id": "cas:lists",
+            "cas:specializes": {
+                "@id": "cas:TargetLink"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 },
                 {
-                    "@id": "pig:Organizer"
+                    "@id": "cas:Organizer"
                 }
             ],
             "dcterms:title": [
@@ -387,7 +351,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Lists an entity, a relationship or a subordinated organizer.",
                     "@language": "en"
@@ -395,19 +359,19 @@
             ]
         },
         {
-            "@id": "pig:shows",
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "@id": "cas:shows",
+            "cas:specializes": {
+                "@id": "cas:TargetLink"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -416,7 +380,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Shows an entity or a relationship.",
                     "@language": "en"
@@ -424,16 +388,16 @@
             ]
         },
         {
-            "@id": "pig:depicts",
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "@id": "cas:depicts",
+            "cas:specializes": {
+                "@id": "cas:TargetLink"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 }
             ],
             "dcterms:title": [
@@ -442,7 +406,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Depicts an entity; inverse of uml:ownedDiagram.",
                     "@language": "en"
@@ -451,11 +415,11 @@
         },
         {
             "@id": "schema:Person",
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
@@ -463,13 +427,13 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "A person (alive, dead, undead, or fictional).",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
                     "@id": "schema:familyName"
                 },
@@ -483,11 +447,11 @@
         },
         {
             "@id": "schema:Organization",
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
@@ -495,13 +459,13 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "An organization such as a school, NGO, corporation, club, etc.",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
                     "@id": "schema:legalName"
                 },
@@ -512,11 +476,11 @@
         },
         {
             "@id": "schema:birthDate",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
@@ -524,7 +488,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Date of birth.",
                     "@language": "en"
@@ -538,11 +502,11 @@
         },
         {
             "@id": "schema:familyName",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
@@ -550,7 +514,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Family name. In the U.S., the last name of a Person.",
                     "@language": "en"
@@ -564,11 +528,11 @@
         },
         {
             "@id": "schema:givenName",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
@@ -576,7 +540,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Given name. In the U.S., the first name of a Person.",
                     "@language": "en"
@@ -590,11 +554,11 @@
         },
         {
             "@id": "schema:legalName",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
@@ -602,7 +566,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "The official name of the organization, e.g. the registered company name.",
                     "@language": "en"
@@ -616,11 +580,11 @@
         },
         {
             "@id": "schema:taxID",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
@@ -628,7 +592,7 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain.",
                     "@language": "en"
@@ -642,11 +606,11 @@
         },
         {
             "@id": "schema:WorksFor",
-            "pig:specializes": {
-                "@id": "pig:Relationship"
+            "cas:specializes": {
+                "@id": "cas:Relationship"
             },
-            "pig:itemType": {
-                "@id": "pig:Relationship"
+            "cas:itemType": {
+                "@id": "cas:Relationship"
             },
             "dcterms:title": [
                 {
@@ -654,27 +618,27 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Organizations that the person works for.",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedProperty": [],
-            "pig:enumeratedSourceLink": {
+            "cas:enumeratedProperty": [],
+            "cas:enumeratedSourceLink": {
                 "@id": "o:Employee"
             },
-            "pig:enumeratedTargetLink": {
+            "cas:enumeratedTargetLink": {
                 "@id": "o:Employer"
             }
         },
         {
             "@id": "o:Employee",
-            "pig:specializes": {
-                "@id": "pig:SourceLink"
+            "cas:specializes": {
+                "@id": "cas:SourceLink"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
             "dcterms:title": [
                 {
@@ -682,13 +646,13 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "The employee in a 'worksFor' relationship",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "schema:Person"
                 }
@@ -696,11 +660,11 @@
         },
         {
             "@id": "o:Employer",
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "cas:specializes": {
+                "@id": "cas:TargetLink"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
             "dcterms:title": [
                 {
@@ -708,13 +672,13 @@
                     "@language": "en"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "The employer in a 'worksFor' relationship",
                     "@language": "en"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "schema:Organization"
                 }
@@ -723,8 +687,8 @@
         {
             "@id": "d:ACME",
             "@type": "schema:Organization",
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
             "dcterms:modified": "2026-01-20T09:38:26.464Z",
             "dcterms:title": [
@@ -736,16 +700,16 @@
             "schema:legalName": [
                 {
                     "@value": "ACME Corp.",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
             "schema:taxID": [
                 {
                     "@value": "DE_123456789",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ]
@@ -753,8 +717,8 @@
         {
             "@id": "d:Alice",
             "@type": "schema:Person",
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
             "dcterms:modified": "2026-01-20T09:38:26.464Z",
             "dcterms:title": [
@@ -766,16 +730,16 @@
             "schema:familyName": [
                 {
                     "@value": "Carpenter",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
             "schema:givenName": [
                 {
                     "@value": "Alice",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ]
@@ -783,26 +747,50 @@
         {
             "@id": "d:Alice_worksFor_ACME",
             "@type": "schema:WorksFor",
-            "pig:itemType": {
-                "@id": "pig:aRelationship"
+            "cas:itemType": {
+                "@id": "cas:aRelationship"
             },
             "dcterms:modified": "2026-01-20T09:38:26.464Z",
             "o:Employee": [
                 {
                     "@id": "d:Alice",
-                    "pig:itemType": {
-                        "@id": "pig:aSourceLink"
+                    "cas:itemType": {
+                        "@id": "cas:aSourceLink"
                     }
                 }
             ],
             "o:Employer": [
                 {
                     "@id": "d:ACME",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
+        },
+        {
+            "@id": "d:Root_Alice_worksFor_ACME",
+            "@type": "cas:Root",
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "dcterms:title": "Package Root",
+            "dcterms:description": "... anchoring all outlines of this graph (package)",
+            "dcterms:modified": "2026-01-20T09:38:26.464Z",
+			"cas:lists": [
+                {
+                    "@id": "d:ACME",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:Alice",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+			]
         }
     ]
 }

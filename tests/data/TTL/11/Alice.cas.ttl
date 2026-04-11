@@ -1,0 +1,522 @@
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <https://www.w3.org/TR/skos-reference/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix cas: <https://product-information-graph.org/ontology/2026-01-20/foundation#> .
+@prefix casShapes_rdfs: <https://product-information-graph.org/ontology/2026-01-20/shapes/rdfs#> .
+@prefix casShapes_schema: <https://product-information-graph.org/ontology/2026-01-20/shapes/schema#> .
+@prefix casShapes_FMC: <https://product-information-graph.org/ontology/2026-01-20/shapes/FMC#> .
+@prefix casShapes_cas: <https://product-information-graph.org/ontology/2026-01-20/shapes/cas#> .
+
+@prefix o: <https://alice.org/ontology#> .
+@prefix d: <https://alice.org/data#> .
+
+#################################################################
+# Project Metadata
+#################################################################
+
+cas:
+	rdf:type owl:Ontology ;
+	rdfs:label "CASCaRA Ontology"@en ;
+	rdfs:comment "Attaches the CASCaRA Ontology to the metamodel items"@en ;
+	owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ,
+		<http://www.w3.org/2000/01/rdf-schema#> ;
+	dcterms:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
+	dcterms:modified "2026-01-20T09:38:26.464Z" .
+
+#################################################################
+# CASCaRA Metamodel
+#################################################################
+
+cas:Entity
+	rdf:type owl:Class ;
+	rdfs:label "Entity"@en ;
+	skos:definition "A CASCaRA meta-model item used for entities (aka resources or artifacts)."@en .
+
+casShapes_cas:Entity
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Entity ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] ,
+		casShapes_cas:Category ,
+		casShapes_cas:Icon .
+
+cas:Package
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Package"@en ;
+	skos:definition "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages."@en .
+
+casShapes_cas:Package
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Package ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] .
+
+cas:Organizer
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Organizer"@en ;
+	skos:definition "A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation."@en .
+
+casShapes_cas:Organizer
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Organizer ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] .
+
+cas:Root
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Package Root"@en ;
+	skos:definition "A subclass of CASCaRA organizer serving as a root for trees and tables."@en .
+
+casShapes_cas:Root
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Root ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] ,
+		casShapes_cas:lists .
+
+cas:Tree
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Tree"@en ;
+	skos:definition "A subclass of CASCaRA organizer for strictly hierarchical data structures referencing entities and relationships."@en .
+
+casShapes_cas:Tree
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Tree ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] ,
+		casShapes_cas:lists .
+
+cas:Outline
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Tree ;
+	rdfs:label "Outline"@en ;
+	skos:definition "A subclass of CASCaRA tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."@en .
+
+casShapes_cas:Outline
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Outline ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] .
+
+cas:Relationship
+	rdf:type owl:Class ;
+	rdfs:label "Relationship"@en ;
+	skos:definition "A CASCaRA meta-model item used for reified relationships (aka predicates)."@en .
+
+casShapes_cas:Relationship
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Relationship ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] ,
+		casShapes_cas:Category ,
+		casShapes_cas:Icon ,
+		casShapes_cas:SourceLink ,
+		casShapes_cas:TargetLink .
+
+cas:Property
+	rdf:type owl:DatatypeProperty ;
+	rdfs:label "Property"@en ;
+	skos:definition "A CASCaRA meta-model item used for properties (aka attributes)."@en .
+
+casShapes_cas:Property
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Property ;
+	sh:datatype xs:anyType .
+
+cas:Icon
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "has icon"@en ;
+	skos:definition "Specifies an icon for a model element (entity or relationship)."@en .
+
+casShapes_cas:Icon
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Icon ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+cas:Diagram
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Diagram"@en ;
+	skos:definition "A diagram illustrating the resource or a link to a diagram."@en .
+
+casShapes_cas:Diagram
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Diagram ;
+	sh:datatype xs:string ;
+	sh:minCount "0" .
+
+cas:Category
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "has category"@en ;
+	skos:definition "Specifies a category for an element (entity, relationship or organizer)."@en .
+
+casShapes_cas:Category
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Category ;
+	sh:datatype xs:string ;
+	sh:maxLength "32" ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+cas:Notation
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Category ;
+	rdfs:label "Notation"@en ;
+	skos:definition "A reference to a notation defining the syntax and semantics of a diagram."@en .
+
+casShapes_cas:Notation
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Notation ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+cas:Link
+	rdf:type owl:ObjectProperty ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "linked with"@en ;
+	skos:definition "A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element."@en .
+
+casShapes_cas:Link
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Link ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:SourceLink
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "to source"@en ;
+	skos:definition "Connects the source of a reified relationship."@en .
+
+casShapes_cas:SourceLink
+	rdf:type sh:PropertyShape ;
+	sh:path cas:SourceLink ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:TargetLink
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "to target"@en ;
+	skos:definition "Connects the target of a reified relationship or an organizer."@en .
+
+casShapes_cas:TargetLink
+	rdf:type sh:PropertyShape ;
+	sh:path cas:TargetLink ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:lists
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+			cas:Organizer
+		)] ;
+	rdfs:label "lists"@en ;
+	skos:definition "Lists an entity, a relationship or a subordinated organizer."@en .
+
+casShapes_cas:lists
+	rdf:type sh:PropertyShape ;
+	sh:path cas:lists ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+			[ sh:class cas:Organizer ]
+		) .
+
+cas:shows
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "shows"@en ;
+	skos:definition "Shows an entity or a relationship." .
+
+casShapes_cas:shows
+	rdf:type sh:PropertyShape ;
+	sh:path cas:shows ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:depicts
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:range cas:Entity ;
+	rdfs:label "depicts"@en ;
+	skos:definition "Depicts an entity; inverse of uml:ownedDiagram."@en .
+
+casShapes_cas:depicts
+	rdf:type sh:PropertyShape ;
+	sh:path cas:depicts ;
+	sh:or (
+			[ sh:class cas:Entity ]
+		) .
+
+#################################################################
+# Classes
+#################################################################
+
+schema:Person
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Person"@en ;
+	rdfs:comment "A person (alive, dead, undead, or fictional)."@en .
+	
+casShapes_schema:Person
+	rdf:type sh:NodeShape ;
+	sh:targetClass schema:Person ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] ,
+		casShapes_schema:familyName ,
+		casShapes_schema:givenName ,
+		casShapes_schema:birthDate .
+
+schema:Organization
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Organization"@en ;
+	rdfs:comment "An organization such as a school, NGO, corporation, club, etc."@en .
+	
+casShapes_schema:Organization
+	rdf:type sh:NodeShape ;
+	sh:targetClass schema:Organization ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] ,
+		casShapes_schema:legalName ,
+		casShapes_schema:taxID .
+
+schema:birthDate
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "birth date"@en ;
+	rdfs:comment "Date of birth."@en .
+
+casShapes_schema:birthDate
+	rdf:type sh:PropertyShape ;
+	sh:path schema:birthDate ;
+	sh:datatype xs:date ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+schema:familyName
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "family name"@en ;
+	rdfs:comment "Family name. In the U.S., the last name of a Person."@en .
+
+casShapes_schema:familyName
+	rdf:type sh:PropertyShape ;
+	sh:path schema:familyName ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+schema:givenName
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "given name"@en ;
+	rdfs:comment "Family name. In the U.S., the last name of a Person."@en .
+
+casShapes_schema:givenName
+	rdf:type sh:PropertyShape ;
+	sh:path schema:givenName ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+schema:legalName
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "legal name"@en ;
+	rdfs:comment "The official name of the organization, e.g. the registered company name."@en .
+
+casShapes_schema:legalName
+	rdf:type sh:PropertyShape ;
+	sh:path schema:legalName ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+schema:taxID
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "tax ID"@en ;
+	rdfs:comment "The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain."@en .
+
+casShapes_schema:taxID
+	rdf:type sh:PropertyShape ;
+	sh:path schema:taxID ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+	
+schema:WorksFor
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "works for"@en ;
+	rdfs:comment "Organizations that the person works for."@en .
+
+o:Employee
+	rdfs:subPropertyOf cas:SourceLink ;
+	rdfs:label "employee" ;
+	rdfs:comment "The employee in a 'worksFor' relationship" ;
+	rdfs:domain schema:WorksFor ;
+	rdfs:range schema:Person .
+
+o:Employer
+	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:label "employer"@en ;
+	rdfs:comment "The employer in a 'worksFor' relationship"@en ;
+	rdfs:domain schema:WorksFor ;
+	rdfs:range schema:Organization .
+
+casShapes_schema:WorksFor
+	rdf:type sh:NodeShape ;
+	sh:targetClass schema:WorksFor ;
+	sh:property [ 
+			sh:path rdfs:label ;
+			sh:minCount 1
+		] ,
+		[ 
+			sh:path rdfs:comment ;
+			sh:minCount 1
+		] ;
+	sh:property [ 
+		sh:path o:Employee ;
+		sh:or (
+			[ sh:class schema:Person ]
+		) ;
+		sh:minCount 1 ;
+		sh:maxCount 1
+	] ;
+	sh:property [ 
+		sh:path o:Employer ;
+		sh:or (
+			[ sh:class schema:Organization ]
+		) ;
+		sh:minCount 1 ;
+		sh:maxCount 1
+	] .
+
+#################################################################
+# Individuals (the "payload")
+#################################################################
+
+d:ACME
+	rdf:type schema:Organization ;
+	rdfs:label "ACME Corp." ;
+	schema:legalName "ACME Corp." ;
+	schema:taxID "DE_123456789" .
+	
+d:Alice
+	rdf:type schema:Person ;
+	rdfs:label "Alice" ;
+	schema:familyName "Carpenter" ;
+	schema:givenName "Alice" .
+	
+d:Alice_worksFor_ACME
+	rdf:type schema:WorksFor ;
+	rdfs:label "works for"@en ;
+	o:Employee d:Alice ;
+	o:Employer d:ACME .
+
+#################################################################
+# Outline
+#################################################################
+
+d:Root_Alice_worksFor_ACME
+	rdf:type cas:Root ;
+	rdfs:lable: "Package Root"@en ;
+	rdfs:comment: "... anchoring all outlines of this graph (package)"@en ;
+	dcterms:modified "2026-03-06T17:36:25.645Z" ;
+	cas:lists (
+			d:ACME
+			d:Alice
+		) .
+

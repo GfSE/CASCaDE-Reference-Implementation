@@ -1,0 +1,623 @@
+
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <https://www.w3.org/TR/skos-reference/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix FMC: <http://fmc-modeling.org#> .
+@prefix casShapes_FMC: <https://product-information-graph.org/v0.2/ontology/shapes/FMC#> .
+@prefix IREB: <https://cpre.ireb.org/en/downloads-and-resources/glossary#> .
+@prefix casShapes_IREB: <https://product-information-graph.org/v0.2/ontology/shapes/IREB#> .
+@prefix ReqIF: <https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#> .
+@prefix casShapes_ReqIF: <https://product-information-graph.org/v0.2/ontology/shapes/ReqIF#> .
+@prefix cas: <https://product-information-graph.org/v0.2/metamodel#> .
+@prefix casShapes_cas: <https://product-information-graph.org/v0.2/ontology/shapes/cas#> .
+@prefix SpecIF: <https://specif.de/v1.2/schema#> .
+@prefix casShapes_SpecIF: <https://product-information-graph.org/v0.2/ontology/shapes/SpecIF#> .
+
+@prefix o: <https://product-information-graph.org/v0.2/ontology#> .
+@prefix d: <https://product-information-graph.org/examples/05_Requirement-with-Enumerated-Property.specif#> .
+
+#################################################################
+# Project Metadata
+#################################################################
+
+d:
+	rdf:type owl:Ontology ;
+	rdfs:label "Project 'Requirement with Enumerated Property'" ;
+	owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ,
+		<http://www.w3.org/2000/01/rdf-schema#> ;
+	dcterms:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
+	dcterms:modified "2026-04-08T07:19:12.475Z" .
+
+#################################################################
+# CASCaRA Metamodel and Semantic Infrastructure
+#################################################################
+
+cas:Entity
+	rdf:type owl:Class ;
+	rdfs:label "Entity" ;
+	skos:definition "A CASCaRA meta-model item used for entities (aka resources or artifacts)." .
+
+casShapes_cas:Entity
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Entity ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_cas:Category ,
+		casShapes_cas:Icon .
+
+cas:Package
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Package" ;
+	skos:definition "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages." .
+
+casShapes_cas:Package
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Package ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+cas:Artifact
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Artifact" ;
+	skos:definition "The most generic class for all model entities (e.g. requirement, function, system, component, state, event, ...)." .
+
+casShapes_cas:Artifact
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Artifact ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+FMC:Actor
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Artifact ;
+	rdfs:label "Actor" ;
+	skos:definition "A fundamental model-element class for actors (e.g. users, functions, systems, components, ...)." .
+
+casShapes_FMC:Actor
+	rdf:type sh:NodeShape ;
+	sh:targetClass FMC:Actor ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+FMC:State
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Artifact ;
+	rdfs:label "State" ;
+	skos:definition "A fundamental model-element class for states (e.g. system or process states, information, form, color, ...)." .
+
+casShapes_FMC:State
+	rdf:type sh:NodeShape ;
+	sh:targetClass FMC:State ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+FMC:Event
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Artifact ;
+	rdfs:label "Event" ;
+	skos:definition "A fundamental model-element class for events (e.g. environmental or process events, ...)." .
+
+casShapes_FMC:Event
+	rdf:type sh:NodeShape ;
+	sh:targetClass FMC:Event ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+cas:Organizer
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Organizer" ;
+	skos:definition "A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation." .
+
+casShapes_cas:Organizer
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Organizer ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+cas:Root
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Root" ;
+	skos:definition "A subclass of cas:Organizer serving as a root for trees and tables." .
+
+casShapes_cas:Root
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Root ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_cas:lists .
+
+cas:Tree
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Tree" ;
+	skos:definition "A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships." .
+
+casShapes_cas:Tree
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Tree ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_cas:lists .
+
+cas:Outline
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Tree ;
+	rdfs:label "Outline" ;
+	skos:definition "A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized." .
+
+casShapes_cas:Outline
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Outline ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+cas:View
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "View" ;
+	skos:definition "A subclass of cas:Organizer representing a model view (diagram) using a certain notation showing selected model elements." .
+
+casShapes_cas:View
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:View ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_cas:Diagram ,
+		casShapes_cas:Notation ,
+		casShapes_cas:shows ,
+		casShapes_cas:depicts .
+
+cas:Table
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Table" ;
+	skos:definition "A subclass of cas:Organizer representing a table showing selected model elements." .
+
+casShapes_cas:Table
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Table ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_cas:shows .
+
+cas:Enumeration
+	rdf:type owl:Class ;
+	rdfs:label "Enumeration" ;
+	skos:definition "A CASCaRA meta-model item used for enumerations of values." .
+
+casShapes_cas:Enumeration
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Enumeration ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+cas:Relationship
+	rdf:type owl:Class ;
+	rdfs:label "Relationship" ;
+	skos:definition "A CASCaRA meta-model item used for reified relationships (aka predicates)." .
+
+casShapes_cas:Relationship
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Relationship ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_cas:Category ,
+		casShapes_cas:Icon ,
+		casShapes_cas:SourceLink ,
+		casShapes_cas:TargetLink .
+
+cas:Property
+	rdf:type owl:DatatypeProperty ;
+	rdfs:label "Property" ;
+	skos:definition "A CASCaRA meta-model item used for properties (aka attributes)." .
+
+casShapes_cas:Property
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Property ;
+	sh:datatype xs:anyType .
+
+cas:Icon
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "has icon" ;
+	skos:definition "Specifies an icon for a model element (entity or relationship)." .
+
+casShapes_cas:Icon
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Icon ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+cas:Diagram
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Diagram" ;
+	skos:definition "A diagram illustrating the resource or a link to a diagram." .
+
+casShapes_cas:Diagram
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Diagram ;
+	sh:datatype xs:string ;
+	sh:minCount "0" .
+
+cas:Category
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "has category" ;
+	skos:definition "Specifies a category for an element (entity, relationship or organizer)." .
+
+casShapes_cas:Category
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Category ;
+	sh:datatype xs:string ;
+	sh:maxLength "32" ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+cas:Notation
+	rdf:type owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Category ;
+	rdfs:label "Notation" ;
+	skos:definition "A reference to a notation defining the syntax and semantics of a diagram." .
+
+casShapes_cas:Notation
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Notation ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+cas:Link
+	rdf:type owl:ObjectProperty ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "linked with" ;
+	skos:definition "A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element." .
+
+casShapes_cas:Link
+	rdf:type sh:PropertyShape ;
+	sh:path cas:Link ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:SourceLink
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "to source" ;
+	skos:definition "Connects the source of a reified relationship." .
+
+casShapes_cas:SourceLink
+	rdf:type sh:PropertyShape ;
+	sh:path cas:SourceLink ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:TargetLink
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "to target" ;
+	skos:definition "Connects the target of a reified relationship or an organizer." .
+
+casShapes_cas:TargetLink
+	rdf:type sh:PropertyShape ;
+	sh:path cas:TargetLink ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:lists
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+			cas:Organizer
+		)] ;
+	rdfs:label "lists" ;
+	skos:definition "Lists an entity, a relationship or a subordinated organizer." .
+
+casShapes_cas:lists
+	rdf:type sh:PropertyShape ;
+	sh:path cas:lists ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+			[ sh:class cas:Organizer ]
+		) .
+
+cas:shows
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:range [ owl:unionOf(
+			cas:Entity
+			cas:Relationship
+		)] ;
+	rdfs:label "shows" ;
+	skos:definition "Shows an entity or a relationship." .
+
+casShapes_cas:shows
+	rdf:type sh:PropertyShape ;
+	sh:path cas:shows ;
+	sh:or (
+			[ sh:class cas:Entity ]
+			[ sh:class cas:Relationship ]
+		) .
+
+cas:depicts
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:range cas:Entity ;
+	rdfs:label "depicts" ;
+	skos:definition "Depicts an entity; inverse of uml:ownedDiagram." .
+
+casShapes_cas:depicts
+	rdf:type sh:PropertyShape ;
+	sh:path cas:depicts ;
+	sh:or (
+			[ sh:class cas:Entity ]
+		) .
+
+#################################################################
+# Data Types with Enumerated Values
+#################################################################
+
+SpecIF:Priority-Value
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	dcterms:modified "2020-03-26T22:59:00+02:00" ;
+	sh:datatype xs:string ;
+	owl:oneOf (
+			SpecIF:priorityHigh
+			SpecIF:priorityRatherHigh
+			SpecIF:priorityMedium
+			SpecIF:priorityRatherLow
+			SpecIF:priorityLow
+		) .
+SpecIF:priorityHigh
+	rdf:type SpecIF:Priority-Value ;
+	rdfs:label "high"@en ,
+		"hoch"@de ,
+		"haut"@fr .
+SpecIF:priorityRatherHigh
+	rdf:type SpecIF:Priority-Value ;
+	rdfs:label "rather high"@en ,
+		"eher hoch"@de ,
+		"plutôt haut"@fr .
+SpecIF:priorityMedium
+	rdf:type SpecIF:Priority-Value ;
+	rdfs:label "medium"@en ,
+		"mittel"@de ,
+		"moyen"@fr .
+SpecIF:priorityRatherLow
+	rdf:type SpecIF:Priority-Value ;
+	rdfs:label "rather low"@en ,
+		"eher niedrig"@de ,
+		"plutôt bas"@fr .
+SpecIF:priorityLow
+	rdf:type SpecIF:Priority-Value ;
+	rdfs:label "low"@en ,
+		"niedrig"@de ,
+		"bas"@fr .
+
+#################################################################
+# Ontology - Property Classes
+#################################################################
+
+# Skipping implicit property: rdfs:label
+
+# Skipping implicit property: rdfs:comment
+
+SpecIF:Priority
+	rdf:type owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	rdfs:range SpecIF:Priority-Value .
+
+casShapes_SpecIF:Priority
+	rdf:type sh:PropertyShape ;
+	sh:path SpecIF:Priority ;
+	sh:maxCount "1" ;
+	sh:class SpecIF:Priority-Value .
+
+# Skipping implicit property: cas:Diagram
+
+# Skipping implicit property: cas:Category
+
+#################################################################
+# Ontology - Entity Classes
+#################################################################
+
+IREB:Requirement
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Artifact ;
+	rdfs:label "Requirement"@en ,
+		"Anforderung"@de ,
+		"Exigence"@fr ;
+	skos:definition "<p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
+		"<p>Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
+		"<p>Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
+	cas:Icon "&#8623;" .
+
+casShapes_IREB:Requirement
+	rdf:type sh:NodeShape ;
+	sh:targetClass IREB:Requirement ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_SpecIF:Priority .
+
+SpecIF:Paragraph
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Artifact ;
+	rdfs:label "Paragraph"@en ,
+		"Textabsatz"@de ,
+		"Paragraphe"@fr ;
+	skos:definition "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
+		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de .
+
+casShapes_SpecIF:Paragraph
+	rdf:type sh:NodeShape ;
+	sh:targetClass SpecIF:Paragraph ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] ,
+		casShapes_cas:Diagram ,
+		casShapes_cas:Category .
+
+#################################################################
+# Entities
+#################################################################
+
+d:Req-35100bca2b005ba
+	rdf:type IREB:Requirement ;
+	rdfs:label "Minimum button size"@en ;
+	rdfs:comment "<p>The <i>button size</i> MUST not be less than 20mm in diameter.</p>"@en ;
+	SpecIF:Priority SpecIF:priorityRatherHigh ;
+	dcterms:modified "2020-03-26T22:59:00+02:00" .
+
+#################################################################
+# Hierarchy
+#################################################################
+
+d:HierarchyRoot-P-Requirement-with-Enumerated-Property
+	rdf:type cas:Root ;
+	dcterms:modified "2026-04-08T07:19:12.570Z" ;
+	rdfs:label "Hierarchy Root" ;
+	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
+	cas:lists (
+			d:HR-bca801377e3d1547
+		) .
+
+d:HR-bca801377e3d1547
+	rdf:type cas:Outline ;
+	rdfs:label "Project 'Requirement with Enumerated Property'" ;
+	cas:Category ReqIF:HierarchyRoot ;
+	dcterms:modified "2026-04-08T07:19:12.522Z" ;
+	cas:lists (
+			d:Req-35100bca2b005ba
+		) .

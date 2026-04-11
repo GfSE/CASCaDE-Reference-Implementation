@@ -8,9 +8,15 @@
  *  Dependencies: none
  *  Authors: oskar.dungern@gfse.org
  *
+ *  Notice:
+ *  - Initially the metamodel had been called "Product Information Graph" (PIG) with namespace prefix 'pig:'.
+ *  - Now it is called CASCaRA with namespace prefix 'cas:'.
+ *  - The codebase still uses the abbreviation PIG or pig in many places for historical reasons,
+ *  - but the namespace prefix for the metamodel and for the semantic infrastructure has been set to 'cas:', see definitions.ts. 
+ * 
  *  Design Decisions:
- *  - The PIG classes contain *only *the elements in the metamodel; it could be generated from the metamodel.
- *  - Abstract classes are not exported, only the concrete classes.
+ *  - The CASCaRA (PIG) classes in this module contain *only *the elements in the metamodel; it could be generated from the metamodel.
+ *  - Abstract classes are not exported to other modules, only the concrete classes.
  *  - All names are always in singular form, even if they have multiple values.
  *  - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
  *  - The 'AProperty' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
@@ -18,10 +24,9 @@
  *  - Both 'AProperty' and 'ALink' have no identifier and no revision history of their own.
  *  - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
  *    This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
- *  - aRelationship.hasSourceLink is an array with maxCount=1 to have the same structure as anEntity.hasSourceLink.
- *  - same for enumeratedTargetLink
- *  - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check
- *    before the items are instantiated here.
+ *  - aRelationship.hasTargetLink is an array with maxCount=1 to have the same structure as anEntity.hasTargetLink.
+ *  - same for hasSourceLink
+ *  - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check;
  *  - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
  *    those references are expanded to id objects only when serializing to JSON-LD.
  *  - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
@@ -30,12 +35,15 @@
  *  - Programming errors result in exceptions, data errors in IMsg return values.
  *  - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
  *  - and now pfxNsMeta: 'cas-meta:' for the metamodel and pfxNsSemi: 'cas-semi:' for the semantic infrastructure.
+ *  - CASCaRA (PIG) classes (as derived from the ontology) get version information it their URL path.
+ *  - All others must at least specify the 'modified' attribute to capture the version history of the item;
+ *    it is recommended to maintain revision and priorRevision as well for better configuration management and traceability.
  *
  *  @ToDo:
  *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check? 
  *  - implement 'composes' (formerly composedProperty) for Property and AProperty
  *  - Check use of PigItem.normalizeId() in the setJSONLD() thread
- *  - PigItem.normalizeId() shortly before validate() in set() ?
+ *    PigItem.normalizeId() shortly before validate() in set() ?
  *  - Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values: must be 'o:'
  *  - Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed?
  *  - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
@@ -414,6 +422,10 @@ interface IIdentifiable extends IItem {
     title?: ILanguageText[];
     description?: ILanguageText[];
     definition?: ILanguageText[]; // mandatory for classes, not allowed for instances as controlled be the schemata
+    revision?: TRevision;
+    priorRevision?: TRevision[];
+    modified?: TISODateString;  // mandatory for instances, see schemata
+    creator?: string;
 }
 abstract class Identifiable extends Item implements IIdentifiable {
     id!: TPigId;
@@ -421,6 +433,10 @@ abstract class Identifiable extends Item implements IIdentifiable {
     title?: ILanguageText[];
     description?: ILanguageText[];
     definition?: ILanguageText[];
+    revision?: TRevision;
+    priorRevision?: TRevision[];
+    modified?: TISODateString;
+    creator?: string;
     protected constructor(itm: IItem) {
         super(itm); // actual itemType set in concrete class
     }
@@ -467,6 +483,10 @@ abstract class Identifiable extends Item implements IIdentifiable {
         this.title = itm.title;
         this.description = itm.description;
         this.definition = itm.definition;
+        this.revision = itm.revision;
+        this.priorRevision = itm.priorRevision;
+        this.modified = itm.modified;
+        this.creator = itm.creator;
 //        LOG.debug('Identifiable.set o: ', this);
         // made chainable in concrete subclass
         return this;
@@ -478,7 +498,11 @@ abstract class Identifiable extends Item implements IIdentifiable {
             specializes: this.specializes,
             title: this.title,
             description: this.description,
-            definition: this.definition
+            definition: this.definition,
+            revision: this.revision,
+            priorRevision: this.priorRevision,
+            modified: this.modified,
+            creator: this.creator
         } as IIdentifiable);
     }
     protected fromJSONLD(itm: any) {
@@ -586,18 +610,10 @@ abstract class Element extends Identifiable implements IElement {
 }
 
 interface IAnElement extends IIdentifiable {
-    revision?: TRevision;
-    priorRevision?: TRevision[];  // optional
-    modified: TISODateString;
-    creator?: string;
     hasProperty?: IAProperty[];
     hasTargetLink?: IALink[];  // array must have exactly one element as checked by the JSON schema
 }
 abstract class AnElement extends Identifiable implements IAnElement {
-    revision?: TRevision;
-    priorRevision?: TRevision[];
-    modified!: TISODateString;
-    creator?: string;
     hasProperty!: AProperty[]; // instantiated AProperty items
     hasTargetLink!: ATargetLink[];  // array must have exactly one element as checked by the JSON schema
     protected constructor(itm: IItem) {
@@ -612,11 +628,6 @@ abstract class AnElement extends Identifiable implements IAnElement {
         // validated in concrete subclass before calling this;
         // also lastStatus set in concrete subclass.
         super.set(itm);
-        this.revision = itm.revision;
-        this.priorRevision = itm.priorRevision;
-        this.modified = itm.modified;
-        this.creator = itm.creator;
-
         this.hasProperty = itm.hasProperty ? itm.hasProperty.map(p => new AProperty().set(p)) : [];
         this.hasTargetLink = itm.hasTargetLink ? itm.hasTargetLink.map(t => new ATargetLink().set(t)) : [];
     //    LOG.debug('anEl.set 9',itm.hasProperty, this.hasProperty);
@@ -626,10 +637,6 @@ abstract class AnElement extends Identifiable implements IAnElement {
     protected get() {
         return {
             ...super.get(),
-            revision: this.revision,
-            priorRevision: this.priorRevision,
-            modified: this.modified,
-            creator: this.creator,
             hasProperty: this.hasProperty.length>0? this.hasProperty.map(p => p.get()) : undefined,
             hasTargetLink: this.hasTargetLink.length > 0 ? this.hasTargetLink.map(t => t.get()) : undefined
         } as IAnElement;

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pig="http://product-information-graph.org" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:csc="http://omg.org/CASCaRA/cas/" xmlns:reqif="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cas="http://product-information-graph.org" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:csc="http://omg.org/CASCaRA/cas/" xmlns:reqif="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd">
     <xsl:output method="xml" encoding="UTF-8" indent="yes" standalone="yes"/>
     <!-- Root template -->
     <xsl:template match="/">
         <xsl:variable name="header" select="//*[local-name()='REQ-IF-HEADER']"/>
-        <pig:aPackage rdf:type="pig:Package">
+        <cas:aPackage rdf:type="cas:Package">
             <xsl:attribute name="id">
                 <xsl:choose>
                     <xsl:when test="$header/@IDENTIFIER">
@@ -51,7 +51,7 @@
             <graph>
                 <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT']"/>
             </graph>
-        </pig:aPackage>
+        </cas:aPackage>
     </xsl:template>
 
     <!-- Template for SPEC-OBJECT (entities) -->
@@ -135,7 +135,7 @@
         <xsl:variable name="hasTitle" select="string-length(normalize-space($titleValue)) &gt; 0"/>
         <xsl:variable name="hasDescription" select="string-length(normalize-space($descriptionValue)) &gt; 0"/>
 
-        <pig:anEntity rdf:type="IREB:Requirement">
+        <cas:anEntity rdf:type="IREB:Requirement">
             <xsl:attribute name="id">
                 <xsl:value-of select="$objectId"/>
             </xsl:attribute>
@@ -164,7 +164,7 @@
                     <xsl:value-of select="@LAST-CHANGE"/>
                 </xsl:if>
             </dcterms:modified>
-        </pig:anEntity>
+        </cas:anEntity>
     </xsl:template>
 
     <!-- Named template to get attribute value from either STRING or XHTML -->
