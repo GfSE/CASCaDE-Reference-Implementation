@@ -84,35 +84,33 @@ class PigSchemaFactory {
         }
     }
 
-    static getPropertySchema() {
+    static getEnumerationSchema() {
         return {
             $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://gfse.org/schema/pig/IProperty',
+            $id: 'https://product-information-graph.org/schema/cas/IEnumeration',
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
-                specializes: { $ref: '#/$defs/idString' },
+            //    hasClass: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
                 itemType: {
                     type: 'string',
-                    enum: [`${DEF.pfxNsMeta}Property`],
-                    description: `The itemType for ${DEF.pfxNsMeta}Property`
+                    enum: [`${DEF.pfxNsMeta}Enumeration`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Enumeration`
                 },
                 title: { $ref: '#/$defs/MultiLanguageText' },
                 description: { $ref: '#/$defs/MultiLanguageText' },
                 definition: { $ref: '#/$defs/MultiLanguageText' },
                 datatype: {
                     type: 'string',
-                    pattern: '^xs:[A-Za-z]+$'
+                    pattern: '^xsd?:[A-Za-z]+$'
                 },
                 minCount: { type: 'integer', minimum: 0 },
                 maxCount: { type: 'integer', minimum: 1 },
-                maxLength: { type: 'integer', minimum: 1 },
-                minInclusive: { type: 'number' },
-                maxInclusive: { type: 'number' },
-                pattern: { type: 'string' },
                 unit: { type: 'string' },
-                defaultValue: { type: 'string' },
                 enumeratedValue: {
                     type: 'array',
                     items: {
@@ -144,6 +142,54 @@ class PigSchemaFactory {
                         ]
                     }
                 },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    minItems: 1,
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getPropertySchema() {
+        return {
+            $schema: 'http://json-schema.org/draft-07/schema#',
+            $id: 'https://product-information-graph.org/schema/cas/IProperty',
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Property`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Property`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                datatype: {
+                    type: 'string',
+                    pattern: '^xsd?:[A-Za-z]+$'
+                },
+                minCount: { type: 'integer', minimum: 0 },
+                maxCount: { type: 'integer', minimum: 1 },
+                maxLength: { type: 'integer', minimum: 1 },
+                minInclusive: { type: 'number' },
+                maxInclusive: { type: 'number' },
+                pattern: { type: 'string' },
+                unit: { type: 'string' },
+                defaultValue: { type: 'string' },
                 composedProperty: {
                     type: 'array',
                     items: { $ref: '#/$defs/idString' }
@@ -170,7 +216,7 @@ class PigSchemaFactory {
     static getLinkSchema() {
         return {
             $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://gfse.org/schema/pig/IReference',
+            $id: 'https://product-information-graph.org/schema/cas/IReference',
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
@@ -211,7 +257,7 @@ class PigSchemaFactory {
     static getEntitySchema() {
         return {
             $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://gfse.org/schema/pig/IEntity',
+            $id: 'https://product-information-graph.org/schema/cas/IEntity',
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
@@ -264,7 +310,7 @@ class PigSchemaFactory {
     static getRelationshipSchema() {
         return {
             $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://gfse.org/schema/pig/IRelationship',
+            $id: 'https://product-information-graph.org/schema/cas/IRelationship',
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
@@ -315,7 +361,7 @@ class PigSchemaFactory {
     static getAnEntitySchema() {
         return {
             $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://gfse.org/schema/pig/IAnEntity',
+            $id: 'https://product-information-graph.org/schema/cas/IAnEntity',
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
@@ -355,7 +401,7 @@ class PigSchemaFactory {
     static getARelationshipSchema() {
         return {
             $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://gfse.org/schema/pig/IARelationship',
+            $id: 'https://product-information-graph.org/schema/cas/IARelationship',
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
@@ -392,7 +438,7 @@ class PigSchemaFactory {
     static getAPackageSchema() {
         return {
             $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://gfse.org/schema/pig/IAPackage',
+            $id: 'https://product-information-graph.org/schema/cas/IAPackage',
             type: 'object',
             properties: {
                 context: {
@@ -446,6 +492,7 @@ class PigSchemaFactory {
 }
 
 // Validierungsfunktionen
+const validateEnumerationSchema = ajv.compile(PigSchemaFactory.getEnumerationSchema())
 const validatePropertySchema = ajv.compile(PigSchemaFactory.getPropertySchema());
 const validateLinkSchema = ajv.compile(PigSchemaFactory.getLinkSchema());
 const validateEntitySchema = ajv.compile(PigSchemaFactory.getEntitySchema());
@@ -456,6 +503,11 @@ const validateAPackageSchema = ajv.compile(PigSchemaFactory.getAPackageSchema())
 
 // Exportstruktur
 export const SCH = {
+    ENUMERATION_SCHEMA: PigSchemaFactory.getEnumerationSchema(),
+    validateEnumerationSchema,
+    getValidateEnumerationErrors() {
+        return ajv.errorsText(validateEnumerationSchema.errors, { separator: '; ' });
+    },
     PROPERTY_SCHEMA: PigSchemaFactory.getPropertySchema(),
     validatePropertySchema,
     getValidatePropertyErrors() {

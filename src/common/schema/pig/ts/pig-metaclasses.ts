@@ -68,7 +68,7 @@ import { IOptionsHTML, stringHTML, toHTML } from '../../../export/html/exportHTM
 
 export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // @ToDo: should be better described using a pattern (RegExp)
-export type TPigClass = Property | Link | Entity | Relationship;
+export type TPigClass = Enumeration | Property | Link | Entity | Relationship;
 export type TPigElement = Entity | Relationship;
 export type TPigAnElement = APackage | AnEntity | ARelationship;
 export type TPigItem = TPigClass | TPigAnElement;
@@ -78,7 +78,8 @@ export type ElementXML = globalThis.Element;  // DOM Element typ
 export const PigItemType = {
     // PIG classes:
     Package: `${DEF.pfxNsMeta}Package`,
-    Ontology: `${DEF.pfxNsMeta}Ontology`,
+//    Ontology: `${DEF.pfxNsMeta}Ontology`,
+    Enumeration: `${DEF.pfxNsMeta}Enumeration`,
     Property: `${DEF.pfxNsMeta}Property`,
     Link: `${DEF.pfxNsMeta}Link`, 
     Entity: `${DEF.pfxNsMeta}Entity`,
@@ -107,6 +108,7 @@ export enum XsDataType {
 }
 
 const PIG_CLASSES = new Set<PigItemTypeValue>([
+    PigItemType.Enumeration,
     PigItemType.Property,
     PigItemType.Link,
     PigItemType.Entity,
@@ -144,6 +146,8 @@ export class PigItem {
     static create(itemType: PigItemTypeValue): TPigItem | null {
         switch (itemType) {
             // PIG Classes
+            case PigItemType.Enumeration:
+                return new Enumeration();
             case PigItemType.Property:
                 return new Property();
             case PigItemType.Link:
@@ -205,6 +209,7 @@ export class PigItem {
      */
     static isInstantiable(itype: PigItemTypeValue): boolean {
         return ([
+            PigItemType.Enumeration,
             PigItemType.Property,
             PigItemType.Link,
             PigItemType.Entity,
@@ -815,6 +820,89 @@ export interface IEnumeratedValue {
     // in PIG, values of all datatypes are strings; the datatype is defined in the respective Property
     value?: string;  
 }
+export interface IEnumeration extends IIdentifiable {
+    datatype: string; // must be of XsDataType
+    minCount?: number;
+    maxCount?: number;
+    enumeratedValue?: IEnumeratedValue[]; // array of allowed values, datatype-dependent
+    unit?: string;  // according to SI units
+}
+export class Property extends Identifiable implements IProperty {
+    datatype!: string;
+    minCount?: number;
+    maxCount?: number;
+    enumeratedValue?: IEnumeratedValue[]; 
+    unit?: string;
+    constructor() {
+        super({itemType:PigItemType.Property});
+    }
+    validate(itm: IProperty) {
+        // Schema validation (AJV) - provides structural checks and reuses the idString definition
+        try {
+            const ok = SCH.validateEnumerationSchema(itm);
+            if (!ok) {
+                const msg = SCH.getValidateEnumerationErrors();
+                return Msg.create(681, 'Enumeration', itm.id, msg);
+            }
+        } catch (err: any) {
+            return Msg.create(681, 'Enumeration', itm.id, err?.message ?? String(err));
+        }
+
+        // Runtime guards:
+        // id and itemType checked in superclass
+        //    const rsp = validateIdString(itm.datatype);
+        //    if (!rsp.ok) return rsp;
+        // all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
+        // others shall be treated as strings (with a warning in the log):
+        if (!PigItem.isSupportedDataType(itm.datatype)) {
+            const msg = Msg.create(680, itm.id, itm.datatype);
+            LOG.warn(msg.statusText);
+            //            return msg */
+        }
+
+        // @ToDo: implement further validation logic
+        return super.validate(itm);
+    }
+    set(itm: IProperty): this {
+        // LOG.debug('Property.set: '+ JSON.stringify(itm,null,2));
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus.ok) {
+            super.set(itm);
+            this.datatype = itm.datatype;
+            this.minCount = itm.minCount || 0;
+            this.maxCount = itm.maxCount || 1;
+            this.enumeratedValue = itm.enumeratedValue;
+            this.unit = itm.unit;
+        }
+        return this; // make chainable
+    }
+    get() {
+        return LIB.stripUndefinedAndNull({
+            ...super.get(),
+            datatype: this.datatype,
+            minCount: this.minCount,
+            maxCount: this.maxCount,
+            enumeratedValue: this.enumeratedValue,
+            unit: this.unit
+        }) as IProperty;
+    }
+    fromJSONLD(itm: any) {
+        return super.fromJSONLD(itm) as any;
+    }
+    setJSONLD(itm: any) {
+        const _itm = this.fromJSONLD(itm) as any;
+
+        // Normalize datatype (Property-specific)
+        if (_itm.datatype) {
+            _itm.datatype = _itm.datatype.replace(/^xsd:/, 'xs:');
+        }
+
+        return this.set(_itm);
+    }
+    getJSONLD() {
+        return super.getJSONLD();
+    }
+}
 export interface IProperty extends IIdentifiable {
     datatype: string; // must be of XsDataType
     minCount?: number;
@@ -823,7 +911,6 @@ export interface IProperty extends IIdentifiable {
     pattern?: string;  // a RegExp pattern, only used for string datatype
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
-    enumeratedValue?: IEnumeratedValue[]; // array of allowed values, datatype-dependent
     defaultValue?: string;   // in PIG, values of all datatypes are strings
     unit?: string;  // according to SI units
     composes?: TPigId[];  // must be URI of another Property, no cyclic references
@@ -836,7 +923,6 @@ export class Property extends Identifiable implements IProperty {
     pattern?: string;
     minInclusive?: number;
     maxInclusive?: number;
-    enumeratedValue?: IEnumeratedValue[]; 
     defaultValue?: string;
     unit?: string;
     composes?: TPigId[];
@@ -882,7 +968,6 @@ export class Property extends Identifiable implements IProperty {
             this.pattern = itm.pattern;
             this.minInclusive = itm.minInclusive;
             this.maxInclusive = itm.maxInclusive;
-            this.enumeratedValue = itm.enumeratedValue;
             this.defaultValue = itm.defaultValue;
             this.unit = itm.unit;
             this.composes = itm.composes;
@@ -899,7 +984,6 @@ export class Property extends Identifiable implements IProperty {
             pattern: this.pattern,
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
-            enumeratedValue: this.enumeratedValue,
             defaultValue: this.defaultValue,
             unit: this.unit,
             composes: this.composes
