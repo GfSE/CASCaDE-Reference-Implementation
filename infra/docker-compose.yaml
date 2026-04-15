@@ -5,9 +5,6 @@ services:
       dockerfile: docker/web.Dockerfile
     ports:
       - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
 
   api:
     build:
@@ -18,6 +15,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    profiles: ["full"]
  
   db:
     image: postgres
@@ -31,12 +29,14 @@ services:
       timeout: 5s
       retries: 10
     command: ["postgres", "-c", "log_connections=on", "-c", "log_disconnections=on"]
+    profiles: ["full"]
  
   adminer:
     image: adminer
     restart: always
     ports:
       - 8081:8080
+    profiles: ["full"]
     
 networks:
   default:
