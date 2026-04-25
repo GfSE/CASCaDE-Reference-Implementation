@@ -311,10 +311,10 @@ function passify(html: string): string {
  * @returns HTML string representing the metadata
  */
 function metadataToHTML(item: TPigAnElement, lang: tagIETF): string {
-    return `<dt>Item Type</dt><dd>${item.itemType}</dd>
-                <dt>ID</dt><dd>${item.id}</dd>
-                <dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>
-                <dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>`
+    return `<dt>Item Type</dt><dd>${item.itemType}</dd>`
+                + `<dt>ID</dt><dd>${item.id}</dd>`
+                + `<dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>`
+                + (item.modified ? `<dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>` : '')
                 + (item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : '')
                 + (item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : '')
                 + (item.priorRevision && item.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${item.priorRevision.map((r: string) => passify(r)).join(', ')}</dd>` : '');

@@ -827,7 +827,7 @@ export interface IEnumeration extends IIdentifiable {
     enumeratedValue?: IEnumeratedValue[]; // array of allowed values, datatype-dependent
     unit?: string;  // according to SI units
 }
-export class Property extends Identifiable implements IProperty {
+export class Enumeration extends Identifiable implements IEnumeration {
     datatype!: string;
     minCount?: number;
     maxCount?: number;
@@ -836,7 +836,7 @@ export class Property extends Identifiable implements IProperty {
     constructor() {
         super({itemType:PigItemType.Property});
     }
-    validate(itm: IProperty) {
+    validate(itm: IEnumeration) {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         try {
             const ok = SCH.validateEnumerationSchema(itm);
@@ -863,8 +863,8 @@ export class Property extends Identifiable implements IProperty {
         // @ToDo: implement further validation logic
         return super.validate(itm);
     }
-    set(itm: IProperty): this {
-        // LOG.debug('Property.set: '+ JSON.stringify(itm,null,2));
+    set(itm: IEnumeration): this {
+        // LOG.debug('Enumeration.set: '+ JSON.stringify(itm,null,2));
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
