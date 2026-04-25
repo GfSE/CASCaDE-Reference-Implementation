@@ -75,23 +75,23 @@ For example, the ontology of a simple library asset management system (or invent
     </element>
     <element identifier="id-c9fa68c1bfc449558cf431c9c8a9b55c" xsi:type="DataObject">
       <name xml:lang="en">Classes for Ontology [JSON-LD]</name>
-      <documentation xml:lang="en">A set of classes allowing to define an ontology. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
+      <documentation xml:lang="en">A set of classes allowing to define an ontology. The data structure (pattern) conforms with the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-852e3b29b0f242d2bc8e8ddda7d076ee" xsi:type="DataObject">
       <name xml:lang="en">Classes for Application [JSON-LD]</name>
-      <documentation xml:lang="en">A set of classes allowing to manage application data. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
+      <documentation xml:lang="en">A set of classes allowing to manage application data. The data structure (pattern) conforms with the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-82d925d89f5a4bfc9da93a338d9badac" xsi:type="DataObject">
       <name xml:lang="en">Application Ontology [JSON-LD]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-ad6609324578417f867c2e0471be1c54" xsi:type="DataObject">
       <name xml:lang="en">Application Data [JSON-LD]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-2ab7af85586b4c26b3d605e26f99e11c" xsi:type="DataObject">
       <name xml:lang="en">Application Data [Turtle]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application data. The data structure (pattern) conforms with the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element identifier="id-5f892d898e0f4c518143a72b9a4b1cc9" xsi:type="ApplicationComponent">
       <name xml:lang="en">Triple-Store</name>
@@ -99,7 +99,7 @@ For example, the ontology of a simple library asset management system (or invent
     </element>
     <element identifier="id-eff21101fdf7483aa17d298c1558f1bb" xsi:type="DataObject">
       <name xml:lang="en">Application Data [RDF]</name>
-      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/), so that standard queries can be used.</documentation>
+      <documentation xml:lang="en">Classes and instances (individuals) representing the application ontology. The data structure (pattern) conforms with the [CASCaRA Metamodel](https://product-information-graph.org/doc/metamodel/latest/), so that standard queries can be used.</documentation>
     </element>
   </elements>
   <relationships>
@@ -250,7 +250,7 @@ If you like, have a look at the demonstration:&#xD;
 | Step | Libraries (Example ) | Develop your own example |&#xD;
 | --- | --- | --- |&#xD;
 | 1 | Open an [Editor](https://specif.de/apps/edit#import="https://cascara.gfse.org/examples/libraries/data/Library-Ontology%20(Example).specif") with loaded classes for building an ontology and some terms. You can add terms of the library domain. | Open an [Editor](https://specif.de/apps/edit#import="https://cascara.gfse.org/examples/data/Classes-for-Ontology.specif") with loaded classes for building an ontology. You can add terms of your application domain. |&#xD;
-| 2 | Inspect the [Library Ontology as HTML](https://cascara.gfse.org/examples/libraries/Library-Ontology%20(Example).html).&lt;br/&gt;Download the [Classes for Libraries](https://cascara.gfse.org/examples/libraries/data/Classes-for-Libraries.specif) (as generated from the Library Ontology) to laod in the editor in the next step. | Export SpecIF Class Definitions (third option) to load in the next step. |&#xD;
+| 2 | Inspect the [Library Ontology as HTML](https://cascara.gfse.org/examples/libraries/Library-Ontology%20(Example).html).&lt;br/&gt;Download the [Classes for Libraries](https://cascara.gfse.org/examples/libraries/data/Classes-for-Libraries.specif) (as generated from the Library Ontology) to load in the editor in the next step. | Export SpecIF Class Definitions (third option) to load in the next step. |&#xD;
 | 3 | Open an [Editor](https://specif.de/apps/edit#import="https://cascara.gfse.org/examples/libraries/data/Libraries%20(Example).specif") with loaded classes for managing libraries and some instances. You can add data according to the library ontology defined above. | Open an [Editor](https://specif.de/apps/edit) ready to load classes for managing application data exported above. You can add data according to your application ontology. |&#xD;
 | 4 | Inspect the [Library Data as HTML](https://cascara.gfse.org/examples/libraries/Libraries%20(Example).html)&lt;br/&gt;Download the [Library Data as Turtle](https://cascara.gfse.org/examples/libraries/data/Libraries%20(Example).ttl) to load in the next step. | Export your application data  (Turtle) to load in the next step. |&#xD;
 | 5 | Load the library data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). | Load your application data to your favorite graph database, e.g. [Apache Fuseki](https://jena.apache.org/documentation/fuseki2/). |&#xD;
