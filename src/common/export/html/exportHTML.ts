@@ -199,7 +199,8 @@ function passify(html: string): string {
     ]);
 
     // Match all <object> tags with their attributes and content
-    const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;
+    // const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;  ... did not work with es2020 even though it should, so we use [\s\S]*? instead of .*?
+    const objectRegex = /<object([^>]*)>([\s\S]*?)<\/object>/gi;
     passified = passified.replace(objectRegex, (match, attributes, content) => {
         // Extract type attribute
         const typeMatch = attributes.match(/type\s*=\s*["']([^"']+)["']/i);

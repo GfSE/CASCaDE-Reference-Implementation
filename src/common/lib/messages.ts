@@ -149,14 +149,14 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
     },
     611: {
-        en: (op, act, exp) =>
-            `${op}: Created ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe créés sur ${exp}`,
-        es: (op, act, exp) =>
-            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
+        en: (op, act, exp, errors) =>
+            `${op}: Created ${act} of ${exp} graph items` + (errors ? ` with errors: ${errors}` : ''),
+        de: (op, act, exp, errors) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt` + (errors ? ` mit Fehlern: ${errors}` : ''),
+        fr: (op, act, exp, errors) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}` + (errors ? ` avec des erreurs: ${errors}` : ''),
+        es: (op, act, exp, errors) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo` + (errors ? ` con errores: ${errors}` : '')
     },
 
 /*  currently not used:
@@ -430,6 +430,16 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `${itemType} '${itemId}' ${arrayName}[${linkIndex}] utilise '${linkClassId}' qui n'est pas éligible dans la classe '${classId}'.`,
         es: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
             `${itemType} '${itemId}' ${arrayName}[${linkIndex}] usa '${linkClassId}' que no es elegible en la clase '${classId}'.`
+    },
+    677: {
+        en: (instanceId, linkIndex, linkClassId, msg) =>
+            `Enumerated value validation failed for item '${instanceId}' targetLink[${linkIndex}] of class '${linkClassId}': ${msg}`,
+        de: (instanceId, linkIndex, linkClassId, msg) =>
+            `Enumeration-Validierung fehlgeschlagen für Element '${instanceId}' targetLink[${linkIndex}] der Klasse '${linkClassId}': ${msg}`,
+        fr: (instanceId, linkIndex, linkClassId, msg) =>
+            `Échec de la validation de la valeur énumérée pour l'élément '${instanceId}' targetLink[${linkIndex}] de la classe '${linkClassId}': ${msg}`,
+        es: (instanceId, linkIndex, linkClassId, msg) =>
+            `Falló la validación del valor enumerado para el elemento '${instanceId}' targetLink[${linkIndex}] de la clase '${linkClassId}': ${msg}`
     },
     678: {
         en: (instanceId, propClassId, actualCount, expectedCount, issue) =>

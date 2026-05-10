@@ -1,30 +1,52 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/Entity.json",
-    "title": "PIG Entity JSON-LD Schema",
-    "description": "Validates <strong>Entity</strong> class definitions for individual information objects. Configures which properties (pig:enumeratedProperty) and which outgoing links are allowed (pig:enumeratedTargetLink). Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. Supports specialization hierarchies via pig:specializes and optional visual representation via pig:icon.",
-    "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://product-information-graph.org/schema/2026-05-08/jsonld/Entity.json",
+  "title": "CASCaRA Entity Schema for JSON-LD",
+  "description": "Validates <strong>Entity</strong> class definitions for individual information objects. Configures which properties (cas:enumeratedProperty) and which outgoing links are allowed (cas:enumeratedTargetLink). Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context. Supports specialization hierarchies via cas:specializes and optional visual representation via cas:icon.",
+  "type": "object",
   "properties": {
     "@id": {
       "$ref": "#/$defs/idString"
     },
     "@type": {
-      "$ref": "#/$defs/idString"
+      "type": "string",
+      "enum": [ "owl:Class" ]
     },
-    "pig:specializes": {
+    "cas:specializes": {
       "$ref": "#/$defs/idObject"
     },
-    "pig:itemType": {
+    "cas:itemType": {
       "type": "object",
       "required": [ "@id" ],
       "properties": {
         "@id": {
           "type": "string",
-          "enum": [ "pig:Entity" ],
-          "description": "The PigItemType for pig:Entity"
+          "enum": [ "cas:Entity" ],
+          "description": "The CASCaRA metamodel item type for cas:Entity"
         }
       },
       "additionalProperties": false
+    },
+    "cas:revision": {
+      "type": "string",
+      "description": "Revision identifier for version control"
+    },
+    "cas:priorRevision": {
+      "type": "array",
+      "description": "Array of prior revision identifiers",
+      "maxItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "dcterms:modified": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last modification"
+    },
+    "dcterms:creator": {
+      "type": "string",
+      "description": "Creator/author of this relationship instance"
     },
     "dcterms:title": {
       "type": "array",
@@ -40,28 +62,28 @@
         "$ref": "#/$defs/languageValue"
       }
     },
-    "dcterms:definition": {
+    "skos:definition": {
       "type": "array",
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/languageValue"
       }
     },
-    "pig:enumeratedProperty": {
+    "cas:enumeratedProperty": {
       "type": "array",
       "description": "Array of Property class references that can be used with this Entity",
       "items": {
         "$ref": "#/$defs/idObject"
       }
     },
-    "pig:enumeratedTargetLink": {
+    "cas:enumeratedTargetLink": {
       "type": "array",
       "description": "Array of Link class references that can be used as outgoing links from this Entity",
       "items": {
         "$ref": "#/$defs/idObject"
       }
     },
-    "pig:Icon": {
+    "cas:Icon": {
       "type": "object",
       "description": "Optional icon representation for this Entity type",
       "properties": {
@@ -73,23 +95,14 @@
       "additionalProperties": false
     }
   },
-    "required": [
-        "@id",
-        "pig:itemType",
-        "dcterms:title"
-    ],
-    "oneOf": [
-        {
-            "required": [ "@type" ],
-            "description": "New Entity class (not specialized)"
-        },
-        {
-            "required": [ "pig:specializes" ],
-            "description": "Specialized Entity class"
-        }
-    ],
-    "additionalProperties": false,
-    "$defs": {
+  "required": [
+    "@id",
+    "@type",
+    "cas:itemType",
+    "dcterms:title"
+  ],
+  "additionalProperties": false,
+  "$defs": {
         "idString": {
             "type": "string",
             "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
@@ -124,5 +137,5 @@
             "additionalProperties": false,
             "description": "Multi-language text value with optional language tag"
         }
-    }
+  }
 }

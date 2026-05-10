@@ -5,6 +5,12 @@ class PigSchemaFactory {
     static getIdNamePattern() {
         return '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
     }
+    static getSchemaSchema() {
+        return 'http://json-schema.org/draft-07/schema#';
+    }
+    static getSchemaPath() {
+        return 'https://product-information-graph.org/schema/2026-05-08/cas/';
+    }
     static getDefs() {
         return {
             idString: {
@@ -86,16 +92,16 @@ class PigSchemaFactory {
 
     static getEnumerationSchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IEnumeration',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IEnumeration`,
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-            //    hasClass: { $ref: '#/$defs/idString' },
                 hasClass: {
                     type: 'string',
                     enum: [`owl:Class`],
                 },
+                specializes: { $ref: '#/$defs/idString' },  // perhaps not needed
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}Enumeration`],
@@ -123,7 +129,7 @@ class PigSchemaFactory {
                                     title: { $ref: '#/$defs/MultiLanguageText' }
                                 },
                                 additionalProperties: false,
-                                description: 'Enumeration value with multi-language title (for xs:string)'
+                                description: 'Enumerated value with multi-language title (for xs:string)'
                             },
                             {
                                 type: 'object',
@@ -137,7 +143,7 @@ class PigSchemaFactory {
                                     }
                                 },
                                 additionalProperties: false,
-                                description: 'Enumeration value with literal value (for xs:integer, xs:double, etc.)'
+                                description: 'Enumerated value with literal value (for xs:integer, xs:double, etc.)'
                             }
                         ]
                     }
@@ -145,7 +151,6 @@ class PigSchemaFactory {
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },
@@ -156,19 +161,22 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'], // change info is optional for classes
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes; enumeratedValue and datatype may be omitted for upper levels in the generalization hierarchy.
             $defs: this.getDefs()
         };
     }
 
     static getPropertySchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IProperty',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IProperty`,
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:DatatypeProperty`],
+                },
                 specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
@@ -197,7 +205,6 @@ class PigSchemaFactory {
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },
@@ -208,19 +215,22 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'], // change info is optional for classes
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
             $defs: this.getDefs()
         };
     }
 
     static getLinkSchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IReference',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IReference`,
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:ObjectProperty`],
+                },
                 specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
@@ -238,7 +248,6 @@ class PigSchemaFactory {
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },
@@ -256,12 +265,15 @@ class PigSchemaFactory {
 
     static getEntitySchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IEntity',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IEntity`,
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
                 specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
@@ -291,7 +303,6 @@ class PigSchemaFactory {
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },
@@ -309,12 +320,15 @@ class PigSchemaFactory {
 
     static getRelationshipSchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IRelationship',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IRelationship`,
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
                 specializes: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
@@ -328,8 +342,17 @@ class PigSchemaFactory {
                     type: 'array',
                     items: { $ref: '#/$defs/idString' }
                 },
-                enumeratedSourceLink: { $ref: '#/$defs/idString' },
-                enumeratedTargetLink: { $ref: '#/$defs/idString' },
+                enumeratedSourceLink: { 
+                    type: 'array',
+                    minItems: 1, // exactly 1 which is not pointing to an enumeration
+                    maxItems: 1,
+                    items: { $ref: '#/$defs/idString' }
+                },
+                enumeratedTargetLink: {
+                    type: 'array',
+                    minItems: 1, // exactly 1 which is not pointing to an enumeration plus 0..n which are pointing to enumerations
+                    items: { $ref: '#/$defs/idString' }
+                },
                 icon: {
                     type: 'object',
                     required: ['value'],
@@ -342,7 +365,6 @@ class PigSchemaFactory {
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },
@@ -360,8 +382,8 @@ class PigSchemaFactory {
 
     static getAnEntitySchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IAnEntity',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IAnEntity`,
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
@@ -378,7 +400,6 @@ class PigSchemaFactory {
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },
@@ -400,8 +421,8 @@ class PigSchemaFactory {
 
     static getARelationshipSchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IARelationship',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IARelationship`,
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
@@ -419,7 +440,6 @@ class PigSchemaFactory {
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },
@@ -437,8 +457,8 @@ class PigSchemaFactory {
 
     static getAPackageSchema() {
         return {
-            $schema: 'http://json-schema.org/draft-07/schema#',
-            $id: 'https://product-information-graph.org/schema/cas/IAPackage',
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IAPackage`,
             type: 'object',
             properties: {
                 context: {
@@ -454,7 +474,10 @@ class PigSchemaFactory {
                     }
                 },
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Package`],
+                },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}aPackage`],
@@ -463,11 +486,10 @@ class PigSchemaFactory {
                 title: { $ref: '#/$defs/MultiLanguageText' },
                 description: { $ref: '#/$defs/MultiLanguageText' },
                 hasProperty: this.getPropertyRef(),
-                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`, 1, 1),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`),
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
-                    minItems: 1,
                     maxItems: 2,
                     items: { type: 'string' }
                 },

@@ -20,6 +20,7 @@ describe('PIG Package getHTML() Method', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-package-html',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Test Package', '@language': 'en' }
@@ -32,6 +33,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -41,6 +43,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -123,6 +126,7 @@ describe('PIG Package getHTML() Method', () => {
                     'o': 'https://example.org/ontology/'
                 },
                 '@id': 'd:package-no-entities',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Empty Package', '@language': 'en' }
@@ -131,6 +135,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Name',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -166,6 +171,7 @@ describe('PIG Package getHTML() Method', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:package-mixed',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Mixed Package', '@language': 'en' }
@@ -174,6 +180,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -183,6 +190,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Link_RefersTo',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -194,6 +202,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -202,6 +211,7 @@ describe('PIG Package getHTML() Method', () => {
                     },
                     {
                         '@id': 'o:Relationship_Trace',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -244,6 +254,7 @@ describe('PIG Package getHTML() Method', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                 },
                 '@id': 'd:invalid-package',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 '@graph': [] // Empty graph
             };
@@ -269,6 +280,7 @@ describe('PIG Package getHTML() Method', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:package-multiple',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Multi-Entity Package', '@language': 'en' }
@@ -277,6 +289,7 @@ describe('PIG Package getHTML() Method', () => {
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': `owl:Class`,
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -317,8 +330,12 @@ describe('PIG Package getHTML() Method', () => {
             };
 
             const pkg = new APackage().setJSONLD(packageWithMultipleEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
-            
-            expect(pkg.status().ok).toBe(true);
+
+            const st = pkg.status();
+            if (!st.ok) {
+                console.error('Package status error:', st);
+            }
+            expect(st.ok).toBe(true);
 
             const htmlList = pkg.getHTML();
 

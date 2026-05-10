@@ -20,12 +20,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-001',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         "@id": `${DEF.pfxNsMeta}Property`,
-                        "@type": "owl:DatatypeProperty",
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             {
@@ -43,6 +44,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Property_Status',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -52,7 +54,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         "@id": `${DEF.pfxNsMeta}Link`,
-                        "@type": "owl:ObjectProperty",
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             {
@@ -75,6 +77,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_RefersTo',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -86,7 +89,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         "@id": `${DEF.pfxNsMeta}Entity`,
-                        "@type": "owl:Class",
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             {
@@ -101,6 +104,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -161,12 +165,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-002',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         "@id": `${DEF.pfxNsMeta}Property`,
-                        "@type": "owl:DatatypeProperty",
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             {
@@ -184,6 +189,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Property_Rationale',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -193,7 +199,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         "@id": `${DEF.pfxNsMeta}Link`,
-                        "@type": "owl:ObjectProperty",
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             {
@@ -216,6 +222,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Source',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -227,6 +234,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -238,7 +246,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         "@id": `${DEF.pfxNsMeta}Entity`,
-                        "@type": "owl:Class",
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             {
@@ -253,7 +261,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         "@id": `${DEF.pfxNsMeta}Relationship`,
-                        "@type": "owl:Class",
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             {
@@ -268,6 +276,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Relationship_Trace',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -276,6 +285,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -354,11 +364,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-duplicate-id',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -368,6 +380,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -376,6 +389,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok', // ❌ Duplicate ID
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -389,11 +403,16 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithDuplicateIds,[ConstraintCheckType.UniqueIds]);
 
             // check the attribute values upon creation:
-         /*   if (pck.status().ok)
-                console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(671); // Duplicate ID error code
+         /*   if (!pkg.status().ok)
+                console.error('status:', pkg.status()); */
             
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(611); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('671'); // Duplicate ID error code
+            expect(status.statusText).toContain('o:Entity_duplicateId_nok');
         /*    const rsp = pkg.get() as IAPackage;
             
             expect(rsp.ok).toBe(false);
@@ -412,11 +431,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-missing-id',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -439,8 +460,8 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingId);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
             expect(pkg.status().ok).toBe(false);
             expect(pkg.status().status).toBe(611); // Error code for one or more failed item instantiations
         });
@@ -457,11 +478,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-invalid-prop',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -491,13 +514,18 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithInvalidPropertyRef);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(673); // Invalid hasClass reference
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(611); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673'); // Invalid hasClass reference
+            expect(status.statusText).toContain('o:Property_NonExistent');
             
         /*    const rsp = pkg.get() as IAPackage;
-            
             expect(rsp.ok).toBe(false);
             expect(rsp.status).toBe(673); // Invalid hasClass reference
             expect(rsp.statusText).toContain('hasProperty[0].hasClass');
@@ -515,11 +543,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-type',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_RefersTo', // This is a Link, not a Property!
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -531,6 +561,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -560,13 +591,20 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithWrongTypeRef);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(673); // Invalid hasClass type
-            
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(611); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673'); // Invalid hasClass reference
+            expect(status.statusText).toContain('expected cas:Property, found cas:Link');
+            // @ToDo: Change error message to show the name of the property instead of its index ... and then:
+            // expect(status.statusText).toContain('o:Link_RefersTo');
+
         /*    const rsp = pkg.get() as IAPackage;
-            
             expect(rsp.ok).toBe(false);
             expect(rsp.status).toBe(673);
             expect(rsp.statusText).toContain('hasProperty[0].hasClass');
@@ -586,6 +624,7 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-invalid-link',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
@@ -599,6 +638,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': `${DEF.pfxNsSemi}Organizer`,
+                        '@type': 'owl:Class',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -607,6 +647,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Folder',
+                        '@type': 'owl:Class',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsSemi}Organizer`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -646,10 +687,15 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithInvalidLinkRef);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(673); // Invalid hasClass reference
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(611); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673');
+            expect(status.statusText).toContain('o:Link_NonExistent');
             
         /*    const rsp = pkg.get() as IAPackage;
             
@@ -670,11 +716,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-link-type',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Rationale',
+                        '@type': "owl:DatatypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -684,6 +732,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Source',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -695,6 +744,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -714,6 +764,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': 'owl:Class',
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -769,11 +820,16 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithWrongLinkType);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(673); // Invalid hasClass type
-            
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(611); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673');
+            expect(status.statusText).toContain('o:Property_Rationale');
+
         /*    const rsp = pkg.get() as IAPackage;
             
             expect(rsp.ok).toBe(false);
@@ -794,11 +850,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-missing-entity-class',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -835,11 +893,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-invalid-entity-class',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -862,8 +922,13 @@ describe('PIG Package Constraint Validation', () => {
             const pkg = new APackage();
             pkg.setJSONLD(packageWithInvalidEntityClass);
 
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass reference (not found)
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(611); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (675)
+            expect(status.statusText).toContain('675'); // Invalid hasClass reference (not found)
+            expect(status.statusText).toContain('d:REQ-nonexistent-class-nok');
         });
 
         test('should reject anEntity with hasClass pointing to wrong type (Property instead of Entity)', () => {
@@ -876,11 +941,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-entity-class-type',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
+                        '@type': "owl:DataTypeProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -904,8 +971,13 @@ describe('PIG Package Constraint Validation', () => {
             const pkg = new APackage();
             pkg.setJSONLD(packageWithWrongEntityClassType);
 
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass type
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(611); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('675');
+            expect(status.statusText).toContain('d:REQ-wrong-class-type-nok');
         });
 
         test('should reject aRelationship with missing hasClass reference', () => {
@@ -918,11 +990,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-missing-rel-class',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_Source',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -931,6 +1005,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -939,6 +1014,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Relationship_Trace',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -947,6 +1023,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -999,11 +1076,13 @@ describe('PIG Package Constraint Validation', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-rel-class-type',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_Source',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -1012,6 +1091,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Target',
+                        '@type': "owl:ObjectProperty",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -1020,6 +1100,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Relationship_Trace',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -1028,6 +1109,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [

@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://product-information-graph.org/schema/2026-05-08/jsonld/Link.json",
-  "title": "CASCaRA Link Schema for JSON-LD",
-  "description": "Validates Link class definitions that specify navigable connections between items. Defines enumerated endpoint classes (cas:enumeratedEndpoint) which determine which Entity or Relationship classes can be connected via this link type. Links enable traversal of the information graph and support bi-directional relationships when paired (e.g., 'contains' / 'is contained by').",
+  "$id": "http://product-information-graph.org/schema/2026-05-08/jsonld/Enumeration.json",
+  "title": "CASCaRA Enumeration Schema for JSON-LD",
+  "description": "Validates Enumeration class definitions. Must include datatype specification (string, integer, double, boolean, dateTime, etc.), enumeration values (cas:enumeratedValue), measurement units.",
   "type": "object",
   "properties": {
     "@id": {
@@ -10,7 +10,7 @@
     },
     "@type": {
       "type": "string",
-      "enum": [ "owl:ObjectProperty" ]
+      "enum": [ "owl:Class" ]
     },
     "cas:specializes": {
       "$ref": "#/$defs/idObject"
@@ -21,8 +21,8 @@
       "properties": {
         "@id": {
           "type": "string",
-          "enum": [ "cas:Link" ],
-          "description": "The CASCaRA metamodel item type for cas:Link"
+          "enum": [ "cas:Enumeration" ],
+          "description": "The CASCaRA metamodel item type for cas:Enumeration"
         }
       },
       "additionalProperties": false
@@ -69,12 +69,61 @@
         "$ref": "#/$defs/languageValue"
       }
     },
-    "cas:enumeratedEndpoint": {
+    "sh:datatype": {
+      "$ref": "#/$defs/idObject"
+    },
+    "sh:minCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sh:maxCount": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "cas:unit": {
+      "type": "string",
+      "description": "Unit of measurement (SI unit)"
+    },
+    "cas:enumeratedValue": {
       "type": "array",
-      "minItems": 1,
-      "description": "Array of Entity or Relationship class references that can be endpoints for this link",
+      "description": "Enumeration of allowed values",
       "items": {
-        "$ref": "#/$defs/idObject"
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Enumeration value with multi-language title (for xs:string)",
+            "properties": {
+              "@id": {
+                "$ref": "#/$defs/idString"
+              },
+              "dcterms:title": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/languageValue"
+                }
+              }
+            },
+            "required": [ "@id", "dcterms:title" ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "Enumeration value with literal value (for xs:integer, xs:double, etc.)",
+            "properties": {
+              "@id": {
+                "$ref": "#/$defs/idString"
+              },
+              "@value": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Literal value for numeric and other datatypes (stored as string)"
+              }
+            },
+            "required": [ "@id", "@value" ],
+            "additionalProperties": false
+          }
+        ]
       }
     }
   },
@@ -82,8 +131,7 @@
     "@id",
     "@type",
     "cas:itemType",
-    "dcterms:title",
-    "cas:enumeratedEndpoint"
+    "dcterms:title"
   ],
   "additionalProperties": false,
   "$defs": {
@@ -94,7 +142,9 @@
     },
     "idObject": {
       "type": "object",
-      "required": [ "@id" ],
+      "required": [
+        "@id"
+      ],
       "properties": {
         "@id": {
           "$ref": "#/$defs/idString"
@@ -105,7 +155,9 @@
     },
     "languageValue": {
       "type": "object",
-      "required": [ "@value" ],
+      "required": [
+        "@value"
+      ],
       "properties": {
         "@value": {
           "type": "string",

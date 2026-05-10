@@ -10,7 +10,7 @@
 
 import { DEF } from '../../src/common/lib/definitions';
 import {
-    Property, Link, Entity, Relationship,
+    Enumeration, Property, Link, Entity, Relationship,
     AnEntity, ARelationship
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
@@ -66,11 +66,13 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import SpecIF:Priority property with enumeratedValues', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Property id="SpecIF:Priority" rdf:type="owl:ObjectProperty">
+                <${DEF.pfxNsMeta}Enumeration id="SpecIF:Priority-Value" rdf:type="owl:Class">
                     <${DEF.pfxNsDcmi}title xml:lang="en">Priority</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="de">Priorität</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="fr">Priorité</${DEF.pfxNsDcmi}title>
-                    <${DEF.pfxNsDcmi}description xml:lang="en">Enumerated values for the 'Priority' of the resource.</${DEF.pfxNsDcmi}description>
+                    <skos:definition xml:lang="en">Enumerated values for the 'Priority' of a resource.</skos:definition>
+                    <${DEF.pfxNsDcmi}modified>2020-03-26T22:59:00+02:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsMeta}specializes>cas:Enumeration</${DEF.pfxNsMeta}specializes>
                     <xs:simpleType>
                         <xs:restriction base="xs:string"/>
                     </xs:simpleType>
@@ -89,26 +91,26 @@ describe('PIG Metaclasses XML Import', () => {
                         <${DEF.pfxNsDcmi}title xml:lang="de">niedrig</${DEF.pfxNsDcmi}title>
                         <${DEF.pfxNsDcmi}title xml:lang="fr">bas</${DEF.pfxNsDcmi}title>
                     </${DEF.pfxNsMeta}enumeratedValue>
-                </${DEF.pfxNsMeta}Property>
+                </${DEF.pfxNsMeta}Enumeration>
             `;
 
-            const prop = new Property().setXML(xmlInput);
+            const en = new Enumeration().setXML(xmlInput);
 
             // check the attribute values upon creation:
-            if (!prop.status().ok)
-                console.error('status:', prop.status());
-            expect(prop.status().ok).toBe(true);
+            if (!en.status().ok)
+                console.error('status:', en.status());
+            expect(en.status().ok).toBe(true);
 
-            // Get the property data
-            const propData = prop.get();
+            // Get the enumeration data
+            const enumData = en.get();
 
             // Verify enumeratedValue structure exists
-            expect(propData?.enumeratedValue).toBeDefined();
-            expect(Array.isArray(propData?.enumeratedValue)).toBe(true);
-            expect(propData?.enumeratedValue?.length).toBe(3);
+            expect(enumData?.enumeratedValue).toBeDefined();
+            expect(Array.isArray(enumData?.enumeratedValue)).toBe(true);
+            expect(enumData?.enumeratedValue?.length).toBe(3);
 
             // Find SpecIF:priorityHigh
-            const priorityHigh = propData?.enumeratedValue?.find((ev:any) => ev.id === 'SpecIF:priorityHigh');
+            const priorityHigh = enumData?.enumeratedValue?.find((ev:any) => ev.id === 'SpecIF:priorityHigh');
             expect(priorityHigh).toBeDefined();
 
             // Verify title structure
@@ -123,7 +125,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it(`should import ${DEF.pfxNsMeta}Icon property`, () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Property id="${DEF.pfxNsMeta}Icon">
+                <${DEF.pfxNsMeta}Property id="${DEF.pfxNsMeta}Icon" rdf:type="owl:DatatypeProperty">
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Property</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsDcmi}title>has icon</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>Specifies an icon for a model element (entity or relationship).</${DEF.pfxNsDcmi}description>
@@ -166,7 +168,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it(`should import ${DEF.pfxNsMeta}SourceLink`, () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}SourceLink">
+                <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}SourceLink" rdf:type="owl:ObjectProperty">
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Link</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
                     <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
@@ -185,7 +187,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import SpecIF:writes-toSource', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Link id="SpecIF:writes-toSource">
+                <${DEF.pfxNsMeta}Link id="SpecIF:writes-toSource" rdf:type="owl:ObjectProperty">
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}SourceLink</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsDcmi}title>SpecIF:writes to source</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>Connects the source of SpecIF:writes</${DEF.pfxNsDcmi}description>
@@ -203,7 +205,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it(`should import ${DEF.pfxNsMeta}lists`, () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}lists">
+                <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}lists" rdf:type="owl:ObjectProperty">
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}TargetLink</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
                     <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
@@ -243,7 +245,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it(`should import ${DEF.pfxNsMeta}HierarchyRoot`, () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Entity id="${DEF.pfxNsMeta}HierarchyRoot">
+                <${DEF.pfxNsMeta}Entity id="${DEF.pfxNsMeta}HierarchyRoot" rdf:type="owl:Class">
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Organizer</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsDcmi}title>Hierarchy Root</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</${DEF.pfxNsDcmi}description>
@@ -261,7 +263,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import FMC:Actor', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Entity id="FMC:Actor">
+                <${DEF.pfxNsMeta}Entity id="FMC:Actor" rdf:type="owl:Class">
                     <${DEF.pfxNsDcmi}title xml:lang="en">Actor</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="de">Akteur</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="fr">Acteur</${DEF.pfxNsDcmi}title>
@@ -284,7 +286,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import IREB:Requirement', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Entity id="IREB:Requirement">
+                <${DEF.pfxNsMeta}Entity id="IREB:Requirement" rdf:type="owl:Class">
                     <${DEF.pfxNsDcmi}title xml:lang="en">Requirement</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="de">Anforderung</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="fr">Exigence</${DEF.pfxNsDcmi}title>
@@ -329,7 +331,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import SpecIF:writes', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Relationship id="SpecIF:writes">
+                <${DEF.pfxNsMeta}Relationship id="SpecIF:writes" rdf:type="owl:Class">
                     <${DEF.pfxNsDcmi}title xml:lang="en">writes</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="de">schreibt</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="fr">écrit</${DEF.pfxNsDcmi}title>
@@ -350,7 +352,7 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import oslc_rm:satisfies', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}Relationship id="oslc_rm:satisfies">
+                <${DEF.pfxNsMeta}Relationship id="oslc_rm:satisfies" rdf:type="owl:Class">
                     <${DEF.pfxNsDcmi}title xml:lang="en">satisfies</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="de">erfüllt</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}title xml:lang="fr">satisfait</${DEF.pfxNsDcmi}title>

@@ -18,11 +18,13 @@ describe('HTML Security - XSS Prevention', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-xss-security',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
+                        '@type': "owl:Class",
                         [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
@@ -85,12 +87,14 @@ describe('HTML Security - XSS Prevention', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-mixed-content',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
@@ -155,12 +159,14 @@ describe('HTML Security - XSS Prevention', () => {
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-malicious-object',
+                '@type': `${DEF.pfxNsMeta}Package`,
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
                 [`${DEF.pfxNsDcmi}modified`]: '2025-02-04T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }

@@ -64,6 +64,10 @@ export const LIB = {
     isLeaf(node: JsonValue): boolean {
         return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
     },
+    isArrayWithContent(L: any): boolean {
+        return (Array.isArray(L) && L.length > 0);
+    },
+
     /**
      * Recursively iterates a JSON value and calls `cb` for each primitive (value).
      * - objects: iterates keys

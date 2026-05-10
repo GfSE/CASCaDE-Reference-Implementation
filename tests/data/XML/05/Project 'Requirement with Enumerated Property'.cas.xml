@@ -30,23 +30,18 @@
             <dcterms:title>Package</dcterms:title>
             <skos:definition>A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages.</skos:definition>
         </cas:Entity>
-        <cas:Entity id="cas:Artifact" cas:hasClass="owl:Class">
-            <cas:specializes>cas:Entity</cas:specializes>
-            <dcterms:title>Artifact</dcterms:title>
-            <skos:definition>The most generic class for all model entities (e.g. requirement, function, system, component, state, event, ...).</skos:definition>
-        </cas:Entity>
         <cas:Entity id="FMC:Actor" cas:hasClass="owl:Class">
-            <cas:specializes>cas:Artifact</cas:specializes>
+            <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title>Actor</dcterms:title>
             <skos:definition>A fundamental model-element class for actors (e.g. users, functions, systems, components, ...).</skos:definition>
         </cas:Entity>
         <cas:Entity id="FMC:State" cas:hasClass="owl:Class">
-            <cas:specializes>cas:Artifact</cas:specializes>
+            <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title>State</dcterms:title>
             <skos:definition>A fundamental model-element class for states (e.g. system or process states, information, form, color, ...).</skos:definition>
         </cas:Entity>
         <cas:Entity id="FMC:Event" cas:hasClass="owl:Class">
-            <cas:specializes>cas:Artifact</cas:specializes>
+            <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title>Event</dcterms:title>
             <skos:definition>A fundamental model-element class for events (e.g. environmental or process events, ...).</skos:definition>
         </cas:Entity>
@@ -183,7 +178,7 @@
         </cas:Link>
 		
         <!-- Enumerations -->
-        <cas:Entity id="SpecIF:Priority-Value" cas:hasClass="owl:Class">
+        <cas:Enumeration id="SpecIF:Priority-Value" cas:hasClass="owl:Class">
             <dcterms:title xml:lang="en">Priority</dcterms:title>
             <dcterms:title xml:lang="de">Priorität</dcterms:title>
             <dcterms:title xml:lang="fr">Priorité</dcterms:title>
@@ -218,40 +213,118 @@
                 <dcterms:title xml:lang="de">niedrig</dcterms:title>
                 <dcterms:title xml:lang="fr">bas</dcterms:title>
             </cas:enumeratedValue>
-        </cas:Entity>
-        <cas:Property id="SpecIF:Priority" cas:hasClass="owl:ObjectProperty">
+        </cas:Enumeration>
+
+        <!-- Links -->
+        <cas:Link id="SpecIF:Priority" cas:hasClass="owl:ObjectProperty">
+            <cas:specializes>cas:TargetLink</cas:specializes>
             <dcterms:title xml:lang="en">Priority</dcterms:title>
             <dcterms:title xml:lang="de">Priorität</dcterms:title>
-            <dcterms:title xml:lang="fr">Priorité</dcterms:title>
-            <skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
+                <dcterms:title xml:lang="fr">Priorité</dcterms:title>
+            <skos:definition xml:lang="en">Enumerated value for the 'Priority' of the resource.</skos:definition>
             <dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
-            <cas:specializes>cas:Link</cas:specializes>
-        </cas:Property>
-		
+            <cas:enumeratedEndpoint>SpecIF:Priority-Value</cas:enumeratedEndpoint>
+        </cas:Link>
+
+        <!-- Domain-Specific Entity Classes -->
+        <cas:Entity id="IREB:Requirement" cas:hasClass="owl:Class">
+            <dcterms:title xml:lang="en">Requirement</dcterms:title>
+            <dcterms:title xml:lang="de">Anforderung</dcterms:title>
+            <dcterms:title xml:lang="fr">Exigence</dcterms:title>
+            <dcterms:description xml:lang="en">
+                <p>
+                    A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Definition:</p>
+                <ol>
+                    <li>A condition or capability needed by a user to solve a problem or achieve an objective.</li>
+                    <li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li>
+                    <li>A documented representation of a condition or capability as in (1) or (2).</li>
+                </ol>
+                <p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p>
+                <ol>
+                    <li>A need perceived by a stakeholder.</li>
+                    <li>A capability or property that a system shall have.</li>
+                    <li>A documented representation of a need, capability or property.</li>
+                </ol>
+            </dcterms:description>
+            <dcterms:description xml:lang="de">
+                <p>
+                    Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Definition:</p>
+                <ol>
+                    <li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li>
+                    <li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li>
+                    <li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li>
+                </ol>
+                <p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p>
+                <ol>
+                    <li>Ein von einem Stakeholder wahrgenommener Bedarf.</li>
+                    <li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li>
+                    <li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li>
+                </ol>
+            </dcterms:description>
+            <dcterms:description xml:lang="fr">
+                <p>
+                    Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Définition:</p>
+                <ol>
+                    <li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li>
+                    <li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li>
+                    <li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li>
+                </ol>
+                <p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p>
+                <ol>
+                    <li>Un besoin perçu par une partie prenante;</li>
+                    <li>Une capacité ou une propriété qu'un système doit avoir.</li>
+                    <li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li>
+                </ol>
+            </dcterms:description>
+            <cas:specializes>cas:Entity</cas:specializes>
+            <cas:icon>&#8623;</cas:icon>
+            <cas:enumeratedProperty>SpecIF:Priority</cas:enumeratedProperty>
+        </cas:Entity>
+
         <!-- Instances -->
-        <IREB:Requirement id="d:Req-35100bca2b005ba">
+        <cas:anEntity id="d:Req-35100bca2b005ba" cas:hasClass="IREB:Requirement">
             <dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
             <dcterms:title xml:lang="en">Minimum button size</dcterms:title>
             <dcterms:description xml:lang="en">&lt;p&gt;The &lt;i&gt;button size&lt;/i&gt; MUST not be less than 20mm in diameter.&lt;/p&gt;</dcterms:description>
             <cas:aTargetLink cas:hasClass="SpecIF:Priority">
                 <idRef>SpecIF:priorityRatherHigh</idRef>
             </cas:aTargetLink>
-        </IREB:Requirement>
-        <cas:Root id="d:HierarchyRoot-P-Requirement-with-Enumerated-Property">
+        </cas:anEntity>
+        <cas:anEntity id="d:HierarchyRoot-P-Requirement-with-Enumerated-Property" cas:hasClass="cas:Root">
             <dcterms:modified>2026-04-08T08:14:32.112Z</dcterms:modified>
             <dcterms:title>Hierarchy Root</dcterms:title>
             <dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
-            <cas:lists>
-                <cas:OutlineRef>d:HR-bca801377e3d1547</cas:OutlineRef>
-            </cas:lists>
-        </cas:Root>
-        <cas:Outline id="d:HR-bca801377e3d1547">
+            <cas:aTargetLink rdf:type="cas:lists">
+                <idRef>d:HR-bca801377e3d1547</idRef>
+            </cas:aTargetLink>
+        </cas:anEntity>
+        <cas:anEntity id="d:HR-bca801377e3d1547" cas:hasClass="cas:Outline">
             <dcterms:modified>2026-04-08T08:14:32.065Z</dcterms:modified>
             <dcterms:title>Project 'Requirement with Enumerated Property'</dcterms:title>
-            <cas:Category>ReqIF:HierarchyRoot</cas:Category>
-            <cas:lists>
-                <IREB:RequirementRef>d:Req-35100bca2b005ba</IREB:RequirementRef>
-            </cas:lists>
-        </cas:Outline>
+            <cas:aProperty cas:hasClass="cas:Category">
+                <value>ReqIF:HierarchyRoot</value>
+            </cas:aProperty>
+            <cas:aTargetLink rdf:type="cas:lists">
+                <idRef>d:Req-35100bca2b005ba</idRef>
+            </cas:aTargetLink>
+        </cas:anEntity>
     </graph>
 </cas:aPackage>

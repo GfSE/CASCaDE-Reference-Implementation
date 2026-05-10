@@ -112,7 +112,7 @@ export class ReqifImporter {
         }
 
         // Get stylesheet path and transform document
-        const stylesheetPath = this.getStylesheetPath();
+        const stylesheetPath = this.getStylesheetPath('ReqIF-to-CAS.sef.json');
         // LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
         const rspTransform = await PLI.transformXSL(xmlToTransform, stylesheetPath);
@@ -120,6 +120,7 @@ export class ReqifImporter {
             return rspTransform;
 
         const xmlString = rspTransform.response as string;
+        // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
 
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
@@ -165,15 +166,14 @@ export class ReqifImporter {
      * @returns Path/URL to ReqIF-to-PIG.sef.json
      * @private
      */
-    private static getStylesheetPath(): string {
-        const reqifToPigSef = 'ReqIF-to-PIG.sef.json';
+    private static getStylesheetPath(filename: string): string {
         if (PLI.isBrowserEnv()) {
             // Browser: fetch from public directory via HTTP
             const baseUrl = window.location.origin;
-            return `${baseUrl}/${DEF.xslPath}${reqifToPigSef}`;
+            return `${baseUrl}/${DEF.xslPath}${filename}`;
         } else {
             // Node.js: read from local public directory
-            return `./public/${DEF.xslPath}${reqifToPigSef}`;
+            return `./public/${DEF.xslPath}${filename}`;
         }
     }
 

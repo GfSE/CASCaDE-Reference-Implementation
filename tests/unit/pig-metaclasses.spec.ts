@@ -28,7 +28,7 @@ describe("PIG Metaclasses", () => {
     let Link_shows_input: ILink;
     let Link_shows_input_JSONLD: any;
     let entityClass_Diagram_input: IEntity;
-    let entityClass_ModelElement_input: IEntity;
+    let entityClass_Artifact_input: IEntity;
     let anEntity_actor_input: IAnEntity;
     let anEntity_state_input: IAnEntity;
     let Link_mutates_toActor: ILink;
@@ -75,6 +75,7 @@ describe("PIG Metaclasses", () => {
         // Link class:
         Link_shows_input = {
             id: `${DEF.pfxNsMeta}shows`,
+            hasClass: "owl:ObjectProperty",
             itemType: PigItemType.Link,
             specializes: PigItemType.Link,
             title: [{ value: "shows", lang: "en" }],
@@ -84,6 +85,7 @@ describe("PIG Metaclasses", () => {
         };
         Link_shows_input_JSONLD = {
             ['@id']: `${DEF.pfxNsMeta}shows`,
+            ["@type"]: { ['@id']: "owl:ObjectProperty" },
             [`${DEF.pfxNsMeta}specializes`]: { ['@id']: PigItemType.Link },
             [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.Link },
             [`${DEF.pfxNsDcmi}title`]: [{ ['@value']: "shows", ['@language']: "en" }],
@@ -95,6 +97,7 @@ describe("PIG Metaclasses", () => {
         // Entity with class:
         entityClass_Diagram_input = {
             id: "o:Entity_Diagram",
+            hasClass: "owl:Class",
             itemType: PigItemType.Entity,
             specializes: PigItemType.Entity,
             title: [{ value: "Title of o:Entity_Diagram" }],  // if there is just one language, lang can be omitted
@@ -104,12 +107,13 @@ describe("PIG Metaclasses", () => {
             enumeratedTargetLink: [`${DEF.pfxNsMeta}shows`],
             enumeratedProperty: [`${DEF.pfxNsDcmi}type`]
         };
-        entityClass_ModelElement_input = {
-            id: "o:Entity_ModelElement",
+        entityClass_Artifact_input = {
+            id: "o:Entity_Artifact",
+            hasClass: "owl:Class",
             itemType: PigItemType.Entity,
             specializes: PigItemType.Entity,
-            title: [{ value: "Title of Entity o:Entity_ModelElement" }],  // if there is just one language, lang can be omitted
-            description: [{ value: "Description of o:Entity_ModelElement" }],
+            title: [{ value: "Title of Entity o:Entity_Artifact" }],  // if there is just one language, lang can be omitted
+            description: [{ value: "Description of o:Entity_Artifact" }],
 
             icon: { value: "&#x2662;" },
             enumeratedProperty: [`${DEF.pfxNsDcmi}type`]
@@ -166,7 +170,7 @@ describe("PIG Metaclasses", () => {
             hasTargetLink: [{
                 itemType: PigItemType.aTargetLink,
                 hasClass: `${DEF.pfxNsMeta}shows`,
-                idRef: "d:anEntity_ModelElement"
+                idRef: "d:anEntity_Artifact"
             }]
         };
         anEntity_with_ref_input_JSONLD = {
@@ -184,13 +188,14 @@ describe("PIG Metaclasses", () => {
             }],
             [`${DEF.pfxNsMeta}shows`]: [{
                 [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.aTargetLink },
-                ['@id']: "d:anEntity_ModelElement"
+                ['@id']: "d:anEntity_Artifact"
             }]
         };
 
         // Relationship with class:
         Link_mutates_toActor = {
             id: "o:Link_mutates_toActor",
+            hasClass: "owl:ObjectProperty",
             itemType: PigItemType.Link,
             specializes: PigItemType.Link,
             title: [{ value: "to actor", lang: "en" }],
@@ -200,6 +205,7 @@ describe("PIG Metaclasses", () => {
         };
         Link_mutates_toState = {
             id: "o:Link_mutates_toState",
+            hasClass: "owl:ObjectProperty",
             itemType: PigItemType.Link,
             specializes: PigItemType.Link,
             title: [{ value: "to state" }],
@@ -209,14 +215,15 @@ describe("PIG Metaclasses", () => {
         };
         Relationship_mutates_input = {
             id: "o:Relationship_mutates",
+            hasClass: "owl:Class",
             itemType: PigItemType.Relationship,
             specializes: PigItemType.Relationship,
             title: [{ value: "Title of o:Relationship_mutates", lang: "en" }],
             description: [{ value: "Description of o:Relationship_mutates", lang: "en" }],
 
             enumeratedProperty: [`${DEF.pfxNsDcmi}type`],
-            enumeratedSourceLink: "o:Link_mutates_toActor",
-            enumeratedTargetLink: "o:Link_mutates_toState"
+            enumeratedSourceLink: ["o:Link_mutates_toActor"],
+            enumeratedTargetLink: ["o:Link_mutates_toState"]
         };
         aRelationship_mutates_input = {
             id: "d:aRelationship_mutates_1",
@@ -371,8 +378,8 @@ describe("PIG Metaclasses", () => {
         expect(inst.description).toEqual([{ value: 'Description of o:Relationship_mutates', lang: "en" }]);
 
         expect(inst.itemType).toBe(PigItemType.Relationship);
-        expect(inst.enumeratedSourceLink).toBe('o:Link_mutates_toActor');
-        expect(inst.enumeratedTargetLink).toBe('o:Link_mutates_toState');
+        expect(inst.enumeratedSourceLink).toStrictEqual(['o:Link_mutates_toActor']);
+        expect(inst.enumeratedTargetLink).toStrictEqual(['o:Link_mutates_toState']);
         expect(inst.enumeratedProperty).toStrictEqual([`${DEF.pfxNsDcmi}type`]);
 
         // check the output:
@@ -421,7 +428,7 @@ describe("PIG Metaclasses", () => {
         expect(inst.hasTargetLink).toHaveLength(1);
         expect(inst.hasTargetLink[0]).toBeInstanceOf(ATargetLink);
         expect(inst.hasTargetLink[0].hasClass).toBe(`${DEF.pfxNsMeta}shows`);
-        expect(inst.hasTargetLink[0].idRef).toBe('d:anEntity_ModelElement');
+        expect(inst.hasTargetLink[0].idRef).toBe('d:anEntity_Artifact');
         expect(inst.hasTargetLink[0].itemType).toBe(PigItemType.aTargetLink);
 
         // check the output as JSON native:

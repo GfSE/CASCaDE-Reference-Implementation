@@ -1,30 +1,52 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/Relationship.json",
-    "title": "PIG Relationship JSON-LD Schema",
-    "description": "Validates <strong>Relationship</strong> class definitions for directed connections between entities. Configures which properties (pig:enumeratedProperty), source links (pig:enumeratedSourceLink) and target links (pig:enumeratedTargetLink) are allowed. Relationships are reified connections that can carry their own properties, enabling rich traceability and dependency modeling (e.g., 'Refinement' relationships with rationale and traceability status). Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance. Supports specialization hierarchies and optional icons.",
-    "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://product-information-graph.org/schema/2026-05-08/jsonld/Relationship.json",
+  "title": "CASCaRA Relationship Schema for JSON-LD",
+  "description": "Validates <strong>Relationship</strong> class definitions for directed connections between entities. Configures which properties (cas:enumeratedProperty), source links (cas:enumeratedSourceLink) and target links (cas:enumeratedTargetLink) are allowed. Relationships are reified connections that can carry their own properties, enabling rich traceability and dependency modeling (e.g., 'Refinement' relationships with rationale and traceability status). Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance. Supports specialization hierarchies and optional icons.",
+  "type": "object",
   "properties": {
     "@id": {
       "$ref": "#/$defs/idString"
     },
     "@type": {
-      "$ref": "#/$defs/idString"
+      "type": "string",
+      "enum": [ "owl:Class" ]
     },
-    "pig:specializes": {
+    "cas:specializes": {
       "$ref": "#/$defs/idObject"
     },
-    "pig:itemType": {
+    "cas:itemType": {
       "type": "object",
       "required": [ "@id" ],
       "properties": {
         "@id": {
           "type": "string",
-          "enum": [ "pig:Relationship" ],
-          "description": "The PigItemType for pig:Relationship"
+          "enum": [ "cas:Relationship" ],
+          "description": "The CASCaRA metamodel item type for cas:Relationship"
         }
       },
       "additionalProperties": false
+    },
+    "cas:revision": {
+      "type": "string",
+      "description": "Revision identifier for version control"
+    },
+    "cas:priorRevision": {
+      "type": "array",
+      "description": "Array of prior revision identifiers",
+      "maxItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "dcterms:modified": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last modification"
+    },
+    "dcterms:creator": {
+      "type": "string",
+      "description": "Creator/author of this relationship instance"
     },
     "dcterms:title": {
       "type": "array",
@@ -40,29 +62,38 @@
         "$ref": "#/$defs/languageValue"
       }
     },
-    "dcterms:definition": {
+    "skos:definition": {
       "type": "array",
       "minItems": 1,
       "items": {
         "$ref": "#/$defs/languageValue"
       }
     },
-    "pig:enumeratedProperty": {
+    "cas:enumeratedProperty": {
       "type": "array",
       "description": "Array of Property class references that can be used with this Relationship",
       "items": {
         "$ref": "#/$defs/idObject"
       }
     },
-    "pig:enumeratedSourceLink": {
-      "$ref": "#/$defs/idObject",
-      "description": "Link class reference that defines the source endpoint of this Relationship"
+    "cas:enumeratedSourceLink": {
+      "type": "array",
+      "description": "Single link class reference that defines the source endpoint of this Relationship",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "$ref": "#/$defs/idObject"
+      }
     },
-    "pig:enumeratedTargetLink": {
-      "$ref": "#/$defs/idObject",
-      "description": "Link class reference that defines the target endpoint of this Relationship"
+    "cas:enumeratedTargetLink": {
+      "type": "array",
+      "description": "Single link class reference that defines the target endpoint of this Relationship plus 0..n link classes pointing to an enumeration",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/idObject"
+      }
     },
-    "pig:Icon": {
+    "cas:Icon": {
       "type": "object",
       "description": "Optional icon representation for this Relationship type",
       "properties": {
@@ -74,56 +105,47 @@
       "additionalProperties": false
     }
   },
-    "required": [
-        "@id",
-        "pig:itemType",
-        "dcterms:title"
-    ],
-    "oneOf": [
-        {
-            "required": [ "@type" ],
-            "description": "New Relationship class (not specialized)"
-        },
-        {
-            "required": [ "pig:specializes" ],
-            "description": "Specialized Relationship class"
+  "required": [
+    "@id",
+    "@type",
+    "cas:itemType",
+    "dcterms:title"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "idString": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
+      "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
+    },
+    "idObject": {
+      "type": "object",
+      "required": [ "@id" ],
+      "properties": {
+        "@id": {
+          "$ref": "#/$defs/idString"
         }
-    ],
-    "additionalProperties": false,
-    "$defs": {
-        "idString": {
-            "type": "string",
-            "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
-            "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
+      },
+      "additionalProperties": false,
+      "description": "JSON-LD ID object wrapper"
+    },
+    "languageValue": {
+      "type": "object",
+      "required": [ "@value" ],
+      "properties": {
+        "@value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The actual text content"
         },
-        "idObject": {
-            "type": "object",
-            "required": [ "@id" ],
-            "properties": {
-                "@id": {
-                    "$ref": "#/$defs/idString"
-                }
-            },
-            "additionalProperties": false,
-            "description": "JSON-LD ID object wrapper"
-        },
-        "languageValue": {
-            "type": "object",
-            "required": [ "@value" ],
-            "properties": {
-                "@value": {
-                    "type": "string",
-                    "minLength": 1,
-                    "description": "The actual text content"
-                },
-                "@language": {
-                    "type": "string",
-                    "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
-                    "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
-                }
-            },
-            "additionalProperties": false,
-            "description": "Multi-language text value with optional language tag"
+        "@language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+          "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
         }
+      },
+      "additionalProperties": false,
+      "description": "Multi-language text value with optional language tag"
     }
+  }
 }

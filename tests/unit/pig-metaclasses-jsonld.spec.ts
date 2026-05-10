@@ -10,7 +10,7 @@
 
 import { DEF } from '../../src/common/lib/definitions';
 import {
-    Property, Link, Entity, Relationship,
+    Enumeration, Property, Link, Entity, Relationship,
     AnEntity, ARelationship
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
@@ -31,13 +31,13 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it(`should import ${DEF.pfxNsDcmi}title property`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsDcmi}title`,
+                '@type': 'owl:DatatypeProperty',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Title', '@language': 'en' },
                     { '@value': 'Titel', '@language': 'de' },
                     { '@value': 'Titre', '@language': 'fr' }
                 ],
-                '@type': 'owl:DatatypeProperty',
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' },
                 'sh:maxCount': 1,
                 'sh:maxLength': 256
@@ -54,6 +54,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it(`should import ${DEF.pfxNsDcmi}description property`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsDcmi}description`,
+                '@type': 'owl:DatatypeProperty',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Description', '@language': 'en' },
                     { '@value': 'Beschreibung', '@language': 'de' },
@@ -65,8 +67,6 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         '@language': 'en'
                     }
                 ],
-                '@type': 'owl:DatatypeProperty',
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' },
                 'sh:maxCount': 1
             };
@@ -81,7 +81,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
 
         it('should import SpecIF:Priority property with enumeratedValues', () => {
             const jsonldInput = {
-                '@id': 'SpecIF:Priority',
+                '@id': 'SpecIF:Priority-Value',
+                '@type': 'owl:Class',
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Enumeration` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Enumeration` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Priority', '@language': 'en' },
                     { '@value': 'Priorität', '@language': 'de' },
@@ -90,8 +93,6 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "Enumerated values for the 'Priority' of the resource.", '@language': 'en' }
                 ],
-                '@type': 'owl:ObjectProperty',
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' },
                 [`${DEF.pfxNsMeta}enumeratedValue`]: [
                     {
@@ -121,23 +122,23 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ]
             };
 
-            const prop = new Property().setJSONLD(jsonldInput);
+            const en = new Enumeration().setJSONLD(jsonldInput);
 
             // check the attribute values upon creation:
-            if (!prop.status().ok)
-                console.error('status:', prop.status());
-            expect(prop.status().ok).toBe(true);
+            if (!en.status().ok)
+                console.error('status:', en.status());
+            expect(en.status().ok).toBe(true);
 
             // Get the property data
-            const propData = prop.get();
+            const enumData = en.get();
 
             // Verify enumeratedValue structure exists
-            expect(propData?.enumeratedValue).toBeDefined();
-            expect(Array.isArray(propData?.enumeratedValue)).toBe(true);
-            expect(propData?.enumeratedValue?.length).toBe(3);
+            expect(enumData?.enumeratedValue).toBeDefined();
+            expect(Array.isArray(enumData?.enumeratedValue)).toBe(true);
+            expect(enumData?.enumeratedValue?.length).toBe(3);
 
             // Find SpecIF:priorityHigh
-            const priorityHigh = propData?.enumeratedValue?.find((ev: any) => ev.id === 'SpecIF:priorityHigh');
+            const priorityHigh = enumData?.enumeratedValue?.find((ev: any) => ev.id === 'SpecIF:priorityHigh');
             expect(priorityHigh).toBeDefined();
 
             // Verify title structure
@@ -153,6 +154,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it(`should import ${DEF.pfxNsMeta}Icon property`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsMeta}Icon`,
+                '@type': 'owl:DatatypeProperty',
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 [`${DEF.pfxNsDcmi}title`]: [
@@ -177,6 +179,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import SpecIF:Diagram property', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:Diagram',
+                '@type': 'owl:DatatypeProperty',
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Diagram', '@language': 'en' },
                     { '@value': 'Diagramm', '@language': 'de' },
@@ -185,7 +190,6 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'A diagram illustrating the resource or a link to a diagram.', '@language': 'en' }
                 ],
-                '@type': 'owl:DatatypeProperty',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' }
             };
@@ -228,6 +232,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it(`should import ${DEF.pfxNsMeta}SourceLink`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsMeta}SourceLink`,
+                '@type': 'owl:ObjectProperty',
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                 [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -253,6 +258,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import SpecIF:writes-toSource', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:writes-toSource',
+                '@type': 'owl:ObjectProperty',
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}SourceLink` },
                 [`${DEF.pfxNsDcmi}title`]: [
@@ -277,6 +283,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it(`should import ${DEF.pfxNsMeta}lists`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsMeta}lists`,
+                '@type': 'owl:ObjectProperty',
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}TargetLink` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
                 [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
@@ -330,6 +337,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it(`should import ${DEF.pfxNsMeta}HierarchyRoot`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsMeta}HierarchyRoot`,
+                '@type': 'owl:Class',
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsSemi}Organizer` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                 [`${DEF.pfxNsDcmi}title`]: [
@@ -355,6 +363,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import FMC:Actor', () => {
             const jsonldInput = {
                 '@id': 'FMC:Actor',
+                '@type': 'owl:Class',
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Actor', '@language': 'en' },
                     { '@value': 'Akteur', '@language': 'de' },
@@ -394,6 +403,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import IREB:Requirement', () => {
             const jsonldInput = {
                 '@id': 'IREB:Requirement',
+                '@type': 'owl:Class',
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Requirement', '@language': 'en' },
                     { '@value': 'Anforderung', '@language': 'de' },
@@ -439,8 +449,8 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@id': `${DEF.pfxNsMeta}Category` },
                     { '@id': `${DEF.pfxNsMeta}Icon` }
                 ],
-                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: { '@id': `${DEF.pfxNsMeta}SourceLink` },
-                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: { '@id': `${DEF.pfxNsMeta}TargetLink` }
+                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: [{ '@id': `${DEF.pfxNsMeta}SourceLink` }],
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [{ '@id': `${DEF.pfxNsMeta}TargetLink` }]
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
@@ -454,6 +464,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import SpecIF:writes', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:writes',
+                '@type': 'owl:Class',
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'writes', '@language': 'en' },
                     { '@value': 'schreibt', '@language': 'de' },
@@ -462,11 +475,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].", '@language': 'en' }
                 ],
-                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: { '@id': 'SpecIF:writes-toSource' },
-                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: { '@id': 'SpecIF:writes-toTarget' }
+                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: [{ '@id': 'SpecIF:writes-toSource' }],
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [{ '@id': 'SpecIF:writes-toTarget' }]
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
@@ -480,6 +491,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
         it('should import oslc_rm:satisfies', () => {
             const jsonldInput = {
                 '@id': 'oslc_rm:satisfies',
+                '@type': 'owl:Class',
+                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'satisfies', '@language': 'en' },
                     { '@value': 'erfüllt', '@language': 'de' },
@@ -491,11 +505,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         '@language': 'en'
                     }
                 ],
-                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: { '@id': 'oslc_rm:satisfies-toSource' },
-                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: { '@id': 'oslc_rm:satisfies-toTarget' }
+                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: [{ '@id': 'oslc_rm:satisfies-toSource' }],
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [{ '@id': 'oslc_rm:satisfies-toTarget' }]
             };
 
             const rel = new Relationship().setJSONLD(jsonldInput);
