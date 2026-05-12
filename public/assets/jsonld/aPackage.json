@@ -231,108 +231,108 @@
     }
   },
   "patternProperties": {
-    "^(?!cas:itemType|cas:revision|cas:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$": {
-      "type": "array",
-      "description": "Configurable properties and links with namespaced keys",
-      "items": {
-        "type": "object",
-        "properties": {
-          "cas:itemType": {
-            "type": "object",
-            "required": [ "@id" ],
-            "properties": {
-              "@id": {
-                "type": "string",
-                "enum": [ "cas:aProperty", "cas:aTargetLink" ],
-                "description": "Type of configurable item: property value or target link"
+    "^(?!cas:itemType|cas:revision|cas:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$": {
+        "type": "array",
+        "description": "Configurable properties and links with namespaced keys",
+        "items": {
+          "type": "object",
+          "properties": {
+            "cas:itemType": {
+              "type": "object",
+              "required": [ "@id" ],
+              "properties": {
+                "@id": {
+                  "type": "string",
+                  "enum": [ "cas:aProperty", "cas:aTargetLink" ],
+                  "description": "Type of configurable item: property value or target link"
+                }
+              },
+              "additionalProperties": false
+            },
+            "@value": {
+              "type": "string",
+              "description": "Direct property value (for aProperty)"
+            },
+            "@id": {
+              "$ref": "#/$defs/idString",
+              "description": "Reference to enumeration value or linked entity/relationship"
+            }
+          },
+          "required": [ "cas:itemType" ],
+          "oneOf": [
+            {
+              "type": "object",
+              "description": "aProperty with direct value",
+              "properties": {
+                "cas:itemType": {
+                  "type": "object",
+                  "properties": {
+                    "@id": {
+                      "const": "cas:aProperty"
+                    }
+                  }
+                }
+              },
+              "required": [ "@value" ],
+              "not": {
+                "required": [ "@id" ]
               }
             },
-            "additionalProperties": false
-          },
+            {
+              "type": "object",
+              "description": "aTargetLink to an enumeration, entity or relationship",
+              "properties": {
+                "cas:itemType": {
+                  "type": "object",
+                  "properties": {
+                    "@id": {
+                      "const": "cas:aTargetLink"
+                    }
+                  }
+                }
+              },
+              "required": [ "@id" ],
+              "not": {
+                "required": [ "@value" ]
+              }
+            }
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "@context",
+      "@id",
+      "@type",
+      "cas:itemType",
+      "@graph",
+      "dcterms:modified"
+    ],
+    "additionalProperties": true,
+    "$defs": {
+      "idString": {
+        "type": "string",
+        "pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$",
+        "description": "Valid identifier format: namespace:name or full URI (e.g., 'cas:Property', 'http://example.org/id')"
+      },
+      "languageValue": {
+        "type": "object",
+        "required": [ "@value" ],
+        "properties": {
           "@value": {
             "type": "string",
-            "description": "Direct property value (for aProperty)"
+            "minLength": 1,
+            "description": "The actual text content"
           },
-          "@id": {
-            "$ref": "#/$defs/idString",
-            "description": "Reference to enumeration value or linked entity/relationship"
-            }
-        },
-        "required": [ "cas:itemType" ],
-        "oneOf": [
-          {
-            "type": "object",
-            "description": "aProperty with direct value",
-            "properties": {
-              "cas:itemType": {
-                "type": "object",
-                "properties": {
-                  "@id": {
-                    "const": "cas:aProperty"
-                  }
-                }
-              }
-            },
-            "required": [ "@value" ],
-            "not": {
-              "required": [ "@id" ]
-            }
-          },
-          {
-            "type": "object",
-            "description": "aTargetLink to an enumeration, entity or relationship",
-            "properties": {
-              "cas:itemType": {
-                "type": "object",
-                "properties": {
-                  "@id": {
-                    "const": "cas:aTargetLink"
-                  }
-                }
-              }
-            },
-            "required": [ "@id" ],
-            "not": {
-              "required": [ "@value" ]
-            }
+          "@language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+            "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
           }
-        ],
-        "additionalProperties": false
+        },
+        "additionalProperties": false,
+        "description": "Multi-language text value with optional language tag"
       }
     }
-  },
-  "required": [
-    "@context",
-    "@id",
-    "@type",
-    "cas:itemType",
-    "@graph",
-    "dcterms:modified"
-  ],
-  "additionalProperties": true,
-  "$defs": {
-    "idString": {
-      "type": "string",
-      "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
-      "description": "Valid identifier format: namespace:name or full URI (e.g., 'cas:Property', 'http://example.org/id')"
-    },
-    "languageValue": {
-      "type": "object",
-      "required": [ "@value" ],
-      "properties": {
-        "@value": {
-          "type": "string",
-          "minLength": 1,
-          "description": "The actual text content"
-        },
-        "@language": {
-          "type": "string",
-          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
-          "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
-        }
-      },
-      "additionalProperties": false,
-      "description": "Multi-language text value with optional language tag"
-    }
   }
-}

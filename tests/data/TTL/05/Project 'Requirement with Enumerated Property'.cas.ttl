@@ -30,11 +30,19 @@ d:
 	owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ,
 		<http://www.w3.org/2000/01/rdf-schema#> ;
 	dcterms:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
-	dcterms:modified "2026-04-08T07:19:12.475Z" .
+	dcterms:modified "2026-05-10T16:32:56.616Z" .
 
 #################################################################
 # CASCaRA Metamodel and Semantic Infrastructure
 #################################################################
+
+cas:Enumeration
+	rdf:type owl:Class ;
+	rdfs:label "Enumeration" ;
+	skos:definition "A CASCaRA meta-model item used for value enumerations." .
+
+casShapes_cas:Enumeration
+	rdf:type sh:NodeShape .
 
 cas:Entity
 	rdf:type owl:Class ;
@@ -52,108 +60,35 @@ casShapes_cas:Entity
 		sh:path rdfs:comment ;
 		sh:minCount 1
 	] ,
-		casShapes_cas:Category ,
-		casShapes_cas:Icon .
-
-cas:Package
-	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Entity ;
-	rdfs:label "Package" ;
-	skos:definition "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages." .
-
-casShapes_cas:Package
-	rdf:type sh:NodeShape ;
-	sh:targetClass cas:Package ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] .
-
-cas:Artifact
-	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Entity ;
-	rdfs:label "Artifact" ;
-	skos:definition "The most generic class for all model entities (e.g. requirement, function, system, component, state, event, ...)." .
-
-casShapes_cas:Artifact
-	rdf:type sh:NodeShape ;
-	sh:targetClass cas:Artifact ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] .
-
-FMC:Actor
-	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Artifact ;
-	rdfs:label "Actor" ;
-	skos:definition "A fundamental model-element class for actors (e.g. users, functions, systems, components, ...)." .
-
-casShapes_FMC:Actor
-	rdf:type sh:NodeShape ;
-	sh:targetClass FMC:Actor ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] .
-
-FMC:State
-	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Artifact ;
-	rdfs:label "State" ;
-	skos:definition "A fundamental model-element class for states (e.g. system or process states, information, form, color, ...)." .
-
-casShapes_FMC:State
-	rdf:type sh:NodeShape ;
-	sh:targetClass FMC:State ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] .
-
-FMC:Event
-	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Artifact ;
-	rdfs:label "Event" ;
-	skos:definition "A fundamental model-element class for events (e.g. environmental or process events, ...)." .
-
-casShapes_FMC:Event
-	rdf:type sh:NodeShape ;
-	sh:targetClass FMC:Event ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] .
+		casShapes_cas:Category .
 
 cas:Organizer
 	rdf:type owl:Class ;
 	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Organizer" ;
-	skos:definition "A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation." .
+	skos:definition "A CASCaRA meta-model item for organizing model-elements. An example is a list of requirements or a diagram using a certain notation." .
 
 casShapes_cas:Organizer
 	rdf:type sh:NodeShape ;
 	sh:targetClass cas:Organizer ;
+	sh:property [ 
+		sh:path rdfs:label ;
+		sh:minCount 1
+	] ,
+		[ 
+		sh:path rdfs:comment ;
+		sh:minCount 1
+	] .
+
+cas:Package
+	rdf:type owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Package" ;
+	skos:definition "A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions." .
+
+casShapes_cas:Package
+	rdf:type sh:NodeShape ;
+	sh:targetClass cas:Package ;
 	sh:property [ 
 		sh:path rdfs:label ;
 		sh:minCount 1
@@ -260,23 +195,6 @@ casShapes_cas:Table
 	] ,
 		casShapes_cas:shows .
 
-cas:Enumeration
-	rdf:type owl:Class ;
-	rdfs:label "Enumeration" ;
-	skos:definition "A CASCaRA meta-model item used for enumerations of values." .
-
-casShapes_cas:Enumeration
-	rdf:type sh:NodeShape ;
-	sh:targetClass cas:Enumeration ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] .
-
 cas:Relationship
 	rdf:type owl:Class ;
 	rdfs:label "Relationship" ;
@@ -294,7 +212,6 @@ casShapes_cas:Relationship
 		sh:minCount 1
 	] ,
 		casShapes_cas:Category ,
-		casShapes_cas:Icon ,
 		casShapes_cas:SourceLink ,
 		casShapes_cas:TargetLink .
 
@@ -307,19 +224,6 @@ casShapes_cas:Property
 	rdf:type sh:PropertyShape ;
 	sh:path cas:Property ;
 	sh:datatype xs:anyType .
-
-cas:Icon
-	rdf:type owl:DatatypeProperty ;
-	rdfs:subPropertyOf cas:Property ;
-	rdfs:label "has icon" ;
-	skos:definition "Specifies an icon for a model element (entity or relationship)." .
-
-casShapes_cas:Icon
-	rdf:type sh:PropertyShape ;
-	sh:path cas:Icon ;
-	sh:datatype xs:string ;
-	sh:minCount "0" ;
-	sh:maxCount "1" .
 
 cas:Diagram
 	rdf:type owl:DatatypeProperty ;
@@ -469,7 +373,7 @@ casShapes_cas:depicts
 # Data Types with Enumerated Values
 #################################################################
 
-SpecIF:Priority-Value
+SpecIF:Priority-Enumeration
 	rdf:type owl:Class ;
 	rdfs:subClassOf cas:Enumeration ;
 	rdfs:label "Priority"@en ,
@@ -486,27 +390,27 @@ SpecIF:Priority-Value
 			SpecIF:priorityLow
 		) .
 SpecIF:priorityHigh
-	rdf:type SpecIF:Priority-Value ;
+	rdf:type SpecIF:Priority-Enumeration ;
 	rdfs:label "high"@en ,
 		"hoch"@de ,
 		"haut"@fr .
 SpecIF:priorityRatherHigh
-	rdf:type SpecIF:Priority-Value ;
+	rdf:type SpecIF:Priority-Enumeration ;
 	rdfs:label "rather high"@en ,
 		"eher hoch"@de ,
 		"plutôt haut"@fr .
 SpecIF:priorityMedium
-	rdf:type SpecIF:Priority-Value ;
+	rdf:type SpecIF:Priority-Enumeration ;
 	rdfs:label "medium"@en ,
 		"mittel"@de ,
 		"moyen"@fr .
 SpecIF:priorityRatherLow
-	rdf:type SpecIF:Priority-Value ;
+	rdf:type SpecIF:Priority-Enumeration ;
 	rdfs:label "rather low"@en ,
 		"eher niedrig"@de ,
 		"plutôt bas"@fr .
 SpecIF:priorityLow
-	rdf:type SpecIF:Priority-Value ;
+	rdf:type SpecIF:Priority-Enumeration ;
 	rdfs:label "low"@en ,
 		"niedrig"@de ,
 		"bas"@fr .
@@ -526,13 +430,13 @@ SpecIF:Priority
 		"Priorität"@de ,
 		"Priorité"@fr ;
 	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
-	rdfs:range SpecIF:Priority-Value .
+	rdfs:range SpecIF:Priority-Enumeration .
 
 casShapes_SpecIF:Priority
 	rdf:type sh:PropertyShape ;
 	sh:path SpecIF:Priority ;
 	sh:maxCount "1" ;
-	sh:class SpecIF:Priority-Value .
+	sh:class SpecIF:Priority-Enumeration .
 
 # Skipping implicit property: cas:Diagram
 
@@ -544,7 +448,7 @@ casShapes_SpecIF:Priority
 
 IREB:Requirement
 	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Artifact ;
+	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Requirement"@en ,
 		"Anforderung"@de ,
 		"Exigence"@fr ;
@@ -568,7 +472,7 @@ casShapes_IREB:Requirement
 
 SpecIF:Paragraph
 	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Artifact ;
+	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Paragraph"@en ,
 		"Textabsatz"@de ,
 		"Paragraphe"@fr ;
@@ -606,7 +510,7 @@ d:Req-35100bca2b005ba
 
 d:HierarchyRoot-P-Requirement-with-Enumerated-Property
 	rdf:type cas:Root ;
-	dcterms:modified "2026-04-08T07:19:12.570Z" ;
+	dcterms:modified "2026-05-10T16:32:56.721Z" ;
 	rdfs:label "Hierarchy Root" ;
 	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
 	cas:lists (
@@ -617,7 +521,7 @@ d:HR-bca801377e3d1547
 	rdf:type cas:Outline ;
 	rdfs:label "Project 'Requirement with Enumerated Property'" ;
 	cas:Category ReqIF:HierarchyRoot ;
-	dcterms:modified "2026-04-08T07:19:12.522Z" ;
+	dcterms:modified "2026-05-10T16:32:56.668Z" ;
 	cas:lists (
 			d:Req-35100bca2b005ba
 		) .

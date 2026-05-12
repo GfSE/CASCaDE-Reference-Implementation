@@ -279,10 +279,12 @@ export class PigItem {
     /**
      *  Type guard: checks whether a value is one of the XsDataType values
      */
-    static isSupportedDataType(value: unknown): value is XsDataType {
+    static isSupportedDatatype(value: unknown): boolean {
         if (typeof value !== 'string') return false;
         const norm = value.replace(/^xsd:/, 'xs:');
-        return (Object.values(XsDataType) as string[]).includes(norm);
+        return PigItem.isSupportedStringDatatype(norm)
+            || PigItem.isSupportedNumericDatatype(norm)
+            || (Object.values(XsDataType) as string[]).includes(norm);
     }
 
     /**
@@ -696,7 +698,9 @@ abstract class AnElement extends Identifiable implements IAnElement {
             if (skipKeys.has(key)) continue;
 
             // Check if key is a valid ID string (namespace:name or URI)
-            if (!PigItem.isValidIdString(key)) continue;
+            const isValid = PigItem.isValidIdString(key);
+            // console.log(`collectConfigurablesFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
+            if (!isValid) continue;
 
             const val = obj[key];
             //LOG.debug('collect 2', key,val);
@@ -855,7 +859,7 @@ export class Enumeration extends Identifiable implements IEnumeration {
         //    if (!rsp.ok) return rsp;
         // all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
         // others shall be treated as strings (with a warning in the log):
-        if (!PigItem.isSupportedDataType(itm.datatype)) {
+        if (!PigItem.isSupportedDatatype(itm.datatype)) {
             const msg = Msg.create(680, itm.id, itm.datatype);
             LOG.warn(msg.statusText);
             //            return msg */
@@ -948,7 +952,7 @@ export class Property extends Identifiable implements IProperty {
         //    if (!rsp.ok) return rsp;
         // all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
         // others shall be treated as strings (with a warning in the log):
-        if (!PigItem.isSupportedDataType(itm.datatype)) {
+        if (!PigItem.isSupportedDatatype(itm.datatype)) {
             const msg = Msg.create(680, itm.id, itm.datatype);
             LOG.warn(msg.statusText);
             //            return msg */
@@ -1278,9 +1282,12 @@ export class AnEntity extends AnElement implements IAnElement {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         // ... only at the lowest subclass level:
         try {
+            // console.log('AnEntity.validate: validating object keys:', Object.keys(itm));
+            // console.log('AnEntity.validate: full object:', JSON.stringify(itm, null, 2));
             const ok = SCH.validateAnEntitySchema(itm);
             if (!ok) {
                 const msg = SCH.getValidateAnEntityErrors();
+                // console.log('AnEntity.validate: FAILED with errors:', msg);
                 return Msg.create(681, 'anEntity', itm.id, msg);
             }
         } catch (err: any) {
@@ -1978,7 +1985,7 @@ function extractId(obj: unknown): string | undefined {
     if (typeof obj === 'object') {
         const o = obj as Record<string, unknown>;
         const id = Object.prototype.hasOwnProperty.call(o, '@id') ? o['@id'] : o['id'];
-        LOG.debug('extractId', obj, id);
+        // LOG.debug('extractId', obj, id);
         if (typeof(id) === 'string' && id.trim().length > 0) {
             return id;
         }
@@ -2487,7 +2494,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         const needsTextWrapper = requiresIText(propertyName);
 
         // Pass parent itemType for context-aware array detection
-        const mustBeArray = requiresArray(propertyName, result.itemType as PigItemTypeValue );
+        const mustBeArray = requiresArray(propertyName /*, result.itemType as PigItemTypeValue */);
 
         if (elements.length === 1 && !mustBeArray) {
             // Single element (and not forced to be array)
@@ -2582,7 +2589,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
  * 
  * Context detection is done via the parent element's itemType
  */
-function requiresArray(propertyName: string, parentItemType?: PigItemTypeValue): boolean {
+function requiresArray(propertyName: string /*, parentItemType?: PigItemTypeValue */): boolean {
     // Remove namespace prefix for checking
     const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
 

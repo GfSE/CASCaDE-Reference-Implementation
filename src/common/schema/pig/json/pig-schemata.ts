@@ -3,7 +3,7 @@ import { ajv } from '../../../../plugins/ajv';
 
 class PigSchemaFactory {
     static getIdNamePattern() {
-        return '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
+        return '^(?:[a-zA-Z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$';
     }
     static getSchemaSchema() {
         return 'http://json-schema.org/draft-07/schema#';

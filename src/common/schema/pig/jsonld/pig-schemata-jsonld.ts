@@ -315,6 +315,10 @@ export const SCH_LD = {
     },
     async getValidateAnEntityLDErrors(): Promise<string> {
         const validator = await getValidator('AnEntity');
+        /* Add detailed error logging
+        if (validator.errors) {
+            console.log('AJV Validation Errors:', JSON.stringify(validator.errors, null, 2));
+        } */
         return ajv.errorsText(validator.errors, { separator: '; ' });
     },
     async getValidateARelationshipLDErrors(): Promise<string> {

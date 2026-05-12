@@ -89,7 +89,7 @@
   "$defs": {
     "idString": {
       "type": "string",
-      "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
+      "pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$",
       "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
     },
     "idObject": {

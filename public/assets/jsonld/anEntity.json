@@ -61,7 +61,7 @@
     }
   },
   "patternProperties": {
-    "^(?!cas:itemType|cas:revision|cas:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$": {
+    "^(?!cas:itemType|cas:revision|cas:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$": {
       "type": "array",
       "description": "Configurable properties and links with namespaced keys",
       "items": {
@@ -163,7 +163,7 @@
   "$defs": {
     "idString": {
       "type": "string",
-      "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
+      "pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$",
       "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
     },
     "languageValue": {

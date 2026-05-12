@@ -57,10 +57,10 @@
  * Authors: oskar.dungern@gfse.org
  */
 
-import { DEF } from '../../../lib/definitions';
+import { DEF, RE } from '../../../lib/definitions';
 import { IRsp, rspOK, Msg } from '../../../lib/messages';
 import { LIB, LOG } from "../../../lib/helpers";
-import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigId, Enumeration } from './pig-metaclasses';
+import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigId, Enumeration, XsDataType } from './pig-metaclasses';
 
 /**
  * Available constraint check types
@@ -1102,129 +1102,111 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
 
                 // Get the value resp. idRef to validate
                 let pVal = prop.value as string | undefined;
-                const idRef = prop.idRef as TPigId | undefined;
-                if ((pVal === undefined || pVal === null) && (idRef === undefined || idRef === null)) {
-                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has neither value nor reference to enumerated value`);
+                if ((pVal === undefined || pVal === null)) {
+                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has no value`);
                     continue; // neither value nor id - validated by schema
                 }
 
-            /*    // Check enumerated values (enumerations) - applies to all datatypes
-                if (propDef.enumeratedValue !== undefined) {
-                    // A: aProperty instances must have references to enumerated values ...
+                // aProperty instances must have a literal value potentially with restrictions:
+                pVal = pVal ?? ''; // satisfy the TypeScript compiler - actually the schema-check assures there is a value.
 
-                    // @ToDo: enumeratedValues is schema-checked and always a list
-                    const enumeratedValues = Array.isArray(propDef.enumeratedValue)
-                        ? propDef.enumeratedValue
-                        : [propDef.enumeratedValue];
-
-                    // Check if value is in enumerated list
-                    const isenumerated = enumeratedValues.some((eV: any) => {
-                        // Handle both string values and object values with id
-                        // @ToDo: should always have an id.
-                        const enumeratedStr = typeof eV === 'object' && eV !== null && 'id' in eV
-                            ? eV['id']
-                            : String(eV);
-                        return enumeratedStr === idRef;
-                    });
-
-                    // LOG.debug(`checkValueRanges - enum list: ${JSON.stringify(enumeratedValues, null, 2)}`, idRef, isenumerated);
-
-                    if (!isenumerated) {
+                // String validation
+                // Here (native item.hasProperty), all elements of a multi-language text are listed flat with all other properties.
+                if (PigItem.isSupportedStringDatatype(datatype)) {
+                    // Perform validation for each language-tagged value
+                    // Check maxLength
+                    if (propDef.maxLength !== undefined && pVal.length > propDef.maxLength) {
                         return Msg.create(
                             679,
                             itemId,
                             j,
                             propClassId,
-                            `value '${idRef}' is not in enumeratedValue list: [${enumeratedValues.map((v: any) =>
-                                typeof v === 'object' && v !== null && 'id' in v ? v['id'] : String(v)
-                            ).join(', ')}]`
+                            `string length ${pVal.length} exceeds maxLength ${propDef.maxLength}`
+                        );
+                    }
+
+                    // Check pattern
+                    if (propDef.pattern) {
+                        try {
+                            const regex = new RegExp(propDef.pattern);
+                            if (!regex.test(pVal)) {
+                                return Msg.create(
+                                    679,
+                                    itemId,
+                                    j,
+                                    propClassId,
+                                    `value '${pVal}' does not match pattern '${propDef.pattern}'`
+                                );
+                            }
+                        } catch (e) {
+                            LOG.warn(`Invalid regex pattern in property ${propClassId}: ${propDef.pattern}`);
+                        }
+                    }
+                }
+
+                // Number validation
+                else if (PigItem.isSupportedNumericDatatype(datatype)) {
+                    const numValue = Number(pVal);
+
+                    if (isNaN(numValue)) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `value '${pVal}' is not a valid number for datatype ${datatype}`
+                        );
+                    }
+
+                    // Check minInclusive
+                    if (propDef.minInclusive !== undefined && numValue < propDef.minInclusive) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `value ${numValue} is less than minInclusive ${propDef.minInclusive}`
+                        );
+                    }
+
+                    // Check maxInclusive
+                    if (propDef.maxInclusive !== undefined && numValue > propDef.maxInclusive) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `value ${numValue} exceeds maxInclusive ${propDef.maxInclusive}`
                         );
                     }
                 }
-                else { */
-                    // B: aProperty instances must have a literal value potentially with restrictions:
-                    pVal = pVal ?? ''; // satisfy the TypeScript compiler - actually the schema-check assures there is a value.
 
-                    // String validation
-                    // Here (native item.hasProperty), all elements of a multi-language text are listed flat with all other properties.
-                    if (PigItem.isSupportedStringDatatype(datatype)) {
-                        // Perform validation for each language-tagged value
-                        // Check maxLength
-                        if (propDef.maxLength !== undefined && pVal.length > propDef.maxLength) {
-                            return Msg.create(
-                                679,
-                                itemId,
-                                j,
-                                propClassId,
-                                `string length ${pVal.length} exceeds maxLength ${propDef.maxLength}`
-                            );
-                        }
-
-                        // Check pattern
-                        if (propDef.pattern) {
-                            try {
-                                const regex = new RegExp(propDef.pattern);
-                                if (!regex.test(pVal)) {
-                                    return Msg.create(
-                                        679,
-                                        itemId,
-                                        j,
-                                        propClassId,
-                                        `value '${pVal}' does not match pattern '${propDef.pattern}'`
-                                    );
-                                }
-                            } catch (e) {
-                                LOG.warn(`Invalid regex pattern in property ${propClassId}: ${propDef.pattern}`);
-                            }
-                        }
+                // Other datatypes:
+                else if (PigItem.isSupportedDatatype(datatype)) {
+                    switch (datatype) {
+                        case XsDataType.AnyURI:
+                            break;
+                        case XsDataType.Date:
+                        case XsDataType.DateTime:
+                            if (pVal && !RE.isoDateTime.test(pVal))
+                                return Msg.create(
+                                    679,
+                                    itemId,
+                                    j,
+                                    propClassId,
+                                    `value '${pVal}' is not a valid ISO-8601 date/time for datatype ${datatype}`
+                                );
                     }
-
-                    // Number validation
-                    else if (PigItem.isSupportedNumericDatatype(datatype)) {
-                        const numValue = Number(pVal);
-
-                        if (isNaN(numValue)) {
-                            return Msg.create(
-                                679,
-                                itemId,
-                                j,
-                                propClassId,
-                                `value '${pVal}' is not a valid number for datatype ${datatype}`
-                            );
-                        }
-
-                        // Check minInclusive
-                        if (propDef.minInclusive !== undefined && numValue < propDef.minInclusive) {
-                            return Msg.create(
-                                679,
-                                itemId,
-                                j,
-                                propClassId,
-                                `value ${numValue} is less than minInclusive ${propDef.minInclusive}`
-                            );
-                        }
-
-                        // Check maxInclusive
-                        if (propDef.maxInclusive !== undefined && numValue > propDef.maxInclusive) {
-                            return Msg.create(
-                                679,
-                                itemId,
-                                j,
-                                propClassId,
-                                `value ${numValue} exceeds maxInclusive ${propDef.maxInclusive}`
-                            );
-                        }
-                    }
-                    else {
-                        return Msg.create(
-                            679,
-                            itemId,
-                            j,
-                            propClassId,
-                            `Unsupported datatype ${datatype}`
-                        );
-                    }
-              //  }
+                }
+                else {
+                    return Msg.create(
+                        679,
+                        itemId,
+                        j,
+                        propClassId,
+                        `Unsupported datatype ${datatype}`
+                    );
+                }
             }
         }
     }
