@@ -613,7 +613,7 @@ abstract class Element extends Identifiable implements IElement {
     protected get() {
         return {
             ...super.get(),
-            enumeratedProperty: LIB.isArrayWithContent(this.enumeratedProperty) ? this.enumeratedProperty : undefined,
+            enumeratedProperty: this.enumeratedProperty, // undfined: all allowed, empty array: none allowed, array with items: only those allowed
             icon: this.icon
         } as IElement;
     }
@@ -1109,7 +1109,7 @@ export class Entity extends Element implements IEntity {
     get() {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
-            enumeratedTargetLink: LIB.isArrayWithContent(this.enumeratedTargetLink) ? this.enumeratedTargetLink : undefined
+            enumeratedTargetLink: this.enumeratedTargetLink // undefined: all allowed, empty array: none allowed, array with items: only those allowed
         }) as IEntity;
     }
     fromJSONLD(itm: any) {
@@ -1173,8 +1173,8 @@ export class Relationship extends Element implements IRelationship {
     get() {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
-            enumeratedSourceLink: LIB.isArrayWithContent(this.enumeratedSourceLink) ? this.enumeratedSourceLink : undefined,
-            enumeratedTargetLink: LIB.isArrayWithContent(this.enumeratedTargetLink) ? this.enumeratedTargetLink : undefined
+            enumeratedSourceLink: this.enumeratedSourceLink, // undefined: all allowed, empty array: none allowed, array with items: only those allowed
+            enumeratedTargetLink: this.enumeratedTargetLink // as above
         }) as IRelationship;
     }
     fromJSONLD(itm: any) {
@@ -1247,7 +1247,9 @@ export class ASourceLink extends ALink implements IALink {
         return this;
     }
     get() {
-        return super.get();
+        return LIB.stripUndefinedAndNull({
+            ... super.get(),
+        });
     }
 }
 export class ATargetLink extends ALink implements IALink {
@@ -1270,7 +1272,9 @@ export class ATargetLink extends ALink implements IALink {
         return this;
     }
     get() {
-        return super.get();
+        return LIB.stripUndefinedAndNull({
+            ... super.get(),
+        });
     }
 }
 

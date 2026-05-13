@@ -1152,4 +1152,311 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
         });
     });
+
+    describe('Enumerated Arrays: undefined vs empty [] semantics', () => {
+        /**
+         * Test semantics:
+         * - undefined = wildcard, all items allowed
+         * - [] = explicit restriction, no items allowed
+         * - [...] = only listed items allowed
+         */
+
+        describe('enumeratedProperty', () => {
+            test('POSITIVE: undefined enumeratedProperty allows any property', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'sh': 'http://www.w3.org/ns/shacl#',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-enumerated-undefined',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Property_Status',
+                            '@type': "owl:DatatypeProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Status' }],
+                            'sh:datatype': { '@id': 'xs:string' }
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedProperty is undefined (not present) = all properties allowed
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-001',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }],
+                            // ✅ Using o:Property_Status even though enumeratedProperty is undefined
+                            'o:Property_Status': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                                    '@value': 'Draft'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
+
+            test('NEGATIVE: empty [] enumeratedProperty rejects any property', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'sh': 'http://www.w3.org/ns/shacl#',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-enumerated-empty',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Property_Status',
+                            '@type': "owl:DatatypeProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Status' }],
+                            'sh:datatype': { '@id': 'xs:string' }
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ❌ enumeratedProperty is [] = no properties allowed
+                            [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-002',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }],
+                            // ❌ Using o:Property_Status but enumeratedProperty is []
+                            'o:Property_Status': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                                    '@value': 'Draft'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData, { constraintChecks: [ConstraintCheckType.enumeratedProperties] });
+                const st = pkg.status();
+                expect(st.ok).toBe(false);
+                // console.log('Status:', st);
+                expect(st.status).toBe(611);
+                expect(st.statusText).toContain('(676)'); // Link not in enumerated list of its class
+            });
+
+            test('POSITIVE: empty [] enumeratedProperty allows entity with no properties', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-enumerated-empty-ok',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedProperty is [] = no properties allowed
+                            [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-003',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }]
+                            // ✅ No properties used, consistent with enumeratedProperty: []
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
+        });
+
+        describe('enumeratedTargetLink', () => {
+            test('POSITIVE: undefined enumeratedTargetLink allows any link', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-link-undefined',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Link_RefersTo',
+                            '@type': "owl:ObjectProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                            [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                                { '@id': `${DEF.pfxNsMeta}Entity` }
+                            ],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Refers To' }]
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedTargetLink is undefined = all links allowed
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-004',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Source' }]
+                        },
+                        {
+                            '@id': 'd:REQ-005',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Target' }],
+                            // ✅ Using link even though enumeratedTargetLink is undefined
+                            'o:Link_RefersTo': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                                    '@id': 'd:REQ-004'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
+
+            test('NEGATIVE: empty [] enumeratedTargetLink rejects any link', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-link-empty',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Link_RefersTo',
+                            '@type': "owl:ObjectProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                            [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                                { '@id': `${DEF.pfxNsMeta}Entity` }
+                            ],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Refers To' }]
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ❌ enumeratedTargetLink is [] = no links allowed
+                            [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-006',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Source' }]
+                        },
+                        {
+                            '@id': 'd:REQ-007',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Target' }],
+                            // ❌ Using link but enumeratedTargetLink is []
+                            'o:Link_RefersTo': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                                    '@id': 'd:REQ-006'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData, { constraintChecks: [ConstraintCheckType.enumeratedLinks] });
+                const st = pkg.status();
+                expect(st.ok).toBe(false);
+                // console.log('Status:', st);
+                expect(st.status).toBe(611);
+                expect(st.statusText).toContain('(676)'); // Link not in enumerated list of its class
+            });
+
+            test('POSITIVE: empty [] enumeratedTargetLink allows entity with no links', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-link-empty-ok',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedTargetLink is [] = no links allowed
+                            [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-008',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }]
+                            // ✅ No links used, consistent with enumeratedTargetLink: []
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
+        });
+    });
 });
