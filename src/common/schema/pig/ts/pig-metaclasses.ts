@@ -702,7 +702,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
             // Check if key is a valid ID string (namespace:name or URI)
             const isValid = PigItem.isValidIdString(key);
-            // console.log(`collectConfigurablesFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
+            // LOG.info(`collectConfigurablesFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
             if (!isValid) continue;
 
             const val = obj[key];
@@ -1284,12 +1284,12 @@ export class AnEntity extends AnElement implements IAnElement {
         // Schema validation (AJV) - provides structural checks and reuses the idString definition
         // ... only at the lowest subclass level:
         try {
-            // console.log('AnEntity.validate: validating object keys:', Object.keys(itm));
-            // console.log('AnEntity.validate: full object:', JSON.stringify(itm, null, 2));
+            // LOG.info('AnEntity.validate: validating object keys:', Object.keys(itm));
+            // LOG.info('AnEntity.validate: full object:', JSON.stringify(itm, null, 2));
             const ok = SCH.validateAnEntitySchema(itm);
             if (!ok) {
                 const msg = SCH.getValidateAnEntityErrors();
-                // console.log('AnEntity.validate: FAILED with errors:', msg);
+                // LOG.info('AnEntity.validate: FAILED with errors:', msg);
                 return Msg.create(681, 'anEntity', itm.id, msg);
             }
         } catch (err: any) {

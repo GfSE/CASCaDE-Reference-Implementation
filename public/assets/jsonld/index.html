@@ -34,7 +34,7 @@
                     <li>
                         <p><a href="Property.json"><strong>Property.json</strong></a></p>
                         <div class="description">
-                            Validates <strong>Property</strong> class definitions that specify attributes for entities and relationships.
+                            Validates <strong>Property</strong> class definitions that specify attributes for entities, relationships and packages.
                             May include datatype specifications (string, integer, double, boolean, dateTime, etc.), cardinality constraints
                             (<code>sh:minCount</code>, <code>sh:maxCount</code>), value constraints (<code>sh:minInclusive</code>,
                             <code>sh:maxInclusive</code>, <code>sh:maxLength</code>, <code>sh:pattern</code>), default value, measurement unit
@@ -55,7 +55,7 @@
                     <li>
                         <p><a href="Entity.json"><strong>Entity.json</strong></a></p>
                         <div class="description">
-                            Validates <strong>Entity</strong> class definitions for individual information objects.
+                            Validates <strong>Entity</strong> class definitions for individual information objects and organizers including packages.
                             Configures which properties (<code>cas:enumeratedProperty</code>) and which outgoing
                             links are allowed (<code>cas:enumeratedTargetLink</code>).
                             Entities classify primary information objects such as Requirements, Components and Diagrams in a systems engineering context.
@@ -71,8 +71,9 @@
                             Configures which properties (<code>cas:enumeratedProperty</code>), source links
                             (<code>cas:enumeratedSourceLink</code>) and target links (<code>cas:enumeratedTargetLink</code>) are allowed.
                             Relationships are reified connections that can carry their own properties, enabling rich traceability and
-                            dependency modeling (e.g., "Refinement" relationships with rationale and traceability status).
-                            Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance.
+                            dependency modeling (e.g., "refines" relationships with rationale and traceability status).
+                            Relationships classify meaningful statements including a subject and an object, 
+							where both the subject and the object is an entity or relationship instance.
                             Supports specialization hierarchies and optional icons.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:Class</code> with constrained <code>owl:ObjectProperty</code> endpoints</div>
@@ -82,7 +83,7 @@
                         <div class="description">
                             Validates <strong>Enumeration</strong> class definitions for enumerated values of a given concept.
                             Defines the datatype of the enumeration (string, integer, double, boolean),
-                            enumeration values (<code>cas:enumeratedValue</code>), and optionally a unit of measurement.
+                            enumeration values (<code>cas:enumeratedValue</code>) and optionally a unit of measurement.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:Class</code> with every enumerated value as individual</div>
                     </li>
@@ -101,7 +102,8 @@
                             Includes mandatory metadata: <code>@type</code> (reference to Entity class), <code>cas:revision</code>, 
                             <code>dcterms:modified</code> timestamp, optional <code>cas:priorRevision</code> and 
                             <code>dcterms:creator</code>. Properties can have direct values (<code>@value</code>) or 
-							reference enumeration values (<code>@id</code>) as defined by its class. Target links reference other entity or relationship instances. 
+							reference enumeration values (<code>@id</code>) as defined by its class. 
+							Target links reference other entity or relationship instances. 
                             Must have either <code>dcterms:title</code> or <code>dcterms:description</code> (or both) to convey meaning.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:NamedIndividual</code></div>
@@ -109,13 +111,15 @@
                     <li>
                         <p><a href="aRelationship.json"><strong>aRelationship.json</strong></a></p>
                         <div class="description">
-                            Validates <strong>relationship instances</strong> representing directed, reified connections between items (i.e. entity or relationship instances). 
+                            Validates <strong>relationship instances</strong> representing directed, 
+							reified connections between items (i.e. entity or relationship instances). 
                             Similar metadata to entities, but additionally requires both source links (<code>cas:aSourceLink</code>) 
 							and target links (<code>cas:aTargetLink</code>) conforming to the class definition. 
 							Source and target links reference entity or relationship instances. 
 							Properties can carry contextual information about the relationship (e.g., traceability status, rationale, coverage analysis). 
 							Reification enables relationships to be first-class items with their own lifecycle and properties.
-							Must have a <code>dcterms:title</code> and optionally a <code>dcterms:description</code> to convey meaning.
+							May have a <code>dcterms:title</code> and/or a <code>dcterms:description</code> to convey meaning;
+							otherwise the title and definition of its class applies.
                         </div>
                         <div class="description">→ OWL mapping: <code>owl:NamedIndividual</code> (reified predicate)</div>
                     </li>
@@ -129,11 +133,16 @@
                     <li>
                         <p><a href="aPackage.json"><strong>aPackage.json</strong></a></p>
                         <div class="description">
-                            Validates <strong>complete JSON-LD package documents</strong> with <code>@context</code> (namespace and vocabulary definitions) 
-							as well as <code>@graph</code> (array of CASCaRA items). The graph contains a mix of classes (Property, Link, Entity, Relationship) 
-                            and instances (anEntity, aRelationship). Package-level metadata includes optional 
+                            Validates <strong>complete JSON-LD packages</strong> with <code>@context</code> (namespace and vocabulary definitions) 
+							as well as <code>@graph</code> (array of CASCaRA items). 
+							Package-level metadata includes optional 
                             <code>dcterms:modified</code>, <code>dcterms:creator</code>, <code>dcterms:title</code>, and 
-                            <code>dcterms:description</code>. Validates each item against its corresponding schema based on <code>cas:itemType</code>.
+                            <code>dcterms:description</code>. 
+							A package may have configurable properties and target links as defined in its class, which
+							must be a subclass of <code>cas:Entity</code>.
+							The graph contains a mix of classes (<code>cas:Property, cas:Link, cas:Entity, cas:Relationship, cas:Enumeration</code>) 
+                            and instances (<code>cas:anEntity, cas:aRelationship</code>). 
+							Validates each item in @graph against its corresponding schema based on <code>cas:itemType</code>.
                         </div>
                         <div class="description">→ OWL mapping: Self-contained RDF graph with ontology and instance data</div>
                     </li>
