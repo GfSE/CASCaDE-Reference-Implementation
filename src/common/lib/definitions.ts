@@ -1,8 +1,8 @@
 import { BUILD_INFO } from '../../build-info';
 
 const PIG_DOMAIN = 'http://product-information-graph.org/';
-const PREFIX_NS_META = 'cas:'
-const PREFIX_NS_SEMI = 'cas:'
+const PREFIX_NS_META = 'cas:';
+const PREFIX_NS_SEMI = 'cas:';
 const PREFIX_NS_DCMI = 'dcterms:';
 
 export const DEF = {

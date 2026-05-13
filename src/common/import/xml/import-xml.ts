@@ -128,32 +128,6 @@ export class XmlImporter {
     }
 
     /**
-     * Check XML syntax before parsing
-     * 
-     * @param xmlString - XML string to validate
-     * @returns IRsp indicating success or error
-     * @private
-     * /
-    static checkXmlSyntax(xmlString: string): IRsp {
-        try {
-            const parser = PLI.createDOMParser();
-            const doc = parser.parseFromString(xmlString, 'text/xml');
-            const parserError = PLI.getXmlParseError(doc);
-
-            if (parserError) {
-                const errorMessage =
-                    parserError.textContent || 'Unknown XML parsing error';
-                return Msg.create(690, 'XML', errorMessage);
-            }
-
-            return rspOK;
-        } catch (err: unknown) {
-            const errorMessage = err instanceof Error ? err.message : String(err);
-            return Msg.create(690, 'XML', errorMessage);
-        }
-    } */
-
-    /**
      * Check schema
      * @param xmlString - XML-String
      * @returns IRsp

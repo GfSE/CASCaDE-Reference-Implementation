@@ -372,8 +372,8 @@ export const PLI = {
  * 
  * @param element - XML DOM Element to serialize
  * @returns HTML content as string (unescaped)
- * /
-function serializeXmlContent(element: ElementXML): string {
+ */
+/* function serializeXmlContent(element: ElementXML): string {
     // ✅ Use PLI.getXMLSerializer() for platform independence
     try {
         const SerializerClass = PLI.getXMLSerializer();
@@ -397,8 +397,8 @@ function serializeXmlContent(element: ElementXML): string {
  * 
  * @param element - Element containing HTML content
  * @returns HTML string with preserved structure
- * /
-function manualSerializeHtml(element: ElementXML): string {
+ */
+/* function manualSerializeHtml(element: ElementXML): string {
     const parts: string[] = [];
 
     for (const child of Array.from(element.childNodes)) {
@@ -422,8 +422,8 @@ function manualSerializeHtml(element: ElementXML): string {
  * 
  * @param elem - Element to serialize
  * @returns HTML string
- * /
-function serializeHtmlElement(elem: ElementXML): string {
+ */
+/* function serializeHtmlElement(elem: ElementXML): string {
     const tagName = elem.tagName.toLowerCase(); // Use lowercase for HTML
     const attributes: string[] = [];
 

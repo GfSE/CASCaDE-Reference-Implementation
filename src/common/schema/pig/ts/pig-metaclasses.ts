@@ -2010,8 +2010,8 @@ function extractId(obj: unknown): string | undefined {
  * @param input  value to check
  * @param fieldName  name used in error messages
  * @returns IRsp (rspOK on success, error IRsp on failure)
- * /
-export function validateIdStringArray(
+ */
+/* export function validateIdStringArray(
     input: unknown,
     fieldName = 'ids',
     options?: { canBeUndefined?: boolean, minCount?: number }
@@ -2066,8 +2066,8 @@ export function validateIdStringArray(
  * @param input  value to check
  * @param fieldName  name used in error messages
  * @returns IRsp (rspOK on success, error IRsp on failure)
- * /
-function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
+ */
+/* function validateIdObjectArray(input: unknown, fieldName = 'ids'): IRsp {
     if (!Array.isArray(input)) {
         return Msg.create(630, fieldName);
     }
