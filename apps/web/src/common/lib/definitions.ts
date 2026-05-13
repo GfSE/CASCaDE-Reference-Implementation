@@ -1,6 +1,9 @@
 import { BUILD_INFO } from '../../build-info';
 
 const PIG_DOMAIN = 'http://product-information-graph.org/';
+const PREFIX_NS_META = 'cas:';
+const PREFIX_NS_SEMI = 'cas:';
+const PREFIX_NS_DCMI = 'dcterms:';
 
 export const DEF = {
     pigVersion: '2026-02-23',
@@ -13,7 +16,11 @@ export const DEF = {
     defaultDataNamespace: PIG_DOMAIN + 'default/data#',  // for data instances with prefix d:
     defaultOntologyNamespace: PIG_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
     ...BUILD_INFO,
-    minIdLength: 3
+    minLengthId: 3,
+    maxSizeXML: 4 * 1024 * 1024, // 4MB
+    pfxNsMeta: PREFIX_NS_META,
+    pfxNsSemi: PREFIX_NS_SEMI,
+    pfxNsDcmi: PREFIX_NS_DCMI,
 };
 
 export const RE = {
@@ -30,7 +37,7 @@ export const RE = {
     //                                                                                                                          $8: 0..1 fragment=page anchor (hash)
     //                                                                                                                                       $9: ends with certain characters or eol
     // Namespace: /^([\w-]+)[.:]([\w\.-]*)$/
-    termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_\\-\\.]*):([^\s]+)$/,
+    termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_-]*):([^:\s]+)$/,
     isoDateTime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}(:\d{2})?)?$/,
     hasTimezone: /(Z|[+-]\d{2}(:\d{2})?)$/
 }

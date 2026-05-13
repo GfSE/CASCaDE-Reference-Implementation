@@ -6,6 +6,7 @@
  * Limitations:
  * - The following tests feed the consistency checks directly with a JSON data structure
  *   similar from aPackage.get(). Some properties irrelevant in this context are however missing.
+ *   So it is possible that some of the items would not pass the schema check! 
  */
 
 import { checkConstraintsForPackage, ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
@@ -15,6 +16,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
     // Helper to create a minimal valid package
     const createPackage = (properties: any[], propertyDefs: any[] = []): IAPackage => {
         return {
+            hasClass: PigItemType.Package,
             itemType: PigItemType.aPackage,
             id: 'd:test-package',
             title: [{ value: 'Test Package', lang: 'en' }],
@@ -56,6 +58,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.Property,
+                            hasClass: 'owl:DatatypeProperty',
                             id: 'o:Name',
                             title: [{ value: 'Name', lang: 'en' }],
                             datatype: 'xs:string',
@@ -86,6 +89,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.Property,
+                            hasClass: 'owl:DatatypeProperty',
                             id: 'o:Name',
                             title: [{ value: 'Name', lang: 'en' }],
                             datatype: 'xs:string',
@@ -116,6 +120,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.Property,
+                            hasClass: 'owl:DatatypeProperty',
                             id: 'o:Description',
                             title: [{ value: 'Description', lang: 'en' }],
                             datatype: 'xs:string',
@@ -156,6 +161,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.Property,
+                            hasClass: 'owl:DatatypeProperty',
                             id: 'o:Keyword',
                             title: [{ value: 'Keyword', lang: 'en' }],
                             datatype: 'xs:string',
@@ -175,6 +181,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.Property,
+                            hasClass: 'owl:DatatypeProperty',
                             id: 'o:Name',
                             title: [{ value: 'Name', lang: 'en' }],
                             datatype: 'xs:string',
@@ -211,6 +218,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.Property,
+                            hasClass: 'owl:DatatypeProperty',
                             id: 'o:Keyword',
                             title: [{ value: 'Keyword', lang: 'en' }],
                             datatype: 'xs:string',

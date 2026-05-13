@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cas:aPackage
+    xmlns:cas="https://product-information-graph.org/v0.2/metamodel#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:skos="https://www.w3.org/TR/skos-reference/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:FMC="http://fmc-modeling.org#"
+    xmlns:IREB="https://cpre.ireb.org/en/downloads-and-resources/glossary#"
+    xmlns:SpecIF="https://specif.de/v1.2/schema#"
+    xmlns:o="https://product-information-graph.org/v0.2/ontology#"
+    xmlns:d="https://product-information-graph.org/examples/05_Requirement-with-Enumerated-Property.specif#"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+    xmlns:sh="http://www.w3.org/ns/shacl#"
+    id="d:P-Requirement-with-Enumerated-Property"
+    cas:hasClass="cas:Package">
+
+    <dcterms:title>Project 'Requirement with Enumerated Property'</dcterms:title>
+    <dcterms:modified>2026-04-08T08:14:32.015Z</dcterms:modified>
+
+    <graph>
+        <!-- Metamodel Classes and Semantic Infrastructure -->
+        <cas:Entity id="cas:Entity" cas:hasClass="owl:Class">
+            <dcterms:title>Entity</dcterms:title>
+            <skos:definition>A CASCaRA meta-model item used for entities (aka resources or artifacts).</skos:definition>
+            <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
+            <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
+        </cas:Entity>
+        <cas:Entity id="cas:Package" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Entity</cas:specializes>
+            <dcterms:title>Package</dcterms:title>
+            <skos:definition>A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages.</skos:definition>
+        </cas:Entity>
+        <cas:Entity id="FMC:Actor" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Entity</cas:specializes>
+            <dcterms:title>Actor</dcterms:title>
+            <skos:definition>A fundamental model-element class for actors (e.g. users, functions, systems, components, ...).</skos:definition>
+        </cas:Entity>
+        <cas:Entity id="FMC:State" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Entity</cas:specializes>
+            <dcterms:title>State</dcterms:title>
+            <skos:definition>A fundamental model-element class for states (e.g. system or process states, information, form, color, ...).</skos:definition>
+        </cas:Entity>
+        <cas:Entity id="FMC:Event" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Entity</cas:specializes>
+            <dcterms:title>Event</dcterms:title>
+            <skos:definition>A fundamental model-element class for events (e.g. environmental or process events, ...).</skos:definition>
+        </cas:Entity>
+        <cas:Entity id="cas:Organizer" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Entity</cas:specializes>
+            <dcterms:title>Organizer</dcterms:title>
+            <skos:definition>A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation.</skos:definition>
+        </cas:Entity>
+        <cas:Entity id="cas:Root" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Organizer</cas:specializes>
+            <dcterms:title>Root</dcterms:title>
+            <skos:definition>A subclass of cas:Organizer serving as a root for trees and tables.</skos:definition>
+            <cas:enumeratedTargetLink>cas:lists</cas:enumeratedTargetLink>
+        </cas:Entity>
+        <cas:Entity id="cas:Tree" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Organizer</cas:specializes>
+            <dcterms:title>Tree</dcterms:title>
+            <skos:definition>A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships.</skos:definition>
+            <cas:enumeratedTargetLink>cas:lists</cas:enumeratedTargetLink>
+        </cas:Entity>
+        <cas:Entity id="cas:Outline" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Tree</cas:specializes>
+            <dcterms:title>Outline</dcterms:title>
+            <skos:definition>A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</skos:definition>
+        </cas:Entity>
+        <cas:Entity id="cas:View" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Organizer</cas:specializes>
+            <dcterms:title>View</dcterms:title>
+            <skos:definition>A subclass of cas:Organizer representing a model view (diagram) using a certain notation showing selected model elements.</skos:definition>
+            <cas:enumeratedProperty>cas:Diagram</cas:enumeratedProperty>
+            <cas:enumeratedProperty>cas:Notation</cas:enumeratedProperty>
+            <cas:enumeratedTargetLink>cas:shows</cas:enumeratedTargetLink>
+            <cas:enumeratedTargetLink>cas:depicts</cas:enumeratedTargetLink>
+        </cas:Entity>
+        <cas:Entity id="cas:Table" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Organizer</cas:specializes>
+            <dcterms:title>Table</dcterms:title>
+            <skos:definition>A subclass of cas:Organizer representing a table showing selected model elements.</skos:definition>
+            <cas:enumeratedTargetLink>cas:shows</cas:enumeratedTargetLink>
+        </cas:Entity>
+        <cas:Entity id="cas:Enumeration" cas:hasClass="owl:Class">
+            <dcterms:title>Enumeration</dcterms:title>
+            <skos:definition>A CASCaRA meta-model item used for enumerations of values.</skos:definition>
+        </cas:Entity>
+        <cas:Relationship id="cas:Relationship" cas:hasClass="owl:Class">
+            <dcterms:title>Relationship</dcterms:title>
+            <skos:definition>A CASCaRA meta-model item used for reified relationships (aka predicates).</skos:definition>
+            <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
+            <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
+            <cas:enumeratedSourceLink>cas:SourceLink</cas:enumeratedSourceLink>
+            <cas:enumeratedTargetLink>cas:TargetLink</cas:enumeratedTargetLink>
+        </cas:Relationship>
+        <cas:Property id="cas:Property" cas:hasClass="owl:DatatypeProperty">
+            <dcterms:title>Property</dcterms:title>
+            <skos:definition>A CASCaRA meta-model item used for properties (aka attributes).</skos:definition>
+            <xs:simpleType>
+                <xs:restriction base="xs:anyType"/>
+            </xs:simpleType>
+        </cas:Property>
+        <cas:Property id="cas:Icon" cas:hasClass="owl:DatatypeProperty">
+            <cas:specializes>cas:Property</cas:specializes>
+            <dcterms:title>has icon</dcterms:title>
+            <skos:definition>Specifies an icon for a model element (entity or relationship).</skos:definition>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+        </cas:Property>
+        <cas:Property id="cas:Diagram" cas:hasClass="owl:DatatypeProperty">
+            <cas:specializes>cas:Property</cas:specializes>
+            <dcterms:title>Diagram</dcterms:title>
+            <skos:definition>A diagram illustrating the resource or a link to a diagram.</skos:definition>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+        </cas:Property>
+        <cas:Property id="cas:Category" cas:hasClass="owl:DatatypeProperty">
+            <cas:specializes>cas:Property</cas:specializes>
+            <dcterms:title>has category</dcterms:title>
+            <skos:definition>Specifies a category for an element (entity, relationship or organizer).</skos:definition>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+        </cas:Property>
+        <cas:Property id="cas:Notation" cas:hasClass="owl:DatatypeProperty">
+            <cas:specializes>cas:Category</cas:specializes>
+            <dcterms:title>Notation</dcterms:title>
+            <skos:definition>A reference to a notation defining the syntax and semantics of a diagram.</skos:definition>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+        </cas:Property>
+		
+        <!-- Links -->
+        <cas:Link id="cas:Link" cas:hasClass="owl:ObjectProperty">
+            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+            <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
+            <dcterms:title>linked with</dcterms:title>
+            <skos:definition>A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element.</skos:definition>
+        </cas:Link>
+        <cas:Link id="cas:SourceLink" cas:hasClass="owl:ObjectProperty">
+            <cas:specializes>cas:Link</cas:specializes>
+            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+            <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
+            <dcterms:title>to source</dcterms:title>
+            <skos:definition>Connects the source of a reified relationship.</skos:definition>
+        </cas:Link>
+        <cas:Link id="cas:TargetLink" cas:hasClass="owl:ObjectProperty">
+            <cas:specializes>cas:Link</cas:specializes>
+            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+            <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
+            <dcterms:title>to target</dcterms:title>
+            <skos:definition>Connects the target of a reified relationship or an organizer.</skos:definition>
+        </cas:Link>
+        <cas:Link id="cas:lists" cas:hasClass="owl:ObjectProperty">
+            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+            <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
+            <cas:enumeratedEndpoint>cas:Organizer</cas:enumeratedEndpoint>
+            <dcterms:title>lists</dcterms:title>
+            <skos:definition>Lists an entity, a relationship or a subordinated organizer.</skos:definition>
+        </cas:Link>
+        <cas:Link id="cas:shows" cas:hasClass="owl:ObjectProperty">
+            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+            <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
+            <dcterms:title>shows</dcterms:title>
+            <skos:definition>Shows an entity or a relationship.</skos:definition>
+        </cas:Link>
+        <cas:Link id="cas:depicts" cas:hasClass="owl:ObjectProperty">
+            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+            <dcterms:title>depicts</dcterms:title>
+            <skos:definition>Depicts an entity; inverse of uml:ownedDiagram.</skos:definition>
+        </cas:Link>
+		
+        <!-- Enumerations -->
+        <cas:Enumeration id="SpecIF:Priority-Value" cas:hasClass="owl:Class">
+            <dcterms:title xml:lang="en">Priority</dcterms:title>
+            <dcterms:title xml:lang="de">Priorität</dcterms:title>
+            <dcterms:title xml:lang="fr">Priorité</dcterms:title>
+            <skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
+            <dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
+            <cas:specializes>cas:Enumeration</cas:specializes>
+            <xs:simpleType>
+                <xs:restriction base="xs:string"/>
+            </xs:simpleType>
+            <cas:enumeratedValue id="SpecIF:priorityHigh">
+                <dcterms:title xml:lang="en">high</dcterms:title>
+                <dcterms:title xml:lang="de">hoch</dcterms:title>
+                <dcterms:title xml:lang="fr">haut</dcterms:title>
+            </cas:enumeratedValue>
+            <cas:enumeratedValue id="SpecIF:priorityRatherHigh">
+                <dcterms:title xml:lang="en">rather high</dcterms:title>
+                <dcterms:title xml:lang="de">eher hoch</dcterms:title>
+                <dcterms:title xml:lang="fr">plutôt haut</dcterms:title>
+            </cas:enumeratedValue>
+            <cas:enumeratedValue id="SpecIF:priorityMedium">
+                <dcterms:title xml:lang="en">medium</dcterms:title>
+                <dcterms:title xml:lang="de">mittel</dcterms:title>
+                <dcterms:title xml:lang="fr">moyen</dcterms:title>
+            </cas:enumeratedValue>
+            <cas:enumeratedValue id="SpecIF:priorityRatherLow">
+                <dcterms:title xml:lang="en">rather low</dcterms:title>
+                <dcterms:title xml:lang="de">eher niedrig</dcterms:title>
+                <dcterms:title xml:lang="fr">plutôt bas</dcterms:title>
+            </cas:enumeratedValue>
+            <cas:enumeratedValue id="SpecIF:priorityLow">
+                <dcterms:title xml:lang="en">low</dcterms:title>
+                <dcterms:title xml:lang="de">niedrig</dcterms:title>
+                <dcterms:title xml:lang="fr">bas</dcterms:title>
+            </cas:enumeratedValue>
+        </cas:Enumeration>
+
+        <!-- Links -->
+        <cas:Link id="SpecIF:Priority" cas:hasClass="owl:ObjectProperty">
+            <cas:specializes>cas:TargetLink</cas:specializes>
+            <dcterms:title xml:lang="en">Priority</dcterms:title>
+            <dcterms:title xml:lang="de">Priorität</dcterms:title>
+                <dcterms:title xml:lang="fr">Priorité</dcterms:title>
+            <skos:definition xml:lang="en">Enumerated value for the 'Priority' of the resource.</skos:definition>
+            <dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
+            <cas:enumeratedEndpoint>SpecIF:Priority-Value</cas:enumeratedEndpoint>
+        </cas:Link>
+
+        <!-- Domain-Specific Entity Classes -->
+        <cas:Entity id="IREB:Requirement" cas:hasClass="owl:Class">
+            <dcterms:title xml:lang="en">Requirement</dcterms:title>
+            <dcterms:title xml:lang="de">Anforderung</dcterms:title>
+            <dcterms:title xml:lang="fr">Exigence</dcterms:title>
+            <dcterms:description xml:lang="en">
+                <p>
+                    A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Definition:</p>
+                <ol>
+                    <li>A condition or capability needed by a user to solve a problem or achieve an objective.</li>
+                    <li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li>
+                    <li>A documented representation of a condition or capability as in (1) or (2).</li>
+                </ol>
+                <p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p>
+                <ol>
+                    <li>A need perceived by a stakeholder.</li>
+                    <li>A capability or property that a system shall have.</li>
+                    <li>A documented representation of a need, capability or property.</li>
+                </ol>
+            </dcterms:description>
+            <dcterms:description xml:lang="de">
+                <p>
+                    Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Definition:</p>
+                <ol>
+                    <li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li>
+                    <li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li>
+                    <li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li>
+                </ol>
+                <p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p>
+                <ol>
+                    <li>Ein von einem Stakeholder wahrgenommener Bedarf.</li>
+                    <li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li>
+                    <li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li>
+                </ol>
+            </dcterms:description>
+            <dcterms:description xml:lang="fr">
+                <p>
+                    Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>
+                        (<i>
+                            source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a>
+                        </i>)
+                    </small>
+                </p>
+                <p>Définition:</p>
+                <ol>
+                    <li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li>
+                    <li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li>
+                    <li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li>
+                </ol>
+                <p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p>
+                <ol>
+                    <li>Un besoin perçu par une partie prenante;</li>
+                    <li>Une capacité ou une propriété qu'un système doit avoir.</li>
+                    <li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li>
+                </ol>
+            </dcterms:description>
+            <cas:specializes>cas:Entity</cas:specializes>
+            <cas:icon>&#8623;</cas:icon>
+            <cas:enumeratedProperty>SpecIF:Priority</cas:enumeratedProperty>
+        </cas:Entity>
+
+        <!-- Instances -->
+        <cas:anEntity id="d:Req-35100bca2b005ba" cas:hasClass="IREB:Requirement">
+            <dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
+            <dcterms:title xml:lang="en">Minimum button size</dcterms:title>
+            <dcterms:description xml:lang="en">&lt;p&gt;The &lt;i&gt;button size&lt;/i&gt; MUST not be less than 20mm in diameter.&lt;/p&gt;</dcterms:description>
+            <cas:aTargetLink cas:hasClass="SpecIF:Priority">
+                <idRef>SpecIF:priorityRatherHigh</idRef>
+            </cas:aTargetLink>
+        </cas:anEntity>
+        <cas:anEntity id="d:HierarchyRoot-P-Requirement-with-Enumerated-Property" cas:hasClass="cas:Root">
+            <dcterms:modified>2026-04-08T08:14:32.112Z</dcterms:modified>
+            <dcterms:title>Hierarchy Root</dcterms:title>
+            <dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
+            <cas:aTargetLink rdf:type="cas:lists">
+                <idRef>d:HR-bca801377e3d1547</idRef>
+            </cas:aTargetLink>
+        </cas:anEntity>
+        <cas:anEntity id="d:HR-bca801377e3d1547" cas:hasClass="cas:Outline">
+            <dcterms:modified>2026-04-08T08:14:32.065Z</dcterms:modified>
+            <dcterms:title>Project 'Requirement with Enumerated Property'</dcterms:title>
+            <cas:aProperty cas:hasClass="cas:Category">
+                <value>ReqIF:HierarchyRoot</value>
+            </cas:aProperty>
+            <cas:aTargetLink rdf:type="cas:lists">
+                <idRef>d:Req-35100bca2b005ba</idRef>
+            </cas:aTargetLink>
+        </cas:anEntity>
+    </graph>
+</cas:aPackage>

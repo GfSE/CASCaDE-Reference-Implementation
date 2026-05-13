@@ -32,6 +32,7 @@
  * - Link.json
  * - Entity.json
  * - Relationship.json
+ * - Enumeration.json
  * - anEntity.json
  * - aRelationship.json
  * - aPackage.json
@@ -40,7 +41,7 @@
 import type { JsonObject } from '../../../lib/helpers';
 import type { ValidateFunction } from 'ajv';
 import { ajv } from '../../../../plugins/ajv';
-import { PIN } from '../../../lib/platform-independence';
+import { PLI } from '../../../lib/platform-independence';
 
 /**
  * Get platform-appropriate base path for schema files
@@ -50,7 +51,7 @@ import { PIN } from '../../../lib/platform-independence';
  * @returns Base path for schema files
  */
 function getSchemaBasePath(): string {
-    if (PIN.isBrowserEnv()) {
+    if (PLI.isBrowserEnv()) {
         // Browser: fetch from public directory via HTTP
         const baseUrl = window.location.origin;
         return `${baseUrl}/assets/jsonld/`;
@@ -66,6 +67,7 @@ const SCHEMA_FILE_NAMES = {
     Link: 'Link.json',
     Entity: 'Entity.json',
     Relationship: 'Relationship.json',
+    Enumeration: 'Enumeration.json',
     AnEntity: 'anEntity.json',
     ARelationship: 'aRelationship.json',
     APackage: 'aPackage.json'
@@ -98,8 +100,8 @@ async function loadSchema(schemaKey: SchemaKey): Promise<Record<string, unknown>
 
     const schemaPath = SCHEMA_FILES[schemaKey];
     try {
-        // Use PIN.readFileAsText to support both Node and browser
-        const rsp = await PIN.readFileAsText(schemaPath);
+        // Use PLI.readFileAsText to support both Node and browser
+        const rsp = await PLI.readFileAsText(schemaPath);
 
         if (!rsp.ok) {
             throw new Error(`Failed to load schema ${schemaPath}: ${rsp.statusText}`);
@@ -141,6 +143,7 @@ async function initializeSchemata(): Promise<void> {
     ajv.addSchema(schemata.Link);
     ajv.addSchema(schemata.Entity);
     ajv.addSchema(schemata.Relationship);
+    ajv.addSchema(schemata.Enumeration);
     ajv.addSchema(schemata.AnEntity);
     ajv.addSchema(schemata.ARelationship);
     ajv.addSchema(schemata.APackage);
@@ -163,6 +166,7 @@ let validatePropertyLD: ValidateFunction | null = null;
 let validateLinkLD: ValidateFunction | null = null;
 let validateEntityLD: ValidateFunction | null = null;
 let validateRelationshipLD: ValidateFunction | null = null;
+let validateEnumerationLD: ValidateFunction | null = null;
 let validateAnEntityLD: ValidateFunction | null = null;
 let validateARelationshipLD: ValidateFunction | null = null;
 let validatePackageLD: ValidateFunction | null = null;
@@ -189,6 +193,9 @@ async function getValidator(schemaKey: SchemaKey): Promise<ValidateFunction> {
         case 'Relationship':
             if (!validateRelationshipLD) validateRelationshipLD = ajv.compile(schema);
             return validateRelationshipLD;
+        case 'Enumeration':
+            if (!validateEnumerationLD) validateEnumerationLD = ajv.compile(schema);
+            return validateEnumerationLD;
         case 'AnEntity':
             if (!validateAnEntityLD) validateAnEntityLD = ajv.compile(schema);
             return validateAnEntityLD;
@@ -220,13 +227,16 @@ export const SCH_LD = {
     async getRelationshipValidator() {
         return await getValidator('Relationship');
     },
+    async getEnumerationValidator() {
+        return await getValidator('Enumeration');
+    },
     async getAnEntityValidator() {
         return await getValidator('AnEntity');
     },
     async getARelationshipValidator() {
         return await getValidator('ARelationship');
     },
-    async getPackageValidator() {
+    async getAPackageValidator() {
         return await getValidator('APackage');
     },
 
@@ -243,13 +253,16 @@ export const SCH_LD = {
     async getRelationshipSchema() {
         return await loadSchema('Relationship');
     },
+    async getEnumerationSchema() {
+        return await loadSchema('Enumeration');
+    },
     async getAnEntitySchema() {
         return await loadSchema('AnEntity');
     },
     async getARelationshipSchema() {
         return await loadSchema('ARelationship');
     },
-    async getPackageSchema() {
+    async getAPackageSchema() {
         return await loadSchema('APackage');
     },
 
@@ -278,7 +291,7 @@ export const SCH_LD = {
         const validator = await getValidator('ARelationship');
         return validator(data);
     },
-    async validatePackageLD(data: JsonObject): Promise<boolean> {
+    async validateAPackageLD(data: JsonObject): Promise<boolean> {
         const validator = await getValidator('APackage');
         return validator(data);
     },
@@ -302,13 +315,17 @@ export const SCH_LD = {
     },
     async getValidateAnEntityLDErrors(): Promise<string> {
         const validator = await getValidator('AnEntity');
+        /* Add detailed error logging
+        if (validator.errors) {
+            console.log('AJV Validation Errors:', JSON.stringify(validator.errors, null, 2));
+        } */
         return ajv.errorsText(validator.errors, { separator: '; ' });
     },
     async getValidateARelationshipLDErrors(): Promise<string> {
         const validator = await getValidator('ARelationship');
         return ajv.errorsText(validator.errors, { separator: '; ' });
     },
-    async getValidatePackageLDErrors(): Promise<string> {
+    async getValidateAPackageLDErrors(): Promise<string> {
         const validator = await getValidator('APackage');
         return ajv.errorsText(validator.errors, { separator: '; ' });
     },

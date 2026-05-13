@@ -1,1 +1,0 @@
-For the HTML representation of the PIG App design, see the documentation folder of this repository: https://github.com/GfSE/CASCaDE-Reference-Implementation/tree/main/docs/design/PIG-App.

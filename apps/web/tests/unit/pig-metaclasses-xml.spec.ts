@@ -8,8 +8,9 @@
  *   is contained in pig-package-constraints-valueRanges.spec.ts
  */
 
+import { DEF } from '../../src/common/lib/definitions';
 import {
-    Property, Link, Entity, Relationship,
+    Enumeration, Property, Link, Entity, Relationship,
     AnEntity, ARelationship
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
@@ -17,20 +18,20 @@ describe('PIG Metaclasses XML Import', () => {
     describe('Property.setXML()', () => {
         it('should import dcterms:title property', () => {
             const xmlInput = `
-                <pig:Property id="dcterms:title" rdf:type="owl:DatatypeProperty">
-                    <dcterms:title xml:lang="en">Title</dcterms:title>
-                    <dcterms:title xml:lang="de">Titel</dcterms:title>
-                    <dcterms:title xml:lang="fr">Titre</dcterms:title>
-                    <dcterms:description xml:lang="en">
+                <${DEF.pfxNsMeta}Property id="${DEF.pfxNsDcmi}title" rdf:type="owl:DatatypeProperty">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">Title</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">Titel</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">Titre</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description xml:lang="en">
                         <p>A name given to the resource. <small>(<i>source: <a href="http://purl.org/dc/elements/1.1/title">DCMI</a></i>)</small></p>
-                    </dcterms:description>
+                    </${DEF.pfxNsDcmi}description>
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:maxLength value="256"/>
                             <xs:maxOccurs>1</xs:maxOccurs>
                         </xs:restriction>
                     </xs:simpleType>
-                </pig:Property>
+                </${DEF.pfxNsMeta}Property>
             `;
 
             const prop = new Property().setXML(xmlInput);
@@ -43,16 +44,16 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import dcterms:description property', () => {
             const xmlInput = `
-                <pig:Property id="dcterms:description" rdf:type="owl:DatatypeProperty">
-                    <dcterms:title xml:lang="en">Description</dcterms:title>
-                    <dcterms:title xml:lang="de">Beschreibung</dcterms:title>
-                    <dcterms:title xml:lang="fr">Description</dcterms:title>
+                <${DEF.pfxNsMeta}Property id="${DEF.pfxNsDcmi}description" rdf:type="owl:DatatypeProperty">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">Description</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">Beschreibung</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">Description</${DEF.pfxNsDcmi}title>
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:maxOccurs>1</xs:maxOccurs>
                         </xs:restriction>
                     </xs:simpleType>
-                </pig:Property>
+                </${DEF.pfxNsMeta}Property>
             `;
 
             const prop = new Property().setXML(xmlInput);
@@ -65,49 +66,51 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import SpecIF:Priority property with enumeratedValues', () => {
             const xmlInput = `
-                <pig:Property id="SpecIF:Priority" rdf:type="owl:ObjectProperty">
-                    <dcterms:title xml:lang="en">Priority</dcterms:title>
-                    <dcterms:title xml:lang="de">Priorität</dcterms:title>
-                    <dcterms:title xml:lang="fr">Priorité</dcterms:title>
-                    <dcterms:description xml:lang="en">Enumerated values for the 'Priority' of the resource.</dcterms:description>
+                <${DEF.pfxNsMeta}Enumeration id="SpecIF:Priority-Value" rdf:type="owl:Class">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">Priority</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">Priorität</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">Priorité</${DEF.pfxNsDcmi}title>
+                    <skos:definition xml:lang="en">Enumerated values for the 'Priority' of a resource.</skos:definition>
+                    <${DEF.pfxNsDcmi}modified>2020-03-26T22:59:00+02:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsMeta}specializes>cas:Enumeration</${DEF.pfxNsMeta}specializes>
                     <xs:simpleType>
                         <xs:restriction base="xs:string"/>
                     </xs:simpleType>
-                    <pig:enumeratedValue id="SpecIF:priorityHigh">
-                        <dcterms:title xml:lang="en">high</dcterms:title>
-                        <dcterms:title xml:lang="de">hoch</dcterms:title>
-                        <dcterms:title xml:lang="fr">haut</dcterms:title>
-                    </pig:enumeratedValue>
-                    <pig:enumeratedValue id="SpecIF:priorityMedium">
-                        <dcterms:title xml:lang="en">medium</dcterms:title>
-                        <dcterms:title xml:lang="de">mittel</dcterms:title>
-                        <dcterms:title xml:lang="fr">moyen</dcterms:title>
-                    </pig:enumeratedValue>
-                    <pig:enumeratedValue id="SpecIF:priorityLow">
-                        <dcterms:title xml:lang="en">low</dcterms:title>
-                        <dcterms:title xml:lang="de">niedrig</dcterms:title>
-                        <dcterms:title xml:lang="fr">bas</dcterms:title>
-                    </pig:enumeratedValue>
-                </pig:Property>
+                    <${DEF.pfxNsMeta}enumeratedValue id="SpecIF:priorityHigh">
+                        <${DEF.pfxNsDcmi}title xml:lang="en">high</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}title xml:lang="de">hoch</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}title xml:lang="fr">haut</${DEF.pfxNsDcmi}title>
+                    </${DEF.pfxNsMeta}enumeratedValue>
+                    <${DEF.pfxNsMeta}enumeratedValue id="SpecIF:priorityMedium">
+                        <${DEF.pfxNsDcmi}title xml:lang="en">medium</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}title xml:lang="de">mittel</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}title xml:lang="fr">moyen</${DEF.pfxNsDcmi}title>
+                    </${DEF.pfxNsMeta}enumeratedValue>
+                    <${DEF.pfxNsMeta}enumeratedValue id="SpecIF:priorityLow">
+                        <${DEF.pfxNsDcmi}title xml:lang="en">low</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}title xml:lang="de">niedrig</${DEF.pfxNsDcmi}title>
+                        <${DEF.pfxNsDcmi}title xml:lang="fr">bas</${DEF.pfxNsDcmi}title>
+                    </${DEF.pfxNsMeta}enumeratedValue>
+                </${DEF.pfxNsMeta}Enumeration>
             `;
 
-            const prop = new Property().setXML(xmlInput);
+            const en = new Enumeration().setXML(xmlInput);
 
             // check the attribute values upon creation:
-            if (!prop.status().ok)
-                console.error('status:', prop.status());
-            expect(prop.status().ok).toBe(true);
+            if (!en.status().ok)
+                console.error('status:', en.status());
+            expect(en.status().ok).toBe(true);
 
-            // Get the property data
-            const propData = prop.get();
+            // Get the enumeration data
+            const enumData = en.get();
 
             // Verify enumeratedValue structure exists
-            expect(propData?.enumeratedValue).toBeDefined();
-            expect(Array.isArray(propData?.enumeratedValue)).toBe(true);
-            expect(propData?.enumeratedValue?.length).toBe(3);
+            expect(enumData?.enumeratedValue).toBeDefined();
+            expect(Array.isArray(enumData?.enumeratedValue)).toBe(true);
+            expect(enumData?.enumeratedValue?.length).toBe(3);
 
             // Find SpecIF:priorityHigh
-            const priorityHigh = propData?.enumeratedValue?.find((ev:any) => ev.id === 'SpecIF:priorityHigh');
+            const priorityHigh = enumData?.enumeratedValue?.find((ev:any) => ev.id === 'SpecIF:priorityHigh');
             expect(priorityHigh).toBeDefined();
 
             // Verify title structure
@@ -120,19 +123,19 @@ describe('PIG Metaclasses XML Import', () => {
             expect(germanTitle?.value).toBe('hoch');
         });
 
-        it('should import pig:Icon property', () => {
+        it(`should import ${DEF.pfxNsMeta}Icon property`, () => {
             const xmlInput = `
-                <pig:Property id="pig:Icon">
-                    <pig:specializes>pig:Property</pig:specializes>
-                    <dcterms:title>has icon</dcterms:title>
-                    <dcterms:description>Specifies an icon for a model element (entity or relationship).</dcterms:description>
+                <${DEF.pfxNsMeta}Property id="${DEF.pfxNsMeta}Icon" rdf:type="owl:DatatypeProperty">
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Property</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsDcmi}title>has icon</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>Specifies an icon for a model element (entity or relationship).</${DEF.pfxNsDcmi}description>
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:minOccurs>0</xs:minOccurs>
                             <xs:maxOccurs>1</xs:maxOccurs>
                         </xs:restriction>
                     </xs:simpleType>
-                </pig:Property>
+                </${DEF.pfxNsMeta}Property>
             `;
 
             const prop = new Property().setXML(xmlInput);
@@ -145,14 +148,14 @@ describe('PIG Metaclasses XML Import', () => {
     });
 
     describe('Link.setXML()', () => {
-        it('should import pig:Link', () => {
+        it(`should import ${DEF.pfxNsMeta}Link`, () => {
             const xmlInput = `
-                <pig:Link id="pig:Link" rdf:type="owl:ObjectProperty">
-                    <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
-                    <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
-                    <dcterms:title>linked with</dcterms:title>
-                    <dcterms:description>Connects a reified relationship with its source or target. Also connects an organizer to a model element</dcterms:description>
-                </pig:Link>
+                <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}Link" rdf:type="owl:ObjectProperty">
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsDcmi}title>linked with</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>Connects a reified relationship with its source or target. Also connects an organizer to a model element</${DEF.pfxNsDcmi}description>
+                </${DEF.pfxNsMeta}Link>
             `;
 
             const link = new Link().setXML(xmlInput);
@@ -163,15 +166,15 @@ describe('PIG Metaclasses XML Import', () => {
             expect(link.status().ok).toBe(true);
         });
 
-        it('should import pig:SourceLink', () => {
+        it(`should import ${DEF.pfxNsMeta}SourceLink`, () => {
             const xmlInput = `
-                <pig:Link id="pig:SourceLink">
-                    <pig:specializes>pig:Link</pig:specializes>
-                    <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
-                    <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
-                    <dcterms:title>to source</dcterms:title>
-                    <dcterms:description>Connects the source of a reified relationship.</dcterms:description>
-                </pig:Link>
+                <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}SourceLink" rdf:type="owl:ObjectProperty">
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Link</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsDcmi}title>to source</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>Connects the source of a reified relationship.</${DEF.pfxNsDcmi}description>
+                </${DEF.pfxNsMeta}Link>
             `;
 
             const link = new Link().setXML(xmlInput);
@@ -184,12 +187,12 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import SpecIF:writes-toSource', () => {
             const xmlInput = `
-                <pig:Link id="SpecIF:writes-toSource">
-                    <pig:specializes>pig:SourceLink</pig:specializes>
-                    <dcterms:title>SpecIF:writes to source</dcterms:title>
-                    <dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
-                    <pig:enumeratedEndpoint>FMC:Actor</pig:enumeratedEndpoint>
-                </pig:Link>
+                <${DEF.pfxNsMeta}Link id="SpecIF:writes-toSource" rdf:type="owl:ObjectProperty">
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}SourceLink</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsDcmi}title>SpecIF:writes to source</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>Connects the source of SpecIF:writes</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>FMC:Actor</${DEF.pfxNsMeta}enumeratedEndpoint>
+                </${DEF.pfxNsMeta}Link>
             `;
 
             const link = new Link().setXML(xmlInput);
@@ -200,16 +203,16 @@ describe('PIG Metaclasses XML Import', () => {
             expect(link.status().ok).toBe(true);
         });
 
-        it('should import pig:lists', () => {
+        it(`should import ${DEF.pfxNsMeta}lists`, () => {
             const xmlInput = `
-                <pig:Link id="pig:lists">
-                    <pig:specializes>pig:TargetLink</pig:specializes>
-                    <pig:enumeratedEndpoint>pig:Entity</pig:enumeratedEndpoint>
-                    <pig:enumeratedEndpoint>pig:Relationship</pig:enumeratedEndpoint>
-                    <pig:enumeratedEndpoint>pig:Organizer</pig:enumeratedEndpoint>
-                    <dcterms:title>lists</dcterms:title>
-                    <dcterms:description>Lists an entity, a relationship or a subordinated organizer.</dcterms:description>
-                </pig:Link>
+                <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}lists" rdf:type="owl:ObjectProperty">
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}TargetLink</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Organizer</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsDcmi}title>lists</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>Lists an entity, a relationship or a subordinated organizer.</${DEF.pfxNsDcmi}description>
+                </${DEF.pfxNsMeta}Link>
             `;
 
             const link = new Link().setXML(xmlInput);
@@ -222,14 +225,14 @@ describe('PIG Metaclasses XML Import', () => {
     });
 
     describe('Entity.setXML()', () => {
-        it('should import pig:Entity', () => {
+        it(`should import ${DEF.pfxNsMeta}Entity`, () => {
             const xmlInput = `
-                <pig:Entity id="pig:Entity" rdf:type="owl:Class">
-                    <dcterms:title>Entity</dcterms:title>
-                    <dcterms:description>A PIG meta-model element used for entities (aka resources or artifacts).</dcterms:description>
-                    <pig:enumeratedProperty>pig:Category</pig:enumeratedProperty>
-                    <pig:enumeratedProperty>pig:Icon</pig:enumeratedProperty>
-                </pig:Entity>
+                <${DEF.pfxNsMeta}Entity id="${DEF.pfxNsMeta}Entity" rdf:type="owl:Class">
+                    <${DEF.pfxNsDcmi}title>Entity</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>A PIG meta-model element used for entities (aka resources or artifacts).</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
+                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Icon</${DEF.pfxNsMeta}enumeratedProperty>
+                </${DEF.pfxNsMeta}Entity>
             `;
 
             const entity = new Entity().setXML(xmlInput);
@@ -240,14 +243,14 @@ describe('PIG Metaclasses XML Import', () => {
             expect(entity.status().ok).toBe(true);
         });
 
-        it('should import pig:HierarchyRoot', () => {
+        it(`should import ${DEF.pfxNsMeta}HierarchyRoot`, () => {
             const xmlInput = `
-                <pig:Entity id="pig:HierarchyRoot">
-                    <pig:specializes>pig:Organizer</pig:specializes>
-                    <dcterms:title>Hierarchy Root</dcterms:title>
-                    <dcterms:description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</dcterms:description>
-                    <pig:enumeratedTargetLink>pig:lists</pig:enumeratedTargetLink>
-                </pig:Entity>
+                <${DEF.pfxNsMeta}Entity id="${DEF.pfxNsMeta}HierarchyRoot" rdf:type="owl:Class">
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Organizer</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsDcmi}title>Hierarchy Root</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>${DEF.pfxNsMeta}lists</${DEF.pfxNsMeta}enumeratedTargetLink>
+                </${DEF.pfxNsMeta}Entity>
             `;
 
             const entity = new Entity().setXML(xmlInput);
@@ -260,17 +263,17 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import FMC:Actor', () => {
             const xmlInput = `
-                <pig:Entity id="FMC:Actor">
-                    <dcterms:title xml:lang="en">Actor</dcterms:title>
-                    <dcterms:title xml:lang="de">Akteur</dcterms:title>
-                    <dcterms:title xml:lang="fr">Acteur</dcterms:title>
-                    <dcterms:description xml:lang="en">
+                <${DEF.pfxNsMeta}Entity id="FMC:Actor" rdf:type="owl:Class">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">Actor</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">Akteur</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">Acteur</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description xml:lang="en">
                         <p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p>
-                    </dcterms:description>
-                    <pig:specializes>pig:Entity</pig:specializes>
-                    <pig:Icon>&#x25A1;</pig:Icon>
-                    <pig:enumeratedProperty>pig:Category</pig:enumeratedProperty>
-                </pig:Entity>
+                    </${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsMeta}Icon>&#x25A1;</${DEF.pfxNsMeta}Icon>
+                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
+                </${DEF.pfxNsMeta}Entity>
             `;
 
             const entity = new Entity().setXML(xmlInput);
@@ -283,17 +286,17 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import IREB:Requirement', () => {
             const xmlInput = `
-                <pig:Entity id="IREB:Requirement">
-                    <dcterms:title xml:lang="en">Requirement</dcterms:title>
-                    <dcterms:title xml:lang="de">Anforderung</dcterms:title>
-                    <dcterms:title xml:lang="fr">Exigence</dcterms:title>
-                    <dcterms:description xml:lang="en">
+                <${DEF.pfxNsMeta}Entity id="IREB:Requirement" rdf:type="owl:Class">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">Requirement</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">Anforderung</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">Exigence</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description xml:lang="en">
                         <p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform.</p>
-                    </dcterms:description>
-                    <pig:specializes>pig:Entity</pig:specializes>
-                    <pig:Icon>&#8623;</pig:Icon>
-                    <pig:enumeratedProperty>SpecIF:Priority</pig:enumeratedProperty>
-                </pig:Entity>
+                    </${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsMeta}Icon>&#8623;</${DEF.pfxNsMeta}Icon>
+                    <${DEF.pfxNsMeta}enumeratedProperty>SpecIF:Priority</${DEF.pfxNsMeta}enumeratedProperty>
+                </${DEF.pfxNsMeta}Entity>
             `;
 
             const entity = new Entity().setXML(xmlInput);
@@ -306,16 +309,16 @@ describe('PIG Metaclasses XML Import', () => {
     });
 
     describe('Relationship.setXML()', () => {
-        it('should import pig:Relationship', () => {
+        it(`should import ${DEF.pfxNsMeta}Relationship`, () => {
             const xmlInput = `
-                <pig:Relationship id="pig:Relationship" rdf:type="owl:Class">
-                    <dcterms:title>Relationship</dcterms:title>
-                    <dcterms:description>A PIG meta-model element used for reified relationships (aka predicates).</dcterms:description>
-                    <pig:enumeratedProperty>pig:Category</pig:enumeratedProperty>
-                    <pig:enumeratedProperty>pig:Icon</pig:enumeratedProperty>
-                    <pig:enumeratedSourceLink>pig:SourceLink</pig:enumeratedSourceLink>
-                    <pig:enumeratedTargetLink>pig:TargetLink</pig:enumeratedTargetLink>
-                </pig:Relationship>
+                <${DEF.pfxNsMeta}Relationship id="${DEF.pfxNsMeta}Relationship" rdf:type="owl:Class">
+                    <${DEF.pfxNsDcmi}title>Relationship</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>A PIG meta-model element used for reified relationships (aka predicates).</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
+                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Icon</${DEF.pfxNsMeta}enumeratedProperty>
+                    <${DEF.pfxNsMeta}enumeratedSourceLink>${DEF.pfxNsMeta}SourceLink</${DEF.pfxNsMeta}enumeratedSourceLink>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>${DEF.pfxNsMeta}TargetLink</${DEF.pfxNsMeta}enumeratedTargetLink>
+                </${DEF.pfxNsMeta}Relationship>
             `;
 
             const rel = new Relationship().setXML(xmlInput);
@@ -328,15 +331,15 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import SpecIF:writes', () => {
             const xmlInput = `
-                <pig:Relationship id="SpecIF:writes">
-                    <dcterms:title xml:lang="en">writes</dcterms:title>
-                    <dcterms:title xml:lang="de">schreibt</dcterms:title>
-                    <dcterms:title xml:lang="fr">écrit</dcterms:title>
-                    <dcterms:description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</dcterms:description>
-                    <pig:specializes>pig:Relationship</pig:specializes>
-                    <pig:enumeratedSourceLink>SpecIF:writes-toSource</pig:enumeratedSourceLink>
-                    <pig:enumeratedTargetLink>SpecIF:writes-toTarget</pig:enumeratedTargetLink>
-                </pig:Relationship>
+                <${DEF.pfxNsMeta}Relationship id="SpecIF:writes" rdf:type="owl:Class">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">writes</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">schreibt</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">écrit</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsMeta}enumeratedSourceLink>SpecIF:writes-toSource</${DEF.pfxNsMeta}enumeratedSourceLink>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>SpecIF:writes-toTarget</${DEF.pfxNsMeta}enumeratedTargetLink>
+                </${DEF.pfxNsMeta}Relationship>
             `;
 
             const rel = new Relationship().setXML(xmlInput);
@@ -349,17 +352,17 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import oslc_rm:satisfies', () => {
             const xmlInput = `
-                <pig:Relationship id="oslc_rm:satisfies">
-                    <dcterms:title xml:lang="en">satisfies</dcterms:title>
-                    <dcterms:title xml:lang="de">erfüllt</dcterms:title>
-                    <dcterms:title xml:lang="fr">satisfait</dcterms:title>
-                    <dcterms:description xml:lang="en">
+                <${DEF.pfxNsMeta}Relationship id="oslc_rm:satisfies" rdf:type="owl:Class">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">satisfies</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">erfüllt</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">satisfait</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description xml:lang="en">
                         <p>The object is satisfied by the subject.</p>
-                    </dcterms:description>
-                    <pig:specializes>pig:Relationship</pig:specializes>
-                    <pig:enumeratedSourceLink>oslc_rm:satisfies-toSource</pig:enumeratedSourceLink>
-                    <pig:enumeratedTargetLink>oslc_rm:satisfies-toTarget</pig:enumeratedTargetLink>
-                </pig:Relationship>
+                    </${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}specializes>
+                    <${DEF.pfxNsMeta}enumeratedSourceLink>oslc_rm:satisfies-toSource</${DEF.pfxNsMeta}enumeratedSourceLink>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>oslc_rm:satisfies-toTarget</${DEF.pfxNsMeta}enumeratedTargetLink>
+                </${DEF.pfxNsMeta}Relationship>
             `;
 
             const rel = new Relationship().setXML(xmlInput);
@@ -374,16 +377,16 @@ describe('PIG Metaclasses XML Import', () => {
     describe('AnEntity.setXML()', () => {
         it('should import requirement entity with property', () => {
             const xmlInput = `
-                <pig:anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b" rdf:type="IREB:Requirement">
-                    <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
-                    <dcterms:title>Data Volume</dcterms:title>
-                    <dcterms:description>
+                <${DEF.pfxNsMeta}anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b" rdf:type="IREB:Requirement">
+                    <${DEF.pfxNsDcmi}modified>2020-10-17T10:00:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}title>Data Volume</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>
                         <p>The data store MUST support a total volume up to 850 GB.</p>
-                    </dcterms:description>
-                    <pig:aProperty rdf:type="SpecIF:Priority">
+                    </${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}aProperty rdf:type="SpecIF:Priority">
                         <value>SpecIF:priorityHigh</value>
-                    </pig:aProperty>
-                </pig:anEntity>
+                    </${DEF.pfxNsMeta}aProperty>
+                </${DEF.pfxNsMeta}anEntity>
             `;
 
             const anEntity = new AnEntity().setXML(xmlInput);
@@ -396,27 +399,27 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import diagram entity with properties and links', () => {
             const xmlInput = `
-                <pig:anEntity id="d:Diagram-aec0df7900010000017001eaf53e8876" rdf:type="pig:View">
-                    <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
-                    <dcterms:title>IT-Integration: FiCo-Application and FiCo-Data</dcterms:title>
-                    <pig:aProperty rdf:type="SpecIF:Diagram">
+                <${DEF.pfxNsMeta}anEntity id="d:Diagram-aec0df7900010000017001eaf53e8876" rdf:type="${DEF.pfxNsMeta}View">
+                    <${DEF.pfxNsDcmi}modified>2020-03-06T08:32:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}title>IT-Integration: FiCo-Application and FiCo-Data</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsMeta}aProperty rdf:type="SpecIF:Diagram">
                         <value>
                             <p class="inline-label">Model Diagram:</p>
                             <p>
                                 <object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object>
                             </p>
                         </value>
-                    </pig:aProperty>
-                    <pig:aProperty rdf:type="pig:Category">
+                    </${DEF.pfxNsMeta}aProperty>
+                    <${DEF.pfxNsMeta}aProperty rdf:type="${DEF.pfxNsMeta}Category">
                         <value>FMC Block Diagram</value>
-                    </pig:aProperty>
-                    <pig:aTargetLink rdf:type="pig:shows">
+                    </${DEF.pfxNsMeta}aProperty>
+                    <${DEF.pfxNsMeta}aTargetLink rdf:type="${DEF.pfxNsMeta}shows">
                         <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
-                    </pig:aTargetLink>
-                    <pig:aTargetLink rdf:type="pig:shows">
+                    </${DEF.pfxNsMeta}aTargetLink>
+                    <${DEF.pfxNsMeta}aTargetLink rdf:type="${DEF.pfxNsMeta}shows">
                         <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-                    </pig:aTargetLink>
-                </pig:anEntity>
+                    </${DEF.pfxNsMeta}aTargetLink>
+                </${DEF.pfxNsMeta}anEntity>
             `;
 
             const anEntity = new AnEntity().setXML(xmlInput);
@@ -428,19 +431,19 @@ describe('PIG Metaclasses XML Import', () => {
             expect(anEntity.status().ok).toBe(true);
 
             expect(anEntity.hasProperty?.length).toBe(2);
-            expect(anEntity.hasProperty[1].hasClass).toBe('pig:Category');
+            expect(anEntity.hasProperty[1].hasClass).toBe(`${DEF.pfxNsMeta}Category`);
 
         });
 
         it('should import FMC:Actor entity', () => {
             const xmlInput = `
-                <pig:anEntity id="d:MEl-50fbfe8f0029b1a8016ea86245a9d83a" rdf:type="FMC:Actor">
-                    <dcterms:modified>2020-03-06T09:04:00+01:00</dcterms:modified>
-                    <dcterms:title>FiCo-Application</dcterms:title>
-                    <dcterms:description>
+                <${DEF.pfxNsMeta}anEntity id="d:MEl-50fbfe8f0029b1a8016ea86245a9d83a" rdf:type="FMC:Actor">
+                    <${DEF.pfxNsDcmi}modified>2020-03-06T09:04:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}title>FiCo-Application</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>
                         <p>IT-Application for Finance and Controlling.</p>
-                    </dcterms:description>
-                </pig:anEntity>
+                    </${DEF.pfxNsDcmi}description>
+                </${DEF.pfxNsMeta}anEntity>
             `;
 
             const anEntity = new AnEntity().setXML(xmlInput);
@@ -455,16 +458,16 @@ describe('PIG Metaclasses XML Import', () => {
     describe('ARelationship.setXML()', () => {
         it('should import SpecIF:writes relationship', () => {
             const xmlInput = `
-                <pig:aRelationship id="d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc" rdf:type="SpecIF:writes">
-                    <dcterms:modified>2020-03-06T09:05:00+01:00</dcterms:modified>
-                    <dcterms:description>'FiCo-Application' writes 'FiCo-Data'</dcterms:description>
-                    <pig:aSourceLink rdf:type="SpecIF:writes-toSource">
+                <${DEF.pfxNsMeta}aRelationship id="d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc" rdf:type="SpecIF:writes">
+                    <${DEF.pfxNsDcmi}modified>2020-03-06T09:05:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}description>'FiCo-Application' writes 'FiCo-Data'</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}aSourceLink rdf:type="SpecIF:writes-toSource">
                         <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
-                    </pig:aSourceLink>
-                    <pig:aTargetLink rdf:type="SpecIF:writes-toTarget">
+                    </${DEF.pfxNsMeta}aSourceLink>
+                    <${DEF.pfxNsMeta}aTargetLink rdf:type="SpecIF:writes-toTarget">
                         <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-                    </pig:aTargetLink>
-                </pig:aRelationship>
+                    </${DEF.pfxNsMeta}aTargetLink>
+                </${DEF.pfxNsMeta}aRelationship>
             `;
 
             const aRel = new ARelationship().setXML(xmlInput);
@@ -477,16 +480,16 @@ describe('PIG Metaclasses XML Import', () => {
 
         it('should import oslc_rm:satisfies relationship', () => {
             const xmlInput = `
-                <pig:aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b" rdf:type="oslc_rm:satisfies">
-                    <dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
-                    <dcterms:description>'FiCo-Data' satisfies 'Data Volume'</dcterms:description>
-                    <pig:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+                <${DEF.pfxNsMeta}aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b" rdf:type="oslc_rm:satisfies">
+                    <${DEF.pfxNsDcmi}modified>2020-10-17T10:00:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}description>'FiCo-Data' satisfies 'Data Volume'</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}aSourceLink rdf:type="oslc_rm:satisfies-toSource">
                         <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-                    </pig:aSourceLink>
-                    <pig:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+                    </${DEF.pfxNsMeta}aSourceLink>
+                    <${DEF.pfxNsMeta}aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
                         <idRef>d:Req-1a8016e2872e78ecadc50feddc00029b</idRef>
-                    </pig:aTargetLink>
-                </pig:aRelationship>
+                    </${DEF.pfxNsMeta}aTargetLink>
+                </${DEF.pfxNsMeta}aRelationship>
             `;
 
             const aRel = new ARelationship().setXML(xmlInput);

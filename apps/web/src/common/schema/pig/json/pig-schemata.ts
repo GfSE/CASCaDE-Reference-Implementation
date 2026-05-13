@@ -1,544 +1,54 @@
-/*! JSON SCHEMATA for PIG items: Property, Reference, Entity, Relationship
- * Messages and Responses
- * Copyright 2025 GfSE (https://gfse.org)
- * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- */
-/** JSON SCHEMATA for PIG items: Property, Reference, Entity, Relationship
- *  Dependencies: ajv (Another JSON Schema Validator) https://ajv.js.org/
- *  Authors: oskar.dungern@gfse.org, ..
- *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
- *
- * Design decisions:
- * - use JSON Schema draft-07 (widely supported)
- * - use ajv for validation (fast, popular)
- * - schemata of all classes as well as relationship instances must have a title and may have a description
- * - schema for entity may have either a title or a description or both.
- *   This allows entities (such as simple paragraphs) without a title but with a description only.
- *
- * Limitations:
- * - xs:datatype values are only pattern-validated here; specific accepted values are validated in code
- * - further constraints (e.g. maxCount >= minCount) are validated in code
- * - enumerated values in Property only for string values; other datatypes to be implemented
-*/
-
+import { DEF } from '../../../lib/definitions';
 import { ajv } from '../../../../plugins/ajv';
 
-const ID_NAME_PATTERN = '^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$';
-//const PROP_NAME_PATTERN = '(^[A-Za-z0-9_\\-]+:[^:\\s]+$)|(^https?:\\/\\/\\S+$)';
-
-/* Consider to allow date or date-time:
-        modified: {
-            oneOf: [
-                { type: 'string', format: 'date' },
-                { type: 'string', format: 'date-time' }
-            ]
-        }
-*/
-/* PROPERTY_SCHEMA: describes IProperty (pig:Property) */
-const PROPERTY_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schema/pig/IProperty',
-    type: 'object',
-    properties: {
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:Property'],
-            description: 'The PigItemType for pig:Property'
-        },
-        hasClass: { $ref: '#/$defs/idString' },
-        specializes: { $ref: '#/$defs/idString' },
-        title: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        definition: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        //        datatype: { $ref: '#/$defs/xsDataType' },
-        datatype: {
-            type: 'string',
-            pattern: '^xs:[A-Za-z]+$'
-        },
-        minCount: { type: 'integer', minimum: 0 },
-        maxCount: { type: 'integer', minimum: 1 },
-        maxLength: { type: 'integer', minimum: 1 },
-        minInclusive: { type: 'number' },
-        maxInclusive: { type: 'number' },
-        pattern: { type: 'string' },
-        unit: { type: 'string' },
-        defaultValue: { type: 'string' },
-        enumeratedValue: {
-            type: 'array',
-            items: {
-                oneOf: [
-                    {
-                        // For string datatypes: enumeratedValue with multi-language title
-                        type: 'object',
-                        required: ['id', 'title'],
-                        properties: {
-                            id: { $ref: '#/$defs/idString' },
-                            title: {
-                                type: 'array',
-                                minItems: 1,
-                                items: { $ref: '#/$defs/LanguageText' }
-                            }
-                        },
-                        additionalProperties: false,
-                        description: 'Enumeration value with multi-language title (for xs:string)'
-                    },
-                    {
-                        // For numeric/other datatypes: enumeratedValue with literal value
-                        type: 'object',
-                        required: ['id', 'value'],
-                        properties: {
-                            id: { $ref: '#/$defs/idString' },
-                            value: {
-                                type: 'string',
-                                minLength: 1,
-                                description: 'Literal value for numeric and other datatypes (stored as string)'
-                            }
-                        },
-                        additionalProperties: false,
-                        description: 'Enumeration value with literal value (for xs:integer, xs:double, etc.)'
-                    }
-                ]
-            }
-        },
-        composedProperty: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        }
-    },
-    additionalProperties: false,
-    required: ['id', 'itemType', 'title', 'datatype'],
-    // One of 'hasClass' and 'specializes' must be there but not both:
-    oneOf: [
-        { required: ['hasClass'] },
-        { required: ['specializes'] }
-    ],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: ID_NAME_PATTERN
-        },
-        LanguageText: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: {
-                    type: 'string',
-                    minLength: 1
-                },
-                lang: { type: 'string' }
-            }
-            /*    },
-                xsDataType: {
-                    type: 'string',
-                    description: 'XSD/XMLSchema datatype',
-                    enum: [
-                        'xs:boolean',
-                        'xs:integer',
-                        'xs:double',
-                        'xs:string',
-                        'xs:anyURI',
-                        'xs:dateTime',
-                        'xs:duration',
-                        'xs:complexType',
-                    ] */
-        }
+class PigSchemaFactory {
+    static getIdNamePattern() {
+        return '^(?:[a-zA-Z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$';
     }
-};
-const validatePropertySchema = ajv.compile(PROPERTY_SCHEMA);
-
-/* LINK_SCHEMA: describes IReference (pig:Link) */
-const LINK_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schema/pig/IReference',
-    type: 'object',
-    properties: {
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:Link'],
-            description: 'The PigItemType for pig:Link'
-        },
-        hasClass: { $ref: '#/$defs/idString' },
-        specializes: { $ref: '#/$defs/idString' },
-        title: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        definition: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        enumeratedEndpoint: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/idString' }
-        }
-    },
-    additionalProperties: false,
-    required: ['id', 'itemType', 'title', 'enumeratedEndpoint'],
-    // One of 'hasClass' and 'specializes' must be there but not both:
-    oneOf: [
-        { required: ['hasClass'] },
-        { required: ['specializes'] }
-    ],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: ID_NAME_PATTERN
-        },
-        LanguageText: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: {
-                    type: 'string',
-                    minLength: 1
-                },
-                lang: { type: 'string' }
-            }
-        }
+    static getSchemaSchema() {
+        return 'http://json-schema.org/draft-07/schema#';
     }
-};
-const validateLinkSchema = ajv.compile(LINK_SCHEMA);
-
-/* ENTITY_SCHEMA: describes IEntity (pig:Entity) */
-const ENTITY_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schema/pig/IEntity',
-    type: 'object',
-    properties: {
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:Entity'],
-            description: 'The PigItemType for pig:Entity'
-        },
-        hasClass: { $ref: '#/$defs/idString' },
-        specializes: { $ref: '#/$defs/idString' },
-        enumeratedProperty: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        },
-        enumeratedTargetLink: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        },
-        icon: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: { type: 'string' }
+    static getSchemaPath() {
+        return 'https://product-information-graph.org/schema/2026-05-08/cas/';
+    }
+    static getDefs() {
+        return {
+            idString: {
+                type: 'string',
+                description: 'TPigId — term with namespace (prefix:local) oder eine URI',
+                pattern: this.getIdNamePattern()
             },
-            description: 'string or data URI of an icon representing the entity'
-        },
-        title: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        definition: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        }
-    },
-    additionalProperties: false,
-    required: ['id', 'itemType', 'title'],
-    // One of 'hasClass' and 'specializes' must be there but not both:
-    oneOf: [
-        { required: ['hasClass'] },
-        { required: ['specializes'] }
-    ],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: ID_NAME_PATTERN
-                    
-        },
-        LanguageText: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: {
-                    type: 'string',
-                    minLength: 1
-                },
-                lang: { type: 'string' }
-            }
-        }
-    }
-};
-const validateEntitySchema = ajv.compile(ENTITY_SCHEMA);
-
-/* RELATIONSHIP_SCHEMA: describes IRelationship (pig:Relationship) */
-const RELATIONSHIP_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schema/pig/IRelationship',
-    type: 'object',
-    properties: {
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:Relationship'],
-            description: 'The PigItemType for pig:Relationship'
-        },
-        hasClass: { $ref: '#/$defs/idString' },
-        specializes: { $ref: '#/$defs/idString' },
-        enumeratedProperty: {
-            type: 'array',
-            items: { $ref: '#/$defs/idString' }
-        },
-        enumeratedSourceLink: { $ref: '#/$defs/idString' },
-        enumeratedTargetLink: { $ref: '#/$defs/idString' },
-        icon: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: { type: 'string' }
-            },
-            description: 'string or data URI of an icon representing the relationship'
-        },
-        title: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        definition: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        }
-    },
-    additionalProperties: false,
-    required: ['id', 'itemType', 'title'],
-    // One of 'hasClass' and 'specializes' must be there but not both:
-    oneOf: [
-        { required: ['hasClass'] },
-        { required: ['specializes'] }
-    ],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: ID_NAME_PATTERN
-        },
-        LanguageText: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: {
-                    type: 'string',
-                    minLength: 1
-                },
-                lang: { type: 'string' }
-            }
-        }
-    }
-};
-const validateRelationshipSchema = ajv.compile(RELATIONSHIP_SCHEMA);
-
-/** ANENTITY_SCHEMA: describes IAnEntity (pig:anEntity);
- * The schema for anEntity differs from others, as anEntity instance may have no title,
- * but only a description (e.g. for simple text paragraphs).
- */
-const ANENTITY_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schema/pig/IAnEntity',
-    type: 'object',
-    properties: {
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:anEntity'],
-            description: 'The PigItemType for pig:anEntity'
-        },
-        hasClass: { $ref: '#/$defs/idString' },
-        title: {
-            type: 'array',
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        revision: { type: 'string' },
-        priorRevision: {
-            type: 'array',
-            minItems: 1,
-            maxItems: 2,
-            items: { type: 'string' }
-        },
-        modified: {
-            type: 'string',
-            format: 'date-time'
-        },
-        creator: { type: 'string' },
-        hasProperty: {
-            type: 'array',
-            items: {
+            LanguageText: {
                 type: 'object',
+                required: ['value'],
+                additionalProperties: false,
                 properties: {
-                    itemType: {
-                        type: 'string',
-                        enum: ['pig:aProperty']
-                    },
-                    hasClass: { $ref: '#/$defs/idString' },
                     value: {
                         type: 'string',
                         minLength: 1
                     },
-                    idRef: { $ref: '#/$defs/idString' },
-                    aComposedProperty: {
-                        type: 'array',
-                        items: { $ref: '#/$defs/idString' }
-                    }
-                },
-                required: ['itemType', 'hasClass'],
-                // One of 'hasClass' and 'specializes' must be there but not both:
-                oneOf: [
-                    { required: ['value'] },
-                    { required: ['idRef'] }
-                ],
-                additionalProperties: false
-            }
-        },
-        hasTargetLink: {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    itemType: {
-                        type: 'string',
-                        enum: ['pig:aTargetLink']
-                    },
-                    hasClass: { $ref: '#/$defs/idString' },
-                    idRef: { $ref: '#/$defs/idString' }
-                },
-                required: ['itemType', 'hasClass', 'idRef'],
-                additionalProperties: false
-            }
-        }
-    },
-    additionalProperties: false,
-    required: ['id', 'itemType', 'hasClass', /*'revision',*/ 'modified'],
-    // One of 'title' and 'description' must be there with content, or both:
-    anyOf: [
-        {
-            required: ['title'],
-            properties: { title: { type: 'array', minItems: 1 } }
-        },
-        {
-            required: ['description'],
-            properties: { description: { type: 'array', minItems: 1 } }
-        }
-    ],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: ID_NAME_PATTERN
-        },
-        LanguageText: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: {
-                    type: 'string',
-                    minLength: 1
-                },
-                lang: { type: 'string' }
+                    lang: { type: 'string' }
+                }
+            },
+            MultiLanguageText: {
+                type: 'array',
+                minItems: 1,
+                items: { $ref: '#/$defs/LanguageText' }
             }
         }
     }
-};
-const validateAnEntitySchema = ajv.compile(ANENTITY_SCHEMA);
-
-/* ARELATIONSHIP_SCHEMA: describes IARelationship (pig:aRelationship) */
-const ARELATIONSHIP_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schema/pig/IARelationship',
-    type: 'object',
-    properties: {
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:aRelationship'],
-            description: 'The PigItemType for pig:aRelationship'
-        },
-        hasClass: { $ref: '#/$defs/idString' },
-        title: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        revision: { type: 'string' },
-        priorRevision: {
-            type: 'array',
-            minItems: 1,
-            maxItems: 2,
-            items: { type: 'string' }
-        },
-        modified: {
-            type: 'string',
-            format: 'date-time'
-        },
-        creator: { type: 'string' },
-        hasProperty: {
+    static getPropertyRef() {
+        return {
             type: 'array',
             items: {
                 type: 'object',
                 properties: {
+                    hasClass: { $ref: '#/$defs/idString' },
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aProperty']
+                        enum: [`${DEF.pfxNsMeta}aProperty`],
+                        description: `The itemType for ${DEF.pfxNsMeta}aProperty`
                     },
-                    hasClass: { $ref: '#/$defs/idString' },
                     value: {
                         type: 'string',
                         minLength: 1
@@ -556,184 +66,503 @@ const ARELATIONSHIP_SCHEMA = {
                 ],
                 additionalProperties: false
             }
-        },
-        hasSourceLink: {
+        }
+    }
+    static getLinkRef(linkType:string, minI?:number, maxI?:number) {
+        return {
             type: 'array',
-            minItems: 1,
-            maxItems: 1,
+            minItems: minI,
+            maxItems: maxI,
             items: {
                 type: 'object',
                 properties: {
+                    hasClass: { $ref: '#/$defs/idString' },
                     itemType: {
                         type: 'string',
-                        enum: ['pig:aSourceLink']
+                        enum: [`${linkType}`],
+                        description: `The itemType for ${linkType}`
                     },
-                    hasClass: { $ref: '#/$defs/idString' },
-                    idRef: { $ref: '#/$defs/idString' }
-                },
-                required: ['itemType', 'hasClass', 'idRef'],
-                additionalProperties: false
-            }
-        },
-        hasTargetLink: {
-            type: 'array',
-            minItems: 1,
-            maxItems: 1,
-            items: {
-                type: 'object',
-                properties: {
-                    itemType: {
-                        type: 'string',
-                        enum: ['pig:aTargetLink']
-                    },
-                    hasClass: { $ref: '#/$defs/idString' },
                     idRef: { $ref: '#/$defs/idString' }
                 },
                 required: ['itemType', 'hasClass', 'idRef'],
                 additionalProperties: false
             }
         }
-    },
-    additionalProperties: false,
-    // aRelationship does not need title nor description; the indications of its class suffice:
-    required: ['id', 'itemType', 'hasClass', 'modified', 'hasSourceLink', 'hasTargetLink'],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: ID_NAME_PATTERN
-        },
-        LanguageText: {
-            type: 'object',
-            required: ['value'],
-            additionalProperties: false,
-            properties: {
-                value: {
-                    type: 'string',
-                    minLength: 1
-                },
-                lang: { type: 'string' }
-            }
-        }
     }
-};
-const validateARelationshipSchema = ajv.compile(ARELATIONSHIP_SCHEMA);
 
-/* APACKAGE_SCHEMA: describes IAPackage (pig:aPackage) */
-const APACKAGE_SCHEMA = {
-    $schema: 'http://json-schema.org/draft-07/schema#',
-    $id: 'https://gfse.org/schema/pig/IAPackage',
-    type: 'object',
-    properties: {
-        context: {
-            type: 'array',
-        //    minItems: 1,
-            items: {
-                type: 'object',
-                description: 'Namespace definitions with tag and URI mappings',
-                properties: {
-                    tag: { type: 'string' },
-                    uri: { type: 'string', format: 'uri' }
-                },
-                additionalProperties: false
-            }
-        },
-        id: { $ref: '#/$defs/idString' },
-        itemType: {
-            type: 'string',
-            enum: ['pig:aPackage'],
-            description: 'The PigItemType for pig:aPackage'
-        },
-        title: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        description: {
-            type: 'array',
-            minItems: 1,
-            items: { $ref: '#/$defs/LanguageText' }
-        },
-        revision: { type: 'string' },
-        priorRevision: {
-            type: 'array',
-            minItems: 1,
-            maxItems: 2,
-            items: { type: 'string' }
-        },
-        modified: {
-            type: 'string',
-            format: 'date-time'
-        },
-        creator: { type: 'string' },
-        graph: {
-            type: 'array',
-            items: {
-                type: 'object',
-                description: 'Any PIG item in the package graph; items are checked individually before instantiation'
-            }
-        }
-    },
-    additionalProperties: false,
-    required: ['id', 'itemType', 'modified', 'graph'],
-    $defs: {
-        idString: {
-            type: 'string',
-            description: 'TPigId — term with namespace (prefix:local) or an URI',
-            pattern: ID_NAME_PATTERN
-        },
-        LanguageText: {
+    static getEnumerationSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IEnumeration`,
             type: 'object',
-            required: ['value'],
-            additionalProperties: false,
             properties: {
-                value: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
                     type: 'string',
-                    minLength: 1
+                    enum: [`owl:Class`],
                 },
-                lang: { type: 'string' }
-            }
-        }
+                specializes: { $ref: '#/$defs/idString' },  // perhaps not needed
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Enumeration`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Enumeration`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                datatype: {
+                    type: 'string',
+                    pattern: '^xsd?:[A-Za-z]+$'
+                },
+                minCount: { type: 'integer', minimum: 0 },
+                maxCount: { type: 'integer', minimum: 1 },
+                unit: { type: 'string' },
+                enumeratedValue: {
+                    type: 'array',
+                    items: {
+                        oneOf: [
+                            {
+                                type: 'object',
+                                required: ['id', 'title'],
+                                properties: {
+                                    id: { $ref: '#/$defs/idString' },
+                                    title: { $ref: '#/$defs/MultiLanguageText' }
+                                },
+                                additionalProperties: false,
+                                description: 'Enumerated value with multi-language title (for xs:string)'
+                            },
+                            {
+                                type: 'object',
+                                required: ['id', 'value'],
+                                properties: {
+                                    id: { $ref: '#/$defs/idString' },
+                                    value: {
+                                        type: 'string',
+                                        minLength: 1,
+                                        description: 'Literal value for numeric and other datatypes (stored as string)'
+                                    }
+                                },
+                                additionalProperties: false,
+                                description: 'Enumerated value with literal value (for xs:integer, xs:double, etc.)'
+                            }
+                        ]
+                    }
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes; enumeratedValue and datatype may be omitted for upper levels in the generalization hierarchy.
+            $defs: this.getDefs()
+        };
     }
-};
-const validateAPackageSchema = ajv.compile(APACKAGE_SCHEMA);
 
-/** SCH: Exported schemata and validation functions for PIG items:
-*/
+    static getPropertySchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IProperty`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:DatatypeProperty`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Property`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Property`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                datatype: {
+                    type: 'string',
+                    pattern: '^xsd?:[A-Za-z]+$'
+                },
+                minCount: { type: 'integer', minimum: 0 },
+                maxCount: { type: 'integer', minimum: 1 },
+                maxLength: { type: 'integer', minimum: 1 },
+                minInclusive: { type: 'number' },
+                maxInclusive: { type: 'number' },
+                pattern: { type: 'string' },
+                unit: { type: 'string' },
+                defaultValue: { type: 'string' },
+                composedProperty: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getLinkSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IReference`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:ObjectProperty`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Link`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Link`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                enumeratedEndpoint: {
+                    type: 'array',
+                    minItems: 1,
+                    items: { $ref: '#/$defs/idString' }
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title', 'enumeratedEndpoint'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getEntitySchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IEntity`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Entity`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Entity`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                enumeratedProperty: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                enumeratedTargetLink: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                icon: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string' }
+                    },
+                    description: 'string oder data URI für das Entity-Icon'
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getRelationshipSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IRelationship`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Relationship`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Relationship`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                enumeratedProperty: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                enumeratedSourceLink: { 
+                    type: 'array',
+                    minItems: 1, // exactly 1 which is not pointing to an enumeration
+                    maxItems: 1,
+                    items: { $ref: '#/$defs/idString' }
+                },
+                enumeratedTargetLink: {
+                    type: 'array',
+                    minItems: 1, // exactly 1 which is not pointing to an enumeration plus 0..n which are pointing to enumerations
+                    items: { $ref: '#/$defs/idString' }
+                },
+                icon: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string' }
+                    },
+                    description: 'string oder data URI für das Relationship-Icon'
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getAnEntitySchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IAnEntity`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}anEntity`],
+                    description: `The itemType for ${DEF.pfxNsMeta}anEntity`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                hasProperty: this.getPropertyRef(),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`),
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'modified'],
+            anyOf: [
+                { required: ['title'] },
+                { required: ['description'] }
+            ],
+            $defs: this.getDefs()
+        };
+    }
+
+    static getARelationshipSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IARelationship`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}aRelationship`],
+                    description: `The itemType for ${DEF.pfxNsMeta}aRelationship`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                hasProperty: this.getPropertyRef(),
+                hasSourceLink: this.getLinkRef(`${DEF.pfxNsMeta}aSourceLink`, 1, 1),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`, 1), // exactly 1 which is not pointing to an enumeration plus 0..n which are pointing to enumerations
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'modified', 'hasSourceLink', 'hasTargetLink'], // but neither title nor description is required
+            $defs: this.getDefs()
+        };
+    }
+
+    static getAPackageSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IAPackage`,
+            type: 'object',
+            properties: {
+                context: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        description: 'Namespace definitions with tag and URI mappings',
+                        properties: {
+                            tag: { type: 'string' },
+                            uri: { type: 'string', format: 'uri' }
+                        },
+                        additionalProperties: false
+                    }
+                },
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Package`],
+                },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}aPackage`],
+                    description: `The itemType for ${DEF.pfxNsMeta}aPackage`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                hasProperty: this.getPropertyRef(),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`),
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' },
+                graph: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        description: 'Any metamodel item in the package graph; items are checked individually before instantiation'
+                    }
+                }
+            },
+            additionalProperties: false,
+            required: ['context', 'id', 'hasClass', 'itemType', 'modified', 'graph'],
+            $defs: this.getDefs()
+        };
+    }
+}
+
+// Validierungsfunktionen
+const validateEnumerationSchema = ajv.compile(PigSchemaFactory.getEnumerationSchema())
+const validatePropertySchema = ajv.compile(PigSchemaFactory.getPropertySchema());
+const validateLinkSchema = ajv.compile(PigSchemaFactory.getLinkSchema());
+const validateEntitySchema = ajv.compile(PigSchemaFactory.getEntitySchema());
+const validateRelationshipSchema = ajv.compile(PigSchemaFactory.getRelationshipSchema());
+const validateAnEntitySchema = ajv.compile(PigSchemaFactory.getAnEntitySchema());
+const validateARelationshipSchema = ajv.compile(PigSchemaFactory.getARelationshipSchema());
+const validateAPackageSchema = ajv.compile(PigSchemaFactory.getAPackageSchema());
+
+// Exportstruktur
 export const SCH = {
-    PROPERTY_SCHEMA,
+    ENUMERATION_SCHEMA: PigSchemaFactory.getEnumerationSchema(),
+    validateEnumerationSchema,
+    getValidateEnumerationErrors() {
+        return ajv.errorsText(validateEnumerationSchema.errors, { separator: '; ' });
+    },
+    PROPERTY_SCHEMA: PigSchemaFactory.getPropertySchema(),
     validatePropertySchema,
     getValidatePropertyErrors() {
         return ajv.errorsText(validatePropertySchema.errors, { separator: '; ' });
     },
-    LINK_SCHEMA,
+    LINK_SCHEMA: PigSchemaFactory.getLinkSchema(),
     validateLinkSchema,
     getValidateLinkErrors() {
-        return ajv.errorsText(validateLinkSchema.errors, { separator: '; ' })
+        return ajv.errorsText(validateLinkSchema.errors, { separator: '; ' });
     },
-    ENTITY_SCHEMA,
+    ENTITY_SCHEMA: PigSchemaFactory.getEntitySchema(),
     validateEntitySchema,
     getValidateEntityErrors() {
-        return ajv.errorsText(validateEntitySchema.errors, { separator: '; ' })
+        return ajv.errorsText(validateEntitySchema.errors, { separator: '; ' });
     },
-    RELATIONSHIP_SCHEMA,
+    RELATIONSHIP_SCHEMA: PigSchemaFactory.getRelationshipSchema(),
     validateRelationshipSchema,
     getValidateRelationshipErrors() {
-        return ajv.errorsText(validateRelationshipSchema.errors, { separator: '; ' })
+        return ajv.errorsText(validateRelationshipSchema.errors, { separator: '; ' });
     },
-    ANENTITY_SCHEMA,
+    ANENTITY_SCHEMA: PigSchemaFactory.getAnEntitySchema(),
     validateAnEntitySchema,
     getValidateAnEntityErrors() {
-        return ajv.errorsText(validateAnEntitySchema.errors, { separator: '; ' })
+        return ajv.errorsText(validateAnEntitySchema.errors, { separator: '; ' });
     },
-    ARELATIONSHIP_SCHEMA,
+    ARELATIONSHIP_SCHEMA: PigSchemaFactory.getARelationshipSchema(),
     validateARelationshipSchema,
     getValidateARelationshipErrors() {
-        return ajv.errorsText(validateARelationshipSchema.errors, { separator: '; ' })
+        return ajv.errorsText(validateARelationshipSchema.errors, { separator: '; ' });
     },
-    APACKAGE_SCHEMA,
+    APACKAGE_SCHEMA: PigSchemaFactory.getAPackageSchema(),
     validateAPackageSchema,
     getValidateAPackageErrors() {
-        return ajv.errorsText(validateAPackageSchema.errors, { separator: '; ' })
+        return ajv.errorsText(validateAPackageSchema.errors, { separator: '; ' });
     }
 };
