@@ -45,39 +45,38 @@ export interface IOptionsHTML {
 
 export const toHTML = {
     aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
-        const pkgSt = pkg.status();
-        if (!pkgSt.ok) {
-            return [
-                `<div class="meta-error">
-                    Invalid aPackage with id ${pkg.id} - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
-                </div>`
-            ];
-        }
-
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang ?? 'en-US';
         const widthMain = options?.widthMain ?? '67%';
         const includeItemTypes = options?.itemType ?? [PigItemType.anEntity];
+        const pkgSt = pkg.status();
 
         // 1. Package metadata as first element with localization
+        const errHTML: stringHTML = pkgSt.ok ? ''
+              : `<div class="meta-error">
+                    Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
+                </div>`;
+            
         const titleText = passify(getLocalText(pkg.title, lang));
         const descText = passify(getLocalText(pkg.description, lang));
 
-        const pkgMetadata = `<div class="meta-aPackage">
-                    <div class="col-main" style="flex: 0 0 ${widthMain};">
-                        <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
-                        ${descText ? `<div class="meta-description">${descText}</div>` : ''}
-                    </div>
-                    <div class="col-right">
-                        <dl class="dl-horizontal">
-                            ${metadataToHTML(pkg, lang)}
-                            <dt>Items in Graph</dt><dd>${pkg.graph.length}</dd>
-                        </dl>
-                    </div>
-                </div>`;
+        const pkgHTML = `<div class="meta-aPackage">
+                <div class="col-main" style="flex: 0 0 ${widthMain};">
+                    <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
+                    ${descText ? `<div class="meta-description">${descText}</div>` : ''}
+                    ${errHTML}
+                </div>
+                <div class="col-right">
+                    <dl class="dl-horizontal">
+                        ${metadataToHTML(pkg, lang)}
+                        <dt>Items in Graph</dt><dd>${pkg.graph.length}</dd>
+                    </dl>
+                </div>
+            </div>`;
+            
+        const result: stringHTML[] = [pkgHTML];
 
-        const result: stringHTML[] = [pkgMetadata];
-
+        // 2. Graph items - filter by type
         for (const item of pkg.graph) {
             if (includeItemTypes.includes(item.itemType) && typeof toHTML.anEntity === 'function') {
                 // call directly the helper function instead of the getHTML method of the item:
@@ -137,7 +136,7 @@ export const toHTML = {
                     Invalid aRelationship with id ${rel.id} - status: (${relSt.status}) ${relSt.statusText ?? ''}
                 </div>`;
         }
-        // ToDo: Implementiere eine HTML-Repräsentation für ARelationship
+        // @ToDo: Implementiere eine HTML-Repräsentation für ARelationship
         return '<div class="meta-not-implemented">HTML export for Relationship not implemented</div>';
     }
 };
@@ -200,7 +199,8 @@ function passify(html: string): string {
     ]);
 
     // Match all <object> tags with their attributes and content
-    const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;
+    // const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;  ... did not work with es2020 even though it should, so we use [\s\S]*? instead of .*?
+    const objectRegex = /<object([^>]*)>([\s\S]*?)<\/object>/gi;
     passified = passified.replace(objectRegex, (match, attributes, content) => {
         // Extract type attribute
         const typeMatch = attributes.match(/type\s*=\s*["']([^"']+)["']/i);
@@ -312,10 +312,10 @@ function passify(html: string): string {
  * @returns HTML string representing the metadata
  */
 function metadataToHTML(item: TPigAnElement, lang: tagIETF): string {
-    return `<dt>Item Type</dt><dd>${item.itemType}</dd>
-                <dt>ID</dt><dd>${item.id}</dd>
-                <dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>
-                <dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>`
+    return `<dt>Item Type</dt><dd>${item.itemType}</dd>`
+                + `<dt>ID</dt><dd>${item.id}</dd>`
+                + `<dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>`
+                + (item.modified ? `<dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>` : '')
                 + (item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : '')
                 + (item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : '')
                 + (item.priorRevision && item.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${item.priorRevision.map((r: string) => passify(r)).join(', ')}</dd>` : '');

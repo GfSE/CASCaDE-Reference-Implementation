@@ -149,14 +149,14 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
     },
     611: {
-        en: (op, act, exp) =>
-            `${op}: Created ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe créés sur ${exp}`,
-        es: (op, act, exp) =>
-            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
+        en: (op, act, exp, errors) =>
+            `${op}: Created ${act} of ${exp} graph items` + (errors ? ` with errors: ${errors}` : ''),
+        de: (op, act, exp, errors) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt` + (errors ? ` mit Fehlern: ${errors}` : ''),
+        fr: (op, act, exp, errors) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}` + (errors ? ` avec des erreurs: ${errors}` : ''),
+        es: (op, act, exp, errors) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo` + (errors ? ` con errores: ${errors}` : '')
     },
 
 /*  currently not used:
@@ -392,34 +392,34 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}] tiene ${msg}`
     },
     673: {
-        en: (parentId, propIndex, hasClass, msg) =>
-            `Package validation failed: item '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        de: (parentId, propIndex, hasClass, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        fr: (parentId, propIndex, hasClass, msg) =>
-            `Échec de la validation du package: élément '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        es: (parentId, propIndex, hasClass, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`
+        en: (parentId, prp, className, msg) =>
+            `Package validation failed: item '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        de: (parentId, prp, className, msg) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        fr: (parentId, prp, className, msg) =>
+            `Échec de la validation du package: élément '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        es: (parentId, prp, className, msg) =>
+            `Error en la validación del paquete: elemento '${parentId}' ${prp}.hasClass='${className}' - ${msg}`
     },
     674: {
         en: (parentId, index, prpName, msg) =>
-            `Package validation failed: item '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Package validation failed: graph[${index}] with item '${parentId}' ${prpName} - ${msg}`,
         de: (parentId, index, prpName, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Paket-Validierung fehlgeschlagen: graph[${index}] mit Element '${parentId}' ${prpName} - ${msg}`,
         fr: (parentId, index, prpName, msg) =>
-            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Échec de la validation du package: graph[${index}] avec l'élément '${parentId}' ${prpName} - ${msg}`,
         es: (parentId, index, prpName, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName} - ${msg}`
+            `Error en la validación del paquete: graph[${index}] con el elemento '${parentId}' ${prpName} - ${msg}`
     },
     675: {
         en: (parentId, index, prpName, prpVal, msg) =>
-            `Package validation failed: item '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Package validation failed: graph[${index}] with item '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         de: (parentId, index, prpName, prpVal, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Paket-Validierung fehlgeschlagen: graph[${index}] mit Element '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         fr: (parentId, index, prpName, prpVal, msg) =>
-            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Échec de la validation du package: graph[${index}] avec l'élément '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         es: (parentId, index, prpName, prpVal, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`
+            `Error en la validación del paquete: graph[${index}] con el elemento '${parentId}' ${prpName}: ${prpVal} - ${msg}`
     },
     676: {
         en: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
@@ -430,6 +430,16 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `${itemType} '${itemId}' ${arrayName}[${linkIndex}] utilise '${linkClassId}' qui n'est pas éligible dans la classe '${classId}'.`,
         es: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
             `${itemType} '${itemId}' ${arrayName}[${linkIndex}] usa '${linkClassId}' que no es elegible en la clase '${classId}'.`
+    },
+    677: {
+        en: (instanceId, linkIndex, linkClassId, msg) =>
+            `Enumerated value validation failed for item '${instanceId}' targetLink[${linkIndex}] of class '${linkClassId}': ${msg}`,
+        de: (instanceId, linkIndex, linkClassId, msg) =>
+            `Enumeration-Validierung fehlgeschlagen für Element '${instanceId}' targetLink[${linkIndex}] der Klasse '${linkClassId}': ${msg}`,
+        fr: (instanceId, linkIndex, linkClassId, msg) =>
+            `Échec de la validation de la valeur énumérée pour l'élément '${instanceId}' targetLink[${linkIndex}] de la classe '${linkClassId}': ${msg}`,
+        es: (instanceId, linkIndex, linkClassId, msg) =>
+            `Falló la validación del valor enumerado para el elemento '${instanceId}' targetLink[${linkIndex}] de la clase '${linkClassId}': ${msg}`
     },
     678: {
         en: (instanceId, propClassId, actualCount, expectedCount, issue) =>

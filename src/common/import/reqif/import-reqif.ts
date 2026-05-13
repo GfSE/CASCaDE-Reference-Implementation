@@ -23,13 +23,13 @@
  * - Static class design for consistency with other importers
  * - Source file is loaded inside (like importXML and importJSONLD), for consistency.
  * 
- * ToDo:
+ * @ToDo:
  * - Extend the constraint checks - very limited now.
  */
 
 import { DEF } from '../../lib/definitions';
 import { LOG } from '../../lib/helpers';
-import { PIN } from '../../lib/platform-independence';
+import { PLI } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
 import { APackage /*, TPigItem*/ } from '../../schema/pig/ts/pig-metaclasses';
 import { XmlImporter } from '../xml/import-xml';
@@ -40,7 +40,7 @@ import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints
  * Static class for importing and transforming ReqIF documents to PIG format
  */
 export class ReqifImporter {
-    private static readonly MAX_XML_SIZE = 4 * 1024 * 1024; // 4MB
+    private static readonly maxSizeInput = DEF.maxSizeXML;
 
     /**
      * Import ReqIF document and transform to PIG items
@@ -55,7 +55,7 @@ export class ReqifImporter {
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await ReqIFImporter.import(file);
+     * const result = await ReqifImporter.import(file);
      */
     static async import(source: string | File): Promise<IRsp<unknown>> {
         // Extract filename for validation and logging
@@ -72,7 +72,7 @@ export class ReqifImporter {
         }
 
         // Read file content
-        const rspRead = await PIN.readFileAsText(source);
+        const rspRead = await PLI.readFileAsText(source);
         if (!rspRead.ok) {
             return rspRead;
         }
@@ -80,26 +80,20 @@ export class ReqifImporter {
         const xmlToTransform = rspRead.response as string;
 
         // Security: Size limit check
-        if (xmlToTransform.length > this.MAX_XML_SIZE) {
+        if (xmlToTransform.length > this.maxSizeInput) {
             return Msg.create(
                 660,
                 filename,
-                `file too large (max ${this.MAX_XML_SIZE / 1024 / 1024}MB)`
+                `file too large (max ${this.maxSizeInput / 1024 / 1024}MB)`
             );
         }
 
-        // Security: Basic XML structure validation
-        const trimmed = xmlToTransform.trim();
-        if (!trimmed.startsWith('<?xml') && !trimmed.startsWith('<')) {
-            return Msg.create(660, filename, 'invalid XML structure');
-        }
-
         // Parse XML document
-        const parser = PIN.createDOMParser();
+        const parser = PLI.createDOMParser();
         const xmlDoc = parser.parseFromString(xmlToTransform, 'text/xml');
 
         // Check for parsing errors
-        const sourceError = PIN.getXmlParseError(xmlDoc);
+        const sourceError = PLI.getXmlParseError(xmlDoc);
         if (sourceError) {
             return Msg.create(
                 660,
@@ -118,25 +112,20 @@ export class ReqifImporter {
         }
 
         // Get stylesheet path and transform document
-        const stylesheetPath = this.getStylesheetPath();
+        const stylesheetPath = this.getStylesheetPath('ReqIF-to-CAS.sef.json');
         // LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
-        const rspTransform = await PIN.transformXSL(xmlToTransform, stylesheetPath);
-        if (!rspTransform.ok) {
-            return Msg.create(
-                660,
-                filename,
-                rspTransform.statusText ?? 'Transformation failed'
-            );
-        }
+        const rspTransform = await PLI.transformXSL(xmlToTransform, stylesheetPath);
+        if (!rspTransform.ok)
+            return rspTransform;
 
         const xmlString = rspTransform.response as string;
+        // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
 
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
-        if (!schemaResult.ok) {
+        if (!schemaResult.ok)
             return schemaResult;
-        }
 
         // Instantiate APackage from transformed XML
         const aPackage = new APackage().setXML(xmlString, {
@@ -163,7 +152,7 @@ export class ReqifImporter {
         const actualCount = allItems.length - 1; // -1 for package itself
 
         LOG.info(
-            `ReqIFImporter: successfully imported ${filename} with ${actualCount} of ${expectedCount} items`
+            `ReqifImporter: successfully imported ${filename} with ${actualCount} of ${expectedCount} items`
         );
 
         // Return success response with items (clone rspOK to avoid shared-state mutation)
@@ -177,15 +166,14 @@ export class ReqifImporter {
      * @returns Path/URL to ReqIF-to-PIG.sef.json
      * @private
      */
-    private static getStylesheetPath(): string {
-        const reqifToPigSef = 'ReqIF-to-PIG.sef.json';
-        if (PIN.isBrowserEnv()) {
+    private static getStylesheetPath(filename: string): string {
+        if (PLI.isBrowserEnv()) {
             // Browser: fetch from public directory via HTTP
             const baseUrl = window.location.origin;
-            return `${baseUrl}/${DEF.xslPath}${reqifToPigSef}`;
+            return `${baseUrl}/${DEF.xslPath}${filename}`;
         } else {
             // Node.js: read from local public directory
-            return `./public/${DEF.xslPath}${reqifToPigSef}`;
+            return `./public/${DEF.xslPath}${filename}`;
         }
     }
 

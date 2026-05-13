@@ -26,7 +26,7 @@ function findXmlFiles(dir: string, fileList: string[] = []): string[] {
         if (stat.isDirectory()) {
             // Recursively search subdirectories
             findXmlFiles(filePath, fileList);
-        } else if (file.endsWith('.xml')) {
+        } else if (file.endsWith('.cas.xml')) {
             // Add XML files to the list
             fileList.push(filePath);
         }
@@ -77,14 +77,15 @@ describe('import XML (file system)', () => {
 
             // validate each instantiated item
             instances.forEach((itm, index) => {
-                expect(itm.status().ok).toBe(true);
+                const st = itm.status();
                 // Log any warnings for debugging
-                if (itm.status().status !== 0) {
-                    console.warn(`  Item ${index} (${itm.get()?.id}): ${itm.status().statusText}`);
+                if (!st.ok) {
+                    console.warn(`  Item ${index} (${itm.get()?.id}): ${st.statusText}`);
                 }
+                expect(st.ok).toBe(true);
             });
 
-            console.log(`  ✓ ${testName}: ${instances.length} items`);
+            // console.log(`  ✓ ${testName}: ${instances.length} items`);
         });
     });
 

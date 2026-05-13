@@ -65,8 +65,8 @@ pluginFiles.keys().forEach((filePath: string) => {
 });
 
 // provide all global components
-const exportComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Export")));
-const importComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, value]) => key.includes("Import")));
+const exportComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, _]) => key.includes("Export")));
+const importComponents = Object.fromEntries(Object.entries(app._context.components).filter(([key, _]) => key.includes("Import")));
 
 LOG.info("Mounted import components:", importComponents);
 app.provide('importComponents', importComponents);
