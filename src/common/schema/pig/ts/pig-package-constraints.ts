@@ -27,6 +27,7 @@
  *   ✅ - value range
  *   ✅ - reference to enumerated values (enumerations)
  * Phase 2 (important):
+ *      check aPackage.hasClass, class and specializes references and consistency with classes (similarly to anEntity)
  *      namespace prefixes are defined in the context
  *      subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
  *      subClass is consistent with specialization hierarchy (following the restrictions of OWL2)

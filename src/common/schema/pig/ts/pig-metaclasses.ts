@@ -49,12 +49,14 @@
  *  - Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed?
  *  - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
  *  - allow packages to be nested
+ *  - implement the import of configurable properties and links for aPackage.
  *  - Consider the storage of numeric and boolean values: should be string?
  *  - Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}?
  *  - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
  *    This code could just *ignore* additional properties.
  *  - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  *  - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
+ *  - There are redundant transformations from JSON-LD to internal format for individual items and a whole package.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -721,7 +723,6 @@ abstract class AnElement extends Identifiable implements IAnElement {
                                 hasClass: key,
                                 // itype == PigItemType.Property: value in case of a plain value 
                                 value: item.value /*|| item['@value'] */,
-                                // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
                                 // itype == PigItemType.Link: idRef is mandatory
                                 idRef: item.id,
                                 composes: item.composes
