@@ -40,7 +40,8 @@
  *    it is recommended to maintain revision and priorRevision as well for better configuration management and traceability.
  *
  *  @ToDo:
- *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check? 
+ *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check?
+ *  - This does also concern enumerations, which have minCount and maxCount at present --> (perhaps) move it to the link class!
  *  - implement 'composes' (formerly composedProperty) for Property and AProperty
  *  - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *    PigItem.normalizeId() shortly before validate() in set() ?
