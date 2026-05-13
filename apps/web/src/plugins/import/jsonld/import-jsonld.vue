@@ -111,7 +111,7 @@
                     if (allHtmlArrays.length > 0) {
                         // Store in Pinia store
                         const store = useHtmlStore();
-                        store.htmlArray = allHtmlArrays;
+                        store.setHtmlArray(allHtmlArrays);
 
                         // Show success message
                         this.successMessage = `Imported ${successful.length} of ${results.length} file(s)`;

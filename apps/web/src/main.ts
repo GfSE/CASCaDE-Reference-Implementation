@@ -13,6 +13,9 @@ import '@mdi/font/css/materialdesignicons.css'
 import router from './router';
 import '@/styles/main.css';
 
+import { useHtmlStore } from "@/stores/cacheStore";
+import { setupPersistence } from "@/stores/persist";
+
 const vuetify = createVuetify({
     components,
     directives,
@@ -51,6 +54,11 @@ const vuetify = createVuetify({
 const app = createApp(App);
 
 app.use(vuetify).use(router).use(ajvPlugin).use(createPinia());
+
+const cacheStore = useHtmlStore();
+LOG.info("Initial htmlArray in cacheStore:", cacheStore.htmlArray);
+
+setupPersistence(cacheStore);
 
 // parameters: root, recursive, file to match
 const pluginFiles = require.context('./plugins', true, /\.ts$/);
