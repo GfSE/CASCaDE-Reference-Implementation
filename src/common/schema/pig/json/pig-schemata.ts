@@ -436,7 +436,7 @@ class PigSchemaFactory {
                 description: { $ref: '#/$defs/MultiLanguageText' },
                 hasProperty: this.getPropertyRef(),
                 hasSourceLink: this.getLinkRef(`${DEF.pfxNsMeta}aSourceLink`, 1, 1),
-                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`, 1, 1),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`, 1), // exactly 1 which is not pointing to an enumeration plus 0..n which are pointing to enumerations
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
