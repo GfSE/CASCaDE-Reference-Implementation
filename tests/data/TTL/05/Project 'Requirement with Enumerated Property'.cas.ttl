@@ -155,25 +155,6 @@ casShapes_cas:Outline
 		sh:minCount 1
 	] .
 
-cas:Table
-	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Organizer ;
-	rdfs:label "Table" ;
-	skos:definition "A subclass of cas:Organizer representing a table showing selected model elements." .
-
-casShapes_cas:Table
-	rdf:type sh:NodeShape ;
-	sh:targetClass cas:Table ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] ,
-		casShapes_cas:shows .
-
 cas:Relationship
 	rdf:type owl:Class ;
 	rdfs:label "Relationship" ;
@@ -314,38 +295,6 @@ casShapes_cas:lists
 			[ sh:class cas:Entity ]
 			[ sh:class cas:Relationship ]
 			[ sh:class cas:Organizer ]
-		) .
-
-cas:shows
-	rdf:type owl:ObjectProperty ;
-	rdfs:subPropertyOf cas:TargetLink ;
-	rdfs:range [ owl:unionOf(
-			cas:Entity
-			cas:Relationship
-		)] ;
-	rdfs:label "shows" ;
-	skos:definition "Shows an entity or a relationship." .
-
-casShapes_cas:shows
-	rdf:type sh:PropertyShape ;
-	sh:path cas:shows ;
-	sh:or (
-			[ sh:class cas:Entity ]
-			[ sh:class cas:Relationship ]
-		) .
-
-cas:depicts
-	rdf:type owl:ObjectProperty ;
-	rdfs:subPropertyOf cas:TargetLink ;
-	rdfs:range cas:Entity ;
-	rdfs:label "depicts" ;
-	skos:definition "Depicts an entity; inverse of uml:ownedDiagram." .
-
-casShapes_cas:depicts
-	rdf:type sh:PropertyShape ;
-	sh:path cas:depicts ;
-	sh:or (
-			[ sh:class cas:Entity ]
 		) .
 
 #################################################################

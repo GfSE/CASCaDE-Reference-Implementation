@@ -616,7 +616,7 @@ abstract class Element extends Identifiable implements IElement {
     protected get() {
         return {
             ...super.get(),
-            enumeratedProperty: this.enumeratedProperty, // undfined: all allowed, empty array: none allowed, array with items: only those allowed
+            enumeratedProperty: this.enumeratedProperty, // undefined: all allowed, empty array: none allowed, array with items: only those allowed
             icon: this.icon
         } as IElement;
     }

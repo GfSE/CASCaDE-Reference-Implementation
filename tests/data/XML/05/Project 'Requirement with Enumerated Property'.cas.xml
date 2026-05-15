@@ -68,21 +68,6 @@
             <dcterms:title>Outline</dcterms:title>
             <skos:definition>A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</skos:definition>
         </cas:Entity>
-        <cas:Entity id="cas:View" cas:hasClass="owl:Class">
-            <cas:specializes>cas:Organizer</cas:specializes>
-            <dcterms:title>View</dcterms:title>
-            <skos:definition>A subclass of cas:Organizer representing a model view (diagram) using a certain notation showing selected model elements.</skos:definition>
-            <cas:enumeratedProperty>cas:Diagram</cas:enumeratedProperty>
-            <cas:enumeratedProperty>cas:Notation</cas:enumeratedProperty>
-            <cas:enumeratedTargetLink>cas:shows</cas:enumeratedTargetLink>
-            <cas:enumeratedTargetLink>cas:depicts</cas:enumeratedTargetLink>
-        </cas:Entity>
-        <cas:Entity id="cas:Table" cas:hasClass="owl:Class">
-            <cas:specializes>cas:Organizer</cas:specializes>
-            <dcterms:title>Table</dcterms:title>
-            <skos:definition>A subclass of cas:Organizer representing a table showing selected model elements.</skos:definition>
-            <cas:enumeratedTargetLink>cas:shows</cas:enumeratedTargetLink>
-        </cas:Entity>
         <cas:Entity id="cas:Enumeration" cas:hasClass="owl:Class">
             <dcterms:title>Enumeration</dcterms:title>
             <skos:definition>A CASCaRA meta-model item used for enumerations of values.</skos:definition>
@@ -163,19 +148,6 @@
             <cas:enumeratedEndpoint>cas:Organizer</cas:enumeratedEndpoint>
             <dcterms:title>lists</dcterms:title>
             <skos:definition>Lists an entity, a relationship or a subordinated organizer.</skos:definition>
-        </cas:Link>
-        <cas:Link id="cas:shows" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:linksTarget</cas:specializes>
-            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
-            <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
-            <dcterms:title>shows</dcterms:title>
-            <skos:definition>Shows an entity or a relationship.</skos:definition>
-        </cas:Link>
-        <cas:Link id="cas:depicts" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:linksTarget</cas:specializes>
-            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
-            <dcterms:title>depicts</dcterms:title>
-            <skos:definition>Depicts an entity; inverse of uml:ownedDiagram.</skos:definition>
         </cas:Link>
 		
         <!-- Enumerations -->
