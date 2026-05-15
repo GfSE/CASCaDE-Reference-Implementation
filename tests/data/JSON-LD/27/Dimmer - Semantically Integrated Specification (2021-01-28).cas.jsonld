@@ -32,7 +32,7 @@
         }
     ],
     "dcterms:creator": "od@enso-managers.de",
-    "dcterms:modified": "2026-05-12T16:14:20.344Z",
+    "dcterms:modified": "2026-05-14T08:43:31.525Z",
     "@graph": [
         {
             "@id": "cas:Enumeration",
@@ -231,12 +231,12 @@
             ],
             "cas:enumeratedSourceLink": [
                 {
-                    "@id": "cas:SourceLink"
+                    "@id": "cas:linksSource"
                 }
             ],
             "cas:enumeratedTargetLink": [
                 {
-                    "@id": "cas:TargetLink"
+                    "@id": "cas:linksTarget"
                 }
             ]
         },
@@ -361,7 +361,7 @@
             ]
         },
         {
-            "@id": "cas:SourceLink",
+            "@id": "cas:linksSource",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
                 "@id": "cas:Link"
@@ -389,7 +389,7 @@
             ]
         },
         {
-            "@id": "cas:TargetLink",
+            "@id": "cas:linksTarget",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
                 "@id": "cas:Link"
@@ -420,7 +420,7 @@
             "@id": "cas:lists",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "cas:itemType": {
                 "@id": "cas:Link"
@@ -451,7 +451,7 @@
             "@id": "cas:shows",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "cas:itemType": {
                 "@id": "cas:Link"
@@ -479,7 +479,7 @@
             "@id": "cas:depicts",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "cas:itemType": {
                 "@id": "cas:Link"
@@ -1609,7 +1609,7 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "o:PC-Diagram-9811374142",
+            "@id": "o:PC-Diagram-11217271637",
             "@type": "owl:DatatypeProperty",
             "dcterms:title": [
                 {
@@ -1735,6 +1735,8 @@
                 {
                     "@id": "cas:Diagram"
                 }
+            ],
+            "cas:enumeratedTargetLink": [
             ]
         },
         {
@@ -1778,7 +1780,11 @@
             },
             "cas:Icon": {
                 "@value": "&#x25CB;"
-            }
+            },
+            "cas:enumeratedProperty": [
+            ],
+            "cas:enumeratedTargetLink": [
+            ]
         },
         {
             "@id": "FMC:Event",
@@ -1821,7 +1827,11 @@
             },
             "cas:Icon": {
                 "@value": "&#x2662;"
-            }
+            },
+            "cas:enumeratedProperty": [
+            ],
+            "cas:enumeratedTargetLink": [
+            ]
         },
         {
             "@id": "IREB:Requirement",
@@ -1998,10 +2008,12 @@
                 {
                     "@id": "cas:Category"
                 }
+            ],
+            "cas:enumeratedTargetLink": [
             ]
         },
         {
-            "@id": "o:RC-Paragraph-9811374142",
+            "@id": "o:RC-Paragraph-11217271637",
             "@type": "owl:Class",
             "dcterms:title": [
                 {
@@ -2028,11 +2040,13 @@
             },
             "cas:enumeratedProperty": [
                 {
-                    "@id": "o:PC-Diagram-9811374142"
+                    "@id": "o:PC-Diagram-11217271637"
                 },
                 {
                     "@id": "cas:Category"
                 }
+            ],
+            "cas:enumeratedTargetLink": [
             ]
         },
         {
@@ -2066,6 +2080,8 @@
             "cas:itemType": {
                 "@id": "cas:Relationship"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedSourceLink": [
                 {
                     "@id": "SpecIF:contains-toSource"
@@ -2084,7 +2100,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -2115,7 +2131,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -2160,6 +2176,8 @@
             "cas:itemType": {
                 "@id": "cas:Relationship"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedSourceLink": [
                 {
                     "@id": "o:SC-stores-toSource"
@@ -2178,7 +2196,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -2203,7 +2221,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -2252,6 +2270,8 @@
             "cas:itemType": {
                 "@id": "cas:Relationship"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedSourceLink": [
                 {
                     "@id": "SpecIF:writes-toSource"
@@ -2270,7 +2290,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -2295,7 +2315,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -2344,6 +2364,8 @@
             "cas:itemType": {
                 "@id": "cas:Relationship"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedSourceLink": [
                 {
                     "@id": "SpecIF:reads-toSource"
@@ -2362,7 +2384,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -2387,7 +2409,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -2436,6 +2458,8 @@
             "cas:itemType": {
                 "@id": "cas:Relationship"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedSourceLink": [
                 {
                     "@id": "SpecIF:dependsOn-toSource"
@@ -2454,7 +2478,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -2479,7 +2503,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -2528,6 +2552,8 @@
             "cas:itemType": {
                 "@id": "cas:Relationship"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedSourceLink": [
                 {
                     "@id": "oslc_rm:satisfies-toSource"
@@ -2546,7 +2572,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -2577,7 +2603,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -2626,6 +2652,8 @@
             "cas:itemType": {
                 "@id": "cas:Relationship"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedSourceLink": [
                 {
                     "@id": "SpecIF:refersTo-toSource"
@@ -2644,7 +2672,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -2669,7 +2697,7 @@
                 "@id": "cas:Link"
             },
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -9655,7 +9683,7 @@
             "cas:itemType": {
                 "@id": "cas:anEntity"
             },
-            "dcterms:modified": "2026-05-12T16:14:20.992Z",
+            "dcterms:modified": "2026-05-14T08:43:32.023Z",
             "dcterms:title": [
                 {
                     "@value": "Hierarchy Root"
@@ -9734,7 +9762,7 @@
         {
             "@id": "d:HR-Fld-59c8a7730000bca80137509a49b1218b-info",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:20.606Z",
+            "dcterms:modified": "2026-05-14T08:43:31.736Z",
             "dcterms:title": [
                 {
                     "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
@@ -9814,7 +9842,7 @@
         {
             "@id": "d:HR-Fld-5a5f54090000bca801375b04a668f1a7",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:20.606Z",
+            "dcterms:modified": "2026-05-14T08:43:31.736Z",
             "dcterms:title": [
                 {
                     "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
@@ -9911,7 +9939,7 @@
         {
             "@id": "d:HR-Fld-5af3154d0000bca801379748537d7388",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:20.606Z",
+            "dcterms:modified": "2026-05-14T08:43:31.736Z",
             "dcterms:title": [
                 {
                     "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
@@ -10142,7 +10170,7 @@
         {
             "@id": "d:HR-Fld-5b8e98550000bca801371afb0c7b671b",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:20.606Z",
+            "dcterms:modified": "2026-05-14T08:43:31.736Z",
             "dcterms:title": [
                 {
                     "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
@@ -10222,7 +10250,7 @@
         {
             "@id": "d:HR-Fld-59c8a7730000bca80137509a49b1218b",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:20.606Z",
+            "dcterms:modified": "2026-05-14T08:43:31.736Z",
             "dcterms:title": [
                 {
                     "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
@@ -10331,7 +10359,7 @@
         {
             "@id": "d:HR-k9qMB6fnxPTk942dvPKdyvnwnoQ",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:20.606Z",
+            "dcterms:modified": "2026-05-14T08:43:31.736Z",
             "dcterms:title": [
                 {
                     "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
@@ -10365,7 +10393,7 @@
         {
             "@id": "d:FolderGlossary-8001804519",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:14.152Z",
+            "dcterms:modified": "2026-05-14T08:43:25.620Z",
             "dcterms:title": [
                 {
                     "@value": "Model Elements (Glossary)"
@@ -10784,7 +10812,7 @@
         {
             "@id": "d:HR-FolderGlossary-8001804519",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-12T16:14:20.606Z",
+            "dcterms:modified": "2026-05-14T08:43:31.736Z",
             "dcterms:title": [
                 {
                     "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"

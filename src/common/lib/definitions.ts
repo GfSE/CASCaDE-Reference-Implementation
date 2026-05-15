@@ -1,26 +1,39 @@
+/*!
+ * CASCaRA Graph (cas:) Definitions and Regular Expressions for global use
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ */
+/**
+ * CASCaRA Graph (cas:) Definitions and Regular Expressions for global use
+ * -----------------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ */
+
 import { BUILD_INFO } from '../../build-info';
 
-const PIG_DOMAIN = 'http://product-information-graph.org/';
-const PREFIX_NS_META = 'cas:';
-const PREFIX_NS_SEMI = 'cas:';
-const PREFIX_NS_DCMI = 'dcterms:';
+const CAS_DOMAIN = 'http://product-information-graph.org/';
+const CAS_VERSION = '2026-05-08';
 
 export const DEF = {
-    pigVersion: '2026-02-23',
+    pigVersion: CAS_VERSION,
     defaultTime: 'T12:00:00',
     defaultTimezone: 'Z',
-    pigPath: PIG_DOMAIN,
-    jsonldSchemaPath: PIG_DOMAIN + 'schema/2026-02-18/jsonld/',
+    pigPath: CAS_DOMAIN,
+    jsonldSchemaPath: CAS_DOMAIN + 'schema/' + CAS_VERSION + '/jsonld/',
     xslPath: 'assets/xslt/',
     // Default for local terms (names) without an explicit namespace
-    defaultDataNamespace: PIG_DOMAIN + 'default/data#',  // for data instances with prefix d:
-    defaultOntologyNamespace: PIG_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
+    defaultDataNamespace: CAS_DOMAIN + 'default/data#',  // for data instances with prefix d:
+    defaultOntologyNamespace: CAS_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
     ...BUILD_INFO,
     minLengthId: 3,
     maxSizeXML: 4 * 1024 * 1024, // 4MB
-    pfxNsMeta: PREFIX_NS_META,
-    pfxNsSemi: PREFIX_NS_SEMI,
-    pfxNsDcmi: PREFIX_NS_DCMI,
+    pfxNsMeta: 'cas:',
+    pfxNsSemi: 'cas:',
+    pfxNsDcmi: 'dcterms:',
 };
 
 export const RE = {

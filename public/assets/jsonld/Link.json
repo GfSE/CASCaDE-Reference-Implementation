@@ -76,6 +76,14 @@
       "items": {
         "$ref": "#/$defs/idObject"
       }
+    },
+    "sh:minCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "sh:maxCount": {
+      "type": "integer",
+      "minimum": 1
     }
   },
   "required": [

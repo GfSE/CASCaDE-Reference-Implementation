@@ -2,10 +2,14 @@
  * Package-level constraint validation for CASCaRA Graph (cas:)
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Link-Implementation/issues)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /**
  * Package-level constraint validation for CASCaRA Graph (cas:)
+ * ------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  * 
  * This module validates cross-item constraints that cannot be checked at the individual item level:
  * - Uniqueness of primary IDs across all items in a package
@@ -54,8 +58,6 @@
  * - New thinking --> 'Permissive Computing': Report all issues but return the package with a valid subgraph;
  *   sometimes there may be 2 or more choices of valid subgraphs when constraints fail.
  *   Partial data is better than no data.
- *
- * Authors: oskar.dungern@gfse.org
  */
 
 import { DEF, RE } from '../../../lib/definitions';

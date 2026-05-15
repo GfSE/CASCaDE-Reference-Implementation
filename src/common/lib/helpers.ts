@@ -226,6 +226,16 @@ export const LIB = {
 
     /**
      * Recursively removes all undefined and null values from any JSON structure.
+     * 
+     * IMPORTANT: Empty arrays are explicitly preserved because they have semantic meaning;
+     * in case of enumeratedProperty, enumeratedSourceLink and enumeratedTargetLink:
+     * - undefined (property absent) = "no restriction, all properties resp. links allowed" (wildcard)
+     * - [] (empty array) = "explicit restriction, no properties resp. links allowed"
+     * 
+     * Example in PIG:
+     * - enumeratedProperty: undefined → all properties allowed
+     * - enumeratedProperty: [] → no properties allowed
+     * 
      * Returns the exact same type as the input value.
      */
     stripUndefinedAndNull<T extends object>(obj: T): T {
@@ -236,6 +246,7 @@ export const LIB = {
             if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
             const value = (obj as any)[key];
             if (value !== undefined && value !== null) {
+                // Empty arrays are preserved (they have semantic meaning)
                 if (typeof value === 'object' && value !== null) {
                     result[key] = this.stripUndefinedAndNull(value);
                 } else {
