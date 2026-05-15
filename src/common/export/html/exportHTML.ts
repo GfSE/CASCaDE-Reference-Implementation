@@ -7,6 +7,10 @@
 /**
  * CASCaDE Reference Implementation – HTML Export Helpers
  * ------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
  * This module provides central HTML helpers for the PIG metamodel classes.
  * For each supported type (APackage, AnEntity, ARelationship), the static
  * object `toHTML` offers a function that generates an HTML representation
@@ -22,9 +26,6 @@
  *   const html = toHTML.anEntity(entity, options);
  * or
  *   const html = anEntity.toHTML(options);
- *
- * Copyright 2026 GfSE (https://gfse.org)
- * License: Apache 2.0
  *
  * Design Decisions:
  * - Combine all HTML export logic in a single module for better maintainability.

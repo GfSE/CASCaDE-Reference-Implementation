@@ -1,3 +1,18 @@
+/*!
+ * CASCaRA Graph (cas:) Native Schemata and Validation
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ */
+/**
+ * CASCaRA Graph (cas:) Native Schemata and Validation
+ * ---------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ */
+
 import { DEF } from '../../../lib/definitions';
 import { ajv } from '../../../../plugins/ajv';
 

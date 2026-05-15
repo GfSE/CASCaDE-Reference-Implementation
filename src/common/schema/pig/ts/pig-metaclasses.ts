@@ -1,61 +1,65 @@
 /*!
- * Product Information Graph (PIG) Metaclasses
- * Copyright 2025 GfSE (https://gfse.org)
+ * CASCaRA Graph (cas:) Metaclasses
+ * Copyright 2026 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
-/** Product Information Graph (PIG) Metaclasses - the basic object structure representing the PIG
- *  Authors: oskar.dungern@gfse.org
+/**
+ * CASCaRA Graph (cas:) Metaclasses - the basic object structure
+ * -------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
- *  Notice:
- *  - Initially the metamodel had been called "Product Information Graph" (PIG) with namespace prefix 'pig:'.
- *  - Now it is called CASCaRA with namespace prefix 'cas:'.
- *  - The codebase still uses the abbreviation PIG or pig in many places for historical reasons,
- *  - but the namespace prefix for the metamodel and for the semantic infrastructure has been set to 'cas:', see definitions.ts. 
+ * Notice:
+ * - Initially the metamodel had been called "Product Information Graph" (PIG) with namespace prefix 'pig:'.
+ * - Now it is called CASCaRA with namespace prefix 'cas:'.
+ * - The codebase still uses the abbreviation PIG or pig in many places for historical reasons,
+ * - but the namespace prefix for the metamodel and for the semantic infrastructure has been set to 'cas:', see definitions.ts. 
  * 
- *  Design Decisions:
- *  - The CASCaRA (PIG) classes in this module contain *only* the elements in the metamodel; it could be generated from the metamodel.
- *  - Abstract classes are not exported to other modules, only the concrete classes.
- *  - All names are always in singular form, even if they have multiple values.
- *  - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
- *  - The 'aProperty' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
- *  - Similarly, the 'aLink' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
- *  - Both 'aProperty' and 'aLink' have no identifier and no revision history of their own.
- *  - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
- *    This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
- *  - aRelationship.hasTargetLink is an array with maxCount=1 to have the same structure as anEntity.hasTargetLink.
- *  - same for hasSourceLink
- *  - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check;
- *  - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
- *    those references are expanded to id objects only when serializing to JSON-LD.
- *  - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
- *  - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
- *  - The 'set' methods are chainable to allow concise code when creating new instances.
- *  - Programming errors result in exceptions, data errors in IMsg return values.
- *  - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
- *    and is now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
- *  - CASCaRA (PIG) classes (as derived from the ontology) get version information it their URL path.
- *  - All others must at least specify the 'modified' attribute to capture the version history of the item;
- *    it is recommended to maintain revision and priorRevision as well for better configuration management and traceability.
+ * Design Decisions:
+ * - The CASCaRA (PIG) classes in this module contain *only* the elements in the metamodel; it could be generated from the metamodel.
+ * - Abstract classes are not exported to other modules, only the concrete classes.
+ * - All names are always in singular form, even if they have multiple values.
+ * - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
+ * - The 'aProperty' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
+ * - Similarly, the 'aLink' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
+ * - Both 'aProperty' and 'aLink' have no identifier and no revision history of their own.
+ * - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
+ *   This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
+ * - aRelationship.hasTargetLink is an array with maxCount=1 to have the same structure as anEntity.hasTargetLink.
+ * - same for hasSourceLink
+ * - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check;
+ * - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
+ *   those references are expanded to id objects only when serializing to JSON-LD.
+ * - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
+ * - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
+ * - The 'set' methods are chainable to allow concise code when creating new instances.
+ * - Programming errors result in exceptions, data errors in IMsg return values.
+ * - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
+ *   and is now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
+ * - CASCaRA (PIG) classes (as derived from the ontology) get version information it their URL path.
+ * - All others must at least specify the 'modified' attribute to capture the version history of the item;
+ *   it is recommended to maintain revision and priorRevision as well for better configuration management and traceability.
  *
- *  @ToDo:
- *  ✅ Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check?
- *  ✅ This does also concern enumerations, which have minCount and maxCount at present --> (perhaps) move it to the link class!
- *  - implement 'composes' (formerly composedProperty) for Property and aProperty
- *  - Check use of PigItem.normalizeId() in the setJSONLD() thread
- *    PigItem.normalizeId() shortly before validate() in set() ?
- *  - Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
- *  ✅ Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed? --> YES.
- *  - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
- *  - allow packages to be nested
- *  - implement the import of configurable properties and links for aPackage.
- *  - Consider the storage of numeric and boolean values: should be string?
- *  - Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}?
- *  - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
- *    This code could just *ignore* additional properties.
- *  - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
- *  - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
- *  - There are redundant transformations from JSON-LD to internal format for individual items and a whole package.
+ * @ToDo:
+ * ✅ Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check?
+ * ✅ This does also concern enumerations, which have minCount and maxCount at present --> (perhaps) move it to the link class!
+ * - implement 'composes' (formerly composedProperty) for Property and aProperty
+ * - Check use of PigItem.normalizeId() in the setJSONLD() thread
+ *   PigItem.normalizeId() shortly before validate() in set() ?
+ * - Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
+ * ✅ Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed? --> YES.
+ * - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
+ * - allow packages to be nested
+ * - implement the import of configurable properties and links for aPackage.
+ * - Consider the storage of numeric and boolean values: should be string?
+ * - Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}?
+ * - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
+ *   This code could just *ignore* additional properties.
+ * - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
+ * - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
+ * - There are redundant transformations from JSON-LD to internal format for individual items and a whole package.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";

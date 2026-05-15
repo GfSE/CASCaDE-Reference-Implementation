@@ -112,7 +112,7 @@
             <skos:definition>Connects a reified relationship with its source or target. Also connects an organizer to a model element</skos:definition>
         </cas:Link>
 
-        <cas:Link id="cas:SourceLink" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:linksSource" cas:hasClass="owl:ObjectProperty">
             <cas:specializes>cas:Link</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -120,7 +120,7 @@
             <skos:definition>Connects the source of a reified relationship.</skos:definition>
         </cas:Link>
 
-        <cas:Link id="cas:TargetLink" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:linksTarget" cas:hasClass="owl:ObjectProperty">
             <cas:specializes>cas:Link</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -129,7 +129,7 @@
         </cas:Link>
 
         <cas:Link id="cas:lists" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Organizer</cas:enumeratedEndpoint>
@@ -138,7 +138,7 @@
         </cas:Link>
 
         <cas:Link id="cas:shows" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
             <dcterms:title>shows</dcterms:title>
@@ -146,7 +146,7 @@
         </cas:Link>
 
         <cas:Link id="cas:depicts" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <dcterms:title>depicts</dcterms:title>
             <skos:definition>Depicts an entity; inverse of uml:ownedDiagram.</skos:definition>
@@ -382,14 +382,14 @@
         </cas:Relationship>
 
         <cas:Link id="SpecIF:writes-toSource" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:SourceLink</cas:specializes>
+            <cas:specializes>cas:linksSource</cas:specializes>
             <dcterms:title>SpecIF:writes to source</dcterms:title>
             <skos:definition>Connects the source of SpecIF:writes</skos:definition>
             <cas:enumeratedEndpoint>FMC:Actor</cas:enumeratedEndpoint>
         </cas:Link>
 
         <cas:Link id="SpecIF:writes-toTarget" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <dcterms:title>SpecIF:writes to target</dcterms:title>
             <skos:definition>Connects the target of SpecIF:writes</skos:definition>
             <cas:enumeratedEndpoint>FMC:State</cas:enumeratedEndpoint>
@@ -406,14 +406,14 @@
         </cas:Relationship>
 
         <cas:Link id="SpecIF:reads-toSource" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:SourceLink</cas:specializes>
+            <cas:specializes>cas:linksSource</cas:specializes>
             <dcterms:title>SpecIF:reads to source</dcterms:title>
             <skos:definition>Connects the source of SpecIF:reads</skos:definition>
             <cas:enumeratedEndpoint>FMC:Actor</cas:enumeratedEndpoint>
         </cas:Link>
 
         <cas:Link id="SpecIF:reads-toTarget" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <dcterms:title>SpecIF:reads to target</dcterms:title>
             <skos:definition>Connects the target of SpecIF:reads</skos:definition>
             <cas:enumeratedEndpoint>FMC:State</cas:enumeratedEndpoint>
@@ -441,7 +441,7 @@
         </cas:Relationship>
 
         <cas:Link id="oslc_rm:satisfies-toSource" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:SourceLink</cas:specializes>
+            <cas:specializes>cas:linksSource</cas:specializes>
             <dcterms:title>oslc_rm:satisfies to source</dcterms:title>
             <skos:definition>Connects the source of oslc_rm:satisfies</skos:definition>
             <cas:enumeratedEndpoint>FMC:Actor</cas:enumeratedEndpoint>
@@ -449,7 +449,7 @@
         </cas:Link>
 
         <cas:Link id="oslc_rm:satisfies-toTarget" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <dcterms:title>oslc_rm:satisfies to target</dcterms:title>
             <skos:definition>Connects the target of oslc_rm:satisfies</skos:definition>
             <cas:enumeratedEndpoint>IREB:Requirement</cas:enumeratedEndpoint>
@@ -495,7 +495,7 @@
 
         <!-- Links -->
         <cas:Link id="SpecIF:Priority" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <dcterms:title xml:lang="en">Priority</dcterms:title>
             <dcterms:title xml:lang="de">Priorität</dcterms:title>
             <dcterms:title xml:lang="fr">Priorité</dcterms:title>

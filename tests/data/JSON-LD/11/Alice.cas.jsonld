@@ -180,12 +180,12 @@
             ],
             "cas:enumeratedSourceLink": [
 				{
-					"@id": "cas:SourceLink"
+					"@id": "cas:linksSource"
 				}
 			],
             "cas:enumeratedTargetLink": [
 				{
-					"@id": "cas:TargetLink"
+					"@id": "cas:linksTarget"
 				}
 			]
         },
@@ -265,7 +265,7 @@
             ]
         },
         {
-            "@id": "cas:SourceLink",
+            "@id": "cas:linksSource",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
                 "@id": "cas:Link"
@@ -295,7 +295,7 @@
             ]
         },
         {
-            "@id": "cas:TargetLink",
+            "@id": "cas:linksTarget",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
                 "@id": "cas:Link"
@@ -328,7 +328,7 @@
             "@id": "cas:lists",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "cas:itemType": {
                 "@id": "cas:Link"
@@ -591,7 +591,7 @@
             "@id": "o:Employee",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
-                "@id": "cas:SourceLink"
+                "@id": "cas:linksSource"
             },
             "cas:itemType": {
                 "@id": "cas:Link"
@@ -618,7 +618,7 @@
             "@id": "o:Employer",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "cas:itemType": {
                 "@id": "cas:Link"

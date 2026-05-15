@@ -2,13 +2,16 @@
  * Product Information Graph (PIG) - Multi-Vocabulary Facility (MVF)
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /** Product Information Graph (PIG) - Multi-Vocabulary Facility
- *  Handles mapping between different vocabulary representations (JSON-LD, XML, internal format)
- *  Dependencies: helpers.ts (for JsonValue types and LOG)
- *  Authors: oskar.dungern@gfse.org, ..
- *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * ------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ * Handles mapping between different vocabulary representations (JSON-LD, XML, internal format)
+ * Dependencies: helpers.ts (for JsonValue types and LOG)
  */
 
 import { DEF } from './definitions';

@@ -1,3 +1,18 @@
+/*!
+ * CASCaRA Graph (cas:) Definitions and Regular Expressions for global use
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ */
+/**
+ * CASCaRA Graph (cas:) Definitions and Regular Expressions for global use
+ * -----------------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ */
+
 import { BUILD_INFO } from '../../build-info';
 
 const CAS_DOMAIN = 'http://product-information-graph.org/';
