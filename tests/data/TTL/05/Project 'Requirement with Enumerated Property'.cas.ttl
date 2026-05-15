@@ -6,6 +6,7 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xs: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix casShapes_dcterms: <https://product-information-graph.org/v0.2/ontology/shapes/dcterms#> .
 @prefix FMC: <http://fmc-modeling.org#> .
 @prefix casShapes_FMC: <https://product-information-graph.org/v0.2/ontology/shapes/FMC#> .
 @prefix IREB: <https://cpre.ireb.org/en/downloads-and-resources/glossary#> .
@@ -30,7 +31,7 @@ d:
 	owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns#> ,
 		<http://www.w3.org/2000/01/rdf-schema#> ;
 	dcterms:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
-	dcterms:modified "2026-05-10T16:32:56.616Z" .
+	dcterms:modified "2026-05-14T08:33:35.458Z" .
 
 #################################################################
 # CASCaRA Metamodel and Semantic Infrastructure
@@ -153,28 +154,6 @@ casShapes_cas:Outline
 		sh:path rdfs:comment ;
 		sh:minCount 1
 	] .
-
-cas:View
-	rdf:type owl:Class ;
-	rdfs:subClassOf cas:Organizer ;
-	rdfs:label "View" ;
-	skos:definition "A subclass of cas:Organizer representing a model view (diagram) using a certain notation showing selected model elements." .
-
-casShapes_cas:View
-	rdf:type sh:NodeShape ;
-	sh:targetClass cas:View ;
-	sh:property [ 
-		sh:path rdfs:label ;
-		sh:minCount 1
-	] ,
-		[ 
-		sh:path rdfs:comment ;
-		sh:minCount 1
-	] ,
-		casShapes_cas:Diagram ,
-		casShapes_cas:Notation ,
-		casShapes_cas:shows ,
-		casShapes_cas:depicts .
 
 cas:Table
 	rdf:type owl:Class ;
@@ -510,7 +489,7 @@ d:Req-35100bca2b005ba
 
 d:HierarchyRoot-P-Requirement-with-Enumerated-Property
 	rdf:type cas:Root ;
-	dcterms:modified "2026-05-10T16:32:56.721Z" ;
+	dcterms:modified "2026-05-14T08:33:35.572Z" ;
 	rdfs:label "Hierarchy Root" ;
 	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
 	cas:lists (
@@ -521,7 +500,7 @@ d:HR-bca801377e3d1547
 	rdf:type cas:Outline ;
 	rdfs:label "Project 'Requirement with Enumerated Property'" ;
 	cas:Category ReqIF:HierarchyRoot ;
-	dcterms:modified "2026-05-10T16:32:56.668Z" ;
+	dcterms:modified "2026-05-14T08:33:35.514Z" ;
 	cas:lists (
 			d:Req-35100bca2b005ba
 		) .

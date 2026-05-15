@@ -5,7 +5,6 @@
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /** Product Information Graph (PIG) Metaclasses - the basic object structure representing the PIG
- *  Dependencies: none
  *  Authors: oskar.dungern@gfse.org
  *
  *  Notice:
@@ -15,13 +14,13 @@
  *  - but the namespace prefix for the metamodel and for the semantic infrastructure has been set to 'cas:', see definitions.ts. 
  * 
  *  Design Decisions:
- *  - The CASCaRA (PIG) classes in this module contain *only *the elements in the metamodel; it could be generated from the metamodel.
+ *  - The CASCaRA (PIG) classes in this module contain *only* the elements in the metamodel; it could be generated from the metamodel.
  *  - Abstract classes are not exported to other modules, only the concrete classes.
  *  - All names are always in singular form, even if they have multiple values.
  *  - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
- *  - The 'AProperty' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
- *  - Similarly, the 'ALink' instances are instantiated as part their parent objects 'AnEntity' or 'ARelationship'.
- *  - Both 'AProperty' and 'ALink' have no identifier and no revision history of their own.
+ *  - The 'aProperty' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
+ *  - Similarly, the 'aLink' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
+ *  - Both 'aProperty' and 'aLink' have no identifier and no revision history of their own.
  *  - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
  *    This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
  *  - aRelationship.hasTargetLink is an array with maxCount=1 to have the same structure as anEntity.hasTargetLink.
@@ -34,19 +33,19 @@
  *  - The 'set' methods are chainable to allow concise code when creating new instances.
  *  - Programming errors result in exceptions, data errors in IMsg return values.
  *  - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
- *  - and now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
+ *    and is now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
  *  - CASCaRA (PIG) classes (as derived from the ontology) get version information it their URL path.
  *  - All others must at least specify the 'modified' attribute to capture the version history of the item;
  *    it is recommended to maintain revision and priorRevision as well for better configuration management and traceability.
  *
  *  @ToDo:
- *  - Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check?
- *  - This does also concern enumerations, which have minCount and maxCount at present --> (perhaps) move it to the link class!
- *  - implement 'composes' (formerly composedProperty) for Property and AProperty
+ *  ✅ Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check?
+ *  ✅ This does also concern enumerations, which have minCount and maxCount at present --> (perhaps) move it to the link class!
+ *  - implement 'composes' (formerly composedProperty) for Property and aProperty
  *  - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *    PigItem.normalizeId() shortly before validate() in set() ?
- *  - Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values: must be 'o:'
- *  - Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed?
+ *  - Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
+ *  ✅ Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed? --> YES.
  *  - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
  *  - allow packages to be nested
  *  - implement the import of configurable properties and links for aPackage.
@@ -829,15 +828,11 @@ export interface IEnumeratedValue {
 export interface IEnumeration extends IIdentifiable {
     datatype: string; // must be of XsDataType
     enumeratedValue: IEnumeratedValue[]; // array of allowed values, datatype-dependent
-    minCount?: number;
-    maxCount?: number;
     unit?: string;  // according to SI units
 }
 export class Enumeration extends Identifiable implements IEnumeration {
     datatype!: string;
     enumeratedValue!: IEnumeratedValue[]; 
-    minCount?: number;
-    maxCount?: number;
     unit?: string;
     constructor() {
         super({itemType:PigItemType.Enumeration});
@@ -876,8 +871,6 @@ export class Enumeration extends Identifiable implements IEnumeration {
         if (this.lastStatus.ok) {
             super.set(itm);
             this.datatype = itm.datatype;
-            this.minCount = itm.minCount || 0;
-            this.maxCount = itm.maxCount || 1;
             this.enumeratedValue = itm.enumeratedValue;
             this.unit = itm.unit;
         }
@@ -887,8 +880,6 @@ export class Enumeration extends Identifiable implements IEnumeration {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
             datatype: this.datatype,
-            minCount: this.minCount,
-            maxCount: this.maxCount,
             enumeratedValue: this.enumeratedValue,
             unit: this.unit
         }) as IEnumeration;
@@ -1015,9 +1006,13 @@ export class Property extends Identifiable implements IProperty {
 }
 export interface ILink extends IIdentifiable {
     enumeratedEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
+    minCount?: number;
+    maxCount?: number;
 }
 export class Link extends Identifiable implements ILink {
     enumeratedEndpoint!: TPigId[];
+    minCount?: number;
+    maxCount?: number;
     constructor() {
         super({ itemType: PigItemType.Link });
     }
@@ -1044,13 +1039,17 @@ export class Link extends Identifiable implements ILink {
         if (this.lastStatus.ok) {
             super.set(itm);
             this.enumeratedEndpoint = itm.enumeratedEndpoint;
+            this.minCount = itm.minCount;
+            this.maxCount = itm.maxCount;
         }
         return this;
     }
     get() {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
-            enumeratedEndpoint: this.enumeratedEndpoint
+            enumeratedEndpoint: this.enumeratedEndpoint,
+            minCount: this.minCount,
+            maxCount: this.maxCount
         }) as ILink;
     }
     fromJSONLD(itm: any) {
@@ -1590,7 +1589,7 @@ export class APackage extends AnElement implements IAPackage {
         const ctx = this.extractContextXML(xmlString, doc.id as string);
 
         // 3. Extract package metadata
-        //    ... can be obtained directly from parsed JSON.
+        //    ... can be obtained directly from doc (result from parsing)
 
         // 4. Extract and process graph items
         const graph: any[] = Array.isArray(doc.graph) ? doc.graph : [];
@@ -1599,13 +1598,11 @@ export class APackage extends AnElement implements IAPackage {
             LOG.warn(`APackage ${doc.id}: @graph is empty`);
         }
 
-        // LOG.debug(`APackage.setXML: successfully instantiated ${instantiatedGraph.length} of ${graph.length} items`);
-
-        // 6. Build and validate package
+        // 5. Build and validate package
         this.set({
             id: doc.id,
             hasClass: doc.hasClass,
-            itemType: PigItemType.aPackage,
+            itemType: PigItemType.aPackage,  // ToDo: obtain from doc - want to check whether the input is correct
             title: doc.title,
             description: doc.description,
             context: ctx,
@@ -2374,7 +2371,7 @@ function xmlToJson(xml: stringXML): IRsp<unknown> {
 /**
  * Convert an XML DOM Element to a JSON object recursively
  * Handles:
- * - PIG classes (Property, Link, Entity, Relationship)
+ * - PIG classes (Property, Link, Entity, Relationship, Enumeration)
  * - PIG instances (anEntity, aRelationship)
  * - Configurable properties (cas:aProperty)
  * - Configurable links (cas:aSourceLink, cas:aTargetLink)

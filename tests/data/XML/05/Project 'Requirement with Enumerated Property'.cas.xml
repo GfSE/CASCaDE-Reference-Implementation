@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cas:aPackage
-    xmlns:cas="https://product-information-graph.org/v0.2/metamodel#"
+    xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:skos="https://www.w3.org/TR/skos-reference/"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:FMC="http://fmc-modeling.org#"
     xmlns:IREB="https://cpre.ireb.org/en/downloads-and-resources/glossary#"
     xmlns:SpecIF="https://specif.de/v1.2/schema#"
-    xmlns:o="https://product-information-graph.org/v0.2/ontology#"
+    xmlns:o="https://product-information-graph.org/ontology/custom#"
     xmlns:d="https://product-information-graph.org/examples/05_Requirement-with-Enumerated-Property.specif#"
     xmlns:xs="http://www.w3.org/2001/XMLSchema#"
     xmlns:sh="http://www.w3.org/ns/shacl#"

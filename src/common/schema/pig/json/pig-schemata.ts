@@ -114,8 +114,6 @@ class PigSchemaFactory {
                     type: 'string',
                     pattern: '^xsd?:[A-Za-z]+$'
                 },
-                minCount: { type: 'integer', minimum: 0 },
-                maxCount: { type: 'integer', minimum: 1 },
                 unit: { type: 'string' },
                 enumeratedValue: {
                     type: 'array',
@@ -245,6 +243,8 @@ class PigSchemaFactory {
                     minItems: 1,
                     items: { $ref: '#/$defs/idString' }
                 },
+                minCount: { type: 'integer', minimum: 0 },
+                maxCount: { type: 'integer', minimum: 1 },
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',

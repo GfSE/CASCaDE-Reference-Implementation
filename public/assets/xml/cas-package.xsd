@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
+           xmlns:dcterms="http://purl.org/dc/terms/"
+           xmlns:skos="https://www.w3.org/TR/skos-reference/"
+           xmlns:owl="http://www.w3.org/2002/07/owl#"
+           xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+           xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+           xmlns:sh="http://www.w3.org/ns/shacl#"
+           targetNamespace="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+
+    <!-- Import common XML Schema definitions -->
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" 
+               schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+
+    <!-- Root Element: aPackage -->
+    <xs:element name="aPackage" type="cas:Package"/>
+
+    <!-- Complex Type: Package -->
+    <xs:complexType name="Package">
+        <xs:sequence>
+            <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="dcterms:modified" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="dcterms:license" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="graph" type="cas:Graph" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required"/>
+        <xs:attribute ref="cas:hasClass" use="optional"/>
+        <xs:attribute ref="rdf:type" use="optional"/>
+    </xs:complexType>
+
+    <!-- Complex Type: Graph -->
+    <xs:complexType name="Graph">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="cas:Entity"/>
+            <xs:element ref="cas:Relationship"/>
+            <xs:element ref="cas:Property"/>
+            <xs:element ref="cas:Link"/>
+            <xs:element ref="cas:Enumeration"/>
+            <xs:element ref="cas:anEntity"/>
+            <xs:element ref="cas:aRelationship"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <!-- Entity Definition (Metamodel) -->
+    <xs:element name="Entity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:description" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="skos:definition" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:specializes" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:enumeratedProperty" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:enumeratedSourceLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:enumeratedTargetLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:icon" minOccurs="0" maxOccurs="1"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="cas:hasClass" use="optional"/>
+            <xs:attribute ref="rdf:type" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Entity Instance -->
+    <xs:element name="anEntity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:description" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:modified" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="cas:aProperty" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:aSourceLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:aTargetLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="cas:hasClass" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Relationship Definition (Metamodel) -->
+    <xs:element name="Relationship">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:description" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="skos:definition" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:specializes" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:enumeratedProperty" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:enumeratedSourceLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:enumeratedTargetLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="cas:hasClass" use="optional"/>
+            <xs:attribute ref="rdf:type" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Relationship Instance -->
+    <xs:element name="aRelationship">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:modified" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="cas:aSourceLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:aTargetLink" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="cas:hasClass" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Property Definition (Metamodel) -->
+    <xs:element name="Property">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:description" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="skos:definition" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:specializes" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="simpleType" type="cas:SimpleTypeType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="sh:datatype" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="sh:minCount" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="sh:maxCount" minOccurs="0" maxOccurs="1"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="cas:hasClass" use="optional"/>
+            <xs:attribute ref="rdf:type" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Property Instance -->
+    <xs:element name="aProperty">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attribute ref="cas:hasClass" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Link Definition (Metamodel) -->
+    <xs:element name="Link">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:description" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="skos:definition" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:specializes" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="cas:enumeratedEndpoint" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="cas:hasClass" use="optional"/>
+            <xs:attribute ref="rdf:type" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Source Link Instance -->
+    <xs:element name="aSourceLink">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="idRef" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attribute ref="cas:hasClass" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Target Link Instance -->
+    <xs:element name="aTargetLink">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="idRef" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+            <xs:attribute ref="cas:hasClass" use="required"/>
+            <xs:attribute ref="rdf:type" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Enumeration Definition -->
+    <xs:element name="Enumeration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="skos:definition" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:modified" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="cas:specializes" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="simpleType" type="cas:SimpleTypeType" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="cas:enumeratedValue" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+            <xs:attribute ref="cas:hasClass" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Enumerated Value -->
+    <xs:element name="enumeratedValue">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- SimpleType wrapper for xs:restriction -->
+    <xs:complexType name="SimpleTypeType">
+        <xs:sequence>
+            <xs:element name="restriction" type="cas:RestrictionType" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Restriction Type -->
+    <xs:complexType name="RestrictionType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="maxLength" type="cas:MaxLengthType"/>
+            <xs:element name="minOccurs" type="xs:nonNegativeInteger"/>
+            <xs:element name="maxOccurs" type="xs:string"/>
+        </xs:choice>
+        <xs:attribute name="base" type="xs:QName" use="required"/>
+    </xs:complexType>
+
+    <!-- MaxLength can be element or attribute based -->
+    <xs:complexType name="MaxLengthType">
+        <xs:simpleContent>
+            <xs:extension base="xs:nonNegativeInteger">
+                <xs:attribute name="value" type="xs:nonNegativeInteger" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- Supporting Elements -->
+    <xs:element name="specializes" type="xs:string"/>
+    <xs:element name="enumeratedProperty" type="xs:string"/>
+    <xs:element name="enumeratedSourceLink" type="xs:string"/>
+    <xs:element name="enumeratedTargetLink" type="xs:string"/>
+    <xs:element name="enumeratedEndpoint" type="xs:string"/>
+    <xs:element name="icon" type="xs:string"/>
+
+    <!-- Attributes -->
+    <xs:attribute name="hasClass" type="xs:string"/>
+
+    <!-- Dublin Core Terms Elements (simplified) -->
+    <xs:element name="title" xmlns="http://purl.org/dc/terms/">
+        <xs:complexType mixed="true">
+            <xs:attribute ref="xml:lang" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="description" xmlns="http://purl.org/dc/terms/">
+        <xs:complexType mixed="true">
+            <xs:complexContent>
+                <xs:extension base="xs:anyType">
+                    <xs:attribute ref="xml:lang" use="optional"/>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="modified" type="xs:string" xmlns="http://purl.org/dc/terms/"/>
+    <xs:element name="license" type="xs:anyURI" xmlns="http://purl.org/dc/terms/"/>
+
+    <!-- SKOS Elements -->
+    <xs:element name="definition" xmlns="https://www.w3.org/TR/skos-reference/">
+        <xs:complexType mixed="true">
+            <xs:attribute ref="xml:lang" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- RDF Attributes -->
+    <xs:attribute name="type" type="xs:string" xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"/>
+
+    <!-- SHACL Elements -->
+    <xs:element name="datatype" type="xs:string" xmlns="http://www.w3.org/ns/shacl#"/>
+    <xs:element name="minCount" type="xs:nonNegativeInteger" xmlns="http://www.w3.org/ns/shacl#"/>
+    <xs:element name="maxCount" type="xs:nonNegativeInteger" xmlns="http://www.w3.org/ns/shacl#"/>
+
+</xs:schema>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cas:aPackage 
-    xmlns:cas="https://product-information-graph.org/ontology/2026-01-20/foundation#"
+    xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
     xmlns:skos="https://www.w3.org/TR/skos-reference/"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dcterms="http://purl.org/dc/terms/"
