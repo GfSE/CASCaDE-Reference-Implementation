@@ -6,7 +6,7 @@
 
 import { DEF } from '../../src/common/lib/definitions';
 import { APackage, AnEntity } from '../../src/common/schema/pig/ts/pig-metaclasses';
-import { ToHTML } from '../../src/common/export/html/toHTML';
+import { GetHTML } from '../../src/common/export/html/getHTML';
 
 describe('HTML Security - XSS Prevention', () => {
     describe('Script Injection and Event Handler Prevention', () => {
@@ -62,7 +62,7 @@ describe('HTML Security - XSS Prevention', () => {
             expect(req).toBeDefined();
             expect(req?.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
 
-            const htmlOutput = ToHTML.anEntity(req as AnEntity);
+            const htmlOutput = GetHTML.anEntity(req as AnEntity);
 
             // Verify that dangerous content is removed/sanitized
             expect(htmlOutput).toBeDefined();
@@ -129,7 +129,7 @@ describe('HTML Security - XSS Prevention', () => {
             
             expect(req).toBeDefined();
 
-            const htmlOutput = ToHTML.anEntity(req);
+            const htmlOutput = GetHTML.anEntity(req);
 
             // Verify XSS vectors are removed
             expect(htmlOutput).not.toContain('onerror');
@@ -201,7 +201,7 @@ describe('HTML Security - XSS Prevention', () => {
             
             expect(req).toBeDefined();
 
-            const htmlOutput = ToHTML.anEntity(req);
+            const htmlOutput = GetHTML.anEntity(req);
 
             // Verify dangerous object types are removed
             expect(htmlOutput).not.toContain('application/x-shockwave-flash');

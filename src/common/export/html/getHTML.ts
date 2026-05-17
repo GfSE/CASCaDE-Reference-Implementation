@@ -13,7 +13,7 @@
  *
  * This module provides central HTML helpers for the PIG metamodel classes.
  * For each supported type (APackage, AnEntity, ARelationship), the static
- * class `ToHTML` offers methods that generate HTML representations
+ * class `GetHTML` offers methods that generate HTML representations
  * of the respective instances.
  *
  * - Always returns valid HTML snippets (string or string[]).
@@ -22,8 +22,8 @@
  * - The logic is decoupled from the metamodel classes.
  *
  * Usage:
- *   import { ToHTML } from './toHTML';
- *   const html = ToHTML.anEntity(entity, options);
+ *   import { GetHTML } from './getHTML';
+ *   const html = GetHTML.anEntity(entity, options);
  *
  * Design Decisions:
  * - Combine all HTML export logic in a single module for better maintainability.
@@ -31,7 +31,7 @@
  * - In earlier versions there were individual methods getHTML for each itemType in the metaclasses.
  *   These have been calling the static methods in this module.
  *   However, to avoid a dependency of pig-metaclasses to this module, the getHTML methods have been removed.
- *   Now, for creating an HTML representation call toHTML(item,options) instead of item.getHTML(options).
+ *   Now, for creating an HTML representation call getHTML(item,options) instead of item.getHTML(options).
  */
 
 
@@ -52,17 +52,17 @@ export interface IOptionsHTML {
  * @returns HTML representation as array of HTML strings
  * 
  * @example
- * import { toHTML } from './toHTML';
- * const html = toHTML(item, options);
+ * import { getHTML } from './getHTML';
+ * const html = getHTML(item, options);
  */
-export function toHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[] {
+export function getHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[] {
     switch (item.itemType) {
         case PigItemType.aPackage:
-            return ToHTML.aPackage(item as APackage, options);
+            return GetHTML.aPackage(item as APackage, options);
         case PigItemType.anEntity:
-            return [ToHTML.anEntity(item as AnEntity, options)];
+            return [GetHTML.anEntity(item as AnEntity, options)];
         case PigItemType.aRelationship:
-            return [ToHTML.aRelationship(item as ARelationship, options)];
+            return [GetHTML.aRelationship(item as ARelationship, options)];
         default:
             return [`<div class="meta-error">
                     ${item.id}: No HTML representation for itemType: ${item.itemType}
@@ -70,7 +70,7 @@ export function toHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[
     }
 }
 
-export class ToHTML {
+export class GetHTML {
     static aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang ?? 'en-US';
@@ -107,7 +107,7 @@ export class ToHTML {
         for (const item of pkg.graph) {
             if (includeItemTypes.includes(item.itemType)) {
                 // call directly the helper function instead of the getHTML method of the item:
-                result.push(ToHTML.anEntity(item as AnEntity, options));
+                result.push(GetHTML.anEntity(item as AnEntity, options));
             }
         }
 

@@ -1,15 +1,15 @@
 /*!
- * JEST Test Suite for CASCaRA (PIG) Package ToHTML() Method
+ * JEST Test Suite for CASCaRA (PIG) Package GetHTML() Method
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
 import { DEF } from '../../src/common/lib/definitions';
 import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
-import { ToHTML } from '../../src/common/export/html/toHTML';
+import { GetHTML } from '../../src/common/export/html/getHTML';
 import { ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
 
-describe('Test CASCaRA Package ToHTML() Methods', () => {
+describe('Test CASCaRA Package GetHTML() Methods', () => {
     describe('Valid Package with Single Entity', () => {
         test('should return array of HTML strings with package metadata and entity', () => {
             const validPackageWithEntity = {
@@ -80,7 +80,7 @@ describe('Test CASCaRA Package ToHTML() Methods', () => {
 
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = ToHTML.aPackage(pkg);
+            const htmlList = GetHTML.aPackage(pkg);
             // console.debug('Generated HTML List:', htmlList);
 
             // Should return an array
@@ -151,7 +151,7 @@ describe('Test CASCaRA Package ToHTML() Methods', () => {
 
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = ToHTML.aPackage(pkg);
+            const htmlList = GetHTML.aPackage(pkg);
 
             // Should have only 1 element (package metadata)
             expect(htmlList.length).toBe(1);
@@ -236,7 +236,7 @@ describe('Test CASCaRA Package ToHTML() Methods', () => {
 
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = ToHTML.aPackage(pkg);
+            const htmlList = GetHTML.aPackage(pkg);
             // console.debug('Generated HTML List for Mixed Package:', htmlList);
 
             // Package metadata + 1 entity (ignoring Property, Link, Entity class, Relationship)
@@ -264,7 +264,7 @@ describe('Test CASCaRA Package ToHTML() Methods', () => {
 
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = ToHTML.aPackage(pkg);
+            const htmlList = GetHTML.aPackage(pkg);
 
             expect(htmlList.length).toBe(1);
         });
@@ -338,7 +338,7 @@ describe('Test CASCaRA Package ToHTML() Methods', () => {
             }
             expect(st.ok).toBe(true);
 
-            const htmlList = ToHTML.aPackage(pkg);
+            const htmlList = GetHTML.aPackage(pkg);
 
             // 1 package metadata + 3 entities
             expect(htmlList.length).toBe(4);

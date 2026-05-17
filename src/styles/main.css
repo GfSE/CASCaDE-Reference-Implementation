@@ -81,7 +81,7 @@ h3 {
         color: #212529;
         text-align: left;
     }
-/* styles used in toHTML: */
+/* styles used in getHTML: */
 .meta-error {
     color: red;
 }

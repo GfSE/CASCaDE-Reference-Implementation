@@ -1,8 +1,8 @@
-/* import * as toHTML from './common/export/html/toHTML';
+/* import * as getHTML from './common/export/html/getHTML';
 // Add further Modul-Inits here, ...
 
 export function initAllModules() {
-    // toHTML.init();
+    // getHTML.init();
     // Call further Modul-Inits here ..
 }
 */

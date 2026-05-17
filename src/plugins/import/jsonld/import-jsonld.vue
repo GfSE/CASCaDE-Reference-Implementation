@@ -63,7 +63,7 @@
     import { Options, Vue } from 'vue-class-component';
     import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { stringHTML, toHTML } from '@/common/export/html/toHTML';
+    import { stringHTML, getHTML } from '@/common/export/html/getHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
     import { LOG } from '@/common/lib/helpers';
     import { IRsp } from '@/common/lib/messages';
@@ -105,7 +105,7 @@
                     const allHtmlArrays = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
                         const thePackage = allItems[0] as APackage;
-                        return toHTML(thePackage) as stringHTML[];
+                        return getHTML(thePackage) as stringHTML[];
                     });
 
                     if (allHtmlArrays.length > 0) {
