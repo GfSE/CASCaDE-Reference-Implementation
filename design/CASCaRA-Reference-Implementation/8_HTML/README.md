@@ -1,1 +1,1 @@
-For the HTML representation of the CASCaRA App design, see the documentation folder of this repository: https://product-information-graph.org/doc/reference-implementation/.
+For the HTML representation of the CASCaRA App design, see the published documentation: https://product-information-graph.org/doc/reference-implementation/.
