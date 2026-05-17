@@ -28,8 +28,10 @@
  * Design Decisions:
  * - Combine all HTML export logic in a single module for better maintainability.
  * - Use a class with static methods for better organization and extensibility.
- * - Prefer calls of helpers from genuine getHTML methods instead of additions to the metamodel prototypes
- *   and type merging - because the latter appears to be rather fragile.
+ * - In earlier versions there were individual methods getHTML for each itemType in the metaclasses.
+ *   These have been calling the static methods in this module.
+ *   However, to avoid a dependency of pig-metaclasses to this module, the getHTML methods have been removed.
+ *   Now, for creating an HTML representation call toHTML(item,options) instead of item.getHTML(options).
  */
 
 
@@ -41,6 +43,31 @@ export interface IOptionsHTML {
     widthMain?: string;
     itemType?: PigItemTypeValue[];
     lang?: tagIETF;
+}
+
+/**
+ * Generic HTML export function that dispatches to the appropriate method based on itemType
+ * @param item - Any PIG item (APackage, AnEntity, ARelationship)
+ * @param options - HTML export options
+ * @returns HTML representation as array of HTML strings
+ * 
+ * @example
+ * import { toHTML } from './exportHTML';
+ * const html = toHTML(item, options);
+ */
+export function toHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[] {
+    switch (item.itemType) {
+        case PigItemType.aPackage:
+            return ToHTML.aPackage(item as APackage, options);
+        case PigItemType.anEntity:
+            return [ToHTML.anEntity(item as AnEntity, options)];
+        case PigItemType.aRelationship:
+            return [ToHTML.aRelationship(item as ARelationship, options)];
+        default:
+            return [`<div class="meta-error">
+                    ${item.id}: No HTML representation for itemType: ${item.itemType}
+                </div>`];
+    }
 }
 
 export class ToHTML {
