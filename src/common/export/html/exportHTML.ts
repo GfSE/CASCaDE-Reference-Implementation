@@ -13,8 +13,8 @@
  *
  * This module provides central HTML helpers for the PIG metamodel classes.
  * For each supported type (APackage, AnEntity, ARelationship), the static
- * object `toHTML` offers a function that generates an HTML representation
- * of the respective instance.
+ * class `ToHTML` offers methods that generate HTML representations
+ * of the respective instances.
  *
  * - Always returns valid HTML snippets (string or string[]).
  * - Error and status information is included in the HTML output.
@@ -22,13 +22,12 @@
  * - The logic is decoupled from the metamodel classes.
  *
  * Usage:
- *   import { toHTML } from './exportHTML';
- *   const html = toHTML.anEntity(entity, options);
- * or
- *   const html = anEntity.toHTML(options);
+ *   import { ToHTML } from './exportHTML';
+ *   const html = ToHTML.anEntity(entity, options);
  *
  * Design Decisions:
  * - Combine all HTML export logic in a single module for better maintainability.
+ * - Use a class with static methods for better organization and extensibility.
  * - Prefer calls of helpers from genuine getHTML methods instead of additions to the metamodel prototypes
  *   and type merging - because the latter appears to be rather fragile.
  */
@@ -44,8 +43,8 @@ export interface IOptionsHTML {
     lang?: tagIETF;
 }
 
-export const toHTML = {
-    aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
+export class ToHTML {
+    static aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang ?? 'en-US';
         const widthMain = options?.widthMain ?? '67%';
@@ -57,7 +56,7 @@ export const toHTML = {
               : `<div class="meta-error">
                     Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
                 </div>`;
-            
+
         const titleText = passify(getLocalText(pkg.title, lang));
         const descText = passify(getLocalText(pkg.description, lang));
 
@@ -74,21 +73,21 @@ export const toHTML = {
                     </dl>
                 </div>
             </div>`;
-            
+
         const result: stringHTML[] = [pkgHTML];
 
         // 2. Graph items - filter by type
         for (const item of pkg.graph) {
-            if (includeItemTypes.includes(item.itemType) && typeof toHTML.anEntity === 'function') {
+            if (includeItemTypes.includes(item.itemType)) {
                 // call directly the helper function instead of the getHTML method of the item:
-                result.push(toHTML.anEntity(item as AnEntity, options));
+                result.push(ToHTML.anEntity(item as AnEntity, options));
             }
         }
 
         return result;
-    },
+    }
 
-    anEntity(entity: AnEntity, options?: IOptionsHTML): stringHTML {
+    static anEntity(entity: AnEntity, options?: IOptionsHTML): stringHTML {
         const enSt = entity.status();
         if (!enSt.ok) {
             return `<div class="meta-error">
@@ -126,9 +125,9 @@ export const toHTML = {
                         ${propertiesHTML}
                     </div>
                 </div>`;
-    },
+    }
 
-    aRelationship(rel: ARelationship, options?: IOptionsHTML): stringHTML {
+    static aRelationship(rel: ARelationship, options?: IOptionsHTML): stringHTML {
         // dummy operation to use options and avoid "unused variable" warning - to be removed when implementation is done
         if (options?.itemType) return '';
         const relSt = rel.status();
@@ -140,7 +139,7 @@ export const toHTML = {
         // @ToDo: Implementiere eine HTML-Repräsentation für ARelationship
         return '<div class="meta-not-implemented">HTML export for Relationship not implemented</div>';
     }
-};
+}
 
 /**
  * Sanitize HTML by removing dangerous elements and attributes that could execute code

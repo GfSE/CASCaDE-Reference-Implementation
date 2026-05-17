@@ -1,14 +1,15 @@
 /*!
- * JEST Test Suite for PIG Package getHTML() Method
+ * JEST Test Suite for CASCaRA (PIG) Package ToHTML() Method
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
 import { DEF } from '../../src/common/lib/definitions';
 import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
+import { ToHTML } from '../../src/common/export/html/exportHTML';
 import { ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
 
-describe('PIG Package getHTML() Method', () => {
+describe('Test CASCaRA Package ToHTML() Methods', () => {
     describe('Valid Package with Single Entity', () => {
         test('should return array of HTML strings with package metadata and entity', () => {
             const validPackageWithEntity = {
@@ -76,10 +77,10 @@ describe('PIG Package getHTML() Method', () => {
             const pkg = new APackage().setJSONLD( validPackageWithEntity,
                 { checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass] }
             );
-            
+
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = pkg.getHTML();
+            const htmlList = ToHTML.aPackage(pkg);
             // console.debug('Generated HTML List:', htmlList);
 
             // Should return an array
@@ -147,10 +148,10 @@ describe('PIG Package getHTML() Method', () => {
             };
 
             const pkg = new APackage().setJSONLD(packageWithoutEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
-            
+
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = pkg.getHTML();
+            const htmlList = ToHTML.aPackage(pkg);
 
             // Should have only 1 element (package metadata)
             expect(htmlList.length).toBe(1);
@@ -232,10 +233,10 @@ describe('PIG Package getHTML() Method', () => {
             };
 
             const pkg = new APackage().setJSONLD(packageWithMixedItems, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
-            
+
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = pkg.getHTML();
+            const htmlList = ToHTML.aPackage(pkg);
             // console.debug('Generated HTML List for Mixed Package:', htmlList);
 
             // Package metadata + 1 entity (ignoring Property, Link, Entity class, Relationship)
@@ -260,10 +261,10 @@ describe('PIG Package getHTML() Method', () => {
             };
 
             const pkg = new APackage().setJSONLD(invalidPackage, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
-            
+
             expect(pkg.status().ok).toBe(true);
 
-            const htmlList = pkg.getHTML();
+            const htmlList = ToHTML.aPackage(pkg);
 
             expect(htmlList.length).toBe(1);
         });
@@ -337,7 +338,7 @@ describe('PIG Package getHTML() Method', () => {
             }
             expect(st.ok).toBe(true);
 
-            const htmlList = pkg.getHTML();
+            const htmlList = ToHTML.aPackage(pkg);
 
             // 1 package metadata + 3 entities
             expect(htmlList.length).toBe(4);

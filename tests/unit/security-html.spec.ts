@@ -6,6 +6,7 @@
 
 import { DEF } from '../../src/common/lib/definitions';
 import { APackage, AnEntity } from '../../src/common/schema/pig/ts/pig-metaclasses';
+import { ToHTML } from '../../src/common/export/html/exportHTML';
 
 describe('HTML Security - XSS Prevention', () => {
     describe('Script Injection and Event Handler Prevention', () => {
@@ -56,13 +57,12 @@ describe('HTML Security - XSS Prevention', () => {
             expect(pkg.status().ok).toBe(true);
 
             const items = pkg.getItems();
-            const entityItem = items.find(item => item.id === 'd:REQ-XSS-001');
+            const req = items.find(item => item.id === 'd:REQ-XSS-001');
             
-            expect(entityItem).toBeDefined();
-            expect(entityItem?.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
+            expect(req).toBeDefined();
+            expect(req?.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
 
-            const entity = entityItem as AnEntity;
-            const htmlOutput = entity.getHTML();
+            const htmlOutput = ToHTML.anEntity(req as AnEntity);
 
             // Verify that dangerous content is removed/sanitized
             expect(htmlOutput).toBeDefined();
@@ -125,11 +125,11 @@ describe('HTML Security - XSS Prevention', () => {
             expect(pkg.status().ok).toBe(true);
 
             const items = pkg.getItems();
-            const entity = items.find(item => item.id === 'd:REQ-MIXED-CONTENT') as AnEntity;
+            const req = items.find(item => item.id === 'd:REQ-MIXED-CONTENT') as AnEntity;
             
-            expect(entity).toBeDefined();
+            expect(req).toBeDefined();
 
-            const htmlOutput = entity.getHTML();
+            const htmlOutput = ToHTML.anEntity(req);
 
             // Verify XSS vectors are removed
             expect(htmlOutput).not.toContain('onerror');
@@ -197,11 +197,11 @@ describe('HTML Security - XSS Prevention', () => {
             expect(pkg.status().ok).toBe(true);
 
             const items = pkg.getItems();
-            const entity = items.find(item => item.id === 'd:REQ-MALICIOUS-OBJ') as AnEntity;
+            const req = items.find(item => item.id === 'd:REQ-MALICIOUS-OBJ') as AnEntity;
             
-            expect(entity).toBeDefined();
+            expect(req).toBeDefined();
 
-            const htmlOutput = entity.getHTML();
+            const htmlOutput = ToHTML.anEntity(req);
 
             // Verify dangerous object types are removed
             expect(htmlOutput).not.toContain('application/x-shockwave-flash');

@@ -63,7 +63,7 @@
     import { Options, Vue } from 'vue-class-component';
     import { ReqifImporter } from '@/common/import/reqif/import-reqif';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { stringHTML } from '@/common/export/html/exportHTML';
+    import { stringHTML, ToHTML } from '@/common/export/html/exportHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
@@ -106,7 +106,7 @@
                     const allHtmlArrays = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
                         const thePackage = allItems[0] as APackage;
-                        return thePackage.getHTML() as stringHTML[];
+                        return ToHTML.aPackage(thePackage) as stringHTML[];
                     });
 
                     if (allHtmlArrays.length > 0) {
