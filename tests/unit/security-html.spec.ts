@@ -6,7 +6,7 @@
 
 import { DEF } from '../../src/common/lib/definitions';
 import { APackage, AnEntity } from '../../src/common/schema/pig/ts/pig-metaclasses';
-import { ToHTML } from '../../src/common/export/html/exportHTML';
+import { ToHTML } from '../../src/common/export/html/toHTML';
 
 describe('HTML Security - XSS Prevention', () => {
     describe('Script Injection and Event Handler Prevention', () => {

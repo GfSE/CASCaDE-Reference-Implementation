@@ -75,7 +75,7 @@
     import { Options, Vue } from 'vue-class-component';
     import { XmlImporter } from '@/common/import/xml/import-xml';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { stringHTML, toHTML } from '@/common/export/html/exportHTML';
+    import { stringHTML, toHTML } from '@/common/export/html/toHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';

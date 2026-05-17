@@ -22,7 +22,7 @@
  * - The logic is decoupled from the metamodel classes.
  *
  * Usage:
- *   import { ToHTML } from './exportHTML';
+ *   import { ToHTML } from './toHTML';
  *   const html = ToHTML.anEntity(entity, options);
  *
  * Design Decisions:
@@ -52,7 +52,7 @@ export interface IOptionsHTML {
  * @returns HTML representation as array of HTML strings
  * 
  * @example
- * import { toHTML } from './exportHTML';
+ * import { toHTML } from './toHTML';
  * const html = toHTML(item, options);
  */
 export function toHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[] {

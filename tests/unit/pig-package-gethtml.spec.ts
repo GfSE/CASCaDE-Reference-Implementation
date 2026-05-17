@@ -6,7 +6,7 @@
 
 import { DEF } from '../../src/common/lib/definitions';
 import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
-import { ToHTML } from '../../src/common/export/html/exportHTML';
+import { ToHTML } from '../../src/common/export/html/toHTML';
 import { ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
 
 describe('Test CASCaRA Package ToHTML() Methods', () => {

@@ -63,7 +63,7 @@
     import { Options, Vue } from 'vue-class-component';
     import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { stringHTML, toHTML } from '@/common/export/html/exportHTML';
+    import { stringHTML, toHTML } from '@/common/export/html/toHTML';
     import { useHtmlStore } from '@/stores/cacheStore';
     import { LOG } from '@/common/lib/helpers';
     import { IRsp } from '@/common/lib/messages';
