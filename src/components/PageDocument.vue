@@ -7,7 +7,7 @@
                     <v-card-title tag="h2">Outline</v-card-title><!-- later: Title of tree root -->
                     <v-divider />
                     <div class="pane-scroll pa-0">
-                        <v-list>
+                        <v-list density="compact">
                             <v-list-item v-for="(item, index) in htmlArray"
                                          :key="index"
                                          @click="selectItem(index)"
@@ -101,5 +101,11 @@
         flex: 1 1 0;
         overflow-y: auto;
         min-height: 0;
+    }
+
+    .pane-scroll :deep(.v-list-item) {
+        min-height: 24px !important;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
     }
 </style>
