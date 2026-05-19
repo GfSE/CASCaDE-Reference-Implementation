@@ -4,7 +4,7 @@
             <!-- LEFT PANE -->
             <v-col cols="3" class="fill-height">
                 <v-card class="pane-card">
-                    <v-card-title tag="h2">Outline</v-card-title><!-- later: Title of tree root -->
+                    <v-card-title tag="h2">Outline</v-card-title>
                     <v-divider />
                     <div class="pane-scroll pa-0">
                         <v-list density="compact">
@@ -39,7 +39,10 @@
 
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
-    import { useHtmlStore } from '@/stores/cacheStore'
+    import { toRaw } from 'vue'
+    import { usePackageCache } from '@/stores/packageCache'
+    import { getHTML, stringHTML } from '@/common/export/html/getHTML'
+    import { APackage } from '@/common/schema/pig/ts/pig-metaclasses'
 
     function extractTitle(html: string): string | null {
         const match = html.match(/<[^>]*class=["'][^"']*meta-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);
@@ -54,14 +57,26 @@
             }
         },
         computed: {
-            htmlArray(): string[] {
-                const store = useHtmlStore()
-                const value = store.htmlArray
-                if (!value) return []
-                return Array.isArray(value) ? value : [value]
+            htmlArray(): stringHTML[] {
+                const cache = usePackageCache()
+                const packages = cache.packages
+
+                if (!packages || packages.length === 0) {
+                    return []
+                }
+
+                // Convert all packages to HTML arrays and flatten into single array
+                const result: stringHTML[] = []
+                for (const pkg of packages) {
+                    // Use toRaw to unwrap Pinia's reactive proxy
+                    const rawPkg = toRaw(pkg) as APackage
+                    const htmlItems = getHTML(rawPkg)
+                    result.push(...htmlItems)
+                }
+                return result
             },
 
-            selectedHtml(): string | null {
+            selectedHtml(): stringHTML | null {
                 if (this.selectedIndex === null) return null
                 return this.htmlArray[this.selectedIndex] ?? null
             }

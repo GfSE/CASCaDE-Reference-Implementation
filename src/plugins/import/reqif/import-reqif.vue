@@ -64,7 +64,7 @@
     import { ReqifImporter } from '@/common/import/reqif/import-reqif';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { stringHTML, getHTML } from '@/common/export/html/getHTML';
-    import { useHtmlStore } from '@/stores/cacheStore';
+    import { usePackageCache } from '@/stores/packageCache';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
 
@@ -101,18 +101,16 @@
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
-                    // Collect all HTML arrays from successful imports
-                    // ✅ Type annotation hinzugefügt
-                    const allHtmlArrays = successful.flatMap((r: IRsp<unknown>) => {
+                    // Collect all packages from successful imports
+                    const allPackages = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
-                        const thePackage = allItems[0] as APackage;
-                        return getHTML(thePackage) as stringHTML[];
+                        return allItems[0] as APackage;
                     });
 
-                    if (allHtmlArrays.length > 0) {
+                    if (allPackages.length > 0) {
                         // Store in Pinia store
-                        const store = useHtmlStore();
-                        store.htmlArray = allHtmlArrays;
+                        const cache = usePackageCache();
+                        cache.packages = allPackages;
 
                         // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;

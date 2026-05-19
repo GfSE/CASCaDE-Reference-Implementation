@@ -7,7 +7,7 @@
                          color="surface-light"
                          height="300"
                          rounded="lg">
-                    <h2 class="column-title">Import</h2>
+                    <h2 class="column-title">Import from file</h2>
                     <ul>
                         <li v-for="(component, name) in importComponents" :key="name">
                             <component :is="component" />
@@ -22,7 +22,7 @@
                          color="surface-light"
                          height="300"
                          rounded="lg">
-                    <h2 class="column-title">Load</h2>
+                    <h2 class="column-title">Load from database</h2>
                     <div style="text-align: center;"><p><i>List of projects available in a database<br/>(in preparation)</i></p></div>
                 </v-sheet>
             </v-col>
@@ -33,7 +33,7 @@
                          color="surface-light"
                          height="300"
                          rounded="lg">
-                    <h2 class="column-title">Export</h2>
+                    <h2 class="column-title">Export to file</h2>
                     <ul>
                         <li v-for="(component, name) in exportComponents" :key="name">
                             <component :is="component" />
