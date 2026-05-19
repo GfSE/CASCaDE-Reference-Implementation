@@ -23,7 +23,7 @@
                          height="300"
                          rounded="lg">
                     <h2 class="column-title">Load from database</h2>
-                    <div style="text-align: center;"><p><i>List of projects available in a database<br/>(in preparation)</i></p></div>
+                    <div style="text-align: center;"><p><i>List of packages available in a database<br/>(in preparation)</i></p></div>
                 </v-sheet>
             </v-col>
 

@@ -6,7 +6,7 @@
 
 import { DEF } from '../../src/common/lib/definitions';
 import { APackage, AnEntity } from '../../src/common/schema/pig/ts/pig-metaclasses';
-import { GetHTML } from '../../src/common/export/html/getHTML';
+import { getHTML } from '../../src/common/export/html/getHTML';
 
 describe('HTML Security - XSS Prevention', () => {
     describe('Script Injection and Event Handler Prevention', () => {
@@ -62,7 +62,11 @@ describe('HTML Security - XSS Prevention', () => {
             expect(req).toBeDefined();
             expect(req?.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
 
-            const htmlOutput = GetHTML.anEntity(req as AnEntity);
+            const output = getHTML(req as AnEntity);
+            expect(Array.isArray(output)).toBe(true);
+            expect(output).toHaveLength(1);
+            expect(typeof output[0]).toBe('string');
+            const htmlOutput = output[0];
 
             // Verify that dangerous content is removed/sanitized
             expect(htmlOutput).toBeDefined();
@@ -129,7 +133,12 @@ describe('HTML Security - XSS Prevention', () => {
             
             expect(req).toBeDefined();
 
-            const htmlOutput = GetHTML.anEntity(req);
+            const output = getHTML(req as AnEntity);
+            // expect(Array.isArray(output)).toBe(true);
+            expect(output).toHaveLength(1);
+            // expect(typeof output[0]).toBe('string');
+            const htmlOutput = output[0];
+
 
             // Verify XSS vectors are removed
             expect(htmlOutput).not.toContain('onerror');
@@ -199,9 +208,11 @@ describe('HTML Security - XSS Prevention', () => {
             const items = pkg.getItems();
             const req = items.find(item => item.id === 'd:REQ-MALICIOUS-OBJ') as AnEntity;
             
-            expect(req).toBeDefined();
-
-            const htmlOutput = GetHTML.anEntity(req);
+            const output = getHTML(req as AnEntity);
+            // expect(Array.isArray(output)).toBe(true);
+            expect(output).toHaveLength(1);
+            // expect(typeof output[0]).toBe('string');
+            const htmlOutput = output[0];
 
             // Verify dangerous object types are removed
             expect(htmlOutput).not.toContain('application/x-shockwave-flash');

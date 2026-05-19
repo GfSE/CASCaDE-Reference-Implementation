@@ -72,6 +72,7 @@
 </template>
 
 <script lang="ts">
+    import { DEF } from '@/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
     import { XmlImporter } from '@/common/import/xml/import-xml';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
@@ -135,7 +136,7 @@
                             await this.$router.push({ name: 'Document' });
                             this.dialog = false;
                             this.onCancel();
-                        }, 1500);
+                        }, DEF.timeBetweenPages);
                     } else {
                         this.logFailedImports(failed);
                     }

@@ -60,6 +60,7 @@
 </template>
 
 <script lang="ts">
+    import { DEF } from '@/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
     import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
@@ -122,7 +123,7 @@
                             await this.$router.push({ name: 'Document' });
                             this.dialog = false;
                             this.onCancel();
-                        }, 1200);
+                        }, DEF.timeBetweenPages);
                     }
                     else {
                         this.logFailedImports(failed);

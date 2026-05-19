@@ -70,7 +70,7 @@ export function getHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML
     }
 }
 
-export class GetHTML {
+class GetHTML {
     static aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang ?? 'en-US';
