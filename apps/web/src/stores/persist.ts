@@ -1,9 +1,9 @@
-import type { useHtmlStore } from "@/stores/cacheStore";
+import type { usePackageCache } from "@/stores/packageCache";
 import type { Store } from "pinia";
 
-type StoreWithHtmlArray = ReturnType<typeof useHtmlStore>['$state'];
+type StoreWithPackages = ReturnType<typeof usePackageCache>['$state'];
 
-export function setupPersistence(store: Store<string, StoreWithHtmlArray>) {
+export function setupPersistence(store: Store<string, StoreWithPackages>) {
   const key = `pinia-${store.$id}`;
 
   // 1. Rehydration: Load from localStorage and update store
@@ -13,9 +13,9 @@ export function setupPersistence(store: Store<string, StoreWithHtmlArray>) {
   if (saved) {
     try {
       const array = JSON.parse(saved);
-      if (Array.isArray(array)) {
+      if (Array.isArray(array) && array.length > 0) {
         store.$patch({
-          htmlArray: array
+          packages: array
         });
         console.log("Persistence: Rehydrated store from localStorage");
       }
@@ -26,11 +26,11 @@ export function setupPersistence(store: Store<string, StoreWithHtmlArray>) {
 
   // 2. Subscription: Watch for changes and save to localStorage
   store.$subscribe((mutation, state) => {
-    if (state.htmlArray?.length > 0) {
-      localStorage.setItem(key, JSON.stringify(state.htmlArray));
+    if (state.packages?.length > 0) {
+      localStorage.setItem(key, JSON.stringify(state.packages));
       console.log("Persistence: Saved store to localStorage (mutation type: " + mutation.type + ")");
 
-      console.log("Persistence: html array saved - ", localStorage.getItem(key));
+      console.log("Persistence: packages array saved - ", localStorage.getItem(key));
     } else {
       localStorage.removeItem(key);
       console.log("Persistence: Removed store from localStorage");

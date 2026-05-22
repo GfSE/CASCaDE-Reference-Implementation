@@ -76,6 +76,7 @@ class GetHTML {
         const lang = options?.lang ?? 'en-US';
         const widthMain = options?.widthMain ?? '67%';
         const includeItemTypes = options?.itemType ?? [PigItemType.anEntity];
+        console.log("Persistence: package being processed - ", pkg);
         const pkgSt = pkg.status();
 
         // 1. Package metadata as first element with localization

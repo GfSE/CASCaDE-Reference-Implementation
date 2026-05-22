@@ -60,6 +60,7 @@
             htmlArray(): stringHTML[] {
                 const cache = usePackageCache()
                 const packages = cache.packages
+                console.log("Persistence: retrieved packages - ", packages)
 
                 if (!packages || packages.length === 0) {
                     return []
