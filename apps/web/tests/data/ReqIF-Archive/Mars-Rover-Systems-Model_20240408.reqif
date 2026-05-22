@@ -1,0 +1,2492 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<REQ-IF xmlns="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd" xmlns:ns2="http://www.w3.org/1999/xhtml">
+    <THE-HEADER>
+        <REQ-IF-HEADER IDENTIFIER="MDReqIF_1712564283242_49849_0">
+            <CREATION-TIME>2024-04-08T10:18:03</CREATION-TIME>
+            <REPOSITORY-ID>PROJECT-cec29cea-69e2-4219-ae73-b95b23c63f6f</REPOSITORY-ID>
+            <REQ-IF-TOOL-ID>MagicDraw</REQ-IF-TOOL-ID>
+            <REQ-IF-VERSION>1.0</REQ-IF-VERSION>
+            <SOURCE-TOOL-ID>MagicDraw</SOURCE-TOOL-ID>
+            <TITLE></TITLE>
+        </REQ-IF-HEADER>
+    </THE-HEADER>
+    <CORE-CONTENT>
+        <REQ-IF-CONTENT>
+            <DATATYPES>
+                <DATATYPE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283287_764712_3" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="XHTML"/>
+                <DATATYPE-DEFINITION-STRING MAX-LENGTH="2147483647" IDENTIFIER="MDReqIF_1712564283448_920029_13" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="String"/>
+            </DATATYPES>
+            <SPEC-TYPES>
+                <SPECIFICATION-TYPE IDENTIFIER="MDReqIF_1712564283259_839915_1" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Paket">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283287_529006_2" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPECIFICATION-TYPE>
+                <SPEC-OBJECT-TYPE IDENTIFIER="MDReqIF_1712564283421_181534_4" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Klasse">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283421_450876_5" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPEC-OBJECT-TYPE>
+                <SPEC-OBJECT-TYPE IDENTIFIER="MDReqIF_1712564283446_317325_10" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Requirement">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283446_256484_11" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                        <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="MDReqIF_1712564283448_537472_12" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.ForeignID" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-STRING-REF>MDReqIF_1712564283448_920029_13</DATATYPE-DEFINITION-STRING-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-STRING>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283458_106953_16" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Text" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPEC-OBJECT-TYPE>
+                <SPEC-OBJECT-TYPE IDENTIFIER="MDReqIF_1712564283461_752038_19" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Functional Requirement">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283461_270092_20" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                        <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="MDReqIF_1712564283462_342092_21" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.ForeignID" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-STRING-REF>MDReqIF_1712564283448_920029_13</DATATYPE-DEFINITION-STRING-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-STRING>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283463_823333_22" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Text" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPEC-OBJECT-TYPE>
+                <SPEC-OBJECT-TYPE IDENTIFIER="MDReqIF_1712564283503_898570_59" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Usability Requirement">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283503_12590_60" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                        <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="MDReqIF_1712564283503_541291_61" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.ForeignID" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-STRING-REF>MDReqIF_1712564283448_920029_13</DATATYPE-DEFINITION-STRING-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-STRING>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283504_133393_62" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Text" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPEC-OBJECT-TYPE>
+                <SPEC-OBJECT-TYPE IDENTIFIER="MDReqIF_1712564283513_737771_74" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Physical Requirement">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283513_690884_75" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                        <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="MDReqIF_1712564283513_913581_76" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.ForeignID" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-STRING-REF>MDReqIF_1712564283448_920029_13</DATATYPE-DEFINITION-STRING-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-STRING>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283513_343174_77" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Text" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPEC-OBJECT-TYPE>
+                <SPEC-RELATION-TYPE IDENTIFIER="MDReqIF_1712564283526_268889_88" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Trace">
+                    <SPEC-ATTRIBUTES/>
+                </SPEC-RELATION-TYPE>
+                <SPEC-RELATION-TYPE IDENTIFIER="MDReqIF_1712564283526_426891_89" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="DeriveReqt">
+                    <SPEC-ATTRIBUTES/>
+                </SPEC-RELATION-TYPE>
+                <SPEC-RELATION-TYPE IDENTIFIER="MDReqIF_1712564283527_842766_90" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Refine">
+                    <SPEC-ATTRIBUTES/>
+                </SPEC-RELATION-TYPE>
+            </SPEC-TYPES>
+            <SPEC-OBJECTS>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373817716_227628_13935" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Legal requirements">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Legal requirements</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283421_450876_5</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283421_181534_4</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373833970_540169_14529" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Legal safety requirements manufacturing">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Legal safety requirements manufacturing</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283421_450876_5</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283421_181534_4</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710146322885_948291_5555" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Legal safety requirement testing">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Legal safety requirement testing</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283421_450876_5</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283421_181534_4</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710146360070_21059_5559" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Legal ergonomy requierments manufacturing">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Legal ergonomy requierments manufacturing</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283421_450876_5</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283421_181534_4</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373833970_87496_14528" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Technical requirements">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Technical requirements</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373894872_831523_16027" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Structure">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Structure</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947269_619833_17513" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Head">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Head</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.1.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a head</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710152799440_775076_5744" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Head Position">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Head Position</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.1.1.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Head of the Mars Rover shall be higher mounted than body, suspension and traction unit.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710153330085_930613_5754" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Head Function">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Head Function</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.1.1.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Head of the Mars Rover shall carry sensors and a LED Display.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710146462874_714909_5562" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Body">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Body</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.1.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a body</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710146492047_939247_5565" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Suspension">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Suspension</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.1.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a suspension suspending the traction unit</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710146526694_117941_5568" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Traction Unit">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Traction Unit</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.1.4">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a traction unit providing traction to the ground</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373894872_990229_16028" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Power Supply">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Power Supply</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a power supply.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947269_334692_17515" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="External Power Supply">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>External Power Supply</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be operable with internal power supply only.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947269_839759_17516" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Internal Power Supply">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Internal Power Supply</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a power supply fulfilling all of the following conditions:
+* it contains an energy storage system
+* it contains an energy management system
+* it contains a power distribution system</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373992768_924005_18953" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Energy Storage">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Energy Storage</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.2.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have means to re-charde its energy storage system.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373992768_101922_18958" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Available Power">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Available Power</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.2.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be operable for 4h under all of the following conditions:
+* The energy storage is fully loaded at the beginning
+* The operation requires less than or equal to 60% of the max energy in peak load
+* the environmental conditions are mission normal</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947269_80329_17517" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Energy Re-Charging">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Energy Re-Charging</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall re-charge the energy storage from 10% to 80% in 4h under the following conditions:
+* re-charging at mission normal conditions
+* no energy consumption of the Mars Rover since the re-charging period</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373886850_739640_15912" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Electrical Values">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Electrical Values</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.5">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall use 12 V DC voltage</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1555340930579_881851_34234" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Motor Voltage">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Motor Voltage</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.5.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have one main drive motor for each traction device fulfilling the following conditions:
+* using 12 V voltage
+* using not more than 30 A current</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2022x_8a9027b_1707924576905_883240_5487" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Encoder Voltage">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Encoder Voltage</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.5.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have an encoder powered by 5 V voltage.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373886850_551019_15911" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Energy Management">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Energy Management</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.4">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have an energy management fullfilling all of the following conditions:
+* distributing the energy to all systems
+* prioritizing the energy available for the different systems
+* limiting energy to individual systems to prioritize individual systems
+* managing energy that the Mars Rover can recharge by itself in a time period of less than 24 hours</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373894872_489031_16029" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Motion">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Motion</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to move by itself.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947238_635549_17411" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Motion over Obstacles">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Motion over Obstacles</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to move by itself over obstacles which fullfill one of the following condition:
+* the obstacle is max. 20 cm high
+* the slope angle uphil is max. 30 degree
+* the slope angle downhil is max. 30 degree
+* the roll angle of the Mars Rover since moving over the obstacle never exceeds an angle of 30 degree</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2022x_8a9027b_1708424764583_139395_5943" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Deformation of the bogie">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Deformation of the bogie</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.2.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The bogie of the suspension system shall not bend more than 5% since all motion events.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710147594026_511625_5572" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Plastic deformation of the bogie">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Plastic deformation of the bogie</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.2.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The bogie of the suspension system shall not deform plastically for bending less than or equal to 7%.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947238_606232_17414" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Motion Ground Contact">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Motion Ground Contact</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.4">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall produce a ground pressure of max. 20 kPa.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947253_22759_17417" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Max Motion Speed">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Max Motion Speed</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to move by itself with a max. speed of 7 m/s.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373947253_787088_17420" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Motion over slopes">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Motion over slopes</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to move on slopes which fullfill the following condition:
+* slope angle uphill max. 20 degree
+* slope angle downhill max. 30 degree
+* slope angle sidehill max 15 degree</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373888774_76355_15935" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Electric Motion Drive">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Electric Motion Drive</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.5">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have one left and one right traction device both driven by one electrical motor each.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373888774_384276_15938" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Motion Distance">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Motion Distance</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.8">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to move at least 100m per day on all slopes where it is able to move on.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373888774_923366_15937" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Min Motion Speed">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Min Motion Speed</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.7">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to move by itself with a min. speed of 1 m/min</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373888774_941195_15936" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Start Driving">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Start Driving</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.6">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall start driving by itself on all slopes where it is able to move on.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1555336591336_85392_31015" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Stopping">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Stopping</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.9">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to stop moving by itself down to 0 m/s speed.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710148366772_438416_5581" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Hill Holding">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Hill Holding</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.10">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall maintain 0 m/s motion on all slopes it is able to move on.
+</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710148561688_473742_5584" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Steering">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Steering</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.11">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to change driving direction to the left and to the right.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710148601847_750005_5587" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Diving Direction">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Diving Direction</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.12">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to drive forwards and backwards.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710148650016_796202_5590" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Navigate">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Navigate</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.13">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to calculate a route between its actual position and a target position</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710148712446_394547_5593" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Detecting Obstacles">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Detecting Obstacles</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.13.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to identify obstacles by itself</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710148782585_264451_5596" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Map Data">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Map Data</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.13.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have map data stored enabling it to calculate a route between its actual position and a target position</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710148844988_144183_5599" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Preventing Obstacles">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Preventing Obstacles</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.3.13.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall prevent driving over obstacles if all of the following conditions are true:
+* the obstacle exceeds the measures of an acceptable obstacle as required in 1.1.3.2
+* a rout is available around the obstacle or rearwards to a position capable to reach the target without crossing the obstacle.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373894872_844710_16030" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Remote Control">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Remote Control</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.4">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be controllable remote.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373888790_510287_15941" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Remote Steering">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Remote Steering</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.4.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover steering direction shall be controllable remote.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373888774_288492_15940" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Remote Speed Control">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Remote Speed Control</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.4.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover speed shall be controllable remote.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710149292477_668117_5602" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Remote Control Priority">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Remote Control Priority</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283503_12590_60</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.4.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283503_541291_61</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover remote control shall be able to overrule the auto navigation function.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283504_133393_62</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283503_898570_59</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373894872_183392_16031" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Optical Feedback">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Optical Feedback</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.5">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall provide optical information if it is operable or not.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373890795_302548_15964" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="LED">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>LED</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.5.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a LED for optical information if it is operable or not.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1554373894872_124599_16032" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Max Mass">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Max Mass</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.6">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a total mass of not more than 12 kg</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710153834097_967050_5805" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Mars Rover Mass">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Mars Rover Mass</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283503_12590_60</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.6.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283503_541291_61</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a total mass of not more than 10 kg</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283504_133393_62</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283503_898570_59</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710153885017_514661_5808" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Payload">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Payload</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.6.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have a payload of 2 kg.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710152920321_382759_5749" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Mars Rover Capabilities">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Mars Rover Capabilities</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.7">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to execute the following operations individually and not in combination:
+* Moving on Mars surface
+* Capturing optical information
+* Capturing video information
+* Capturing audio information
+* Sampling of Probes of solid material of individual diameter not bigger than 20 mm
+* Sampling of probes of fluid material in the range of ph-value 0 to 11
+* Sampling of probes of gas of not more than 50 mm³ volume and pressure between 1 hPa up to 3.000 hPa
+* Sampling of biological probes of not more than 50 mm³ volume and not more than 30 mm length in any direction</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710153615080_304380_5787" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Mars Rover Communication">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Mars Rover Communication</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.7.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to communicate sampled information to the Mars station.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710153678770_496381_5792" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Information Storage">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Information Storage</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.7.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be capable to store information up to 2 TB</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710153727491_409919_5797" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Sample Storage">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Sample Storage</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.7.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to store probes up to 48 h long.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710153776399_96192_5800" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Unloading">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Unloading</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283461_270092_20</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.7.4">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283462_342092_21</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to unload stored probes into the Mars Station.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283463_823333_22</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283461_752038_19</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710151635216_154098_5695" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Operating on Mars">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Operating on Mars</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.9">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to operate on the planet Mars.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710151675649_994932_5700" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Operating Atmosphere">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Operating Atmosphere</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.9.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to operate in Mars atmosphere for at least 25 years.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710151718558_644987_5705" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Mars Gravity">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Mars Gravity</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.9.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to operate under Mars gravity of 3.71 m/s².</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710151896250_201297_5710" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Mars Temperatures">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Mars Temperatures</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.9.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to operate in a temperature range from -80°C up to 80°C</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710152037892_253674_5713" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Mars Radiation">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Mars Radiation</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.9.4">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to be fully operable under constant cosmic radiation of at least 250 mSv.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710150433825_282917_5653" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Landing on Mars">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Landing on Mars</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.8">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to land on planet Mars.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710150476050_13127_5658" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Landing Temperatures">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Landing Temperatures</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.8.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall resist temperatures of not more than 100°C for not more than 7 minutes while staying full functional.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710150561344_954069_5661" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Landing Deceleration">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Landing Deceleration</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.8.2">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be able to withstand landing deceleration as listed below:
+* Deceleration from 20.000 km/h at Mars atmosphere entry to 1.500 km/h in 4 minutes.
+* Deceleration from 1.500 km/s to 25 m/s in 3 minutes</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710150880576_958104_5666" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Landing speed">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Landing speed</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.8.3">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall be full operable after a landing on Mars with the following conditions beeing true:
+* The vertical speed at ground contact is not higher than 1 m/s
+* The horizontal speed at graund contact is not higher than 1 m/s</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+                <SPEC-OBJECT IDENTIFIER="_2021x_2_8d501e7_1710151377993_602525_5676" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Landing Orientation">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Landing Orientation</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_690884_75</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.8.4">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283513_913581_76</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall land on Mars with the traction units first contacting the ground.</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283513_343174_77</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283513_737771_74</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+            </SPEC-OBJECTS>
+            <SPEC-RELATIONS>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1555337377444_257188_31500" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_268889_88</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947253_22759_17417</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_923366_15937</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1554373890795_759324_15965" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_426891_89</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_619833_17513</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373890795_302548_15964</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_2022x_8a9027b_1708424832465_98016_5980" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283527_842766_90</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947238_635549_17411</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_2022x_8a9027b_1708424764583_139395_5943</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1554373817716_134402_13936" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_426891_89</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373886850_551019_15911</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_80329_17517</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1555340977980_904480_34264" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_268889_88</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947238_606232_17414</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1555340930579_881851_34234</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_2022x_8a9027b_1710766151046_864329_8022" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_426891_89</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148561688_473742_5584</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888790_510287_15941</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1555344116481_669973_45499" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_268889_88</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373886850_739640_15912</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1555340930579_881851_34234</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1554373817716_84639_13937" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_426891_89</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373886850_739640_15912</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_80329_17517</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1554373817716_97143_13938" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_426891_89</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_76355_15935</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_80329_17517</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1555337374165_656605_31483" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_268889_88</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947253_22759_17417</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_384276_15938</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+                <SPEC-RELATION IDENTIFIER="_17_0_3_1_60c0217_1555340161504_516693_33114" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="">
+                    <VALUES/>
+                    <TYPE>
+                        <SPEC-RELATION-TYPE-REF>MDReqIF_1712564283526_268889_88</SPEC-RELATION-TYPE-REF>
+                    </TYPE>
+                    <TARGET>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373894872_489031_16029</SPEC-OBJECT-REF>
+                    </TARGET>
+                    <SOURCE>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947238_606232_17414</SPEC-OBJECT-REF>
+                    </SOURCE>
+                </SPEC-RELATION>
+            </SPEC-RELATIONS>
+            <SPECIFICATIONS>
+                <SPECIFICATION IDENTIFIER="_17_0_3_1_60c0217_1554373814649_874555_13801" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="3000 Requirements">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>3000 Requirements</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_529006_2</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <CHILDREN>
+                        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283438_326544_6" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                            <EDITABLE-ATTS/>
+                            <CHILDREN>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283440_695136_7" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373833970_540169_14529</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283441_817538_8" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710146322885_948291_5555</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283446_708469_9" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710146360070_21059_5559</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+                            </CHILDREN>
+                            <OBJECT>
+<SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373817716_227628_13935</SPEC-OBJECT-REF>
+                            </OBJECT>
+                        </SPEC-HIERARCHY>
+                        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283454_218202_14" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                            <EDITABLE-ATTS/>
+                            <CHILDREN>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283456_693943_15" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283459_643681_17" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <CHILDREN>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283461_502454_18" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710152799440_775076_5744</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283464_129024_23" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710153330085_930613_5754</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+            </CHILDREN>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_619833_17513</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283466_890364_24" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710146462874_714909_5562</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283468_494564_25" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710146492047_939247_5565</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283470_945937_26" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710146526694_117941_5568</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373894872_831523_16027</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283473_596067_27" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283475_752153_28" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_334692_17515</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283477_410685_29" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <CHILDREN>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283478_300951_30" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373992768_924005_18953</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283479_407706_31" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373992768_101922_18958</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+            </CHILDREN>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_839759_17516</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283480_633121_32" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947269_80329_17517</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283481_763126_33" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <CHILDREN>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283482_87295_34" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1555340930579_881851_34234</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283483_545134_35" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2022x_8a9027b_1707924576905_883240_5487</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+            </CHILDREN>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373886850_739640_15912</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283484_836618_36" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373886850_551019_15911</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373894872_990229_16028</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283485_162875_37" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283486_445437_38" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <CHILDREN>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283487_280125_39" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2022x_8a9027b_1708424764583_139395_5943</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283488_233744_40" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710147594026_511625_5572</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+            </CHILDREN>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947238_635549_17411</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283489_937076_41" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947238_606232_17414</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283490_599103_42" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947253_22759_17417</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283491_524955_43" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373947253_787088_17420</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283491_6247_44" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_76355_15935</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283492_637840_45" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_384276_15938</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283493_20349_46" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_923366_15937</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283494_442488_47" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_941195_15936</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283495_704301_48" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1555336591336_85392_31015</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283495_709790_49" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148366772_438416_5581</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283496_611444_50" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148561688_473742_5584</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283497_830604_51" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148601847_750005_5587</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283498_937312_52" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <CHILDREN>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283499_174754_53" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148712446_394547_5593</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283500_616704_54" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148782585_264451_5596</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+                <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283501_866457_55" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+                    <EDITABLE-ATTS/>
+                    <OBJECT>
+                        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148844988_144183_5599</SPEC-OBJECT-REF>
+                    </OBJECT>
+                </SPEC-HIERARCHY>
+            </CHILDREN>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710148650016_796202_5590</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373894872_489031_16029</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283501_1248_56" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283502_153968_57" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888790_510287_15941</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283503_478441_58" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373888774_288492_15940</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283505_108593_63" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710149292477_668117_5602</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373894872_844710_16030</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283506_666864_64" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283507_165347_65" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373890795_302548_15964</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373894872_183392_16031</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283508_309471_66" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283508_29548_67" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710153834097_967050_5805</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283509_568790_68" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710153885017_514661_5808</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373894872_124599_16032</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283510_334179_69" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283511_227393_70" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710153615080_304380_5787</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283511_103728_71" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710153678770_496381_5792</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283512_191466_72" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710153727491_409919_5797</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283513_742926_73" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710153776399_96192_5800</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710152920321_382759_5749</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283514_331405_78" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283515_196208_79" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710151675649_994932_5700</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283515_256528_80" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710151718558_644987_5705</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283516_922064_81" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710151896250_201297_5710</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283517_649046_82" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710152037892_253674_5713</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710151635216_154098_5695</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+<SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283518_277578_83" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+    <EDITABLE-ATTS/>
+    <CHILDREN>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283518_397356_84" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710150476050_13127_5658</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283519_819897_85" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710150561344_954069_5661</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283520_86607_86" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710150880576_958104_5666</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+        <SPEC-HIERARCHY IS-TABLE-INTERNAL="false" IDENTIFIER="MDReqIF_1712564283521_412885_87" LAST-CHANGE="2024-04-08T10:18:03" IS-EDITABLE="false">
+            <EDITABLE-ATTS/>
+            <OBJECT>
+                <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710151377993_602525_5676</SPEC-OBJECT-REF>
+            </OBJECT>
+        </SPEC-HIERARCHY>
+    </CHILDREN>
+    <OBJECT>
+        <SPEC-OBJECT-REF>_2021x_2_8d501e7_1710150433825_282917_5653</SPEC-OBJECT-REF>
+    </OBJECT>
+</SPEC-HIERARCHY>
+                            </CHILDREN>
+                            <OBJECT>
+<SPEC-OBJECT-REF>_17_0_3_1_60c0217_1554373833970_87496_14528</SPEC-OBJECT-REF>
+                            </OBJECT>
+                        </SPEC-HIERARCHY>
+                    </CHILDREN>
+                    <TYPE>
+                        <SPECIFICATION-TYPE-REF>MDReqIF_1712564283259_839915_1</SPECIFICATION-TYPE-REF>
+                    </TYPE>
+                </SPECIFICATION>
+            </SPECIFICATIONS>
+            <SPEC-RELATION-GROUPS/>
+        </REQ-IF-CONTENT>
+    </CORE-CONTENT>
+</REQ-IF>

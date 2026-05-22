@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<REQ-IF xmlns="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd" xmlns:ns2="http://www.w3.org/1999/xhtml">
+    <THE-HEADER>
+        <REQ-IF-HEADER IDENTIFIER="MDReqIF_1712564283242_49849_0">
+            <CREATION-TIME>2024-04-08T10:18:03</CREATION-TIME>
+            <REPOSITORY-ID>PROJECT-cec29cea-69e2-4219-ae73-b95b23c63f6f</REPOSITORY-ID>
+            <REQ-IF-TOOL-ID>MagicDraw</REQ-IF-TOOL-ID>
+            <REQ-IF-VERSION>1.0</REQ-IF-VERSION>
+            <SOURCE-TOOL-ID>MagicDraw</SOURCE-TOOL-ID>
+            <TITLE></TITLE>
+        </REQ-IF-HEADER>
+    </THE-HEADER>
+    <CORE-CONTENT>
+        <REQ-IF-CONTENT>
+            <DATATYPES>
+                <DATATYPE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283287_764712_3" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="XHTML"/>
+                <DATATYPE-DEFINITION-STRING MAX-LENGTH="2147483647" IDENTIFIER="MDReqIF_1712564283448_920029_13" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="String"/>
+            </DATATYPES>
+            <SPEC-TYPES>
+                <SPECIFICATION-TYPE IDENTIFIER="MDReqIF_1712564283259_839915_1" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Paket">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283287_529006_2" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPECIFICATION-TYPE>
+                <SPEC-OBJECT-TYPE IDENTIFIER="MDReqIF_1712564283446_317325_10" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Requirement">
+                    <SPEC-ATTRIBUTES>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283446_256484_11" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Name" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                        <ATTRIBUTE-DEFINITION-STRING IDENTIFIER="MDReqIF_1712564283448_537472_12" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.ForeignID" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-STRING-REF>MDReqIF_1712564283448_920029_13</DATATYPE-DEFINITION-STRING-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-STRING>
+                        <ATTRIBUTE-DEFINITION-XHTML IDENTIFIER="MDReqIF_1712564283458_106953_16" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="ReqIF.Text" IS-EDITABLE="true">
+                            <TYPE>
+<DATATYPE-DEFINITION-XHTML-REF>MDReqIF_1712564283287_764712_3</DATATYPE-DEFINITION-XHTML-REF>
+                            </TYPE>
+                        </ATTRIBUTE-DEFINITION-XHTML>
+                    </SPEC-ATTRIBUTES>
+                </SPEC-OBJECT-TYPE>
+            </SPEC-TYPES>
+            <SPEC-OBJECTS>
+                <SPEC-OBJECT IDENTIFIER="_17_0_3_1_60c0217_1555340930579_881851_34234" LAST-CHANGE="2024-04-08T10:18:03" LONG-NAME="Motor Voltage">
+                    <VALUES>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>Motor Voltage</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283446_256484_11</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                        <ATTRIBUTE-VALUE-STRING THE-VALUE="2.2.5.1">
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-STRING-REF>MDReqIF_1712564283448_537472_12</ATTRIBUTE-DEFINITION-STRING-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-STRING>
+                        <ATTRIBUTE-VALUE-XHTML IS-SIMPLIFIED="false">
+                            <THE-VALUE>
+<ns2:div>The Mars Rover shall have one main drive motor for each traction device fulfilling the following conditions:
+* using 12 V voltage
+* using not more than 30 A current</ns2:div>
+                            </THE-VALUE>
+                            <DEFINITION>
+<ATTRIBUTE-DEFINITION-XHTML-REF>MDReqIF_1712564283458_106953_16</ATTRIBUTE-DEFINITION-XHTML-REF>
+                            </DEFINITION>
+                        </ATTRIBUTE-VALUE-XHTML>
+                    </VALUES>
+                    <TYPE>
+                        <SPEC-OBJECT-TYPE-REF>MDReqIF_1712564283446_317325_10</SPEC-OBJECT-TYPE-REF>
+                    </TYPE>
+                </SPEC-OBJECT>
+            </SPEC-OBJECTS>
+            <SPEC-RELATIONS>
+            </SPEC-RELATIONS>
+            <SPECIFICATIONS>
+            </SPECIFICATIONS>
+            <SPEC-RELATION-GROUPS/>
+        </REQ-IF-CONTENT>
+    </CORE-CONTENT>
+</REQ-IF>

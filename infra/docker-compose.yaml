@@ -1,0 +1,43 @@
+services:
+  web:
+    build: 
+      context: ../
+      dockerfile: docker/web.Dockerfile
+    ports:
+      - "8080:8080"
+
+  api:
+    build:
+      context: ../
+      dockerfile: docker/api.Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles: ["full"]
+ 
+  db:
+    image: postgres
+    restart: always
+    env_file: "postgres.env"
+    volumes:
+      - ../db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cas_user -d cascara_db"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+    command: ["postgres", "-c", "log_connections=on", "-c", "log_disconnections=on"]
+    profiles: ["full"]
+ 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    profiles: ["full"]
+    
+networks:
+  default:
+    driver: bridge

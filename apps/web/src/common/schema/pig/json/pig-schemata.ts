@@ -1,0 +1,583 @@
+/*!
+ * CASCaRA Graph (cas:) Native Schemata and Validation
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ */
+/**
+ * CASCaRA Graph (cas:) Native Schemata and Validation
+ * ---------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ */
+
+import { DEF } from '../../../lib/definitions';
+import { ajv } from '../../../../plugins/ajv';
+
+class PigSchemaFactory {
+    static getIdNamePattern() {
+        return '^(?:[a-zA-Z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$';
+    }
+    static getSchemaSchema() {
+        return 'http://json-schema.org/draft-07/schema#';
+    }
+    static getSchemaPath() {
+        return 'https://product-information-graph.org/schema/2026-05-08/cas/';
+    }
+    static getDefs() {
+        return {
+            idString: {
+                type: 'string',
+                description: 'TPigId — term with namespace (prefix:local) oder eine URI',
+                pattern: this.getIdNamePattern()
+            },
+            LanguageText: {
+                type: 'object',
+                required: ['value'],
+                additionalProperties: false,
+                properties: {
+                    value: {
+                        type: 'string',
+                        minLength: 1
+                    },
+                    lang: { type: 'string' }
+                }
+            },
+            MultiLanguageText: {
+                type: 'array',
+                minItems: 1,
+                items: { $ref: '#/$defs/LanguageText' }
+            }
+        }
+    }
+    static getPropertyRef() {
+        return {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    hasClass: { $ref: '#/$defs/idString' },
+                    itemType: {
+                        type: 'string',
+                        enum: [`${DEF.pfxNsMeta}aProperty`],
+                        description: `The itemType for ${DEF.pfxNsMeta}aProperty`
+                    },
+                    value: {
+                        type: 'string',
+                        minLength: 1
+                    },
+                    idRef: { $ref: '#/$defs/idString' },
+                    aComposedProperty: {
+                        type: 'array',
+                        items: { $ref: '#/$defs/idString' }
+                    }
+                },
+                required: ['itemType', 'hasClass'],
+                oneOf: [
+                    { required: ['value'] },
+                    { required: ['idRef'] }
+                ],
+                additionalProperties: false
+            }
+        }
+    }
+    static getLinkRef(linkType:string, minI?:number, maxI?:number) {
+        return {
+            type: 'array',
+            minItems: minI,
+            maxItems: maxI,
+            items: {
+                type: 'object',
+                properties: {
+                    hasClass: { $ref: '#/$defs/idString' },
+                    itemType: {
+                        type: 'string',
+                        enum: [`${linkType}`],
+                        description: `The itemType for ${linkType}`
+                    },
+                    idRef: { $ref: '#/$defs/idString' }
+                },
+                required: ['itemType', 'hasClass', 'idRef'],
+                additionalProperties: false
+            }
+        }
+    }
+
+    static getEnumerationSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IEnumeration`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
+                specializes: { $ref: '#/$defs/idString' },  // perhaps not needed
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Enumeration`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Enumeration`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                datatype: {
+                    type: 'string',
+                    pattern: '^xsd?:[A-Za-z]+$'
+                },
+                unit: { type: 'string' },
+                enumeratedValue: {
+                    type: 'array',
+                    items: {
+                        oneOf: [
+                            {
+                                type: 'object',
+                                required: ['id', 'title'],
+                                properties: {
+                                    id: { $ref: '#/$defs/idString' },
+                                    title: { $ref: '#/$defs/MultiLanguageText' }
+                                },
+                                additionalProperties: false,
+                                description: 'Enumerated value with multi-language title (for xs:string)'
+                            },
+                            {
+                                type: 'object',
+                                required: ['id', 'value'],
+                                properties: {
+                                    id: { $ref: '#/$defs/idString' },
+                                    value: {
+                                        type: 'string',
+                                        minLength: 1,
+                                        description: 'Literal value for numeric and other datatypes (stored as string)'
+                                    }
+                                },
+                                additionalProperties: false,
+                                description: 'Enumerated value with literal value (for xs:integer, xs:double, etc.)'
+                            }
+                        ]
+                    }
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes; enumeratedValue and datatype may be omitted for upper levels in the generalization hierarchy.
+            $defs: this.getDefs()
+        };
+    }
+
+    static getPropertySchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IProperty`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:DatatypeProperty`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Property`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Property`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                datatype: {
+                    type: 'string',
+                    pattern: '^xsd?:[A-Za-z]+$'
+                },
+                minCount: { type: 'integer', minimum: 0 },
+                maxCount: { type: 'integer', minimum: 1 },
+                maxLength: { type: 'integer', minimum: 1 },
+                minInclusive: { type: 'number' },
+                maxInclusive: { type: 'number' },
+                pattern: { type: 'string' },
+                unit: { type: 'string' },
+                defaultValue: { type: 'string' },
+                composedProperty: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getLinkSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IReference`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:ObjectProperty`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Link`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Link`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                enumeratedEndpoint: {
+                    type: 'array',
+                    minItems: 1,
+                    items: { $ref: '#/$defs/idString' }
+                },
+                minCount: { type: 'integer', minimum: 0 },
+                maxCount: { type: 'integer', minimum: 1 },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title', 'enumeratedEndpoint'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getEntitySchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IEntity`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Entity`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Entity`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                enumeratedProperty: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                enumeratedTargetLink: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                icon: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string' }
+                    },
+                    description: 'string oder data URI für das Entity-Icon'
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getRelationshipSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IRelationship`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`owl:Class`],
+                },
+                specializes: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Relationship`],
+                    description: `The itemType for ${DEF.pfxNsMeta}Relationship`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                definition: { $ref: '#/$defs/MultiLanguageText' },
+                enumeratedProperty: {
+                    type: 'array',
+                    items: { $ref: '#/$defs/idString' }
+                },
+                enumeratedSourceLink: { 
+                    type: 'array',
+                    minItems: 1, // exactly 1 which is not pointing to an enumeration
+                    maxItems: 1,
+                    items: { $ref: '#/$defs/idString' }
+                },
+                enumeratedTargetLink: {
+                    type: 'array',
+                    minItems: 1, // exactly 1 which is not pointing to an enumeration plus 0..n which are pointing to enumerations
+                    items: { $ref: '#/$defs/idString' }
+                },
+                icon: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string' }
+                    },
+                    description: 'string oder data URI für das Relationship-Icon'
+                },
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            $defs: this.getDefs()
+        };
+    }
+
+    static getAnEntitySchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IAnEntity`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}anEntity`],
+                    description: `The itemType for ${DEF.pfxNsMeta}anEntity`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                hasProperty: this.getPropertyRef(),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`),
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'modified'],
+            anyOf: [
+                { required: ['title'] },
+                { required: ['description'] }
+            ],
+            $defs: this.getDefs()
+        };
+    }
+
+    static getARelationshipSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IARelationship`,
+            type: 'object',
+            properties: {
+                id: { $ref: '#/$defs/idString' },
+                hasClass: { $ref: '#/$defs/idString' },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}aRelationship`],
+                    description: `The itemType for ${DEF.pfxNsMeta}aRelationship`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                hasProperty: this.getPropertyRef(),
+                hasSourceLink: this.getLinkRef(`${DEF.pfxNsMeta}aSourceLink`, 1, 1),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`, 1), // exactly 1 which is not pointing to an enumeration plus 0..n which are pointing to enumerations
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' }
+            },
+            additionalProperties: false,
+            required: ['id', 'hasClass', 'itemType', 'modified', 'hasSourceLink', 'hasTargetLink'], // but neither title nor description is required
+            $defs: this.getDefs()
+        };
+    }
+
+    static getAPackageSchema() {
+        return {
+            $schema: this.getSchemaSchema(),
+            $id: `${this.getSchemaPath()}IAPackage`,
+            type: 'object',
+            properties: {
+                context: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        description: 'Namespace definitions with tag and URI mappings',
+                        properties: {
+                            tag: { type: 'string' },
+                            uri: { type: 'string', format: 'uri' }
+                        },
+                        additionalProperties: false
+                    }
+                },
+                id: { $ref: '#/$defs/idString' },
+                hasClass: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}Package`],
+                },
+                itemType: {
+                    type: 'string',
+                    enum: [`${DEF.pfxNsMeta}aPackage`],
+                    description: `The itemType for ${DEF.pfxNsMeta}aPackage`
+                },
+                title: { $ref: '#/$defs/MultiLanguageText' },
+                description: { $ref: '#/$defs/MultiLanguageText' },
+                hasProperty: this.getPropertyRef(),
+                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`),
+                revision: { type: 'string' },
+                priorRevision: {
+                    type: 'array',
+                    maxItems: 2,
+                    items: { type: 'string' }
+                },
+                modified: {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                creator: { type: 'string' },
+                graph: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        description: 'Any metamodel item in the package graph; items are checked individually before instantiation'
+                    }
+                }
+            },
+            additionalProperties: false,
+            required: ['context', 'id', 'hasClass', 'itemType', 'modified', 'graph'],
+            $defs: this.getDefs()
+        };
+    }
+}
+
+// Validierungsfunktionen
+const validateEnumerationSchema = ajv.compile(PigSchemaFactory.getEnumerationSchema())
+const validatePropertySchema = ajv.compile(PigSchemaFactory.getPropertySchema());
+const validateLinkSchema = ajv.compile(PigSchemaFactory.getLinkSchema());
+const validateEntitySchema = ajv.compile(PigSchemaFactory.getEntitySchema());
+const validateRelationshipSchema = ajv.compile(PigSchemaFactory.getRelationshipSchema());
+const validateAnEntitySchema = ajv.compile(PigSchemaFactory.getAnEntitySchema());
+const validateARelationshipSchema = ajv.compile(PigSchemaFactory.getARelationshipSchema());
+const validateAPackageSchema = ajv.compile(PigSchemaFactory.getAPackageSchema());
+
+// Exportstruktur
+export const SCH = {
+    ENUMERATION_SCHEMA: PigSchemaFactory.getEnumerationSchema(),
+    validateEnumerationSchema,
+    getValidateEnumerationErrors() {
+        return ajv.errorsText(validateEnumerationSchema.errors, { separator: '; ' });
+    },
+    PROPERTY_SCHEMA: PigSchemaFactory.getPropertySchema(),
+    validatePropertySchema,
+    getValidatePropertyErrors() {
+        return ajv.errorsText(validatePropertySchema.errors, { separator: '; ' });
+    },
+    LINK_SCHEMA: PigSchemaFactory.getLinkSchema(),
+    validateLinkSchema,
+    getValidateLinkErrors() {
+        return ajv.errorsText(validateLinkSchema.errors, { separator: '; ' });
+    },
+    ENTITY_SCHEMA: PigSchemaFactory.getEntitySchema(),
+    validateEntitySchema,
+    getValidateEntityErrors() {
+        return ajv.errorsText(validateEntitySchema.errors, { separator: '; ' });
+    },
+    RELATIONSHIP_SCHEMA: PigSchemaFactory.getRelationshipSchema(),
+    validateRelationshipSchema,
+    getValidateRelationshipErrors() {
+        return ajv.errorsText(validateRelationshipSchema.errors, { separator: '; ' });
+    },
+    ANENTITY_SCHEMA: PigSchemaFactory.getAnEntitySchema(),
+    validateAnEntitySchema,
+    getValidateAnEntityErrors() {
+        return ajv.errorsText(validateAnEntitySchema.errors, { separator: '; ' });
+    },
+    ARELATIONSHIP_SCHEMA: PigSchemaFactory.getARelationshipSchema(),
+    validateARelationshipSchema,
+    getValidateARelationshipErrors() {
+        return ajv.errorsText(validateARelationshipSchema.errors, { separator: '; ' });
+    },
+    APACKAGE_SCHEMA: PigSchemaFactory.getAPackageSchema(),
+    validateAPackageSchema,
+    getValidateAPackageErrors() {
+        return ajv.errorsText(validateAPackageSchema.errors, { separator: '; ' });
+    }
+};
