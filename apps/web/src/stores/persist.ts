@@ -1,4 +1,3 @@
-import { APackage } from "@/common/schema/pig/ts/pig-metaclasses";
 import type { useHtmlStore } from "@/stores/cacheStore";
 import type { Store } from "pinia";
 
@@ -9,15 +8,14 @@ export function setupPersistence(store: Store<string, StoreWithHtmlArray>) {
 
   // 1. Rehydration: Load from localStorage and update store
   const saved = localStorage.getItem(key);
+  console.log("Persistence: Attempting to rehydrate store from localStorage");
+  console.log("Persistence: Saved data in localStorage - ", saved);
   if (saved) {
     try {
       const array = JSON.parse(saved);
-      if (Array.isArray(array) && array.length > 0) {
-        const xml = array.join('');
-        const pkg = new APackage().setXML(xml);
-        
+      if (Array.isArray(array)) {
         store.$patch({
-          htmlArray: pkg.getHTML()
+          htmlArray: array
         });
         console.log("Persistence: Rehydrated store from localStorage");
       }
