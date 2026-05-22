@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' @click='dialog = true'>Export JSON</v-btn>
+    <v-btn color='secondary' @click='dialog = true'>Export JSON-LD</v-btn>
     <v-dialog v-model='dialog'>
         <v-card>
             <v-card-title>Select Export Elements</v-card-title>

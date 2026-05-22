@@ -7,10 +7,14 @@
 /**
  * CASCaDE Reference Implementation – HTML Export Helpers
  * ------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
  * This module provides central HTML helpers for the PIG metamodel classes.
  * For each supported type (APackage, AnEntity, ARelationship), the static
- * object `toHTML` offers a function that generates an HTML representation
- * of the respective instance.
+ * class `GetHTML` offers methods that generate HTML representations
+ * of the respective instances.
  *
  * - Always returns valid HTML snippets (string or string[]).
  * - Error and status information is included in the HTML output.
@@ -18,18 +22,16 @@
  * - The logic is decoupled from the metamodel classes.
  *
  * Usage:
- *   import { toHTML } from './exportHTML';
- *   const html = toHTML.anEntity(entity, options);
- * or
- *   const html = anEntity.toHTML(options);
- *
- * Copyright 2026 GfSE (https://gfse.org)
- * License: Apache 2.0
+ *   import { GetHTML } from './getHTML';
+ *   const html = GetHTML.anEntity(entity, options);
  *
  * Design Decisions:
  * - Combine all HTML export logic in a single module for better maintainability.
- * - Prefer calls of helpers from genuine getHTML methods instead of additions to the metamodel prototypes
- *   and type merging - because the latter appears to be rather fragile.
+ * - Use a class with static methods for better organization and extensibility.
+ * - In earlier versions there were individual methods getHTML for each itemType in the metaclasses.
+ *   These have been calling the static methods in this module.
+ *   However, to avoid a dependency of pig-metaclasses to this module, the getHTML methods have been removed.
+ *   Now, for creating an HTML representation call getHTML(item,options) instead of item.getHTML(options).
  */
 
 
@@ -43,8 +45,33 @@ export interface IOptionsHTML {
     lang?: tagIETF;
 }
 
-export const toHTML = {
-    aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
+/**
+ * Generic HTML export function that dispatches to the appropriate method based on itemType
+ * @param item - Any PIG item (APackage, AnEntity, ARelationship)
+ * @param options - HTML export options
+ * @returns HTML representation as array of HTML strings
+ * 
+ * @example
+ * import { getHTML } from './getHTML';
+ * const html = getHTML(item, options);
+ */
+export function getHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[] {
+    switch (item.itemType) {
+        case PigItemType.aPackage:
+            return GetHTML.aPackage(item as APackage, options);
+        case PigItemType.anEntity:
+            return [GetHTML.anEntity(item as AnEntity, options)];
+        case PigItemType.aRelationship:
+            return [GetHTML.aRelationship(item as ARelationship, options)];
+        default:
+            return [`<div class="meta-error">
+                    ${item.id}: No HTML representation for itemType: ${item.itemType}
+                </div>`];
+    }
+}
+
+class GetHTML {
+    static aPackage(pkg: APackage, options?: IOptionsHTML): stringHTML[] {
         // Extract language preference from options, default to 'en-US'
         const lang = options?.lang ?? 'en-US';
         const widthMain = options?.widthMain ?? '67%';
@@ -56,7 +83,7 @@ export const toHTML = {
               : `<div class="meta-error">
                     Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
                 </div>`;
-            
+
         const titleText = passify(getLocalText(pkg.title, lang));
         const descText = passify(getLocalText(pkg.description, lang));
 
@@ -73,21 +100,21 @@ export const toHTML = {
                     </dl>
                 </div>
             </div>`;
-            
+
         const result: stringHTML[] = [pkgHTML];
 
         // 2. Graph items - filter by type
         for (const item of pkg.graph) {
-            if (includeItemTypes.includes(item.itemType) && typeof toHTML.anEntity === 'function') {
+            if (includeItemTypes.includes(item.itemType)) {
                 // call directly the helper function instead of the getHTML method of the item:
-                result.push(toHTML.anEntity(item as AnEntity, options));
+                result.push(GetHTML.anEntity(item as AnEntity, options));
             }
         }
 
         return result;
-    },
+    }
 
-    anEntity(entity: AnEntity, options?: IOptionsHTML): stringHTML {
+    static anEntity(entity: AnEntity, options?: IOptionsHTML): stringHTML {
         const enSt = entity.status();
         if (!enSt.ok) {
             return `<div class="meta-error">
@@ -125,9 +152,9 @@ export const toHTML = {
                         ${propertiesHTML}
                     </div>
                 </div>`;
-    },
+    }
 
-    aRelationship(rel: ARelationship, options?: IOptionsHTML): stringHTML {
+    static aRelationship(rel: ARelationship, options?: IOptionsHTML): stringHTML {
         // dummy operation to use options and avoid "unused variable" warning - to be removed when implementation is done
         if (options?.itemType) return '';
         const relSt = rel.status();
@@ -139,7 +166,7 @@ export const toHTML = {
         // @ToDo: Implementiere eine HTML-Repräsentation für ARelationship
         return '<div class="meta-not-implemented">HTML export for Relationship not implemented</div>';
     }
-};
+}
 
 /**
  * Sanitize HTML by removing dangerous elements and attributes that could execute code

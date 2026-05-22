@@ -4,8 +4,9 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
-/** Product Information Graph (PIG) - Centralized error and status messages
- *  Dependencies: none (self-contained)
+/**
+ * Product Information Graph (PIG) - Centralized error and status messages
+ * -----------------------------------------------------------------------
  *  Authors: oskar.dungern@gfse.org
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
@@ -18,6 +19,8 @@
  *  - Rsp: for responses with payload (response/responseType)
  *  - Multi-language support: en, de, fr, es
  */
+
+import { LOG } from "./helpers";
 
 /** IRsp interface
  * An xhr-like object to return the result of the import;
@@ -32,9 +35,6 @@
  *      const doc = rsp.response as Document;
  *   };
  */
-import { LOG } from "./helpers";
-
-
 // type XMLHttpRequestResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text"
 export interface IRsp<T = unknown> {
     status: number;

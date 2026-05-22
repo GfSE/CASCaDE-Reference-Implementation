@@ -24,7 +24,7 @@
             "@value": "Project 'Requirement with Enumerated Property'"
         }
     ],
-    "dcterms:modified": "2026-05-10T15:30:50.419Z",
+    "dcterms:modified": "2026-05-14T08:33:28.561Z",
     "@graph": [
         {
             "@id": "cas:Enumeration",
@@ -176,67 +176,6 @@
             ]
         },
         {
-            "@id": "cas:View",
-            "@type": "owl:Class",
-            "cas:specializes": {
-                "@id": "cas:Organizer"
-            },
-            "cas:itemType": {
-                "@id": "cas:Entity"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "View"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "A subclass of cas:Organizer representing a model view (diagram) using a certain notation showing selected model elements."
-                }
-            ],
-            "cas:enumeratedProperty": [
-                {
-                    "@id": "cas:Diagram"
-                },
-                {
-                    "@id": "cas:Notation"
-                }
-            ],
-            "cas:enumeratedTargetLink": [
-                {
-                    "@id": "cas:shows"
-                },
-                {
-                    "@id": "cas:depicts"
-                }
-            ]
-        },
-        {
-            "@id": "cas:Table",
-            "@type": "owl:Class",
-            "cas:specializes": {
-                "@id": "cas:Organizer"
-            },
-            "cas:itemType": {
-                "@id": "cas:Entity"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "Table"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "A subclass of cas:Organizer representing a table showing selected model elements."
-                }
-            ],
-            "cas:enumeratedTargetLink": [
-                {
-                    "@id": "cas:shows"
-                }
-            ]
-        },
-        {
             "@id": "cas:Relationship",
             "@type": "owl:Class",
             "cas:itemType": {
@@ -259,12 +198,12 @@
             ],
             "cas:enumeratedSourceLink": [
                 {
-                    "@id": "cas:SourceLink"
+                    "@id": "cas:linksSource"
                 }
             ],
             "cas:enumeratedTargetLink": [
                 {
-                    "@id": "cas:TargetLink"
+                    "@id": "cas:linksTarget"
                 }
             ]
         },
@@ -389,7 +328,7 @@
             ]
         },
         {
-            "@id": "cas:SourceLink",
+            "@id": "cas:linksSource",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
                 "@id": "cas:Link"
@@ -417,7 +356,7 @@
             ]
         },
         {
-            "@id": "cas:TargetLink",
+            "@id": "cas:linksTarget",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
                 "@id": "cas:Link"
@@ -448,7 +387,7 @@
             "@id": "cas:lists",
             "@type": "owl:ObjectProperty",
             "cas:specializes": {
-                "@id": "cas:TargetLink"
+                "@id": "cas:linksTarget"
             },
             "cas:itemType": {
                 "@id": "cas:Link"
@@ -472,59 +411,6 @@
             "skos:definition": [
                 {
                     "@value": "Lists an entity, a relationship or a subordinated organizer."
-                }
-            ]
-        },
-        {
-            "@id": "cas:shows",
-            "@type": "owl:ObjectProperty",
-            "cas:specializes": {
-                "@id": "cas:TargetLink"
-            },
-            "cas:itemType": {
-                "@id": "cas:Link"
-            },
-            "cas:enumeratedEndpoint": [
-                {
-                    "@id": "cas:Entity"
-                },
-                {
-                    "@id": "cas:Relationship"
-                }
-            ],
-            "dcterms:title": [
-                {
-                    "@value": "shows"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "Shows an entity or a relationship."
-                }
-            ]
-        },
-        {
-            "@id": "cas:depicts",
-            "@type": "owl:ObjectProperty",
-            "cas:specializes": {
-                "@id": "cas:TargetLink"
-            },
-            "cas:itemType": {
-                "@id": "cas:Link"
-            },
-            "cas:enumeratedEndpoint": [
-                {
-                    "@id": "cas:Entity"
-                }
-            ],
-            "dcterms:title": [
-                {
-                    "@value": "depicts"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "Depicts an entity; inverse of uml:ownedDiagram."
                 }
             ]
         },
@@ -726,6 +612,8 @@
             "cas:Icon": {
                 "@value": "&#8623;"
             },
+            "cas:enumeratedProperty": [
+            ],
             "cas:enumeratedTargetLink": [
                 {
                     "@id": "SpecIF:Priority"
@@ -774,6 +662,8 @@
                 {
                     "@id": "cas:Category"
                 }
+            ],
+            "cas:enumeratedTargetLink": [
             ]
         },
         {
@@ -810,7 +700,7 @@
             "cas:itemType": {
                 "@id": "cas:anEntity"
             },
-            "dcterms:modified": "2026-05-10T15:30:50.523Z",
+            "dcterms:modified": "2026-05-14T08:33:28.683Z",
             "dcterms:title": [
                 {
                     "@value": "Hierarchy Root"
@@ -833,7 +723,7 @@
         {
             "@id": "d:HR-bca801377e3d1547",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-10T15:30:50.471Z",
+            "dcterms:modified": "2026-05-14T08:33:28.620Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Requirement with Enumerated Property'"

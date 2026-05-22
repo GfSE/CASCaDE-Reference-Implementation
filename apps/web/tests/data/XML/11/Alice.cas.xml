@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <cas:aPackage 
-    xmlns:cas="https://product-information-graph.org/ontology/2026-01-20/foundation#"
+    xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
     xmlns:skos="https://www.w3.org/TR/skos-reference/"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:dcterms="http://purl.org/dc/terms/"
@@ -53,8 +53,8 @@
             <skos:definition xml:lang="en">A CASCaRA meta-model element used for reified relationships (aka predicates).</skos:definition>
             <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
             <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
-            <cas:enumeratedSourceLink>cas:SourceLink</cas:enumeratedSourceLink>
-            <cas:enumeratedTargetLink>cas:TargetLink</cas:enumeratedTargetLink>
+            <cas:enumeratedSourceLink>cas:linksSource</cas:enumeratedSourceLink>
+            <cas:enumeratedTargetLink>cas:linksTarget</cas:enumeratedTargetLink>
         </cas:Relationship>
 
         <!-- Metamodel: Properties -->
@@ -99,7 +99,7 @@
             <skos:definition xml:lang="en">Connects a reified relationship with its source or target. Also connects an organizer to a model element</skos:definition>
         </cas:Link>
 
-        <cas:Link id="cas:SourceLink" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:linksSource" cas:hasClass="owl:ObjectProperty">
             <cas:specializes>cas:Link</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -107,7 +107,7 @@
             <skos:definition xml:lang="en">Connects the source of a reified relationship.</skos:definition>
         </cas:Link>
 
-        <cas:Link id="cas:TargetLink" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:linksTarget" cas:hasClass="owl:ObjectProperty">
             <cas:specializes>cas:Link</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -116,7 +116,7 @@
         </cas:Link>
 
         <cas:Link id="cas:lists" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Organizer</cas:enumeratedEndpoint>
@@ -125,7 +125,7 @@
         </cas:Link>
 
         <cas:Link id="cas:shows" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
             <dcterms:title xml:lang="en">shows</dcterms:title>
@@ -133,7 +133,7 @@
         </cas:Link>
 
         <cas:Link id="cas:depicts" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <dcterms:title xml:lang="en">depicts</dcterms:title>
             <skos:definition xml:lang="en">Depicts an entity; inverse of uml:ownedDiagram.</skos:definition>
@@ -227,14 +227,14 @@
         
         <!-- Custom Link Classes -->
         <cas:Link id="o:Employee" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:SourceLink</cas:specializes>
+            <cas:specializes>cas:linksSource</cas:specializes>
             <dcterms:title xml:lang="en">employee</dcterms:title>
             <skos:definition xml:lang="en">The employee in a 'worksFor' relationship</skos:definition>
             <cas:enumeratedEndpoint>schema:Person</cas:enumeratedEndpoint>
         </cas:Link>
         
         <cas:Link id="o:Employer" cas:hasClass="owl:ObjectProperty">
-            <cas:specializes>cas:TargetLink</cas:specializes>
+            <cas:specializes>cas:linksTarget</cas:specializes>
             <dcterms:title xml:lang="en">employer</dcterms:title>
             <skos:definition xml:lang="en">The employer in a 'worksFor' relationship</skos:definition>
             <cas:enumeratedEndpoint>schema:Organization</cas:enumeratedEndpoint>
