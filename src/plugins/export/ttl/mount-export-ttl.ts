@@ -11,7 +11,8 @@ const rdfExportPlugin: Plugin = {
         //   console.log('Example Method');
         // };
 
-        // global component
+        // Mount component globally
+        // Don't change the name, it is used to filter the component in main.ts
         app.component('Export-TTL', RdfExportComponent);
     }
 }

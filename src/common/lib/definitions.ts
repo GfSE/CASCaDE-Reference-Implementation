@@ -31,9 +31,10 @@ export const DEF = {
     ...BUILD_INFO,
     minLengthId: 3,
     maxSizeXML: 4 * 1024 * 1024, // 4MB
+    timeBetweenPages: 800,
     pfxNsMeta: 'cas:',
     pfxNsSemi: 'cas:',
-    pfxNsDcmi: 'dcterms:',
+    pfxNsDcmi: 'dcterms:'
 };
 
 export const RE = {

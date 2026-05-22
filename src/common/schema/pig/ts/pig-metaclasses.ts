@@ -70,7 +70,6 @@ import { PLI, NodeType } from "../../../lib/platform-independence";
 import { JsonPrimitive, JsonValue, JsonArray, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage } from './pig-package-constraints';
-import { IOptionsHTML, stringHTML, toHTML } from '../../../export/html/exportHTML';
 
 export type TPigId = string;  // an URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL
 export type TRevision = string;  // @ToDo: should be better described using a pattern (RegExp)
@@ -1333,12 +1332,6 @@ export class AnEntity extends AnElement implements IAnElement {
     //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
-    getHTML(options?: IOptionsHTML): stringHTML {
-        if (toHTML?.anEntity) {
-            return toHTML.anEntity(this, options);
-        }
-        return '<div class="meta-not-implemented">HTML export for anEntity not implemented</div>';
-    }
 }
 
 export interface IARelationship extends IAnElement {
@@ -1399,12 +1392,6 @@ export class ARelationship extends AnElement implements IARelationship {
         jld = this.addConfigurablesToJSONLD(jld, 'hasSourceLink');
         //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
-    }
-    getHTML(options?: IOptionsHTML): stringHTML {
-        if (toHTML?.aRelationship) {
-            return toHTML.aRelationship(this, options);
-        }
-        return '<div class="meta-not-implemented">HTML export for aRelationship not implemented</div>';
     }
 }
 // For packages:
@@ -1709,12 +1696,6 @@ export class APackage extends AnElement implements IAPackage {
         } */
 
         return result;
-    }
-    getHTML(options?: IOptionsHTML): stringHTML[] {
-        if (toHTML?.aPackage) {
-            return toHTML.aPackage(this, options);
-        }
-        return ['<div class="meta-not-implemented">HTML export for aPackage not implemented</div>'];
     }
 
     /**

@@ -72,11 +72,12 @@
 </template>
 
 <script lang="ts">
+    import { DEF } from '@/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
     import { XmlImporter } from '@/common/import/xml/import-xml';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { stringHTML } from '@/common/export/html/exportHTML';
-    import { useHtmlStore } from '@/stores/cacheStore';
+    import { stringHTML, getHTML } from '@/common/export/html/getHTML';
+    import { usePackageCache } from '@/stores/packageCache';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
 
@@ -114,17 +115,16 @@
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
-                    // Collect all HTML arrays from successful imports
-                    const allHtmlArrays = successful.flatMap((r: IRsp<unknown>) => {
+                    // Collect all packages from successful imports
+                    const allPackages = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
-                        const thePackage = allItems[0] as APackage;
-                        return thePackage.getHTML() as stringHTML[];
+                        return allItems[0] as APackage;
                     });
 
-                    if (allHtmlArrays.length > 0) {
+                    if (allPackages.length > 0) {
                         // Store in Pinia store
-                        const store = useHtmlStore();
-                        store.htmlArray = allHtmlArrays;
+                        const cache = usePackageCache();
+                        cache.packages = allPackages;
 
                         // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
@@ -136,7 +136,7 @@
                             await this.$router.push({ name: 'Document' });
                             this.dialog = false;
                             this.onCancel();
-                        }, 1500);
+                        }, DEF.timeBetweenPages);
                     } else {
                         this.logFailedImports(failed);
                     }
