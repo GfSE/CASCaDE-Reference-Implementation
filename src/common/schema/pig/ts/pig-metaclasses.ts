@@ -542,6 +542,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
         // LOG.debug('Identifiable.getJSONLD: ', jld);
         return makeIdObjects(jld) as JsonObject;
+        // no sorting for abstract classes
     }
     /**
      * Generic XML parsing for all Identifiable subclasses
@@ -592,6 +593,7 @@ abstract class ALink extends Item implements IALink {
     protected getJSONLD() {
         const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
         return makeIdObjects(jld) as JsonObject;
+        // no sorting for abstract classes
     }
 }
 interface IElement extends IIdentifiable {
@@ -677,6 +679,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
         jld = this.xConfigurablesToJSONLD(jld, 'hasProperty');
         return this.xConfigurablesToJSONLD(jld, 'hasTargetLink');
+        // no sorting for abstract classes
     }
     /**
      * Collect configurable properties and references from a JSON-LD object.
@@ -903,7 +906,7 @@ export class Enumeration extends Identifiable implements IEnumeration {
         return this.set(_itm);
     }
     getJSONLD() {
-        return super.getJSONLD();
+        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 export interface IProperty extends IIdentifiable {
@@ -1007,7 +1010,7 @@ export class Property extends Identifiable implements IProperty {
         return this.set(_itm);
     }
     getJSONLD() {
-        return super.getJSONLD();
+        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 export interface ILink extends IIdentifiable {
@@ -1066,7 +1069,7 @@ export class Link extends Identifiable implements ILink {
         return this.set(_itm);
     }
     getJSONLD() {
-        return super.getJSONLD();
+        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 
@@ -1125,7 +1128,7 @@ export class Entity extends Element implements IEntity {
         return this.set(_itm);
     }
     getJSONLD() {
-        return super.getJSONLD();
+        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 
@@ -1190,7 +1193,7 @@ export class Relationship extends Element implements IRelationship {
         return this.set(_itm);
     }
     getJSONLD() {
-        return super.getJSONLD();
+        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 
@@ -1333,7 +1336,7 @@ export class AnEntity extends AnElement implements IAnElement {
     getJSONLD() {
         const jld = super.getJSONLD();
     //    LOG.debug('AnEntity.getJSONLD: ', out);
-        return jld;
+        return LIB.sortJsonLdKeys(jld);
     }
 }
 
@@ -1394,7 +1397,7 @@ export class ARelationship extends AnElement implements IARelationship {
         let jld = super.getJSONLD();
         jld = this.xConfigurablesToJSONLD(jld, 'hasSourceLink');
         //    LOG.debug('AnEntity.getJSONLD: ', out);
-        return jld;
+        return LIB.sortJsonLdKeys(jld);
     }
 }
 // For packages:
@@ -1538,7 +1541,7 @@ export class APackage extends AnElement implements IAPackage {
         jld = this.xGraphToJSONLD(jld);
 
         //    LOG.debug('APackage.getJSONLD: ', out);
-        return jld;
+        return LIB.sortJsonLdKeys(jld);
     }
 
     /**

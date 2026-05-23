@@ -47,8 +47,6 @@ import {
     Property,
     Link,
     Enumeration,
-    TPigAnElement,
-    TPigClass,
     TPigItem
 } from '../../schema/pig/ts/pig-metaclasses';
 import { JsonObject } from '../../lib/helpers';

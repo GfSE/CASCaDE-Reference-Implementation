@@ -113,10 +113,11 @@ import { LOG } from '../../../common/lib/helpers';
 
         const pkgs = cache.packages;
 
-        // Debug output
+     /*   // Debug output
         LOG.debug('[Export JSON-LD] packageCache:', cache);
         LOG.debug('[Export JSON-LD] packages:', pkgs);
         LOG.debug('[Export JSON-LD] packages.length:', pkgs.length);
+    */
 
         this.packageCount = pkgs.length;
 
