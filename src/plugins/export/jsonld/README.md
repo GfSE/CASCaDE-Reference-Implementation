@@ -59,7 +59,7 @@ The JSON-LD Export plugin allows users to export all packages from the packageCa
 ### Code Example
 ```typescript
 // The component uses the following stores and utilities:
-import { PackageCache } from '../../../stores/packageCache';
+import { PackageCache } from '../../../stores/package-cache';
 import { getJSONLD } from '../../../common/export/jsonld/getJSONLD';
 import { PLI } from '../../../common/lib/platform-independence';
 
