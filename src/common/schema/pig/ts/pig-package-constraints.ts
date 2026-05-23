@@ -45,7 +45,6 @@
  *      Referenced Enumerations have a datatype
  *      enumerations at the lowest specialization level must have datatype and enumerated values
  *      enumerated values as defined comply with the datatype of the enumeration class
- *      enumerations at the lowest specialization level must have datatype and enumerated values
  *      Entity and Relationship classes should not have configurable properties
  *           with the same name as a native property (e.g. cas:unit, dcterms:modified, ..)
  * Phase 4 (optional):

@@ -54,7 +54,7 @@ import { JsonObject } from '../../lib/helpers';
 export interface IOptionsJSONLD {
     /** Stringify the output (default: false, returns JsonObject) */
     stringify?: boolean;
-    /** Indentation for stringified output (default: 4) */
+    /** Indentation for stringified output (default: 2) */
     indent?: number;
     /** Filter which item types to include in package graph (default: all) */
     itemType?: PigItemTypeValue[];
@@ -140,8 +140,16 @@ class GetJSONLD {
         if (filterTypes && Array.isArray(baseJSONLD['@graph'])) {
             const graph = baseJSONLD['@graph'] as JsonObject[];
             baseJSONLD['@graph'] = graph.filter((item: JsonObject) => {
-                const itemType = item['cas:itemType'] || item['@type'];
-                return filterTypes.includes(itemType as PigItemTypeValue);
+                const itemTypeValue = item['cas:itemType'] || item['@type'];
+                const itemType =
+                    typeof itemTypeValue === 'string'
+                        ? itemTypeValue as PigItemTypeValue
+                        : itemTypeValue &&
+                            typeof itemTypeValue === 'object' &&
+                            typeof (itemTypeValue as JsonObject)['@id'] === 'string'
+                            ? ((itemTypeValue as JsonObject)['@id'] as PigItemTypeValue)
+                            : undefined;
+                return itemType !== undefined && filterTypes.includes(itemType);
             });
         }
 

@@ -81,7 +81,7 @@ import { LOG } from '../../../common/lib/helpers';
             required: (value: string) => !!value || 'Filename is required',
             extension: (value: string) => {
                 if (!value) return true;
-                const hasExtension = value.includes('.jsonld') || value.includes('.json');
+                const hasExtension = value.endsWith('.jsonld') || value.endsWith('.json');
                 return hasExtension || 'Filename should end with .jsonld or .json';
             }
         }
@@ -90,7 +90,7 @@ import { LOG } from '../../../common/lib/helpers';
   computed: {
     isFilenameValid(): boolean {
         const fn = this.filename as string;
-        return fn.length > 0 && (fn.includes('.jsonld') || fn.includes('.json'));
+        return fn.length > 0 && (fn.endsWith('.jsonld') || fn.endsWith('.json'));
     }
   },
   methods: {

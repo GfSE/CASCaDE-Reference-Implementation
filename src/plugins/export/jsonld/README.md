@@ -59,7 +59,7 @@ The JSON-LD Export plugin allows users to export all packages from the packageCa
 ### Code Example
 ```typescript
 // The component uses the following stores and utilities:
-import { usePackageCache } from '../../../stores/packageCache';
+import { PackageCache } from '../../../stores/packageCache';
 import { getJSONLD } from '../../../common/export/jsonld/getJSONLD';
 import { PLI } from '../../../common/lib/platform-independence';
 
@@ -71,7 +71,7 @@ const result = await PLI.writeFile(jsonldPackages, filename);
 ## Implementation Details
 
 ### Dependencies
-- **Pinia Store**: `usePackageCache` for accessing cached packages
+- **Pinia Store**: `PackageCache` for accessing cached packages
 - **Export Utility**: `getJSONLD()` for transforming packages to JSON-LD
 - **Platform Independence**: `PLI.writeFile()` for cross-platform file writing
 - **Vuetify**: UI components (v-dialog, v-text-field, v-snackbar, etc.)
@@ -96,9 +96,9 @@ const result = await PLI.writeFile(jsonldPackages, filename);
 ```json
 {
   "@context": { ... },
+  "@id": "package-id",
   "@graph": [ ... ],
-  "cas:id": "package-id",
-  "cas:title": "Package Title",
+  "dcterms:title": "Package Title",
   ...
 }
 ```
