@@ -1,11 +1,3 @@
-# Reroute all subfolders to index.html, so that the routing of the Vue app works:
-RewriteEngine On
-RewriteBase /
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
-
 # Cache-Control for all file types
 # Cache expires in 1 day (86400 Sec)
 # Applies rekursively to all subfolders

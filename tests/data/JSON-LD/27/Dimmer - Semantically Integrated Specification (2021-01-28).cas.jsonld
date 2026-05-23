@@ -1654,7 +1654,7 @@
             "cas:itemType": {
                 "@id": "cas:Entity"
             },
-            "cas:Icon": {
+            "cas:icon": {
                 "@value": "▣"
             },
             "cas:enumeratedProperty": [
@@ -1728,7 +1728,7 @@
             "cas:itemType": {
                 "@id": "cas:Entity"
             },
-            "cas:Icon": {
+            "cas:icon": {
                 "@value": "&#x25A1;"
             },
             "cas:enumeratedProperty": [
@@ -1778,7 +1778,7 @@
             "cas:itemType": {
                 "@id": "cas:Entity"
             },
-            "cas:Icon": {
+            "cas:icon": {
                 "@value": "&#x25CB;"
             },
             "cas:enumeratedProperty": [
@@ -1825,7 +1825,7 @@
             "cas:itemType": {
                 "@id": "cas:Entity"
             },
-            "cas:Icon": {
+            "cas:icon": {
                 "@value": "&#x2662;"
             },
             "cas:enumeratedProperty": [
@@ -1872,7 +1872,7 @@
             "cas:itemType": {
                 "@id": "cas:Entity"
             },
-            "cas:Icon": {
+            "cas:icon": {
                 "@value": "&#8623;"
             },
             "cas:enumeratedProperty": [

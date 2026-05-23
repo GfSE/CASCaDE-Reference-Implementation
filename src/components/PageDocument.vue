@@ -40,9 +40,10 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import { toRaw } from 'vue'
-    import { usePackageCache } from '@/stores/packageCache'
+    import { PackageCache } from '@/stores/package-cache'
     import { getHTML, stringHTML } from '@/common/export/html/getHTML'
     import { APackage } from '@/common/schema/pig/ts/pig-metaclasses'
+    import { LOG } from '@/common/lib/helpers'
 
     function extractTitle(html: string): string | null {
         const match = html.match(/<[^>]*class=["'][^"']*meta-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);
@@ -58,9 +59,13 @@
         },
         computed: {
             htmlArray(): stringHTML[] {
-                const cache = usePackageCache()
-                const packages = cache.packages
+                const cache = PackageCache();
+                const packages = cache.get();
 
+            /*    // Debug output
+                LOG.debug('[PageDocument] packages:', packages);
+                // LOG.debug('[PageDocument] packages.length:', packages.length);
+            */
                 if (!packages || packages.length === 0) {
                     return []
                 }
@@ -88,6 +93,13 @@
             extractTitle
         },
         mounted() {
+            // Load packages from storage if cache is empty
+            const cache = PackageCache()
+            if (cache.packages.length === 0) {
+                console.log('[PageDocument] Cache is empty, loading from storage...')
+                cache.loadFromStorage()
+            }
+
             // Select the first item when opening the view:
             if (this.htmlArray.length > 0) {
                 this.selectedIndex = 0

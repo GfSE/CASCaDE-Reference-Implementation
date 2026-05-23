@@ -77,7 +77,7 @@
     import { XmlImporter } from '@/common/import/xml/import-xml';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { stringHTML, getHTML } from '@/common/export/html/getHTML';
-    import { usePackageCache } from '@/stores/packageCache';
+    import { PackageCache } from '@/stores/package-cache';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
 
@@ -122,9 +122,9 @@
                     });
 
                     if (allPackages.length > 0) {
-                        // Store in Pinia store
-                        const cache = usePackageCache();
-                        cache.packages = allPackages;
+                        // Store in Pinia store with persistence
+                        const cache = PackageCache();
+                        cache.set(allPackages);
 
                         // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;

@@ -52,6 +52,23 @@ interface NodeProcess {
     };
 }
 
+// Type definitions for File System Access API
+interface FilePickerAcceptType {
+    description?: string;
+    accept: Record<string, string[]>;
+}
+interface SaveFilePickerOptions {
+    suggestedName?: string;
+    types?: FilePickerAcceptType[];
+}
+interface FileSystemWritableFileStream extends WritableStream {
+    write(data: BufferSource | Blob | string): Promise<void>;
+    close(): Promise<void>;
+}
+interface FileSystemFileHandle {
+    createWritable(): Promise<FileSystemWritableFileStream>;
+}
+
 // Cache for loaded modules
 let cachedDOMParser: typeof DOMParser | null = null;
 let cachedXMLSerializer: typeof XMLSerializer | null = null;
@@ -363,6 +380,161 @@ export const PLI = {
      */
     isBrowserEnv(): boolean {
         return typeof window !== 'undefined' && typeof document !== 'undefined';
+    },
+
+    /**
+     * Write data to a file in both browser and Node.js environments
+     * 
+     * Platform-specific behavior:
+     * - Node.js: Writes directly to filesystem using fs/promises
+     * - Browser with File System Access API: Opens save dialog and writes to selected location
+     * - Browser fallback: Triggers download using Blob URL
+     * 
+     * @param data - Data to write (JsonObject, string, or Blob)
+     * @param filename - Target filename with extension (e.g., 'data.json', 'output.txt')
+     * @returns IRsp indicating success or error
+     * 
+     * @example
+     * // Write JSON object
+     * await PLI.writeFile({ key: 'value' }, 'data.json');
+     * 
+     * // Write JSON array
+     * await PLI.writeFile([{ key: 'value1' }, { key: 'value2' }], 'data.json');
+     * 
+     * // Write string
+     * await PLI.writeFile('Hello World', 'output.txt');
+     * 
+     * // Write Blob
+     * const blob = new Blob(['content'], { type: 'text/plain' });
+     * await PLI.writeFile(blob, 'file.txt');
+     */
+    async writeFile(
+        data: Record<string, unknown> | Array<unknown> | string | Blob,
+        filename: string
+    ): Promise<IRsp<unknown>> {
+        try {
+            // Convert data to Blob
+            let blob: Blob;
+            let mimeType: string;
+
+            if (data instanceof Blob) {
+                blob = data;
+                mimeType = blob.type || this.getMimeTypeFromFilename(filename);
+            } else if (typeof data === 'string') {
+                mimeType = this.getMimeTypeFromFilename(filename);
+                blob = new Blob([data], { type: mimeType });
+            } else {
+                // Assume JSON object or array
+                mimeType = 'application/json';
+                const jsonString = JSON.stringify(data, null, 2);
+                blob = new Blob([jsonString], { type: mimeType });
+            }
+
+            // Node.js environment
+            if (this.isNodeEnv()) {
+                try {
+                    const { writeFile } = await import('fs/promises');
+                    const buffer = Buffer.from(await blob.arrayBuffer());
+                    await writeFile(filename, buffer);
+                    return Msg.create(0, filename, 'text');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(700, filename, msg);
+                }
+            }
+
+            // Browser environment
+            if (this.isBrowserEnv()) {
+                // Try File System Access API first (if available)
+                if ('showSaveFilePicker' in window) {
+                    try {
+                        const opts: SaveFilePickerOptions = {
+                            suggestedName: filename,
+                            types: [{
+                                description: 'File',
+                                accept: { [mimeType]: [this.getExtension(filename)] }
+                            }]
+                        };
+
+                        const handle = await (window as any).showSaveFilePicker(opts);
+                        const writable = await handle.createWritable();
+                        await writable.write(blob);
+                        await writable.close();
+                        return Msg.create(0, filename, 'text');
+                    } catch (e: unknown) {
+                        // User cancelled or API failed - fall through to download trick
+                        if (e instanceof Error && e.name === 'AbortError') {
+                            return Msg.create(701, filename, 'User cancelled file save');
+                        }
+                        LOG.warn('File System Access API failed, falling back to download trick', e);
+                    }
+                }
+
+                // Fallback: Download trick
+                try {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+
+                    // Cleanup
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+
+                    return Msg.create(0, filename, 'text');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(700, filename, msg);
+                }
+            }
+
+            return Msg.create(695); // Not HTTP URL and not Node/Browser
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            return Msg.create(700, filename, msg);
+        }
+    },
+
+    /**
+     * Get MIME type from filename extension
+     * @param filename - Filename with extension
+     * @returns MIME type string
+     */
+    getMimeTypeFromFilename(filename: string): string {
+        const ext = filename.split('.').pop()?.toLowerCase() || '';
+        const mimeTypes: Record<string, string> = {
+            'json': 'application/json',
+            'xml': 'application/xml',
+            'txt': 'text/plain',
+            'html': 'text/html',
+            'htm': 'text/html',
+            'css': 'text/css',
+            'js': 'application/javascript',
+            'ts': 'application/typescript',
+            'csv': 'text/csv',
+            'pdf': 'application/pdf',
+            'png': 'image/png',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'gif': 'image/gif',
+            'svg': 'image/svg+xml'
+        };
+        return mimeTypes[ext] || 'application/octet-stream';
+    },
+
+    /**
+     * Get file extension from filename
+     * @param filename - Filename with extension
+     * @returns Extension with dot (e.g., '.json')
+     */
+    getExtension(filename: string): string {
+        const ext = filename.split('.').pop();
+        return ext ? `.${ext}` : '';
     }
 };
 /**

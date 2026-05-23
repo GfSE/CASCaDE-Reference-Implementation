@@ -609,7 +609,7 @@
             "cas:itemType": {
                 "@id": "cas:Entity"
             },
-            "cas:Icon": {
+            "cas:icon": {
                 "@value": "&#8623;"
             },
             "cas:enumeratedProperty": [

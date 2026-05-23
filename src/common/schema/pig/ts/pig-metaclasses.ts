@@ -1,5 +1,5 @@
 /*!
- * CASCaRA Graph (cas:) Metaclasses
+ * CASCaRA Graph (cas:) Metaclasses - the basic object structure
  * Copyright 2026 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
@@ -540,7 +540,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
     }
     protected getJSONLD() {
         const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
-    //    LOG.debug('Identifiable.getJSONLD: ', jld);
+        // LOG.debug('Identifiable.getJSONLD: ', jld);
         return makeIdObjects(jld) as JsonObject;
     }
     /**
@@ -675,8 +675,8 @@ abstract class AnElement extends Identifiable implements IAnElement {
     protected getJSONLD() {
         let jld = super.getJSONLD();
 
-        jld = this.addConfigurablesToJSONLD(jld, 'hasProperty');
-        return this.addConfigurablesToJSONLD(jld, 'hasTargetLink');
+        jld = this.xConfigurablesToJSONLD(jld, 'hasProperty');
+        return this.xConfigurablesToJSONLD(jld, 'hasTargetLink');
     }
     /**
      * Collect configurable properties and references from a JSON-LD object.
@@ -767,14 +767,15 @@ abstract class AnElement extends Identifiable implements IAnElement {
         return properties;
     }
     /**
-     * Add hasProperty, hasSourceLink or hasTargetLink arrays to JSON-LD output
+     * Transform hasProperty, hasSourceLink or hasTargetLink arrays for JSON-LD output.
+     * It is assumed that the native property names have already been renamed with MVF.renameJsonTags( ..., MVF.toJSONLD).
      */
-    protected addConfigurablesToJSONLD(
+    protected xConfigurablesToJSONLD(
         jld: JsonObject,
         hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
     ): JsonObject {
         const items = (this as any)[hasX];
-        //    LOG.debug('addConfigurablesToJSONLD:', jld, this, hasX, items);
+        //    LOG.debug('xConfigurablesToJSONLD:', jld, this, hasX, items);
         if (!Array.isArray(items)) {
             return jld;
         }
@@ -854,12 +855,13 @@ export class Enumeration extends Identifiable implements IEnumeration {
         }
 
         // Runtime guards:
-        // id and itemType checked in superclass
+        // - id and itemType checked in superclass
         //    const rsp = validateIdString(itm.datatype);
         //    if (!rsp.ok) return rsp;
-        // all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
-        // others shall be treated as strings (with a warning in the log):
-        if (!PigItem.isSupportedDatatype(itm.datatype)) {
+        // - all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
+        // - undefined datatype is allowed for all enumerations that are not referenced (which is checked in the overall consistency check)
+        // - others shall be treated as strings (with a warning in the log):
+        if (itm.datatype && !PigItem.isSupportedDatatype(itm.datatype)) {
             const msg = Msg.create(680, itm.id, itm.datatype);
             LOG.warn(msg.statusText);
             //            return msg */
@@ -943,12 +945,13 @@ export class Property extends Identifiable implements IProperty {
         }
 
         // Runtime guards:
-        // id and itemType checked in superclass
+        // - id and itemType checked in superclass
         //    const rsp = validateIdString(itm.datatype);
         //    if (!rsp.ok) return rsp;
-        // all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
-        // others shall be treated as strings (with a warning in the log):
-        if (!PigItem.isSupportedDatatype(itm.datatype)) {
+        // - all datatypes beginning with 'xs:' are allowed, however only those defined in XsDatatypes are specifically supported,
+        // - undefined datatype is allowed for all properties that are not referenced (which is checked in the overall consistency check)
+        // - others shall be treated as strings (with a warning in the log):
+        if (itm.datatype && !PigItem.isSupportedDatatype(itm.datatype)) {
             const msg = Msg.create(680, itm.id, itm.datatype);
             LOG.warn(msg.statusText);
             //            return msg */
@@ -963,8 +966,8 @@ export class Property extends Identifiable implements IProperty {
         if (this.lastStatus.ok) {
             super.set(itm);
             this.datatype = itm.datatype;
-            this.minCount = itm.minCount || 0;
-            this.maxCount = itm.maxCount || 1;
+            this.minCount = itm.minCount;
+            this.maxCount = itm.maxCount;
             this.maxLength = itm.maxLength;
             this.pattern = itm.pattern;
             this.minInclusive = itm.minInclusive;
@@ -1389,7 +1392,7 @@ export class ARelationship extends AnElement implements IARelationship {
     }
     getJSONLD() {
         let jld = super.getJSONLD();
-        jld = this.addConfigurablesToJSONLD(jld, 'hasSourceLink');
+        jld = this.xConfigurablesToJSONLD(jld, 'hasSourceLink');
         //    LOG.debug('AnEntity.getJSONLD: ', out);
         return jld;
     }
@@ -1528,39 +1531,90 @@ export class APackage extends AnElement implements IAPackage {
         return this;
     }
 
-/*    getJSONLD(): string {
-        if (!this.lastStatus.ok) 
-            return JSON.stringify({ error: this.lastStatus.statusText });
+    getJSONLD() {
+        let jld = super.getJSONLD();
 
-        // Start with parent's JSON-LD representation
-        const jld = super.getJSONLD() as JsonObject;
+        jld = this.xContextToJSONLD(jld);
+        jld = this.xGraphToJSONLD(jld);
 
-        // Add @context
-        if (this.context) {
-            jld['@context'] = buildContextForJSONLD(this.context);
+        //    LOG.debug('APackage.getJSONLD: ', out);
+        return jld;
+    }
+
+    /**
+     * Transform context from internal INamespace[] format to JSON-LD @context format
+     * @param jld - JSON-LD object with '@context' property in internal format
+     * @returns JSON-LD object with '@context' property in JSON-LD format
+     * 
+     * Internal format: @context = [{ tag: "cas:", uri: "https://..." }, ...]
+     * JSON-LD format:  @context = { "cas": "https://...", ... }
+     */
+    private xContextToJSONLD(jld: JsonObject): JsonObject {
+        const ctx = jld['@context'];
+
+        if (!ctx || !Array.isArray(ctx)) {
+            // Context is already in JSON-LD format (object or string) or doesn't exist
+            return jld;
         }
 
-        // Add @graph with full items (using their getJSONLD methods)
-        jld['@graph'] = this.items.map(item => {
-            if ('getJSONLD' in item && typeof item.getJSONLD === 'function') {
-                const itemJLD = item.getJSONLD();
-                // If getJSONLD returns a string, parse it back to object
-                return typeof itemJLD === 'string' ? JSON.parse(itemJLD) : itemJLD;
+        // Transform INamespace[] to JSON-LD @context object
+        const contextObj: Record<string, string> = {};
+
+        for (const ns of ctx) {
+            // Skip if not a valid object
+            if (!ns || typeof ns !== 'object' || Array.isArray(ns)) {
+                continue;
             }
-            return { '@id': (item as any).id };
+            if (!('tag' in ns) || !('uri' in ns)) {
+                continue;
+            }
+
+            const tag = ns.tag;
+            const uri = ns.uri;
+
+            // Ensure tag and uri are strings
+            if (typeof tag === 'string' && typeof uri === 'string') {
+                // Remove trailing colon from tag for JSON-LD format
+                const key = tag.endsWith(':') ? tag.slice(0, -1) : tag;
+                contextObj[key] = uri;
+            }
+        }
+
+        // Replace '@context' array with object
+        jld['@context'] = contextObj;
+
+        return jld;
+    }
+
+    /**
+     * Transform graph items to JSON-LD format
+     * @param jld - JSON-LD object with '@graph' property
+     * @returns JSON-LD object with '@graph' property containing JSON-LD items
+     */
+    private xGraphToJSONLD(jld: JsonObject): JsonObject {
+        const graph = jld['@graph'];
+
+        if (!graph || !Array.isArray(graph) || graph.length === 0) {
+            return jld;
+        }
+
+        // Transform each graph item to JSON-LD
+        // The graph items are already in native format (from get()), need to convert to JSON-LD
+        const graphLD = this.graph.map(item => {
+            // Call getJSONLD on each item if available
+            if ('getJSONLD' in item && typeof (item as any).getJSONLD === 'function') {
+                return (item as any).getJSONLD();
+            }
+            // Fallback: return item as-is (shouldn't happen)
+            return item;
         });
 
-        // Add metadata
-        if (this.modified) {
-            jld['dcterms:modified'] = this.modified;
-        }
-        if (this.creator) {
-            jld['dcterms:creator'] = this.creator;
-        }
+        // Replace '@graph' with graph items in JSON-LD format
+        jld['@graph'] = graphLD;
 
-        // Return stringified JSON-LD
-        return JSON.stringify(jld, null, 4);
-    } */
+        return jld;
+    }
+
     setXML(xmlString: stringXML, options?:any) {
         // 1. Parse XML string to JSON
         //    The context is skipped here, as it is extracted separately below.
@@ -2094,6 +2148,7 @@ function makeIdObjects(
     options?: { idKey?: string; mutate?: boolean }
 ): JsonValue {
     const idKey = options?.idKey ?? '@id';
+    const typeKey = '@type';
     const mutate = !!options?.mutate;
 
     // primitives
@@ -2123,8 +2178,8 @@ function makeIdObjects(
     if (mutate) {
         for (const k of Object.keys(obj)) {
             const v = obj[k];
-            if (k === idKey) {
-                // keep the actual id property unchanged
+            if (k === idKey || k === typeKey || k === '@context' || k === '@graph') {
+                // keep the actual id property, @type, @context, and @graph unchanged (JSON-LD reserved keywords)
                 obj[k] = v;
             } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
                 obj[k] = { [idKey]: v } as unknown as JsonValue;
@@ -2138,8 +2193,8 @@ function makeIdObjects(
     const out: JsonObject = {};
     for (const k of Object.keys(obj)) {
         const v = obj[k];
-        if (k === idKey) {
-            // preserve '@id' raw value
+        if (k === idKey || k === typeKey || k === '@context' || k === '@graph') {
+            // preserve '@id', '@type', '@context', and '@graph' raw values (JSON-LD reserved keywords)
             out[k] = v;
         } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
             out[k] = { [idKey]: v } as unknown as JsonValue;
@@ -2417,15 +2472,15 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
 
             // Special handling for configurable properties and links
             if (childTagName === PigItemType.aProperty) {
-                configurableProperties.push(processConfigurableProperty(childElement));
+                configurableProperties.push(configurablePropertyToJson(childElement));
                 continue;
             }
             if (childTagName === PigItemType.aSourceLink) {
-                configurableSourceLinks.push(processConfigurableLink(childElement, PigItemType.aSourceLink));
+                configurableSourceLinks.push(configurableLinkToJson(childElement, PigItemType.aSourceLink));
                 continue;
             }
             if (childTagName === PigItemType.aTargetLink) {
-                configurableTargetLinks.push(processConfigurableLink(childElement, PigItemType.aTargetLink));
+                configurableTargetLinks.push(configurableLinkToJson(childElement, PigItemType.aTargetLink));
                 continue;
             }
 
@@ -2599,7 +2654,7 @@ function requiresArray(propertyName: string /*, parentItemType?: PigItemTypeValu
  * - <value> → value
  * - itemType → cas:aProperty
  */
-function processConfigurableProperty(elem: ElementXML): JsonObject {
+function configurablePropertyToJson(elem: ElementXML): JsonObject {
     const prop: JsonObject = {
         itemType: PigItemType.aProperty
     };
@@ -2635,19 +2690,21 @@ function processConfigurableProperty(elem: ElementXML): JsonObject {
 }
 
 /**
- * Process cas:aSourceLink or cas:aTargetLink element
+ * Import cas:aSourceLink or cas:aTargetLink element
  * Extracts:
  * - rdf:type → hasClass
+ * - cas:hasClass → hasClass (accepted alternative to rdf:type)
  * - <idRef> → idRef
  * - itemType → cas:aSourceLink or cas:aTargetLink
  */
-function processConfigurableLink(elem: ElementXML, itemType: PigItemTypeValue): JsonObject {
+function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): JsonObject {
     const link: JsonObject = {
         itemType: itemType
     };
 
     // Extract rdf:type and cas:hasClass as hasClass
-    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
+    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
+        || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
         link.hasClass = rdfType;
     }
@@ -2676,7 +2733,7 @@ function requiresIText(propertyName: string): boolean {
 
     // Fields that need IText wrapper: { value: string }
     const textWrapperFields = new Set([
-        'icon'    // 'cas:Icon' after mvf
+        'icon'
     ]);
 
     return textWrapperFields.has(localName);
@@ -2780,7 +2837,7 @@ function getXmlElementText(xmlElement: ElementXML): string {
     // Check if element contains HTML elements (p, div, span, etc.)
     const hasHtmlContent = Array.from(xmlElement.childNodes).some(node =>
         node.nodeType === NodeType.ELEMENT_NODE &&
-        ['p', 'div', 'span', 'small', 'i', 'a', 'object'].includes((node as ElementXML).tagName.toLowerCase())
+        ['div', 'span', 'small', 'i', 'b', 'p', 'a', 'object'].includes((node as ElementXML).tagName.toLowerCase())
     );
 
     if (hasHtmlContent) {

@@ -493,6 +493,16 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (tags) =>
             `Elemento(s) no instanciable(s) encontrado(s): ${tags}`
     },
+    683: {
+        en: (format, errors) =>
+            `${format} package validation failed: ${errors}`,
+        de: (format, errors) =>
+            `${format} Paket-Validierung fehlgeschlagen: ${errors}`,
+        fr: (format, errors) =>
+            `Échec de la validation du package ${format}: ${errors}`,
+        es: (format, errors) =>
+            `Error en la validación del paquete ${format}: ${errors}`
+    },
 
     // General errors (690-699)
     690: {
@@ -539,7 +549,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         fr: (source, msg) =>
             `Échec de la lecture du fichier` + (source ? ` '${source}'` : '') + `: ${msg}`,
         es: (source, msg) =>
-            `Error al leer el archivo` + (source ? ` '${source}'` : ``) + `: ${msg}`
+            `Error al leer el archivo` + (source ? ` '${source}'` : '') + `: ${msg}`
     },
     695: {
         en: () =>
@@ -561,16 +571,6 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: () =>
             `Tipo de fuente no compatible al leer un archivo como texto`
     },
-    697: {
-        en: (format, errors) =>
-            `${format} package validation failed: ${errors}`,
-        de: (format, errors) =>
-            `${format} Paket-Validierung fehlgeschlagen: ${errors}`,
-        fr: (format, errors) =>
-            `Échec de la validation du package ${format}: ${errors}`,
-        es: (format, errors) =>
-            `Error en la validación del paquete ${format}: ${errors}`
-    },
     698: {
         en: (func) => `${func} not yet implemented`,
         de: (func) => `${func} ist noch nicht implementiert`,
@@ -582,6 +582,26 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         de: (msg) => msg.toString(),
         fr: (msg) => msg.toString(),
         es: (msg) => msg.toString()
+    },
+    700: {
+        en: (filename, msg) =>
+            `Failed to write file` + (filename ? ` '${filename}'` : '') + `: ${msg}`,
+        de: (filename, msg) =>
+            `Fehler beim Schreiben der Datei` + (filename ? ` '${filename}'` : '') + `: ${msg}`,
+        fr: (filename, msg) =>
+            `Échec de l'écriture du fichier` + (filename ? ` '${filename}'` : '') + `: ${msg}`,
+        es: (filename, msg) =>
+            `Error al escribir el archivo` + (filename ? ` '${filename}'` : '') + `: ${msg}`
+    },
+    701: {
+        en: (filename, msg) =>
+            `File save cancelled` + (filename ? ` for '${filename}'` : '') + (msg ? `: ${msg}` : ''),
+        de: (filename, msg) =>
+            `Dateispeichern abgebrochen` + (filename ? ` für '${filename}'` : '') + (msg ? `: ${msg}` : ''),
+        fr: (filename, msg) =>
+            `Enregistrement du fichier annulé` + (filename ? ` pour '${filename}'` : '') + (msg ? `: ${msg}` : ''),
+        es: (filename, msg) =>
+            `Guardado de archivo cancelado` + (filename ? ` para '${filename}'` : '') + (msg ? `: ${msg}` : '')
     }
 };
 

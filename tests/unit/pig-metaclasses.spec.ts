@@ -56,7 +56,7 @@ describe("PIG Metaclasses", () => {
         };
         Property_input_JSONLD = {
             ['@id']: `${DEF.pfxNsDcmi}type`,
-            ["@type"]: { ['@id']: "owl:DatatypeProperty" },
+            ["@type"]: "owl:DatatypeProperty",
             [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.Property },
             [`${DEF.pfxNsDcmi}title`]: [{ ['@value']: "The type or category", ['@language']: "en" }],
             [`${DEF.pfxNsDcmi}description`]: [{ ['@value']: `This is a class for a property named ${DEF.pfxNsDcmi}type used by anEntity or aRelationship`, ['@language']: "en" }],
@@ -85,7 +85,7 @@ describe("PIG Metaclasses", () => {
         };
         Link_shows_input_JSONLD = {
             ['@id']: `${DEF.pfxNsMeta}shows`,
-            ["@type"]: { ['@id']: "owl:ObjectProperty" },
+            ["@type"]: "owl:ObjectProperty",
             [`${DEF.pfxNsMeta}specializes`]: { ['@id']: PigItemType.Link },
             [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.Link },
             [`${DEF.pfxNsDcmi}title`]: [{ ['@value']: "shows", ['@language']: "en" }],
@@ -175,7 +175,7 @@ describe("PIG Metaclasses", () => {
         };
         anEntity_with_ref_input_JSONLD = {
             ['@id']: "d:anEntity_Diagram",
-            ['@type']: { ['@id']: "o:Entity_Diagram" },
+            ['@type']: "o:Entity_Diagram",
             [`${DEF.pfxNsMeta}revision`]: "v1.0",
             [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.anEntity },
             [`${DEF.pfxNsDcmi}modified`]: '2025-12-20T00:00:00Z',

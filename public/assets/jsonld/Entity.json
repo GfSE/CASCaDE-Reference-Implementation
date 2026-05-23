@@ -83,7 +83,7 @@
         "$ref": "#/$defs/idObject"
       }
     },
-    "cas:Icon": {
+    "cas:icon": {
       "type": "object",
       "description": "Optional icon representation for this Entity type",
       "properties": {

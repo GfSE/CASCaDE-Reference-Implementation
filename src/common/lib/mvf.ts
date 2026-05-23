@@ -21,6 +21,7 @@ import { LIB, JsonPrimitive, JsonValue, JsonObject, LOG } from './helpers';
 // all other keys are derived from the ontology and handled dynamically:
 const FROM_JSONLD = new Map<string, string>([
     ['@context', 'context'],
+    ['@graph', 'graph'],
     ['@id', 'id'],
     ['@type', 'hasClass'],
     ['@value', 'value'],
@@ -37,6 +38,9 @@ const FROM_JSONLD = new Map<string, string>([
     [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
     [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
     [`${DEF.pfxNsMeta}Icon`, 'icon'],
+    [`${DEF.pfxNsMeta}icon`, 'icon'],
+    [`${DEF.pfxNsMeta}Unit`, 'unit'],
+    [`${DEF.pfxNsMeta}unit`, 'unit'],
 //    ['xs:simpleType', 'datatype'], ... doesn't make sense as long as rejected by the schema
     ['sh:datatype', 'datatype'],
 //    ['xs:minOccurs', 'minCount'],
@@ -73,8 +77,10 @@ const FROM_XML = new Map<string, string>([
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     [`${DEF.pfxNsMeta}specializes`, 'specializes'],
-    [`${DEF.pfxNsMeta}icon`, 'icon'],  // older files may use 'pig:icon' instead of 'pig:Icon'
     [`${DEF.pfxNsMeta}Icon`, 'icon'],
+    [`${DEF.pfxNsMeta}icon`, 'icon'],
+    [`${DEF.pfxNsMeta}Unit`, 'unit'],
+    [`${DEF.pfxNsMeta}unit`, 'unit'],
     ['sh:datatype', 'datatype'],
     ['xs:simpleType', 'datatype'],
     ['sh:minCount', 'minCount'],
