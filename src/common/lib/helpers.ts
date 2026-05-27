@@ -395,76 +395,7 @@ export const LIB = {
         } catch {
             return dateStr;
         }
-    },
-
-    /**
-     * Sort JSON-LD object keys in canonical order: @context, @id, @type, @graph, @value, then all other keys alphabetically.
-     * This ensures consistent JSON-LD output regardless of object construction order.
-     * 
-     * @param obj - JSON-LD object to sort
-     * @returns New object with keys in canonical order
-     * 
-     * @example
-     * const jsonld = { '@type': 'Entity', '@id': 'ex:123', 'title': 'Example' };
-     * const sorted = LIB.sortJsonLdKeys(jsonld);
-     * // Result: { '@id': 'ex:123', '@type': 'Entity', 'title': 'Example' }
-     */
-    sortJsonLdKeys(obj: JsonObject): JsonObject {
-        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
-            return obj;
-        }
-
-        // Canonical order for JSON-LD special keys
-        const canonicalOrder = [
-            '@context', '@id', '@type', '@graph', '@value', '@language',
-            `${DEF.pfxNsMeta}itemType`, `${DEF.pfxNsMeta}specializes`,
-            `${DEF.pfxNsDcmi}title`, 'skos:definition', `${DEF.pfxNsDcmi}description`,   
-            `${DEF.pfxNsDcmi}modified`, `${DEF.pfxNsDcmi}creator`,
-            `${DEF.pfxNsMeta}revision`, `${DEF.pfxNsMeta}priorRevision`,
-            `${DEF.pfxNsMeta}enumeratedProperty`, `${DEF.pfxNsMeta}enumeratedSourceLink`, `${DEF.pfxNsMeta}enumeratedTargetLink`, `${DEF.pfxNsMeta}enumeratedEndpoint`
-        ];
-
-        // Separate JSON-LD special keys from other keys
-        const specialKeys: string[] = [];
-        const otherKeys: string[] = [];
-
-        for (const key of Object.keys(obj)) {
-            if (canonicalOrder.includes(key)) {
-                specialKeys.push(key);
-            } else {
-                otherKeys.push(key);
-            }
-        }
-
-        // Sort special keys by canonical order
-        specialKeys.sort((a, b) => canonicalOrder.indexOf(a) - canonicalOrder.indexOf(b));
-
-        // Sort other keys alphabetically
-        otherKeys.sort();
-
-        // Build new object with sorted keys
-        const sorted: JsonObject = {};
-
-        for (const key of [...specialKeys, ...otherKeys]) {
-            const value = obj[key];
-            // Recursively sort nested objects, but preserve arrays
-            if (value && typeof value === 'object' && !Array.isArray(value)) {
-                sorted[key] = this.sortJsonLdKeys(value as JsonObject);
-            } else if (Array.isArray(value)) {
-                // Sort objects within arrays
-                sorted[key] = value.map(item => 
-                    item && typeof item === 'object' && !Array.isArray(item)
-                        ? this.sortJsonLdKeys(item as JsonObject)
-                        : item
-                );
-            } else {
-                sorted[key] = value;
-            }
-        }
-
-        return sorted;
-    },
-
+    }
 };
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';

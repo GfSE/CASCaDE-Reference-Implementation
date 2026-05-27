@@ -147,7 +147,7 @@ class GetJSONLD {
             });
         }
     */
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
 
         /**
          * Transform context from internal INamespace[] format to JSON-LD @context format
@@ -223,7 +223,7 @@ class GetJSONLD {
 
         jld = this.xConfigurablesToJSONLD(jld, itm, 'hasProperty');
         jld = this.xConfigurablesToJSONLD(jld, itm, 'hasTargetLink');
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
     }
 
     /**
@@ -238,7 +238,7 @@ class GetJSONLD {
         jld = this.xConfigurablesToJSONLD(jld, rel, 'hasProperty');
         jld = this.xConfigurablesToJSONLD(jld, rel, 'hasTargetLink');
         jld = this.xConfigurablesToJSONLD(jld, rel, 'hasSourceLink');
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
     }
 
     /**
@@ -249,7 +249,7 @@ class GetJSONLD {
      */
     static enumeration(enm: Enumeration, options?: IOptionsJSONLD): JsonObject {
         const jld = this.getAsJSONLD(enm, options);
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
     }
 
     /**
@@ -260,7 +260,7 @@ class GetJSONLD {
      */
     static property(prp: Property, options?: IOptionsJSONLD): JsonObject {
         const jld = this.getAsJSONLD(prp, options);
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
     }
 
     /**
@@ -271,7 +271,7 @@ class GetJSONLD {
      */
     static link(lnk: Link, options?: IOptionsJSONLD): JsonObject {
         const jld = this.getAsJSONLD(lnk, options);
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
     }
 
     /**
@@ -282,7 +282,7 @@ class GetJSONLD {
      */
     static entity(itm: Entity, options?: IOptionsJSONLD): JsonObject {
         const jld = this.getAsJSONLD(itm, options);
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
     }
 
     /**
@@ -293,7 +293,7 @@ class GetJSONLD {
      */
     static relationship(rel: Relationship, options?: IOptionsJSONLD): JsonObject {
         const jld = this.getAsJSONLD(rel, options);
-        return LIB.sortJsonLdKeys(jld);
+        return this.sortJsonLdKeys(jld);
     }
     /**
      * Transform hasProperty, hasSourceLink or hasTargetLink arrays for JSON-LD output.
@@ -347,80 +347,147 @@ class GetJSONLD {
         delete jld[hasX];
         return jld;
     }
-    private static getAsJSONLD(itm: TPigItem, options?: IOptionsJSONLD): JsonObject {
-        const jld = MVF.renameJsonTags(itm.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
-        return makeIdObjects(jld) as JsonObject;
-    }
-}
+    /**
+     * Sort JSON-LD object keys in canonical order: @context, @id, @type, @graph, @value, then all other keys alphabetically.
+     * This ensures consistent JSON-LD output regardless of object construction order.
+     * 
+     * @param obj - JSON-LD object to sort
+     * @returns New object with keys in canonical order
+     * 
+     * @example
+     * const jsonld = { '@type': 'Entity', '@id': 'ex:123', 'title': 'Example' };
+     * const sorted = this.sortJsonLdKeys(jsonld);
+     * // Result: { '@id': 'ex:123', '@type': 'Entity', 'title': 'Example' }
+     */
+    private static sortJsonLdKeys(obj: JsonObject): JsonObject {
+        if (!obj || typeof obj !== 'object' || Array.isArray(obj)) {
+            return obj;
+        }
 
-/**
- * Convert valid id-strings to id-objects.
- * - Accepts any JsonValue (string/number/boolean/null/object/array).
- * - Recursively processes arrays and objects (non-flat).
- * - Skips converting the actual id property (default '@id').
- * - options.idKey: output id key (default '@id')
- * - options.mutate: if true modify in-place, otherwise return a new structure
- */
-function makeIdObjects(
-    node: JsonValue,
-    options?: { idKey?: string; mutate?: boolean }
-): JsonValue {
-    const idKey = options?.idKey ?? '@id';
-    const typeKey = '@type';
-    const mutate = !!options?.mutate;
+        // Canonical order for JSON-LD special keys
+        const canonicalOrder = [
+            '@context', '@id', '@type', '@graph', '@value', '@language',
+            `${DEF.pfxNsMeta}itemType`, `${DEF.pfxNsMeta}specializes`,
+            `${DEF.pfxNsDcmi}title`, 'skos:definition', `${DEF.pfxNsDcmi}description`,
+            `${DEF.pfxNsDcmi}modified`, `${DEF.pfxNsDcmi}creator`,
+            `${DEF.pfxNsMeta}revision`, `${DEF.pfxNsMeta}priorRevision`,
+            `${DEF.pfxNsMeta}enumeratedProperty`, `${DEF.pfxNsMeta}enumeratedSourceLink`, `${DEF.pfxNsMeta}enumeratedTargetLink`, `${DEF.pfxNsMeta}enumeratedEndpoint`
+        ];
 
-    // primitives
-    if (node === null || node === undefined) return node;
-    if (typeof node === 'string') {
-        return PigItem.isValidIdString(node) ? ({ [idKey]: node } as JsonObject) : node;
-    }
-    if (typeof node === 'number' || typeof node === 'boolean') return node;
+        // Separate JSON-LD special keys from other keys
+        const specialKeys: string[] = [];
+        const otherKeys: string[] = [];
 
-    // array: map elements
-    if (Array.isArray(node)) {
-        if (mutate) {
-            for (let i = 0; i < node.length; i++) {
-                node[i] = makeIdObjects(node[i], options);
+        for (const key of Object.keys(obj)) {
+            if (canonicalOrder.includes(key)) {
+                specialKeys.push(key);
+            } else {
+                otherKeys.push(key);
             }
-            return node;
         }
-        const outArr: JsonArray = [];
-        for (let i = 0; i < node.length; i++) {
-            outArr[i] = makeIdObjects(node[i], options);
-        }
-        return outArr;
-    }
 
-    // object: handle the idKey specially (do not convert its string value)
-    const obj = node as JsonObject;
-    if (mutate) {
+        // Sort special keys by canonical order
+        specialKeys.sort((a, b) => canonicalOrder.indexOf(a) - canonicalOrder.indexOf(b));
+
+        // Sort other keys alphabetically
+        otherKeys.sort();
+
+        // Build new object with sorted keys
+        const sorted: JsonObject = {};
+
+        for (const key of [...specialKeys, ...otherKeys]) {
+            const value = obj[key];
+            // Recursively sort nested objects, but preserve arrays
+            if (value && typeof value === 'object' && !Array.isArray(value)) {
+                sorted[key] = this.sortJsonLdKeys(value as JsonObject);
+            } else if (Array.isArray(value)) {
+                // Sort objects within arrays
+                sorted[key] = value.map(item =>
+                    item && typeof item === 'object' && !Array.isArray(item)
+                        ? this.sortJsonLdKeys(item as JsonObject)
+                        : item
+                );
+            } else {
+                sorted[key] = value;
+            }
+        }
+
+        return sorted;
+    }
+    /**
+     * Convert valid id-strings to id-objects.
+     * - Accepts any JsonValue (string/number/boolean/null/object/array).
+     * - Recursively processes arrays and objects (non-flat).
+     * - Skips converting the actual id property (default '@id').
+     * - options.idKey: output id key (default '@id')
+     * - options.mutate: if true modify in-place, otherwise return a new structure
+     */
+    private static makeIdObjects(
+        node: JsonValue,
+        options?: { idKey?: string; mutate?: boolean }
+    ): JsonValue {
+        const idKey = options?.idKey ?? '@id';
+        const typeKey = '@type';
+        const mutate = !!options?.mutate;
+
+        // primitives
+        if (node === null || node === undefined) return node;
+        if (typeof node === 'string') {
+            return PigItem.isValidIdString(node) ? ({ [idKey]: node } as JsonObject) : node;
+        }
+        if (typeof node === 'number' || typeof node === 'boolean') return node;
+
+        // array: map elements
+        if (Array.isArray(node)) {
+            if (mutate) {
+                for (let i = 0; i < node.length; i++) {
+                    node[i] = this.makeIdObjects(node[i], options);
+                }
+                return node;
+            }
+            const outArr: JsonArray = [];
+            for (let i = 0; i < node.length; i++) {
+                outArr[i] = this.makeIdObjects(node[i], options);
+            }
+            return outArr;
+        }
+
+        // object: handle the idKey specially (do not convert its string value)
+        const obj = node as JsonObject;
+        if (mutate) {
+            for (const k of Object.keys(obj)) {
+                const v = obj[k];
+                if ([idKey, typeKey, '@context', '@graph', '@value', '@language'].includes(k)) {
+                    // keep JSON-LD reserved keywords unchanged (@id, @type, @context, @graph, @value, @language)
+                    // @value must preserve literal values and never be expanded to objects with @id
+                    obj[k] = v;
+                } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
+                    obj[k] = { [idKey]: v } as unknown as JsonValue;
+                } else {
+                    obj[k] = this.makeIdObjects(v, options);
+                }
+            }
+            return obj;
+        }
+
+        const out: JsonObject = {};
         for (const k of Object.keys(obj)) {
             const v = obj[k];
-            if ([idKey, typeKey, '@context', '@graph', '@value', '@language'].includes(k)) {
-                // keep JSON-LD reserved keywords unchanged (@id, @type, @context, @graph, @value, @language)
+            if (k === idKey || k === typeKey || k === '@context' || k === '@graph' || k === '@value' || k === '@language') {
+                // preserve JSON-LD reserved keywords raw values (@id, @type, @context, @graph, @value, @language)
                 // @value must preserve literal values and never be expanded to objects with @id
-                obj[k] = v;
+                out[k] = v;
             } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
-                obj[k] = { [idKey]: v } as unknown as JsonValue;
+                out[k] = { [idKey]: v } as unknown as JsonValue;
             } else {
-                obj[k] = makeIdObjects(v, options);
+                out[k] = this.makeIdObjects(v, options);
             }
         }
-        return obj;
+        return out;
     }
-
-    const out: JsonObject = {};
-    for (const k of Object.keys(obj)) {
-        const v = obj[k];
-        if (k === idKey || k === typeKey || k === '@context' || k === '@graph' || k === '@value' || k === '@language') {
-            // preserve JSON-LD reserved keywords raw values (@id, @type, @context, @graph, @value, @language)
-            // @value must preserve literal values and never be expanded to objects with @id
-            out[k] = v;
-        } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
-            out[k] = { [idKey]: v } as unknown as JsonValue;
-        } else {
-            out[k] = makeIdObjects(v, options);
-        }
+    private static getAsJSONLD(itm: TPigItem, options?: IOptionsJSONLD): JsonObject {
+        const jld = MVF.renameJsonTags(itm.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
+        return this.makeIdObjects(jld) as JsonObject;
     }
-    return out;
 }
+
