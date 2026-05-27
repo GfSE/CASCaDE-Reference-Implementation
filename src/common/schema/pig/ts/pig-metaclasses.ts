@@ -343,9 +343,13 @@ export class PigItem {
     }
     /**
      * Normalize ID by adding namespace prefix if missing
+     * 
+     * @param id - Raw ID from import (may lack namespace)
+     * @param itemType - PIG item type to determine correct prefix
+     * @returns Normalized ID with namespace prefix
      */
     static normalizeId(id: string, itemType: PigItemTypeValue): string {
-        if (!id || typeof id !== 'string') {
+        if (!id || typeof(id) !== 'string') {
             return id;
         }
 
@@ -359,11 +363,10 @@ export class PigItem {
         // and also their references in properties
         let prefix: string;
         if (PigItem.isClass(itemType)) {
-            prefix = 'o:';
-            //    else if (PigItem.isInstance(itemType)) {
-            //        prefix = 'd:';
+            prefix = DEF.defaultOntologyNamespace; // add a default namespace prefix for classes if missing
+        //  else if (PigItem.isInstance(itemType)) {
         } else {
-            prefix = 'd:'; // Default for unknown
+            prefix = DEF.defaultDataNamespace; // add a default namespace prefix for instances if missing
         }
 
         const normalized = `${prefix}${id}`;
@@ -2011,14 +2014,6 @@ function replaceIdObjects(
 
     return walk(root);
 }
-/**
- * Normalize ID by adding namespace prefix if missing
- * Logs transformations for debugging ReqIF imports
- * 
- * @param id - Raw ID from import (may lack namespace)
- * @param itemType - PIG item type to determine correct prefix
- * @returns Normalized ID with namespace prefix
- */
 
 // Normalize dateTime strings by ensuring they are in ISO format (e.g. '2024-06-01T12:00:00Z')
 function normalizeDateTime(dateStr: any): string | undefined {
