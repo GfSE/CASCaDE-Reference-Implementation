@@ -31,7 +31,7 @@ import { DEF } from '../../lib/definitions';
 import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
-import { APackage /*, TPigItem*/ } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
 import { XmlImporter } from '../xml/import-xml';
 import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
 
@@ -151,12 +151,23 @@ export class ReqifImporter {
         const expectedCount = aPackage.graph?.length || 0;
         const actualCount = allItems.length - 1; // -1 for package itself
 
-        LOG.info(
-            `ReqifImporter: successfully imported ${filename} with ${actualCount} of ${expectedCount} items`
-        );
+        // Build result response
+        let result: IRsp;
+        if (actualCount === expectedCount) {
+            LOG.info(
+                `ReqifImporter: successfully imported ${filename} with all ${actualCount} items`
+            );
+            result = Rsp.create(0, allItems, 'json');
+        } else {
+            // Log details about erroneous items
+            const errorDetails = this.buildErrorReport(allItems);
+            LOG.warn(
+                `ReqifImporter: imported ${actualCount} of ${expectedCount} items from ${filename}${errorDetails}`
+            );
 
-        // Return success response with items (clone rspOK to avoid shared-state mutation)
-        const result = Rsp.create(0, allItems, 'json', 'ReqIF', actualCount, expectedCount);
+            result = Rsp.create(604, allItems, 'json', 'ReqIF', actualCount, expectedCount);
+        }
+
         return result;
     }
 
@@ -175,6 +186,26 @@ export class ReqifImporter {
             // Node.js: read from local public directory
             return `./public/${DEF.xslPath}${filename}`;
         }
+    }
+
+    /**
+     * Build detailed error report for failed items
+     * 
+     * @param allItems - All items including package
+     * @returns Formatted error report string
+     * @private
+     */
+    private static buildErrorReport(allItems: any[]): string {
+        let errorReport = '\nErroneous items:';
+
+        for (let i = 1; i < allItems.length; i++) {
+            const status = allItems[i].status();
+            if (!status.ok) {
+                errorReport += `\n- graph[${i}]: (${status.status}) ${status.statusText}`;
+            }
+        }
+
+        return errorReport;
     }
 
     /**

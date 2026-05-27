@@ -107,7 +107,7 @@ export class JsonldImporter {
                 `JsonldImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Rsp.create(691, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
+            result = Rsp.create(604, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
         }
 
         return result as IRsp<TPigItem[]>;

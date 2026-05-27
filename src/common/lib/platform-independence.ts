@@ -439,7 +439,7 @@ export const PLI = {
                     return Msg.create(0, filename, 'text');
                 } catch (e: unknown) {
                     const msg = e instanceof Error ? e.message : String(e);
-                    return Msg.create(700, filename, msg);
+                    return Msg.create(697, filename, msg);
                 }
             }
 
@@ -464,7 +464,7 @@ export const PLI = {
                     } catch (e: unknown) {
                         // User cancelled or API failed - fall through to download trick
                         if (e instanceof Error && e.name === 'AbortError') {
-                            return Msg.create(701, filename, 'User cancelled file save');
+                            return Msg.create(698, filename, 'User cancelled file save');
                         }
                         LOG.warn('File System Access API failed, falling back to download trick', e);
                     }
@@ -489,14 +489,14 @@ export const PLI = {
                     return Msg.create(0, filename, 'text');
                 } catch (e: unknown) {
                     const msg = e instanceof Error ? e.message : String(e);
-                    return Msg.create(700, filename, msg);
+                    return Msg.create(697, filename, msg);
                 }
             }
 
             return Msg.create(695); // Not HTTP URL and not Node/Browser
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
-            return Msg.create(700, filename, msg);
+            return Msg.create(697, filename, msg);
         }
     },
 

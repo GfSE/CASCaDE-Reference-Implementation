@@ -742,7 +742,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
             // console.info('Result:', JSON.stringify(result,null,2));
 
             expect(result.status().ok).toBe(false);
-            expect(result.status().status).toBe(611);  // not all graph items could be instantiated
+            expect(result.status().status).toBe(603);  // not all graph items could be instantiated
 
             // ToDo: Return items that failed to instantiate and check that o:ForbiddenProp has a schema check error for maxCount=0
             // expect(result.status().statusText).toContain('maxCount');

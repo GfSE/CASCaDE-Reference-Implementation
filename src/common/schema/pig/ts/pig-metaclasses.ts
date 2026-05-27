@@ -415,7 +415,7 @@ abstract class Item implements IItem {
     }
     protected validate(itm: IItem) {
         if (itm.itemType !== this.itemType)
-            return Msg.create(601, this.itemType, itm.itemType);
+            return Msg.create(613, this.itemType, itm.itemType);
         return rspOK;
     }
     protected set(itm: IItem): this {
@@ -457,12 +457,12 @@ abstract class Identifiable extends Item implements IIdentifiable {
     }
     protected validate(itm: IIdentifiable) {
         if (this.id && itm.id !== this.id)
-            return Msg.create(603, this.id, itm.id);
+            return Msg.create(614, this.id, itm.id);
 
         this.id = itm.id; // to complement status messages
 
         if (this.specializes && this.specializes !== itm.specializes)
-            return Msg.create(604, this.specializes, itm.specializes ?? '');
+            return Msg.create(615, this.specializes, itm.specializes ?? '');
 
         // Runtime guards:
         // This is more constraining than the schema,
@@ -566,7 +566,7 @@ abstract class ALink extends Item implements IALink {
     protected validate(itm: IALink) {
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            return Msg.create(602, itm.itemType);
+            return Msg.create(612, itm.itemType);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Link URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
@@ -1132,7 +1132,7 @@ export class AProperty extends Item implements IAProperty {
     validate(itm: IAProperty) {
         // itemType checked in superclass
         if (!itm.hasClass)
-            return Msg.create(602, PigItemType.aProperty);
+            return Msg.create(612, PigItemType.aProperty);
         return super.validate(itm);
     }
     set(itm: IAProperty) {
@@ -1161,7 +1161,7 @@ export class ASourceLink extends ALink implements IALink {
     validate(itm: IALink) {
         // itemType checked in superclass
         if (!itm.hasClass)
-            return Msg.create(602, PigItemType.aSourceLink);
+            return Msg.create(612, PigItemType.aSourceLink);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
@@ -1186,7 +1186,7 @@ export class ATargetLink extends ALink implements IALink {
     validate(itm: IALink) {
         // itemType checked in superclass
         if (!itm.hasClass)
-            return Msg.create(602, PigItemType.aTargetLink);
+            return Msg.create(612, PigItemType.aTargetLink);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
@@ -1230,7 +1230,7 @@ export class AnEntity extends AnElement implements IAnElement {
         // Runtime guards:
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            return Msg.create(602, PigItemType.anEntity);
+            return Msg.create(612, PigItemType.anEntity);
 
         return super.validate(itm);
     }
@@ -1278,7 +1278,7 @@ export class ARelationship extends AnElement implements IARelationship {
         // Runtime guards:
         // id and itemType checked in superclass
         if (!itm.hasClass)
-            return Msg.create(602, PigItemType.aRelationship);
+            return Msg.create(612, PigItemType.aRelationship);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Relationship URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
@@ -1384,7 +1384,7 @@ export class APackage extends AnElement implements IAPackage {
         this.graph = instantiatedGraph;
 
         if (errors.length > 0) {
-            this.lastStatus = Msg.create(611, 'Package Import', instantiatedGraph.length, _pkg.graph.length, errors.join(', '));
+            this.lastStatus = Msg.create(603, 'Package Import', instantiatedGraph.length, _pkg.graph.length, errors.join(', '));
             LOG.warn(this.lastStatus.statusText);
         }
         else {

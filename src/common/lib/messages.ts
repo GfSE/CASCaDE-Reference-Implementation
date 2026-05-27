@@ -95,29 +95,66 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         fr: (txt) => `Erreur: ${txt}`,
         es: (txt) => `Error: ${txt}`
     },
-    601: {
-        en: (fromType, toType) => 
-            `Cannot change the itemType (tried to change from ${fromType} to ${toType})`,
-        de: (fromType, toType) => 
-            `Der itemType kann nicht geändert werden (Versuch von ${fromType} nach ${toType})`,
-        fr: (fromType, toType) => 
-            `Impossible de changer le itemType (tentative de ${fromType} vers ${toType})`,
-        es: (fromType, toType) => 
-            `No se puede cambiar el itemType (intento de ${fromType} a ${toType})`
+/*    601: {
+        en: (msg) => msg.toString(),
+        de: (msg) => msg.toString(),
+        fr: (msg) => msg.toString(),
+        es: (msg) => msg.toString()
     },
     602: {
+        en: (op, act, exp) =>
+            `${op}: Delivered ${act} of ${exp} graph items`,
+        de: (op, act, exp) =>
+            `${op}: ${act} von ${exp} Graph-Elementen geliefert`,
+        fr: (op, act, exp) =>
+            `${op}: ${act} éléments de graphe sur ${exp} livrés`,
+        es: (op, act, exp) =>
+            `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
+    }, */
+    603: {
+        en: (op, act, exp, errors) =>
+            `${op}: Created ${act} of ${exp} graph items` + (errors ? ` with errors: ${errors}` : ''),
+        de: (op, act, exp, errors) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt` + (errors ? ` mit Fehlern: ${errors}` : ''),
+        fr: (op, act, exp, errors) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}` + (errors ? ` avec des erreurs: ${errors}` : ''),
+        es: (op, act, exp, errors) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo` + (errors ? ` con errores: ${errors}` : '')
+    },
+    604: {
+        en: (format, created, total) =>
+            `Imported ${created} of ${total} items from ${format}`,
+        de: (format, created, total) =>
+            `${created} von ${total} Elementen aus ${format} importiert`,
+        fr: (format, created, total) =>
+            `${created} éléments sur ${total} importés depuis ${format}`,
+        es: (format, created, total) =>
+            `${created} de ${total} elementos importados desde ${format}`
+    },
+
+    612: {
         en: (itemType) => 
             `'${itemType}' must have a hasClass reference`,
         de: (itemType) => 
-            `'${itemType}' muss eine hasClass-Referenz haben`,
+            `'${itemType}' muss eine hasClass Referenz haben`,
         fr: (itemType) => 
             `'${itemType}' doit avoir une référence hasClass`,
         es: (itemType) => 
             `'${itemType}' debe tener una referencia hasClass`
     },
+    613: {
+        en: (fromType, toType) =>
+            `Cannot change the itemType (tried to change from ${fromType} to ${toType})`,
+        de: (fromType, toType) =>
+            `Der itemType kann nicht geändert werden (Versuch von ${fromType} nach ${toType})`,
+        fr: (fromType, toType) =>
+            `Impossible de changer le itemType (tentative de ${fromType} vers ${toType})`,
+        es: (fromType, toType) =>
+            `No se puede cambiar el itemType (intento de ${fromType} a ${toType})`
+    },
 
     // Identifiable validation
-    603: {
+    614: {
         en: (fromId, toId) => 
             `Cannot change the id of an item (tried to change from ${fromId} to ${toId})`,
         de: (fromId, toId) => 
@@ -127,7 +164,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (fromId, toId) => 
             `No se puede cambiar el id de un elemento (intento de ${fromId} a ${toId})`
     },
-    604: {
+    615: {
         en: (fromSpec, toSpec) => 
             `Cannot change the specialization (tried to change from ${fromSpec} to ${toSpec})`,
         de: (fromSpec, toSpec) => 
@@ -138,26 +175,6 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `No se puede cambiar la especialización (intento de ${fromSpec} a ${toSpec})`
     },
 
-    610: {
-        en: (op, act, exp) =>
-            `${op}: Delivered ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen geliefert`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe sur ${exp} livrés`,
-        es: (op, act, exp) =>
-            `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
-    },
-    611: {
-        en: (op, act, exp, errors) =>
-            `${op}: Created ${act} of ${exp} graph items` + (errors ? ` with errors: ${errors}` : ''),
-        de: (op, act, exp, errors) =>
-            `${op}: ${act} von ${exp} Graph-Elementen erstellt` + (errors ? ` mit Fehlern: ${errors}` : ''),
-        fr: (op, act, exp, errors) =>
-            `${op}: ${act} éléments de graphe créés sur ${exp}` + (errors ? ` avec des erreurs: ${errors}` : ''),
-        es: (op, act, exp, errors) =>
-            `${op}: Se crearon ${act} de ${exp} elementos del grafo` + (errors ? ` con errores: ${errors}` : '')
-    },
 
 /*  currently not used:
     // ID validation (620-629)
@@ -511,16 +528,6 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         fr: (format, msg) => `Échec de l'analyse ${format}: ${msg}`,
         es: (format, msg) => `Error al analizar ${format}: ${msg}`
     },
-    691: {
-        en: (format, created, total) =>
-            `Imported ${created} of ${total} items from ${format}`,
-        de: (format, created, total) =>
-            `${created} von ${total} Elementen aus ${format} importiert`,
-        fr: (format, created, total) =>
-            `${created} éléments sur ${total} importés depuis ${format}`,
-        es: (format, created, total) =>
-            `${created} de ${total} elementos importados desde ${format}`
-    },
     692: {
         en: (url, statusText) =>
             `Failed to fetch URL ${url}: ${statusText}`,
@@ -571,19 +578,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: () =>
             `Tipo de fuente no compatible al leer un archivo como texto`
     },
-    698: {
-        en: (func) => `${func} not yet implemented`,
-        de: (func) => `${func} ist noch nicht implementiert`,
-        fr: (func) => `${func} pas encore implémenté`,
-        es: (func) => `${func} aún no implementado`
-    },
-    699: {
-        en: (msg) => msg.toString(),
-        de: (msg) => msg.toString(),
-        fr: (msg) => msg.toString(),
-        es: (msg) => msg.toString()
-    },
-    700: {
+    697: {
         en: (filename, msg) =>
             `Failed to write file` + (filename ? ` '${filename}'` : '') + `: ${msg}`,
         de: (filename, msg) =>
@@ -593,7 +588,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (filename, msg) =>
             `Error al escribir el archivo` + (filename ? ` '${filename}'` : '') + `: ${msg}`
     },
-    701: {
+    698: {
         en: (filename, msg) =>
             `File save cancelled` + (filename ? ` for '${filename}'` : '') + (msg ? `: ${msg}` : ''),
         de: (filename, msg) =>
@@ -602,6 +597,12 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `Enregistrement du fichier annulé` + (filename ? ` pour '${filename}'` : '') + (msg ? `: ${msg}` : ''),
         es: (filename, msg) =>
             `Guardado de archivo cancelado` + (filename ? ` para '${filename}'` : '') + (msg ? `: ${msg}` : '')
+    },
+    699: {
+        en: (func) => `${func} not yet implemented`,
+        de: (func) => `${func} ist noch nicht implementiert`,
+        fr: (func) => `${func} pas encore implémenté`,
+        es: (func) => `${func} aún no implementado`
     }
 };
 

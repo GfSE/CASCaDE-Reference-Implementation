@@ -396,8 +396,9 @@ function makeIdObjects(
     if (mutate) {
         for (const k of Object.keys(obj)) {
             const v = obj[k];
-            if (k === idKey || k === typeKey || k === '@context' || k === '@graph') {
-                // keep the actual id property, @type, @context, and @graph unchanged (JSON-LD reserved keywords)
+            if ([idKey, typeKey, '@context', '@graph', '@value', '@language'].includes(k)) {
+                // keep JSON-LD reserved keywords unchanged (@id, @type, @context, @graph, @value, @language)
+                // @value must preserve literal values and never be expanded to objects with @id
                 obj[k] = v;
             } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
                 obj[k] = { [idKey]: v } as unknown as JsonValue;
@@ -411,8 +412,9 @@ function makeIdObjects(
     const out: JsonObject = {};
     for (const k of Object.keys(obj)) {
         const v = obj[k];
-        if (k === idKey || k === typeKey || k === '@context' || k === '@graph') {
-            // preserve '@id', '@type', '@context', and '@graph' raw values (JSON-LD reserved keywords)
+        if (k === idKey || k === typeKey || k === '@context' || k === '@graph' || k === '@value' || k === '@language') {
+            // preserve JSON-LD reserved keywords raw values (@id, @type, @context, @graph, @value, @language)
+            // @value must preserve literal values and never be expanded to objects with @id
             out[k] = v;
         } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
             out[k] = { [idKey]: v } as unknown as JsonValue;

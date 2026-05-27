@@ -1168,7 +1168,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             const st = rsp.status();
             // console.info(`Package ${pkgJsonLD['@id']}:`, st.statusText ?? st.status);
             expect(st.ok).toBe(false);
-            expect(st.status).toBe(611);
+            expect(st.status).toBe(603);
             expect(st.statusText).toContain("has no enumerated value 'o:Fibonacci-4'");
         });
 
