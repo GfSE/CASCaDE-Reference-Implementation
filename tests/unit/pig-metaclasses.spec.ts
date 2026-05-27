@@ -20,6 +20,7 @@ import { XsDataType, PigItemType,
     IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,
     Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, /* ASourceLink,*/ ATargetLink
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
+import { getJSONLD } from '../../src/common/export/jsonld/getJSONLD';
 
 describe("PIG Metaclasses", () => {
     let Property_input: IProperty;
@@ -269,7 +270,7 @@ describe("PIG Metaclasses", () => {
         expect(propertyClass_output).toEqual(Property_input);
 
         // check the output as JSON-LD:
-        const propertyClass_output_JSONLD = inst.getJSONLD();
+        const propertyClass_output_JSONLD = getJSONLD(inst);
         expect(propertyClass_output_JSONLD).toEqual(Property_input_JSONLD);
 
         // input JSON-LD to JSON conversion check;
@@ -307,7 +308,7 @@ describe("PIG Metaclasses", () => {
         expect(refClass_output).toEqual(Link_shows_input);
 
         // check the output as JSON-LD:
-        const linkClass_output_JSONLD = inst.getJSONLD();
+        const linkClass_output_JSONLD = getJSONLD(inst);
         expect(linkClass_output_JSONLD).toEqual(Link_shows_input_JSONLD);
 
         // input JSON-LD to JSON conversion check
@@ -440,8 +441,8 @@ describe("PIG Metaclasses", () => {
         expect(anEntity_with_ref_input).toMatchObject(anEntity_output);
 
         // check the output as JSON-LD:
-        const anEntity_output_JSONLD = inst.getJSONLD();
-        // console.debug('pig:anEntity.getJSONLD():', anEntity_output_JSONLD);
+        const anEntity_output_JSONLD = getJSONLD(inst);
+        // console.debug('getJSONLD(anEntity):', anEntity_output_JSONLD);
         // Due to possible different order of properties, use toMatchObject for partial deep comparison;
         // succeeds if the properties of the latter are found in the former with the same values:
         expect(anEntity_output_JSONLD).toMatchObject(anEntity_with_ref_input_JSONLD);

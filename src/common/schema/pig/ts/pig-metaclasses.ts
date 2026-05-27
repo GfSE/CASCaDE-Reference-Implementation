@@ -32,9 +32,12 @@
  * - To avoid access to the cache in the validation methods, the validation of references to classes shall be done in an overall consistency check;
  * - Links to other items are stored as simple strings (the URIs) to avoid deep object graphs;
  *   those references are expanded to id objects only when serializing to JSON-LD.
- * - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
- * - The 'getJSONLD' and 'setJSONLD' methods handle conversion to/from JSON-LD representation.
  * - The 'set' methods are chainable to allow concise code when creating new instances.
+ * - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
+ * - The 'setJSONLD' methods handles conversion from JSON-LD representation.
+ * - There are no 'getJSONLD' methods for the core classes. Instead, the data is transformed to JSON-LD in a separate module
+ *   providing a getJSONLD() function for all itemTypes. The reason is to avoid that this module is getting huge.
+ * - Similar for getHTML() and others.
  * - Programming errors result in exceptions, data errors in IMsg return values.
  * - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
  *   and is now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
@@ -78,7 +81,7 @@ export type TPigElement = Entity | Relationship;
 export type TPigAnElement = APackage | AnEntity | ARelationship;
 export type TPigItem = TPigClass | TPigAnElement;
 export type stringXML = string;  // contains XML code
-export type ElementXML = globalThis.Element;  // DOM Element typ
+export type ElementXML = globalThis.Element;  // DOM Element type
 
 export const PigItemType = {
     // PIG classes:
@@ -538,12 +541,6 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // Set the normalized object in the concrete subclass
         return ld;
     }
-    protected getJSONLD() {
-        const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
-        // LOG.debug('Identifiable.getJSONLD: ', jld);
-        return makeIdObjects(jld) as JsonObject;
-        // no sorting for abstract classes
-    }
     /**
      * Generic XML parsing for all Identifiable subclasses
      * Parses XML to JSON and delegates to set()
@@ -589,11 +586,6 @@ abstract class ALink extends Item implements IALink {
         let _itm = MVF.renameJsonTags(itm, MVF.fromJSONLD, { mutate: false }) as any;
         _itm = replaceIdObjects(_itm) as any;
         return this.set(_itm);
-    }
-    protected getJSONLD() {
-        const jld = MVF.renameJsonTags(this.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
-        return makeIdObjects(jld) as JsonObject;
-        // no sorting for abstract classes
     }
 }
 interface IElement extends IIdentifiable {
@@ -673,13 +665,6 @@ abstract class AnElement extends Identifiable implements IAnElement {
         // ... not superseded by any subclass, thus *not* protected.
         const _itm = this.fromJSONLD(itm) as any;
         return this.set(_itm);
-    }
-    protected getJSONLD() {
-        let jld = super.getJSONLD();
-
-        jld = this.xConfigurablesToJSONLD(jld, 'hasProperty');
-        return this.xConfigurablesToJSONLD(jld, 'hasTargetLink');
-        // no sorting for abstract classes
     }
     /**
      * Collect configurable properties and references from a JSON-LD object.
@@ -769,57 +754,6 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
         return properties;
     }
-    /**
-     * Transform hasProperty, hasSourceLink or hasTargetLink arrays for JSON-LD output.
-     * It is assumed that the native property names have already been renamed with MVF.renameJsonTags( ..., MVF.toJSONLD).
-     */
-    protected xConfigurablesToJSONLD(
-        jld: JsonObject,
-        hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
-    ): JsonObject {
-        const items = (this as any)[hasX];
-        //    LOG.debug('xConfigurablesToJSONLD:', jld, this, hasX, items);
-        if (!Array.isArray(items)) {
-            return jld;
-        }
-
-        const grouped = new Map<TPigId, JsonObject[]>();
-
-        for (const item of items) {
-            const propValue: Record<string, JsonValue> = {
-                [`${DEF.pfxNsMeta}itemType`]: { ['@id']: item.itemType } as JsonObject
-            };
-
-            // Add value if present (only for AProperty)
-            if ('value' in item && item.value !== undefined) {
-                propValue['@value'] = item.value;
-            }
-
-            // Add idRef if present
-            if (item.idRef !== undefined) {
-                propValue['@id'] = item.idRef;
-            }
-
-            const key = item.hasClass as TPigId;
-            if (!grouped.has(key)) {
-                grouped.set(key, []);
-            }
-
-            const gr = grouped.get(key);
-            if (Array.isArray(gr))
-                gr.push(propValue as JsonObject);
-            else
-                throw new Error(`Invalid group for key: ${key}`);
-        }
-
-        // Add grouped items to JSON-LD
-        for (const [key, values] of grouped) {
-            jld[key] = values as JsonValue;
-        }
-
-        delete jld[hasX];
-        return jld;
-    }
 }
 
 //////////////////////////////////////
@@ -904,9 +838,6 @@ export class Enumeration extends Identifiable implements IEnumeration {
         }
 
         return this.set(_itm);
-    }
-    getJSONLD() {
-        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 export interface IProperty extends IIdentifiable {
@@ -1009,9 +940,6 @@ export class Property extends Identifiable implements IProperty {
 
         return this.set(_itm);
     }
-    getJSONLD() {
-        return LIB.sortJsonLdKeys(super.getJSONLD());
-    }
 }
 export interface ILink extends IIdentifiable {
     enumeratedEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
@@ -1068,9 +996,6 @@ export class Link extends Identifiable implements ILink {
         const _itm = this.fromJSONLD(itm) as any;
         return this.set(_itm);
     }
-    getJSONLD() {
-        return LIB.sortJsonLdKeys(super.getJSONLD());
-    }
 }
 
 export interface IEntity extends IElement {
@@ -1126,9 +1051,6 @@ export class Entity extends Element implements IEntity {
     setJSONLD(itm: any) {
         const _itm = this.fromJSONLD(itm) as any;
         return this.set(_itm);
-    }
-    getJSONLD() {
-        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 
@@ -1191,9 +1113,6 @@ export class Relationship extends Element implements IRelationship {
     setJSONLD(itm: any) {
         const _itm = this.fromJSONLD(itm) as any;
         return this.set(_itm);
-    }
-    getJSONLD() {
-        return LIB.sortJsonLdKeys(super.getJSONLD());
     }
 }
 
@@ -1333,11 +1252,6 @@ export class AnEntity extends AnElement implements IAnElement {
             ... super.get(),
         });
     }
-    getJSONLD() {
-        const jld = super.getJSONLD();
-    //    LOG.debug('AnEntity.getJSONLD: ', out);
-        return LIB.sortJsonLdKeys(jld);
-    }
 }
 
 export interface IARelationship extends IAnElement {
@@ -1392,12 +1306,6 @@ export class ARelationship extends AnElement implements IARelationship {
         const _itm = super.fromJSONLD(itm) as any;
         _itm.hasSourceLink = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
         return _itm;
-    }
-    getJSONLD() {
-        let jld = super.getJSONLD();
-        jld = this.xConfigurablesToJSONLD(jld, 'hasSourceLink');
-        //    LOG.debug('AnEntity.getJSONLD: ', out);
-        return LIB.sortJsonLdKeys(jld);
     }
 }
 // For packages:
@@ -1532,90 +1440,6 @@ export class APackage extends AnElement implements IAPackage {
         // LOG.debug(`APackage.setJSONLD: package ${JSON.stringify(this, null, 2)} set with status`, this.lastStatus);
         // return the instantiated graph with instantiated graph items:
         return this;
-    }
-
-    getJSONLD() {
-        let jld = super.getJSONLD();
-
-        jld = this.xContextToJSONLD(jld);
-        jld = this.xGraphToJSONLD(jld);
-
-        //    LOG.debug('APackage.getJSONLD: ', out);
-        return LIB.sortJsonLdKeys(jld);
-    }
-
-    /**
-     * Transform context from internal INamespace[] format to JSON-LD @context format
-     * @param jld - JSON-LD object with '@context' property in internal format
-     * @returns JSON-LD object with '@context' property in JSON-LD format
-     * 
-     * Internal format: @context = [{ tag: "cas:", uri: "https://..." }, ...]
-     * JSON-LD format:  @context = { "cas": "https://...", ... }
-     */
-    private xContextToJSONLD(jld: JsonObject): JsonObject {
-        const ctx = jld['@context'];
-
-        if (!ctx || !Array.isArray(ctx)) {
-            // Context is already in JSON-LD format (object or string) or doesn't exist
-            return jld;
-        }
-
-        // Transform INamespace[] to JSON-LD @context object
-        const contextObj: Record<string, string> = {};
-
-        for (const ns of ctx) {
-            // Skip if not a valid object
-            if (!ns || typeof ns !== 'object' || Array.isArray(ns)) {
-                continue;
-            }
-            if (!('tag' in ns) || !('uri' in ns)) {
-                continue;
-            }
-
-            const tag = ns.tag;
-            const uri = ns.uri;
-
-            // Ensure tag and uri are strings
-            if (typeof tag === 'string' && typeof uri === 'string') {
-                // Remove trailing colon from tag for JSON-LD format
-                const key = tag.endsWith(':') ? tag.slice(0, -1) : tag;
-                contextObj[key] = uri;
-            }
-        }
-
-        // Replace '@context' array with object
-        jld['@context'] = contextObj;
-
-        return jld;
-    }
-
-    /**
-     * Transform graph items to JSON-LD format
-     * @param jld - JSON-LD object with '@graph' property
-     * @returns JSON-LD object with '@graph' property containing JSON-LD items
-     */
-    private xGraphToJSONLD(jld: JsonObject): JsonObject {
-        const graph = jld['@graph'];
-
-        if (!graph || !Array.isArray(graph) || graph.length === 0) {
-            return jld;
-        }
-
-        // Transform each graph item to JSON-LD
-        // The graph items are already in native format (from get()), need to convert to JSON-LD
-        const graphLD = this.graph.map(item => {
-            // Call getJSONLD on each item if available
-            if ('getJSONLD' in item && typeof (item as any).getJSONLD === 'function') {
-                return (item as any).getJSONLD();
-            }
-            // Fallback: return item as-is (shouldn't happen)
-            return item;
-        });
-
-        // Replace '@graph' with graph items in JSON-LD format
-        jld['@graph'] = graphLD;
-
-        return jld;
     }
 
     setXML(xmlString: stringXML, options?:any) {
@@ -1853,6 +1677,8 @@ export class APackage extends AnElement implements IAPackage {
      * Compatible with JSON-LD @context format
      * 
      * @param xmlString - XML string containing namespace declarations
+     * @param docId - Document ID for logging purposes
+     * 
      * @returns Context as INamespace[], string, Record<string, string>, or undefined
      * 
      * @example
@@ -2138,75 +1964,6 @@ function extractId(obj: unknown): string | undefined {
     return rspOK;
 } */
 
-/**
- * Convert valid id-strings to id-objects.
- * - Accepts any JsonValue (string/number/boolean/null/object/array).
- * - Recursively processes arrays and objects (non-flat).
- * - Skips converting the actual id property (default '@id').
- * - options.idKey: output id key (default '@id')
- * - options.mutate: if true modify in-place, otherwise return a new structure
- */
-function makeIdObjects(
-    node: JsonValue,
-    options?: { idKey?: string; mutate?: boolean }
-): JsonValue {
-    const idKey = options?.idKey ?? '@id';
-    const typeKey = '@type';
-    const mutate = !!options?.mutate;
-
-    // primitives
-    if (node === null || node === undefined) return node;
-    if (typeof node === 'string') {
-        return PigItem.isValidIdString(node) ? ({ [idKey]: node } as JsonObject) : node;
-    }
-    if (typeof node === 'number' || typeof node === 'boolean') return node;
-
-    // array: map elements
-    if (Array.isArray(node)) {
-        if (mutate) {
-            for (let i = 0; i < node.length; i++) {
-                node[i] = makeIdObjects(node[i], options);
-            }
-            return node;
-        }
-        const outArr: JsonArray = [];
-        for (let i = 0; i < node.length; i++) {
-            outArr[i] = makeIdObjects(node[i], options);
-        }
-        return outArr;
-    }
-
-    // object: handle the idKey specially (do not convert its string value)
-    const obj = node as JsonObject;
-    if (mutate) {
-        for (const k of Object.keys(obj)) {
-            const v = obj[k];
-            if (k === idKey || k === typeKey || k === '@context' || k === '@graph') {
-                // keep the actual id property, @type, @context, and @graph unchanged (JSON-LD reserved keywords)
-                obj[k] = v;
-            } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
-                obj[k] = { [idKey]: v } as unknown as JsonValue;
-            } else {
-                obj[k] = makeIdObjects(v, options);
-            }
-        }
-        return obj;
-    }
-
-    const out: JsonObject = {};
-    for (const k of Object.keys(obj)) {
-        const v = obj[k];
-        if (k === idKey || k === typeKey || k === '@context' || k === '@graph') {
-            // preserve '@id', '@type', '@context', and '@graph' raw values (JSON-LD reserved keywords)
-            out[k] = v;
-        } else if (typeof v === 'string' && PigItem.isValidIdString(v)) {
-            out[k] = { [idKey]: v } as unknown as JsonValue;
-        } else {
-            out[k] = makeIdObjects(v, options);
-        }
-    }
-    return out;
-}
 /**
  * Replace id-objects (e.g. { id: "xyz" } or { "@id": "xyz" }) by the id string.
  * - options.idKeys: array of keys to treat as id keys (default ['id','@id'])
@@ -2873,45 +2630,3 @@ export function getLocalText(texts?: ILanguageText[], lang?: tagIETF): string {
     // Fallback to first available text
     return texts[0].value;
 }
-
-/**
- * Replace top-level string values that are valid id-strings with id-objects.
- * - Non-recursive (flat): only replaces direct properties of the provided object.
- * - Uses existing `PigItem.isValidIdString` to decide whether a string is an ID.
- * - options.idKey: property name for the id-object (default '@id')
- * - options.mutate: if true, modify the input object in-place; otherwise return a shallow copy
- *
-function makeIdObjects(
-    obj: JsonObject,
-    options?: { idKey?: string; mutate?: boolean }
-): JsonObject {
-    const idKey = options?.idKey ?? '@id';
-    const mutate = !!options?.mutate;
-    const target: JsonObject = mutate ? obj : { ...obj };
-
-    for (const k of Object.keys(obj)) {
-        const v = obj[k];
-        // replace all id-strings except for the '@id' property itself:
-        if (k !== idKey && typeof v === 'string' && PigItem.isValidIdString(v)) {
-            // replace string by an id-object, using the configured idKey
-            target[k] = { [idKey]: v } as unknown as JsonValue;
-        } else if (!mutate) {
-            // ensure non-mutating mode copies non-id values
-            target[k] = v;
-        }
-    }
-
-    return target;
-} */
-/**
- * Build a simple id-object.
- * - useJsonLd=false => { id: 'xyz' }
- * - useJsonLd=true  => { '@id': 'xyz' }
- *
-function buildIdObject(id: string, useJsonLd = false): JsonObject {
-    return useJsonLd ? { ['@id']: id } : { id };
-}
-makeIdObject(str: string): JsonObject {
-        return { id: str };
-}
-*/
