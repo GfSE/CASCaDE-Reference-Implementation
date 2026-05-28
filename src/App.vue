@@ -65,4 +65,8 @@
     h3 {
         text-align: center;
     }
+
+    .main-content {
+        height: 100%;
+    }
 </style>

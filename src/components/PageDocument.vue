@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="fill-height">
+    <v-container fluid class="page-document-container">
         <v-row class="fill-height">
             <!-- LEFT PANE -->
             <v-col cols="3" class="fill-height">
@@ -47,7 +47,6 @@
     import { LOG } from '@/common/lib/helpers'
 
     function extractTitle(html: string): string | null {
-        LOG.debug('Extracting title from HTML:', html);
         const match = html.match(/<[^>]*class=["'][^"']*meta-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);
         return match ? match[1] : null;
     }
@@ -126,10 +125,14 @@
 </script>
 
 <style scoped>
+    .page-document-container {
+        height: 100%;
+        padding: 0;
+    }
+
     .fill-height {
-        height: 100vh !important;
-        min-height: 0 !important;
-        max-height: 100vh !important;
+        height: 100%;
+        min-height: 0;
     }
 
     .pane-card {
