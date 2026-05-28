@@ -29,6 +29,18 @@ export type JsonArray = Array<JsonValue>
 export type tagIETF = string; // contains IETF language tag
 export type TISODateString = string;
 
+export interface INamespace {
+    tag: string; // e.g. a namespace tag, e.g. "cas:"
+    uri: string; // e.g. a namespace value, e.g. "https://product-information-graph.org/"
+}
+export interface ILanguageText {
+    value: string;
+    lang?: tagIETF;
+}
+export interface IText {
+    value: string;
+}
+
 /**
  * Standard XML Namespaces used in PIG XML documents
  * Collected from tests/data/XML files
@@ -256,6 +268,41 @@ export const LIB = {
         }
         return result;
     },
+    /**
+     * Strip HTML tags from a string, returning only the text content.
+     * Uses DOMParser to safely parse HTML without jQuery dependency.
+     * Prevents XSS attacks by not using regex.
+     * 
+     * @param html - HTML string to strip tags from
+     * @returns Plain text content without HTML tags
+     * 
+     * @example
+     * const html = '<p>Hello <strong>World</strong></p>';
+     * const text = LIB.stripHTML(html);
+     * // Returns: 'Hello World'
+     */
+    stripHTML(html: string): string {
+        if (!html || typeof html !== 'string') return '';
+
+        // Use DOMParser to safely parse HTML
+        if (typeof DOMParser !== 'undefined') {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            return doc.body.textContent?.trim() || '';
+        }
+
+        // Fallback for Node.js environment (if DOMParser not available)
+        // Use a simple but safe approach: remove tags
+        return html
+            .replace(/<[^>]*>/g, '') // Remove tags
+        /*    .replace(/&lt;/g, '<')    // Decode HTML entities
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'") */
+            .trim();
+    },
+
 /*    stripUndefinedAndNull<T extends object>(obj: T): T {
         function strip(val: unknown): unknown {
             if (val === undefined) return undefined;
@@ -395,6 +442,24 @@ export const LIB = {
         } catch {
             return dateStr;
         }
+    },
+    // Helper function to get localized text from multi-language array
+    getLocalText(texts ?: ILanguageText[], lang ?: tagIETF): string {
+        if (!texts || texts.length === 0) return '';
+
+        lang = lang ?? 'en-US';
+
+        // Try to find exact language match
+        const exact = texts.find(t => t.lang === lang);
+        if (exact) return exact.value;
+
+        // Try to find language prefix match (e.g., 'en' for 'en-US')
+        const langPrefix = lang.split('-')[0];
+        const prefixMatch = texts.find(t => t.lang?.startsWith(langPrefix));
+        if (prefixMatch) return prefixMatch.value;
+
+        // Fallback to first available text
+        return texts[0].value;
     }
 };
 

@@ -61,13 +61,13 @@ interface SaveFilePickerOptions {
     suggestedName?: string;
     types?: FilePickerAcceptType[];
 }
-interface FileSystemWritableFileStream extends WritableStream {
+/* interface FileSystemWritableFileStream extends WritableStream {
     write(data: BufferSource | Blob | string): Promise<void>;
     close(): Promise<void>;
 }
 interface FileSystemFileHandle {
     createWritable(): Promise<FileSystemWritableFileStream>;
-}
+} */
 
 // Cache for loaded modules
 let cachedDOMParser: typeof DOMParser | null = null;

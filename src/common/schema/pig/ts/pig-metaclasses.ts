@@ -67,10 +67,10 @@
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
 import { DEF, RE } from "../../../lib/definitions";
-import { LIB, LOG } from "../../../lib/helpers";
+import { LIB, LOG, INamespace, ILanguageText, IText } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
 import { PLI, NodeType } from "../../../lib/platform-independence";
-import { JsonPrimitive, JsonValue, JsonArray, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
+import { JsonPrimitive, JsonValue, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage } from './pig-package-constraints';
 
@@ -375,17 +375,7 @@ export class PigItem {
         return normalized;
     }
 }
-export interface INamespace {
-    tag: string; // e.g. a namespace tag, e.g. "cas:"
-    uri: string; // e.g. a namespace value, e.g. "https://product-information-graph.org/"
-}
-export interface ILanguageText {
-    value: string;
-    lang?: tagIETF;
-}
-export interface IText {
-    value: string;
-}
+
 //////////////////////////////////////
 // The abstract classes:
 
@@ -2605,23 +2595,4 @@ function getXmlElementText(xmlElement: ElementXML): string {
         // Return plain text content
         return xmlElement.textContent?.trim() || '';
     }
-}
-
-// Helper function to get localized text from multi-language array
-export function getLocalText(texts?: ILanguageText[], lang?: tagIETF): string {
-    if (!texts || texts.length === 0) return '';
-
-    lang = lang ?? 'en-US';
-
-    // Try to find exact language match
-    const exact = texts.find(t => t.lang === lang);
-    if (exact) return exact.value;
-
-    // Try to find language prefix match (e.g., 'en' for 'en-US')
-    const langPrefix = lang.split('-')[0];
-    const prefixMatch = texts.find(t => t.lang?.startsWith(langPrefix));
-    if (prefixMatch) return prefixMatch.value;
-
-    // Fallback to first available text
-    return texts[0].value;
 }
