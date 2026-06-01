@@ -51,13 +51,13 @@
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
  * - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *   PigItem.normalizeId() shortly before validate() in set() ?
- * - Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
+ * ✅ Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
  * ✅ Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed? --> YES.
- * - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names
+ * - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names using normalizeId()
  * - allow packages to be nested
  * - implement the import of configurable properties and links for aPackage.
  * - Consider the storage of numeric and boolean values: should be string?
- * - Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}?
+ * ✅ Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}? --> keep as is
  * - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
  *   This code could just *ignore* additional properties.
  * - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
@@ -2274,8 +2274,10 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             // Group regular child elements by tag name
             const elements = childElementsByTag.get(childTagName);
             if (elements) {
+                // push to respective group childElementsByTag, if it already exists
                 elements.push(childElement);
             } else {
+                // otherwise, create new group with this child as first element
                 childElementsByTag.set(childTagName, [childElement]);
             }
 

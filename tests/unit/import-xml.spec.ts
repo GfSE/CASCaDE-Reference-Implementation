@@ -139,15 +139,29 @@ describe('import XML - ID normalization', () => {
                         <${DEF.pfxNsMeta}enumeratedEndpoint>Priority-Values</${DEF.pfxNsMeta}enumeratedEndpoint>
                     </${DEF.pfxNsMeta}Link>
 
-                    <!-- 4. Relationship class -->
+                    <!-- 4. Link class for Relationship source -->
+                    <${DEF.pfxNsMeta}Link id="toSource">
+                        <${DEF.pfxNsMeta}hasClass>owl:ObjectProperty</${DEF.pfxNsMeta}hasClass>
+                        <dcterms:title xml:lang="en">to Source</dcterms:title>
+                        <${DEF.pfxNsMeta}enumeratedEndpoint>Requirement</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    </${DEF.pfxNsMeta}Link>
+
+                    <!-- 5. Link class for Relationship target -->
+                    <${DEF.pfxNsMeta}Link id="toTarget">
+                        <${DEF.pfxNsMeta}hasClass>owl:ObjectProperty</${DEF.pfxNsMeta}hasClass>
+                        <dcterms:title xml:lang="en">to Target</dcterms:title>
+                        <${DEF.pfxNsMeta}enumeratedEndpoint>Requirement</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    </${DEF.pfxNsMeta}Link>
+
+                    <!-- 6. Relationship class -->
                     <${DEF.pfxNsMeta}Relationship id="dependsOn">
                         <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
                         <dcterms:title xml:lang="en">depends on</dcterms:title>
-                        <${DEF.pfxNsMeta}enumeratedSourceLink>Requirement</${DEF.pfxNsMeta}enumeratedSourceLink>
-                        <${DEF.pfxNsMeta}enumeratedTargetLink>Requirement</${DEF.pfxNsMeta}enumeratedTargetLink>
+                        <${DEF.pfxNsMeta}enumeratedSourceLink>toSource</${DEF.pfxNsMeta}enumeratedSourceLink>
+                        <${DEF.pfxNsMeta}enumeratedTargetLink>toTarget</${DEF.pfxNsMeta}enumeratedTargetLink>
                     </${DEF.pfxNsMeta}Relationship>
 
-                    <!-- 5. First anEntity instance -->
+                    <!-- 7. First anEntity instance -->
                     <${DEF.pfxNsMeta}anEntity id="Req-001">
                         <${DEF.pfxNsMeta}hasClass>Requirement</${DEF.pfxNsMeta}hasClass>
                         <dcterms:title xml:lang="en">System shall authenticate users</dcterms:title>
@@ -158,7 +172,7 @@ describe('import XML - ID normalization', () => {
                         </${DEF.pfxNsMeta}aTargetLink>
                     </${DEF.pfxNsMeta}anEntity>
 
-                    <!-- 6. Second anEntity instance -->
+                    <!-- 8. Second anEntity instance -->
                     <${DEF.pfxNsMeta}anEntity id="Req-002">
                         <${DEF.pfxNsMeta}hasClass>Requirement</${DEF.pfxNsMeta}hasClass>
                         <dcterms:title xml:lang="en">System shall log activities</dcterms:title>
@@ -169,16 +183,16 @@ describe('import XML - ID normalization', () => {
                         </${DEF.pfxNsMeta}aTargetLink>
                     </${DEF.pfxNsMeta}anEntity>
 
-                    <!-- 7. aRelationship instance -->
+                    <!-- 9. aRelationship instance -->
                     <${DEF.pfxNsMeta}aRelationship id="Dep-001">
                         <${DEF.pfxNsMeta}hasClass>dependsOn</${DEF.pfxNsMeta}hasClass>
                         <dcterms:modified>2026-01-01T12:00:00Z</dcterms:modified>
                         <${DEF.pfxNsMeta}aSourceLink>
-                            <${DEF.pfxNsMeta}hasClass>dependsOn</${DEF.pfxNsMeta}hasClass>
+                            <${DEF.pfxNsMeta}hasClass>toSource</${DEF.pfxNsMeta}hasClass>
                             <idRef>Req-001</idRef>
                         </${DEF.pfxNsMeta}aSourceLink>
                         <${DEF.pfxNsMeta}aTargetLink>
-                            <${DEF.pfxNsMeta}hasClass>dependsOn</${DEF.pfxNsMeta}hasClass>
+                            <${DEF.pfxNsMeta}hasClass>toTarget</${DEF.pfxNsMeta}hasClass>
                             <idRef>Req-002</idRef>
                         </${DEF.pfxNsMeta}aTargetLink>
                     </${DEF.pfxNsMeta}aRelationship>
@@ -186,7 +200,7 @@ describe('import XML - ID normalization', () => {
             </${DEF.pfxNsMeta}aPackage>`;
 
         // Import the package WITHOUT constraint checking to focus on ID normalization
-        const pkg = new APackage().setXML(xmlInput, { checkConstraints: [] });
+        const pkg = new APackage().setXML(xmlInput);
 
         // Check import status
         const status = pkg.status();
@@ -204,7 +218,9 @@ describe('import XML - ID normalization', () => {
         // Find items in graph
         const enumeration = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Enumeration);
         const entityClass = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Entity);
-        const linkClass = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Link);
+        const linkClass = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Link && item.id === 'o:hasPriority');
+        const toSourceLink = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Link && item.id === 'o:toSource');
+        const toTargetLink = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Link && item.id === 'o:toTarget');
         const relationshipClass = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Relationship);
         const entity1 = pkgData.graph?.find((item: any) => item.itemType === PigItemType.anEntity && item.id === 'd:Req-001');
         const entity2 = pkgData.graph?.find((item: any) => item.itemType === PigItemType.anEntity && item.id === 'd:Req-002');
@@ -235,17 +251,31 @@ describe('import XML - ID normalization', () => {
         expect(Array.isArray((linkClass as any)?.enumeratedEndpoint)).toBe(true);
         expect((linkClass as any)?.enumeratedEndpoint?.[0]).toBe('o:Priority-Values');  // Reference to class gets 'o:' prefix
 
-        // 4. Check Relationship class ID and enumerated links
+        // 4. Check toSource Link class ID and enumeratedEndpoint
+        expect(toSourceLink).toBeDefined();
+        expect(toSourceLink?.id).toBe('o:toSource');  // Classes get 'o:' prefix
+        expect((toSourceLink as any)?.enumeratedEndpoint).toBeDefined();
+        expect(Array.isArray((toSourceLink as any)?.enumeratedEndpoint)).toBe(true);
+        expect((toSourceLink as any)?.enumeratedEndpoint?.[0]).toBe('o:Requirement');  // Reference to Entity class gets 'o:' prefix
+
+        // 5. Check toTarget Link class ID and enumeratedEndpoint
+        expect(toTargetLink).toBeDefined();
+        expect(toTargetLink?.id).toBe('o:toTarget');  // Classes get 'o:' prefix
+        expect((toTargetLink as any)?.enumeratedEndpoint).toBeDefined();
+        expect(Array.isArray((toTargetLink as any)?.enumeratedEndpoint)).toBe(true);
+        expect((toTargetLink as any)?.enumeratedEndpoint?.[0]).toBe('o:Requirement');  // Reference to Entity class gets 'o:' prefix
+
+        // 6. Check Relationship class ID and enumerated links
         expect(relationshipClass).toBeDefined();
         expect(relationshipClass?.id).toBe('o:dependsOn');  // Classes get 'o:' prefix
         expect((relationshipClass as any)?.enumeratedSourceLink).toBeDefined();
         expect(Array.isArray((relationshipClass as any)?.enumeratedSourceLink)).toBe(true);
-        expect((relationshipClass as any)?.enumeratedSourceLink?.[0]).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
+        expect((relationshipClass as any)?.enumeratedSourceLink?.[0]).toBe('o:toSource');  // Reference to Link class gets 'o:' prefix
         expect((relationshipClass as any)?.enumeratedTargetLink).toBeDefined();
         expect(Array.isArray((relationshipClass as any)?.enumeratedTargetLink)).toBe(true);
-        expect((relationshipClass as any)?.enumeratedTargetLink?.[0]).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
+        expect((relationshipClass as any)?.enumeratedTargetLink?.[0]).toBe('o:toTarget');  // Reference to Link class gets 'o:' prefix
 
-        // 5. Check first anEntity instance
+        // 7. Check first anEntity instance
         expect(entity1).toBeDefined();
         expect(entity1?.id).toBe('d:Req-001');  // Instances get 'd:' prefix
         expect((entity1 as any)?.hasClass).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
@@ -255,7 +285,7 @@ describe('import XML - ID normalization', () => {
         expect((entity1 as any)?.hasTargetLink?.[0]?.hasClass).toBe('o:hasPriority');  // Reference to class gets 'o:' prefix
         expect((entity1 as any)?.hasTargetLink?.[0]?.idRef).toBe('o:priorityHigh');  // Reference to enumerated value gets 'o:' prefix (resolved via link class)
 
-        // 6. Check second anEntity instance
+        // 8. Check second anEntity instance
         expect(entity2).toBeDefined();
         expect(entity2?.id).toBe('d:Req-002');  // Instances get 'd:' prefix
         expect((entity2 as any)?.hasClass).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
@@ -265,19 +295,19 @@ describe('import XML - ID normalization', () => {
         expect((entity2 as any)?.hasTargetLink?.[0]?.hasClass).toBe('o:hasPriority');  // Reference to class gets 'o:' prefix
         expect((entity2 as any)?.hasTargetLink?.[0]?.idRef).toBe('o:priorityLow');  // Reference to enumerated value gets 'o:' prefix (resolved via link class)
 
-        // 7. Check aRelationship instance
+        // 9. Check aRelationship instance
         expect(relationship).toBeDefined();
         expect(relationship?.id).toBe('d:Dep-001');  // Instances get 'd:' prefix
         expect(relationship?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
         expect((relationship as any)?.hasSourceLink).toBeDefined();
         expect(Array.isArray((relationship as any)?.hasSourceLink)).toBe(true);
         expect((relationship as any)?.hasSourceLink?.length).toBe(1);
-        expect((relationship as any)?.hasSourceLink?.[0]?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
+        expect((relationship as any)?.hasSourceLink?.[0]?.hasClass).toBe('o:toSource');  // Reference to Link class gets 'o:' prefix
         expect((relationship as any)?.hasSourceLink?.[0]?.idRef).toBe('d:Req-001');  // Reference to instance gets 'd:' prefix
         expect((relationship as any)?.hasTargetLink).toBeDefined();
         expect(Array.isArray((relationship as any)?.hasTargetLink)).toBe(true);
         expect((relationship as any)?.hasTargetLink?.length).toBe(1);
-        expect((relationship as any)?.hasTargetLink?.[0]?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
+        expect((relationship as any)?.hasTargetLink?.[0]?.hasClass).toBe('o:toTarget');  // Reference to Link class gets 'o:' prefix
         expect((relationship as any)?.hasTargetLink?.[0]?.idRef).toBe('d:Req-002');  // Reference to instance gets 'd:' prefix
     });
 });

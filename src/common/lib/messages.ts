@@ -520,6 +520,26 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (format, errors) =>
             `Error en la validación del paquete ${format}: ${errors}`
     },
+    684: {
+        en: (linkId, enumCount, nonEnumCount) =>
+            `Link '${linkId}' has mixed enumeratedEndpoints: ${enumCount} point(s) to Enumeration(s) and ${nonEnumCount} point(s) to non-Enumeration(s). All endpoints must point exclusively to Enumerations or none of them should.`,
+        de: (linkId, enumCount, nonEnumCount) =>
+            `Link '${linkId}' hat gemischte enumeratedEndpoints: ${enumCount} zeigt/zeigen auf Enumeration(en) und ${nonEnumCount} auf Nicht-Enumeration(en). Alle Endpunkte müssen ausschließlich auf Enumerations zeigen oder keiner von ihnen sollte es.`,
+        fr: (linkId, enumCount, nonEnumCount) =>
+            `Le lien '${linkId}' a des enumeratedEndpoints mixtes: ${enumCount} pointe(nt) vers des Enumeration(s) et ${nonEnumCount} pointe(nt) vers des non-Enumeration(s). Tous les points de terminaison doivent pointer exclusivement vers des Enumerations ou aucun d'entre eux ne devrait le faire.`,
+        es: (linkId, enumCount, nonEnumCount) =>
+            `El enlace '${linkId}' tiene enumeratedEndpoints mixtos: ${enumCount} apunta(n) a Enumeration(es) y ${nonEnumCount} apunta(n) a no-Enumeration(es). Todos los puntos finales deben apuntar exclusivamente a Enumerations o ninguno de ellos debería hacerlo.`
+    },
+    685: {
+        en: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] references '${linkId}' - ${msg}`,
+        de: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] referenziert '${linkId}' - ${msg}`,
+        fr: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] référence '${linkId}' - ${msg}`,
+        es: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] referencia '${linkId}' - ${msg}`
+    },
 
     // General errors (690-699)
     690: {
