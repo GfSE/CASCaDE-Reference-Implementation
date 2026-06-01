@@ -88,7 +88,7 @@ export enum ConstraintCheckType {
 }
 
 /**
- * All available constraint checks
+ * All available constraint checks as a list
  */
 const allConstraintChecks: ConstraintCheckType[] = [
     ConstraintCheckType.UniqueIds,
@@ -105,6 +105,37 @@ const allConstraintChecks: ConstraintCheckType[] = [
     ConstraintCheckType.ValueRanges,
     ConstraintCheckType.enumeratedValues
 ];
+
+/**
+ * Ontologies that are available online;
+ * those don't need to be supplied by imported data.
+ * Note: This is a little more complicated than above, as DEF.pfxNsMeta is not known at compile time.
+ */
+export const KnownOntology = {
+    casMeta: DEF.pfxNsMeta,
+    casSemi: DEF.pfxNsSemi,
+    dcterms: DEF.pfxNsDcmi
+} as const;
+
+export type KnownOntology = typeof KnownOntology[keyof typeof KnownOntology];
+/**
+ * All known ontologies as a list
+ */
+const allKnownOntologies: KnownOntology[] = [
+    KnownOntology.casMeta,
+    KnownOntology.casSemi,
+    KnownOntology.dcterms
+];
+
+/**
+ * Check if a reference ID belongs to a known ontology namespace
+ * @param refId - Reference ID to check (e.g., 'cas:Entity', 'dcterms:modified')
+ * @returns true if the reference starts with a known ontology prefix
+ */
+function isKnownOntologyReference(refId: TPigId | undefined): boolean {
+    if (!refId) return false;
+    return allKnownOntologies.some(prefix => refId.startsWith(prefix));
+}
 
 /**
  * Check cross-item constraints for a package
@@ -858,6 +889,11 @@ function checkPropertyHasClass(
         return Msg.create(672, parentId, propIndex, 'missing hasClass');
     }
 
+    // Skip validation for known ontology references (e.g., cas:, dcterms:)
+    if (isKnownOntologyReference(prop.hasClass)) {
+        return rspOK;
+    }
+
     // LOG.debug(`checkPropertyHasClass: checking hasClass ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
     // LOG.debug(`checkPropertyHasClass: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
 
@@ -941,6 +977,11 @@ function checkLinkHasClass(
         return Msg.create(674, parentId, linkIndex, linkArrayName, 'missing hasClass');
     }
 
+    // Skip validation for known ontology references (e.g., cas:, dcterms:)
+    if (isKnownOntologyReference(link.hasClass)) {
+        return rspOK;
+    }
+
     const targetType = itemTypeMap.get(link.hasClass);
     if (!targetType) {
         return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.hasClass, 'not found in package');
@@ -991,6 +1032,11 @@ function checkEntityOrRelationshipReferences(
                     return Msg.create(674, iId, i, referenceType, `missing ${referenceType}`);
                 }
 
+                // Skip validation for known ontology references (e.g., cas:, dcterms:)
+                if (isKnownOntologyReference(referenceValue)) {
+                    continue;
+                }
+
                 // Expected type depends on whether we're checking hasClass or specializes:
                 // - hasClass: anEntity -> Entity, aRelationship -> Relationship
                 // - specializes: Entity -> Entity, Relationship -> Relationship
@@ -1033,6 +1079,11 @@ function checkPropertyOrLinkReferences(
 
             if (!referenceValue) {
                 // specializes is optional (can inherit from pig:Property directly)
+                continue;
+            }
+
+            // Skip validation for known ontology references (e.g., cas:, dcterms:)
+            if (isKnownOntologyReference(referenceValue)) {
                 continue;
             }
 

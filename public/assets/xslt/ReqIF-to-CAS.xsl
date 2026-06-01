@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cas="http://product-information-graph.org" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:csc="http://omg.org/CASCaRA/cas/" xmlns:reqif="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cas="http://product-information-graph.org" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:csc="http://omg.org/CASCaRA/cas/" xmlns:reqif="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd" xmlns:sh="http://www.w3.org/ns/shacl#" xmlns:xs="http://www.w3.org/2001/XMLSchema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
     <xsl:output method="xml" encoding="UTF-8" indent="yes" standalone="yes"/>
     <!-- Root template -->
     <xsl:template match="/">
@@ -49,14 +49,269 @@
                 </xsl:if>
             </dcterms:modified>
             <graph>
+                <!-- Collect all ATTRIBUTE-DEFINITIONS from all OBJECT-TYPEs -->
+                <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT-TYPE']/*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]"/>
+                <xsl:apply-templates select="//*[local-name()='SPECIFICATION-TYPE']/*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]"/>
+                <xsl:apply-templates select="//*[local-name()='SPEC-RELATION-TYPE']/*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]"/>
+                <!-- Collect SPECIFICATION-TYPEs and OBJECT-TYPEs as Entities -->
+                <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT-TYPE']" mode="entity"/>
+                <xsl:apply-templates select="//*[local-name()='SPECIFICATION-TYPE']" mode="entity"/>
+                <xsl:apply-templates select="//*[local-name()='SPEC-RELATION-TYPE']" mode="relationship"/>
+                <!-- Collect all SPEC-OBJECTs -->
                 <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT']"/>
             </graph>
         </cas:aPackage>
     </xsl:template>
 
+    <!-- Template for ATTRIBUTE-DEFINITION-STRING -->
+    <xsl:template match="*[local-name()='ATTRIBUTE-DEFINITION-STRING']">
+        <cas:Property rdf:type="owl:DatatypeProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <sh:datatype>xs:string</sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <!-- Template for ATTRIBUTE-DEFINITION-XHTML -->
+    <xsl:template match="*[local-name()='ATTRIBUTE-DEFINITION-XHTML']">
+        <cas:Property rdf:type="owl:DatatypeProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <sh:datatype>xs:string</sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <!-- Template for ATTRIBUTE-DEFINITION-INTEGER -->
+    <xsl:template match="*[local-name()='ATTRIBUTE-DEFINITION-INTEGER']">
+        <cas:Property rdf:type="owl:DatatypeProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <sh:datatype>xs:integer</sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <!-- Template for ATTRIBUTE-DEFINITION-REAL -->
+    <xsl:template match="*[local-name()='ATTRIBUTE-DEFINITION-REAL']">
+        <cas:Property rdf:type="owl:DatatypeProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <sh:datatype>xs:double</sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <!-- Template for ATTRIBUTE-DEFINITION-BOOLEAN -->
+    <xsl:template match="*[local-name()='ATTRIBUTE-DEFINITION-BOOLEAN']">
+        <cas:Property rdf:type="owl:DatatypeProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <sh:datatype>xs:boolean</sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <!-- Template for ATTRIBUTE-DEFINITION-DATE -->
+    <xsl:template match="*[local-name()='ATTRIBUTE-DEFINITION-DATE']">
+        <cas:Property rdf:type="owl:DatatypeProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <sh:datatype>xs:dateTime</sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <!-- Template for ATTRIBUTE-DEFINITION-ENUMERATION -->
+    <xsl:template match="*[local-name()='ATTRIBUTE-DEFINITION-ENUMERATION']">
+        <cas:Property rdf:type="owl:DatatypeProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <sh:datatype>xs:string</sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <!-- Template for SPEC-OBJECT-TYPE as Entity -->
+    <xsl:template match="*[local-name()='SPEC-OBJECT-TYPE']" mode="entity">
+        <cas:Entity rdf:type="owl:Class">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <!-- Add enumeratedProperty for each ATTRIBUTE-DEFINITION -->
+            <xsl:for-each select="*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]">
+                <cas:enumeratedProperty>
+                    <xsl:value-of select="@IDENTIFIER"/>
+                </cas:enumeratedProperty>
+            </xsl:for-each>
+        </cas:Entity>
+    </xsl:template>
+
+    <!-- Template for SPECIFICATION-TYPE as Entity -->
+    <xsl:template match="*[local-name()='SPECIFICATION-TYPE']" mode="entity">
+        <cas:Entity rdf:type="owl:Class">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <!-- Add enumeratedProperty for each ATTRIBUTE-DEFINITION -->
+            <xsl:for-each select="*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]">
+                <cas:enumeratedProperty>
+                    <xsl:value-of select="@IDENTIFIER"/>
+                </cas:enumeratedProperty>
+            </xsl:for-each>
+        </cas:Entity>
+    </xsl:template>
+
+    <!-- Template for SPEC-RELATION-TYPE as Relationship -->
+    <xsl:template match="*[local-name()='SPEC-RELATION-TYPE']" mode="relationship">
+        <cas:Relationship rdf:type="owl:Class">
+            <xsl:attribute name="id">
+                <xsl:value-of select="@IDENTIFIER"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="@LONG-NAME"/>
+            </dcterms:title>
+            <xsl:if test="@DESC and string-length(@DESC) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="@DESC"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                <dcterms:modified>
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </dcterms:modified>
+            </xsl:if>
+            <!-- Add enumeratedProperty for each ATTRIBUTE-DEFINITION -->
+            <xsl:for-each select="*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]">
+                <cas:enumeratedProperty>
+                    <xsl:value-of select="@IDENTIFIER"/>
+                </cas:enumeratedProperty>
+            </xsl:for-each>
+        </cas:Relationship>
+    </xsl:template>
+
     <!-- Template for SPEC-OBJECT (entities) -->
     <xsl:template match="*[local-name()='SPEC-OBJECT']">
         <xsl:variable name="objectId" select="@IDENTIFIER"/>
+        <xsl:variable name="typeRef" select="*[local-name()='TYPE']/*[local-name()='SPEC-OBJECT-TYPE-REF']"/>
         <xsl:variable name="values" select="*[local-name()='VALUES']"/>
         <!-- Find attribute definition IDs for title and description -->
         <xsl:variable name="nameAttrDefString" select="//*[local-name()='ATTRIBUTE-DEFINITION-STRING'][
@@ -135,7 +390,10 @@
         <xsl:variable name="hasTitle" select="string-length(normalize-space($titleValue)) &gt; 0"/>
         <xsl:variable name="hasDescription" select="string-length(normalize-space($descriptionValue)) &gt; 0"/>
 
-        <cas:anEntity rdf:type="IREB:Requirement">
+        <cas:anEntity>
+            <xsl:attribute name="rdf:type">
+                <xsl:value-of select="$typeRef"/>
+            </xsl:attribute>
             <xsl:attribute name="id">
                 <xsl:value-of select="$objectId"/>
             </xsl:attribute>

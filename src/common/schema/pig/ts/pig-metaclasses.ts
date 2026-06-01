@@ -346,9 +346,10 @@ export class PigItem {
      * 
      * @param id - Raw ID from import (may lack namespace)
      * @param itemType - PIG item type to determine correct prefix
+     *                 - is undefined in case of references, which are always classes
      * @returns Normalized ID with namespace prefix
      */
-    static normalizeId(id: string, itemType: PigItemTypeValue): string {
+    static normalizeId(id: string, itemType?: PigItemTypeValue): string {
         if (!id || typeof(id) !== 'string') {
             return id;
         }
@@ -362,10 +363,11 @@ export class PigItem {
         // @ToDo: Check whether the namespaces for enumerated value types are correctly normalized with 'o:'
         // and also their references in properties
         let prefix: string;
-        if (PigItem.isClass(itemType)) {
+        if (!itemType || PigItem.isClass(itemType)) {
             prefix = DEF.defaultOntologyNamespace; // add a default namespace prefix for classes if missing
         //  else if (PigItem.isInstance(itemType)) {
         } else {
+            // includes all references within instances where itemType is undefined
             prefix = DEF.defaultDataNamespace; // add a default namespace prefix for instances if missing
         }
 
@@ -801,13 +803,19 @@ export class Enumeration extends Identifiable implements IEnumeration {
         return super.validate(itm);
     }
     set(itm: IEnumeration): this {
+        const _itm = LIB.stripUndefinedAndNull(itm) as IEnumeration;
+        // id is normalized in the caller (setXML or setJSONLD) on multiple levels
+        // For classes, the change information is optional and shall be used only for self-defined classes (as delivered in the package):
+        if (_itm.modified)
+            _itm.modified = normalizeDateTime(_itm.modified);
+
         // LOG.debug('Enumeration.set: '+ JSON.stringify(itm,null,2));
-        this.lastStatus = this.validate(itm);
+        this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
-            super.set(itm);
-            this.datatype = itm.datatype;
-            this.enumeratedValue = itm.enumeratedValue;
-            this.unit = itm.unit;
+            super.set(_itm);
+            this.datatype = _itm.datatype;
+            this.enumeratedValue = _itm.enumeratedValue;
+            this.unit = _itm.unit;
         }
         return this; // make chainable
     }
@@ -888,20 +896,26 @@ export class Property extends Identifiable implements IProperty {
         return super.validate(itm);
     }
     set(itm: IProperty): this {
+        const _itm = LIB.stripUndefinedAndNull(itm) as IProperty;
+        // id is normalized in the caller (setXML or setJSONLD) on multiple levels
+        // For classes, the change information is optional and shall be used only for self-defined classes (as delivered in the package):
+        if (_itm.modified)
+            _itm.modified = normalizeDateTime(_itm.modified);
+
         // LOG.debug('Property.set: '+ JSON.stringify(itm,null,2));
-        this.lastStatus = this.validate(itm);
+        this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
-            super.set(itm);
-            this.datatype = itm.datatype;
-            this.minCount = itm.minCount;
-            this.maxCount = itm.maxCount;
-            this.maxLength = itm.maxLength;
-            this.pattern = itm.pattern;
-            this.minInclusive = itm.minInclusive;
-            this.maxInclusive = itm.maxInclusive;
-            this.defaultValue = itm.defaultValue;
-            this.unit = itm.unit;
-            this.composes = itm.composes;
+            super.set(_itm);
+            this.datatype = _itm.datatype;
+            this.minCount = _itm.minCount;
+            this.maxCount = _itm.maxCount;
+            this.maxLength = _itm.maxLength;
+            this.pattern = _itm.pattern;
+            this.minInclusive = _itm.minInclusive;
+            this.maxInclusive = _itm.maxInclusive;
+            this.defaultValue = _itm.defaultValue;
+            this.unit = _itm.unit;
+            this.composes = _itm.composes;
         }
         return this; // make chainable
     }
@@ -965,12 +979,18 @@ export class Link extends Identifiable implements ILink {
         return super.validate(itm);
     }
     set(itm: ILink) {
-        this.lastStatus = this.validate(itm);
+        const _itm = LIB.stripUndefinedAndNull(itm) as ILink;
+        // id is normalized in the caller (setXML or setJSONLD) on multiple levels
+        // For classes, the change information is optional and shall be used only for self-defined classes (as delivered in the package):
+        if (_itm.modified)
+            _itm.modified = normalizeDateTime(_itm.modified);
+
+        this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
-            super.set(itm);
-            this.enumeratedEndpoint = itm.enumeratedEndpoint;
-            this.minCount = itm.minCount;
-            this.maxCount = itm.maxCount;
+            super.set(_itm);
+            this.enumeratedEndpoint = _itm.enumeratedEndpoint;
+            this.minCount = _itm.minCount;
+            this.maxCount = _itm.maxCount;
         }
         return this;
     }
@@ -1025,10 +1045,16 @@ export class Entity extends Element implements IEntity {
         return super.validate(itm);
     }
     set(itm: IEntity) {
-        this.lastStatus = this.validate(itm);
+        const _itm = LIB.stripUndefinedAndNull(itm) as IEntity;
+        // id is normalized in the caller (setXML or setJSONLD) on multiple levels
+        // For classes, the change information is optional and shall be used only for self-defined classes (as delivered in the package):
+        if (_itm.modified)
+            _itm.modified = normalizeDateTime(_itm.modified);
+
+        this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
-            super.set(itm);
-            this.enumeratedTargetLink = itm.enumeratedTargetLink;
+            super.set(_itm);
+            this.enumeratedTargetLink = _itm.enumeratedTargetLink;
         }
         return this;  // make chainable
     }
@@ -1084,12 +1110,18 @@ export class Relationship extends Element implements IRelationship {
         return super.validate(itm);
     }
     set(itm: IRelationship) {
-        this.lastStatus = this.validate(itm);
+        const _itm = LIB.stripUndefinedAndNull(itm) as IRelationship;
+        // id is normalized in the caller (setXML or setJSONLD) on multiple levels
+        // For classes, the change information is optional and shall be used only for self-defined classes (as delivered in the package):
+        if ( _itm.modified )
+            _itm.modified = normalizeDateTime(_itm.modified);
+
+        this.lastStatus = this.validate(_itm);
         if (this.lastStatus.ok) {
-            super.set(itm);
+            super.set(_itm);
             // each of the following have at least one entry if present, as checked by the JSON schema; if not present, all references are allowed:
-            this.enumeratedSourceLink = itm.enumeratedSourceLink;
-            this.enumeratedTargetLink = itm.enumeratedTargetLink;
+            this.enumeratedSourceLink = _itm.enumeratedSourceLink;
+            this.enumeratedTargetLink = _itm.enumeratedTargetLink;
         }
         return this;
     }
@@ -1229,7 +1261,7 @@ export class AnEntity extends AnElement implements IAnElement {
     }
     set(itm: IAnEntity) {
         const _itm = LIB.stripUndefinedAndNull(itm) as IAnEntity;
-
+        // id is normalized in the caller (setXML or setJSONLD) on multiple levels
         _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
 
         this.lastStatus = this.validate(_itm);
@@ -1279,7 +1311,7 @@ export class ARelationship extends AnElement implements IARelationship {
     set(itm: IARelationship) {
         const _itm = LIB.stripUndefinedAndNull(itm) as IARelationship;
         //LOG.debug('ARelationship.set():', _itm);
-        // id is normalized in the caller (setXML or setJSONLD)
+        // id is normalized in the caller (setXML or setJSONLD) on multiple levels
         _itm.modified = normalizeDateTime(_itm.modified) || new Date().toISOString();
 
         this.lastStatus = this.validate(_itm);
@@ -1346,9 +1378,9 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     set(pkg: IAPackage, options?:any): this {
-        const _pkg = { ...pkg };
-        // @ToDo: strip?
-        // id is normalized in the caller (setXML or setJSONLD)
+        // const _pkg = { ...pkg };
+        const _pkg = LIB.stripUndefinedAndNull(pkg) as IAPackage;
+        // id is normalized in the caller (setXML or setJSONLD) on multiple layers
         _pkg.modified = normalizeDateTime(_pkg.modified) || new Date().toISOString();
 
         // Instantiate each graph item:
@@ -1366,6 +1398,7 @@ export class APackage extends AnElement implements IAPackage {
                 // LOG.debug(`APackage.set: failed to instantiate item: `, JSON.stringify(item, null, 2));
             }
         }
+        // LOG.debug('APackage.set: ',JSON.stringify(_pkg, null, 2));
 
         const pkgValidation = this.validate(_pkg, options);
         if (!pkgValidation.ok)
@@ -2165,6 +2198,7 @@ function xmlToJson(xml: stringXML): IRsp<unknown> {
  * @returns JSON representation of the element
  */
 function xmlElementToJson(xmlElement: ElementXML): JsonObject {
+
     const result: JsonObject = {};
 
     // 1. Extract itemType from element tag name (only for valid PIG types)
@@ -2175,25 +2209,33 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         result.itemType = tagName;
     }
 
-    // 2. Extract all attributes as properties
+    // 2. Extract all attributes (within tag) as properties
     for (const attr of Array.from(xmlElement.attributes)) {
         const attrName = attr.name;
         const attrValue = attr.value;
 
+        // ToDo: Reconsider the following structure. It may assume cases that don't exist.
         if (attrName.startsWith('xmlns')) {
             continue;
-        } else if (attrName === 'id') {
-            // normalize always, including enumerated values
-            result.id = PigItem.normalizeId(attrValue, tagName);
+        } else if (attrName.endsWith('id')) {
+            // Special handling for enumeratedValue IDs - they should use ontology namespace
+            const localTagName = tagName.includes(':') ? tagName.split(':')[1] : tagName;
+            if (localTagName === 'enumeratedValue') {
+                // enumeratedValue IDs are part of ontology definitions, not data instances
+                result.id = PigItem.normalizeId(attrValue, PigItemType.Enumeration);
+            } else {
+                // normalize always, including enumerated values
+                result.id = PigItem.normalizeId(attrValue, tagName);
+            }
         } else if (attrName.endsWith('type') || attrName.endsWith('hasClass')) {
             // normalize if we have a valid PIG type
             result.hasClass = isValidPigElement
-                ? PigItem.normalizeId(attrValue, tagName)
+                ? PigItem.normalizeId(attrValue)  // references always point to a class
                 : attrValue;
         } else if (attrName.endsWith('specializes')) {
             // normalize if we have a valid PIG type
             result.specializes = isValidPigElement
-                ? PigItem.normalizeId(attrValue, tagName)
+                ? PigItem.normalizeId(attrValue)  // references always point to a class
                 : attrValue;
         } else {
             result[attrName] = attrValue;
@@ -2284,6 +2326,9 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         // Pass parent itemType for context-aware array detection
         const mustBeArray = requiresArray(propertyName /*, result.itemType as PigItemTypeValue */);
 
+        // Check if this property contains IDs that need normalization
+        const needsIdNormalization = requiresIdNormalization(propertyName);
+
         if (elements.length === 1 && !mustBeArray) {
             // Single element (and not forced to be array)
             const elem = elements[0];
@@ -2320,7 +2365,8 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                     } else if (propertyName.endsWith('maxInclusive')) {
                         result.maxInclusive = parseFloat(childText);
                     } else {
-                        result[propertyName] = childText;
+                        // Apply ID normalization if needed
+                        result[propertyName] = needsIdNormalization ? PigItem.normalizeId(childText) : childText;
                     }
                 } else {
                     result[propertyName] = xmlElementToJson(elem);
@@ -2343,7 +2389,8 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                     );
 
                     if (!hasChildElements && childText) {
-                        return childText;
+                        // Apply ID normalization if needed
+                        return needsIdNormalization ? PigItem.normalizeId(childText) : childText;
                     } else {
                         return xmlElementToJson(elem);
                     }
@@ -2393,6 +2440,25 @@ function requiresArray(propertyName: string /*, parentItemType?: PigItemTypeValu
     ].includes(localName);
 }
 /**
+ * Check if a property contains IDs that should be normalized
+ * These properties reference other PIG items and need namespace prefixes
+ */
+function requiresIdNormalization(propertyName: string): boolean {
+    // Remove namespace prefix for checking
+    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+    // Properties that contain TPigId references to other items
+    return [
+        'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
+        'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
+        'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]
+        'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
+        'composedProperty',       // Property.composedProperty?: TPigId[]
+        'specializes',            // Class.specializes?: TPigId
+        'hasClass'                // Instance hasClass references a class
+    ].includes(localName);
+}
+/**
  * Process cas:aProperty element
  * Extracts:
  * - rdf:type → hasClass
@@ -2407,7 +2473,7 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
     // Extract rdf:type and cas:hasClass as hasClass
     const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
-        prop.hasClass = rdfType;
+        prop.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
     }
 
     // Extract child elements
@@ -2419,14 +2485,14 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
             if (childTagName === 'value') {
                 prop.value = getXmlElementText(childElement);
             } else if (childTagName === 'idRef') {
-                prop.idRef = childElement.textContent?.trim() as JsonValue;
+                prop.idRef = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if (childTagName.endsWith('type')  || childTagName.endsWith('hasClass')) {
-                prop.hasClass = childElement.textContent?.trim() as JsonValue;
+                prop.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if (childTagName === 'composes') {
                 if (!prop.composes) {
                     prop.composes = [];
                 }
-                (prop.composes as string[]).push(childElement.textContent?.trim() || '');
+                (prop.composes as string[]).push(PigItem.normalizeId(childElement.textContent?.trim() as string));
             }
         }
     }
@@ -2451,7 +2517,7 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
     const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
         || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
-        link.hasClass = rdfType;
+        link.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
     }
 
     // Extract child elements
@@ -2461,12 +2527,154 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
             const childTagName = childElement.tagName;
 
             if (childTagName === 'idRef') {
-                link.idRef = childElement.textContent?.trim() as JsonValue;
+                const idRefValue = childElement.textContent?.trim() as string;
+
+                // Determine namespace based on link class definition
+                // If the link class's enumeratedEndpoint points to an Enumeration, idRef uses ontology namespace (o:)
+                // Otherwise, idRef points to an instance and uses data namespace (d:)
+                let targetItemType: PigItemTypeValue = PigItemType.anEntity; // default: data namespace
+
+                if (link.hasClass) {
+                    // Try to find the link class definition in the graph
+                    const linkClassId = link.hasClass as string;
+                    const linkClassElem = findLinkClassInGraph(elem, linkClassId);
+                    if (linkClassElem && enumeratedEndpointPointsToEnumeration(linkClassElem)) {
+                        // Link's enumeratedEndpoint points to an Enumeration, so idRef should use ontology namespace
+                        targetItemType = PigItemType.Enumeration;
+                    }
+                }
+
+                link.idRef = PigItem.normalizeId(idRefValue, targetItemType);
+            } else if (childTagName.endsWith('hasClass')) {
+                link.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
             }
         }
     }
 
     return link;
+}
+
+/**
+ * Find a Link class definition in the graph by traversing up the DOM tree
+ * @param linkElement - The aSourceLink or aTargetLink element
+ * @param linkClassId - The ID of the Link class to find (may have namespace prefix)
+ * @returns The Link element if found, null otherwise
+ */
+function findLinkClassInGraph(linkElement: ElementXML, linkClassId: string): ElementXML | null {
+    // Remove namespace prefix from search ID for comparison
+    const searchId = linkClassId.includes(':') ? linkClassId.split(':')[1] : linkClassId;
+
+    // Traverse up to find the graph element
+    let current = linkElement.parentNode;
+    while (current && current.nodeType === NodeType.ELEMENT_NODE) {
+        const elem = current as ElementXML;
+        const tagName = elem.tagName;
+        const localName = tagName.includes(':') ? tagName.split(':')[1] : tagName;
+
+        if (localName === 'graph') {
+            // Found the graph, now search for the Link class
+            for (const child of Array.from(elem.childNodes)) {
+                if (child.nodeType === NodeType.ELEMENT_NODE) {
+                    const childElem = child as ElementXML;
+                    const childTagName = childElem.tagName;
+                    const childLocalName = childTagName.includes(':') ? childTagName.split(':')[1] : childTagName;
+
+                    // Check if this is a Link or Relationship (both can have enumeratedEndpoint)
+                    if (childLocalName === 'Link' || childLocalName === 'Relationship') {
+                        const id = childElem.getAttribute('id');
+                        if (id) {
+                            // Compare without namespace prefix
+                            const idWithoutPrefix = id.includes(':') ? id.split(':')[1] : id;
+                            if (idWithoutPrefix === searchId) {
+                                return childElem;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        current = current.parentNode;
+    }
+    return null;
+}
+
+/**
+ * Check if a Link or Relationship element's first enumeratedEndpoint points to an Enumeration
+ * @param linkElement - The Link or Relationship element
+ * @returns true if the first enumeratedEndpoint points to an Enumeration
+ */
+function enumeratedEndpointPointsToEnumeration(linkElement: ElementXML): boolean {
+    // Find the first enumeratedEndpoint child
+    for (const child of Array.from(linkElement.childNodes)) {
+        if (child.nodeType === NodeType.ELEMENT_NODE) {
+            const childElem = child as ElementXML;
+            const tagName = childElem.tagName;
+            const localName = tagName.includes(':') ? tagName.split(':')[1] : tagName;
+            if (localName === 'enumeratedEndpoint') {
+                // Found enumeratedEndpoint, now check what it points to
+                // It should reference an Entity or Enumeration via text content
+                const endpointRefId = childElem.textContent?.trim();
+                if (endpointRefId) {
+                    // Look up the referenced element in the graph
+                    const referencedElement = findEntityOrEnumerationInGraph(linkElement, endpointRefId);
+                    if (referencedElement) {
+                        const refTagName = referencedElement.tagName;
+                        const refLocalName = refTagName.includes(':') ? refTagName.split(':')[1] : refTagName;
+                        return refLocalName === 'Enumeration';
+                    }
+                }
+                // Only check the first enumeratedEndpoint
+                return false;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Find an Entity or Enumeration definition in the graph by ID
+ * @param element - Any element within the graph
+ * @param targetId - The ID to search for (may have namespace prefix)
+ * @returns The Entity or Enumeration element if found, null otherwise
+ */
+function findEntityOrEnumerationInGraph(element: ElementXML, targetId: string): ElementXML | null {
+    // Remove namespace prefix from search ID for comparison
+    const searchId = targetId.includes(':') ? targetId.split(':')[1] : targetId;
+
+    // Traverse up to find the graph element
+    let current = element.parentNode;
+    while (current && current.nodeType === NodeType.ELEMENT_NODE) {
+        const elem = current as ElementXML;
+        const tagName = elem.tagName;
+        const localName = tagName.includes(':') ? tagName.split(':')[1] : tagName;
+
+        if (localName === 'graph') {
+            // Found the graph, now search for the Entity or Enumeration
+            for (const child of Array.from(elem.childNodes)) {
+                if (child.nodeType === NodeType.ELEMENT_NODE) {
+                    const childElem = child as ElementXML;
+                    const childTagName = childElem.tagName;
+                    const childLocalName = childTagName.includes(':') ? childTagName.split(':')[1] : childTagName;
+
+                    // Check if this is an Entity or Enumeration
+                    if (childLocalName === 'Entity' || childLocalName === 'Enumeration') {
+                        const id = childElem.getAttribute('id');
+                        if (id) {
+                            // Compare without namespace prefix
+                            const idWithoutPrefix = id.includes(':') ? id.split(':')[1] : id;
+                            if (idWithoutPrefix === searchId) {
+                                return childElem;
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+        }
+        current = current.parentNode;
+    }
+    return null;
 }
 
 /**

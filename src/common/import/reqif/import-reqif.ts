@@ -31,9 +31,9 @@ import { DEF } from '../../lib/definitions';
 import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
-import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage } from '../../schema/pig/ts/pig-metaclasses';
 import { XmlImporter } from '../xml/import-xml';
-import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
+// import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
 
 /**
  * ReqIF Importer
@@ -120,7 +120,7 @@ export class ReqifImporter {
             return rspTransform;
 
         const xmlString = rspTransform.response as string;
-        // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
+        LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
 
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
@@ -128,7 +128,7 @@ export class ReqifImporter {
             return schemaResult;
 
         // Instantiate APackage from transformed XML
-        const aPackage = new APackage().setXML(xmlString, {
+        const aPackage = new APackage().setXML(xmlString /*, {
             checkConstraints: [
                 ConstraintCheckType.UniqueIds,
                 // Input has only instances, so omit constraint checks on classes
@@ -137,7 +137,7 @@ export class ReqifImporter {
                 //    ConstraintCheckType.anEntityHasClass,
                 //    ConstraintCheckType.aRelationshipHasClass,
             ] as ConstraintCheckType[]
-        });
+        } */);
 
         // Check if package was successfully created
         if (!aPackage.status().ok) {
