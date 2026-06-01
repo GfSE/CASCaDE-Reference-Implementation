@@ -59,6 +59,8 @@
                 <xsl:apply-templates select="//*[local-name()='SPEC-RELATION-TYPE']" mode="relationship"/>
                 <!-- Collect all SPEC-OBJECTs -->
                 <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT']"/>
+                <!-- Collect all SPEC-RELATIONs -->
+                <xsl:apply-templates select="//*[local-name()='SPEC-RELATION']"/>
             </graph>
         </cas:aPackage>
     </xsl:template>
@@ -282,9 +284,12 @@
 
     <!-- Template for SPEC-RELATION-TYPE as Relationship -->
     <xsl:template match="*[local-name()='SPEC-RELATION-TYPE']" mode="relationship">
+        <xsl:variable name="relationTypeId" select="@IDENTIFIER"/>
+
+        <!-- Create the Relationship class -->
         <cas:Relationship rdf:type="owl:Class">
             <xsl:attribute name="id">
-                <xsl:value-of select="@IDENTIFIER"/>
+                <xsl:value-of select="$relationTypeId"/>
             </xsl:attribute>
             <dcterms:title>
                 <xsl:value-of select="@LONG-NAME"/>
@@ -306,6 +311,38 @@
                 </cas:enumeratedProperty>
             </xsl:for-each>
         </cas:Relationship>
+
+        <!-- Create the Source Link class -->
+        <cas:Link rdf:type="owl:ObjectProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="concat($relationTypeId, '-toSource')"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="concat(@LONG-NAME, ' to Source')"/>
+            </dcterms:title>
+            <!-- Add enumeratedEndpoint for each SPEC-OBJECT-TYPE (all Entity classes) -->
+            <xsl:for-each select="//*[local-name()='SPEC-OBJECT-TYPE']">
+                <cas:enumeratedEndpoint>
+                    <xsl:value-of select="@IDENTIFIER"/>
+                </cas:enumeratedEndpoint>
+            </xsl:for-each>
+        </cas:Link>
+
+        <!-- Create the Target Link class -->
+        <cas:Link rdf:type="owl:ObjectProperty">
+            <xsl:attribute name="id">
+                <xsl:value-of select="concat($relationTypeId, '-toTarget')"/>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:value-of select="concat(@LONG-NAME, ' to Target')"/>
+            </dcterms:title>
+            <!-- Add enumeratedEndpoint for each SPEC-OBJECT-TYPE (all Entity classes) -->
+            <xsl:for-each select="//*[local-name()='SPEC-OBJECT-TYPE']">
+                <cas:enumeratedEndpoint>
+                    <xsl:value-of select="@IDENTIFIER"/>
+                </cas:enumeratedEndpoint>
+            </xsl:for-each>
+        </cas:Link>
     </xsl:template>
 
     <!-- Template for SPEC-OBJECT (entities) -->
@@ -451,5 +488,139 @@
                 <xsl:value-of select="$xhtmlValue/@THE-VALUE"/>
             </xsl:when>
         </xsl:choose>
+    </xsl:template>
+
+    <!-- Template for SPEC-RELATION (relationships) -->
+    <xsl:template match="*[local-name()='SPEC-RELATION']">
+        <xsl:variable name="relationId" select="@IDENTIFIER"/>
+        <xsl:variable name="typeRef" select="*[local-name()='TYPE']/*[local-name()='SPEC-RELATION-TYPE-REF']"/>
+        <xsl:variable name="values" select="*[local-name()='VALUES']"/>
+        <xsl:variable name="sourceRef" select="*[local-name()='SOURCE']/*[local-name()='SPEC-OBJECT-REF']"/>
+        <xsl:variable name="targetRef" select="*[local-name()='TARGET']/*[local-name()='SPEC-OBJECT-REF']"/>
+
+        <!-- Find attribute definition IDs for title and description (same as SPEC-OBJECT) -->
+        <xsl:variable name="nameAttrDefString" select="//*[local-name()='ATTRIBUTE-DEFINITION-STRING'][
+            @LONG-NAME='ReqIF.Name' or
+            @LONG-NAME='ReqIF.ChapterName' or
+            @LONG-NAME='Name' or
+            @LONG-NAME='Title'
+        ]/@IDENTIFIER"/>
+        <xsl:variable name="nameAttrDefXhtml" select="//*[local-name()='ATTRIBUTE-DEFINITION-XHTML'][
+            @LONG-NAME='ReqIF.Name' or
+            @LONG-NAME='ReqIF.ChapterName' or
+            @LONG-NAME='Name' or
+            @LONG-NAME='Title'
+        ]/@IDENTIFIER"/>
+        <xsl:variable name="textAttrDefXhtml" select="//*[local-name()='ATTRIBUTE-DEFINITION-XHTML'][
+            @LONG-NAME='ReqIF.Text' or
+            @LONG-NAME='Description' or
+            @LONG-NAME='Text'
+        ]/@IDENTIFIER"/>
+        <xsl:variable name="textAttrDefString" select="//*[local-name()='ATTRIBUTE-DEFINITION-STRING'][
+            @LONG-NAME='ReqIF.Text' or
+            @LONG-NAME='Description' or
+            @LONG-NAME='Text'
+        ]/@IDENTIFIER"/>
+
+        <!-- Relationship title: try STRING, then XHTML -->
+        <xsl:variable name="titleValueString">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$nameAttrDefString"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="titleValueXhtml">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$nameAttrDefXhtml"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="titleValue">
+            <xsl:choose>
+                <xsl:when test="string-length(normalize-space($titleValueString)) &gt; 0">
+                    <xsl:value-of select="$titleValueString"/>
+                </xsl:when>
+                <xsl:when test="string-length(normalize-space($titleValueXhtml)) &gt; 0">
+                    <xsl:value-of select="$titleValueXhtml"/>
+                </xsl:when>
+                <xsl:otherwise/>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!-- Relationship description: try XHTML, then STRING -->
+        <xsl:variable name="descriptionValueXhtml">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$textAttrDefXhtml"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="descriptionValueString">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$textAttrDefString"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="descriptionValue">
+            <xsl:choose>
+                <xsl:when test="string-length(normalize-space($descriptionValueXhtml)) &gt; 0">
+                    <xsl:value-of select="$descriptionValueXhtml"/>
+                </xsl:when>
+                <xsl:when test="string-length(normalize-space($descriptionValueString)) &gt; 0">
+                    <xsl:value-of select="$descriptionValueString"/>
+                </xsl:when>
+                <xsl:otherwise/>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:variable name="hasTitle" select="string-length(normalize-space($titleValue)) &gt; 0"/>
+        <xsl:variable name="hasDescription" select="string-length(normalize-space($descriptionValue)) &gt; 0"/>
+
+        <cas:aRelationship>
+            <xsl:attribute name="id">
+                <xsl:value-of select="$relationId"/>
+            </xsl:attribute>
+            <cas:hasClass>
+                <xsl:value-of select="$typeRef"/>
+            </cas:hasClass>
+            <!-- Title: Output only if found -->
+            <xsl:if test="$hasTitle">
+                <dcterms:title>
+                    <xsl:value-of select="$titleValue"/>
+                </dcterms:title>
+            </xsl:if>
+            <!-- Description: Output only if found -->
+            <xsl:if test="$hasDescription">
+                <dcterms:description>
+                    <xsl:value-of select="$descriptionValue"/>
+                </dcterms:description>
+            </xsl:if>
+            <dcterms:modified>
+                <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </xsl:if>
+            </dcterms:modified>
+            <!-- Source Link -->
+            <xsl:if test="$sourceRef and string-length($sourceRef) &gt; 0">
+                <cas:aSourceLink>
+                    <cas:hasClass>
+                        <xsl:value-of select="concat($typeRef, '-toSource')"/>
+                    </cas:hasClass>
+                    <idRef>
+                        <xsl:value-of select="$sourceRef"/>
+                    </idRef>
+                </cas:aSourceLink>
+            </xsl:if>
+            <!-- Target Link -->
+            <xsl:if test="$targetRef and string-length($targetRef) &gt; 0">
+                <cas:aTargetLink>
+                    <cas:hasClass>
+                        <xsl:value-of select="concat($typeRef, '-toTarget')"/>
+                    </cas:hasClass>
+                    <idRef>
+                        <xsl:value-of select="$targetRef"/>
+                    </idRef>
+                </cas:aTargetLink>
+            </xsl:if>
+        </cas:aRelationship>
     </xsl:template>
 </xsl:stylesheet>

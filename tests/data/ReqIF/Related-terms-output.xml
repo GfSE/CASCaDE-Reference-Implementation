@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<cas:aPackage rdf:type="cas:Package" id="P-Related-Terms" xmlns:cas="http://product-information-graph.org" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:csc="http://omg.org/CASCaRA/cas/" xmlns:reqif="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd" xmlns:sh="http://www.w3.org/ns/shacl#" xmlns:xs="http://www.w3.org/2001/XMLSchema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+  <dcterms:title>Project 'Related Terms'</dcterms:title>
+  <dcterms:description>ReqIF Document</dcterms:description>
+  <dcterms:modified>2020-11-04T17:44:55.993Z</dcterms:modified>
+  <graph>
+    <cas:Property rdf:type="owl:DatatypeProperty" id="RC--116302417">
+      <dcterms:title>ReqIF.Name</dcterms:title>
+      <dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+      <sh:datatype>xs:string</sh:datatype>
+    </cas:Property>
+    <cas:Property rdf:type="owl:DatatypeProperty" id="RC--1540583336">
+      <dcterms:title>ReqIF.Text</dcterms:title>
+      <dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+      <sh:datatype>xs:string</sh:datatype>
+    </cas:Property>
+    <cas:Property rdf:type="owl:DatatypeProperty" id="RC-2080686058">
+      <dcterms:title>ReqIF.Name</dcterms:title>
+      <dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+      <sh:datatype>xs:string</sh:datatype>
+    </cas:Property>
+    <cas:Property rdf:type="owl:DatatypeProperty" id="RC--1645460035">
+      <dcterms:title>ReqIF.Text</dcterms:title>
+      <dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+      <sh:datatype>xs:string</sh:datatype>
+    </cas:Property>
+    <cas:Property rdf:type="owl:DatatypeProperty" id="RC--2128012875">
+      <dcterms:title>ReqIF.Name</dcterms:title>
+      <dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+      <sh:datatype>xs:string</sh:datatype>
+    </cas:Property>
+    <cas:Entity rdf:type="owl:Class" id="RC-ResourceTerm">
+      <dcterms:title>Resource Term</dcterms:title>
+      <dcterms:modified>2020-03-01T07:59:00+01:00</dcterms:modified>
+      <cas:enumeratedProperty>RC--116302417</cas:enumeratedProperty>
+      <cas:enumeratedProperty>RC--1540583336</cas:enumeratedProperty>
+    </cas:Entity>
+    <cas:Entity rdf:type="owl:Class" id="RC-HierarchyRoot">
+      <dcterms:title>SpecIF:Outline</dcterms:title>
+      <dcterms:description>Metadata of a document outline (hierarchy).</dcterms:description>
+      <dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+      <cas:enumeratedProperty>RC-2080686058</cas:enumeratedProperty>
+      <cas:enumeratedProperty>RC--1645460035</cas:enumeratedProperty>
+    </cas:Entity>
+    <cas:Relationship rdf:type="owl:Class" id="SC-isSpecialisationOf">
+      <dcterms:title>SysML:isSpecialisationOf</dcterms:title>
+      <dcterms:description>Signifies that a term is a specialization of another, such as 'Passenger Car' and 'Vehicle'.</dcterms:description>
+      <dcterms:modified>2018-03-21T18:06:20+01:00</dcterms:modified>
+      <cas:enumeratedProperty>RC--2128012875</cas:enumeratedProperty>
+    </cas:Relationship>
+    <cas:Link rdf:type="owl:ObjectProperty" id="SC-isSpecialisationOf-toSource">
+      <dcterms:title>SysML:isSpecialisationOf to Source</dcterms:title>
+      <cas:enumeratedEndpoint>RC-ResourceTerm</cas:enumeratedEndpoint>
+    </cas:Link>
+    <cas:Link rdf:type="owl:ObjectProperty" id="SC-isSpecialisationOf-toTarget">
+      <dcterms:title>SysML:isSpecialisationOf to Target</dcterms:title>
+      <cas:enumeratedEndpoint>RC-ResourceTerm</cas:enumeratedEndpoint>
+    </cas:Link>
+    <cas:anEntity rdf:type="RC-ResourceTerm" id="R-1234">
+      <dcterms:title>Lorry</dcterms:title>
+      <dcterms:description>
+                                Any of various conveyances running on rails, as for transporting material in a mine or factory. (Source: dictionary.com)
+                            </dcterms:description>
+      <dcterms:modified>2020-03-01T07:59:00+01:00</dcterms:modified>
+    </cas:anEntity>
+    <cas:anEntity rdf:type="RC-ResourceTerm" id="R-9876">
+      <dcterms:title>Vehicle</dcterms:title>
+      <dcterms:description>
+                                Any means in or by which someone travels or something is carried or conveyed; a means of conveyance or transport. (Source: dictionary.com)
+                            </dcterms:description>
+      <dcterms:modified>2020-03-01T07:59:00+01:00</dcterms:modified>
+    </cas:anEntity>
+    <cas:aRelationship id="S-X0lXi7lJP9DQsg4Jj4qbLuQYaGz">
+      <cas:hasClass>SC-isSpecialisationOf</cas:hasClass>
+      <dcterms:title>SysML:isSpecialisationOf</dcterms:title>
+      <dcterms:modified>2020-03-01T07:59:00+01:00</dcterms:modified>
+      <cas:aSourceLink>
+        <cas:hasClass>SC-isSpecialisationOf-toSource</cas:hasClass>
+        <idRef>R-1234</idRef>
+      </cas:aSourceLink>
+      <cas:aTargetLink>
+        <cas:hasClass>SC-isSpecialisationOf-toTarget</cas:hasClass>
+        <idRef>R-9876</idRef>
+      </cas:aTargetLink>
+    </cas:aRelationship>
+  </graph>
+</cas:aPackage>

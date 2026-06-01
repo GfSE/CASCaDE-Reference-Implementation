@@ -120,7 +120,7 @@ export class ReqifImporter {
             return rspTransform;
 
         const xmlString = rspTransform.response as string;
-        LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
+        // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
 
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
