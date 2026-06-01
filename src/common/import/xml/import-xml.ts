@@ -121,7 +121,7 @@ export class XmlImporter {
                 `XmlImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Rsp.create(691, allItems, 'json', 'XML', actualCount, expectedCount);
+            result = Rsp.create(604, allItems, 'json', 'XML', actualCount, expectedCount);
         }
 
         return result as IRsp<TPigItem[]>;

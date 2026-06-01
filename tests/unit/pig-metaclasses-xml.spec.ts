@@ -122,29 +122,6 @@ describe('PIG Metaclasses XML Import', () => {
             expect(germanTitle).toBeDefined();
             expect(germanTitle?.value).toBe('hoch');
         });
-
-        it(`should import ${DEF.pfxNsMeta}Icon property`, () => {
-            const xmlInput = `
-                <${DEF.pfxNsMeta}Property id="${DEF.pfxNsMeta}Icon" rdf:type="owl:DatatypeProperty">
-                    <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Property</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsDcmi}title>has icon</${DEF.pfxNsDcmi}title>
-                    <${DEF.pfxNsDcmi}description>Specifies an icon for a model element (entity or relationship).</${DEF.pfxNsDcmi}description>
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:minOccurs>0</xs:minOccurs>
-                            <xs:maxOccurs>1</xs:maxOccurs>
-                        </xs:restriction>
-                    </xs:simpleType>
-                </${DEF.pfxNsMeta}Property>
-            `;
-
-            const prop = new Property().setXML(xmlInput);
-
-            // check the attribute values upon creation:
-            if (!prop.status().ok)
-                console.error('status:', prop.status());
-            expect(prop.status().ok).toBe(true);
-        });
     });
 
     describe('Link.setXML()', () => {
@@ -231,7 +208,6 @@ describe('PIG Metaclasses XML Import', () => {
                     <${DEF.pfxNsDcmi}title>Entity</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>A PIG meta-model element used for entities (aka resources or artifacts).</${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
-                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Icon</${DEF.pfxNsMeta}enumeratedProperty>
                 </${DEF.pfxNsMeta}Entity>
             `;
 
@@ -271,7 +247,7 @@ describe('PIG Metaclasses XML Import', () => {
                         <p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p>
                     </${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsMeta}Icon>&#x25A1;</${DEF.pfxNsMeta}Icon>
+                    <${DEF.pfxNsMeta}icon>&#x25A1;</${DEF.pfxNsMeta}icon>
                     <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
                 </${DEF.pfxNsMeta}Entity>
             `;
@@ -294,7 +270,6 @@ describe('PIG Metaclasses XML Import', () => {
                         <p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform.</p>
                     </${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsMeta}Icon>&#8623;</${DEF.pfxNsMeta}Icon>
                     <${DEF.pfxNsMeta}enumeratedProperty>SpecIF:Priority</${DEF.pfxNsMeta}enumeratedProperty>
                 </${DEF.pfxNsMeta}Entity>
             `;
@@ -315,7 +290,6 @@ describe('PIG Metaclasses XML Import', () => {
                     <${DEF.pfxNsDcmi}title>Relationship</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>A PIG meta-model element used for reified relationships (aka predicates).</${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
-                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Icon</${DEF.pfxNsMeta}enumeratedProperty>
                     <${DEF.pfxNsMeta}enumeratedSourceLink>${DEF.pfxNsMeta}SourceLink</${DEF.pfxNsMeta}enumeratedSourceLink>
                     <${DEF.pfxNsMeta}enumeratedTargetLink>${DEF.pfxNsMeta}TargetLink</${DEF.pfxNsMeta}enumeratedTargetLink>
                 </${DEF.pfxNsMeta}Relationship>

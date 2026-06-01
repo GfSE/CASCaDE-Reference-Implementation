@@ -49,8 +49,7 @@ casShapes_cas:Entity
 			sh:path rdfs:comment ;
 			sh:minCount 1
 		] ,
-		casShapes_cas:Category ,
-		casShapes_cas:Icon .
+		casShapes_cas:Category .
 
 cas:Package
 	rdf:type owl:Class ;
@@ -161,9 +160,8 @@ casShapes_cas:Relationship
 			sh:minCount 1
 		] ,
 		casShapes_cas:Category ,
-		casShapes_cas:Icon ,
-		casShapes_cas:SourceLink ,
-		casShapes_cas:TargetLink .
+		casShapes_cas:linksSource ,
+		casShapes_cas:linksTarget .
 
 cas:Property
 	rdf:type owl:DatatypeProperty ;
@@ -174,19 +172,6 @@ casShapes_cas:Property
 	rdf:type sh:PropertyShape ;
 	sh:path cas:Property ;
 	sh:datatype xs:anyType .
-
-cas:Icon
-	rdf:type owl:DatatypeProperty ;
-	rdfs:subPropertyOf cas:Property ;
-	rdfs:label "has icon"@en ;
-	skos:definition "Specifies an icon for a model element (entity or relationship)."@en .
-
-casShapes_cas:Icon
-	rdf:type sh:PropertyShape ;
-	sh:path cas:Icon ;
-	sh:datatype xs:string ;
-	sh:minCount "0" ;
-	sh:maxCount "1" .
 
 cas:Diagram
 	rdf:type owl:DatatypeProperty ;
@@ -244,7 +229,7 @@ casShapes_cas:Link
 			[ sh:class cas:Relationship ]
 		) .
 
-cas:SourceLink
+cas:linksSource
 	rdf:type owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:Link ;
 	rdfs:range [ owl:unionOf(
@@ -254,15 +239,15 @@ cas:SourceLink
 	rdfs:label "to source"@en ;
 	skos:definition "Connects the source of a reified relationship."@en .
 
-casShapes_cas:SourceLink
+casShapes_cas:linksSource
 	rdf:type sh:PropertyShape ;
-	sh:path cas:SourceLink ;
+	sh:path cas:linksSource ;
 	sh:or (
 			[ sh:class cas:Entity ]
 			[ sh:class cas:Relationship ]
 		) .
 
-cas:TargetLink
+cas:linksTarget
 	rdf:type owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:Link ;
 	rdfs:range [ owl:unionOf(
@@ -272,9 +257,9 @@ cas:TargetLink
 	rdfs:label "to target"@en ;
 	skos:definition "Connects the target of a reified relationship or an organizer."@en .
 
-casShapes_cas:TargetLink
+casShapes_cas:linksTarget
 	rdf:type sh:PropertyShape ;
-	sh:path cas:TargetLink ;
+	sh:path cas:linksTarget ;
 	sh:or (
 			[ sh:class cas:Entity ]
 			[ sh:class cas:Relationship ]
@@ -282,7 +267,7 @@ casShapes_cas:TargetLink
 
 cas:lists
 	rdf:type owl:ObjectProperty ;
-	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:range [ owl:unionOf(
 			cas:Entity
 			cas:Relationship
@@ -302,7 +287,7 @@ casShapes_cas:lists
 
 cas:shows
 	rdf:type owl:ObjectProperty ;
-	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:range [ owl:unionOf(
 			cas:Entity
 			cas:Relationship
@@ -320,7 +305,7 @@ casShapes_cas:shows
 
 cas:depicts
 	rdf:type owl:ObjectProperty ;
-	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:range cas:Entity ;
 	rdfs:label "depicts"@en ;
 	skos:definition "Depicts an entity; inverse of uml:ownedDiagram."@en .
@@ -443,14 +428,14 @@ schema:WorksFor
 	rdfs:comment "Organizations that the person works for."@en .
 
 o:Employee
-	rdfs:subPropertyOf cas:SourceLink ;
+	rdfs:subPropertyOf cas:linksSource ;
 	rdfs:label "employee" ;
 	rdfs:comment "The employee in a 'worksFor' relationship" ;
 	rdfs:domain schema:WorksFor ;
 	rdfs:range schema:Person .
 
 o:Employer
-	rdfs:subPropertyOf cas:TargetLink ;
+	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "employer"@en ;
 	rdfs:comment "The employer in a 'worksFor' relationship"@en ;
 	rdfs:domain schema:WorksFor ;

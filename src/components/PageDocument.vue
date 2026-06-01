@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="fill-height">
+    <v-container fluid class="page-document-container">
         <v-row class="fill-height">
             <!-- LEFT PANE -->
             <v-col cols="3" class="fill-height">
@@ -7,9 +7,10 @@
                     <v-card-title tag="h2">Outline</v-card-title>
                     <v-divider />
                     <div class="pane-scroll pa-0">
-                        <v-list density="compact">
+                        <v-list density="compact" @keydown="handleArrowKeys">
                             <v-list-item v-for="(item, index) in htmlArray"
                                          :key="index"
+                                         :value="index"
                                          @click="selectItem(index)"
                                          :active="selectedIndex === index">
                                 <v-list-item-title class="text-body-2">
@@ -40,9 +41,10 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import { toRaw } from 'vue'
-    import { usePackageCache } from '@/stores/packageCache'
+    import { PackageCache } from '@/stores/package-cache'
     import { getHTML, stringHTML } from '@/common/export/html/getHTML'
     import { APackage } from '@/common/schema/pig/ts/pig-metaclasses'
+    import { LOG } from '@/common/lib/helpers'
 
     function extractTitle(html: string): string | null {
         const match = html.match(/<[^>]*class=["'][^"']*meta-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);
@@ -58,8 +60,8 @@
         },
         computed: {
             htmlArray(): stringHTML[] {
-                const cache = usePackageCache()
-                const packages = cache.packages
+                const cache = PackageCache();
+                const packages = cache.get();
 
                 if (!packages || packages.length === 0) {
                     return []
@@ -85,9 +87,33 @@
             selectItem(index: number) {
                 this.selectedIndex = index
             },
+            handleArrowKeys(event: KeyboardEvent) {
+                if (event.key === 'ArrowDown') {
+                    event.preventDefault()
+                    if (this.selectedIndex === null) {
+                        this.selectedIndex = 0
+                    } else if (this.selectedIndex < this.htmlArray.length - 1) {
+                        this.selectedIndex++
+                    }
+                } else if (event.key === 'ArrowUp') {
+                    event.preventDefault()
+                    if (this.selectedIndex === null) {
+                        this.selectedIndex = 0
+                    } else if (this.selectedIndex > 0) {
+                        this.selectedIndex--
+                    }
+                }
+            },
             extractTitle
         },
         mounted() {
+        /*    // Load packages from storage if cache is empty
+            const cache = PackageCache()
+            if (cache.packages.length === 0) {
+                console.log('[PageDocument] Cache is empty, loading from storage...')
+                cache.loadFromStorage()
+            } */
+
             // Select the first item when opening the view:
             if (this.htmlArray.length > 0) {
                 this.selectedIndex = 0
@@ -99,10 +125,14 @@
 </script>
 
 <style scoped>
+    .page-document-container {
+        height: 100%;
+        padding: 0;
+    }
+
     .fill-height {
-        height: 100vh !important;
-        min-height: 0 !important;
-        max-height: 100vh !important;
+        height: 100%;
+        min-height: 0;
     }
 
     .pane-card {
@@ -118,7 +148,7 @@
         min-height: 0;
     }
 
-    .pane-scroll :deep(.v-list-item) {
+    .pane-scroll ::v-deep(.v-list-item) {
         min-height: 24px !important;
         padding-top: 2px !important;
         padding-bottom: 2px !important;
