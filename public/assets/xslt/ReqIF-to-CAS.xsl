@@ -57,6 +57,8 @@
                 <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT-TYPE']" mode="entity"/>
                 <xsl:apply-templates select="//*[local-name()='SPECIFICATION-TYPE']" mode="entity"/>
                 <xsl:apply-templates select="//*[local-name()='SPEC-RELATION-TYPE']" mode="relationship"/>
+                <!-- Collect all SPECIFICATIONs -->
+                <xsl:apply-templates select="//*[local-name()='SPECIFICATION']"/>
                 <!-- Collect all SPEC-OBJECTs -->
                 <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT']"/>
                 <!-- Collect all SPEC-RELATIONs -->
@@ -232,6 +234,7 @@
             <xsl:attribute name="id">
                 <xsl:value-of select="@IDENTIFIER"/>
             </xsl:attribute>
+            <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title>
                 <xsl:value-of select="@LONG-NAME"/>
             </dcterms:title>
@@ -260,6 +263,7 @@
             <xsl:attribute name="id">
                 <xsl:value-of select="@IDENTIFIER"/>
             </xsl:attribute>
+            <cas:specializes>cas:Root</cas:specializes>
             <dcterms:title>
                 <xsl:value-of select="@LONG-NAME"/>
             </dcterms:title>
@@ -291,6 +295,7 @@
             <xsl:attribute name="id">
                 <xsl:value-of select="$relationTypeId"/>
             </xsl:attribute>
+            <cas:specializes>cas:Relationship</cas:specializes>
             <dcterms:title>
                 <xsl:value-of select="@LONG-NAME"/>
             </dcterms:title>
@@ -317,6 +322,7 @@
             <xsl:attribute name="id">
                 <xsl:value-of select="concat($relationTypeId, '-toSource')"/>
             </xsl:attribute>
+            <cas:specializes>cas:Link</cas:specializes>
             <dcterms:title>
                 <xsl:value-of select="concat(@LONG-NAME, ' to Source')"/>
             </dcterms:title>
@@ -336,6 +342,7 @@
             <dcterms:title>
                 <xsl:value-of select="concat(@LONG-NAME, ' to Target')"/>
             </dcterms:title>
+            <cas:specializes>cas:Link</cas:specializes>
             <!-- Add enumeratedEndpoint for each SPEC-OBJECT-TYPE (all Entity classes) -->
             <xsl:for-each select="//*[local-name()='SPEC-OBJECT-TYPE']">
                 <cas:enumeratedEndpoint>
@@ -445,6 +452,123 @@
                     <dcterms:title>
                         <xsl:text>Object with id </xsl:text>
                         <xsl:value-of select="$objectId"/>
+                    </dcterms:title>
+                </xsl:when>
+            </xsl:choose>
+            <!-- Description: Output only if found -->
+            <xsl:if test="$hasDescription">
+                <dcterms:description>
+                    <xsl:value-of select="$descriptionValue"/>
+                </dcterms:description>
+            </xsl:if>
+            <dcterms:modified>
+                <xsl:if test="@LAST-CHANGE and string-length(@LAST-CHANGE) &gt; 0">
+                    <xsl:value-of select="@LAST-CHANGE"/>
+                </xsl:if>
+            </dcterms:modified>
+        </cas:anEntity>
+    </xsl:template>
+
+    <!-- Template for SPECIFICATION (specification containers) -->
+    <xsl:template match="*[local-name()='SPECIFICATION']">
+        <xsl:variable name="specId" select="@IDENTIFIER"/>
+        <xsl:variable name="typeRef" select="*[local-name()='TYPE']/*[local-name()='SPECIFICATION-TYPE-REF']"/>
+        <xsl:variable name="values" select="*[local-name()='VALUES']"/>
+        <!-- Find attribute definition IDs for title and description -->
+        <xsl:variable name="nameAttrDefString" select="//*[local-name()='ATTRIBUTE-DEFINITION-STRING'][
+            @LONG-NAME='ReqIF.Name' or
+            @LONG-NAME='ReqIF.ChapterName' or
+            @LONG-NAME='Name' or
+            @LONG-NAME='Title'
+        ]/@IDENTIFIER"/>
+        <xsl:variable name="nameAttrDefXhtml" select="//*[local-name()='ATTRIBUTE-DEFINITION-XHTML'][
+            @LONG-NAME='ReqIF.Name' or
+            @LONG-NAME='ReqIF.ChapterName' or
+            @LONG-NAME='Name' or
+            @LONG-NAME='Title'
+        ]/@IDENTIFIER"/>
+        <xsl:variable name="textAttrDefXhtml" select="//*[local-name()='ATTRIBUTE-DEFINITION-XHTML'][
+            @LONG-NAME='ReqIF.Text' or
+            @LONG-NAME='Description' or
+            @LONG-NAME='Text'
+        ]/@IDENTIFIER"/>
+        <xsl:variable name="textAttrDefString" select="//*[local-name()='ATTRIBUTE-DEFINITION-STRING'][
+            @LONG-NAME='ReqIF.Text' or
+            @LONG-NAME='Description' or
+            @LONG-NAME='Text'
+        ]/@IDENTIFIER"/>
+
+        <!-- Specification title: try STRING, then XHTML -->
+        <xsl:variable name="titleValueString">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$nameAttrDefString"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="titleValueXhtml">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$nameAttrDefXhtml"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="titleValue">
+            <xsl:choose>
+                <xsl:when test="string-length(normalize-space($titleValueString)) &gt; 0">
+                    <xsl:value-of select="$titleValueString"/>
+                </xsl:when>
+                <xsl:when test="string-length(normalize-space($titleValueXhtml)) &gt; 0">
+                    <xsl:value-of select="$titleValueXhtml"/>
+                </xsl:when>
+                <xsl:otherwise/>
+            </xsl:choose>
+        </xsl:variable>
+
+        <!-- Specification description: try XHTML, then STRING -->
+        <xsl:variable name="descriptionValueXhtml">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$textAttrDefXhtml"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="descriptionValueString">
+            <xsl:call-template name="getAttributeValue">
+                <xsl:with-param name="values" select="$values"/>
+                <xsl:with-param name="attrDefId" select="$textAttrDefString"/>
+            </xsl:call-template>
+        </xsl:variable>
+        <xsl:variable name="descriptionValue">
+            <xsl:choose>
+                <xsl:when test="string-length(normalize-space($descriptionValueXhtml)) &gt; 0">
+                    <xsl:value-of select="$descriptionValueXhtml"/>
+                </xsl:when>
+                <xsl:when test="string-length(normalize-space($descriptionValueString)) &gt; 0">
+                    <xsl:value-of select="$descriptionValueString"/>
+                </xsl:when>
+                <xsl:otherwise/>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:variable name="hasTitle" select="string-length(normalize-space($titleValue)) &gt; 0"/>
+        <xsl:variable name="hasDescription" select="string-length(normalize-space($descriptionValue)) &gt; 0"/>
+
+        <cas:anEntity>
+            <xsl:attribute name="rdf:type">
+                <xsl:value-of select="$typeRef"/>
+            </xsl:attribute>
+            <xsl:attribute name="id">
+                <xsl:value-of select="$specId"/>
+            </xsl:attribute>
+            <!-- Title: Only output if found OR if neither title nor description found (fallback) -->
+            <xsl:choose>
+                <xsl:when test="$hasTitle">
+                    <dcterms:title>
+                        <xsl:value-of select="$titleValue"/>
+                    </dcterms:title>
+                </xsl:when>
+                <xsl:when test="not($hasDescription)">
+                    <dcterms:title>
+                        <xsl:text>Specification with id </xsl:text>
+                        <xsl:value-of select="$specId"/>
                     </dcterms:title>
                 </xsl:when>
             </xsl:choose>

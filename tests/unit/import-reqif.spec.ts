@@ -173,7 +173,7 @@ describe('ReqIF Import', () => {
             expect(items[0].itemType).toBe(PigItemType.aPackage);
 
             // Should have additional graph items
-            expect(items.length).toBe(14);
+            expect(items.length).toBe(15);
             expect(items[2].itemType).toBe(PigItemType.Property);
             console.log(`Package structure validated: ${items.length - 1} graph items`);
         });
@@ -196,7 +196,7 @@ describe('ReqIF Import', () => {
                 item?.itemType === PigItemType.anEntity
             );
 
-            expect(entities.length).toBe(2);
+            expect(entities.length).toBe(3);
 
             console.log(`Found ${entities.length} entities in transformation`);
         });
