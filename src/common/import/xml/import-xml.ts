@@ -1,13 +1,12 @@
 /*!
- * Cross-environment XML importer.
+ * Cross-environment XML importer with optional XSLT transformation.
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 /**
- * XML Importer - Static class for importing PIG XML documents
- * 
- * Cross-environment XML importer:
+ * Cross-environment XML importer with optional XSLT transformation.
  * - Accepts a Node file path, an http(s) URL string or a browser File/Blob.
+ * - Transforms an input XML document with a user-supplied XSL stylesheet before parsing.
  * - Parses XML document, converts XML structure to internal keys
  *   and instantiates matching PIG class instances where possible.
  *
@@ -15,7 +14,6 @@
  * 
  * Design Decisions:
  * - Static class design for consistency with ReqIFImporter
- * - Direct parsing without XSLT transformation (unlike ReqIF)
  * - Validation through APackage.setXML() method
  * 
  * Usage:
