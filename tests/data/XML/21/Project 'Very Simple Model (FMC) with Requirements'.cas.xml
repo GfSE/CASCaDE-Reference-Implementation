@@ -26,7 +26,6 @@
             <dcterms:title>Entity</dcterms:title>
             <skos:definition>A CASCaRA meta-model element used for entities (aka resources or artifacts).</skos:definition>
             <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-            <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
         </cas:Entity>
 
         <cas:Entity id="cas:Organizer" cas:hasClass="owl:Class">
@@ -56,7 +55,6 @@
             <dcterms:title>View</dcterms:title>
             <skos:definition>A subclass of CASCaRA organizer representing a model view (diagram) using a certain notation showing selected model elements.</skos:definition>
             <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-            <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
             <cas:enumeratedProperty>cas:Diagram</cas:enumeratedProperty>
             <cas:enumeratedTargetLink>cas:shows</cas:enumeratedTargetLink>
             <cas:enumeratedTargetLink>cas:depicts</cas:enumeratedTargetLink>
@@ -67,7 +65,6 @@
             <dcterms:title>Relationship</dcterms:title>
             <skos:definition>A CASCaRA meta-model element used for reified relationships (aka predicates).</skos:definition>
             <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-            <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
         </cas:Relationship>
 
         <!-- Metamodel: Properties -->
@@ -76,18 +73,6 @@
             <skos:definition>A CASCaRA meta-model element used for properties (aka attributes).</skos:definition>
             <xs:simpleType>
                 <xs:restriction base="xs:anyType"/>
-            </xs:simpleType>
-        </cas:Property>
-
-        <cas:Property id="cas:Icon" cas:hasClass="owl:DatatypeProperty">
-            <cas:specializes>cas:Property</cas:specializes>
-            <dcterms:title>has icon</dcterms:title>
-            <skos:definition>Specifies an icon for a model element (entity or relationship).</skos:definition>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:minOccurs>0</xs:minOccurs>
-                    <xs:maxOccurs>1</xs:maxOccurs>
-                </xs:restriction>
             </xs:simpleType>
         </cas:Property>
 

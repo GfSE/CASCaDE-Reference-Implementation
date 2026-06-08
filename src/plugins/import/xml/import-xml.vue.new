@@ -199,7 +199,7 @@ async function handleFileSelect(event: Event) {
             // Full success
             importedItems.value = result.response as TPigItem[];
             importSuccess.value = true;
-        } else if (result.status === 691) {
+        } else if (result.status === 604) {
             // Partial success (some items failed)
             importedItems.value = result.response as TPigItem[];
             importWarning.value = result.statusText || 'Some items could not be imported';

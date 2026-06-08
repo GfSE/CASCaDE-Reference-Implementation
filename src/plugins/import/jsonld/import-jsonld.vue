@@ -65,7 +65,7 @@
     import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { stringHTML, getHTML } from '@/common/export/html/getHTML';
-    import { usePackageCache } from '@/stores/packageCache';
+    import { PackageCache } from '@/stores/package-cache';
     import { LOG } from '@/common/lib/helpers';
     import { IRsp } from '@/common/lib/messages';
 
@@ -98,7 +98,7 @@
                     const results = await this.importAllFiles();
 
                     // Separate successful and failed imports
-                    // @ToDo: results with 691 status (partial success) should be handled separately, but for now we treat them as failures:
+                    // @ToDo: results with 604 status (partial success) should be handled separately, but for now we treat them as failures:
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
@@ -109,9 +109,9 @@
                     });
 
                     if(allPackages.length > 0) {
-                        // Store in Pinia store
-                        const cache = usePackageCache();
-                        cache.packages = allPackages;
+                        // Store in Pinia store with persistence
+                        const cache = PackageCache();
+                        cache.set(allPackages);
 
                         // Show success message
                         this.successMessage = `Imported ${successful.length} of ${results.length} file(s)`;

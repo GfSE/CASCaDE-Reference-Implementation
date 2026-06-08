@@ -1,7 +1,34 @@
 # Reroute all subfolders to index.html, so that the routing of the Vue app works:
-RewriteEngine On
-RewriteBase /
-RewriteRule ^index\.html$ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Don't rewrite files or directories
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # Don't rewrite asset files
+  RewriteCond %{REQUEST_URI} !^/assets/
+
+  # Rewrite everything else to index.html to allow HTML5 state routing
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Fallback for servers without mod_rewrite
+<IfModule !mod_rewrite.c>
+  ErrorDocument 404 /index.html
+</IfModule>
+
+# Cache-Control for all file types
+# Cache expires in 1 day (86400 Sec)
+# Applies recursively to all subfolders
+<IfModule mod_headers.c>
+	# Cache-Control for 1 day
+	Header set Cache-Control "public, max-age=86400"
+</IfModule>
+<IfModule mod_expires.c>
+	# Activates Expires-Header
+	ExpiresActive On
+	# Expires: day
+	ExpiresDefault "access plus 1 day"
+</IfModule>

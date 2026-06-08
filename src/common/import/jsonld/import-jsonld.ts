@@ -61,17 +61,14 @@ export class JsonldImporter {
             return rsp;
         }
 
-        const text = rsp.response as string;
-
         // Parse JSON document
         let doc: JsonObject;
         try {
-            doc = JSON.parse(text) as JsonObject;
+            doc = JSON.parse(rsp.response as string) as JsonObject;
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : String(err);
             return Msg.create(690, 'JSON-LD', errorMessage);
         }
-        // LOG.debug('JsonldImporter.import', JSON.stringify(doc, null, 2));
 
         // Check JSON-LD document structure
         const validationResult = await this.checkJsonLdDocument(doc);
@@ -110,7 +107,7 @@ export class JsonldImporter {
                 `JsonldImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Rsp.create(691, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
+            result = Rsp.create(604, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
         }
 
         return result as IRsp<TPigItem[]>;
@@ -135,7 +132,7 @@ export class JsonldImporter {
         if (!isValidPackage) {
             const errors = await SCH_LD.getValidateAPackageLDErrors();
             LOG.error('JSON-LD package validation failed:', errors);
-            return Msg.create(697, 'JSON-LD', errors);
+            return Msg.create(683, 'JSON-LD', errors);
         }
 
         return rspOK;

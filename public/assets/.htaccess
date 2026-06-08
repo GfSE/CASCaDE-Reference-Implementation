@@ -1,0 +1,13 @@
+# Cache-Control for all file types
+# Cache expires in 1 day (86400 Sec)
+# Applies recursively to all subfolders
+<IfModule mod_headers.c>
+	# Cache-Control for 1 day
+	Header set Cache-Control "public, max-age=86400"
+</IfModule>
+<IfModule mod_expires.c>
+	# Activates Expires-Header
+	ExpiresActive On
+	# Expires: day
+	ExpiresDefault "access plus 1 day"
+</IfModule>

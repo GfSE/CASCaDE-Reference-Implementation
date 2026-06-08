@@ -17,6 +17,8 @@
  * - Validity of hasClass references in aLink instances (aSourceLink, aTargetLink)
  * - Property occurrence validation (minCount, maxCount)
  * - enumerated properties and links validation
+ * - enumeratedEndpoint consistency (Link classes)
+ * - enumeratedTargetLink and enumeratedSourceLink reference validation
  * 
  * List of constraint checks:
  * Phase 1 (critical):
@@ -30,20 +32,24 @@
  *   ✅ - occurrence (minCount, maxCount) with language-aware validation for xs:string
  *   ✅ - value range
  *   ✅ - reference to enumerated values (enumerations)
+ *   ✅ - enumeratedEndpoint in Link classes (all or none point to Enumerations)
+ *   ✅ - enumeratedTargetLink and enumeratedSourceLink → Link
  * Phase 2 (important):
  *      check aPackage.hasClass, class and specializes references and consistency with classes (similarly to anEntity)
  *      namespace prefixes are defined in the context
  *      subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
  *      subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
  *      enumeratedProperty references
- *      enumeratedEndpoint references
  *      Link endpoint compliance
  * Phase 3 (useful):
  *      No cyclic specialization
  *      No cyclic composition of properties
  *      Relationship structure
  *      Referenced Enumerations have a datatype
+ *      enumerations at the lowest specialization level must have datatype and enumerated values
  *      enumerated values as defined comply with the datatype of the enumeration class
+ *      Entity and Relationship classes should not have configurable properties
+ *           with the same name as a native property (e.g. cas:unit, dcterms:modified, ..)
  * Phase 4 (optional):
  *      Orphaned items
  *      - nodes without reference by an organizer AND
@@ -80,12 +86,14 @@ export enum ConstraintCheckType {
     LinkSpecializes = 'linkSpecializes',
     enumeratedProperties = 'enumeratedProperties',
     enumeratedLinks = 'enumeratedLinks',
+    enumeratedEndpoints = 'enumeratedEndpoints',
+    enumeratedLinkClasses = 'enumeratedLinkClasses',
     ValueRanges = 'valueRanges',
     enumeratedValues = 'enumeratedValues'
 }
 
 /**
- * All available constraint checks
+ * All available constraint checks as a list
  */
 const allConstraintChecks: ConstraintCheckType[] = [
     ConstraintCheckType.UniqueIds,
@@ -99,9 +107,42 @@ const allConstraintChecks: ConstraintCheckType[] = [
     ConstraintCheckType.LinkSpecializes,
     ConstraintCheckType.enumeratedProperties,
     ConstraintCheckType.enumeratedLinks,
+    ConstraintCheckType.enumeratedEndpoints,
+    ConstraintCheckType.enumeratedLinkClasses,
     ConstraintCheckType.ValueRanges,
     ConstraintCheckType.enumeratedValues
 ];
+
+/**
+ * Ontologies that are available online;
+ * those don't need to be supplied by imported data.
+ * Note: This is a little more complicated than above, as DEF.pfxNsMeta is not known at compile time.
+ */
+export const KnownOntology = {
+    casMeta: DEF.pfxNsMeta,
+    casSemi: DEF.pfxNsSemi,
+    dcterms: DEF.pfxNsDcmi
+} as const;
+
+export type KnownOntology = typeof KnownOntology[keyof typeof KnownOntology];
+/**
+ * All known ontologies as a list
+ */
+const allKnownOntologies: KnownOntology[] = [
+    KnownOntology.casMeta,
+    KnownOntology.casSemi,
+    KnownOntology.dcterms
+];
+
+/**
+ * Check if a reference ID belongs to a known ontology namespace
+ * @param refId - Reference ID to check (e.g., 'cas:Entity', 'dcterms:modified')
+ * @returns true if the reference starts with a known ontology prefix
+ */
+function isKnownOntologyReference(refId: TPigId | undefined): boolean {
+    if (!refId) return false;
+    return allKnownOntologies.some(prefix => refId.startsWith(prefix));
+}
 
 /**
  * Check cross-item constraints for a package
@@ -185,6 +226,18 @@ export function checkConstraintsForPackage(
     // 6b. Check enumerated links in anEntity and aRelationship instances
     if (checksSet.has(ConstraintCheckType.enumeratedLinks)) {
         const rsp = checkEnumeratedLinks(pkg, classMap);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 6c. Check enumerated endpoints in Link classes
+    if (checksSet.has(ConstraintCheckType.enumeratedEndpoints)) {
+        const rsp = checkLinkEnumeratedEndpoints(pkg, itemTypeMap);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 6d. Check that enumeratedTargetLink and enumeratedSourceLink references point to Link classes
+    if (checksSet.has(ConstraintCheckType.enumeratedLinkClasses)) {
+        const rsp = checkEnumeratedLinkClassReferences(pkg, itemTypeMap);
         if (!rsp.ok) return rsp;
     }
 
@@ -646,6 +699,136 @@ function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp 
 }
 
 /**
+ * Check that enumeratedEndpoints of Link classes point exclusively to Enumerations or none of them points to an Enumeration
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @returns IRsp (rspOK on success, error on mixed endpoint types)
+ */
+function checkLinkEnumeratedEndpoints(
+    pkg: IAPackage,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Check only Link class definitions
+        if (itemType !== PigItemType.Link) {
+            continue;
+        }
+
+        const link = item as any;
+        const enumeratedEndpoints = link.enumeratedEndpoint;
+
+        // Skip if no enumeratedEndpoint is defined
+        if (!Array.isArray(enumeratedEndpoints) || enumeratedEndpoints.length === 0) {
+            continue;
+        }
+
+        // Count how many endpoints point to Enumerations
+        let enumerationCount = 0;
+        let nonEnumerationCount = 0;
+
+        for (const endpointId of enumeratedEndpoints) {
+        /*    // Skip validation for known ontology references
+            if (isKnownOntologyReference(endpointId)) {
+                nonEnumerationCount++;
+                continue;
+            } */
+
+            const endpointType = itemTypeMap.get(endpointId);
+
+            // If endpoint not found, skip (this will be caught by other checks)
+            if (!endpointType) {
+                continue;
+            }
+
+            if (endpointType === PigItemType.Enumeration) {
+                enumerationCount++;
+            } else {
+                nonEnumerationCount++;
+            }
+        }
+
+        // Check: either all endpoints point to Enumerations or none of them does
+        if (enumerationCount > 0 && nonEnumerationCount > 0) {
+            return Msg.create(684, itemId, enumerationCount, nonEnumerationCount);
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that enumeratedTargetLink and enumeratedSourceLink in Entity and Relationship classes point to Link items
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkEnumeratedLinkClassReferences(
+    pkg: IAPackage,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Check Entity and Relationship class definitions
+        if (itemType !== PigItemType.Entity && itemType !== PigItemType.Relationship) {
+            continue;
+        }
+
+        const classDef = item as any;
+
+        // Check enumeratedTargetLink
+        if (Array.isArray(classDef.enumeratedTargetLink)) {
+            for (let j = 0; j < classDef.enumeratedTargetLink.length; j++) {
+                const linkId = classDef.enumeratedTargetLink[j];
+
+            /*    // Skip validation for known ontology references
+                if (isKnownOntologyReference(linkId)) {
+                    continue;
+                } */
+
+                const targetType = itemTypeMap.get(linkId);
+                if (!targetType) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedTargetLink', j, linkId, 'not found in package');
+                }
+
+                if (targetType !== PigItemType.Link) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedTargetLink', j, linkId, `expected ${PigItemType.Link}, found ${targetType}`);
+                }
+            }
+        }
+
+        // Check enumeratedSourceLink (only for Relationship)
+        if (Array.isArray(classDef.enumeratedSourceLink)) {
+            for (let j = 0; j < classDef.enumeratedSourceLink.length; j++) {
+                const linkId = classDef.enumeratedSourceLink[j];
+
+            /*    // Skip validation for known ontology references
+                if (isKnownOntologyReference(linkId)) {
+                    continue;
+                } */
+
+                const targetType = itemTypeMap.get(linkId);
+                if (!targetType) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedSourceLink', j, linkId, 'not found in package');
+                }
+
+                if (targetType !== PigItemType.Link) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedSourceLink', j, linkId, `expected ${PigItemType.Link}, found ${targetType}`);
+                }
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
  * Check that all aProperty.hasClass references point to pig:Property items
  * AND validate minCount/maxCount constraints
  * @param pkg - Package to validate
@@ -855,6 +1038,11 @@ function checkPropertyHasClass(
         return Msg.create(672, parentId, propIndex, 'missing hasClass');
     }
 
+    // Skip validation for known ontology references (e.g., cas:, dcterms:)
+    if (isKnownOntologyReference(prop.hasClass)) {
+        return rspOK;
+    }
+
     // LOG.debug(`checkPropertyHasClass: checking hasClass ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
     // LOG.debug(`checkPropertyHasClass: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
 
@@ -938,6 +1126,11 @@ function checkLinkHasClass(
         return Msg.create(674, parentId, linkIndex, linkArrayName, 'missing hasClass');
     }
 
+    // Skip validation for known ontology references (e.g., cas:, dcterms:)
+    if (isKnownOntologyReference(link.hasClass)) {
+        return rspOK;
+    }
+
     const targetType = itemTypeMap.get(link.hasClass);
     if (!targetType) {
         return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.hasClass, 'not found in package');
@@ -988,6 +1181,11 @@ function checkEntityOrRelationshipReferences(
                     return Msg.create(674, iId, i, referenceType, `missing ${referenceType}`);
                 }
 
+                // Skip validation for known ontology references (e.g., cas:, dcterms:)
+                if (isKnownOntologyReference(referenceValue)) {
+                    continue;
+                }
+
                 // Expected type depends on whether we're checking hasClass or specializes:
                 // - hasClass: anEntity -> Entity, aRelationship -> Relationship
                 // - specializes: Entity -> Entity, Relationship -> Relationship
@@ -1030,6 +1228,11 @@ function checkPropertyOrLinkReferences(
 
             if (!referenceValue) {
                 // specializes is optional (can inherit from pig:Property directly)
+                continue;
+            }
+
+            // Skip validation for known ontology references (e.g., cas:, dcterms:)
+            if (isKnownOntologyReference(referenceValue)) {
                 continue;
             }
 
@@ -1219,7 +1422,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
 
 /**
  * Check that all targetLinks pointing to enumeration entities can be resolved
- * - Validates that when a Link class points to an enumeration (Entity class with datatype),
+ * - Validates that when a Link class points to an Enumeration,
  *   all instances using that Link class reference valid enumeration values
  * - Enumerations are Entity classes with a datatype property
  * - targetLinks must reference anEntity instances whose hasClass matches the enumeration
@@ -1235,59 +1438,78 @@ function checkEnumeratedValues(
     targetLinkMap: Map<TPigId, TPigId>
 ): IRsp {
 
-    // Check all anEntity and aRelationship instances
+    // Helper function to check targetLinks for a given element
+    function checkTargetLinks(
+        hasTargetLink: any,
+        elementId: TPigId,
+        elementLabel: string
+    ): IRsp {
+        if (Array.isArray(hasTargetLink)) {
+            for (let j = 0; j < hasTargetLink.length; j++) {
+                const link = hasTargetLink[j];
+                const linkClassId = link.hasClass as TPigId;
+                const targetId = link.idRef as TPigId;
+
+                if (!linkClassId || !targetId) {
+                    continue; // Validated elsewhere
+                }
+
+                // Check if this Link class points to an enumeration
+                const enumerationClassId = targetLinkMap.get(linkClassId);
+                if (!enumerationClassId) {
+                    continue; // This link doesn't point to an enumeration
+                }
+
+                // Validate that the targetId references a valid enumeration value
+                const targetEnumList = enumerationMap.get(enumerationClassId);
+                if (!targetEnumList) {
+                    return Msg.create(
+                        677,
+                        elementId,
+                        j,
+                        linkClassId,
+                        `target enumeration not found in package`
+                    );
+                }
+
+                // Check whether the targetId is listed in targetEnumList
+                if (!targetEnumList.includes(targetId)) {
+                    return Msg.create(
+                        677,
+                        elementId,
+                        j,
+                        linkClassId,
+                        `target enumeration has no enumerated value '${targetId}'`
+                    );
+                }
+            }
+        }
+        return rspOK;
+    }
+
+    // Check the aPackage itself
+    if (pkg.hasTargetLink) {
+        const rsp = checkTargetLinks(pkg.hasTargetLink, pkg.id ?? 'aPackage', 'aPackage');
+        if (!rsp.ok) {
+            return rsp;
+        }
+    }
+
+    // Check all anEntity and aRelationship instances in the graph
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
         const itemType = (item as any).itemType;
         const itemId = (item as any)['@id'] ?? (item as any).id;
 
         // Process anEntity and aRelationship instances
-        if (itemType === PigItemType.anEntity || itemType === PigItemType.aRelationship) {
+        if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itemType)) {
             const instance = item as TPigAnElement;
 
             // Check hasTargetLink array
-            if (Array.isArray(instance.hasTargetLink)) {
-                for (let j = 0; j < instance.hasTargetLink.length; j++) {
-                    const link = instance.hasTargetLink[j];
-                    const linkClassId = link.hasClass as TPigId;
-                    const targetId = link.idRef as TPigId;
-                    // LOG.debug('checkEnumeratedValues:', linkClassId, targetId);
-
-                    if (!linkClassId || !targetId) {
-                        continue; // Validated elsewhere
-                    }
-
-                    // Check if this Link class points to an enumeration
-                    const enumerationClassId = targetLinkMap.get(linkClassId);
-                    // LOG.debug('enumerationClassId:', enumerationClassId);
-                    if (!enumerationClassId) {
-                        continue; // This link doesn't point to an enumeration
-                    }
-
-                    // Validate that the targetId references a valid enumeration value
-                    const targetEnumList = enumerationMap.get(enumerationClassId);
-                    // LOG.debug('targetEnumList:', targetEnumList);
-                    if (!targetEnumList) {
-                        return Msg.create(
-                            677,
-                            itemId,
-                            j,
-                            linkClassId,
-                            `target enumeration not found in package`
-                        );
-                    }
-
-                    // Check whether the targetId is listed in targetEnumList
-                    if (!targetEnumList.includes(targetId)) {
-                        return Msg.create(
-                            677,
-                            itemId,
-                            j,
-                            linkClassId,
-                            `target enumeration has no enumerated value '${targetId}'`
-                        );
-                    }
-
+            if (instance.hasTargetLink) {
+                const rsp = checkTargetLinks(instance.hasTargetLink, itemId, itemType);
+                if (!rsp.ok) {
+                    return rsp;
                 }
             }
         }

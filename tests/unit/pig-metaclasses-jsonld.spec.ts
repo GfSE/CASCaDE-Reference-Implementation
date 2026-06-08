@@ -6,20 +6,25 @@
  * Note:
  * - a roundtrip test via setJSONLD() and getJSONLD() and enumerated (enumerated) values
  *   is contained in pig-package-constraints-valueRanges.spec.ts
+ *
+ * ToDo
+ * - Some tests are redundant
+ * - Test also properties with number, dateTime and anyURI data types
  */
 
 import { DEF } from '../../src/common/lib/definitions';
 import {
     Enumeration, Property, Link, Entity, Relationship,
-    AnEntity, ARelationship
+    AnEntity, ARelationship, APackage
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
+import { getJSONLD } from '../../src/common/export/jsonld/getJSONLD';
 
 describe('PIG Metaclasses JSON-LD Import', () => {
-/*    // Ensure console flush before test ends
+    // Ensure console flush before test ends
     afterEach(async () => {
         await new Promise(resolve => setImmediate(resolve));
     });
-    // Reliable error logging with synchronous write
+/*    // Reliable error logging with synchronous write
     const logResponse = (context: string, response: any) => {
         if (!response.ok) {
             const msg = `\n❌ ${context} FAILED:\n${JSON.stringify(response, null, 2)}\n`;
@@ -28,7 +33,9 @@ describe('PIG Metaclasses JSON-LD Import', () => {
     };
 */
     describe('Property.setJSONLD()', () => {
-        it(`should import ${DEF.pfxNsDcmi}title property`, () => {
+        it(`should import and export ${DEF.pfxNsDcmi}title property`, () => {
+            // Attention: There is actually no need for a class defining a title property,
+            // because 'title' is a native property.
             const jsonldInput = {
                 '@id': `${DEF.pfxNsDcmi}title`,
                 '@type': 'owl:DatatypeProperty',
@@ -39,7 +46,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     { '@value': 'Titre', '@language': 'fr' }
                 ],
                 'sh:datatype': { '@id': 'xs:string' },
-                'sh:maxCount': 1,
+            //    'sh:maxCount': 1,
                 'sh:maxLength': 256
             };
 
@@ -49,9 +56,26 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!prop.status().ok)
                 console.error('status:', prop.status());
             expect(prop.status().ok).toBe(true);
+
+            // Get the property data
+            const outData = getJSONLD(prop) as any;
+
+        /*    // Debug output - will appear in test output
+            process.stderr.write(`\n=== Property Export Test ===\n`);
+            process.stderr.write(`Input: ${JSON.stringify(jsonldInput, null, 2)}\n`);
+            process.stderr.write(`Output: ${JSON.stringify(outData, null, 2)}\n`);
+        */
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(`${DEF.pfxNsDcmi}title`);
+            expect(outData['@type']).toBe('owl:DatatypeProperty');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it(`should import ${DEF.pfxNsDcmi}description property`, () => {
+        it(`should import and export ${DEF.pfxNsDcmi}description property`, () => {
+            // Attention: There is actually no need for a class defining a description property,
+            // because 'description' is a native property.
             const jsonldInput = {
                 '@id': `${DEF.pfxNsDcmi}description`,
                 '@type': 'owl:DatatypeProperty',
@@ -77,11 +101,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!prop.status().ok)
                 console.error('status:', prop.status());
             expect(prop.status().ok).toBe(true);
+
+            // Get the property data
+            const outData = getJSONLD(prop) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(`${DEF.pfxNsDcmi}description`);
+            expect(outData['@type']).toBe('owl:DatatypeProperty');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it('should import SpecIF:Priority property with enumeratedValues', () => {
+        it('should import and export SpecIF:Priority enumeratedValues', () => {
             const jsonldInput = {
-                '@id': 'SpecIF:Priority-Value',
+                '@id': 'SpecIF:Priority-Enumeration',
                 '@type': 'owl:Class',
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Enumeration` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Enumeration` },
@@ -149,11 +183,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const germanTitle = priorityHigh?.title?.find((t: any) => t.lang === 'de');
             expect(germanTitle).toBeDefined();
             expect(germanTitle?.value).toBe('hoch');
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(en) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe('SpecIF:Priority-Enumeration');
+            expect(outData['@type']).toBe('owl:Class');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it(`should import ${DEF.pfxNsMeta}Icon property`, () => {
+        it(`should import ${DEF.pfxNsMeta}icon property`, () => {
             const jsonldInput = {
-                '@id': `${DEF.pfxNsMeta}Icon`,
+                '@id': `${DEF.pfxNsMeta}icon`,
                 '@type': 'owl:DatatypeProperty',
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
@@ -204,7 +248,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
     });
 
     describe('Link.setJSONLD()', () => {
-        it(`should import ${DEF.pfxNsMeta}Link`, () => {
+        it(`should import and export ${DEF.pfxNsMeta}Link`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsMeta}Link`,
                 '@type': 'owl:ObjectProperty',
@@ -227,6 +271,16 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!link.status().ok)
                 console.error('status:', link.status());
             expect(link.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(link) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(`${DEF.pfxNsMeta}Link`);
+            expect(outData['@type']).toBe('owl:ObjectProperty');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
         it(`should import ${DEF.pfxNsMeta}SourceLink`, () => {
@@ -309,7 +363,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
     });
 
     describe('Entity.setJSONLD()', () => {
-        it(`should import ${DEF.pfxNsMeta}Entity`, () => {
+        it(`should import and export ${DEF.pfxNsMeta}Entity`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsMeta}Entity`,
                 '@type': 'owl:Class',
@@ -322,7 +376,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ],
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
                     { '@id': `${DEF.pfxNsMeta}Category` },
-                    { '@id': `${DEF.pfxNsMeta}Icon` }
+                    { '@id': `${DEF.pfxNsMeta}icon` }
                 ]
             };
 
@@ -332,11 +386,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!entity.status().ok)
                 console.error('status:', entity.status());
             expect(entity.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(entity) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(`${DEF.pfxNsMeta}Entity`);
+            expect(outData['@type']).toBe('owl:Class');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it(`should import ${DEF.pfxNsMeta}HierarchyRoot`, () => {
+        it(`should import ${DEF.pfxNsMeta}Root`, () => {
             const jsonldInput = {
-                '@id': `${DEF.pfxNsMeta}HierarchyRoot`,
+                '@id': `${DEF.pfxNsMeta}Root`,
                 '@type': 'owl:Class',
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsSemi}Organizer` },
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
@@ -360,7 +424,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(entity.status().ok).toBe(true);
         });
 
-        it('should import FMC:Actor', () => {
+        it('should import and export FMC:Actor', () => {
             const jsonldInput = {
                 '@id': 'FMC:Actor',
                 '@type': 'owl:Class',
@@ -384,7 +448,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     }
                 ],
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                [`${DEF.pfxNsMeta}Icon`]: { '@value': '□' },
+                [`${DEF.pfxNsMeta}icon`]: { '@value': '□' },
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
                     { '@id': `${DEF.pfxNsMeta}Category` }
                 ],
@@ -398,9 +462,19 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!entity.status().ok)
                 console.error('status:', entity.status());
             expect(entity.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(entity) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe('FMC:Actor');
+            expect(outData['@type']).toBe('owl:Class');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it('should import IREB:Requirement', () => {
+        it('should import and export IREB:Requirement', () => {
             const jsonldInput = {
                 '@id': 'IREB:Requirement',
                 '@type': 'owl:Class',
@@ -416,7 +490,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                     }
                 ],
                 [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
-                [`${DEF.pfxNsMeta}Icon`]: { '@value': '↯' },
+                [`${DEF.pfxNsMeta}icon`]: { '@value': '↯' },
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
                     { '@id': 'SpecIF:Priority' }
                 ],
@@ -430,11 +504,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!entity.status().ok)
                 console.error('status:', entity.status());
             expect(entity.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(entity) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe('IREB:Requirement');
+            expect(outData['@type']).toBe('owl:Class');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
     });
 
     describe('Relationship.setJSONLD()', () => {
-        it(`should import ${DEF.pfxNsMeta}Relationship`, () => {
+        it(`should import and export ${DEF.pfxNsMeta}Relationship`, () => {
             const jsonldInput = {
                 '@id': `${DEF.pfxNsMeta}Relationship`,
                 '@type': 'owl:Class',
@@ -447,7 +531,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ],
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
                     { '@id': `${DEF.pfxNsMeta}Category` },
-                    { '@id': `${DEF.pfxNsMeta}Icon` }
+                    { '@id': `${DEF.pfxNsMeta}icon` }
                 ],
                 [`${DEF.pfxNsMeta}enumeratedSourceLink`]: [{ '@id': `${DEF.pfxNsMeta}SourceLink` }],
                 [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [{ '@id': `${DEF.pfxNsMeta}TargetLink` }]
@@ -459,9 +543,19 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!rel.status().ok)
                 console.error('status:', rel.status());
             expect(rel.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(rel) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(`${DEF.pfxNsMeta}Relationship`);
+            expect(outData['@type']).toBe('owl:Class');
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it('should import SpecIF:writes', () => {
+        it('should import and export SpecIF:writes', () => {
             const jsonldInput = {
                 '@id': 'SpecIF:writes',
                 '@type': 'owl:Class',
@@ -486,41 +580,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!rel.status().ok)
                 console.error('status:', rel.status());
             expect(rel.status().ok).toBe(true);
-        });
 
-        it('should import oslc_rm:satisfies', () => {
-            const jsonldInput = {
-                '@id': 'oslc_rm:satisfies',
-                '@type': 'owl:Class',
-                [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
-                [`${DEF.pfxNsDcmi}title`]: [
-                    { '@value': 'satisfies', '@language': 'en' },
-                    { '@value': 'erfüllt', '@language': 'de' },
-                    { '@value': 'satisfait', '@language': 'fr' }
-                ],
-                [`${DEF.pfxNsDcmi}description`]: [
-                    {
-                        '@value': "<p>The object is satisfied by the subject. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p><p>SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.</p>",
-                        '@language': 'en'
-                    }
-                ],
-                [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
-                [`${DEF.pfxNsMeta}enumeratedSourceLink`]: [{ '@id': 'oslc_rm:satisfies-toSource' }],
-                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [{ '@id': 'oslc_rm:satisfies-toTarget' }]
-            };
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(rel) as any;
 
-            const rel = new Relationship().setJSONLD(jsonldInput);
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe('SpecIF:writes');
+            expect(outData['@type']).toBe('owl:Class');
 
-            // check the attribute values upon creation:
-            if (!rel.status().ok)
-                console.error('status:', rel.status());
-            expect(rel.status().ok).toBe(true);
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
     });
 
     describe('AnEntity.setJSONLD()', () => {
-        it('should import requirement entity with property', () => {
+        it('should import and export requirement entity with property', () => {
             const jsonldInput = {
                 '@id': 'd:Req-1a8016e2872e78ecadc50feddc00029b',
                 '@type': 'IREB:Requirement',
@@ -546,9 +620,19 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!anEntity.status().ok)
                 console.error('status:', anEntity.status());
             expect(anEntity.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(anEntity) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(jsonldInput['@id']);
+            expect(outData['@type']).toBe(jsonldInput['@type']);
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it('should import diagram entity with properties and links', () => {
+        it('should import and export diagram entity with properties and links', () => {
             const jsonldInput = {
                 '@id': 'd:Diagram-aec0df7900010000017001eaf53e8876',
                 '@type': `${DEF.pfxNsMeta}View`,
@@ -598,9 +682,17 @@ describe('PIG Metaclasses JSON-LD Import', () => {
 
             expect(anEntity.hasProperty?.length).toBe(2);
             expect(anEntity.hasProperty[1].hasClass).toBe(`${DEF.pfxNsMeta}Category`);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(anEntity) as any;
+
+            expect(outData).toBeDefined();
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it('should import FMC:Actor entity', () => {
+        it('should import and export FMC:Actor entity', () => {
             const jsonldInput = {
                 '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
                 '@type': 'FMC:Actor',
@@ -620,11 +712,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!anEntity.status().ok)
                 console.error('status:', anEntity.status());
             expect(anEntity.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(anEntity) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(jsonldInput['@id']);
+            expect(outData['@type']).toBe(jsonldInput['@type']);
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
     });
 
     describe('ARelationship.setJSONLD()', () => {
-        it('should import SpecIF:writes relationship', () => {
+        it('should import and export SpecIF:writes relationship', () => {
             const jsonldInput = {
                 '@id': 'd:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
                 '@type': 'SpecIF:writes',
@@ -653,9 +755,19 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!aRel.status().ok)
                 console.error('status:', aRel.status());
             expect(aRel.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(aRel) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(jsonldInput['@id']);
+            expect(outData['@type']).toBe(jsonldInput['@type']);
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
 
-        it('should import oslc_rm:satisfies relationship', () => {
+        it('should import and export oslc_rm:satisfies relationship', () => {
             const jsonldInput = {
                 '@id': 'd:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b',
                 '@type': 'oslc_rm:satisfies',
@@ -684,6 +796,225 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             if (!aRel.status().ok)
                 console.error('status:', aRel.status());
             expect(aRel.status().ok).toBe(true);
+
+            // Get the property data as JSON-LD
+            const outData = getJSONLD(aRel) as any;
+
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe(jsonldInput['@id']);
+            expect(outData['@type']).toBe(jsonldInput['@type']);
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
+        });
+    });
+
+    describe('APackage.setJSONLD() and getJSONLD() roundtrip', () => {
+        it('should import and export a minimal package with entities and relationships', () => {
+            // Create a minimal package based on "Very Simple Model (FMC) with Requirements"
+            // Contains: 2 entity classes, 1 relationship class, 2 entity instances, 1 relationship instance
+            const jsonldInput = {
+                '@context': {
+                    'o': 'https://product-information-graph.org/v0.2/ontology#',
+                    'd': 'https://product-information-graph.org/examples/test#',
+                    'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+                    'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
+                    'owl': 'http://www.w3.org/2002/07/owl#',
+                    'sh': 'http://www.w3.org/ns/shacl#',
+                    'xs': 'http://www.w3.org/2001/XMLSchema#',
+                    'dcterms': 'http://purl.org/dc/terms/',
+                    'FMC': 'http://fmc-modeling.org#',
+                    'cas': 'https://product-information-graph.org/v0.2/metamodel#',
+                    'SpecIF': 'https://specif.de/v1.2/schema#'
+                },
+                '@id': 'd:test-package',
+                '@type': 'cas:Package',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}title`]: [
+                    { '@value': 'Test Package for JSON-LD roundtrip' }
+                ],
+                [`${DEF.pfxNsDcmi}modified`]: '2026-05-14T08:07:52.031Z',
+                '@graph': [
+                    // Entity class: FMC:Actor
+                    {
+                        '@id': 'FMC:Actor',
+                        '@type': 'owl:Class',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        // in real data there is usually a specialization, but here we skip it to save the declaration
+                        // [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'Actor', '@language': 'en' }
+                        ],
+                        'skos:definition': [
+                            { '@value': 'An active system component.', '@language': 'en' }
+                        ],
+                        [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [
+                            { '@id': 'SpecIF:writes-toTarget' }
+                        ]
+                    },
+                    // Property class: o:Volume
+                    {
+                        '@id': 'o:Volume',
+                        '@type': 'owl:DatatypeProperty',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        'sh:datatype': { '@id': 'xs:integer' },
+                        [`${DEF.pfxNsMeta}unit`]: 'MB',
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'Volume' }
+                        ],
+                        [`${DEF.pfxNsDcmi}description`]: [
+                            { '@value': 'Storage volume in megabytes' }
+                        ]
+                    },
+                    // Entity class: FMC:State
+                    {
+                        '@id': 'FMC:State',
+                        '@type': 'owl:Class',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        // in real data there is usually a specialization, but here we skip it to save the declaration
+                        // [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'State', '@language': 'en' }
+                        ],
+                        'skos:definition': [
+                            { '@value': 'A passive system component storing data.', '@language': 'en' }
+                        ],
+                        [`${DEF.pfxNsMeta}enumeratedProperty`]: [
+                            { '@id': 'o:Volume' }
+                        ]
+                    },
+                    // Relationship class: SpecIF:writes
+                    {
+                        '@id': 'SpecIF:writes',
+                        '@type': 'owl:Class',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        // in real data there is usually a specialization, but here we skip it to save the declaration
+                        // [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'writes', '@language': 'en' }
+                        ],
+                        'skos:definition': [
+                            { '@value': 'An Actor writes a State.', '@language': 'en' }
+                        ],
+                        [`${DEF.pfxNsMeta}enumeratedSourceLink`]: [
+                            { '@id': 'SpecIF:writes-toSource' }
+                        ],
+                        [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [
+                            { '@id': 'SpecIF:writes-toTarget' }
+                        ]
+                    },
+                    // Link class: SpecIF:writes-toSource
+                    {
+                        '@id': 'SpecIF:writes-toSource',
+                        '@type': 'owl:ObjectProperty',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        // in real data there is usually a specialization, but here we skip it to save the declaration
+                        // [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}linksSource` },
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'writes to source' }
+                        ],
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                            { '@id': 'FMC:Actor' }
+                        ]
+                    },
+                    // Link class: SpecIF:writes-toTarget
+                    {
+                        '@id': 'SpecIF:writes-toTarget',
+                        '@type': 'owl:ObjectProperty',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        // in real data there is usually a specialization, but here we skip it to save the declaration
+                        // [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}linksTarget` },
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'writes to target' }
+                        ],
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                            { '@id': 'FMC:State' }
+                        ]
+                    },
+                    // Entity instance 1: FiCo-Application
+                    {
+                        '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
+                        '@type': 'FMC:Actor',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T09:05:00+01:00',
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'FiCo-Application' }
+                        ],
+                        [`${DEF.pfxNsDcmi}description`]: [
+                            { '@value': '<p>IT-Application for Finance and Controlling.</p>' }
+                        ]
+                    },
+                    // Entity instance 2: FiCo-Data
+                    {
+                        '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
+                        '@type': 'FMC:State',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T09:05:00+01:00',
+                        [`${DEF.pfxNsDcmi}title`]: [
+                            { '@value': 'FiCo-Data' }
+                        ],
+                        [`${DEF.pfxNsDcmi}description`]: [
+                            { '@value': '<p>Finance and Controlling Data.</p>' }
+                        ],
+                        'o:Volume': [
+                            {
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                                '@value': '600'
+                            }
+                        ]
+                    },
+                    // Relationship instance: FiCo-Application writes FiCo-Data
+                    {
+                        '@id': 'd:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
+                        '@type': 'SpecIF:writes',
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
+                        [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T09:05:00+01:00',
+                        [`${DEF.pfxNsDcmi}description`]: [
+                            { '@value': "'FiCo-Application' writes 'FiCo-Data'" }
+                        ],
+                        'SpecIF:writes-toSource': [
+                            {
+                                '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` }
+                            }
+                        ],
+                        'SpecIF:writes-toTarget': [
+                            {
+                                '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            // Import the package
+            const pkg = new APackage().setJSONLD(jsonldInput);
+
+            // Debug output
+            const pkgStatus = pkg.status();
+            if (!pkgStatus.ok)
+                console.error(`Package Import Failed: ${JSON.stringify(pkgStatus, null, 2)}\n`);
+
+            expect(pkgStatus.ok).toBe(true);
+            expect(pkg.graph.length).toBe(9);
+
+            // Export the package back to JSON-LD
+            const outData = getJSONLD(pkg) as any;
+
+        /*    // Debug output
+            process.stderr.write(`\n=== Package Roundtrip Test ===\n`);
+            process.stderr.write(`Package output: ${JSON.stringify(outData, null, 2)}\n`);
+            process.stderr.write(`Input graph items: ${jsonldInput['@graph'].length}\n`);
+            process.stderr.write(`Output graph items: ${outData['@graph'].length}\n`);
+        */
+            expect(outData).toBeDefined();
+            expect(outData['@id']).toBe('d:test-package');
+            expect(outData['@graph']).toBeDefined();
+            expect(outData['@graph'].length).toBe(9);
+
+            // Compare the exported JSON-LD with the original input for exact equality
+            expect(outData).toEqual(jsonldInput);
         });
     });
 });

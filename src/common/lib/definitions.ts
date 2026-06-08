@@ -26,8 +26,10 @@ export const DEF = {
     jsonldSchemaPath: CAS_DOMAIN + 'schema/' + CAS_VERSION + '/jsonld/',
     xslPath: 'assets/xslt/',
     // Default for local terms (names) without an explicit namespace
-    defaultDataNamespace: CAS_DOMAIN + 'default/data#',  // for data instances with prefix d:
-    defaultOntologyNamespace: CAS_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
+    defaultDataNamespace: 'd:',  // for data instances
+    defaultOntologyNamespace: 'o:',  // for (application or project) ontology
+ //   defaultDataURL: CAS_DOMAIN + 'default/data#',  // URL for data instances
+ //   defaultOntologyURL: CAS_DOMAIN + 'default/ontology#',  // URL for (application or project) ontology
     ...BUILD_INFO,
     minLengthId: 3,
     maxSizeXML: 4 * 1024 * 1024, // 4MB

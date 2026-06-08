@@ -24,7 +24,6 @@
             <dcterms:title>Entity</dcterms:title>
             <skos:definition>A CASCaRA meta-model item used for entities (aka resources or artifacts).</skos:definition>
             <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-            <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
         </cas:Entity>
         <cas:Entity id="cas:Package" cas:hasClass="owl:Class">
             <cas:specializes>cas:Entity</cas:specializes>
@@ -76,7 +75,6 @@
             <dcterms:title>Relationship</dcterms:title>
             <skos:definition>A CASCaRA meta-model item used for reified relationships (aka predicates).</skos:definition>
             <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-            <cas:enumeratedProperty>cas:Icon</cas:enumeratedProperty>
             <cas:enumeratedSourceLink>cas:linksSource</cas:enumeratedSourceLink>
             <cas:enumeratedTargetLink>cas:linksTarget</cas:enumeratedTargetLink>
         </cas:Relationship>
@@ -85,14 +83,6 @@
             <skos:definition>A CASCaRA meta-model item used for properties (aka attributes).</skos:definition>
             <xs:simpleType>
                 <xs:restriction base="xs:anyType"/>
-            </xs:simpleType>
-        </cas:Property>
-        <cas:Property id="cas:Icon" cas:hasClass="owl:DatatypeProperty">
-            <cas:specializes>cas:Property</cas:specializes>
-            <dcterms:title>has icon</dcterms:title>
-            <skos:definition>Specifies an icon for a model element (entity or relationship).</skos:definition>
-            <xs:simpleType>
-                <xs:restriction base="xs:string"/>
             </xs:simpleType>
         </cas:Property>
         <cas:Property id="cas:Diagram" cas:hasClass="owl:DatatypeProperty">

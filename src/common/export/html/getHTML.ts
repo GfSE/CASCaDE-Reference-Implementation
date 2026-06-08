@@ -35,7 +35,7 @@
  */
 
 
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, getLocalText, TPigAnElement } from '../../schema/pig/ts/pig-metaclasses';
+import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement } from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, LIB } from '../../lib/helpers';
 
 export type stringHTML = string;  // contains HTML code
@@ -84,8 +84,8 @@ class GetHTML {
                     Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
                 </div>`;
 
-        const titleText = passify(getLocalText(pkg.title, lang));
-        const descText = passify(getLocalText(pkg.description, lang));
+        const titleText = passify(LIB.stripHTML(LIB.getLocalText(pkg.title, lang)));
+        const descText = passify(LIB.getLocalText(pkg.description, lang));
 
         const pkgHTML = `<div class="meta-aPackage">
                 <div class="col-main" style="flex: 0 0 ${widthMain};">
@@ -124,8 +124,8 @@ class GetHTML {
         const lang = options?.lang || 'en-US';
         const widthMain = options?.widthMain || '67%';
 
-        const titleText = passify(getLocalText(entity.title, lang));
-        const descText = passify(getLocalText(entity.description, lang));
+        const titleText = passify(LIB.stripHTML(LIB.getLocalText(entity.title, lang)));
+        const descText = passify(LIB.getLocalText(entity.description, lang));
 
         let propertiesHTML = '';
         propertiesHTML = '<div class="col-right"><dl class="dl-horizontal">';

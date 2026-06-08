@@ -408,7 +408,7 @@ describe('PIG Package Constraint Validation', () => {
             
             const status = pkg.status();
             expect(status.ok).toBe(false);
-            expect(status.status).toBe(611); // Incomplete item instantiation
+            expect(status.status).toBe(603); // Incomplete item instantiation
 
             // statusText should indicate that the hasClass reference is invalid (673)
             expect(status.statusText).toContain('671'); // Duplicate ID error code
@@ -463,7 +463,7 @@ describe('PIG Package Constraint Validation', () => {
             /*   if (!pkg.status().ok)
                    console.error('status:', pkg.status()); */
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Error code for one or more failed item instantiations
+            expect(pkg.status().status).toBe(603); // Error code for one or more failed item instantiations
         });
     });
 
@@ -519,7 +519,7 @@ describe('PIG Package Constraint Validation', () => {
 
             const status = pkg.status();
             expect(status.ok).toBe(false);
-            expect(status.status).toBe(611); // Incomplete item instantiation
+            expect(status.status).toBe(603); // Incomplete item instantiation
 
             // statusText should indicate that the hasClass reference is invalid (673)
             expect(status.statusText).toContain('673'); // Invalid hasClass reference
@@ -596,7 +596,7 @@ describe('PIG Package Constraint Validation', () => {
 
             const status = pkg.status();
             expect(status.ok).toBe(false);
-            expect(status.status).toBe(611); // Incomplete item instantiation
+            expect(status.status).toBe(603); // Incomplete item instantiation
 
             // statusText should indicate that the hasClass reference is invalid (673)
             expect(status.statusText).toContain('673'); // Invalid hasClass reference
@@ -691,7 +691,7 @@ describe('PIG Package Constraint Validation', () => {
                    console.error('status:', pkg.status()); */
             const status = pkg.status();
             expect(status.ok).toBe(false);
-            expect(status.status).toBe(611); // Incomplete item instantiation
+            expect(status.status).toBe(603); // Incomplete item instantiation
 
             // statusText should indicate that the hasClass reference is invalid (673)
             expect(status.statusText).toContain('673');
@@ -824,7 +824,7 @@ describe('PIG Package Constraint Validation', () => {
                    console.error('status:', pkg.status()); */
             const status = pkg.status();
             expect(status.ok).toBe(false);
-            expect(status.status).toBe(611); // Incomplete item instantiation
+            expect(status.status).toBe(603); // Incomplete item instantiation
 
             // statusText should indicate that the hasClass reference is invalid (673)
             expect(status.statusText).toContain('673');
@@ -880,7 +880,7 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingEntityClass);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
         });
 
         test('should reject anEntity with hasClass pointing to non-existent Entity', () => {
@@ -924,7 +924,7 @@ describe('PIG Package Constraint Validation', () => {
 
             const status = pkg.status();
             expect(status.ok).toBe(false);
-            expect(status.status).toBe(611); // Incomplete item instantiation
+            expect(status.status).toBe(603); // Incomplete item instantiation
 
             // statusText should indicate that the hasClass reference is invalid (675)
             expect(status.statusText).toContain('675'); // Invalid hasClass reference (not found)
@@ -973,7 +973,7 @@ describe('PIG Package Constraint Validation', () => {
 
             const status = pkg.status();
             expect(status.ok).toBe(false);
-            expect(status.status).toBe(611); // Incomplete item instantiation
+            expect(status.status).toBe(603); // Incomplete item instantiation
 
             // statusText should indicate that the hasClass reference is invalid (673)
             expect(status.statusText).toContain('675');
@@ -1063,7 +1063,7 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingRelClass);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
         });
 
         test('should reject aRelationship with hasClass pointing to wrong type (Link instead of Relationship)', () => {
@@ -1149,7 +1149,7 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithWrongRelClassType);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
         });
     });
 
@@ -1261,7 +1261,7 @@ describe('PIG Package Constraint Validation', () => {
                 const st = pkg.status();
                 expect(st.ok).toBe(false);
                 // console.log('Status:', st);
-                expect(st.status).toBe(611);
+                expect(st.status).toBe(603);
                 expect(st.statusText).toContain('(676)'); // Link not in enumerated list of its class
             });
 
@@ -1418,7 +1418,7 @@ describe('PIG Package Constraint Validation', () => {
                 const st = pkg.status();
                 expect(st.ok).toBe(false);
                 // console.log('Status:', st);
-                expect(st.status).toBe(611);
+                expect(st.status).toBe(603);
                 expect(st.statusText).toContain('(676)'); // Link not in enumerated list of its class
             });
 
