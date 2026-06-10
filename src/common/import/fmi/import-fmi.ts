@@ -15,12 +15,7 @@
  * self-contained CAS package that embeds both a small 'fmi:' ontology layer and
  * the instance data extracted from the model.
  *
- * Design decisions (consistent with ReqifImporter):
- * - SEF stylesheet is loaded from public/assets/xslt/ in both environments.
- * - Static class design for consistency with the other importers.
- * - The source file is loaded inside import(), for consistency.
- *
- * Authors: oskar.dungern@gfse.org
+ * Authors: rakshit.mittal@uantwerpen.be
  */
 
 import { unzipSync, strFromU8 } from 'fflate';
