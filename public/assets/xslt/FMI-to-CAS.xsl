@@ -37,6 +37,11 @@
     <!-- Unit / type-definition declarations -->
     <xsl:variable name="units" select="$md/*[local-name()='UnitDefinitions']/*[local-name()='Unit']"/>
     <xsl:variable name="types" select="$md/*[local-name()='TypeDefinitions']/*"/>
+    <!-- Enumeration types are mapped to cas:Enumeration classes; all other types -->
+    <!-- become fmi:TypeDefinition instances. FMI 2.0: SimpleType with an Enumeration -->
+    <!-- child; FMI 3.0: EnumerationType element. -->
+    <xsl:variable name="enumTypes" select="$types[local-name()='EnumerationType' or *[local-name()='Enumeration']]"/>
+    <xsl:variable name="plainTypes" select="$types[not(local-name()='EnumerationType') and not(*[local-name()='Enumeration'])]"/>
     <!-- Interfaces (ModelExchange, CoSimulation, ScheduledExecution) -->
     <xsl:variable name="interfaces" select="$md/*[local-name()='ModelExchange' or local-name()='CoSimulation' or local-name()='ScheduledExecution']"/>
     <xsl:variable name="logcats" select="$md/*[local-name()='LogCategories']/*[local-name()='Category']"/>
@@ -257,12 +262,47 @@
             <xsl:with-param name="datatype" select="'xs:integer'"/>
         </xsl:call-template>
 
-        <!-- Unit-level properties -->
+        <!-- Unit-level properties: one SI base-unit exponent per axis -->
         <xsl:call-template name="emit-property-class">
-            <xsl:with-param name="id" select="'fmi:baseUnit'"/>
-            <xsl:with-param name="title" select="'SI base unit'"/>
-            <xsl:with-param name="datatype" select="'xs:string'"/>
-            <xsl:with-param name="definition" select="'SI base unit exponents (kg, m, s, A, K, mol, cd, rad) of the unit.'"/>
+            <xsl:with-param name="id" select="'fmi:exp_kg'"/>
+            <xsl:with-param name="title" select="'SI exponent: kg (mass)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+            <xsl:with-param name="definition" select="'Exponent of the SI base unit kilogram in this unit.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:exp_m'"/>
+            <xsl:with-param name="title" select="'SI exponent: m (length)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:exp_s'"/>
+            <xsl:with-param name="title" select="'SI exponent: s (time)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:exp_A'"/>
+            <xsl:with-param name="title" select="'SI exponent: A (electric current)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:exp_K'"/>
+            <xsl:with-param name="title" select="'SI exponent: K (temperature)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:exp_mol'"/>
+            <xsl:with-param name="title" select="'SI exponent: mol (amount of substance)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:exp_cd'"/>
+            <xsl:with-param name="title" select="'SI exponent: cd (luminous intensity)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:exp_rad'"/>
+            <xsl:with-param name="title" select="'SI exponent: rad (angle)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
         </xsl:call-template>
         <xsl:call-template name="emit-property-class">
             <xsl:with-param name="id" select="'fmi:factor'"/>
@@ -273,6 +313,12 @@
             <xsl:with-param name="id" select="'fmi:offset'"/>
             <xsl:with-param name="title" select="'offset'"/>
             <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:inverse'"/>
+            <xsl:with-param name="title" select="'inverse'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+            <xsl:with-param name="definition" select="'If true, the display value is computed as factor/value + offset (FMI 3.0 inverse display unit).'"/>
         </xsl:call-template>
 
         <!-- TypeDefinition-level properties -->
@@ -363,6 +409,8 @@
 
         <!-- Entity, Relationship and Link classes are emitted in SECTION 2 -->
         <xsl:call-template name="emit-ontology-classes"/>
+        <!-- Enumeration classes (one per FMI enumeration type) are emitted in SECTION 2b -->
+        <xsl:call-template name="emit-enumeration-classes"/>
     </xsl:template>
 
     <!-- ============================================================= -->
@@ -416,6 +464,11 @@
             <xsl:with-param name="id" select="'fmi:Unit'"/>
             <xsl:with-param name="title" select="'Unit'"/>
             <xsl:with-param name="definition" select="'A unit definition with respect to the SI base units.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:DisplayUnit'"/>
+            <xsl:with-param name="title" select="'Display unit'"/>
+            <xsl:with-param name="definition" select="'A human-readable display variant of a Unit, related to it by factor, offset and (FMI 3.0) inverse.'"/>
         </xsl:call-template>
         <xsl:call-template name="emit-entity-class">
             <xsl:with-param name="id" select="'fmi:TypeDefinition'"/>
@@ -498,6 +551,62 @@
             <xsl:with-param name="title" select="'variable has type definition'"/>
             <xsl:with-param name="endpoints" select="'fmi:TypeDefinition'"/>
         </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasDisplayUnit'"/>
+            <xsl:with-param name="title" select="'has display unit'"/>
+            <xsl:with-param name="endpoints" select="'fmi:DisplayUnit'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:variableHasDisplayUnit'"/>
+            <xsl:with-param name="title" select="'variable has display unit'"/>
+            <xsl:with-param name="endpoints" select="'fmi:DisplayUnit'"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <!-- ============================================================= -->
+    <!-- SECTION 2b: Ontology - Enumeration classes                    -->
+    <!-- Each FMI enumeration type becomes a cas:Enumeration carrying   -->
+    <!-- its Items as enumeratedValue (title = item name, value encoded -->
+    <!-- in the id). A dedicated Link class connects variables to a     -->
+    <!-- chosen value via its enumeratedEndpoint.                       -->
+    <!-- ============================================================= -->
+    <xsl:template name="emit-enumeration-classes">
+        <xsl:for-each select="$enumTypes">
+            <xsl:variable name="enumPos" select="position()"/>
+            <xsl:variable name="items" select="if (local-name() = 'EnumerationType')
+                then *[local-name()='Item']
+                else *[local-name()='Enumeration']/*[local-name()='Item']"/>
+            <cas:Enumeration cas:hasClass="owl:Class" id="fmi:enum-{$enumPos}">
+                <dcterms:title>
+                    <xsl:value-of select="@name"/>
+                </dcterms:title>
+                <xsl:if test="@description and string-length(@description) &gt; 0">
+                    <skos:definition>
+                        <xsl:value-of select="@description"/>
+                    </skos:definition>
+                </xsl:if>
+                <cas:specializes>cas:Enumeration</cas:specializes>
+                <xsl:for-each select="$items">
+                    <xsl:variable name="vid" select="if (@value and string-length(string(@value)) &gt; 0) then string(@value) else string(position())"/>
+                    <cas:enumeratedValue id="fmi:enum-{$enumPos}-{$vid}">
+                        <dcterms:title>
+                            <xsl:value-of select="@name"/>
+                        </dcterms:title>
+                    </cas:enumeratedValue>
+                </xsl:for-each>
+            </cas:Enumeration>
+            <cas:Link rdf:type="owl:ObjectProperty" id="fmi:hasEnumValue-{$enumPos}">
+                <cas:specializes>cas:Link</cas:specializes>
+                <dcterms:title>
+                    <xsl:text>has enumeration value (</xsl:text>
+                    <xsl:value-of select="@name"/>
+                    <xsl:text>)</xsl:text>
+                </dcterms:title>
+                <cas:enumeratedEndpoint>
+                    <xsl:value-of select="concat('fmi:enum-', $enumPos)"/>
+                </cas:enumeratedEndpoint>
+            </cas:Link>
+        </xsl:for-each>
     </xsl:template>
 
     <!-- ============================================================= -->
@@ -600,7 +709,7 @@
                     <xsl:with-param name="idRef" select="concat('unit-', position())"/>
                 </xsl:call-template>
             </xsl:for-each>
-            <xsl:for-each select="$types">
+            <xsl:for-each select="$plainTypes">
                 <xsl:call-template name="emit-target-link">
                     <xsl:with-param name="class" select="'fmi:hasTypeDefinition'"/>
                     <xsl:with-param name="idRef" select="concat('type-', position())"/>
@@ -635,7 +744,14 @@
             <xsl:variable name="unitName" select="string($attrNode/@unit)"/>
             <xsl:variable name="unitPos" select="(for $i in 1 to count($units) return if (string($units[$i]/@name) = $unitName) then $i else ())[1]"/>
             <xsl:variable name="typeName" select="string($attrNode/@declaredType)"/>
-            <xsl:variable name="typePos" select="(for $i in 1 to count($types) return if (string($types[$i]/@name) = $typeName) then $i else ())[1]"/>
+            <xsl:variable name="typePos" select="(for $i in 1 to count($plainTypes) return if (string($plainTypes[$i]/@name) = $typeName) then $i else ())[1]"/>
+            <xsl:variable name="enumPos" select="(for $i in 1 to count($enumTypes) return if (string($enumTypes[$i]/@name) = $typeName) then $i else ())[1]"/>
+            <xsl:variable name="startVal" select="string($attrNode/@start)"/>
+            <xsl:variable name="duName" select="string($attrNode/@displayUnit)"/>
+            <xsl:variable name="duPos" select="if (exists($unitPos))
+                then (for $j in 1 to count($units[$unitPos]/*[local-name()='DisplayUnit'])
+                    return if (string($units[$unitPos]/*[local-name()='DisplayUnit'][$j]/@name) = $duName) then $j else ())[1]
+                else ()"/>
 
             <cas:anEntity rdf:type="fmi:Variable" id="var-{position()}">
                 <dcterms:modified>
@@ -717,30 +833,46 @@
                         <xsl:with-param name="idRef" select="concat('type-', $typePos)"/>
                     </xsl:call-template>
                 </xsl:if>
+                <xsl:if test="string-length($duName) &gt; 0 and exists($unitPos) and exists($duPos)">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:variableHasDisplayUnit'"/>
+                        <xsl:with-param name="idRef" select="concat('displayunit-', $unitPos, '-', $duPos)"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="exists($enumPos) and string-length($startVal) &gt; 0">
+                    <xsl:variable name="enumNode" select="$enumTypes[$enumPos]"/>
+                    <xsl:variable name="enumItems" select="if (local-name($enumNode) = 'EnumerationType')
+                        then $enumNode/*[local-name()='Item']
+                        else $enumNode/*[local-name()='Enumeration']/*[local-name()='Item']"/>
+                    <xsl:if test="exists($enumItems[string(@value) = $startVal])">
+                        <xsl:call-template name="emit-target-link">
+                            <xsl:with-param name="class" select="concat('fmi:hasEnumValue-', $enumPos)"/>
+                            <xsl:with-param name="idRef" select="concat('fmi:enum-', $enumPos, '-', $startVal)"/>
+                        </xsl:call-template>
+                    </xsl:if>
+                </xsl:if>
             </cas:anEntity>
         </xsl:for-each>
 
-        <!-- Unit entities -->
+        <!-- Unit entities (+ their DisplayUnit sub-entities) -->
         <xsl:for-each select="$units">
+            <xsl:variable name="unitPos" select="position()"/>
             <xsl:variable name="bu" select="*[local-name()='BaseUnit']"/>
-            <xsl:variable name="baseUnitText">
-                <xsl:if test="$bu">
-                    <xsl:for-each select="$bu/@*[local-name() = ('kg','m','s','A','K','mol','cd','rad')][. != '0']">
-                        <xsl:value-of select="concat(local-name(), '^', ., ' ')"/>
-                    </xsl:for-each>
-                </xsl:if>
-            </xsl:variable>
-            <cas:anEntity rdf:type="fmi:Unit" id="unit-{position()}">
+            <xsl:variable name="dus" select="*[local-name()='DisplayUnit']"/>
+            <cas:anEntity rdf:type="fmi:Unit" id="unit-{$unitPos}">
                 <dcterms:modified>
                     <xsl:value-of select="$modified"/>
                 </dcterms:modified>
                 <dcterms:title>
                     <xsl:value-of select="@name"/>
                 </dcterms:title>
-                <xsl:call-template name="emit-prop">
-                    <xsl:with-param name="class" select="'fmi:baseUnit'"/>
-                    <xsl:with-param name="value" select="normalize-space($baseUnitText)"/>
-                </xsl:call-template>
+                <!-- one integer property per non-zero SI base-unit exponent -->
+                <xsl:for-each select="$bu/@*[local-name() = ('kg','m','s','A','K','mol','cd','rad')][. != '0']">
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="concat('fmi:exp_', local-name())"/>
+                        <xsl:with-param name="value" select="."/>
+                    </xsl:call-template>
+                </xsl:for-each>
                 <xsl:call-template name="emit-prop">
                     <xsl:with-param name="class" select="'fmi:factor'"/>
                     <xsl:with-param name="value" select="$bu/@factor"/>
@@ -749,15 +881,52 @@
                     <xsl:with-param name="class" select="'fmi:offset'"/>
                     <xsl:with-param name="value" select="$bu/@offset"/>
                 </xsl:call-template>
+                <!-- link to each shared DisplayUnit of this unit -->
+                <xsl:for-each select="$dus">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:hasDisplayUnit'"/>
+                        <xsl:with-param name="idRef" select="concat('displayunit-', $unitPos, '-', position())"/>
+                    </xsl:call-template>
+                </xsl:for-each>
             </cas:anEntity>
+            <!-- DisplayUnit entities for this unit -->
+            <xsl:for-each select="$dus">
+                <cas:anEntity rdf:type="fmi:DisplayUnit" id="displayunit-{$unitPos}-{position()}">
+                    <dcterms:modified>
+                        <xsl:value-of select="$modified"/>
+                    </dcterms:modified>
+                    <dcterms:title>
+                        <xsl:value-of select="@name"/>
+                    </dcterms:title>
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:factor'"/>
+                        <xsl:with-param name="value" select="@factor"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:offset'"/>
+                        <xsl:with-param name="value" select="@offset"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:inverse'"/>
+                        <xsl:with-param name="value" select="@inverse"/>
+                    </xsl:call-template>
+                </cas:anEntity>
+            </xsl:for-each>
         </xsl:for-each>
 
-        <!-- Type definition entities -->
-        <xsl:for-each select="$types">
+        <!-- Type definition entities (enumerations are emitted as cas:Enumeration classes) -->
+        <xsl:for-each select="$plainTypes">
             <xsl:variable name="isSimple" select="local-name() = 'SimpleType'"/>
             <xsl:variable name="typedT" select="*[local-name() = ('Real','Integer','Boolean','String','Enumeration')]"/>
             <xsl:variable name="tAttr" select="if ($isSimple) then $typedT else ."/>
             <xsl:variable name="baseType" select="if ($isSimple) then local-name($typedT) else local-name(.)"/>
+            <xsl:variable name="tUnitName" select="string($tAttr/@unit)"/>
+            <xsl:variable name="tUnitPos" select="(for $i in 1 to count($units) return if (string($units[$i]/@name) = $tUnitName) then $i else ())[1]"/>
+            <xsl:variable name="tDuName" select="string($tAttr/@displayUnit)"/>
+            <xsl:variable name="tDuPos" select="if (exists($tUnitPos))
+                then (for $j in 1 to count($units[$tUnitPos]/*[local-name()='DisplayUnit'])
+                    return if (string($units[$tUnitPos]/*[local-name()='DisplayUnit'][$j]/@name) = $tDuName) then $j else ())[1]
+                else ()"/>
             <cas:anEntity rdf:type="fmi:TypeDefinition" id="type-{position()}">
                 <dcterms:modified>
                     <xsl:value-of select="$modified"/>
@@ -783,6 +952,10 @@
                     <xsl:with-param name="value" select="$tAttr/@unit"/>
                 </xsl:call-template>
                 <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:displayUnit'"/>
+                    <xsl:with-param name="value" select="$tAttr/@displayUnit"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
                     <xsl:with-param name="class" select="'fmi:min'"/>
                     <xsl:with-param name="value" select="$tAttr/@min"/>
                 </xsl:call-template>
@@ -790,6 +963,20 @@
                     <xsl:with-param name="class" select="'fmi:max'"/>
                     <xsl:with-param name="value" select="$tAttr/@max"/>
                 </xsl:call-template>
+                <!-- A type definition shares the same Unit / DisplayUnit entities -->
+                <!-- that variables of this type reference (many-to-one fan-in). -->
+                <xsl:if test="string-length($tUnitName) &gt; 0 and exists($tUnitPos)">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:variableHasUnit'"/>
+                        <xsl:with-param name="idRef" select="concat('unit-', $tUnitPos)"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="string-length($tDuName) &gt; 0 and exists($tUnitPos) and exists($tDuPos)">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:variableHasDisplayUnit'"/>
+                        <xsl:with-param name="idRef" select="concat('displayunit-', $tUnitPos, '-', $tDuPos)"/>
+                    </xsl:call-template>
+                </xsl:if>
             </cas:anEntity>
         </xsl:for-each>
 
