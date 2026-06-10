@@ -1,0 +1,938 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--
+    FMI-to-CAS.xsl
+    Transforms an FMI modelDescription.xml (FMI 2.0 or FMI 3.0) into a self-contained
+    CASCaRA (CAS) package. The package embeds both:
+      (a) a small 'fmi:' ontology layer (Entity/Relationship/Link/Property classes), and
+      (b) the instance data extracted from the model description.
+
+    Version tolerance: all element matching uses local-name() so the same stylesheet
+    handles FMI 2.0 (ScalarVariable + typed child) and FMI 3.0 (typed variable elements).
+    The mapping is driven by the FMI XSDs in /ref (fmi2-schema, fmi3-schema).
+
+    Copyright 2025 GfSE (https://gfse.org) - License: Apache 2.0
+-->
+<xsl:stylesheet version="2.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:cas="http://product-information-graph.org"
+    xmlns:fmi="https://fmi-standard.org/ontology#"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:sh="http://www.w3.org/ns/shacl#"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:owl="http://www.w3.org/2002/07/owl#">
+
+    <xsl:output method="xml" encoding="UTF-8" indent="yes" standalone="yes"/>
+
+    <!-- ============================================================= -->
+    <!-- Global context                                                -->
+    <!-- ============================================================= -->
+    <xsl:variable name="md" select="/*[local-name()='fmiModelDescription']"/>
+    <xsl:variable name="fmiVersion" select="string($md/@fmiVersion)"/>
+    <xsl:variable name="isFmi3" select="starts-with($fmiVersion, '3')"/>
+
+    <!-- All variable elements (FMI2: ScalarVariable; FMI3: Float64, Int32, ...) -->
+    <xsl:variable name="vars" select="$md/*[local-name()='ModelVariables']/*"/>
+    <!-- Unit / type-definition declarations -->
+    <xsl:variable name="units" select="$md/*[local-name()='UnitDefinitions']/*[local-name()='Unit']"/>
+    <xsl:variable name="types" select="$md/*[local-name()='TypeDefinitions']/*"/>
+    <!-- Interfaces (ModelExchange, CoSimulation, ScheduledExecution) -->
+    <xsl:variable name="interfaces" select="$md/*[local-name()='ModelExchange' or local-name()='CoSimulation' or local-name()='ScheduledExecution']"/>
+    <xsl:variable name="logcats" select="$md/*[local-name()='LogCategories']/*[local-name()='Category']"/>
+    <xsl:variable name="experiment" select="$md/*[local-name()='DefaultExperiment']"/>
+
+    <!-- A timestamp used for the mandatory dcterms:modified of every instance.    -->
+    <!-- FMI has no per-element change info, so we reuse generationDateAndTime.     -->
+    <xsl:variable name="modified">
+        <xsl:choose>
+            <xsl:when test="$md/@generationDateAndTime and string-length($md/@generationDateAndTime) &gt; 0">
+                <xsl:value-of select="$md/@generationDateAndTime"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:text>1970-01-01T00:00:00Z</xsl:text>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+    <!-- ============================================================= -->
+    <!-- Root template                                                 -->
+    <!-- ============================================================= -->
+    <xsl:template match="/">
+        <cas:aPackage rdf:type="cas:Package">
+            <xsl:attribute name="id">
+                <xsl:text>fmi-package</xsl:text>
+            </xsl:attribute>
+            <dcterms:title>
+                <xsl:choose>
+                    <xsl:when test="$md/@modelName and string-length($md/@modelName) &gt; 0">
+                        <xsl:text>FMU: </xsl:text>
+                        <xsl:value-of select="$md/@modelName"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>Imported FMU</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </dcterms:title>
+            <dcterms:description>
+                <xsl:choose>
+                    <xsl:when test="$md/@description and string-length($md/@description) &gt; 0">
+                        <xsl:value-of select="$md/@description"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>Functional Mock-up Interface model (FMI </xsl:text>
+                        <xsl:value-of select="$fmiVersion"/>
+                        <xsl:text>)</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </dcterms:description>
+            <dcterms:modified>
+                <xsl:value-of select="$modified"/>
+            </dcterms:modified>
+            <graph>
+                <xsl:call-template name="emit-ontology"/>
+                <xsl:call-template name="emit-instances"/>
+            </graph>
+        </cas:aPackage>
+    </xsl:template>
+
+    <!-- ============================================================= -->
+    <!-- SECTION 1: Ontology - Datatype Properties (cas:Property)      -->
+    <!-- ============================================================= -->
+    <xsl:template name="emit-property-class">
+        <xsl:param name="id"/>
+        <xsl:param name="title"/>
+        <xsl:param name="datatype"/>
+        <xsl:param name="definition"/>
+        <cas:Property rdf:type="owl:DatatypeProperty" id="{$id}">
+            <cas:specializes>cas:Property</cas:specializes>
+            <dcterms:title>
+                <xsl:value-of select="$title"/>
+            </dcterms:title>
+            <xsl:if test="$definition and string-length($definition) &gt; 0">
+                <skos:definition>
+                    <xsl:value-of select="$definition"/>
+                </skos:definition>
+            </xsl:if>
+            <sh:datatype>
+                <xsl:value-of select="$datatype"/>
+            </sh:datatype>
+        </cas:Property>
+    </xsl:template>
+
+    <xsl:template name="emit-ontology">
+        <!-- FMU-level properties -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:fmiVersion'"/>
+            <xsl:with-param name="title" select="'FMI version'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'The version of the FMI standard the FMU conforms to.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:guid'"/>
+            <xsl:with-param name="title" select="'GUID / instantiation token'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'Fingerprint (FMI 2.0 guid / FMI 3.0 instantiationToken) verifying that the model description and the binary match.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:modelName'"/>
+            <xsl:with-param name="title" select="'model name'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:author'"/>
+            <xsl:with-param name="title" select="'author'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:version'"/>
+            <xsl:with-param name="title" select="'FMU version'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:copyright'"/>
+            <xsl:with-param name="title" select="'copyright'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:license'"/>
+            <xsl:with-param name="title" select="'license'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:generationTool'"/>
+            <xsl:with-param name="title" select="'generation tool'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:generationDateAndTime'"/>
+            <xsl:with-param name="title" select="'generation date and time'"/>
+            <xsl:with-param name="datatype" select="'xs:dateTime'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:variableNamingConvention'"/>
+            <xsl:with-param name="title" select="'variable naming convention'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:numberOfEventIndicators'"/>
+            <xsl:with-param name="title" select="'number of event indicators'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+
+        <!-- Variable-level properties -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:valueReference'"/>
+            <xsl:with-param name="title" select="'value reference'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+            <xsl:with-param name="definition" select="'Handle used to identify the variable value in FMI function calls.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:causality'"/>
+            <xsl:with-param name="title" select="'causality'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'parameter, calculatedParameter, input, output, local, independent or structuralParameter.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:variability'"/>
+            <xsl:with-param name="title" select="'variability'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'constant, fixed, tunable, discrete or continuous.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:initial'"/>
+            <xsl:with-param name="title" select="'initial'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'exact, approx or calculated.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:dataType'"/>
+            <xsl:with-param name="title" select="'data type'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'FMI base data type, e.g. Real/Integer/Boolean/String/Enumeration (FMI 2.0) or Float64/Int32/... (FMI 3.0).'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:start'"/>
+            <xsl:with-param name="title" select="'start value'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:declaredType'"/>
+            <xsl:with-param name="title" select="'declared type'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:unit'"/>
+            <xsl:with-param name="title" select="'unit'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:displayUnit'"/>
+            <xsl:with-param name="title" select="'display unit'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:quantity'"/>
+            <xsl:with-param name="title" select="'quantity'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:min'"/>
+            <xsl:with-param name="title" select="'minimum'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:max'"/>
+            <xsl:with-param name="title" select="'maximum'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:nominal'"/>
+            <xsl:with-param name="title" select="'nominal'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:derivative'"/>
+            <xsl:with-param name="title" select="'derivative of (index)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+
+        <!-- Unit-level properties -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:baseUnit'"/>
+            <xsl:with-param name="title" select="'SI base unit'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'SI base unit exponents (kg, m, s, A, K, mol, cd, rad) of the unit.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:factor'"/>
+            <xsl:with-param name="title" select="'factor'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:offset'"/>
+            <xsl:with-param name="title" select="'offset'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+
+        <!-- TypeDefinition-level properties -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:baseType'"/>
+            <xsl:with-param name="title" select="'base type'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+
+        <!-- Interface-level properties -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:interfaceType'"/>
+            <xsl:with-param name="title" select="'interface type'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'ModelExchange, CoSimulation or ScheduledExecution.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:modelIdentifier'"/>
+            <xsl:with-param name="title" select="'model identifier'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:needsExecutionTool'"/>
+            <xsl:with-param name="title" select="'needs execution tool'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canGetAndSetFMUstate'"/>
+            <xsl:with-param name="title" select="'can get and set FMU state'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canSerializeFMUstate'"/>
+            <xsl:with-param name="title" select="'can serialize FMU state'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:providesDirectionalDerivative'"/>
+            <xsl:with-param name="title" select="'provides directional derivatives'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canHandleVariableCommunicationStepSize'"/>
+            <xsl:with-param name="title" select="'can handle variable communication step size'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:maxOutputDerivativeOrder'"/>
+            <xsl:with-param name="title" select="'max output derivative order'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+
+        <!-- DefaultExperiment-level properties -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:startTime'"/>
+            <xsl:with-param name="title" select="'start time'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:stopTime'"/>
+            <xsl:with-param name="title" select="'stop time'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:tolerance'"/>
+            <xsl:with-param name="title" select="'tolerance'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:stepSize'"/>
+            <xsl:with-param name="title" select="'step size'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+
+        <!-- Dependency (connection) properties -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:dependencyKind'"/>
+            <xsl:with-param name="title" select="'dependency kind'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'dependent, constant, fixed, tunable or discrete.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:structureKind'"/>
+            <xsl:with-param name="title" select="'model structure kind'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'Which ModelStructure list the dependency was declared in (Output, Derivative, InitialUnknown, ...).'"/>
+        </xsl:call-template>
+
+        <!-- Entity, Relationship and Link classes are emitted in SECTION 2 -->
+        <xsl:call-template name="emit-ontology-classes"/>
+    </xsl:template>
+
+    <!-- ============================================================= -->
+    <!-- SECTION 2: Ontology - Entity / Relationship / Link classes    -->
+    <!-- ============================================================= -->
+    <xsl:template name="emit-entity-class">
+        <xsl:param name="id"/>
+        <xsl:param name="title"/>
+        <xsl:param name="definition"/>
+        <cas:Entity rdf:type="owl:Class" id="{$id}">
+            <cas:specializes>cas:Entity</cas:specializes>
+            <dcterms:title>
+                <xsl:value-of select="$title"/>
+            </dcterms:title>
+            <skos:definition>
+                <xsl:value-of select="$definition"/>
+            </skos:definition>
+        </cas:Entity>
+    </xsl:template>
+
+    <xsl:template name="emit-link-class">
+        <xsl:param name="id"/>
+        <xsl:param name="title"/>
+        <xsl:param name="endpoints"/>
+        <cas:Link rdf:type="owl:ObjectProperty" id="{$id}">
+            <cas:specializes>cas:Link</cas:specializes>
+            <dcterms:title>
+                <xsl:value-of select="$title"/>
+            </dcterms:title>
+            <xsl:for-each select="tokenize($endpoints, '\s+')">
+                <cas:enumeratedEndpoint>
+                    <xsl:value-of select="."/>
+                </cas:enumeratedEndpoint>
+            </xsl:for-each>
+        </cas:Link>
+    </xsl:template>
+
+    <xsl:template name="emit-ontology-classes">
+        <!-- Entity classes -->
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:FMU'"/>
+            <xsl:with-param name="title" select="'FMU'"/>
+            <xsl:with-param name="definition" select="'A Functional Mock-up Unit described by an FMI modelDescription.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:Variable'"/>
+            <xsl:with-param name="title" select="'Variable'"/>
+            <xsl:with-param name="definition" select="'A model variable (FMI 2.0 ScalarVariable or FMI 3.0 typed variable).'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:Unit'"/>
+            <xsl:with-param name="title" select="'Unit'"/>
+            <xsl:with-param name="definition" select="'A unit definition with respect to the SI base units.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:TypeDefinition'"/>
+            <xsl:with-param name="title" select="'Type definition'"/>
+            <xsl:with-param name="definition" select="'A reusable simple type providing default attributes for variables.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:Interface'"/>
+            <xsl:with-param name="title" select="'Interface'"/>
+            <xsl:with-param name="definition" select="'A supported FMI interface type: ModelExchange, CoSimulation or ScheduledExecution.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:LogCategory'"/>
+            <xsl:with-param name="title" select="'Log category'"/>
+            <xsl:with-param name="definition" select="'A logging category supported by the FMU.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:DefaultExperiment'"/>
+            <xsl:with-param name="title" select="'Default experiment'"/>
+            <xsl:with-param name="definition" select="'Default simulation settings recommended by the FMU.'"/>
+        </xsl:call-template>
+
+        <!-- Relationship class: variable dependency (connection) -->
+        <cas:Relationship rdf:type="owl:Class" id="fmi:dependsOn">
+            <cas:specializes>cas:Relationship</cas:specializes>
+            <dcterms:title>depends on</dcterms:title>
+            <skos:definition>A functional dependency declared in ModelStructure: the source variable depends on the target variable.</skos:definition>
+            <cas:enumeratedProperty>fmi:dependencyKind</cas:enumeratedProperty>
+            <cas:enumeratedProperty>fmi:structureKind</cas:enumeratedProperty>
+        </cas:Relationship>
+
+        <!-- Link classes -->
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:dependsOn-toSource'"/>
+            <xsl:with-param name="title" select="'depends on (source)'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Variable'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:dependsOn-toTarget'"/>
+            <xsl:with-param name="title" select="'depends on (target)'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Variable'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasVariable'"/>
+            <xsl:with-param name="title" select="'has variable'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Variable'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasUnit'"/>
+            <xsl:with-param name="title" select="'has unit'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Unit'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasTypeDefinition'"/>
+            <xsl:with-param name="title" select="'has type definition'"/>
+            <xsl:with-param name="endpoints" select="'fmi:TypeDefinition'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasInterface'"/>
+            <xsl:with-param name="title" select="'has interface'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Interface'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasLogCategory'"/>
+            <xsl:with-param name="title" select="'has log category'"/>
+            <xsl:with-param name="endpoints" select="'fmi:LogCategory'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasDefaultExperiment'"/>
+            <xsl:with-param name="title" select="'has default experiment'"/>
+            <xsl:with-param name="endpoints" select="'fmi:DefaultExperiment'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:variableHasUnit'"/>
+            <xsl:with-param name="title" select="'variable has unit'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Unit'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:variableHasType'"/>
+            <xsl:with-param name="title" select="'variable has type definition'"/>
+            <xsl:with-param name="endpoints" select="'fmi:TypeDefinition'"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <!-- ============================================================= -->
+    <!-- Instance helpers                                              -->
+    <!-- ============================================================= -->
+    <xsl:template name="emit-prop">
+        <xsl:param name="class"/>
+        <xsl:param name="value"/>
+        <xsl:if test="string-length(string($value)) &gt; 0">
+            <cas:aProperty rdf:type="{$class}">
+                <value>
+                    <xsl:value-of select="$value"/>
+                </value>
+            </cas:aProperty>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template name="emit-target-link">
+        <xsl:param name="class"/>
+        <xsl:param name="idRef"/>
+        <cas:aTargetLink rdf:type="{$class}">
+            <idRef>
+                <xsl:value-of select="$idRef"/>
+            </idRef>
+        </cas:aTargetLink>
+    </xsl:template>
+
+    <!-- ============================================================= -->
+    <!-- SECTION 3: Instances                                          -->
+    <!-- ============================================================= -->
+    <xsl:template name="emit-instances">
+
+        <!-- The FMU entity -->
+        <cas:anEntity rdf:type="fmi:FMU" id="fmu">
+            <dcterms:modified>
+                <xsl:value-of select="$modified"/>
+            </dcterms:modified>
+            <dcterms:title>
+                <xsl:value-of select="$md/@modelName"/>
+            </dcterms:title>
+            <xsl:if test="$md/@description and string-length($md/@description) &gt; 0">
+                <dcterms:description>
+                    <xsl:value-of select="$md/@description"/>
+                </dcterms:description>
+            </xsl:if>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:fmiVersion'"/>
+                <xsl:with-param name="value" select="$md/@fmiVersion"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:guid'"/>
+                <xsl:with-param name="value" select="if ($md/@guid) then $md/@guid else $md/@instantiationToken"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:modelName'"/>
+                <xsl:with-param name="value" select="$md/@modelName"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:author'"/>
+                <xsl:with-param name="value" select="$md/@author"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:version'"/>
+                <xsl:with-param name="value" select="$md/@version"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:copyright'"/>
+                <xsl:with-param name="value" select="$md/@copyright"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:license'"/>
+                <xsl:with-param name="value" select="$md/@license"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:generationTool'"/>
+                <xsl:with-param name="value" select="$md/@generationTool"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:generationDateAndTime'"/>
+                <xsl:with-param name="value" select="$md/@generationDateAndTime"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:variableNamingConvention'"/>
+                <xsl:with-param name="value" select="$md/@variableNamingConvention"/>
+            </xsl:call-template>
+            <xsl:call-template name="emit-prop">
+                <xsl:with-param name="class" select="'fmi:numberOfEventIndicators'"/>
+                <xsl:with-param name="value" select="$md/@numberOfEventIndicators"/>
+            </xsl:call-template>
+            <!-- Containment links to all child entities -->
+            <xsl:for-each select="$vars">
+                <xsl:call-template name="emit-target-link">
+                    <xsl:with-param name="class" select="'fmi:hasVariable'"/>
+                    <xsl:with-param name="idRef" select="concat('var-', position())"/>
+                </xsl:call-template>
+            </xsl:for-each>
+            <xsl:for-each select="$units">
+                <xsl:call-template name="emit-target-link">
+                    <xsl:with-param name="class" select="'fmi:hasUnit'"/>
+                    <xsl:with-param name="idRef" select="concat('unit-', position())"/>
+                </xsl:call-template>
+            </xsl:for-each>
+            <xsl:for-each select="$types">
+                <xsl:call-template name="emit-target-link">
+                    <xsl:with-param name="class" select="'fmi:hasTypeDefinition'"/>
+                    <xsl:with-param name="idRef" select="concat('type-', position())"/>
+                </xsl:call-template>
+            </xsl:for-each>
+            <xsl:for-each select="$interfaces">
+                <xsl:call-template name="emit-target-link">
+                    <xsl:with-param name="class" select="'fmi:hasInterface'"/>
+                    <xsl:with-param name="idRef" select="concat('if-', position())"/>
+                </xsl:call-template>
+            </xsl:for-each>
+            <xsl:for-each select="$logcats">
+                <xsl:call-template name="emit-target-link">
+                    <xsl:with-param name="class" select="'fmi:hasLogCategory'"/>
+                    <xsl:with-param name="idRef" select="concat('logcat-', position())"/>
+                </xsl:call-template>
+            </xsl:for-each>
+            <xsl:if test="$experiment">
+                <xsl:call-template name="emit-target-link">
+                    <xsl:with-param name="class" select="'fmi:hasDefaultExperiment'"/>
+                    <xsl:with-param name="idRef" select="'defaultExperiment'"/>
+                </xsl:call-template>
+            </xsl:if>
+        </cas:anEntity>
+
+        <!-- Variable entities -->
+        <xsl:for-each select="$vars">
+            <xsl:variable name="isScalar" select="local-name() = 'ScalarVariable'"/>
+            <xsl:variable name="typed" select="*[local-name() = ('Real','Integer','Boolean','String','Enumeration')]"/>
+            <xsl:variable name="attrNode" select="if ($isScalar) then $typed else ."/>
+            <xsl:variable name="dataType" select="if ($isScalar) then local-name($typed) else local-name(.)"/>
+            <xsl:variable name="unitName" select="string($attrNode/@unit)"/>
+            <xsl:variable name="unitPos" select="(for $i in 1 to count($units) return if (string($units[$i]/@name) = $unitName) then $i else ())[1]"/>
+            <xsl:variable name="typeName" select="string($attrNode/@declaredType)"/>
+            <xsl:variable name="typePos" select="(for $i in 1 to count($types) return if (string($types[$i]/@name) = $typeName) then $i else ())[1]"/>
+
+            <cas:anEntity rdf:type="fmi:Variable" id="var-{position()}">
+                <dcterms:modified>
+                    <xsl:value-of select="$modified"/>
+                </dcterms:modified>
+                <dcterms:title>
+                    <xsl:value-of select="@name"/>
+                </dcterms:title>
+                <xsl:if test="@description and string-length(@description) &gt; 0">
+                    <dcterms:description>
+                        <xsl:value-of select="@description"/>
+                    </dcterms:description>
+                </xsl:if>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:valueReference'"/>
+                    <xsl:with-param name="value" select="@valueReference"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:causality'"/>
+                    <xsl:with-param name="value" select="@causality"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:variability'"/>
+                    <xsl:with-param name="value" select="@variability"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:initial'"/>
+                    <xsl:with-param name="value" select="@initial"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:dataType'"/>
+                    <xsl:with-param name="value" select="$dataType"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:start'"/>
+                    <xsl:with-param name="value" select="$attrNode/@start"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:declaredType'"/>
+                    <xsl:with-param name="value" select="$attrNode/@declaredType"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:unit'"/>
+                    <xsl:with-param name="value" select="$attrNode/@unit"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:displayUnit'"/>
+                    <xsl:with-param name="value" select="$attrNode/@displayUnit"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:quantity'"/>
+                    <xsl:with-param name="value" select="$attrNode/@quantity"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:min'"/>
+                    <xsl:with-param name="value" select="$attrNode/@min"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:max'"/>
+                    <xsl:with-param name="value" select="$attrNode/@max"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:nominal'"/>
+                    <xsl:with-param name="value" select="$attrNode/@nominal"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:derivative'"/>
+                    <xsl:with-param name="value" select="$attrNode/@derivative"/>
+                </xsl:call-template>
+                <xsl:if test="string-length($unitName) &gt; 0 and exists($unitPos)">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:variableHasUnit'"/>
+                        <xsl:with-param name="idRef" select="concat('unit-', $unitPos)"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:if test="string-length($typeName) &gt; 0 and exists($typePos)">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:variableHasType'"/>
+                        <xsl:with-param name="idRef" select="concat('type-', $typePos)"/>
+                    </xsl:call-template>
+                </xsl:if>
+            </cas:anEntity>
+        </xsl:for-each>
+
+        <!-- Unit entities -->
+        <xsl:for-each select="$units">
+            <xsl:variable name="bu" select="*[local-name()='BaseUnit']"/>
+            <xsl:variable name="baseUnitText">
+                <xsl:if test="$bu">
+                    <xsl:for-each select="$bu/@*[local-name() = ('kg','m','s','A','K','mol','cd','rad')][. != '0']">
+                        <xsl:value-of select="concat(local-name(), '^', ., ' ')"/>
+                    </xsl:for-each>
+                </xsl:if>
+            </xsl:variable>
+            <cas:anEntity rdf:type="fmi:Unit" id="unit-{position()}">
+                <dcterms:modified>
+                    <xsl:value-of select="$modified"/>
+                </dcterms:modified>
+                <dcterms:title>
+                    <xsl:value-of select="@name"/>
+                </dcterms:title>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:baseUnit'"/>
+                    <xsl:with-param name="value" select="normalize-space($baseUnitText)"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:factor'"/>
+                    <xsl:with-param name="value" select="$bu/@factor"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:offset'"/>
+                    <xsl:with-param name="value" select="$bu/@offset"/>
+                </xsl:call-template>
+            </cas:anEntity>
+        </xsl:for-each>
+
+        <!-- Type definition entities -->
+        <xsl:for-each select="$types">
+            <xsl:variable name="isSimple" select="local-name() = 'SimpleType'"/>
+            <xsl:variable name="typedT" select="*[local-name() = ('Real','Integer','Boolean','String','Enumeration')]"/>
+            <xsl:variable name="tAttr" select="if ($isSimple) then $typedT else ."/>
+            <xsl:variable name="baseType" select="if ($isSimple) then local-name($typedT) else local-name(.)"/>
+            <cas:anEntity rdf:type="fmi:TypeDefinition" id="type-{position()}">
+                <dcterms:modified>
+                    <xsl:value-of select="$modified"/>
+                </dcterms:modified>
+                <dcterms:title>
+                    <xsl:value-of select="@name"/>
+                </dcterms:title>
+                <xsl:if test="@description and string-length(@description) &gt; 0">
+                    <dcterms:description>
+                        <xsl:value-of select="@description"/>
+                    </dcterms:description>
+                </xsl:if>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:baseType'"/>
+                    <xsl:with-param name="value" select="$baseType"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:quantity'"/>
+                    <xsl:with-param name="value" select="$tAttr/@quantity"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:unit'"/>
+                    <xsl:with-param name="value" select="$tAttr/@unit"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:min'"/>
+                    <xsl:with-param name="value" select="$tAttr/@min"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:max'"/>
+                    <xsl:with-param name="value" select="$tAttr/@max"/>
+                </xsl:call-template>
+            </cas:anEntity>
+        </xsl:for-each>
+
+        <!-- Interface entities -->
+        <xsl:for-each select="$interfaces">
+            <cas:anEntity rdf:type="fmi:Interface" id="if-{position()}">
+                <dcterms:modified>
+                    <xsl:value-of select="$modified"/>
+                </dcterms:modified>
+                <dcterms:title>
+                    <xsl:value-of select="local-name()"/>
+                </dcterms:title>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:interfaceType'"/>
+                    <xsl:with-param name="value" select="local-name()"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:modelIdentifier'"/>
+                    <xsl:with-param name="value" select="@modelIdentifier"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:needsExecutionTool'"/>
+                    <xsl:with-param name="value" select="@needsExecutionTool"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canGetAndSetFMUstate'"/>
+                    <xsl:with-param name="value" select="if (@canGetAndSetFMUState) then @canGetAndSetFMUState else @canGetAndSetFMUstate"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canSerializeFMUstate'"/>
+                    <xsl:with-param name="value" select="if (@canSerializeFMUState) then @canSerializeFMUState else @canSerializeFMUstate"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:providesDirectionalDerivative'"/>
+                    <xsl:with-param name="value" select="if (@providesDirectionalDerivative) then @providesDirectionalDerivative else @providesDirectionalDerivatives"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canHandleVariableCommunicationStepSize'"/>
+                    <xsl:with-param name="value" select="@canHandleVariableCommunicationStepSize"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:maxOutputDerivativeOrder'"/>
+                    <xsl:with-param name="value" select="@maxOutputDerivativeOrder"/>
+                </xsl:call-template>
+            </cas:anEntity>
+        </xsl:for-each>
+
+        <!-- Log category entities -->
+        <xsl:for-each select="$logcats">
+            <cas:anEntity rdf:type="fmi:LogCategory" id="logcat-{position()}">
+                <dcterms:modified>
+                    <xsl:value-of select="$modified"/>
+                </dcterms:modified>
+                <dcterms:title>
+                    <xsl:value-of select="@name"/>
+                </dcterms:title>
+                <xsl:if test="@description and string-length(@description) &gt; 0">
+                    <dcterms:description>
+                        <xsl:value-of select="@description"/>
+                    </dcterms:description>
+                </xsl:if>
+            </cas:anEntity>
+        </xsl:for-each>
+
+        <!-- Default experiment entity -->
+        <xsl:if test="$experiment">
+            <cas:anEntity rdf:type="fmi:DefaultExperiment" id="defaultExperiment">
+                <dcterms:modified>
+                    <xsl:value-of select="$modified"/>
+                </dcterms:modified>
+                <dcterms:title>Default Experiment</dcterms:title>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:startTime'"/>
+                    <xsl:with-param name="value" select="$experiment/@startTime"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:stopTime'"/>
+                    <xsl:with-param name="value" select="$experiment/@stopTime"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:tolerance'"/>
+                    <xsl:with-param name="value" select="$experiment/@tolerance"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:stepSize'"/>
+                    <xsl:with-param name="value" select="$experiment/@stepSize"/>
+                </xsl:call-template>
+            </cas:anEntity>
+        </xsl:if>
+
+        <!-- Dependency (connection) relationships -->
+        <xsl:for-each select="$md/*[local-name()='ModelStructure']//*[@index or @valueReference]">
+            <xsl:variable name="uPos" select="position()"/>
+            <xsl:variable name="ownerIsVR" select="boolean(@valueReference) and not(@index)"/>
+            <xsl:variable name="ownerPos" select="if ($ownerIsVR)
+                then (for $i in 1 to count($vars) return if (string($vars[$i]/@valueReference) = string(@valueReference)) then $i else ())[1]
+                else xs:integer(@index)"/>
+            <xsl:variable name="structureKind" select="if (local-name() = 'Unknown') then local-name(..) else local-name()"/>
+            <xsl:variable name="depTokens" select="tokenize(normalize-space(@dependencies), '\s+')"/>
+            <xsl:variable name="kindTokens" select="tokenize(normalize-space(@dependenciesKind), '\s+')"/>
+            <xsl:if test="@dependencies and string-length(normalize-space(@dependencies)) &gt; 0 and exists($ownerPos)">
+                <xsl:for-each select="$depTokens">
+                    <xsl:variable name="tok" select="."/>
+                    <xsl:variable name="depIdx" select="position()"/>
+                    <xsl:if test="string-length($tok) &gt; 0">
+                        <xsl:variable name="depPos" select="if ($ownerIsVR)
+                            then (for $i in 1 to count($vars) return if (string($vars[$i]/@valueReference) = $tok) then $i else ())[1]
+                            else xs:integer($tok)"/>
+                        <xsl:if test="exists($depPos)">
+                            <cas:aRelationship rdf:type="fmi:dependsOn" id="dep-u{$uPos}-{$depIdx}">
+                                <dcterms:modified>
+                                    <xsl:value-of select="$modified"/>
+                                </dcterms:modified>
+                                <dcterms:description>
+                                    <xsl:value-of select="$vars[$ownerPos]/@name"/>
+                                    <xsl:text> depends on </xsl:text>
+                                    <xsl:value-of select="$vars[$depPos]/@name"/>
+                                </dcterms:description>
+                                <xsl:call-template name="emit-prop">
+                                    <xsl:with-param name="class" select="'fmi:dependencyKind'"/>
+                                    <xsl:with-param name="value" select="$kindTokens[$depIdx]"/>
+                                </xsl:call-template>
+                                <xsl:call-template name="emit-prop">
+                                    <xsl:with-param name="class" select="'fmi:structureKind'"/>
+                                    <xsl:with-param name="value" select="$structureKind"/>
+                                </xsl:call-template>
+                                <cas:aSourceLink rdf:type="fmi:dependsOn-toSource">
+                                    <idRef>
+                                        <xsl:value-of select="concat('var-', $ownerPos)"/>
+                                    </idRef>
+                                </cas:aSourceLink>
+                                <cas:aTargetLink rdf:type="fmi:dependsOn-toTarget">
+                                    <idRef>
+                                        <xsl:value-of select="concat('var-', $depPos)"/>
+                                    </idRef>
+                                </cas:aTargetLink>
+                            </cas:aRelationship>
+                        </xsl:if>
+                    </xsl:if>
+                </xsl:for-each>
+            </xsl:if>
+        </xsl:for-each>
+
+    </xsl:template>
+
+</xsl:stylesheet>
