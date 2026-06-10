@@ -262,6 +262,108 @@
             <xsl:with-param name="datatype" select="'xs:integer'"/>
         </xsl:call-template>
 
+        <!-- Additional variable / type-definition scalar attributes (Phase 1) -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canHandleMultipleSetPerTimeInstant'"/>
+            <xsl:with-param name="title" select="'can handle multiple set per time instant'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+            <xsl:with-param name="definition" select="'ModelExchange inputs only: if false, the input may not appear in an algebraic loop.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:reinit'"/>
+            <xsl:with-param name="title" select="'reinit'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+            <xsl:with-param name="definition" select="'Continuous-time state (ModelExchange) that can be reinitialized at an event.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:relativeQuantity'"/>
+            <xsl:with-param name="title" select="'relative quantity'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+            <xsl:with-param name="definition" select="'If true, the displayUnit offset is ignored when converting values.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:unbounded'"/>
+            <xsl:with-param name="title" select="'unbounded'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+            <xsl:with-param name="definition" select="'Real variable whose value can grow without bound (e.g. crank angle).'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:clocks'"/>
+            <xsl:with-param name="title" select="'clocks'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'FMI 3.0: space-separated value references of the clocks this variable is associated with.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:intermediateUpdate'"/>
+            <xsl:with-param name="title" select="'intermediate update'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+            <xsl:with-param name="definition" select="'FMI 3.0: variable may be accessed during intermediate update.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:previous'"/>
+            <xsl:with-param name="title" select="'previous (value reference)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+            <xsl:with-param name="definition" select="'FMI 3.0: value reference of the variable holding the previous value of a clocked variable.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:mimeType'"/>
+            <xsl:with-param name="title" select="'MIME type'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'FMI 3.0 Binary: MIME type of the binary data.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:maxSize'"/>
+            <xsl:with-param name="title" select="'max size'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+            <xsl:with-param name="definition" select="'FMI 3.0 Binary: maximum size in bytes.'"/>
+        </xsl:call-template>
+        <!-- FMI 3.0 Clock variable / ClockType attributes -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canBeDeactivated'"/>
+            <xsl:with-param name="title" select="'can be deactivated'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:priority'"/>
+            <xsl:with-param name="title" select="'priority'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:intervalVariability'"/>
+            <xsl:with-param name="title" select="'interval variability'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:intervalDecimal'"/>
+            <xsl:with-param name="title" select="'interval (decimal)'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:shiftDecimal'"/>
+            <xsl:with-param name="title" select="'shift (decimal)'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:supportsFraction'"/>
+            <xsl:with-param name="title" select="'supports fraction'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:resolution'"/>
+            <xsl:with-param name="title" select="'resolution'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:intervalCounter'"/>
+            <xsl:with-param name="title" select="'interval counter'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:shiftCounter'"/>
+            <xsl:with-param name="title" select="'shift counter'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+
         <!-- Unit-level properties: one SI base-unit exponent per axis -->
         <xsl:call-template name="emit-property-class">
             <xsl:with-param name="id" select="'fmi:exp_kg'"/>
@@ -369,6 +471,84 @@
             <xsl:with-param name="id" select="'fmi:maxOutputDerivativeOrder'"/>
             <xsl:with-param name="title" select="'max output derivative order'"/>
             <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+
+        <!-- Additional interface capability flags (Phase 1) -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:completedIntegratorStepNotNeeded'"/>
+            <xsl:with-param name="title" select="'completed integrator step not needed'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canBeInstantiatedOnlyOncePerProcess'"/>
+            <xsl:with-param name="title" select="'can be instantiated only once per process'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canNotUseMemoryManagementFunctions'"/>
+            <xsl:with-param name="title" select="'cannot use memory management functions'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canInterpolateInputs'"/>
+            <xsl:with-param name="title" select="'can interpolate inputs'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canRunAsynchronuously'"/>
+            <xsl:with-param name="title" select="'can run asynchronously'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+            <xsl:with-param name="definition" select="'FMI 2.0 Co-Simulation capability flag (spelled canRunAsynchronuously in the FMI 2.0 schema).'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:providesAdjointDerivatives'"/>
+            <xsl:with-param name="title" select="'provides adjoint derivatives'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:providesPerElementDependencies'"/>
+            <xsl:with-param name="title" select="'provides per-element dependencies'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:needsCompletedIntegratorStep'"/>
+            <xsl:with-param name="title" select="'needs completed integrator step'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:providesEvaluateDiscreteStates'"/>
+            <xsl:with-param name="title" select="'provides evaluate discrete states'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:fixedInternalStepSize'"/>
+            <xsl:with-param name="title" select="'fixed internal step size'"/>
+            <xsl:with-param name="datatype" select="'xs:double'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:recommendedIntermediateInputSmoothness'"/>
+            <xsl:with-param name="title" select="'recommended intermediate input smoothness'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:providesIntermediateUpdate'"/>
+            <xsl:with-param name="title" select="'provides intermediate update'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:mightReturnEarlyFromDoStep'"/>
+            <xsl:with-param name="title" select="'might return early from doStep'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:canReturnEarlyAfterIntermediateUpdate'"/>
+            <xsl:with-param name="title" select="'can return early after intermediate update'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:hasEventMode'"/>
+            <xsl:with-param name="title" select="'has event mode'"/>
+            <xsl:with-param name="datatype" select="'xs:boolean'"/>
         </xsl:call-template>
 
         <!-- DefaultExperiment-level properties -->
@@ -821,6 +1001,78 @@
                     <xsl:with-param name="class" select="'fmi:derivative'"/>
                     <xsl:with-param name="value" select="$attrNode/@derivative"/>
                 </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canHandleMultipleSetPerTimeInstant'"/>
+                    <xsl:with-param name="value" select="@canHandleMultipleSetPerTimeInstant"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:clocks'"/>
+                    <xsl:with-param name="value" select="@clocks"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:intermediateUpdate'"/>
+                    <xsl:with-param name="value" select="@intermediateUpdate"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:previous'"/>
+                    <xsl:with-param name="value" select="@previous"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:reinit'"/>
+                    <xsl:with-param name="value" select="$attrNode/@reinit"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:relativeQuantity'"/>
+                    <xsl:with-param name="value" select="$attrNode/@relativeQuantity"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:unbounded'"/>
+                    <xsl:with-param name="value" select="$attrNode/@unbounded"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:mimeType'"/>
+                    <xsl:with-param name="value" select="$attrNode/@mimeType"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:maxSize'"/>
+                    <xsl:with-param name="value" select="$attrNode/@maxSize"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canBeDeactivated'"/>
+                    <xsl:with-param name="value" select="$attrNode/@canBeDeactivated"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:priority'"/>
+                    <xsl:with-param name="value" select="$attrNode/@priority"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:intervalVariability'"/>
+                    <xsl:with-param name="value" select="$attrNode/@intervalVariability"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:intervalDecimal'"/>
+                    <xsl:with-param name="value" select="$attrNode/@intervalDecimal"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:shiftDecimal'"/>
+                    <xsl:with-param name="value" select="$attrNode/@shiftDecimal"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:supportsFraction'"/>
+                    <xsl:with-param name="value" select="$attrNode/@supportsFraction"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:resolution'"/>
+                    <xsl:with-param name="value" select="$attrNode/@resolution"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:intervalCounter'"/>
+                    <xsl:with-param name="value" select="$attrNode/@intervalCounter"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:shiftCounter'"/>
+                    <xsl:with-param name="value" select="$attrNode/@shiftCounter"/>
+                </xsl:call-template>
                 <xsl:if test="string-length($unitName) &gt; 0 and exists($unitPos)">
                     <xsl:call-template name="emit-target-link">
                         <xsl:with-param name="class" select="'fmi:variableHasUnit'"/>
@@ -963,6 +1215,26 @@
                     <xsl:with-param name="class" select="'fmi:max'"/>
                     <xsl:with-param name="value" select="$tAttr/@max"/>
                 </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:nominal'"/>
+                    <xsl:with-param name="value" select="$tAttr/@nominal"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:relativeQuantity'"/>
+                    <xsl:with-param name="value" select="$tAttr/@relativeQuantity"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:unbounded'"/>
+                    <xsl:with-param name="value" select="$tAttr/@unbounded"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:mimeType'"/>
+                    <xsl:with-param name="value" select="$tAttr/@mimeType"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:maxSize'"/>
+                    <xsl:with-param name="value" select="$tAttr/@maxSize"/>
+                </xsl:call-template>
                 <!-- A type definition shares the same Unit / DisplayUnit entities -->
                 <!-- that variables of this type reference (many-to-one fan-in). -->
                 <xsl:if test="string-length($tUnitName) &gt; 0 and exists($tUnitPos)">
@@ -1020,6 +1292,66 @@
                 <xsl:call-template name="emit-prop">
                     <xsl:with-param name="class" select="'fmi:maxOutputDerivativeOrder'"/>
                     <xsl:with-param name="value" select="@maxOutputDerivativeOrder"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:completedIntegratorStepNotNeeded'"/>
+                    <xsl:with-param name="value" select="@completedIntegratorStepNotNeeded"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canBeInstantiatedOnlyOncePerProcess'"/>
+                    <xsl:with-param name="value" select="@canBeInstantiatedOnlyOncePerProcess"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canNotUseMemoryManagementFunctions'"/>
+                    <xsl:with-param name="value" select="@canNotUseMemoryManagementFunctions"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canInterpolateInputs'"/>
+                    <xsl:with-param name="value" select="@canInterpolateInputs"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canRunAsynchronuously'"/>
+                    <xsl:with-param name="value" select="@canRunAsynchronuously"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:providesAdjointDerivatives'"/>
+                    <xsl:with-param name="value" select="@providesAdjointDerivatives"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:providesPerElementDependencies'"/>
+                    <xsl:with-param name="value" select="@providesPerElementDependencies"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:needsCompletedIntegratorStep'"/>
+                    <xsl:with-param name="value" select="@needsCompletedIntegratorStep"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:providesEvaluateDiscreteStates'"/>
+                    <xsl:with-param name="value" select="@providesEvaluateDiscreteStates"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:fixedInternalStepSize'"/>
+                    <xsl:with-param name="value" select="@fixedInternalStepSize"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:recommendedIntermediateInputSmoothness'"/>
+                    <xsl:with-param name="value" select="@recommendedIntermediateInputSmoothness"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:providesIntermediateUpdate'"/>
+                    <xsl:with-param name="value" select="@providesIntermediateUpdate"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:mightReturnEarlyFromDoStep'"/>
+                    <xsl:with-param name="value" select="@mightReturnEarlyFromDoStep"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:canReturnEarlyAfterIntermediateUpdate'"/>
+                    <xsl:with-param name="value" select="@canReturnEarlyAfterIntermediateUpdate"/>
+                </xsl:call-template>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:hasEventMode'"/>
+                    <xsl:with-param name="value" select="@hasEventMode"/>
                 </xsl:call-template>
             </cas:anEntity>
         </xsl:for-each>
