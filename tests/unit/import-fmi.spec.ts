@@ -133,11 +133,12 @@ describe('FMI Import', () => {
             const relClasses = items.filter((i: any) => i?.itemType === PigItemType.Relationship);
             const propClasses = items.filter((i: any) => i?.itemType === PigItemType.Property);
             const enumClasses = items.filter((i: any) => i?.itemType === PigItemType.Enumeration);
-            // 8 entity classes: FMU, Variable, Unit, DisplayUnit, TypeDefinition,
-            // Interface, LogCategory, DefaultExperiment.
-            expect(entityClasses.length).toBe(8);
-            // 12 static link classes + 1 per-enum value link (one enumeration here).
-            expect(linkClasses.length).toBe(13);
+            // 11 entity classes: FMU, Variable, Unit, DisplayUnit, TypeDefinition,
+            // Interface, LogCategory, DefaultExperiment, Dimension, VariableAlias,
+            // StartValue (the last three only carry instances for FMI 3.0 models).
+            expect(entityClasses.length).toBe(11);
+            // 16 static link classes + 1 per-enum value link (one enumeration here).
+            expect(linkClasses.length).toBe(17);
             expect(relClasses.length).toBe(1);
             expect(propClasses.length).toBeGreaterThan(20);
 
@@ -303,6 +304,67 @@ describe('FMI Import', () => {
             );
             const reinitVar = variables.find((v: any) => propValue(v, 'fmi:reinit') === 'true');
             expect(reinitVar).toBeTruthy();
+        }, 30000);
+    });
+
+    describe('Dependency scope (ModelStructure): stimuli_model.fmu / PID_Euler_0_01_sf.fmu', () => {
+        const stimuliFmu = fmuFiles.find(f => f.endsWith('stimuli_model.fmu'));
+        const pidFmu = fmuFiles.find(f => f.endsWith('PID_Euler_0_01_sf.fmu'));
+
+        const allPropValues = (item: any, classId: string): string[] => {
+            const props = item?.hasProperty;
+            if (!Array.isArray(props)) return [];
+            return props.filter((x: any) => x?.hasClass === classId).map((x: any) => x?.value);
+        };
+
+        it('should mark dependencies="" as scope "none" (stimuli_model)', async () => {
+            if (!stimuliFmu) {
+                logResponse('locate stimuli fmu', { ok: false, status: 404, statusText: 'stimuli_model.fmu not found' });
+                return;
+            }
+            const result = await FmiImporter.import(stimuliFmu);
+            if (!result.ok) logResponse('import stimuli fmu', result);
+            expect(result.status).toBe(0);
+            const items = result.response as any[];
+
+            const variables = items.filter(
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+            );
+            // Variables 5 and 6 are Outputs with dependencies="" (none). The "none"
+            // declaration wins over their explicit InitialUnknowns list (precedence
+            // none > explicit > allKnowns), so the variable-level summary is "none".
+            const noneVar = variables.find((v: any) => propValue(v, 'fmi:dependencyScope') === 'none');
+            expect(noneVar).toBeTruthy();
+        }, 30000);
+
+        it('should mark a missing dependencies attribute as scope "allKnowns" (PID)', async () => {
+            if (!pidFmu) {
+                logResponse('locate pid fmu', { ok: false, status: 404, statusText: 'PID_Euler_0_01_sf.fmu not found' });
+                return;
+            }
+            const result = await FmiImporter.import(pidFmu);
+            if (!result.ok) logResponse('import pid fmu', result);
+            expect(result.status).toBe(0);
+            const items = result.response as any[];
+
+            const variables = items.filter(
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+            );
+            const allKnownsVar = variables.find((v: any) => allPropValues(v, 'fmi:dependencyScope').includes('allKnowns'));
+            expect(allKnownsVar).toBeTruthy();
+        }, 30000);
+
+        it('should mark explicit dependency lists as scope "explicit" (plant)', async () => {
+            if (!plantFmu) return;
+            const result = await FmiImporter.import(plantFmu);
+            expect(result.status).toBe(0);
+            const items = result.response as any[];
+
+            const variables = items.filter(
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+            );
+            const explicitVar = variables.find((v: any) => propValue(v, 'fmi:dependencyScope') === 'explicit');
+            expect(explicitVar).toBeTruthy();
         }, 30000);
     });
 
