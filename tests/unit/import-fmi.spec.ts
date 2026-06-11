@@ -202,6 +202,23 @@ describe('FMI Import', () => {
                 expect(rel.hasTargetLink[0].idRef).toMatch(/var-\d+$/);
             }
         }, 30000);
+
+        it('should capture additional CoSimulation capability flags', async () => {
+            if (!plantFmu) return;
+
+            const result = await FmiImporter.import(plantFmu);
+            expect(result.status).toBe(0);
+            const items = result.response as any[];
+
+            const iface = items.find(
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Interface'
+            );
+            expect(iface).toBeTruthy();
+            expect(propValue(iface, 'fmi:canInterpolateInputs')).toBe('false');
+            expect(propValue(iface, 'fmi:canRunAsynchronuously')).toBe('false');
+            expect(propValue(iface, 'fmi:canBeInstantiatedOnlyOncePerProcess')).toBe('false');
+            expect(propValue(iface, 'fmi:canNotUseMemoryManagementFunctions')).toBe('false');
+        }, 30000);
     });
 
     describe('Units, base-unit exponents and display units: edrive_mass.fmu', () => {
@@ -261,6 +278,31 @@ describe('FMI Import', () => {
             const consumerDuRefs = allEntities.flatMap((e: any) => targetRefs(e, 'fmi:variableHasDisplayUnit'));
             expect(consumerDuRefs.length).toBeGreaterThanOrEqual(1);
             expect(consumerDuRefs).toContain(radDuRefs[0]);
+            const meIface = instances('fmi:Interface')[0];
+            expect(meIface).toBeTruthy();
+            expect(propValue(meIface, 'fmi:completedIntegratorStepNotNeeded')).toBe('true');
+            expect(propValue(meIface, 'fmi:canNotUseMemoryManagementFunctions')).toBe('true');
+        }, 30000);
+    });
+
+    describe('Additional variable scalar attributes: PID_Euler_0_01_sf.fmu', () => {
+        const pidFmu = fmuFiles.find(f => f.endsWith('PID_Euler_0_01_sf.fmu'));
+
+        it('should capture the reinit flag on at least one variable', async () => {
+            if (!pidFmu) {
+                logResponse('locate pid fmu', { ok: false, status: 404, statusText: 'PID_Euler_0_01_sf.fmu not found' });
+                return;
+            }
+            const result = await FmiImporter.import(pidFmu);
+            if (!result.ok) logResponse('import pid fmu', result);
+            expect(result.status).toBe(0);
+            const items = result.response as any[];
+
+            const variables = items.filter(
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+            );
+            const reinitVar = variables.find((v: any) => propValue(v, 'fmi:reinit') === 'true');
+            expect(reinitVar).toBeTruthy();
         }, 30000);
     });
 
