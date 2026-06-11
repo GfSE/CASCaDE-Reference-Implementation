@@ -586,6 +586,32 @@
             <xsl:with-param name="datatype" select="'xs:string'"/>
             <xsl:with-param name="definition" select="'Which ModelStructure list the dependency was declared in (Output, Derivative, InitialUnknown, ...).'"/>
         </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:dependencyScope'"/>
+            <xsl:with-param name="title" select="'dependency scope'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'Single summary of how this variable declares its ModelStructure dependencies (precedence none &gt; explicit &gt; allKnowns): none = at least one role declares dependencies=&quot;&quot; (depends on nothing); explicit = it only declares non-empty dependency lists, captured as fmi:dependsOn relationships; allKnowns = no dependencies attribute, i.e. depends on all knowns by default.'"/>
+        </xsl:call-template>
+
+        <!-- Array / alias / start-value properties (FMI 3.0) -->
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:rank'"/>
+            <xsl:with-param name="title" select="'rank'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+            <xsl:with-param name="definition" select="'Number of array dimensions of the variable (0 = scalar).'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:dimensionStart'"/>
+            <xsl:with-param name="title" select="'dimension start (size)'"/>
+            <xsl:with-param name="datatype" select="'xs:integer'"/>
+            <xsl:with-param name="definition" select="'Fixed size of an array dimension (Dimension/@start).'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-property-class">
+            <xsl:with-param name="id" select="'fmi:startValue'"/>
+            <xsl:with-param name="title" select="'start value'"/>
+            <xsl:with-param name="datatype" select="'xs:string'"/>
+            <xsl:with-param name="definition" select="'A start value declared via a Start child element (FMI 3.0 String / Binary variables, one per array element).'"/>
+        </xsl:call-template>
 
         <!-- Entity, Relationship and Link classes are emitted in SECTION 2 -->
         <xsl:call-template name="emit-ontology-classes"/>
@@ -670,6 +696,21 @@
             <xsl:with-param name="title" select="'Default experiment'"/>
             <xsl:with-param name="definition" select="'Default simulation settings recommended by the FMU.'"/>
         </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:Dimension'"/>
+            <xsl:with-param name="title" select="'Dimension'"/>
+            <xsl:with-param name="definition" select="'One array dimension of a variable (FMI 3.0), sized either by a fixed value or by another variable.'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:VariableAlias'"/>
+            <xsl:with-param name="title" select="'Variable alias'"/>
+            <xsl:with-param name="definition" select="'An alternative name (and optional display unit) for a variable (FMI 3.0 Alias).'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-entity-class">
+            <xsl:with-param name="id" select="'fmi:StartValue'"/>
+            <xsl:with-param name="title" select="'Start value'"/>
+            <xsl:with-param name="definition" select="'A start value carried by a Start child element (FMI 3.0 String / Binary variables, one per array element).'"/>
+        </xsl:call-template>
 
         <!-- Relationship class: variable dependency (connection) -->
         <cas:Relationship rdf:type="owl:Class" id="fmi:dependsOn">
@@ -740,6 +781,26 @@
             <xsl:with-param name="id" select="'fmi:variableHasDisplayUnit'"/>
             <xsl:with-param name="title" select="'variable has display unit'"/>
             <xsl:with-param name="endpoints" select="'fmi:DisplayUnit'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasDimension'"/>
+            <xsl:with-param name="title" select="'has dimension'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Dimension'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:dimensionSizedBy'"/>
+            <xsl:with-param name="title" select="'dimension sized by'"/>
+            <xsl:with-param name="endpoints" select="'fmi:Variable'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasAlias'"/>
+            <xsl:with-param name="title" select="'has alias'"/>
+            <xsl:with-param name="endpoints" select="'fmi:VariableAlias'"/>
+        </xsl:call-template>
+        <xsl:call-template name="emit-link-class">
+            <xsl:with-param name="id" select="'fmi:hasStartValue'"/>
+            <xsl:with-param name="title" select="'has start value'"/>
+            <xsl:with-param name="endpoints" select="'fmi:StartValue'"/>
         </xsl:call-template>
     </xsl:template>
 
@@ -932,6 +993,25 @@
                 then (for $j in 1 to count($units[$unitPos]/*[local-name()='DisplayUnit'])
                     return if (string($units[$unitPos]/*[local-name()='DisplayUnit'][$j]/@name) = $duName) then $j else ())[1]
                 else ()"/>
+            <!-- Variable position and array / alias / start children (FMI 3.0) -->
+            <xsl:variable name="vp" select="position()"/>
+            <xsl:variable name="vVR" select="string(@valueReference)"/>
+            <xsl:variable name="dims" select="*[local-name()='Dimension']"/>
+            <xsl:variable name="aliases" select="*[local-name()='Alias']"/>
+            <xsl:variable name="startEls" select="*[local-name()='Start']"/>
+            <!-- single dependency-scope summary for this variable.
+                 Precedence: none > explicit > allKnowns.
+                 none      = at least one role declares dependencies="" (depends on nothing)
+                 explicit  = it only declares non-empty dependency lists (edges: fmi:dependsOn)
+                 allKnowns = it appears with no dependencies attribute (depends on all knowns) -->
+            <xsl:variable name="msRefs" select="$md/*[local-name()='ModelStructure']//*[@index or @valueReference][
+                (@index and string(@index) = string($vp)) or
+                (@valueReference and not(@index) and string(@valueReference) = $vVR)]"/>
+            <xsl:variable name="depScope" select="
+                if ($msRefs[@dependencies and normalize-space(@dependencies) = '']) then 'none'
+                else if ($msRefs[@dependencies and normalize-space(@dependencies) != '']) then 'explicit'
+                else if (exists($msRefs)) then 'allKnowns'
+                else ()"/>
 
             <cas:anEntity rdf:type="fmi:Variable" id="var-{position()}">
                 <dcterms:modified>
@@ -1073,6 +1153,16 @@
                     <xsl:with-param name="class" select="'fmi:shiftCounter'"/>
                     <xsl:with-param name="value" select="$attrNode/@shiftCounter"/>
                 </xsl:call-template>
+                <xsl:if test="count($dims) &gt; 0">
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:rank'"/>
+                        <xsl:with-param name="value" select="count($dims)"/>
+                    </xsl:call-template>
+                </xsl:if>
+                <xsl:call-template name="emit-prop">
+                    <xsl:with-param name="class" select="'fmi:dependencyScope'"/>
+                    <xsl:with-param name="value" select="$depScope"/>
+                </xsl:call-template>
                 <xsl:if test="string-length($unitName) &gt; 0 and exists($unitPos)">
                     <xsl:call-template name="emit-target-link">
                         <xsl:with-param name="class" select="'fmi:variableHasUnit'"/>
@@ -1103,7 +1193,93 @@
                         </xsl:call-template>
                     </xsl:if>
                 </xsl:if>
+                <!-- links to array dimension / alias / start-value sub-entities (FMI 3.0) -->
+                <xsl:for-each select="$dims">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:hasDimension'"/>
+                        <xsl:with-param name="idRef" select="concat('dim-', $vp, '-', position())"/>
+                    </xsl:call-template>
+                </xsl:for-each>
+                <xsl:for-each select="$aliases">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:hasAlias'"/>
+                        <xsl:with-param name="idRef" select="concat('alias-', $vp, '-', position())"/>
+                    </xsl:call-template>
+                </xsl:for-each>
+                <xsl:for-each select="$startEls">
+                    <xsl:call-template name="emit-target-link">
+                        <xsl:with-param name="class" select="'fmi:hasStartValue'"/>
+                        <xsl:with-param name="idRef" select="concat('start-', $vp, '-', position())"/>
+                    </xsl:call-template>
+                </xsl:for-each>
             </cas:anEntity>
+
+            <!-- Dimension sub-entities (link to the sizing variable when dynamic) -->
+            <xsl:for-each select="$dims">
+                <xsl:variable name="dimSizeVR" select="string(@valueReference)"/>
+                <xsl:variable name="dimVarPos" select="if (string-length($dimSizeVR) &gt; 0)
+                    then (for $i in 1 to count($vars) return if (string($vars[$i]/@valueReference) = $dimSizeVR) then $i else ())[1]
+                    else ()"/>
+                <cas:anEntity rdf:type="fmi:Dimension" id="dim-{$vp}-{position()}">
+                    <dcterms:modified>
+                        <xsl:value-of select="$modified"/>
+                    </dcterms:modified>
+                    <dcterms:title>
+                        <xsl:value-of select="concat('Dimension ', position())"/>
+                    </dcterms:title>
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:dimensionStart'"/>
+                        <xsl:with-param name="value" select="@start"/>
+                    </xsl:call-template>
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:valueReference'"/>
+                        <xsl:with-param name="value" select="@valueReference"/>
+                    </xsl:call-template>
+                    <xsl:if test="exists($dimVarPos)">
+                        <xsl:call-template name="emit-target-link">
+                            <xsl:with-param name="class" select="'fmi:dimensionSizedBy'"/>
+                            <xsl:with-param name="idRef" select="concat('var-', $dimVarPos)"/>
+                        </xsl:call-template>
+                    </xsl:if>
+                </cas:anEntity>
+            </xsl:for-each>
+
+            <!-- Alias sub-entities -->
+            <xsl:for-each select="$aliases">
+                <cas:anEntity rdf:type="fmi:VariableAlias" id="alias-{$vp}-{position()}">
+                    <dcterms:modified>
+                        <xsl:value-of select="$modified"/>
+                    </dcterms:modified>
+                    <dcterms:title>
+                        <xsl:value-of select="@name"/>
+                    </dcterms:title>
+                    <xsl:if test="@description and string-length(@description) &gt; 0">
+                        <dcterms:description>
+                            <xsl:value-of select="@description"/>
+                        </dcterms:description>
+                    </xsl:if>
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:displayUnit'"/>
+                        <xsl:with-param name="value" select="@displayUnit"/>
+                    </xsl:call-template>
+                </cas:anEntity>
+            </xsl:for-each>
+
+            <!-- Start-value sub-entities (FMI 3.0 String / Binary) -->
+            <xsl:for-each select="$startEls">
+                <cas:anEntity rdf:type="fmi:StartValue" id="start-{$vp}-{position()}">
+                    <dcterms:modified>
+                        <xsl:value-of select="$modified"/>
+                    </dcterms:modified>
+                    <dcterms:title>
+                        <xsl:value-of select="concat('Start ', position())"/>
+                    </dcterms:title>
+                    <xsl:call-template name="emit-prop">
+                        <xsl:with-param name="class" select="'fmi:startValue'"/>
+                        <xsl:with-param name="value" select="@value"/>
+                    </xsl:call-template>
+                </cas:anEntity>
+            </xsl:for-each>
         </xsl:for-each>
 
         <!-- Unit entities (+ their DisplayUnit sub-entities) -->
