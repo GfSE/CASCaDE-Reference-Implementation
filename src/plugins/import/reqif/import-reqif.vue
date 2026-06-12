@@ -64,7 +64,6 @@
     import { Options, Vue } from 'vue-class-component';
     import { ReqifImporter } from '@/common/import/reqif/import-reqif';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { stringHTML, getHTML } from '@/common/export/html/getHTML';
     import { PackageCache } from '@/stores/package-cache';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
