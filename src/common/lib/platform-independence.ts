@@ -334,7 +334,7 @@ export const PLI = {
                         return Msg.create(692, source, resp.statusText);
                     }
                     const buffer = await resp.arrayBuffer();
-                    return Rsp.create(0, new Uint8Array(buffer), 'json');
+                    return Rsp.create(0, new Uint8Array(buffer), 'arraybuffer');
                 } catch (e: unknown) {
                     const msg = e instanceof Error ? e.message : String(e);
                     return Msg.create(693, source, msg);
@@ -345,7 +345,7 @@ export const PLI = {
                 try {
                     const { readFile } = await import('fs/promises');
                     const data = await readFile(source);
-                    return Rsp.create(0, new Uint8Array(data), 'json');
+                    return Rsp.create(0, new Uint8Array(data), 'arraybuffer');
                 } catch (e: unknown) {
                     const msg = e instanceof Error ? e.message : String(e);
                     return Msg.create(694, source, msg);
@@ -358,7 +358,7 @@ export const PLI = {
         if (typeof (source as Blob).arrayBuffer === 'function') {
             try {
                 const buffer = await (source as Blob).arrayBuffer();
-                return Rsp.create(0, new Uint8Array(buffer), 'json');
+                return Rsp.create(0, new Uint8Array(buffer), 'arraybuffer');
             } catch (e: unknown) {
                 const msg = e instanceof Error ? e.message : String(e);
                 return Msg.create(694, '', msg);
