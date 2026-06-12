@@ -1,5 +1,5 @@
 {
-  "name": "CASCaRA-App",
+  "name": "CASCaRA-Validation-Tool",
   "version": "0.2.6",
   "private": true,
   "scripts": {
@@ -21,6 +21,7 @@
     "@xmldom/xmldom": "^0.8.11",
     "ajv-keywords": "^5.1.0",
     "core-js": "^3.8.3",
+    "fflate": "^0.8.3",
     "pinia": "^3.0.4",
     "saxon-js": "^2.7.0",
     "vue": "^3.2.13",
