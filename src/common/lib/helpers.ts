@@ -12,9 +12,11 @@
  *  Design Decisions:
  *  -
  *
- *  ToDo:
+ *  @ToDo:
  *  -
  */
+
+import { DEF } from './definitions';
 
 /**
  * JSON helper types
@@ -26,6 +28,18 @@ export type JsonArray = Array<JsonValue>
 
 export type tagIETF = string; // contains IETF language tag
 export type TISODateString = string;
+
+export interface INamespace {
+    tag: string; // e.g. a namespace tag, e.g. "cas:"
+    uri: string; // e.g. a namespace value, e.g. "https://product-information-graph.org/"
+}
+export interface ILanguageText {
+    value: string;
+    lang?: tagIETF;
+}
+export interface IText {
+    value: string;
+}
 
 /**
  * Standard XML Namespaces used in PIG XML documents
@@ -62,6 +76,10 @@ export const LIB = {
     isLeaf(node: JsonValue): boolean {
         return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
     },
+    isArrayWithContent(L: any): boolean {
+        return (Array.isArray(L) && L.length > 0);
+    },
+
     /**
      * Recursively iterates a JSON value and calls `cb` for each primitive (value).
      * - objects: iterates keys
@@ -220,6 +238,16 @@ export const LIB = {
 
     /**
      * Recursively removes all undefined and null values from any JSON structure.
+     * 
+     * IMPORTANT: Empty arrays are explicitly preserved because they have semantic meaning;
+     * in case of enumeratedProperty, enumeratedSourceLink and enumeratedTargetLink:
+     * - undefined (property absent) = "no restriction, all properties resp. links allowed" (wildcard)
+     * - [] (empty array) = "explicit restriction, no properties resp. links allowed"
+     * 
+     * Example in PIG:
+     * - enumeratedProperty: undefined → all properties allowed
+     * - enumeratedProperty: [] → no properties allowed
+     * 
      * Returns the exact same type as the input value.
      */
     stripUndefinedAndNull<T extends object>(obj: T): T {
@@ -230,6 +258,7 @@ export const LIB = {
             if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
             const value = (obj as any)[key];
             if (value !== undefined && value !== null) {
+                // Empty arrays are preserved (they have semantic meaning)
                 if (typeof value === 'object' && value !== null) {
                     result[key] = this.stripUndefinedAndNull(value);
                 } else {
@@ -239,6 +268,41 @@ export const LIB = {
         }
         return result;
     },
+    /**
+     * Strip HTML tags from a string, returning only the text content.
+     * Uses DOMParser to safely parse HTML without jQuery dependency.
+     * Prevents XSS attacks by not using regex.
+     * 
+     * @param html - HTML string to strip tags from
+     * @returns Plain text content without HTML tags
+     * 
+     * @example
+     * const html = '<p>Hello <strong>World</strong></p>';
+     * const text = LIB.stripHTML(html);
+     * // Returns: 'Hello World'
+     */
+    stripHTML(html: string): string {
+        if (!html || typeof html !== 'string') return '';
+
+        // Use DOMParser to safely parse HTML
+        if (typeof DOMParser !== 'undefined') {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            return doc.body.textContent?.trim() || '';
+        }
+
+        // Fallback for Node.js environment (if DOMParser not available)
+        // Use a simple but safe approach: remove tags
+        return html
+            .replace(/<[^>]*>/g, '') // Remove tags
+        /*    .replace(/&lt;/g, '<')    // Decode HTML entities
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'") */
+            .trim();
+    },
+
 /*    stripUndefinedAndNull<T extends object>(obj: T): T {
         function strip(val: unknown): unknown {
             if (val === undefined) return undefined;
@@ -292,13 +356,13 @@ export const LIB = {
     makeXMLDoc(
         xml: string,
         options?: {
-            rootTag?: string;                        // Custom root tag (default: 'pig:Package')
+            rootTag?: string;                        // Custom root tag (default: `${DEF.pfxNsMeta}Package`)   
             includeXmlDeclaration?: boolean;         // Include <?xml...?> declaration (default: false)
             namespaces?: Record<string, string>;     // Explicit namespace prefix -> URI mappings
             warnOnMissing?: boolean;                 // Warn about prefixes without declarations (default: true)
         }
     ): string {
-        const rootTag = options?.rootTag ?? 'pig:Package';
+        const rootTag = options?.rootTag ?? `${DEF.pfxNsMeta}Package`;
         const includeXmlDecl = options?.includeXmlDeclaration ?? false;
         const explicitNamespaces = options?.namespaces ?? {};
         const warnOnMissing = options?.warnOnMissing ?? true;
@@ -379,7 +443,24 @@ export const LIB = {
             return dateStr;
         }
     },
+    // Helper function to get localized text from multi-language array
+    getLocalText(texts ?: ILanguageText[], lang ?: tagIETF): string {
+        if (!texts || texts.length === 0) return '';
 
+        lang = lang ?? 'en-US';
+
+        // Try to find exact language match
+        const exact = texts.find(t => t.lang === lang);
+        if (exact) return exact.value;
+
+        // Try to find language prefix match (e.g., 'en' for 'en-US')
+        const langPrefix = lang.split('-')[0];
+        const prefixMatch = texts.find(t => t.lang?.startsWith(langPrefix));
+        if (prefixMatch) return prefixMatch.value;
+
+        // Fallback to first available text
+        return texts[0].value;
+    }
 };
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';

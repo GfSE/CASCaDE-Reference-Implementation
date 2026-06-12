@@ -2,37 +2,45 @@
  * Product Information Graph (PIG) - Multi-Vocabulary Facility (MVF)
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
- *  We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
 /** Product Information Graph (PIG) - Multi-Vocabulary Facility
- *  Handles mapping between different vocabulary representations (JSON-LD, XML, internal format)
- *  Dependencies: helpers.ts (for JsonValue types and LOG)
- *  Authors: oskar.dungern@gfse.org, ..
- *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * ------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ * Handles mapping between different vocabulary representations (JSON-LD, XML, internal format)
+ * Dependencies: helpers.ts (for JsonValue types and LOG)
  */
 
+import { DEF } from './definitions';
 import { LIB, JsonPrimitive, JsonValue, JsonObject, LOG } from './helpers';
 
 // Map PIG metamodel attributes to/from JSON-LD keys;
 // all other keys are derived from the ontology and handled dynamically:
 const FROM_JSONLD = new Map<string, string>([
     ['@context', 'context'],
+    ['@graph', 'graph'],
     ['@id', 'id'],
     ['@type', 'hasClass'],
     ['@value', 'value'],
     ['@language', 'lang'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
-    ['pig:specializes', 'specializes'],
-    ['pig:itemType', 'itemType'],
-    ['pig:revision', 'revision'],
-    ['pig:priorRevision', 'priorRevision'],
-    ['pig:enumeratedProperty', 'enumeratedProperty'],
-    ['pig:enumeratedSourceLink', 'enumeratedSourceLink'],
-    ['pig:enumeratedTargetLink', 'enumeratedTargetLink'],
-    ['pig:enumeratedEndpoint', 'enumeratedEndpoint'],
-    ['pig:enumeratedValue', 'enumeratedValue'],
-    ['pig:Icon', 'icon'],
+    [`${DEF.pfxNsMeta}specializes`, 'specializes'],
+    [`${DEF.pfxNsMeta}itemType`, 'itemType'],
+    [`${DEF.pfxNsMeta}revision`, 'revision'],
+    [`${DEF.pfxNsMeta}priorRevision`, 'priorRevision'],
+    [`${DEF.pfxNsMeta}enumeratedProperty`, 'enumeratedProperty'],
+    [`${DEF.pfxNsMeta}enumeratedSourceLink`, 'enumeratedSourceLink'],
+    [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
+    [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
+    [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
+    [`${DEF.pfxNsMeta}Icon`, 'icon'],
+    [`${DEF.pfxNsMeta}icon`, 'icon'],
+    [`${DEF.pfxNsMeta}Unit`, 'unit'],
+    [`${DEF.pfxNsMeta}unit`, 'unit'],
 //    ['xs:simpleType', 'datatype'], ... doesn't make sense as long as rejected by the schema
     ['sh:datatype', 'datatype'],
 //    ['xs:minOccurs', 'minCount'],
@@ -45,11 +53,11 @@ const FROM_JSONLD = new Map<string, string>([
     ['sh:defaultValue', 'defaultValue'],
 //    ['xs:pattern', 'pattern'],
     ['sh:pattern', 'pattern'],
-    ['dcterms:title', 'title'],
-    ['dcterms:description', 'description'],
-    ['dcterms:created', 'created'],
-    ['dcterms:modified', 'modified'],
-    ['dcterms:creator', 'creator'],
+    [`${DEF.pfxNsDcmi}title`, 'title'],
+    [`${DEF.pfxNsDcmi}description`, 'description'],
+    [`${DEF.pfxNsDcmi}created`, 'created'],
+    [`${DEF.pfxNsDcmi}modified`, 'modified'],
+    [`${DEF.pfxNsDcmi}creator`, 'creator'],
     ['skos:definition', 'definition']
 ]);
 
@@ -62,15 +70,17 @@ const TO_JSONLD = new Map<string, string>(
 const FROM_XML = new Map<string, string>([
     //    ['@value', 'value'],
     //    ['@language', 'lang'],
-    ['pig:revision', 'revision'],
-    ['pig:priorRevision', 'priorRevision'],
+    [`${DEF.pfxNsMeta}revision`, 'revision'],
+    [`${DEF.pfxNsMeta}priorRevision`, 'priorRevision'],
     ['rdf:type', 'hasClass'],
-    ['pig:hasClass', 'hasClass'],
+    [`${DEF.pfxNsMeta}hasClass`, 'hasClass'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
-    ['pig:specializes', 'specializes'],
-    ['pig:icon', 'icon'],  // older files may use 'pig:icon' instead of 'pig:Icon'
-    ['pig:Icon', 'icon'],
+    [`${DEF.pfxNsMeta}specializes`, 'specializes'],
+    [`${DEF.pfxNsMeta}Icon`, 'icon'],
+    [`${DEF.pfxNsMeta}icon`, 'icon'],
+    [`${DEF.pfxNsMeta}Unit`, 'unit'],
+    [`${DEF.pfxNsMeta}unit`, 'unit'],
     ['sh:datatype', 'datatype'],
     ['xs:simpleType', 'datatype'],
     ['sh:minCount', 'minCount'],
@@ -83,17 +93,17 @@ const FROM_XML = new Map<string, string>([
     ['xs:default', 'defaultValue'],
     ['sh:pattern', 'pattern'],
     ['xs:pattern', 'pattern'],
-    ['pig:itemType', 'itemType'],
-    ['pig:enumeratedProperty', 'enumeratedProperty'],
-    ['pig:enumeratedSourceLink', 'enumeratedSourceLink'],
-    ['pig:enumeratedTargetLink', 'enumeratedTargetLink'],
-    ['pig:enumeratedEndpoint', 'enumeratedEndpoint'],
-    ['pig:enumeratedValue', 'enumeratedValue'],
-    ['dcterms:title', 'title'],
-    ['dcterms:description', 'description'],
-    ['dcterms:created', 'created'],
-    ['dcterms:modified', 'modified'],
-    ['dcterms:creator', 'creator'],
+    [`${DEF.pfxNsMeta}itemType`, 'itemType'],
+    [`${DEF.pfxNsMeta}enumeratedProperty`, 'enumeratedProperty'],
+    [`${DEF.pfxNsMeta}enumeratedSourceLink`, 'enumeratedSourceLink'],
+    [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
+    [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
+    [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
+    [`${DEF.pfxNsDcmi}title`, 'title'],
+    [`${DEF.pfxNsDcmi}description`, 'description'],
+    [`${DEF.pfxNsDcmi}created`, 'created'],
+    [`${DEF.pfxNsDcmi}modified`, 'modified'],
+    [`${DEF.pfxNsDcmi}creator`, 'creator'],
     ['skos:definition', 'definition']
 ]);
 const TO_XML = new Map<string, string>(
@@ -216,6 +226,6 @@ export const MVF = {
         if (typeof term !== 'string') {
             return term;
         }
-        return mapping.get(term) ?? term; // ✅ SUPER EINFACH!
+        return mapping.get(term) ?? term;
     }
 };

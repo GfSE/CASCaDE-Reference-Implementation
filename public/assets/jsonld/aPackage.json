@@ -1,9 +1,9 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "http://product-information-graph.org/schema/2026-02-18/jsonld/aPackage.json",
-    "title": "PIG APackage JSON-LD Schema",
-    "description": "Validates complete JSON-LD package documents with @context (namespace and vocabulary definitions) as well as @graph (array of PIG items). The graph contains a mix of item classes (Property, Link, Entity, Relationship) and instances (anEntity, aRelationship). Package-level metadata includes optional dcterms:modified, dcterms:creator, dcterms:title, and dcterms:description. Validates each item against its corresponding schema based on pig:itemType.",
-    "type": "object",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://product-information-graph.org/schema/2026-05-08/jsonld/aPackage.json",
+  "title": "CASCaRA aPackage Schema for JSON-LD",
+  "description": "Validates a complete JSON-LD document (CASCaRA aPackage) with @context (namespace and vocabulary definitions) as well as @graph (array of PIG items). The graph contains a mix of item classes (Property, Link, Entity, Relationship) and instances (anEntity, aRelationship). Package-level metadata includes optional dcterms:modified, dcterms:creator, dcterms:title, and dcterms:description. Validates each item against its corresponding schema based on cas:itemType.",
+  "type": "object",
   "properties": {
     "@context": {
       "description": "JSON-LD context defining namespaces and vocabulary mappings",
@@ -37,25 +37,26 @@
       "$ref": "#/$defs/idString",
       "description": "Reference to the Package class this instance belongs to"
     },
-    "pig:itemType": {
+    "cas:itemType": {
       "type": "object",
       "required": [ "@id" ],
       "properties": {
         "@id": {
           "type": "string",
-          "enum": [ "pig:aPackage" ],
-          "description": "The PigItemType for pig:aPackage"
+          "enum": [ "cas:aPackage" ],
+          "description": "The CASCaRA metamodel item type for cas:aPackage"
         }
       },
       "additionalProperties": false
     },
-    "pig:revision": {
+    "cas:revision": {
       "type": "string",
       "description": "Revision identifier for version control"
     },
-    "pig:priorRevision": {
+    "cas:priorRevision": {
       "type": "array",
       "description": "Array of prior revision identifiers",
+      "maxItems": 2,
       "items": {
         "type": "string"
       }
@@ -91,21 +92,22 @@
       "description": "Array of PIG items (classes and instances)",
       "items": {
         "type": "object",
-        "required": [ "pig:itemType" ],
+        "required": [ "cas:itemType" ],
         "properties": {
-          "pig:itemType": {
+          "cas:itemType": {
             "type": "object",
             "required": [ "@id" ],
             "properties": {
               "@id": {
                 "type": "string",
                 "enum": [
-                  "pig:Property",
-                  "pig:Link",
-                  "pig:Entity",
-                  "pig:Relationship",
-                  "pig:anEntity",
-                  "pig:aRelationship"
+                  "cas:Property",
+                  "cas:Link",
+                  "cas:Entity",
+                  "cas:Relationship",
+                  "cas:Enumeration",
+                  "cas:anEntity",
+                  "cas:aRelationship"
                 ]
               }
             }
@@ -116,127 +118,221 @@
             "if": {
               "type": "object",
               "properties": {
-                "pig:itemType": {
+                "cas:itemType": {
                   "type": "object",
                   "properties": {
-                    "@id": { "const": "pig:anEntity" }
+                    "@id": { "const": "cas:anEntity" }
                   }
                 }
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/anEntity.json"
+              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/anEntity.json"
             }
           },
           {
             "if": {
               "type": "object",
               "properties": {
-                "pig:itemType": {
+                "cas:itemType": {
                   "type": "object",
                   "properties": {
-                    "@id": { "const": "pig:aRelationship" }
+                    "@id": { "const": "cas:aRelationship" }
                   }
                 }
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/aRelationship.json"
+              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/aRelationship.json"
             }
           },
           {
             "if": {
               "type": "object",
               "properties": {
-                "pig:itemType": {
+                "cas:itemType": {
                   "type": "object",
                   "properties": {
-                    "@id": { "const": "pig:Property" }
+                    "@id": { "const": "cas:Property" }
                   }
                 }
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Property.json"
+              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Property.json"
             }
           },
           {
             "if": {
               "type": "object",
               "properties": {
-                "pig:itemType": {
+                "cas:itemType": {
                   "type": "object",
                   "properties": {
-                    "@id": { "const": "pig:Link" }
+                    "@id": { "const": "cas:Link" }
                   }
                 }
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Link.json"
+              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Link.json"
             }
           },
           {
             "if": {
               "type": "object",
               "properties": {
-                "pig:itemType": {
+                "cas:itemType": {
                   "type": "object",
                   "properties": {
-                    "@id": { "const": "pig:Entity" }
+                    "@id": { "const": "cas:Entity" }
                   }
                 }
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Entity.json"
+              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Entity.json"
             }
           },
           {
             "if": {
               "type": "object",
               "properties": {
-                "pig:itemType": {
+                "cas:itemType": {
                   "type": "object",
                   "properties": {
-                    "@id": { "const": "pig:Relationship" }
+                    "@id": { "const": "cas:Relationship" }
                   }
                 }
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-02-18/jsonld/Relationship.json"
+              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Relationship.json"
+            }
+          },
+          {
+            "if": {
+              "type": "object",
+              "properties": {
+                "cas:itemType": {
+                  "type": "object",
+                  "properties": {
+                    "@id": { "const": "cas:Enumeration" }
+                  }
+                }
+              }
+            },
+            "then": {
+              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Enumeration.json"
             }
           }
         ]
       }
     }
   },
-    "required": [ "@context", "@graph" ],
-    "additionalProperties": true,
-  "$defs": {
-    "idString": {
-      "type": "string",
-      "pattern": "^(?:[A-Za-z0-9_\\-]+:[^:\\s]+|https?:\\/\\/[^\\s]+)$",
-      "description": "Valid identifier format: namespace:name or full URI (e.g., 'pig:Property', 'http://example.org/id')"
-    },
-    "languageValue": {
-      "type": "object",
-      "required": [ "@value" ],
-      "properties": {
-        "@value": {
-          "type": "string",
-          "minLength": 1,
-          "description": "The actual text content"
-        },
-        "@language": {
-          "type": "string",
-          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
-          "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+  "patternProperties": {
+    "^(?!cas:itemType|cas:revision|cas:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$": {
+        "type": "array",
+        "description": "Configurable properties and links with namespaced keys",
+        "items": {
+          "type": "object",
+          "properties": {
+            "cas:itemType": {
+              "type": "object",
+              "required": [ "@id" ],
+              "properties": {
+                "@id": {
+                  "type": "string",
+                  "enum": [ "cas:aProperty", "cas:aTargetLink" ],
+                  "description": "Type of configurable item: property value or target link"
+                }
+              },
+              "additionalProperties": false
+            },
+            "@value": {
+              "type": "string",
+              "description": "Direct property value (for aProperty)"
+            },
+            "@id": {
+              "$ref": "#/$defs/idString",
+              "description": "Reference to enumeration value or linked entity/relationship"
+            }
+          },
+          "required": [ "cas:itemType" ],
+          "oneOf": [
+            {
+              "type": "object",
+              "description": "aProperty with direct value",
+              "properties": {
+                "cas:itemType": {
+                  "type": "object",
+                  "properties": {
+                    "@id": {
+                      "const": "cas:aProperty"
+                    }
+                  }
+                }
+              },
+              "required": [ "@value" ],
+              "not": {
+                "required": [ "@id" ]
+              }
+            },
+            {
+              "type": "object",
+              "description": "aTargetLink to an enumeration, entity or relationship",
+              "properties": {
+                "cas:itemType": {
+                  "type": "object",
+                  "properties": {
+                    "@id": {
+                      "const": "cas:aTargetLink"
+                    }
+                  }
+                }
+              },
+              "required": [ "@id" ],
+              "not": {
+                "required": [ "@value" ]
+              }
+            }
+          ],
+          "additionalProperties": false
         }
+      }
+    },
+    "required": [
+      "@context",
+      "@id",
+      "@type",
+      "cas:itemType",
+      "@graph",
+      "dcterms:modified"
+    ],
+    "additionalProperties": true,
+    "$defs": {
+      "idString": {
+        "type": "string",
+        "pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$",
+        "description": "Valid identifier format: namespace:name or full URI (e.g., 'cas:Property', 'http://example.org/id')"
       },
-      "additionalProperties": false,
-      "description": "Multi-language text value with optional language tag"
+      "languageValue": {
+        "type": "object",
+        "required": [ "@value" ],
+        "properties": {
+          "@value": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The actual text content"
+          },
+          "@language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+            "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Multi-language text value with optional language tag"
+      }
     }
   }
-}

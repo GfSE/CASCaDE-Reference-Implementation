@@ -16,7 +16,7 @@
  * - saxon-js (for XSLT transformations, works in both environments)
  *
  * Design Decisions
- * - Instead of shims, specific functions are implemented such as PIN.innerHTML(),
+ * - Instead of shims, specific functions are implemented such as PLI.innerHTML(),
  *   because it is considered more robust than fiddling around with prototypes provided by 3rd parties
  * 
  * Authors: oskar.dungern@gfse.org
@@ -52,11 +52,28 @@ interface NodeProcess {
     };
 }
 
+// Type definitions for File System Access API
+interface FilePickerAcceptType {
+    description?: string;
+    accept: Record<string, string[]>;
+}
+interface SaveFilePickerOptions {
+    suggestedName?: string;
+    types?: FilePickerAcceptType[];
+}
+/* interface FileSystemWritableFileStream extends WritableStream {
+    write(data: BufferSource | Blob | string): Promise<void>;
+    close(): Promise<void>;
+}
+interface FileSystemFileHandle {
+    createWritable(): Promise<FileSystemWritableFileStream>;
+} */
+
 // Cache for loaded modules
 let cachedDOMParser: typeof DOMParser | null = null;
 let cachedXMLSerializer: typeof XMLSerializer | null = null;
 
-export const PIN = {
+export const PLI = {
     /**
      * Transform XML using XSLT with Saxon-JS
      * Works in both Node.js and browser environments
@@ -69,13 +86,14 @@ export const PIN = {
         xmlContent: string,
         sefPath: string
     ): Promise<IRsp<unknown>> {
+        // LOG.debug('PLI.transformXSL 0',xmlContent,sefPath);
         try {
             // Load compiled XSLT stylesheet
-            const sefResult = await PIN.readFileAsText(sefPath);
+            const sefResult = await PLI.readFileAsText(sefPath);
             if (!sefResult.ok)
                 return sefResult;
+            // LOG.debug(`PLI.transformXSL: loaded SEF stylesheet from ${sefPath}`,sefResult);
 
-        //    LOG.debug(`PIN.transformXSL: loaded SEF stylesheet from ${sefPath}`);
             const output = await SaxonJS.transform(
                 {
                     stylesheetText: sefResult.response as string,
@@ -85,7 +103,7 @@ export const PIN = {
                 'async'
             );
 
-        //    LOG.debug(`PIN.transformXSL: transformation completed successfully`, output);
+            // LOG.debug(`PLI.transformXSL 9: transformation completed successfully`, output);
             return Rsp.create(0, output.principalResult as string, 'text');
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
@@ -226,7 +244,7 @@ export const PIN = {
      * 
      * @example
      * const doc = parser.parseFromString(xml, 'text/xml');
-     * const error = PIN.getXmlParseError(doc);
+     * const error = PLI.getXmlParseError(doc);
      * if (error) {
      *     console.error('Parse error:', error.textContent);
      * }
@@ -252,7 +270,7 @@ export const PIN = {
      */
 
     async readFileAsText(source: string | File | Blob): Promise<IRsp<unknown>> {
-        if (typeof source === 'string') {
+        if (typeof(source) === 'string') {
             // string can be a URL or a Node filesystem path
             if (this.isHttpUrl(source)) {
                 // browser or Node fetch
@@ -300,6 +318,57 @@ export const PIN = {
     },
 
     /**
+     * Load binary content as a Uint8Array from a Node file path, HTTP(S) URL or browser File/Blob.
+     * Needed for binary formats such as ZIP archives (e.g. .fmu) that cannot be read as text.
+     *
+     * @param source - File path (Node.js), URL, or File/Blob object (Browser)
+     * @returns IRsp with the file content as a Uint8Array, or an error
+     */
+    async readFileAsBytes(source: string | File | Blob): Promise<IRsp<unknown>> {
+        if (typeof (source) === 'string') {
+            // string can be a URL or a Node filesystem path
+            if (this.isHttpUrl(source)) {
+                try {
+                    const resp = await fetch(source);
+                    if (!resp.ok) {
+                        return Msg.create(692, source, resp.statusText);
+                    }
+                    const buffer = await resp.arrayBuffer();
+                    return Rsp.create(0, new Uint8Array(buffer), 'arraybuffer');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(693, source, msg);
+                }
+            }
+            // assume Node path: dynamic import to avoid bundling 'fs' into browser build
+            if (this.isNodeEnv()) {
+                try {
+                    const { readFile } = await import('fs/promises');
+                    const data = await readFile(source);
+                    return Rsp.create(0, new Uint8Array(data), 'arraybuffer');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(694, source, msg);
+                }
+            }
+
+            return Msg.create(695);  // not an http(s) URL and not running in Node
+        }
+
+        if (typeof (source as Blob).arrayBuffer === 'function') {
+            try {
+                const buffer = await (source as Blob).arrayBuffer();
+                return Rsp.create(0, new Uint8Array(buffer), 'arraybuffer');
+            } catch (e: unknown) {
+                const msg = e instanceof Error ? e.message : String(e);
+                return Msg.create(694, '', msg);
+            }
+        }
+
+        return Msg.create(696); // unsupported source type
+    },
+
+    /**
      * Get innerHTML of an element (platform-independent)
      * Polyfill for xmlElement.innerHTML which is not available in @xmldom/xmldom
      * 
@@ -311,7 +380,7 @@ export const PIN = {
      * 
      * @example
      * // Browser and Node.js compatible
-     * const html = PIN.innerHTML(element);
+     * const html = PLI.innerHTML(element);
      * console.log(html); // "<p>Hello</p><span>World</span>"
      */
     innerHTML(element: Element): string {
@@ -333,7 +402,7 @@ export const PIN = {
             return parts.join('').trim();
         } catch (e) {
             // Ultimate fallback: return text content
-            LOG.warn('PIN.innerHTML: XMLSerializer failed, falling back to textContent');
+            LOG.warn('PLI.innerHTML: XMLSerializer failed, falling back to textContent');
             return element.textContent || '';
         }
     /*    } catch(e) {
@@ -362,6 +431,161 @@ export const PIN = {
      */
     isBrowserEnv(): boolean {
         return typeof window !== 'undefined' && typeof document !== 'undefined';
+    },
+
+    /**
+     * Write data to a file in both browser and Node.js environments
+     * 
+     * Platform-specific behavior:
+     * - Node.js: Writes directly to filesystem using fs/promises
+     * - Browser with File System Access API: Opens save dialog and writes to selected location
+     * - Browser fallback: Triggers download using Blob URL
+     * 
+     * @param data - Data to write (JsonObject, string, or Blob)
+     * @param filename - Target filename with extension (e.g., 'data.json', 'output.txt')
+     * @returns IRsp indicating success or error
+     * 
+     * @example
+     * // Write JSON object
+     * await PLI.writeFile({ key: 'value' }, 'data.json');
+     * 
+     * // Write JSON array
+     * await PLI.writeFile([{ key: 'value1' }, { key: 'value2' }], 'data.json');
+     * 
+     * // Write string
+     * await PLI.writeFile('Hello World', 'output.txt');
+     * 
+     * // Write Blob
+     * const blob = new Blob(['content'], { type: 'text/plain' });
+     * await PLI.writeFile(blob, 'file.txt');
+     */
+    async writeFile(
+        data: Record<string, unknown> | Array<unknown> | string | Blob,
+        filename: string
+    ): Promise<IRsp<unknown>> {
+        try {
+            // Convert data to Blob
+            let blob: Blob;
+            let mimeType: string;
+
+            if (data instanceof Blob) {
+                blob = data;
+                mimeType = blob.type || this.getMimeTypeFromFilename(filename);
+            } else if (typeof data === 'string') {
+                mimeType = this.getMimeTypeFromFilename(filename);
+                blob = new Blob([data], { type: mimeType });
+            } else {
+                // Assume JSON object or array
+                mimeType = 'application/json';
+                const jsonString = JSON.stringify(data, null, 2);
+                blob = new Blob([jsonString], { type: mimeType });
+            }
+
+            // Node.js environment
+            if (this.isNodeEnv()) {
+                try {
+                    const { writeFile } = await import('fs/promises');
+                    const buffer = Buffer.from(await blob.arrayBuffer());
+                    await writeFile(filename, buffer);
+                    return Msg.create(0, filename, 'text');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(697, filename, msg);
+                }
+            }
+
+            // Browser environment
+            if (this.isBrowserEnv()) {
+                // Try File System Access API first (if available)
+                if ('showSaveFilePicker' in window) {
+                    try {
+                        const opts: SaveFilePickerOptions = {
+                            suggestedName: filename,
+                            types: [{
+                                description: 'File',
+                                accept: { [mimeType]: [this.getExtension(filename)] }
+                            }]
+                        };
+
+                        const handle = await (window as any).showSaveFilePicker(opts);
+                        const writable = await handle.createWritable();
+                        await writable.write(blob);
+                        await writable.close();
+                        return Msg.create(0, filename, 'text');
+                    } catch (e: unknown) {
+                        // User cancelled or API failed - fall through to download trick
+                        if (e instanceof Error && e.name === 'AbortError') {
+                            return Msg.create(698, filename, 'User cancelled file save');
+                        }
+                        LOG.warn('File System Access API failed, falling back to download trick', e);
+                    }
+                }
+
+                // Fallback: Download trick
+                try {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    a.style.display = 'none';
+                    document.body.appendChild(a);
+                    a.click();
+
+                    // Cleanup
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+
+                    return Msg.create(0, filename, 'text');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(697, filename, msg);
+                }
+            }
+
+            return Msg.create(695); // Not HTTP URL and not Node/Browser
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            return Msg.create(697, filename, msg);
+        }
+    },
+
+    /**
+     * Get MIME type from filename extension
+     * @param filename - Filename with extension
+     * @returns MIME type string
+     */
+    getMimeTypeFromFilename(filename: string): string {
+        const ext = filename.split('.').pop()?.toLowerCase() || '';
+        const mimeTypes: Record<string, string> = {
+            'json': 'application/json',
+            'xml': 'application/xml',
+            'txt': 'text/plain',
+            'html': 'text/html',
+            'htm': 'text/html',
+            'css': 'text/css',
+            'js': 'application/javascript',
+            'ts': 'application/typescript',
+            'csv': 'text/csv',
+            'pdf': 'application/pdf',
+            'png': 'image/png',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'gif': 'image/gif',
+            'svg': 'image/svg+xml'
+        };
+        return mimeTypes[ext] || 'application/octet-stream';
+    },
+
+    /**
+     * Get file extension from filename
+     * @param filename - Filename with extension
+     * @returns Extension with dot (e.g., '.json')
+     */
+    getExtension(filename: string): string {
+        const ext = filename.split('.').pop();
+        return ext ? `.${ext}` : '';
     }
 };
 /**
@@ -371,11 +595,11 @@ export const PIN = {
  * 
  * @param element - XML DOM Element to serialize
  * @returns HTML content as string (unescaped)
- * /
-function serializeXmlContent(element: ElementXML): string {
-    // ✅ Use PIN.getXMLSerializer() for platform independence
+ */
+/* function serializeXmlContent(element: ElementXML): string {
+    // ✅ Use PLI.getXMLSerializer() for platform independence
     try {
-        const SerializerClass = PIN.getXMLSerializer();
+        const SerializerClass = PLI.getXMLSerializer();
         const serializer = new SerializerClass();
         const children: string[] = [];
 
@@ -396,8 +620,8 @@ function serializeXmlContent(element: ElementXML): string {
  * 
  * @param element - Element containing HTML content
  * @returns HTML string with preserved structure
- * /
-function manualSerializeHtml(element: ElementXML): string {
+ */
+/* function manualSerializeHtml(element: ElementXML): string {
     const parts: string[] = [];
 
     for (const child of Array.from(element.childNodes)) {
@@ -421,8 +645,8 @@ function manualSerializeHtml(element: ElementXML): string {
  * 
  * @param elem - Element to serialize
  * @returns HTML string
- * /
-function serializeHtmlElement(elem: ElementXML): string {
+ */
+/* function serializeHtmlElement(elem: ElementXML): string {
     const tagName = elem.tagName.toLowerCase(); // Use lowercase for HTML
     const attributes: string[] = [];
 

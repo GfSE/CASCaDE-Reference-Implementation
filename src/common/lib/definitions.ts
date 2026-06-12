@@ -1,19 +1,42 @@
+/*!
+ * CASCaRA Graph (cas:) Definitions and Regular Expressions for global use
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ */
+/**
+ * CASCaRA Graph (cas:) Definitions and Regular Expressions for global use
+ * -----------------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ */
+
 import { BUILD_INFO } from '../../build-info';
 
-const PIG_DOMAIN = 'http://product-information-graph.org/';
+const CAS_DOMAIN = 'http://product-information-graph.org/';
+const CAS_VERSION = '2026-05-08';
 
 export const DEF = {
-    pigVersion: '2026-02-23',
+    pigVersion: CAS_VERSION,
     defaultTime: 'T12:00:00',
     defaultTimezone: 'Z',
-    pigPath: PIG_DOMAIN,
-    jsonldSchemaPath: PIG_DOMAIN + 'schema/2026-02-18/jsonld/',
+    pigPath: CAS_DOMAIN,
+    jsonldSchemaPath: CAS_DOMAIN + 'schema/' + CAS_VERSION + '/jsonld/',
     xslPath: 'assets/xslt/',
     // Default for local terms (names) without an explicit namespace
-    defaultDataNamespace: PIG_DOMAIN + 'default/data#',  // for data instances with prefix d:
-    defaultOntologyNamespace: PIG_DOMAIN + 'default/ontology#',  // for (application or project) ontology terms with prefix o:
+    defaultDataNamespace: 'd:',  // for data instances
+    defaultOntologyNamespace: 'o:',  // for (application or project) ontology
+ //   defaultDataURL: CAS_DOMAIN + 'default/data#',  // URL for data instances
+ //   defaultOntologyURL: CAS_DOMAIN + 'default/ontology#',  // URL for (application or project) ontology
     ...BUILD_INFO,
-    minIdLength: 3
+    minLengthId: 3,
+    maxSizeXML: 4 * 1024 * 1024, // 4MB
+    timeBetweenPages: 800,
+    pfxNsMeta: 'cas:',
+    pfxNsSemi: 'cas:',
+    pfxNsDcmi: 'dcterms:'
 };
 
 export const RE = {
@@ -30,7 +53,7 @@ export const RE = {
     //                                                                                                                          $8: 0..1 fragment=page anchor (hash)
     //                                                                                                                                       $9: ends with certain characters or eol
     // Namespace: /^([\w-]+)[.:]([\w\.-]*)$/
-    termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_\\-\\.]*):([^\s]+)$/,
+    termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_-]*):([^:\s]+)$/,
     isoDateTime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}(:\d{2})?)?$/,
     hasTimezone: /(Z|[+-]\d{2}(:\d{2})?)$/
 }

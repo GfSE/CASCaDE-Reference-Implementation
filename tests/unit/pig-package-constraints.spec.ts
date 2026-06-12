@@ -4,6 +4,7 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
+import { DEF } from '../../src/common/lib/definitions';
 import { APackage } from '../../src/common/schema/pig/ts/pig-metaclasses';
 import { ConstraintCheckType } from '../../src/common/schema/pig/ts/pig-package-constraints';
 
@@ -12,26 +13,27 @@ describe('PIG Package Constraint Validation', () => {
         test('should validate minimal valid package', () => {
             const validPackageJsonLd = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-001',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
-                        "@id": "pig:Property",
-                        "@type": "owl:DatatypeProperty",
-                        'pig:itemType': { '@id': 'pig:Property' },
-                        "dcterms:title": [
+                        "@id": `${DEF.pfxNsMeta}Property`,
+                        '@type': "owl:DatatypeProperty",
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Property"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for properties (aka attributes)."
                             }
@@ -42,31 +44,32 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': 'pig:Property',
-                        'pig:itemType': { '@id': 'pig:Property' },
-                        'dcterms:title': [
+                        '@type': "owl:DatatypeProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
                     },
                     {
-                        "@id": "pig:Link",
-                        "@type": "owl:ObjectProperty",
-                        "pig:itemType": { "@id": "pig:Link" },
-                        "pig:enumeratedEndpoint": [
+                        "@id": `${DEF.pfxNsMeta}Link`,
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             {
-                                "@id": "pig:Entity"
+                                "@id": `${DEF.pfxNsMeta}Entity`
                             },
                             {
-                                "@id": "pig:Relationship"
+                                "@id": `${DEF.pfxNsMeta}Relationship`
                             }
                         ],
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "linked with"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "Connects a reified relationship with its source or target. Also connects an organizer to a model element"
                             }
@@ -74,25 +77,26 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_RefersTo',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:enumeratedEndpoint': [
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
                     {
-                        "@id": "pig:Entity",
-                        "@type": "owl:Class",
-                        "pig:itemType": { "@id": "pig:Entity" },
-                        "dcterms:title": [
+                        "@id": `${DEF.pfxNsMeta}Entity`,
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}itemType`]: { "@id": `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Entity"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for entities (aka resources or artifacts)."
                             }
@@ -100,30 +104,31 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-001-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Requirement', '@language': 'en' }
                         ],
                         'o:Property_Status': [
                             {
-                                'pig:itemType': { '@id': 'pig:aProperty' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
                                 '@value': 'Draft'
                             }
                         ],
                         'o:Link_RefersTo': [
                             {
-                                'pig:itemType': { '@id': 'pig:aTargetLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
                                 '@id': 'd:REQ-002'
                             }
                         ]
@@ -131,10 +136,10 @@ describe('PIG Package Constraint Validation', () => {
                     {
                         '@id': 'd:REQ-002-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Another Requirement', '@language': 'en' }
                         ]
                     }
@@ -153,28 +158,27 @@ describe('PIG Package Constraint Validation', () => {
         test('should validate package with relationship containing source and target links', () => {
             const packageWithRelationship = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-002',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
-                        "@id": "pig:Property",
-                        "@type": "owl:DatatypeProperty",
-                        "pig:itemType": {
-                            "@id": "pig:Property"
-                        },
-                        "dcterms:title": [
+                        "@id": `${DEF.pfxNsMeta}Property`,
+                        '@type': "owl:DatatypeProperty",
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Property"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for properties (aka attributes)."
                             }
@@ -185,33 +189,32 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Property_Rationale',
-                        'pig:specializes': 'pig:Property',
-                        'pig:itemType': { '@id': 'pig:Property' },
-                        'dcterms:title': [
+                        '@type': "owl:DatatypeProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Rationale', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
                     },
                     {
-                        "@id": "pig:Link",
-                        "@type": "owl:ObjectProperty",
-                        "pig:itemType": {
-                            "@id": "pig:Link"
-                        },
-                        "pig:enumeratedEndpoint": [
+                        "@id": `${DEF.pfxNsMeta}Link`,
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             {
-                                "@id": "pig:Entity"
+                                "@id": `${DEF.pfxNsMeta}Entity`
                             },
                             {
-                                "@id": "pig:Relationship"
+                                "@id": `${DEF.pfxNsMeta}Relationship`
                             }
                         ],
-                        "dcterms:title": [
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "linked with"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "Connects a reified relationship with its source or target. Also connects an organizer to a model element"
                             }
@@ -219,55 +222,53 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Link_Source',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ],
-                        'pig:enumeratedEndpoint': [
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
                     {
                         '@id': 'o:Link_Target',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ],
-                        'pig:enumeratedEndpoint': [
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
                     {
-                        "@id": "pig:Entity",
-                        "@type": "owl:Class",
-                        "pig:itemType": {
-                            "@id": "pig:Entity"
-                        },
-                        "dcterms:title": [
+                        "@id": `${DEF.pfxNsMeta}Entity`,
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Entity"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for entities (aka resources or artifacts)."
                             }
                         ]
                     },
                     {
-                        "@id": "pig:Relationship",
-                        "@type": "owl:Class",
-                        "pig:itemType": {
-                            "@id": "pig:Relationship"
-                        },
-                        "dcterms:title": [
+                        "@id": `${DEF.pfxNsMeta}Relationship`,
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             {
                                 "@value": "Relationship"
                             }
                         ],
-                        "dcterms:description": [
+                        [`${DEF.pfxNsDcmi}description`]: [
                             {
                                 "@value": "A PIG meta-model element used for reified relationships (aka predicates)."
                             }
@@ -275,64 +276,66 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'o:Relationship_Trace',
-                        'pig:specializes': 'pig:Relationship',
-                        'pig:itemType': { '@id': 'pig:Relationship' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-003-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-004-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:TRACE-001-ok',
                         '@type': 'o:Relationship_Trace',
-                        'pig:itemType': { '@id': 'pig:aRelationship' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace Link', '@language': 'en' }
                         ],
                         'o:Property_Rationale': [
                             {
-                                'pig:itemType': { '@id': 'pig:aProperty' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
                                 '@value': 'Decomposition'
                             }
                         ],
                         'o:Link_Source': [
                             {
-                                'pig:itemType': { '@id': 'pig:aSourceLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` },
                                 '@id': 'd:REQ-003-ok'
                             }
                         ],
                         'o:Link_Target': [
                             {
-                                'pig:itemType': { '@id': 'pig:aTargetLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
                                 '@id': 'd:REQ-004-ok'
                             }
                         ]
@@ -354,38 +357,42 @@ describe('PIG Package Constraint Validation', () => {
         test('should reject package with items having duplicate IDs', () => {
             const packageWithDuplicateIds = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-duplicate-id',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': 'pig:Property',
-                        'pig:itemType': { '@id': 'pig:Property' },
-                        'dcterms:title': [
+                        '@type': "owl:DatatypeProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_duplicateId_nok', // ❌ Duplicate ID
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Another Entity', '@language': 'en' }
                         ]
                     }
@@ -396,11 +403,16 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithDuplicateIds,[ConstraintCheckType.UniqueIds]);
 
             // check the attribute values upon creation:
-         /*   if (pck.status().ok)
-                console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(671); // Duplicate ID error code
+         /*   if (!pkg.status().ok)
+                console.error('status:', pkg.status()); */
             
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(603); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('671'); // Duplicate ID error code
+            expect(status.statusText).toContain('o:Entity_duplicateId_nok');
         /*    const rsp = pkg.get() as IAPackage;
             
             expect(rsp.ok).toBe(false);
@@ -412,30 +424,32 @@ describe('PIG Package Constraint Validation', () => {
         test('should reject package with an item missing ID', () => {
             const packageWithMissingId = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-missing-id',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': 'pig:Property',
-                        'pig:itemType': { '@id': 'pig:Property' },
-                        'dcterms:title': [
+                        '@type': "owl:DatatypeProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
                     },
                     {
                         // ❌ Missing @id
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity Without ID', '@language': 'en' }
                         ]
                     }
@@ -446,10 +460,10 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingId);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Error code for one or more failed item instantiations
+            expect(pkg.status().status).toBe(603); // Error code for one or more failed item instantiations
         });
     });
 
@@ -457,36 +471,38 @@ describe('PIG Package Constraint Validation', () => {
         test('should reject aProperty referencing non-existent class', () => {
             const packageWithInvalidPropertyRef = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-invalid-prop',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-with-NonExistent-Property',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Requirement with property having an invalid class', '@language': 'en' }
                         ],
                         'o:Property_NonExistent': [ // ❌ References non-existent Property
                             {
-                                'pig:itemType': { '@id': 'pig:aProperty' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
                                 '@value': 'Some Value'
                             }
                         ]
@@ -498,13 +514,18 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithInvalidPropertyRef);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(673); // Invalid hasClass reference
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(603); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673'); // Invalid hasClass reference
+            expect(status.statusText).toContain('o:Property_NonExistent');
             
         /*    const rsp = pkg.get() as IAPackage;
-            
             expect(rsp.ok).toBe(false);
             expect(rsp.status).toBe(673); // Invalid hasClass reference
             expect(rsp.statusText).toContain('hasProperty[0].hasClass');
@@ -515,47 +536,50 @@ describe('PIG Package Constraint Validation', () => {
         test('should reject aProperty referencing wrong type (Link instead of Property)', () => {
             const packageWithWrongTypeRef = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-type',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_RefersTo', // This is a Link, not a Property!
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Refers To', '@language': 'en' }
                         ],
-                        'pig:enumeratedEndpoint': [
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-with-wrong-Property-class',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Requirement', '@language': 'en' }
                         ],
                         'o:Link_RefersTo': [ // ❌ Used as Property but it's a Link!
                             {
-                                'pig:itemType': { '@id': 'pig:aProperty' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
                                 '@value': 'Wrong Property class'
                             }
                         ]
@@ -567,13 +591,20 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithWrongTypeRef);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(673); // Invalid hasClass type
-            
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(603); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673'); // Invalid hasClass reference
+            expect(status.statusText).toContain('expected cas:Property, found cas:Link');
+            // @ToDo: Change error message to show the name of the property instead of its index ... and then:
+            // expect(status.statusText).toContain('o:Link_RefersTo');
+
         /*    const rsp = pkg.get() as IAPackage;
-            
             expect(rsp.ok).toBe(false);
             expect(rsp.status).toBe(673);
             expect(rsp.statusText).toContain('hasProperty[0].hasClass');
@@ -586,52 +617,55 @@ describe('PIG Package Constraint Validation', () => {
         test('should reject aTargetLink referencing non-existent class', () => {
             const packageWithInvalidLinkRef = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-invalid-link',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
-                        '@id': 'pig:Entity',
+                        '@id': `${DEF.pfxNsMeta}Entity`,
                         '@type': 'owl:class',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity', '@language': 'en' }
                         ]
                     },
                     {
-                        '@id': 'pig:Organizer',
-                        'specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@id': `${DEF.pfxNsSemi}Organizer`,
+                        '@type': 'owl:Class',
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Organizer', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_Folder',
-                        'pig:specializes': 'pig:Organizer',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': 'owl:Class',
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsSemi}Organizer`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Folder', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:Folder-with-link-having-invalid-class',
                         '@type': 'o:Entity_Folder',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Test Folder with a target link having an invalid (missing) class', '@language': 'en' }
                         ],
                         'o:Link_NonExistent': [ // ❌ References non-existent Link
                             {
-                                'pig:itemType': { '@id': 'pig:aTargetLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
                                 '@id': 'd:REQ-005-ok'
                             }
                         ]
@@ -639,10 +673,10 @@ describe('PIG Package Constraint Validation', () => {
                     {
                         '@id': 'd:REQ-005-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target Requirement', '@language': 'en' }
                         ]
                     }
@@ -653,15 +687,20 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithInvalidLinkRef);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass reference
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(603); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673');
+            expect(status.statusText).toContain('o:Link_NonExistent');
             
         /*    const rsp = pkg.get() as IAPackage;
             
             expect(rsp.ok).toBe(false);
-            expect(rsp.status).toBe(675); // Invalid link hasClass reference
+            expect(rsp.status).toBe(673); // Invalid link hasClass reference
             expect(rsp.statusText).toContain('hasTargetLink[0].hasClass');
             expect(rsp.statusText).toContain('o:Link_NonExistent');
             expect(rsp.statusText).toContain('not found in package'); */
@@ -670,101 +709,106 @@ describe('PIG Package Constraint Validation', () => {
         test('should reject aSourceLink referencing wrong type (Property instead of Link)', () => {
             const packageWithWrongLinkType = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-link-type',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Rationale',
-                        'pig:specializes': 'pig:Property',
-                        'pig:itemType': { '@id': 'pig:Property' },
-                        'dcterms:title': [
+                        '@type': "owl:DatatypeProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Rationale', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
                     },
                     {
                         '@id': 'o:Link_Source',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ],
-                        'pig:enumeratedEndpoint': [
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
                     {
                         '@id': 'o:Link_Target',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ],
-                        'pig:enumeratedEndpoint': [
+                        [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
                             { '@id': 'o:Entity_Requirement' }
                         ]
                     },
                     {
                         '@id': 'o:Relationship_Refinement',
-                        '@type': 'pig:Relationship',
-                        'pig:itemType': { '@id': 'pig:Relationship' },
-                        'dcterms:title': [
+                        '@type': `${DEF.pfxNsMeta}Relationship`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'refines', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': 'owl:Class',
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-006-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-007-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:TRACE-wrong-SourceLink-class-nok',
                         '@type': 'o:Relationship_Trace',
-                        'pig:itemType': { '@id': 'pig:aRelationship' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace Link', '@language': 'en' }
                         ],
                         'o:Property_Rationale': [ // ❌ Used as Link but it's a Property!
                             {
-                                'pig:itemType': { '@id': 'pig:aSourceLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` },
                                 '@id': 'd:REQ-003-ok'
                             }
                         ],
                         'o:Link_Target': [
                             {
-                                'pig:itemType': { '@id': 'pig:aTargetLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
                                 '@id': 'd:REQ-004-ok'
                             }
                         ]
@@ -776,11 +820,16 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithWrongLinkType);
 
             // check the attribute values upon creation:
-            /*   if (pck.status().ok)
-                   console.error('status:', pck.status()); */
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass type
-            
+            /*   if (!pkg.status().ok)
+                   console.error('status:', pkg.status()); */
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(603); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('673');
+            expect(status.statusText).toContain('o:Property_Rationale');
+
         /*    const rsp = pkg.get() as IAPackage;
             
             expect(rsp.ok).toBe(false);
@@ -794,31 +843,33 @@ describe('PIG Package Constraint Validation', () => {
         test('should reject anEntity with missing hasClass reference', () => {
             const packageWithMissingEntityClass = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-missing-entity-class',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-invalid-class-nok',
                         // ❌ Missing @type (which maps to hasClass)
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity without class', '@language': 'en' }
                         ]
                     }
@@ -829,37 +880,39 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingEntityClass);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
         });
 
         test('should reject anEntity with hasClass pointing to non-existent Entity', () => {
             const packageWithInvalidEntityClass = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-invalid-entity-class',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-nonexistent-class-nok',
                         '@type': 'o:Entity_NonExistent', // ❌ References non-existent Entity class
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity with invalid class', '@language': 'en' }
                         ]
                     }
@@ -869,28 +922,35 @@ describe('PIG Package Constraint Validation', () => {
             const pkg = new APackage();
             pkg.setJSONLD(packageWithInvalidEntityClass);
 
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass reference (not found)
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(603); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (675)
+            expect(status.statusText).toContain('675'); // Invalid hasClass reference (not found)
+            expect(status.statusText).toContain('d:REQ-nonexistent-class-nok');
         });
 
         test('should reject anEntity with hasClass pointing to wrong type (Property instead of Entity)', () => {
             const packageWithWrongEntityClassType = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-entity-class-type',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Property_Status',
-                        'pig:specializes': 'pig:Property',
-                        'pig:itemType': { '@id': 'pig:Property' },
-                        'dcterms:title': [
+                        '@type': "owl:DataTypeProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Property`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Status', '@language': 'en' }
                         ],
                         'sh:datatype': { '@id': 'xs:string' }
@@ -898,10 +958,10 @@ describe('PIG Package Constraint Validation', () => {
                     {
                         '@id': 'd:REQ-wrong-class-type-nok',
                         '@type': 'o:Property_Status', // ❌ References Property instead of Entity
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity with Property as class', '@language': 'en' }
                         ]
                     }
@@ -911,77 +971,87 @@ describe('PIG Package Constraint Validation', () => {
             const pkg = new APackage();
             pkg.setJSONLD(packageWithWrongEntityClassType);
 
-            expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(675); // Invalid hasClass type
+            const status = pkg.status();
+            expect(status.ok).toBe(false);
+            expect(status.status).toBe(603); // Incomplete item instantiation
+
+            // statusText should indicate that the hasClass reference is invalid (673)
+            expect(status.statusText).toContain('675');
+            expect(status.statusText).toContain('d:REQ-wrong-class-type-nok');
         });
 
         test('should reject aRelationship with missing hasClass reference', () => {
             const packageWithMissingRelClass = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-missing-rel-class',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_Source',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Link_Target',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Relationship_Trace',
-                        'pig:specializes': 'pig:Relationship',
-                        'pig:itemType': { '@id': 'pig:Relationship' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-008-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REL-missing-class-nok',
                         // ❌ Missing @type (which maps to hasClass)
-                        'pig:itemType': { '@id': 'pig:aRelationship' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Relationship without class', '@language': 'en' }
                         ],
                         'o:Link_Source': [
                             {
-                                'pig:itemType': { '@id': 'pig:aSourceLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` },
                                 '@id': 'd:REQ-008-ok'
                             }
                         ]
@@ -993,76 +1063,81 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithMissingRelClass);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
         });
 
         test('should reject aRelationship with hasClass pointing to wrong type (Link instead of Relationship)', () => {
             const packageWithWrongRelClassType = {
                 '@context': {
-                    'pig': 'https://product-information-graph.gfse.org/',
+                    [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
                 '@id': 'd:test-wrong-rel-class-type',
-                'pig:itemType': { '@id': 'pig:aPackage' },
-                'dcterms:modified': '2025-01-16T10:00:00Z',
+                '@type': `${DEF.pfxNsMeta}Package`,
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
                 '@graph': [
                     {
                         '@id': 'o:Link_Source',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Link_Target',
-                        'pig:specializes': 'pig:Link',
-                        'pig:itemType': { '@id': 'pig:Link' },
-                        'dcterms:title': [
+                        '@type': "owl:ObjectProperty",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Link`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Target', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Relationship_Trace',
-                        'pig:specializes': 'pig:Relationship',
-                        'pig:itemType': { '@id': 'pig:Relationship' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Relationship`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Relationship` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Trace', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'o:Entity_Requirement',
-                        'pig:specializes': 'pig:Entity',
-                        'pig:itemType': { '@id': 'pig:Entity' },
-                        'dcterms:title': [
+                        '@type': "owl:Class",
+                        [`${DEF.pfxNsMeta}specializes`]: `${DEF.pfxNsMeta}Entity`,
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REQ-009-ok',
                         '@type': 'o:Entity_Requirement',
-                        'pig:itemType': { '@id': 'pig:anEntity' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Source Requirement', '@language': 'en' }
                         ]
                     },
                     {
                         '@id': 'd:REL-wrong-class-type-nok',
                         '@type': 'o:Link_Source', // ❌ References Link instead of Relationship
-                        'pig:itemType': { '@id': 'pig:aRelationship' },
-                        'pig:revision': '1.0',
-                        'dcterms:modified': '2025-01-16T10:00:00Z',
-                        'dcterms:title': [
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
+                        [`${DEF.pfxNsMeta}revision`]: '1.0',
+                        [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                        [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Relationship with Link as class', '@language': 'en' }
                         ],
                         'o:Link_Source': [
                             {
-                                'pig:itemType': { '@id': 'pig:aSourceLink' },
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` },
                                 '@id': 'd:REQ-009-ok'
                             }
                         ]
@@ -1074,7 +1149,314 @@ describe('PIG Package Constraint Validation', () => {
             pkg.setJSONLD(packageWithWrongRelClassType);
 
             expect(pkg.status().ok).toBe(false);
-            expect(pkg.status().status).toBe(611); // Not all item instantiations succeeded
+            expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
+        });
+    });
+
+    describe('Enumerated Arrays: undefined vs empty [] semantics', () => {
+        /**
+         * Test semantics:
+         * - undefined = wildcard, all items allowed
+         * - [] = explicit restriction, no items allowed
+         * - [...] = only listed items allowed
+         */
+
+        describe('enumeratedProperty', () => {
+            test('POSITIVE: undefined enumeratedProperty allows any property', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'sh': 'http://www.w3.org/ns/shacl#',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-enumerated-undefined',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Property_Status',
+                            '@type': "owl:DatatypeProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Status' }],
+                            'sh:datatype': { '@id': 'xs:string' }
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedProperty is undefined (not present) = all properties allowed
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-001',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }],
+                            // ✅ Using o:Property_Status even though enumeratedProperty is undefined
+                            'o:Property_Status': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                                    '@value': 'Draft'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
+
+            test('NEGATIVE: empty [] enumeratedProperty rejects any property', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'sh': 'http://www.w3.org/ns/shacl#',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-enumerated-empty',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Property_Status',
+                            '@type': "owl:DatatypeProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Status' }],
+                            'sh:datatype': { '@id': 'xs:string' }
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ❌ enumeratedProperty is [] = no properties allowed
+                            [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-002',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }],
+                            // ❌ Using o:Property_Status but enumeratedProperty is []
+                            'o:Property_Status': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                                    '@value': 'Draft'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData, { constraintChecks: [ConstraintCheckType.enumeratedProperties] });
+                const st = pkg.status();
+                expect(st.ok).toBe(false);
+                // console.log('Status:', st);
+                expect(st.status).toBe(603);
+                expect(st.statusText).toContain('(676)'); // Link not in enumerated list of its class
+            });
+
+            test('POSITIVE: empty [] enumeratedProperty allows entity with no properties', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-enumerated-empty-ok',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedProperty is [] = no properties allowed
+                            [`${DEF.pfxNsMeta}enumeratedProperty`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-003',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }]
+                            // ✅ No properties used, consistent with enumeratedProperty: []
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
+        });
+
+        describe('enumeratedTargetLink', () => {
+            test('POSITIVE: undefined enumeratedTargetLink allows any link', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-link-undefined',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Link_RefersTo',
+                            '@type': "owl:ObjectProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                            [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                                { '@id': `${DEF.pfxNsMeta}Entity` }
+                            ],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Refers To' }]
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedTargetLink is undefined = all links allowed
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-004',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Source' }]
+                        },
+                        {
+                            '@id': 'd:REQ-005',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Target' }],
+                            // ✅ Using link even though enumeratedTargetLink is undefined
+                            'o:Link_RefersTo': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                                    '@id': 'd:REQ-004'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
+
+            test('NEGATIVE: empty [] enumeratedTargetLink rejects any link', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-link-empty',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Link_RefersTo',
+                            '@type': "owl:ObjectProperty",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Link` },
+                            [`${DEF.pfxNsMeta}enumeratedEndpoint`]: [
+                                { '@id': `${DEF.pfxNsMeta}Entity` }
+                            ],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Refers To' }]
+                        },
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ❌ enumeratedTargetLink is [] = no links allowed
+                            [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-006',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Source' }]
+                        },
+                        {
+                            '@id': 'd:REQ-007',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Target' }],
+                            // ❌ Using link but enumeratedTargetLink is []
+                            'o:Link_RefersTo': [
+                                {
+                                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                                    '@id': 'd:REQ-006'
+                                }
+                            ]
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData, { constraintChecks: [ConstraintCheckType.enumeratedLinks] });
+                const st = pkg.status();
+                expect(st.ok).toBe(false);
+                // console.log('Status:', st);
+                expect(st.status).toBe(603);
+                expect(st.statusText).toContain('(676)'); // Link not in enumerated list of its class
+            });
+
+            test('POSITIVE: empty [] enumeratedTargetLink allows entity with no links', () => {
+                const packageData = {
+                    '@context': {
+                        [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'dcterms': 'http://purl.org/dc/terms/',
+                        'o': 'https://example.org/ontology/',
+                        'd': 'https://example.org/data/'
+                    },
+                    '@id': 'd:test-link-empty-ok',
+                    '@type': `${DEF.pfxNsMeta}Package`,
+                    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aPackage` },
+                    [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                    '@graph': [
+                        {
+                            '@id': 'o:Entity_Requirement',
+                            '@type': "owl:Class",
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
+                            // ✅ enumeratedTargetLink is [] = no links allowed
+                            [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Requirement' }]
+                        },
+                        {
+                            '@id': 'd:REQ-008',
+                            '@type': 'o:Entity_Requirement',
+                            [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
+                            [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
+                            [`${DEF.pfxNsDcmi}title`]: [{ '@value': 'Test' }]
+                            // ✅ No links used, consistent with enumeratedTargetLink: []
+                        }
+                    ]
+                };
+
+                const pkg = new APackage().setJSONLD(packageData);
+                expect(pkg.status().ok).toBe(true);
+            });
         });
     });
 });

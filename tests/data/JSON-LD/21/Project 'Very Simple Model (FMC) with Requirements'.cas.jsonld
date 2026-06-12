@@ -3,239 +3,250 @@
         "o": "https://product-information-graph.org/v0.2/ontology#",
         "d": "https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#",
         "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
         "owl": "http://www.w3.org/2002/07/owl#",
+        "skos": "https://www.w3.org/TR/skos-reference/",
         "sh": "http://www.w3.org/ns/shacl#",
         "xs": "http://www.w3.org/2001/XMLSchema#",
         "dcterms": "http://purl.org/dc/terms/",
         "FMC": "http://fmc-modeling.org#",
         "IREB": "https://cpre.ireb.org/en/downloads-and-resources/glossary#",
-        "ReqIF": "https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#",
         "oslc_rm": "http://open-services.net/ns/rm#",
-        "pig": "https://product-information-graph.org/v0.2/metamodel#",
+        "cas": "https://product-information-graph.org/v0.2/metamodel#",
         "SpecIF": "https://specif.de/v1.2/schema#"
     },
     "@id": "d:ACP-Very-Simple-Model-FMC-with-Requirements",
-    "@type": "pig:Package",
+    "@type": "cas:Package",
+    "cas:itemType": {
+        "@id": "cas:aPackage"
+    },
     "dcterms:title": [
         {
             "@value": "Project 'Very Simple Model (FMC) with Requirements'"
         }
     ],
-    "dcterms:modified": "2026-02-15T07:11:17.995Z",
+    "dcterms:modified": "2026-05-14T08:07:52.031Z",
     "@graph": [
         {
-            "@id": "pig:Entity",
+            "@id": "cas:Enumeration",
             "@type": "owl:Class",
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Enumeration"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Enumeration"
+                }
+            ],
+            "skos:definition": [
+                {
+                    "@value": "A CASCaRA meta-model item used for value enumerations."
+                }
+            ]
+        },
+        {
+            "@id": "cas:Entity",
+            "@type": "owl:Class",
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
                     "@value": "Entity"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A PIG meta-model item used for entities (aka resources or artifacts)."
+                    "@value": "A CASCaRA meta-model item used for entities (aka resources or artifacts)."
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:Category"
-                },
-                {
-                    "@id": "pig:Icon"
+                    "@id": "cas:Category"
                 }
             ]
         },
         {
-            "@id": "pig:Organizer",
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "@id": "cas:Organizer",
+            "@type": "owl:Class",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
                     "@value": "Organizer"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "An element organizing model elements. An example is a list of requirements or a diagram using a certain notation."
-                }
-            ],
-            "pig:enumeratedProperty": [
-                {
-                    "@id": "pig:Category"
+                    "@value": "A CASCaRA meta-model item for organizing model-elements. An example is a list of requirements or a diagram using a certain notation."
                 }
             ]
         },
         {
-            "@id": "pig:Root",
-            "pig:specializes": {
-                "@id": "pig:Organizer"
+            "@id": "cas:Package",
+            "@type": "owl:Class",
+            "cas:specializes": {
+                "@id": "cas:Organizer"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "dcterms:title": [
+                {
+                    "@value": "Package"
+                }
+            ],
+            "skos:definition": [
+                {
+                    "@value": "A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions."
+                }
+            ]
+        },
+        {
+            "@id": "cas:Root",
+            "@type": "owl:Class",
+            "cas:specializes": {
+                "@id": "cas:Organizer"
+            },
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
                     "@value": "Root"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A subclass of pig:Organizer serving as a root for trees (hierarchically organized graph elements)."
+                    "@value": "A subclass of cas:Organizer serving as a root for trees and tables."
                 }
             ],
-            "pig:enumeratedProperty": [
-            ],
-            "pig:enumeratedTargetLink": [
+            "cas:enumeratedTargetLink": [
                 {
-                    "@id": "pig:lists"
+                    "@id": "cas:lists"
                 }
             ]
         },
         {
-            "@id": "pig:Tree",
-            "pig:specializes": {
-                "@id": "pig:Organizer"
+            "@id": "cas:Tree",
+            "@type": "owl:Class",
+            "cas:specializes": {
+                "@id": "cas:Organizer"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
                     "@value": "Tree"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A subclass of pig:Organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
+                    "@value": "A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships."
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedTargetLink": [
                 {
-                    "@id": "pig:Category"
-                }
-            ],
-            "pig:enumeratedTargetLink": [
-                {
-                    "@id": "pig:lists"
+                    "@id": "cas:lists"
                 }
             ]
         },
         {
-            "@id": "pig:Outline",
-            "pig:specializes": {
-                "@id": "pig:Tree"
+            "@id": "cas:Outline",
+            "@type": "owl:Class",
+            "cas:specializes": {
+                "@id": "cas:Tree"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
                     "@value": "Outline"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A subclass of pig:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
-                }
-            ],
-            "pig:enumeratedProperty": [
-                {
-                    "@id": "pig:Category"
-                }
-            ],
-            "pig:enumeratedTargetLink": [
-                {
-                    "@id": "pig:lists"
+                    "@value": "A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
                 }
             ]
         },
         {
-            "@id": "pig:View",
-            "pig:specializes": {
-                "@id": "pig:Organizer"
+            "@id": "cas:Table",
+            "@type": "owl:Class",
+            "cas:specializes": {
+                "@id": "cas:Organizer"
             },
-            "pig:itemType": {
-                "@id": "pig:Entity"
+            "cas:itemType": {
+                "@id": "cas:Entity"
             },
             "dcterms:title": [
                 {
-                    "@value": "View"
+                    "@value": "Table"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A subclass of pig:Organizer representing a model view (diagram) using a certain notation showing selected model elements."
+                    "@value": "A subclass of cas:Organizer representing a table showing selected model elements."
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedTargetLink": [
                 {
-                    "@id": "pig:Category"
-                },
-                {
-                    "@id": "pig:Icon"
-                },
-                {
-                    "@id": "pig:Diagram"
-                },
-                {
-                    "@id": "pig:Notation"
-                }
-            ],
-            "pig:enumeratedTargetLink": [
-                {
-                    "@id": "pig:shows"
-                },
-                {
-                    "@id": "pig:depicts"
+                    "@id": "cas:shows"
                 }
             ]
         },
         {
-            "@id": "pig:Relationship",
+            "@id": "cas:Relationship",
             "@type": "owl:Class",
-            "pig:itemType": {
-                "@id": "pig:Relationship"
+            "cas:itemType": {
+                "@id": "cas:Relationship"
             },
             "dcterms:title": [
                 {
                     "@value": "Relationship"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A PIG meta-model item used for reified relationships (aka predicates)."
+                    "@value": "A CASCaRA meta-model item used for reified relationships (aka predicates)."
                 }
             ],
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:Category"
-                },
+                    "@id": "cas:Category"
+                }
+            ],
+            "cas:enumeratedSourceLink": [
                 {
-                    "@id": "pig:Icon"
+                    "@id": "cas:linksSource"
+                }
+            ],
+            "cas:enumeratedTargetLink": [
+                {
+                    "@id": "cas:linksTarget"
                 }
             ]
         },
         {
-            "@id": "pig:Property",
+            "@id": "cas:Property",
             "@type": "owl:DatatypeProperty",
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
                     "@value": "Property"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
-                    "@value": "A PIG meta-model item used for properties (aka attributes)."
+                    "@value": "A CASCaRA meta-model item used for properties (aka attributes)."
                 }
             ],
             "sh:datatype": {
@@ -243,43 +254,20 @@
             }
         },
         {
-            "@id": "pig:Icon",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "@id": "cas:Diagram",
+            "@type": "owl:DatatypeProperty",
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "has icon"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "Specifies an icon for a model element (entity or relationship)."
-                }
-            ],
-            "sh:datatype": {
-                "@id": "xs:string"
-            },
-            "sh:minCount": 0,
-            "sh:maxCount": 1
-        },
-        {
-            "@id": "pig:Diagram",
-            "pig:specializes": {
-                "@id": "pig:Property"
-            },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
                     "@value": "Diagram"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "A diagram illustrating the resource or a link to a diagram."
                 }
@@ -287,23 +275,23 @@
             "sh:datatype": {
                 "@id": "xs:string"
             },
-            "sh:minCount": 0,
-            "sh:maxCount": 1
+            "sh:minCount": 0
         },
         {
-            "@id": "pig:Category",
-            "pig:specializes": {
-                "@id": "pig:Property"
+            "@id": "cas:Category",
+            "@type": "owl:DatatypeProperty",
+            "cas:specializes": {
+                "@id": "cas:Property"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
                     "@value": "has category"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Specifies a category for an element (entity, relationship or organizer)."
                 }
@@ -316,19 +304,20 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "pig:Notation",
-            "pig:specializes": {
-                "@id": "pig:Category"
+            "@id": "cas:Notation",
+            "@type": "owl:DatatypeProperty",
+            "cas:specializes": {
+                "@id": "cas:Category"
             },
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "dcterms:title": [
                 {
                     "@value": "Notation"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "A reference to a notation defining the syntax and semantics of a diagram."
                 }
@@ -340,17 +329,17 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "pig:Link",
+            "@id": "cas:Link",
             "@type": "owl:ObjectProperty",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -358,26 +347,27 @@
                     "@value": "linked with"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element."
                 }
             ]
         },
         {
-            "@id": "pig:SourceLink",
-            "pig:specializes": {
-                "@id": "pig:Link"
+            "@id": "cas:linksSource",
+            "@type": "owl:ObjectProperty",
+            "cas:specializes": {
+                "@id": "cas:Link"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -385,26 +375,27 @@
                     "@value": "to source"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Connects the source of a reified relationship."
                 }
             ]
         },
         {
-            "@id": "pig:TargetLink",
-            "pig:specializes": {
-                "@id": "pig:Link"
+            "@id": "cas:linksTarget",
+            "@type": "owl:ObjectProperty",
+            "cas:specializes": {
+                "@id": "cas:Link"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -412,29 +403,30 @@
                     "@value": "to target"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Connects the target of a reified relationship or an organizer."
                 }
             ]
         },
         {
-            "@id": "pig:lists",
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "@id": "cas:lists",
+            "@type": "owl:ObjectProperty",
+            "cas:specializes": {
+                "@id": "cas:linksTarget"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 },
                 {
-                    "@id": "pig:Organizer"
+                    "@id": "cas:Organizer"
                 }
             ],
             "dcterms:title": [
@@ -442,26 +434,27 @@
                     "@value": "lists"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Lists an entity, a relationship or a subordinated organizer."
                 }
             ]
         },
         {
-            "@id": "pig:shows",
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "@id": "cas:shows",
+            "@type": "owl:ObjectProperty",
+            "cas:specializes": {
+                "@id": "cas:linksTarget"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 },
                 {
-                    "@id": "pig:Relationship"
+                    "@id": "cas:Relationship"
                 }
             ],
             "dcterms:title": [
@@ -469,23 +462,24 @@
                     "@value": "shows"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Shows an entity or a relationship."
                 }
             ]
         },
         {
-            "@id": "pig:depicts",
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "@id": "cas:depicts",
+            "@type": "owl:ObjectProperty",
+            "cas:specializes": {
+                "@id": "cas:linksTarget"
             },
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
-                    "@id": "pig:Entity"
+                    "@id": "cas:Entity"
                 }
             ],
             "dcterms:title": [
@@ -493,77 +487,15 @@
                     "@value": "depicts"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Depicts an entity; inverse of uml:ownedDiagram."
                 }
             ]
         },
         {
-            "@id": "dcterms:title",
-            "dcterms:title": [
-                {
-                    "@value": "Title",
-                    "@language": "en"
-                },
-                {
-                    "@value": "Titel",
-                    "@language": "de"
-                },
-                {
-                    "@value": "Titre",
-                    "@language": "fr"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "<p>A name given to the resource. <small>(<i>source: <a href=\"http://purl.org/dc/elements/1.1/title\">DCMI</a></i>)</small></p><p>Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p>",
-                    "@language": "en"
-                }
-            ],
-            "@type": "owl:DatatypeProperty",
-            "pig:itemType": {
-                "@id": "pig:Property"
-            },
-            "sh:datatype": {
-                "@id": "xs:string"
-            },
-            "sh:maxCount": 1,
-            "sh:maxLength": 256
-        },
-        {
-            "@id": "dcterms:description",
-            "dcterms:title": [
-                {
-                    "@value": "Description",
-                    "@language": "en"
-                },
-                {
-                    "@value": "Beschreibung",
-                    "@language": "de"
-                },
-                {
-                    "@value": "Description",
-                    "@language": "fr"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "<p>An account of the resource. <small>(<i>source: <a href=\"http://purl.org/dc/elements/1.1/description\">DCMI</a></i>)</small></p><p>Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p>",
-                    "@language": "en"
-                }
-            ],
-            "@type": "owl:DatatypeProperty",
-            "pig:itemType": {
-                "@id": "pig:Property"
-            },
-            "sh:datatype": {
-                "@id": "xs:string"
-            },
-            "sh:maxCount": 1
-        },
-        {
-            "@id": "SpecIF:Priority",
+            "@id": "SpecIF:Priority-Enumeration",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "Priority",
@@ -578,20 +510,23 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "Enumerated values for the 'Priority' of the resource.",
                     "@language": "en"
                 }
             ],
-            "@type": "owl:ObjectProperty",
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "dcterms:modified": "2016-05-26T08:59:00+02:00",
+            "cas:itemType": {
+                "@id": "cas:Enumeration"
+            },
+            "cas:specializes": {
+                "@id": "cas:Enumeration"
             },
             "sh:datatype": {
                 "@id": "xs:string"
             },
-            "pig:enumeratedValue": [
+            "cas:enumeratedValue": [
                 {
                     "@id": "SpecIF:priorityHigh",
                     "dcterms:title": [
@@ -646,20 +581,61 @@
             ]
         },
         {
-            "@id": "o:PC-Diagram-10199275557",
+            "@id": "SpecIF:Priority",
+            "@type": "owl:ObjectProperty",
             "dcterms:title": [
                 {
-                    "@value": "pig:Diagram"
+                    "@value": "Priority",
+                    "@language": "en"
+                },
+                {
+                    "@value": "Priorität",
+                    "@language": "de"
+                },
+                {
+                    "@value": "Priorité",
+                    "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
+                {
+                    "@value": "Enumerated values for the 'Priority' of the resource.",
+                    "@language": "en"
+                }
+            ],
+            "dcterms:modified": "2020-03-26T22:59:00+02:00",
+            "cas:specializes": {
+                "@id": "cas:Link"
+            },
+            "cas:itemType": {
+                "@id": "cas:Link"
+            },
+            "cas:enumeratedEndpoint": [
+                {
+                    "@id": "SpecIF:Priority-Enumeration"
+                }
+            ]
+        },
+        {
+            "@id": "o:PC-Diagram-10900558082",
+            "@type": "owl:DatatypeProperty",
+            "dcterms:title": [
+                {
+                    "@value": "cas:Diagram"
+                }
+            ],
+            "skos:definition": [
                 {
                     "@value": "A diagram illustrating the resource or a link to a diagram."
                 }
             ],
-            "@type": "owl:DatatypeProperty",
-            "pig:itemType": {
-                "@id": "pig:Property"
+            "cas:revision": "1.1",
+            "dcterms:modified": "2026-02-12T22:05:14.551Z",
+            "cas:specializes": {
+                "@id": "cas:Property"
+            },
+            "cas:itemType": {
+                "@id": "cas:Property"
             },
             "sh:datatype": {
                 "@id": "xs:string"
@@ -667,6 +643,7 @@
         },
         {
             "@id": "SpecIF:Paragraph",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "Paragraph",
@@ -681,7 +658,7 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
                     "@language": "en"
@@ -691,25 +668,68 @@
                     "@language": "de"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "cas:revision": "1.1",
+            "dcterms:modified": "2024-03-02T20:55:23.295Z",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:enumeratedProperty": [
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:Diagram"
+                    "@id": "cas:Diagram"
                 },
                 {
-                    "@id": "pig:Category"
+                    "@id": "cas:Category"
                 }
             ],
-            "pig:enumeratedTargetLink": [
+            "cas:enumeratedTargetLink": [
+            ]
+        },
+        {
+            "@id": "cas:View",
+            "@type": "owl:Class",
+            "dcterms:title": [
+                {
+                    "@value": "View"
+                }
             ],
-            "pig:itemType": {
-                "@id": "pig:Entity"
-            }
+            "skos:definition": [
+                {
+                    "@value": "A PIG organizer class representing a diagram with certain model-elements for a given communication purpose."
+                }
+            ],
+            "dcterms:modified": "2018-05-10T11:54:00+01:00",
+            "cas:specializes": {
+                "@id": "cas:Organizer"
+            },
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "cas:icon": {
+                "@value": "▣"
+            },
+            "cas:enumeratedProperty": [
+                {
+                    "@id": "cas:Diagram"
+                },
+                {
+                    "@id": "cas:Category"
+                }
+            ],
+            "cas:enumeratedTargetLink": [
+                {
+                    "@id": "cas:shows"
+                },
+                {
+                    "@id": "cas:depicts"
+                }
+            ]
         },
         {
             "@id": "FMC:Actor",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "Actor",
@@ -724,7 +744,7 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The  particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>",
                     "@language": "en"
@@ -738,25 +758,27 @@
                     "@language": "fr"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "dcterms:modified": "2018-05-10T11:54:00+01:00",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:Icon": {
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "cas:icon": {
                 "@value": "&#x25A1;"
             },
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:Category"
+                    "@id": "cas:Category"
                 }
             ],
-            "pig:enumeratedTargetLink": [
-            ],
-            "pig:itemType": {
-                "@id": "pig:Entity"
-            }
+            "cas:enumeratedTargetLink": [
+            ]
         },
         {
             "@id": "FMC:State",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "State",
@@ -771,7 +793,7 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "<p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean  ontology-term, such as [[bpmn:dataObject]].</p>",
                     "@language": "en"
@@ -785,25 +807,27 @@
                     "@language": "fr"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "dcterms:modified": "2018-05-10T11:54:00+01:00",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:Icon": {
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "cas:icon": {
                 "@value": "&#x25CB;"
             },
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:Category"
+                    "@id": "cas:Category"
                 }
             ],
-            "pig:enumeratedTargetLink": [
-            ],
-            "pig:itemType": {
-                "@id": "pig:Entity"
-            }
+            "cas:enumeratedTargetLink": [
+            ]
         },
         {
             "@id": "FMC:Event",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "Event",
@@ -818,7 +842,7 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "<p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>",
                     "@language": "en"
@@ -832,25 +856,27 @@
                     "@language": "fr"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "dcterms:modified": "2018-05-10T11:54:00+01:00",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:Icon": {
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "cas:icon": {
                 "@value": "&#x2662;"
             },
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "pig:Category"
+                    "@id": "cas:Category"
                 }
             ],
-            "pig:enumeratedTargetLink": [
-            ],
-            "pig:itemType": {
-                "@id": "pig:Entity"
-            }
+            "cas:enumeratedTargetLink": [
+            ]
         },
         {
             "@id": "IREB:Requirement",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "Requirement",
@@ -865,7 +891,7 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "<p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>",
                     "@language": "en"
@@ -879,31 +905,33 @@
                     "@language": "fr"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "dcterms:modified": "2021-02-22T08:59:00+02:00",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:Icon": {
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "cas:icon": {
                 "@value": "&#8623;"
             },
-            "pig:enumeratedProperty": [
+            "cas:enumeratedProperty": [
+            ],
+            "cas:enumeratedTargetLink": [
                 {
                     "@id": "SpecIF:Priority"
                 }
-            ],
-            "pig:enumeratedTargetLink": [
-            ],
-            "pig:itemType": {
-                "@id": "pig:Entity"
-            }
+            ]
         },
         {
-            "@id": "o:RC-Paragraph-10199275588",
+            "@id": "o:RC-Paragraph-10900558082",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "SpecIF:Paragraph"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
                     "@language": "en"
@@ -913,25 +941,28 @@
                     "@language": "de"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Entity"
+            "cas:revision": "1.1",
+            "dcterms:modified": "2024-03-02T20:55:23.295Z",
+            "cas:specializes": {
+                "@id": "cas:Entity"
             },
-            "pig:enumeratedProperty": [
+            "cas:itemType": {
+                "@id": "cas:Entity"
+            },
+            "cas:enumeratedProperty": [
                 {
-                    "@id": "o:PC-Diagram-10199275557"
+                    "@id": "o:PC-Diagram-10900558082"
                 },
                 {
-                    "@id": "pig:Category"
+                    "@id": "cas:Category"
                 }
             ],
-            "pig:enumeratedTargetLink": [
-            ],
-            "pig:itemType": {
-                "@id": "pig:Entity"
-            }
+            "cas:enumeratedTargetLink": [
+            ]
         },
         {
             "@id": "SpecIF:writes",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "writes",
@@ -946,34 +977,40 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].",
                     "@language": "en"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Relationship"
+            "dcterms:modified": "2018-05-10T11:54:00+01:00",
+            "cas:specializes": {
+                "@id": "cas:Relationship"
             },
-            "pig:enumeratedProperty": [
+            "cas:itemType": {
+                "@id": "cas:Relationship"
+            },
+            "cas:enumeratedProperty": [
             ],
-            "pig:itemType": {
-                "@id": "pig:Relationship"
-            },
-            "pig:enumeratedSourceLink": {
-                "@id": "SpecIF:writes-toSource"
-            },
-            "pig:enumeratedTargetLink": {
-                "@id": "SpecIF:writes-toTarget"
-            }
+            "cas:enumeratedSourceLink": [
+                {
+                    "@id": "SpecIF:writes-toSource"
+                }
+            ],
+            "cas:enumeratedTargetLink": [
+                {
+                    "@id": "SpecIF:writes-toTarget"
+                }
+            ]
         },
         {
             "@id": "SpecIF:writes-toSource",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "@type": "owl:ObjectProperty",
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:specializes": {
-                "@id": "pig:SourceLink"
+            "cas:specializes": {
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -985,7 +1022,7 @@
                     "@value": "Connects the source of SpecIF:writes"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "FMC:Actor"
                 }
@@ -993,11 +1030,12 @@
         },
         {
             "@id": "SpecIF:writes-toTarget",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "@type": "owl:ObjectProperty",
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "cas:specializes": {
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -1009,7 +1047,7 @@
                     "@value": "Connects the target of SpecIF:writes"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "FMC:State"
                 }
@@ -1017,6 +1055,7 @@
         },
         {
             "@id": "SpecIF:reads",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "reads",
@@ -1031,34 +1070,40 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "A [[FMC:Actor]] 'reads' a [[FMC:State]].",
                     "@language": "en"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Relationship"
+            "dcterms:modified": "2018-05-10T11:54:00+01:00",
+            "cas:specializes": {
+                "@id": "cas:Relationship"
             },
-            "pig:enumeratedProperty": [
+            "cas:itemType": {
+                "@id": "cas:Relationship"
+            },
+            "cas:enumeratedProperty": [
             ],
-            "pig:itemType": {
-                "@id": "pig:Relationship"
-            },
-            "pig:enumeratedSourceLink": {
-                "@id": "SpecIF:reads-toSource"
-            },
-            "pig:enumeratedTargetLink": {
-                "@id": "SpecIF:reads-toTarget"
-            }
+            "cas:enumeratedSourceLink": [
+                {
+                    "@id": "SpecIF:reads-toSource"
+                }
+            ],
+            "cas:enumeratedTargetLink": [
+                {
+                    "@id": "SpecIF:reads-toTarget"
+                }
+            ]
         },
         {
             "@id": "SpecIF:reads-toSource",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "@type": "owl:ObjectProperty",
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:specializes": {
-                "@id": "pig:SourceLink"
+            "cas:specializes": {
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -1070,7 +1115,7 @@
                     "@value": "Connects the source of SpecIF:reads"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "FMC:Actor"
                 }
@@ -1078,11 +1123,12 @@
         },
         {
             "@id": "SpecIF:reads-toTarget",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "@type": "owl:ObjectProperty",
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "cas:specializes": {
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -1094,7 +1140,7 @@
                     "@value": "Connects the target of SpecIF:reads"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "FMC:State"
                 }
@@ -1102,6 +1148,7 @@
         },
         {
             "@id": "oslc_rm:satisfies",
+            "@type": "owl:Class",
             "dcterms:title": [
                 {
                     "@value": "satisfies",
@@ -1116,34 +1163,40 @@
                     "@language": "fr"
                 }
             ],
-            "dcterms:description": [
+            "skos:definition": [
                 {
                     "@value": "<p>The object is satisfied by the subject. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p><p>SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.</p>",
                     "@language": "en"
                 }
             ],
-            "pig:specializes": {
-                "@id": "pig:Relationship"
+            "dcterms:modified": "2016-05-26T08:59:00+02:00",
+            "cas:specializes": {
+                "@id": "cas:Relationship"
             },
-            "pig:enumeratedProperty": [
+            "cas:itemType": {
+                "@id": "cas:Relationship"
+            },
+            "cas:enumeratedProperty": [
             ],
-            "pig:itemType": {
-                "@id": "pig:Relationship"
-            },
-            "pig:enumeratedSourceLink": {
-                "@id": "oslc_rm:satisfies-toSource"
-            },
-            "pig:enumeratedTargetLink": {
-                "@id": "oslc_rm:satisfies-toTarget"
-            }
+            "cas:enumeratedSourceLink": [
+                {
+                    "@id": "oslc_rm:satisfies-toSource"
+                }
+            ],
+            "cas:enumeratedTargetLink": [
+                {
+                    "@id": "oslc_rm:satisfies-toTarget"
+                }
+            ]
         },
         {
             "@id": "oslc_rm:satisfies-toSource",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "@type": "owl:ObjectProperty",
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:specializes": {
-                "@id": "pig:SourceLink"
+            "cas:specializes": {
+                "@id": "cas:linksSource"
             },
             "dcterms:title": [
                 {
@@ -1155,7 +1208,7 @@
                     "@value": "Connects the source of oslc_rm:satisfies"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "FMC:Actor"
                 },
@@ -1166,11 +1219,12 @@
         },
         {
             "@id": "oslc_rm:satisfies-toTarget",
-            "pig:itemType": {
-                "@id": "pig:Link"
+            "@type": "owl:ObjectProperty",
+            "cas:itemType": {
+                "@id": "cas:Link"
             },
-            "pig:specializes": {
-                "@id": "pig:TargetLink"
+            "cas:specializes": {
+                "@id": "cas:linksTarget"
             },
             "dcterms:title": [
                 {
@@ -1182,7 +1236,7 @@
                     "@value": "Connects the target of oslc_rm:satisfies"
                 }
             ],
-            "pig:enumeratedEndpoint": [
+            "cas:enumeratedEndpoint": [
                 {
                     "@id": "IREB:Requirement"
                 }
@@ -1205,13 +1259,13 @@
             "SpecIF:Priority": [
                 {
                     "@id": "SpecIF:priorityHigh",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             }
         },
         {
@@ -1231,13 +1285,13 @@
             "SpecIF:Priority": [
                 {
                     "@id": "SpecIF:priorityHigh",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             }
         },
         {
@@ -1257,66 +1311,66 @@
             "SpecIF:Priority": [
                 {
                     "@id": "SpecIF:priorityMedium",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             }
         },
         {
             "@id": "d:Diagram-aec0df7900010000017001eaf53e8876",
-            "@type": "pig:View",
+            "@type": "cas:View",
             "dcterms:modified": "2020-03-06T08:32:00+01:00",
             "dcterms:title": [
                 {
                     "@value": "IT-Integration: FiCo-Application and FiCo-Data"
                 }
             ],
-            "pig:Diagram": [
+            "cas:Diagram": [
                 {
                     "@value": "<p class=\"inline-label\">Model Diagram:</p><p><object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object></p>",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
-            "pig:Category": [
+            "cas:Category": [
                 {
                     "@value": "FMC Block Diagram",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:shows": [
+            "cas:shows": [
                 {
                     "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
@@ -1335,8 +1389,8 @@
                     "@value": "<p>IT-Application for Finance and Controlling.</p>"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             }
         },
         {
@@ -1353,8 +1407,8 @@
                     "@value": "<p>Finance and Controlling Data, such as cost-units per project with budget, accrued cost etc.</p>"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             }
         },
         {
@@ -1366,22 +1420,22 @@
                     "@value": "'FiCo-Application' writes 'FiCo-Data'"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:aRelationship"
+            "cas:itemType": {
+                "@id": "cas:aRelationship"
             },
             "SpecIF:writes-toSource": [
                 {
                     "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
-                    "pig:itemType": {
-                        "@id": "pig:aSourceLink"
+                    "cas:itemType": {
+                        "@id": "cas:aSourceLink"
                     }
                 }
             ],
             "SpecIF:writes-toTarget": [
                 {
                     "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
@@ -1395,22 +1449,22 @@
                     "@value": "'FiCo-Application' reads 'FiCo-Data'"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:aRelationship"
+            "cas:itemType": {
+                "@id": "cas:aRelationship"
             },
             "SpecIF:reads-toSource": [
                 {
                     "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
-                    "pig:itemType": {
-                        "@id": "pig:aSourceLink"
+                    "cas:itemType": {
+                        "@id": "cas:aSourceLink"
                     }
                 }
             ],
             "SpecIF:reads-toTarget": [
                 {
                     "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
@@ -1424,22 +1478,22 @@
                     "@value": "'FiCo-Data' satisfies 'Data Volume'"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:aRelationship"
+            "cas:itemType": {
+                "@id": "cas:aRelationship"
             },
             "oslc_rm:satisfies-toSource": [
                 {
                     "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aSourceLink"
+                    "cas:itemType": {
+                        "@id": "cas:aSourceLink"
                     }
                 }
             ],
             "oslc_rm:satisfies-toTarget": [
                 {
                     "@id": "d:Req-1a8016e2872e78ecadc50feddc00029b",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
@@ -1453,22 +1507,22 @@
                     "@value": "'FiCo-Data' satisfies 'Consistency'"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:aRelationship"
+            "cas:itemType": {
+                "@id": "cas:aRelationship"
             },
             "oslc_rm:satisfies-toSource": [
                 {
                     "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aSourceLink"
+                    "cas:itemType": {
+                        "@id": "cas:aSourceLink"
                     }
                 }
             ],
             "oslc_rm:satisfies-toTarget": [
                 {
                     "@id": "d:Req-0Z7916e2872e78ecadc50feddc00918a",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
@@ -1482,33 +1536,33 @@
                     "@value": "'FiCo-Application' satisfies 'Response Time'"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:aRelationship"
+            "cas:itemType": {
+                "@id": "cas:aRelationship"
             },
             "oslc_rm:satisfies-toSource": [
                 {
                     "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
-                    "pig:itemType": {
-                        "@id": "pig:aSourceLink"
+                    "cas:itemType": {
+                        "@id": "cas:aSourceLink"
                     }
                 }
             ],
             "oslc_rm:satisfies-toTarget": [
                 {
                     "@id": "d:Req-2b9016e2872e78ecadc50feddc0013Ac",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements",
-            "@type": "pig:Root",
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "@type": "cas:Root",
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "dcterms:modified": "2026-02-15T07:11:18.173Z",
+            "dcterms:modified": "2026-05-14T08:07:52.208Z",
             "dcterms:title": [
                 {
                     "@value": "Hierarchy Root"
@@ -1519,36 +1573,36 @@
                     "@value": "... anchoring all hierarchies of this graph (package)"
                 }
             ],
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:HR-Folder-Introduction",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:HR-Folder-Requirements",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:HR-Folder-SystemModel",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:HR-FolderGlossary-10875487071",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:Folder-Introduction",
-            "@type": "pig:Outline",
+            "@type": "cas:Outline",
             "dcterms:modified": "2025-02-07T08:32:00+01:00",
             "dcterms:title": [
                 {
@@ -1560,211 +1614,211 @@
                     "@value": "<p>This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in <a href=\"https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html\" target=\"_blank\">Tutorial 6: Very Simple Model (FMC)</a> and <a href=\"https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html\" target=\"_blank\">Tutorial 9: Very Simple Model (FMC) with Requirements</a>.</p>"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             }
         },
         {
             "@id": "d:HR-Folder-Introduction",
-            "@type": "pig:Outline",
-            "dcterms:modified": "2026-02-15T07:11:18.087Z",
+            "@type": "cas:Outline",
+            "dcterms:modified": "2026-05-14T08:07:52.125Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:Category": [
+            "cas:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:Folder-Introduction",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:Folder-Requirements",
-            "@type": "pig:Outline",
+            "@type": "cas:Outline",
             "dcterms:modified": "2020-03-06T08:32:00+01:00",
             "dcterms:title": [
                 {
                     "@value": "Requirements"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:Req-1a8016e2872e78ecadc50feddc00029b",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:Req-0Z7916e2872e78ecadc50feddc00918a",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:Req-2b9016e2872e78ecadc50feddc0013Ac",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:HR-Folder-Requirements",
-            "@type": "pig:Outline",
-            "dcterms:modified": "2026-02-15T07:11:18.087Z",
+            "@type": "cas:Outline",
+            "dcterms:modified": "2026-05-14T08:07:52.125Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:Category": [
+            "cas:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:Folder-Requirements",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:Folder-SystemModel",
-            "@type": "pig:Outline",
+            "@type": "cas:Outline",
             "dcterms:modified": "2020-03-06T08:32:00+01:00",
             "dcterms:title": [
                 {
                     "@value": "System Model"
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:Diagram-aec0df7900010000017001eaf53e8876",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:HR-Folder-SystemModel",
-            "@type": "pig:Outline",
-            "dcterms:modified": "2026-02-15T07:11:18.087Z",
+            "@type": "cas:Outline",
+            "dcterms:modified": "2026-05-14T08:07:52.125Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:Category": [
+            "cas:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:Folder-SystemModel",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:FolderGlossary-10875487071",
-            "@type": "pig:Outline",
-            "dcterms:modified": "2026-02-15T07:11:11.045Z",
+            "@type": "cas:Outline",
+            "dcterms:modified": "2026-05-14T08:07:46.986Z",
             "dcterms:title": [
                 {
                     "@value": "Model Elements (Glossary)"
                 }
             ],
-            "pig:Category": [
+            "cas:Category": [
                 {
                     "@value": "SpecIF:Glossary",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 },
                 {
                     "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]
         },
         {
             "@id": "d:HR-FolderGlossary-10875487071",
-            "@type": "pig:Outline",
-            "dcterms:modified": "2026-02-15T07:11:18.087Z",
+            "@type": "cas:Outline",
+            "dcterms:modified": "2026-05-14T08:07:52.125Z",
             "dcterms:title": [
                 {
                     "@value": "Project 'Very Simple Model (FMC) with Requirements'"
                 }
             ],
-            "pig:Category": [
+            "cas:Category": [
                 {
                     "@value": "ReqIF:HierarchyRoot",
-                    "pig:itemType": {
-                        "@id": "pig:aProperty"
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
                     }
                 }
             ],
-            "pig:itemType": {
-                "@id": "pig:anEntity"
+            "cas:itemType": {
+                "@id": "cas:anEntity"
             },
-            "pig:lists": [
+            "cas:lists": [
                 {
                     "@id": "d:FolderGlossary-10875487071",
-                    "pig:itemType": {
-                        "@id": "pig:aTargetLink"
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
                     }
                 }
             ]

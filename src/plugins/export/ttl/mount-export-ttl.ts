@@ -2,7 +2,7 @@ import { App, Plugin } from 'vue';
 import RdfExportComponent from "./export-ttl.vue";
 
 const rdfExportPlugin: Plugin = {
-    install(app: App, options?) {
+    install(app: App /*, options?*/) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
 
@@ -11,7 +11,8 @@ const rdfExportPlugin: Plugin = {
         //   console.log('Example Method');
         // };
 
-        // global component
+        // Mount component globally
+        // Don't change the name, it is used to filter the component in main.ts
         app.component('Export-TTL', RdfExportComponent);
     }
 }

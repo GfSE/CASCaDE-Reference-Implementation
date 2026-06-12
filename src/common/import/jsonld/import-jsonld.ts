@@ -26,7 +26,7 @@
 
 import { IRsp, rspOK, Rsp, Msg } from '../../lib/messages';
 import { LOG, JsonObject, JsonArray } from '../../lib/helpers';
-import { PIN } from '../../lib/platform-independence';
+import { PLI } from '../../lib/platform-independence';
 import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
 import { SCH_LD } from '../../schema/pig/jsonld/pig-schemata-jsonld';
 
@@ -56,17 +56,15 @@ export class JsonldImporter {
      */
     static async import(source: string | File | Blob): Promise<IRsp> {
         // Read file content
-        const rsp = await PIN.readFileAsText(source);
+        const rsp = await PLI.readFileAsText(source);
         if (!rsp.ok) {
             return rsp;
         }
 
-        const text = rsp.response as string;
-
         // Parse JSON document
         let doc: JsonObject;
         try {
-            doc = JSON.parse(text) as JsonObject;
+            doc = JSON.parse(rsp.response as string) as JsonObject;
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : String(err);
             return Msg.create(690, 'JSON-LD', errorMessage);
@@ -75,8 +73,10 @@ export class JsonldImporter {
         // Check JSON-LD document structure
         const validationResult = await this.checkJsonLdDocument(doc);
         if (!validationResult.ok) {
+            // LOG.debug('JsonldImporter.import: JSON-LD document validation failed',validationResult);
             return validationResult;
         }
+        // LOG.debug('JsonldImporter.import: JSON-LD document validation succeeded', validationResult);
 
         // Instantiate APackage and load the document
         const aPackage = new APackage().setJSONLD(doc);
@@ -107,7 +107,7 @@ export class JsonldImporter {
                 `JsonldImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Rsp.create(691, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
+            result = Rsp.create(604, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
         }
 
         return result as IRsp<TPigItem[]>;
@@ -127,12 +127,12 @@ export class JsonldImporter {
      */
     private static async checkJsonLdDocument(doc: JsonObject): Promise<IRsp> {
         // Validate entire JSON-LD document structure using schema
-        const isValidPackage = await SCH_LD.validatePackageLD(doc);
+        const isValidPackage = await SCH_LD.validateAPackageLD(doc);
 
         if (!isValidPackage) {
-            const errors = await SCH_LD.getValidatePackageLDErrors();
+            const errors = await SCH_LD.getValidateAPackageLDErrors();
             LOG.error('JSON-LD package validation failed:', errors);
-            return Msg.create(697, 'JSON-LD', errors);
+            return Msg.create(683, 'JSON-LD', errors);
         }
 
         return rspOK;

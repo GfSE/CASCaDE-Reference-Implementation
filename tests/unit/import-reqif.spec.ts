@@ -9,6 +9,7 @@
 import { ReqifImporter } from '../../src/common/import/reqif/import-reqif';
 import * as path from 'path';
 import * as fs from 'fs';
+import { PigItemType } from '../../src/common/schema/pig/ts/pig-metaclasses';
 
 function findReqifFiles(dir: string, fileList: string[] = []): string[] {
     const files = fs.readdirSync(dir);
@@ -169,12 +170,11 @@ describe('ReqIF Import', () => {
 
             // First item should be the package itself
             expect(items[0]).toBeTruthy();
-            expect(items[0].itemType).toBe('pig:aPackage');
+            expect(items[0].itemType).toBe(PigItemType.aPackage);
 
             // Should have additional graph items
-            expect(items.length).toBe(3);
-            expect(items[2].itemType).toBe('pig:anEntity');
-
+            expect(items.length).toBe(15);
+            expect(items[2].itemType).toBe(PigItemType.Property);
             console.log(`Package structure validated: ${items.length - 1} graph items`);
         });
 
@@ -193,10 +193,10 @@ describe('ReqIF Import', () => {
 
             const items = result.response as any[];
             const entities = items.filter((item: any) =>
-                item?.itemType === 'pig:anEntity'
+                item?.itemType === PigItemType.anEntity
             );
 
-            expect(entities.length).toBe(2);
+            expect(entities.length).toBe(3);
 
             console.log(`Found ${entities.length} entities in transformation`);
         });

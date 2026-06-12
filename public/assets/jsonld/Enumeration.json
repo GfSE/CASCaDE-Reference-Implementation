@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://product-information-graph.org/schema/2026-05-08/jsonld/Enumeration.json",
+  "title": "CASCaRA Enumeration Schema for JSON-LD",
+  "description": "Validates Enumeration class definitions. Must include datatype specification (string, integer, double, boolean, dateTime, etc.), enumeration values (cas:enumeratedValue), measurement units.",
+  "type": "object",
+  "properties": {
+    "@id": {
+      "$ref": "#/$defs/idString"
+    },
+    "@type": {
+      "type": "string",
+      "enum": [ "owl:Class" ]
+    },
+    "cas:specializes": {
+      "$ref": "#/$defs/idObject"
+    },
+    "cas:itemType": {
+      "type": "object",
+      "required": [ "@id" ],
+      "properties": {
+        "@id": {
+          "type": "string",
+          "enum": [ "cas:Enumeration" ],
+          "description": "The CASCaRA metamodel item type for cas:Enumeration"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cas:revision": {
+      "type": "string",
+      "description": "Revision identifier for version control"
+    },
+    "cas:priorRevision": {
+      "type": "array",
+      "description": "Array of prior revision identifiers",
+      "maxItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "dcterms:modified": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last modification"
+    },
+    "dcterms:creator": {
+      "type": "string",
+      "description": "Creator/author of this relationship instance"
+    },
+    "dcterms:title": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "dcterms:description": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "skos:definition": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/languageValue"
+      }
+    },
+    "sh:datatype": {
+      "$ref": "#/$defs/idObject"
+    },
+    "cas:unit": {
+      "type": "string",
+      "description": "Unit of measurement (SI unit)"
+    },
+    "cas:enumeratedValue": {
+      "type": "array",
+      "description": "Enumeration of allowed values",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Enumeration value with multi-language title (for xs:string)",
+            "properties": {
+              "@id": {
+                "$ref": "#/$defs/idString"
+              },
+              "dcterms:title": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/$defs/languageValue"
+                }
+              }
+            },
+            "required": [ "@id", "dcterms:title" ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "description": "Enumeration value with literal value (for xs:integer, xs:double, etc.)",
+            "properties": {
+              "@id": {
+                "$ref": "#/$defs/idString"
+              },
+              "@value": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Literal value for numeric and other datatypes (stored as string)"
+              }
+            },
+            "required": [ "@id", "@value" ],
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "@id",
+    "@type",
+    "cas:itemType",
+    "dcterms:title"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "idString": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$",
+      "description": "A valid ID string: either a namespaced identifier (prefix:name) or a URL"
+    },
+    "idObject": {
+      "type": "object",
+      "required": [
+        "@id"
+      ],
+      "properties": {
+        "@id": {
+          "$ref": "#/$defs/idString"
+        }
+      },
+      "additionalProperties": false,
+      "description": "JSON-LD ID object wrapper"
+    },
+    "languageValue": {
+      "type": "object",
+      "required": [
+        "@value"
+      ],
+      "properties": {
+        "@value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The actual text content"
+        },
+        "@language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+          "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Multi-language text value with optional language tag"
+    }
+  }
+}

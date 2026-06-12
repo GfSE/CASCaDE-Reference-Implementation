@@ -36,7 +36,7 @@ function findTestFiles(dir: string, ext: string): string[] {
 
 // Dynamic test file discovery
 const testFilesDir = path.resolve(__dirname, '../data/JSON-LD');
-const ldFiles = findTestFiles(testFilesDir, '.jsonld');
+const ldFiles = findTestFiles(testFilesDir, '.cas.jsonld');
 
 describe('import JSONLD - Dynamic Test Files', () => {
     if (ldFiles.length === 0) {
@@ -69,6 +69,7 @@ describe('import JSONLD - Dynamic Test Files', () => {
             const rsp = await JsonldImporter.import(ldFile);
             if (!rsp.ok)
                 console.warn('import JSONLD', rsp.status, rsp.statusText);
+        
 
             // Basic validation
             expect(rsp.status === 0 || rsp.status === 691).toBe(true); // some or all items have been processed
@@ -90,7 +91,7 @@ describe('import JSONLD - Dynamic Test Files', () => {
                 // each instantiated item must have a successful status
                 // additional per-item assertions can be added here
                 //    expect(itm).toBeInstanceOf(Property);
-                //    expect(inst.id).toBe('dcterms:type');
+                //    expect(inst.id).toBe(`${DEF.pfxNsDcmi}type`);
                 //    expect(inst.title).toEqual({ value: 'The type or category', lang: 'en' });
                 //    expect(inst.datatype).toBe('xs:string');
             });

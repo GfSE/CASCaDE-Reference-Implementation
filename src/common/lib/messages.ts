@@ -4,8 +4,9 @@
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
  */
-/** Product Information Graph (PIG) - Centralized error and status messages
- *  Dependencies: none (self-contained)
+/**
+ * Product Information Graph (PIG) - Centralized error and status messages
+ * -----------------------------------------------------------------------
  *  Authors: oskar.dungern@gfse.org
  *  License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
@@ -18,6 +19,8 @@
  *  - Rsp: for responses with payload (response/responseType)
  *  - Multi-language support: en, de, fr, es
  */
+
+import { LOG } from "./helpers";
 
 /** IRsp interface
  * An xhr-like object to return the result of the import;
@@ -32,9 +35,6 @@
  *      const doc = rsp.response as Document;
  *   };
  */
-import { LOG } from "./helpers";
-
-
 // type XMLHttpRequestResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text"
 export interface IRsp<T = unknown> {
     status: number;
@@ -95,29 +95,66 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         fr: (txt) => `Erreur: ${txt}`,
         es: (txt) => `Error: ${txt}`
     },
-    601: {
-        en: (fromType, toType) => 
-            `Cannot change the itemType (tried to change from ${fromType} to ${toType})`,
-        de: (fromType, toType) => 
-            `Der itemType kann nicht geändert werden (Versuch von ${fromType} nach ${toType})`,
-        fr: (fromType, toType) => 
-            `Impossible de changer le itemType (tentative de ${fromType} vers ${toType})`,
-        es: (fromType, toType) => 
-            `No se puede cambiar el itemType (intento de ${fromType} a ${toType})`
+/*    601: {
+        en: (msg) => msg.toString(),
+        de: (msg) => msg.toString(),
+        fr: (msg) => msg.toString(),
+        es: (msg) => msg.toString()
     },
     602: {
+        en: (op, act, exp) =>
+            `${op}: Delivered ${act} of ${exp} graph items`,
+        de: (op, act, exp) =>
+            `${op}: ${act} von ${exp} Graph-Elementen geliefert`,
+        fr: (op, act, exp) =>
+            `${op}: ${act} éléments de graphe sur ${exp} livrés`,
+        es: (op, act, exp) =>
+            `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
+    }, */
+    603: {
+        en: (op, act, exp, errors) =>
+            `${op}: Created ${act} of ${exp} graph items` + (errors ? ` with errors: ${errors}` : ''),
+        de: (op, act, exp, errors) =>
+            `${op}: ${act} von ${exp} Graph-Elementen erstellt` + (errors ? ` mit Fehlern: ${errors}` : ''),
+        fr: (op, act, exp, errors) =>
+            `${op}: ${act} éléments de graphe créés sur ${exp}` + (errors ? ` avec des erreurs: ${errors}` : ''),
+        es: (op, act, exp, errors) =>
+            `${op}: Se crearon ${act} de ${exp} elementos del grafo` + (errors ? ` con errores: ${errors}` : '')
+    },
+    604: {
+        en: (format, created, total) =>
+            `Imported ${created} of ${total} items from ${format}`,
+        de: (format, created, total) =>
+            `${created} von ${total} Elementen aus ${format} importiert`,
+        fr: (format, created, total) =>
+            `${created} éléments sur ${total} importés depuis ${format}`,
+        es: (format, created, total) =>
+            `${created} de ${total} elementos importados desde ${format}`
+    },
+
+    612: {
         en: (itemType) => 
             `'${itemType}' must have a hasClass reference`,
         de: (itemType) => 
-            `'${itemType}' muss eine hasClass-Referenz haben`,
+            `'${itemType}' muss eine hasClass Referenz haben`,
         fr: (itemType) => 
             `'${itemType}' doit avoir une référence hasClass`,
         es: (itemType) => 
             `'${itemType}' debe tener una referencia hasClass`
     },
+    613: {
+        en: (fromType, toType) =>
+            `Cannot change the itemType (tried to change from ${fromType} to ${toType})`,
+        de: (fromType, toType) =>
+            `Der itemType kann nicht geändert werden (Versuch von ${fromType} nach ${toType})`,
+        fr: (fromType, toType) =>
+            `Impossible de changer le itemType (tentative de ${fromType} vers ${toType})`,
+        es: (fromType, toType) =>
+            `No se puede cambiar el itemType (intento de ${fromType} a ${toType})`
+    },
 
     // Identifiable validation
-    603: {
+    614: {
         en: (fromId, toId) => 
             `Cannot change the id of an item (tried to change from ${fromId} to ${toId})`,
         de: (fromId, toId) => 
@@ -127,7 +164,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (fromId, toId) => 
             `No se puede cambiar el id de un elemento (intento de ${fromId} a ${toId})`
     },
-    604: {
+    615: {
         en: (fromSpec, toSpec) => 
             `Cannot change the specialization (tried to change from ${fromSpec} to ${toSpec})`,
         de: (fromSpec, toSpec) => 
@@ -138,26 +175,6 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `No se puede cambiar la especialización (intento de ${fromSpec} a ${toSpec})`
     },
 
-    610: {
-        en: (op, act, exp) =>
-            `${op}: Delivered ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen geliefert`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe sur ${exp} livrés`,
-        es: (op, act, exp) =>
-            `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
-    },
-    611: {
-        en: (op, act, exp) =>
-            `${op}: Created ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen erstellt`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe créés sur ${exp}`,
-        es: (op, act, exp) =>
-            `${op}: Se crearon ${act} de ${exp} elementos del grafo`
-    },
 
 /*  currently not used:
     // ID validation (620-629)
@@ -392,34 +409,34 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}] tiene ${msg}`
     },
     673: {
-        en: (parentId, propIndex, hasClass, msg) =>
-            `Package validation failed: item '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        de: (parentId, propIndex, hasClass, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        fr: (parentId, propIndex, hasClass, msg) =>
-            `Échec de la validation du package: élément '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`,
-        es: (parentId, propIndex, hasClass, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' hasProperty[${propIndex}].hasClass='${hasClass}' - ${msg}`
+        en: (parentId, prp, className, msg) =>
+            `Package validation failed: item '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        de: (parentId, prp, className, msg) =>
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        fr: (parentId, prp, className, msg) =>
+            `Échec de la validation du package: élément '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+        es: (parentId, prp, className, msg) =>
+            `Error en la validación del paquete: elemento '${parentId}' ${prp}.hasClass='${className}' - ${msg}`
     },
     674: {
         en: (parentId, index, prpName, msg) =>
-            `Package validation failed: item '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Package validation failed: graph[${index}] with item '${parentId}' ${prpName} - ${msg}`,
         de: (parentId, index, prpName, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Paket-Validierung fehlgeschlagen: graph[${index}] mit Element '${parentId}' ${prpName} - ${msg}`,
         fr: (parentId, index, prpName, msg) =>
-            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName} - ${msg}`,
+            `Échec de la validation du package: graph[${index}] avec l'élément '${parentId}' ${prpName} - ${msg}`,
         es: (parentId, index, prpName, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName} - ${msg}`
+            `Error en la validación del paquete: graph[${index}] con el elemento '${parentId}' ${prpName} - ${msg}`
     },
     675: {
         en: (parentId, index, prpName, prpVal, msg) =>
-            `Package validation failed: item '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Package validation failed: graph[${index}] with item '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         de: (parentId, index, prpName, prpVal, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Paket-Validierung fehlgeschlagen: graph[${index}] mit Element '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         fr: (parentId, index, prpName, prpVal, msg) =>
-            `Échec de la validation du package: élément '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`,
+            `Échec de la validation du package: graph[${index}] avec l'élément '${parentId}' ${prpName}: ${prpVal} - ${msg}`,
         es: (parentId, index, prpName, prpVal, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' graph[${index}] ${prpName}: ${prpVal} - ${msg}`
+            `Error en la validación del paquete: graph[${index}] con el elemento '${parentId}' ${prpName}: ${prpVal} - ${msg}`
     },
     676: {
         en: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
@@ -430,6 +447,16 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `${itemType} '${itemId}' ${arrayName}[${linkIndex}] utilise '${linkClassId}' qui n'est pas éligible dans la classe '${classId}'.`,
         es: (itemId, itemType, arrayName, linkIndex, linkClassId, classId) =>
             `${itemType} '${itemId}' ${arrayName}[${linkIndex}] usa '${linkClassId}' que no es elegible en la clase '${classId}'.`
+    },
+    677: {
+        en: (instanceId, linkIndex, linkClassId, msg) =>
+            `Enumerated value validation failed for item '${instanceId}' targetLink[${linkIndex}] of class '${linkClassId}': ${msg}`,
+        de: (instanceId, linkIndex, linkClassId, msg) =>
+            `Enumeration-Validierung fehlgeschlagen für Element '${instanceId}' targetLink[${linkIndex}] der Klasse '${linkClassId}': ${msg}`,
+        fr: (instanceId, linkIndex, linkClassId, msg) =>
+            `Échec de la validation de la valeur énumérée pour l'élément '${instanceId}' targetLink[${linkIndex}] de la classe '${linkClassId}': ${msg}`,
+        es: (instanceId, linkIndex, linkClassId, msg) =>
+            `Falló la validación del valor enumerado para el elemento '${instanceId}' targetLink[${linkIndex}] de la clase '${linkClassId}': ${msg}`
     },
     678: {
         en: (instanceId, propClassId, actualCount, expectedCount, issue) =>
@@ -483,6 +510,36 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (tags) =>
             `Elemento(s) no instanciable(s) encontrado(s): ${tags}`
     },
+    683: {
+        en: (format, errors) =>
+            `${format} package validation failed: ${errors}`,
+        de: (format, errors) =>
+            `${format} Paket-Validierung fehlgeschlagen: ${errors}`,
+        fr: (format, errors) =>
+            `Échec de la validation du package ${format}: ${errors}`,
+        es: (format, errors) =>
+            `Error en la validación del paquete ${format}: ${errors}`
+    },
+    684: {
+        en: (linkId, enumCount, nonEnumCount) =>
+            `Link '${linkId}' has mixed enumeratedEndpoints: ${enumCount} point(s) to Enumeration(s) and ${nonEnumCount} point(s) to non-Enumeration(s). All endpoints must point exclusively to Enumerations or none of them should.`,
+        de: (linkId, enumCount, nonEnumCount) =>
+            `Link '${linkId}' hat gemischte enumeratedEndpoints: ${enumCount} zeigt/zeigen auf Enumeration(en) und ${nonEnumCount} auf Nicht-Enumeration(en). Alle Endpunkte müssen ausschließlich auf Enumerations zeigen oder keiner von ihnen sollte es.`,
+        fr: (linkId, enumCount, nonEnumCount) =>
+            `Le lien '${linkId}' a des enumeratedEndpoints mixtes: ${enumCount} pointe(nt) vers des Enumeration(s) et ${nonEnumCount} pointe(nt) vers des non-Enumeration(s). Tous les points de terminaison doivent pointer exclusivement vers des Enumerations ou aucun d'entre eux ne devrait le faire.`,
+        es: (linkId, enumCount, nonEnumCount) =>
+            `El enlace '${linkId}' tiene enumeratedEndpoints mixtos: ${enumCount} apunta(n) a Enumeration(es) y ${nonEnumCount} apunta(n) a no-Enumeration(es). Todos los puntos finales deben apuntar exclusivamente a Enumerations o ninguno de ellos debería hacerlo.`
+    },
+    685: {
+        en: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] references '${linkId}' - ${msg}`,
+        de: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] referenziert '${linkId}' - ${msg}`,
+        fr: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] référence '${linkId}' - ${msg}`,
+        es: (classId, classType, arrayName, index, linkId, msg) =>
+            `${classType} '${classId}' ${arrayName}[${index}] referencia '${linkId}' - ${msg}`
+    },
 
     // General errors (690-699)
     690: {
@@ -490,16 +547,6 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         de: (format, msg) => `Parsing von ${format} fehlgeschlagen: ${msg}`,
         fr: (format, msg) => `Échec de l'analyse ${format}: ${msg}`,
         es: (format, msg) => `Error al analizar ${format}: ${msg}`
-    },
-    691: {
-        en: (format, created, total) =>
-            `Imported ${created} of ${total} items from ${format}`,
-        de: (format, created, total) =>
-            `${created} von ${total} Elementen aus ${format} importiert`,
-        fr: (format, created, total) =>
-            `${created} éléments sur ${total} importés depuis ${format}`,
-        es: (format, created, total) =>
-            `${created} de ${total} elementos importados desde ${format}`
     },
     692: {
         en: (url, statusText) =>
@@ -529,7 +576,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         fr: (source, msg) =>
             `Échec de la lecture du fichier` + (source ? ` '${source}'` : '') + `: ${msg}`,
         es: (source, msg) =>
-            `Error al leer el archivo` + (source ? ` '${source}'` : ``) + `: ${msg}`
+            `Error al leer el archivo` + (source ? ` '${source}'` : '') + `: ${msg}`
     },
     695: {
         en: () =>
@@ -552,26 +599,30 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `Tipo de fuente no compatible al leer un archivo como texto`
     },
     697: {
-        en: (format, errors) =>
-            `${format} package validation failed: ${errors}`,
-        de: (format, errors) =>
-            `${format} Paket-Validierung fehlgeschlagen: ${errors}`,
-        fr: (format, errors) =>
-            `Échec de la validation du package ${format}: ${errors}`,
-        es: (format, errors) =>
-            `Error en la validación del paquete ${format}: ${errors}`
+        en: (filename, msg) =>
+            `Failed to write file` + (filename ? ` '${filename}'` : '') + `: ${msg}`,
+        de: (filename, msg) =>
+            `Fehler beim Schreiben der Datei` + (filename ? ` '${filename}'` : '') + `: ${msg}`,
+        fr: (filename, msg) =>
+            `Échec de l'écriture du fichier` + (filename ? ` '${filename}'` : '') + `: ${msg}`,
+        es: (filename, msg) =>
+            `Error al escribir el archivo` + (filename ? ` '${filename}'` : '') + `: ${msg}`
     },
     698: {
+        en: (filename, msg) =>
+            `File save cancelled` + (filename ? ` for '${filename}'` : '') + (msg ? `: ${msg}` : ''),
+        de: (filename, msg) =>
+            `Dateispeichern abgebrochen` + (filename ? ` für '${filename}'` : '') + (msg ? `: ${msg}` : ''),
+        fr: (filename, msg) =>
+            `Enregistrement du fichier annulé` + (filename ? ` pour '${filename}'` : '') + (msg ? `: ${msg}` : ''),
+        es: (filename, msg) =>
+            `Guardado de archivo cancelado` + (filename ? ` para '${filename}'` : '') + (msg ? `: ${msg}` : '')
+    },
+    699: {
         en: (func) => `${func} not yet implemented`,
         de: (func) => `${func} ist noch nicht implementiert`,
         fr: (func) => `${func} pas encore implémenté`,
         es: (func) => `${func} aún no implementado`
-    },
-    699: {
-        en: (msg) => msg.toString(),
-        de: (msg) => msg.toString(),
-        fr: (msg) => msg.toString(),
-        es: (msg) => msg.toString()
     }
 };
 
