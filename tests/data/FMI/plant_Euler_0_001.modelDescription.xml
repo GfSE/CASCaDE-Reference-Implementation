@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+  fmiVersion="2.0"
+  modelName="plant_Euler_0_001"
+  guid="{8c4e810f-3df3-4a00-8276-176fa3c9f9e0}"
+  description=""
+  generationTool="OpenModelica Compiler OpenModelica 1.12.0"
+  generationDateAndTime="2018-06-01T11:40:28Z"
+  variableNamingConvention="structured"
+  numberOfEventIndicators="0">
+  <CoSimulation
+    modelIdentifier="plant_Euler_0_001"
+    needsExecutionTool="false"
+    canHandleVariableCommunicationStepSize="true"
+    canInterpolateInputs="false"
+    maxOutputDerivativeOrder="1"
+    canRunAsynchronuously = "false"
+    canBeInstantiatedOnlyOncePerProcess="false"
+    canNotUseMemoryManagementFunctions="false"
+    canGetAndSetFMUstate="false"
+    canSerializeFMUstate="false"
+     />
+  <TypeDefinitions>
+    <SimpleType name="Modelica.Blocks.Types.Init">
+      <Enumeration>
+        <Item name="NoInit" value="1"/>
+        <Item name="SteadyState" value="2"/>
+        <Item name="InitialState" value="3"/>
+        <Item name="InitialOutput" value="4"/>
+      </Enumeration>
+    </SimpleType>
+  </TypeDefinitions>
+  <LogCategories>
+    <Category name="logEvents" />
+    <Category name="logSingularLinearSystems" />
+    <Category name="logNonlinearSystems" />
+    <Category name="logDynamicStateSelection" />
+    <Category name="logStatusWarning" />
+    <Category name="logStatusDiscard" />
+    <Category name="logStatusError" />
+    <Category name="logStatusFatal" />
+    <Category name="logStatusPending" />
+    <Category name="logAll" />
+    <Category name="logFmi2Call" />
+  </LogCategories>
+  <DefaultExperiment startTime="0.0" stopTime="10.0" tolerance="1e-06"/>
+  <ModelVariables>
+  <!-- Index of variable = "1" -->
+  <ScalarVariable
+    name="transferFunction1.x_scaled[1]"
+    valueReference="0"
+    description="Scaled vector x"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "2" -->
+  <ScalarVariable
+    name="transferFunction2.x_scaled[1]"
+    valueReference="1"
+    description="Scaled vector x"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "3" -->
+  <ScalarVariable
+    name="transferFunction2.x_scaled[2]"
+    valueReference="2"
+    description="Scaled vector x"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "4" -->
+  <ScalarVariable
+    name="transferFunction3.x_scaled[1]"
+    valueReference="3"
+    description="Scaled vector x"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "5" -->
+  <ScalarVariable
+    name="der(transferFunction1.x_scaled[1])"
+    valueReference="4"
+    description="der(Scaled vector x)"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real derivative="1"/>
+  </ScalarVariable>
+  <!-- Index of variable = "6" -->
+  <ScalarVariable
+    name="der(transferFunction2.x_scaled[1])"
+    valueReference="5"
+    description="der(Scaled vector x)"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real derivative="2"/>
+  </ScalarVariable>
+  <!-- Index of variable = "7" -->
+  <ScalarVariable
+    name="der(transferFunction2.x_scaled[2])"
+    valueReference="6"
+    description="der(Scaled vector x)"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real derivative="3"/>
+  </ScalarVariable>
+  <!-- Index of variable = "8" -->
+  <ScalarVariable
+    name="der(transferFunction3.x_scaled[1])"
+    valueReference="7"
+    description="der(Scaled vector x)"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real derivative="4"/>
+  </ScalarVariable>
+  <!-- Index of variable = "9" -->
+  <ScalarVariable
+    name="input_n4"
+    valueReference="8"
+    variability="continuous"
+    causality="input"
+    >
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "10" -->
+  <ScalarVariable
+    name="output_n2"
+    valueReference="9"
+    variability="continuous"
+    causality="output"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "11" -->
+  <ScalarVariable
+    name="output_n3"
+    valueReference="10"
+    variability="continuous"
+    causality="output"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "12" -->
+  <ScalarVariable
+    name="transferFunction1.x[1]"
+    valueReference="11"
+    description="State of transfer function from controller canonical form"
+    variability="continuous"
+    causality="local"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "13" -->
+  <ScalarVariable
+    name="transferFunction1.y"
+    valueReference="12"
+    description="Connector of Real output signal"
+    variability="continuous"
+    causality="local"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "14" -->
+  <ScalarVariable
+    name="transferFunction2.x[1]"
+    valueReference="13"
+    description="State of transfer function from controller canonical form"
+    variability="continuous"
+    causality="local"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "15" -->
+  <ScalarVariable
+    name="transferFunction2.x[2]"
+    valueReference="14"
+    description="State of transfer function from controller canonical form"
+    variability="continuous"
+    causality="local"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "16" -->
+  <ScalarVariable
+    name="transferFunction3.x[1]"
+    valueReference="15"
+    description="State of transfer function from controller canonical form"
+    variability="continuous"
+    causality="local"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "17" -->
+  <ScalarVariable
+    name="transferFunction1.a[1]"
+    valueReference="16"
+    description="Denominator coefficients of transfer function (e.g., 5*s+6 is specified as {5,6})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.01"/>
+  </ScalarVariable>
+  <!-- Index of variable = "18" -->
+  <ScalarVariable
+    name="transferFunction1.a[2]"
+    valueReference="17"
+    description="Denominator coefficients of transfer function (e.g., 5*s+6 is specified as {5,6})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="1.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "19" -->
+  <ScalarVariable
+    name="transferFunction1.a_end"
+    valueReference="18"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "20" -->
+  <ScalarVariable
+    name="transferFunction1.b[1]"
+    valueReference="19"
+    description="Numerator coefficients of transfer function (e.g., 2*s+3 is specified as {2,3})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="1.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "21" -->
+  <ScalarVariable
+    name="transferFunction1.bb[1]"
+    valueReference="20"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "22" -->
+  <ScalarVariable
+    name="transferFunction1.bb[2]"
+    valueReference="21"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "23" -->
+  <ScalarVariable
+    name="transferFunction1.d"
+    valueReference="22"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "24" -->
+  <ScalarVariable
+    name="transferFunction1.x_start[1]"
+    valueReference="23"
+    description="Initial or guess values of states"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "25" -->
+  <ScalarVariable
+    name="transferFunction1.y_start"
+    valueReference="24"
+    description="Initial value of output (derivatives of y are zero up to nx-1-th derivative)"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "26" -->
+  <ScalarVariable
+    name="transferFunction2.a[1]"
+    valueReference="25"
+    description="Denominator coefficients of transfer function (e.g., 5*s+6 is specified as {5,6})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="3.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "27" -->
+  <ScalarVariable
+    name="transferFunction2.a[2]"
+    valueReference="26"
+    description="Denominator coefficients of transfer function (e.g., 5*s+6 is specified as {5,6})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="2.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "28" -->
+  <ScalarVariable
+    name="transferFunction2.a[3]"
+    valueReference="27"
+    description="Denominator coefficients of transfer function (e.g., 5*s+6 is specified as {5,6})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="5.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "29" -->
+  <ScalarVariable
+    name="transferFunction2.a_end"
+    valueReference="28"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "30" -->
+  <ScalarVariable
+    name="transferFunction2.b[1]"
+    valueReference="29"
+    description="Numerator coefficients of transfer function (e.g., 2*s+3 is specified as {2,3})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="1.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "31" -->
+  <ScalarVariable
+    name="transferFunction2.bb[1]"
+    valueReference="30"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "32" -->
+  <ScalarVariable
+    name="transferFunction2.bb[2]"
+    valueReference="31"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "33" -->
+  <ScalarVariable
+    name="transferFunction2.bb[3]"
+    valueReference="32"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "34" -->
+  <ScalarVariable
+    name="transferFunction2.d"
+    valueReference="33"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "35" -->
+  <ScalarVariable
+    name="transferFunction2.x_start[1]"
+    valueReference="34"
+    description="Initial or guess values of states"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "36" -->
+  <ScalarVariable
+    name="transferFunction2.x_start[2]"
+    valueReference="35"
+    description="Initial or guess values of states"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "37" -->
+  <ScalarVariable
+    name="transferFunction2.y_start"
+    valueReference="36"
+    description="Initial value of output (derivatives of y are zero up to nx-1-th derivative)"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "38" -->
+  <ScalarVariable
+    name="transferFunction3.a[1]"
+    valueReference="37"
+    description="Denominator coefficients of transfer function (e.g., 5*s+6 is specified as {5,6})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.02"/>
+  </ScalarVariable>
+  <!-- Index of variable = "39" -->
+  <ScalarVariable
+    name="transferFunction3.a[2]"
+    valueReference="38"
+    description="Denominator coefficients of transfer function (e.g., 5*s+6 is specified as {5,6})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="1.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "40" -->
+  <ScalarVariable
+    name="transferFunction3.a_end"
+    valueReference="39"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "41" -->
+  <ScalarVariable
+    name="transferFunction3.b[1]"
+    valueReference="40"
+    description="Numerator coefficients of transfer function (e.g., 2*s+3 is specified as {2,3})"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="1.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "42" -->
+  <ScalarVariable
+    name="transferFunction3.bb[1]"
+    valueReference="41"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "43" -->
+  <ScalarVariable
+    name="transferFunction3.bb[2]"
+    valueReference="42"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "44" -->
+  <ScalarVariable
+    name="transferFunction3.d"
+    valueReference="43"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "45" -->
+  <ScalarVariable
+    name="transferFunction3.x_start[1]"
+    valueReference="44"
+    description="Initial or guess values of states"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "46" -->
+  <ScalarVariable
+    name="transferFunction3.y_start"
+    valueReference="45"
+    description="Initial value of output (derivatives of y are zero up to nx-1-th derivative)"
+    variability="fixed"
+    causality="parameter"
+    initial="exact">
+    <Real start="0.0"/>
+  </ScalarVariable>
+  <!-- Index of variable = "47" -->
+  <ScalarVariable
+    name="transferFunction1.u"
+    valueReference="8"
+    description="Connector of Real input signal"
+    variability="continuous"
+    causality="local"
+    >
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "48" -->
+  <ScalarVariable
+    name="transferFunction2.u"
+    valueReference="12"
+    description="Connector of Real input signal"
+    variability="continuous"
+    causality="local"
+    >
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "49" -->
+  <ScalarVariable
+    name="transferFunction2.y"
+    valueReference="9"
+    description="Connector of Real output signal"
+    variability="continuous"
+    causality="local"
+    >
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "50" -->
+  <ScalarVariable
+    name="transferFunction3.u"
+    valueReference="9"
+    description="Connector of Real input signal"
+    variability="continuous"
+    causality="local"
+    >
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "51" -->
+  <ScalarVariable
+    name="transferFunction3.y"
+    valueReference="10"
+    description="Connector of Real output signal"
+    variability="continuous"
+    causality="local"
+    >
+    <Real/>
+  </ScalarVariable>
+  <!-- Index of variable = "52" -->
+  <ScalarVariable
+    name="transferFunction1.initType"
+    valueReference="0"
+    description="Type of initialization (1: no init, 2: steady state, 3: initial state, 4: initial output)"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Enumeration declaredType="Modelica.Blocks.Types.Init"/>
+  </ScalarVariable>
+  <!-- Index of variable = "53" -->
+  <ScalarVariable
+    name="transferFunction1.na"
+    valueReference="1"
+    description="Size of Denominator of transfer function."
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "54" -->
+  <ScalarVariable
+    name="transferFunction1.nb"
+    valueReference="2"
+    description="Size of Numerator of transfer function."
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "55" -->
+  <ScalarVariable
+    name="transferFunction1.nx"
+    valueReference="3"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "56" -->
+  <ScalarVariable
+    name="transferFunction2.initType"
+    valueReference="4"
+    description="Type of initialization (1: no init, 2: steady state, 3: initial state, 4: initial output)"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Enumeration declaredType="Modelica.Blocks.Types.Init"/>
+  </ScalarVariable>
+  <!-- Index of variable = "57" -->
+  <ScalarVariable
+    name="transferFunction2.na"
+    valueReference="5"
+    description="Size of Denominator of transfer function."
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "58" -->
+  <ScalarVariable
+    name="transferFunction2.nb"
+    valueReference="6"
+    description="Size of Numerator of transfer function."
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "59" -->
+  <ScalarVariable
+    name="transferFunction2.nx"
+    valueReference="7"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "60" -->
+  <ScalarVariable
+    name="transferFunction3.initType"
+    valueReference="8"
+    description="Type of initialization (1: no init, 2: steady state, 3: initial state, 4: initial output)"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Enumeration declaredType="Modelica.Blocks.Types.Init"/>
+  </ScalarVariable>
+  <!-- Index of variable = "61" -->
+  <ScalarVariable
+    name="transferFunction3.na"
+    valueReference="9"
+    description="Size of Denominator of transfer function."
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "62" -->
+  <ScalarVariable
+    name="transferFunction3.nb"
+    valueReference="10"
+    description="Size of Numerator of transfer function."
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  <!-- Index of variable = "63" -->
+  <ScalarVariable
+    name="transferFunction3.nx"
+    valueReference="11"
+    variability="fixed"
+    causality="calculatedParameter"
+    initial="calculated">
+    <Integer/>
+  </ScalarVariable>
+  </ModelVariables>
+  <ModelStructure>
+    <Outputs>
+      <Unknown index="10" dependencies="1 2 3 9" dependenciesKind="dependent dependent dependent dependent" />
+      <Unknown index="11" dependencies="1 2 3 4 9" dependenciesKind="dependent dependent dependent dependent dependent" />
+    </Outputs>
+    <Derivatives>
+      <Unknown index="5" dependencies="1 9" dependenciesKind="dependent dependent" />
+      <Unknown index="6" dependencies="1 2 3 9" dependenciesKind="dependent dependent dependent dependent" />
+      <Unknown index="7" dependencies="2" dependenciesKind="dependent" />
+      <Unknown index="8" dependencies="1 2 3 4 9" dependenciesKind="dependent dependent dependent dependent dependent" />
+    </Derivatives>
+  </ModelStructure>
+</fmiModelDescription>

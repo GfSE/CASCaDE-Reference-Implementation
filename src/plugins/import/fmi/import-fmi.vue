@@ -1,18 +1,18 @@
 <template>
-    <v-btn color='secondary' @click='dialog = true'>Import ReqIF</v-btn>
+    <v-btn color='secondary' @click='dialog = true'>Import FMI</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-            <v-card-title>Select ReqIF Files</v-card-title>
+            <v-card-title>Select FMI Files</v-card-title>
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.reqif'
-                              label='ReqIF Input'
+                              accept='.fmu,.xml'
+                              label='FMI Input'
                               prepend-icon='mdi-folder-open'
                               multiple
                               :loading='isLoading'
                               :disabled='isLoading'
-                              hint='Select one or more ReqIF files to import'
+                              hint='Select one or more FMU archives (.fmu) or modelDescription.xml files'
                               persistent-hint></v-file-input>
 
                 <!-- Error Display -->
@@ -62,7 +62,7 @@
 <script lang="ts">
     import { DEF } from '@/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
-    import { ReqifImporter } from '@/common/import/reqif/import-reqif';
+    import { FmiImporter } from '@/common/import/fmi/import-fmi';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { PackageCache } from '@/stores/package-cache';
     import { LOG } from '@/common/lib/helpers';
@@ -93,31 +93,24 @@
                 this.successMessage = '';
 
                 try {
-                    // Import all files and collect results
                     const results = await this.importAllFiles();
 
-                    // Separate successful and failed imports
-                    // ✅ Type annotation hinzugefügt
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
-                    // Collect all packages from successful imports
                     const allPackages = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
                         return allItems[0] as APackage;
                     });
 
                     if (allPackages.length > 0) {
-                        // Store in Pinia store with persistence
                         const cache = PackageCache();
                         cache.set(allPackages);
 
-                        // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
 
                         this.logFailedImports(failed);
 
-                        // Navigate to the document viewing page after short delay
                         setTimeout(async () => {
                             await this.$router.push({ name: 'Document' });
                             this.dialog = false;
@@ -144,10 +137,9 @@
 
                 for (const file of this.selectedFiles) {
                     try {
-                        const rsp = await ReqifImporter.import(file);
+                        const rsp = await FmiImporter.import(file);
                         results.push(rsp);
                     } catch (error: any) {
-                        // Convert exception to IRsp format
                         results.push(Msg.create(600, `${file.name}: ${error?.message || String(error)}`));
                     }
                 }
@@ -159,7 +151,6 @@
              * Extract filename from IRsp response for error messages
              */
             getFilenameFromResponse(rsp: IRsp<unknown>): string {
-                // Try to extract filename from statusText
                 const match = rsp.statusText?.match(/^([^:]+):/);
                 return match ? match[1] : 'Unknown file';
             },
@@ -169,7 +160,6 @@
                     this.errorMessages = failed.map((r: IRsp<unknown>) =>
                         `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
                     );
-                    // LOG.error('Failed imports:', failed);
                 }
             },
 
@@ -185,7 +175,7 @@
         }
     })
 
-    export default class ReqifImportComponent extends Vue {
+    export default class FmiImportComponent extends Vue {
         dialog!: boolean;
         selectedFiles!: File[];
         isLoading!: boolean;

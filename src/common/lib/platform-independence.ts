@@ -318,6 +318,57 @@ export const PLI = {
     },
 
     /**
+     * Load binary content as a Uint8Array from a Node file path, HTTP(S) URL or browser File/Blob.
+     * Needed for binary formats such as ZIP archives (e.g. .fmu) that cannot be read as text.
+     *
+     * @param source - File path (Node.js), URL, or File/Blob object (Browser)
+     * @returns IRsp with the file content as a Uint8Array, or an error
+     */
+    async readFileAsBytes(source: string | File | Blob): Promise<IRsp<unknown>> {
+        if (typeof (source) === 'string') {
+            // string can be a URL or a Node filesystem path
+            if (this.isHttpUrl(source)) {
+                try {
+                    const resp = await fetch(source);
+                    if (!resp.ok) {
+                        return Msg.create(692, source, resp.statusText);
+                    }
+                    const buffer = await resp.arrayBuffer();
+                    return Rsp.create(0, new Uint8Array(buffer), 'arraybuffer');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(693, source, msg);
+                }
+            }
+            // assume Node path: dynamic import to avoid bundling 'fs' into browser build
+            if (this.isNodeEnv()) {
+                try {
+                    const { readFile } = await import('fs/promises');
+                    const data = await readFile(source);
+                    return Rsp.create(0, new Uint8Array(data), 'arraybuffer');
+                } catch (e: unknown) {
+                    const msg = e instanceof Error ? e.message : String(e);
+                    return Msg.create(694, source, msg);
+                }
+            }
+
+            return Msg.create(695);  // not an http(s) URL and not running in Node
+        }
+
+        if (typeof (source as Blob).arrayBuffer === 'function') {
+            try {
+                const buffer = await (source as Blob).arrayBuffer();
+                return Rsp.create(0, new Uint8Array(buffer), 'arraybuffer');
+            } catch (e: unknown) {
+                const msg = e instanceof Error ? e.message : String(e);
+                return Msg.create(694, '', msg);
+            }
+        }
+
+        return Msg.create(696); // unsupported source type
+    },
+
+    /**
      * Get innerHTML of an element (platform-independent)
      * Polyfill for xmlElement.innerHTML which is not available in @xmldom/xmldom
      * 

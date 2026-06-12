@@ -44,7 +44,7 @@
     import { PackageCache } from '@/stores/package-cache'
     import { getHTML, stringHTML } from '@/common/export/html/getHTML'
     import { APackage } from '@/common/schema/pig/ts/pig-metaclasses'
-    import { LOG } from '@/common/lib/helpers'
+//    import { LOG } from '@/common/lib/helpers'
 
     function extractTitle(html: string): string | null {
         const match = html.match(/<[^>]*class=["'][^"']*meta-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);
@@ -110,7 +110,7 @@
         /*    // Load packages from storage if cache is empty
             const cache = PackageCache()
             if (cache.packages.length === 0) {
-                console.log('[PageDocument] Cache is empty, loading from storage...')
+                LOG.info('[PageDocument] Cache is empty, loading from storage...')
                 cache.loadFromStorage()
             } */
 
