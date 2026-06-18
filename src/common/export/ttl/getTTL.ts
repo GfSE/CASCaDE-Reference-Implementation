@@ -32,8 +32,8 @@
  *
  */
 
-import { DEF } from '../../lib/definitions';
-import { LIB, LOG } from '../../lib/helpers';
+import { DEF, RE } from '../../lib/definitions';
+import { LIB, LOG, ILanguageText } from '../../lib/helpers';
 import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
     AnEntity, APackage, ARelationship,
@@ -43,7 +43,7 @@ import {
 export interface IOptionsTTL {
     /** Include prefixes in output (default: true for APackage, false for individual items) */
     includePrefixes?: boolean;
-    /** Indentation string (default: '\t' for tabs) */
+    /** Indentation string (default: '\t' for tab) */
     indent?: string;
     /** Filter which item types to include in package graph (default: all) */
     itemType?: PigItemTypeValue[];
@@ -112,19 +112,18 @@ class GetTTL {
     static aPackage(pkg: APackage, options?: IOptionsTTL): string {
         const filterTypes = options?.itemType;
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
         let ttl = '';
 
         // Add prefixes
-        ttl += this.xContextToTTL(pkg);
-        ttl += '\n';
+        ttl += this.xContextToTTL(pkg, rdf);
 
         // Add project metadata section
-        ttl += this.xPackageMetadataToTTL(pkg, indent);
-        ttl += '\n';
+        ttl += this.xPackageMetadataToTTL(pkg, rdf);
 
         // Add graph items
-        ttl += this.xGraphToTTL(pkg, filterTypes, indent);
+        ttl += this.xGraphToTTL(pkg, filterTypes, rdf);
 
         return ttl;
     }
@@ -279,12 +278,13 @@ class GetTTL {
     /**
      * Transform context from internal INamespace[] format to Turtle @prefix format
      * @param pkg - APackage instance
+     * @param rdf - CToTtl instance for building Turtle output
      * @returns Turtle @prefix declarations
      * 
      * Internal format: context = [{ tag: "cas:", uri: "https://..." }, ...]
      * Turtle format:   @prefix cas: <https://...> .
      */
-    private static xContextToTTL(pkg: APackage): string {
+    private static xContextToTTL(pkg: APackage, rdf: CToTtl): string {
         const ctx = pkg.context;
 
         if (!ctx || !Array.isArray(ctx)) {
@@ -296,17 +296,19 @@ class GetTTL {
 
         // Add standard prefixes that are commonly needed
         const standardPrefixes = [
-            '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .',
-            '@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .',
-            '@prefix skos: <https://www.w3.org/TR/skos-reference/> .',
-            '@prefix owl: <http://www.w3.org/2002/07/owl#> .',
-            '@prefix sh: <http://www.w3.org/ns/shacl#> .',
-            '@prefix xs: <http://www.w3.org/2001/XMLSchema#> .',
-            '@prefix dcterms: <http://purl.org/dc/terms/> .',
-            '@prefix schema: <http://schema.org/> .'
+            { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
+            { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' },
+            { tag: 'skos', uri: 'https://www.w3.org/TR/skos-reference/' },
+            { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' },
+            { tag: 'sh', uri: 'http://www.w3.org/ns/shacl#' },
+            { tag: 'xs', uri: 'http://www.w3.org/2001/XMLSchema#' },
+            { tag: 'dcterms', uri: 'http://purl.org/dc/terms/' },
+            { tag: 'schema', uri: 'http://schema.org/' }
         ];
 
-        ttl += standardPrefixes.join('\n') + '\n';
+        for (const prefix of standardPrefixes) {
+            ttl += rdf.prefix(prefix.tag, prefix.uri);
+        }
 
         // Transform INamespace[] to Turtle @prefix declarations
         for (const ns of ctx) {
@@ -323,31 +325,75 @@ class GetTTL {
 
             // Ensure tag and uri are strings
             if (typeof tag === 'string' && typeof uri === 'string') {
-                // Remove trailing colon from tag for prefix name
-                const prefixName = tag.endsWith(':') ? tag.slice(0, -1) : tag;
-                ttl += `@prefix ${prefixName}: <${uri}> .\n`;
+                ttl += rdf.prefix(tag, uri);
             }
         }
 
+        ttl += rdf.newLine();
         return ttl;
     }
 
     /**
      * Transform package metadata to Turtle format
      * @param pkg - APackage instance
-     * @param indent - Indentation string
+     * @param rdf - CToTtl instance for building Turtle output
      * @returns Turtle representation of package metadata
      */
-    private static xPackageMetadataToTTL(pkg: APackage, indent: string): string {
+    private static xPackageMetadataToTTL(pkg: APackage, rdf: CToTtl): string {
         let ttl = '';
 
-        ttl += '#################################################################\n';
-        ttl += '# Project Metadata\n';
-        ttl += '#################################################################\n\n';
+        // Package ID as subject
+        const subjectId = this.formatTurtleId(pkg.id);
+        ttl += rdf.tab0(subjectId);
 
-        // TODO: Add actual metadata transformation
-        ttl += `# TODO: Implement package metadata transformation for: ${pkg.id}\n`;
+        // itemType
+        ttl += rdf.tab1('a', `cas:${pkg.itemType}`);
 
+        // title (multi-language)
+        if (pkg.title && Array.isArray(pkg.title) && pkg.title.length > 0) {
+            ttl += rdf.tab1('dcterms:title', pkg.title);
+        }
+
+        // description (multi-language)
+        if (pkg.description && Array.isArray(pkg.description) && pkg.description.length > 0) {
+            ttl += rdf.tab1('dcterms:description', pkg.description);
+        }
+
+        // definition (multi-language)
+        if (pkg.definition && Array.isArray(pkg.definition) && pkg.definition.length > 0) {
+            ttl += rdf.tab1('skos:definition', pkg.definition);
+        }
+
+        // specializes
+        if (pkg.specializes) {
+            const specializesId = this.formatTurtleId(pkg.specializes);
+            ttl += rdf.tab1('rdfs:subClassOf', specializesId);
+        }
+
+        // revision
+        if (pkg.revision) {
+            ttl += rdf.tab1('schema:version', pkg.revision);
+        }
+
+        // priorRevision
+        if (pkg.priorRevision && Array.isArray(pkg.priorRevision) && pkg.priorRevision.length > 0) {
+            ttl += rdf.tab1('cas:priorRevision', pkg.priorRevision[0]);
+            for (let i = 1; i < pkg.priorRevision.length; i++) {
+                ttl += rdf.tab2(pkg.priorRevision[i]);
+            }
+        }
+
+        // modified (ISO date string)
+        if (pkg.modified) {
+            ttl += rdf.tab1('dcterms:modified', `"${pkg.modified}"^^xs:dateTime`);
+        }
+
+        // creator
+        if (pkg.creator) {
+            ttl += rdf.tab1('dcterms:creator', pkg.creator);
+        }
+
+        ttl += rdf.newLine();
         return ttl;
     }
 
@@ -361,7 +407,7 @@ class GetTTL {
     private static xGraphToTTL(
         pkg: APackage,
         filterTypes: PigItemTypeValue[] | undefined,
-        indent: string
+        rdf: CToTtl
     ): string {
         const graph = pkg.graph;
 
@@ -369,10 +415,7 @@ class GetTTL {
             return '';
         }
 
-        let ttl = '';
-        ttl += '#################################################################\n';
-        ttl += '# Graph Items\n';
-        ttl += '#################################################################\n\n';
+        let ttl = rdf.heading('Graph Items');
 
         // Filter graph items if specified
         const items = filterTypes
@@ -381,57 +424,11 @@ class GetTTL {
 
         // Transform each graph item to Turtle
         for (const item of items) {
-            ttl += getTTL(item, { includePrefixes: false, indent });
-            ttl += '\n';
+            ttl += getTTL(item);
         }
 
+        ttl += rdf.newLine();
         return ttl;
-    }
-
-    /**
-     * Escape a string for use in Turtle literals
-     * @param str - String to escape
-     * @returns Escaped string
-     */
-    private static escapeTurtleString(str: string): string {
-        return str
-            .replace(/\\/g, '\\\\')
-            .replace(/"/g, '\\"')
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r')
-            .replace(/\t/g, '\\t');
-    }
-
-    /**
-     * Format a value for Turtle output
-     * @param value - Value to format
-     * @param datatype - Optional XSD datatype
-     * @returns Formatted Turtle value
-     */
-    private static formatTurtleValue(value: any, datatype?: string): string {
-        if (value === null || value === undefined) {
-            return '""';
-        }
-
-        if (typeof value === 'string') {
-            const escaped = this.escapeTurtleString(value);
-            if (datatype) {
-                return `"${escaped}"^^xs:${datatype}`;
-            }
-            return `"${escaped}"`;
-        }
-
-        if (typeof value === 'number') {
-            return value.toString();
-        }
-
-        if (typeof value === 'boolean') {
-            return value.toString();
-        }
-
-        // Default: stringify as JSON and escape
-        const escaped = this.escapeTurtleString(JSON.stringify(value));
-        return `"${escaped}"`;
     }
 
     /**
@@ -456,5 +453,278 @@ class GetTTL {
 
         // Otherwise, return as-is (might need context-specific handling)
         return id;
+    }
+}
+function makeShapeId(id: string) {
+    // Make a name for a shape given for an element;
+    // it is assumed that the id has a namespace.
+    return id.startsWith(DEF.defaultOntologyNamespace) ? id + DEF.suffixShape : DEF.prefixShape + id;
+}
+interface ShaclAssertion {
+    prd: string;
+    obj: string;
+}
+
+/**
+ * Helper class for building RDF/Turtle triples with proper formatting.
+ * Manages indentation and line endings (., ;, ,) based on triple structure.
+ * 
+ * @example
+ * ```typescript
+ * const rdf = new CToTtl('\t');
+ * let ttl = rdf.prefix('ex', 'http://example.org/');
+ * ttl += rdf.tab0('ex:Subject');
+ * ttl += rdf.tab1('rdf:type', 'ex:Class');
+ * ttl += rdf.tab1('rdfs:label', 'Example');
+ * ttl += rdf.newLine();
+ * ```
+ */
+export class CToTtl {
+    private lastTab: number;
+    private readonly indent: string;
+
+    /**
+     * Create a new RDF/Turtle builder
+     * @param indent - Indentation string (default: '\t')
+     */
+    constructor(indent = '\t') {
+        this.lastTab = -1;
+        this.indent = indent;
+    }
+
+    /**
+     * Add a section heading as comment
+     * @param str - Heading text
+     * @returns Formatted heading with separator lines
+     */
+    heading(str: string): string {
+        return this.newLine('#################################################################')
+            + this.newLine(`# ${str}`)
+            + this.newLine('#################################################################')
+            + this.newLine();
+    }
+
+    /**
+     * Start a new line, finalizing any previous triple
+     * @param str - Optional content for the new line
+     * @returns Formatted line with proper ending
+     */
+    newLine(str?: string): string {
+        if (this.lastTab === 0) {
+            throw new Error("CToTtl: Previous triple is incomplete (subject without predicate)");
+        }
+        const ending = this.lastTab < 0 ? "" : " .";
+        this.lastTab = -1;
+        return ending + '\n' + (str ?? "");
+    }
+
+    /**
+     * Add a @prefix declaration
+     * @param tag - Prefix tag (with or without colon)
+     * @param url - Namespace URI
+     * @returns Formatted prefix declaration
+     */
+    prefix(tag: string, url: string): string {
+        const prefixName = tag.endsWith(':') ? tag.slice(0, -1) : tag;
+        return this.newLine(`@prefix ${prefixName}: <${url}> .`);
+    }
+
+    /**
+     * Start a new triple with the given subject
+     * @param subject - Subject IRI or prefixed name
+     * @returns Formatted subject line
+     */
+    tab0(subject: string): string {
+        if (this.lastTab === 0) {
+            throw new Error("CToTtl: Previous triple is incomplete (subject without predicate)");
+        }
+        const ending = this.lastTab < 0 ? "" : " .";
+        this.lastTab = 0;
+        return ending + `\n${subject}`;
+    }
+
+    /**
+     * Add a predicate-object pair (new predicate in predicate list)
+     * @param predicate - Predicate IRI or prefixed name
+     * @param object - Object value (scalar or ILanguageText array)
+     * @returns Formatted predicate-object line(s)
+     */
+    tab1(predicate: string, object: undefined | number | boolean | string | ILanguageText[]): string {
+        if (this.lastTab < 0) {
+            throw new Error("CToTtl: Subject is missing");
+        }
+        if (object !== undefined) { // object may be 0 or false
+            const ending = this.lastTab < 1 ? "" : " ;";
+            this.lastTab = 1;
+            return this.makeLines(ending + `\n${this.indent}${predicate} `, object);
+        }
+        return "";
+    }
+
+    /**
+     * Add an additional object to the current predicate (object list)
+     * @param object - Object value (scalar or ILanguageText array)
+     * @returns Formatted object line(s)
+     */
+    tab2(object: undefined | number | boolean | string | ILanguageText[]): string {
+        if (this.lastTab < 1) {
+            throw new Error("CToTtl: Predicate is missing");
+        }
+        if (object !== undefined) { // object may be 0 or false
+            const ending = " ,";
+            this.lastTab = 2;
+            return this.makeLines(ending + `\n${this.indent}${this.indent}`, object);
+        }
+        return "";
+    }
+
+    /**
+     * Format object value(s) with proper quoting and language tags
+     * @param pred - Prefix string (includes predicate for first value, or just indentation)
+     * @param object - Object value(s) to format
+     * @returns Formatted object string(s)
+     */
+    private makeLines(pred: string, object: undefined | number | boolean | string | ILanguageText[]): string {
+        switch (typeof object) {
+            case 'undefined':
+                return "";
+
+            case 'number':
+            case 'boolean':
+                return pred + object.toString();
+
+            case 'string':
+                return this.formatStringObject(pred, object);
+
+            default:
+                return this.formatArrayObject(pred, object);
+        }
+    }
+
+    /**
+     * Format a string object with proper quoting
+     * @param pred - Prefix string
+     * @param str - String value
+     * @returns Formatted string
+     */
+    private formatStringObject(pred: string, str: string): string {
+        if (str.length === 0) return "";
+
+        if (this.shouldSkipQuotes(pred, str)) {
+            return pred + str;
+        }
+        return pred + `"${this.escapeTtl(str)}"`;
+    }
+
+    /**
+     * Format an array of objects (ILanguageText[] or scalar array)
+     * @param pred - Prefix string
+     * @param object - Array of values
+     * @returns Formatted string with all values
+     */
+    private formatArrayObject(pred: string, object: ILanguageText[]): string {
+        if (!LIB.isArrayWithContent(object)) {
+            LOG.error("CToTtl: Expecting an array with items but got:", object);
+            return "";
+        }
+
+        if (PigItem.isMultiLanguageText(object)) {
+            return this.formatMultiLanguageText(pred, object);
+        }
+        return this.formatScalarArray(pred, object);
+    }
+
+    /**
+     * Format multi-language text values
+     * @param pred - Prefix string
+     * @param texts - Array of ILanguageText objects
+     * @returns Formatted multi-language text
+     */
+    private formatMultiLanguageText(pred: string, texts: ILanguageText[]): string {
+        if (texts.length === 1) {
+            // Single language version may omit language tag
+            const t = texts[0].value;
+            const l = texts[0].lang;
+
+            if (this.shouldSkipQuotes(pred, t)) {
+                return pred + t;
+            }
+            const languageTag = l ? `@${l}` : '';
+            return pred + `"${this.escapeTtl(t)}"` + languageTag;
+        }
+
+        // Multiple language versions must have language tags
+        let str = "";
+        texts.forEach((v, i) => {
+            if (!v.lang) {
+                LOG.error("CToTtl: Multi-language text must have a language specified for multiple versions:", v);
+            }
+            const prefix = i === 0 ? pred : ` ,\n${this.indent}${this.indent}`;
+            str += prefix + `"${this.escapeTtl(v.value)}"@${v.lang}`;
+        });
+        return str;
+    }
+
+    /**
+     * Format an array of scalar values
+     * @param pred - Prefix string
+     * @param values - Array of scalar values
+     * @returns Formatted scalar array
+     */
+    private formatScalarArray(pred: string, values: any[]): string {
+        let str = '';
+        values.forEach((v, i) => {
+            // Validate it's not an ILanguageText object
+            if (typeof v === 'object' && v !== null && ('value' in v || 'lang' in v)) {
+                LOG.error("CToTtl: Expected scalar value but got ILanguageText object:", v);
+                return;
+            }
+
+            const scalarValue = String(v);
+            const prefix = i === 0 ? pred : ` ,\n${this.indent}${this.indent}`;
+
+            if (this.shouldSkipQuotes(pred, scalarValue)) {
+                str += prefix + scalarValue;
+            } else {
+                str += prefix + `"${this.escapeTtl(scalarValue)}"`;
+            }
+        });
+        return str;
+    }
+
+    /**
+     * Determine if quotes should be skipped for a value
+     * @param pred - Prefix string (may contain predicate name)
+     * @param str - Value to check
+     * @returns True if quotes should be omitted
+     */
+    private shouldSkipQuotes(pred: string, str: string): boolean {
+        // Skip quotes for RDF resources, complex values (blank nodes, lists), and typed literals
+        // Always use quotes for rdfs:label and rdfs:comment
+        const isResource = RE.Namespace.test(str) 
+            || str.startsWith('<http') 
+            || RE.contentInRoundBrackets.test(str) 
+            || RE.contentInSquareBrackets.test(str)
+            || str.includes('^^');  // Typed literals (e.g., "value"^^xs:dateTime)
+
+        const isLabelOrComment = pred.includes('rdfs:label') || pred.includes('rdfs:comment');
+
+        return isResource && !isLabelOrComment;
+    }
+
+    /**
+     * Escape special characters for Turtle string literals
+     * @param str - String to escape
+     * @returns Escaped string
+     */
+    private escapeTtl(str: string): string {
+        if (!str) return '';
+
+        return str
+            .replace(/\\/g, '\\\\')  // Backslashes first
+            .replace(/"/g, '\\"')     // Double quotes
+            .replace(/\n/g, '\\n')    // Newlines
+            .replace(/\r/g, '')       // Remove carriage returns
+            .replace(/\t/g, '\\t');   // Tabs
     }
 }

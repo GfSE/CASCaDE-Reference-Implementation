@@ -17,6 +17,7 @@ import { BUILD_INFO } from '../../build-info';
 
 const CAS_DOMAIN = 'http://product-information-graph.org/';
 const CAS_VERSION = '2026-05-08';
+const CAS_NS = 'cas:';
 
 export const DEF = {
     pigVersion: CAS_VERSION,
@@ -25,6 +26,8 @@ export const DEF = {
     pigPath: CAS_DOMAIN,
     jsonldSchemaPath: CAS_DOMAIN + 'schema/' + CAS_VERSION + '/jsonld/',
     xslPath: 'assets/xslt/',
+    prefixShape: `${CAS_NS.slice(0, -1)}Shapes_`,  // for shapes of remotely defined ontologies
+    suffixShape: '_shape',  // for local shapes
     // Default for local terms (names) without an explicit namespace
     defaultDataNamespace: 'd:',  // for data instances
     defaultOntologyNamespace: 'o:',  // for (application or project) ontology
@@ -34,8 +37,8 @@ export const DEF = {
     minLengthId: 3,
     maxSizeXML: 4 * 1024 * 1024, // 4MB
     timeBetweenPages: 800,
-    pfxNsMeta: 'cas:',
-    pfxNsSemi: 'cas:',
+    pfxNsMeta: CAS_NS,
+    pfxNsSemi: CAS_NS,
     pfxNsDcmi: 'dcterms:'
 };
 
@@ -53,7 +56,11 @@ export const RE = {
     //                                                                                                                          $8: 0..1 fragment=page anchor (hash)
     //                                                                                                                                       $9: ends with certain characters or eol
     // Namespace: /^([\w-]+)[.:]([\w\.-]*)$/
+    Namespace: /^([\w-]+):([\w.-]*)$/, // only ':' as separator
     termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_-]*):([^:\s]+)$/,
     isoDateTime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}(:\d{2})?)?$/,
-    hasTimezone: /(Z|[+-]\d{2}(:\d{2})?)$/
+    hasTimezone: /(Z|[+-]\d{2}(:\d{2})?)$/,
+    contentInQuotes: /"(\S[^"]+?\S)"|'(\S[^']+?\S)'/i,  // empty space in the middle allowed, but not as first and last character
+    contentInRoundBrackets: /^\(([\S\s]+?)\)$/i,  // empty spaces allowed
+    contentInSquareBrackets: /^\[([\S\s]+?)\]$/i,  // empty spaces allowed
 }

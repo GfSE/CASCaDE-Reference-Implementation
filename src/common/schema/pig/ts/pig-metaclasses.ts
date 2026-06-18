@@ -309,37 +309,45 @@ export class PigItem {
      *
      * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
      */
-    static isMultiLanguageText(propertyName: string, value?: unknown): boolean {
+    static isMultiLanguageText(value: unknown): boolean {
 
-        // 1. Name-based: title or description
-        // Remove namespace prefix for checking
-        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-        // All multi-language fields from PIG schemata that use LanguageText[]
-        const multiLangFields = new Set([
-            'title',
-            'description',
-            'definition'
-        ]);
-        if (multiLangFields.has(localName)) {
-            return true;
-        }
-
-        // 2. Structure-based: Array of ILanguageText
+        // Structure-based: Array of ILanguageText
+        // If length > 1, lang is mandatory for all items; if length = 1, lang is optional
         if (Array.isArray(value) && value.length > 0) {
+            const requireLang = value.length > 1;
+
             return value.every(
                 v =>
                     typeof v === 'object' &&
                     v !== null &&
                     typeof (v as any).value === 'string' &&
                     (
-                        (v as any).lang === undefined ||
-                        typeof (v as any).lang === 'string'
+                        requireLang
+                            ? typeof (v as any).lang === 'string'  // lang required when length > 1
+                            : ((v as any).lang === undefined || typeof (v as any).lang === 'string')  // lang optional when length = 1
                     )
             );
         }
 
         return false;
+    }
+    /**
+     * Check if a property requires multi-language text format (ILanguageText[])
+     * @param propertyName - Property name to check (with or without namespace prefix)
+     * @returns true if the property is title, description, or definition
+     */
+    static needsMultiLanguageText(propertyName: string): boolean {
+
+        // Name-based: title or description
+        // Remove namespace prefix for checking
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // All multi-language fields from PIG schemata that use LanguageText[]
+        return [
+            'title',
+            'description',
+            'definition'
+        ].includes(localName);
     }
     /**
      * Normalize ID by adding namespace prefix if missing
@@ -2320,7 +2328,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         const propertyName = MVF.mapTerm(tagName, MVF.fromXML) as string;
 
         // Check if this property is a multi-language text field
-        const isMultiLang = PigItem.isMultiLanguageText(propertyName);
+        const isMultiLang = PigItem.needsMultiLanguageText(propertyName);
 
         // Check if this property needs IText wrapping (e.g. icon)
         const needsTextWrapper = requiresIText(propertyName);
