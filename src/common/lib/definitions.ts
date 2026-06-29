@@ -63,4 +63,6 @@ export const RE = {
     contentInQuotes: /"(\S[^"]+?\S)"|'(\S[^']+?\S)'/i,  // empty space in the middle allowed, but not as first and last character
     contentInRoundBrackets: /^\(([\S\s]+?)\)$/i,  // empty spaces allowed
     contentInSquareBrackets: /^\[([\S\s]+?)\]$/i,  // empty spaces allowed
+    // HTML detection: paired tags <tag>...</tag> or self-closing tags <tag />
+    hasHTML: /<[a-zA-Z][^>]*>.*?<\/[a-zA-Z][^>]*>|<[a-zA-Z][^>]*\/>/s
 }

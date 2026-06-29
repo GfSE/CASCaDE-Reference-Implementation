@@ -32,21 +32,34 @@
  *
  */
 
-import { DEF, RE } from '../../lib/definitions';
+import { RE } from '../../lib/definitions';
 import { LIB, LOG, ILanguageText } from '../../lib/helpers';
 import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
     AnEntity, APackage, ARelationship,
-    Entity, Relationship, Property, Link, Enumeration
+    Entity, Relationship, Property, Link, Enumeration,
+    AProperty, ATargetLink, ASourceLink
 } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsTTL {
-    /** Include prefixes in output (default: true for APackage, false for individual items) */
-    includePrefixes?: boolean;
     /** Indentation string (default: '\t' for tab) */
     indent?: string;
     /** Filter which item types to include in package graph (default: all) */
-    itemType?: PigItemTypeValue[];
+    filterItemType?: PigItemTypeValue[];
+    /** Include shapes (default: false) */
+    addShapes?: boolean;
+    /** Include any ontology even if available on a server (default: false) */
+    addServedOntologies?: boolean;
+    /** 
+     * Add explicit rdfs:subClassOf or rdfs:subPropertyOf statements (default: false)
+     * - For Entity/Relationship classes: adds rdfs:subClassOf to parent class
+     * - For Property classes: adds rdfs:subPropertyOf to parent property
+     * - For Link classes: adds rdfs:subPropertyOf to parent link
+     * These statements are redundant but can improve readability.
+     * Also, some tools may not infer them properly.
+     */
+    addExplicitSubTypes?: boolean;
+    addItemTypes?: boolean;
 }
 
 /**
@@ -57,10 +70,11 @@ export interface IOptionsTTL {
  * 
  * @example
  * import { getTTL } from './getTTL';
- * const turtle = getTTL(item);
+ * const turtle = getTTL(item, { addServedOntologies: true, addItemTypes: true });
  */
 export function getTTL(item: TPigItem, options?: IOptionsTTL): string {
     let result: string;
+    // LOG.debug(`getTTL called for itemType: ${item.itemType}, id: ${item.id}, options: ${JSON.stringify(options)}`);
 
     switch (item.itemType) {
         // Instances/Individuals
@@ -110,20 +124,23 @@ class GetTTL {
      * @returns Turtle representation with @prefix declarations and triples
      */
     static aPackage(pkg: APackage, options?: IOptionsTTL): string {
-        const filterTypes = options?.itemType;
+        const filterTypes = options?.filterItemType;
         const indent = options?.indent ?? '\t';
         const rdf = new CToTtl(indent);
 
         let ttl = '';
 
-        // Add prefixes
-        ttl += this.xContextToTTL(pkg, rdf);
+        // Add prefix definitions
+        ttl += this.xContext(pkg, rdf);
 
-        // Add project metadata section
-        ttl += this.xPackageMetadataToTTL(pkg, rdf);
+        // Add package metadata
+        ttl += this.xMetadataForInstances(pkg, rdf, options);
+
+        // End the package metadata triple (no properties follow for packages)
+        ttl += rdf.newLine();
 
         // Add graph items
-        ttl += this.xGraphToTTL(pkg, filterTypes, rdf);
+        ttl += this.xGraph(pkg, filterTypes, rdf, options);
 
         return ttl;
     }
@@ -136,16 +153,25 @@ class GetTTL {
      */
     static anEntity(itm: AnEntity, options?: IOptionsTTL): string {
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
-        // TODO: Implement AnEntity to Turtle transformation
         let ttl = '';
+        LOG.debug(`Exporting AnEntity ${itm.id} to Turtle, options: ${JSON.stringify(options)}`);
 
-        if (options?.includePrefixes) {
-            ttl += '# AnEntity transformation\n';
+        // Add entity metadata
+        ttl += this.xMetadataForInstances(itm, rdf, options);
+
+        // hasProperty - transform configurable properties
+        if (LIB.isArrayWithContent(itm.hasProperty)) {
+            ttl += this.xProperties(itm.hasProperty, rdf);
         }
 
-        ttl += `# TODO: Implement transformation for AnEntity: ${itm.id}\n`;
+        // hasTargetLink - transform configurable target links
+        if (LIB.isArrayWithContent(itm.hasTargetLink)) {
+            ttl += this.xTargetLinks(itm.hasTargetLink, rdf);
+        }
 
+        ttl += rdf.newLine();
         return ttl;
     }
 
@@ -157,16 +183,29 @@ class GetTTL {
      */
     static aRelationship(rel: ARelationship, options?: IOptionsTTL): string {
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
-        // TODO: Implement ARelationship to Turtle transformation
         let ttl = '';
 
-        if (options?.includePrefixes) {
-            ttl += '# ARelationship transformation\n';
+        // Add relationship metadata
+        ttl += this.xMetadataForInstances(rel, rdf, options);
+
+        // hasProperty - transform configurable properties
+        if (LIB.isArrayWithContent(rel.hasProperty)) {
+            ttl += this.xProperties(rel.hasProperty, rdf);
         }
 
-        ttl += `# TODO: Implement transformation for ARelationship: ${rel.id}\n`;
+        // hasSourceLink - transform configurable source links
+        if (LIB.isArrayWithContent(rel.hasSourceLink)) {
+            ttl += this.xSourceLinks(rel.hasSourceLink, rdf);
+        }
 
+        // hasTargetLink - transform configurable target links
+        if (LIB.isArrayWithContent(rel.hasTargetLink)) {
+            ttl += this.xTargetLinks(rel.hasTargetLink, rdf);
+        }
+
+        ttl += rdf.newLine();
         return ttl;
     }
 
@@ -178,17 +217,33 @@ class GetTTL {
      */
     static enumeration(enm: Enumeration, options?: IOptionsTTL): string {
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
-        // TODO: Implement Enumeration to Turtle transformation
         let ttl = '';
 
-        if (options?.includePrefixes) {
-            ttl += '# Enumeration transformation\n';
+        // Use xMetadataForClasses for basic metamodel properties
+        ttl += this.xMetadataForClasses(enm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
+
+        // enumeratedValue (mandatory array of allowed values)
+        if (LIB.isArrayWithContent(enm.enumeratedValue)) {
+            const values = enm.enumeratedValue;
+            ttl += rdf.tab1('cas:enumeratedValue', this.formatTurtleId(values[0].id));
+            for (let i = 1; i < values.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(values[i].id));
+            }
         }
 
-        ttl += `# TODO: Implement transformation for Enumeration: ${enm.id}\n`;
+    /*    // datatype
+        if (enm.datatype) {
+            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(enm.datatype));
+        } */
 
-        return ttl;
+        // unit (optional)
+        if (enm.unit) {
+            ttl += rdf.tab1('cas:unit', `"${enm.unit}"`);
+        }
+
+        return ttl + rdf.newLine();
     }
 
     /**
@@ -199,17 +254,32 @@ class GetTTL {
      */
     static property(prp: Property, options?: IOptionsTTL): string {
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
-        // TODO: Implement Property to Turtle transformation
         let ttl = '';
 
-        if (options?.includePrefixes) {
-            ttl += '# Property transformation\n';
+        // Use xMetadataForClasses for basic metamodel properties
+        ttl += this.xMetadataForClasses(prp, 'owl:DatatypeProperty', 'rdfs:subPropertyOf', rdf, options);
+
+    /*    // datatype --> include in shape later
+        if (prp.datatype) {
+            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(prp.datatype));
+        } */
+
+        // composes (references to other Properties)
+        if (LIB.isArrayWithContent(prp.composes)) {
+            const composes = prp.composes as TPigId[];
+            ttl += rdf.tab1('cas:composes', this.formatTurtleId(composes[0]));
+            for (let i = 1; i < composes.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(composes[i]));
+            }
         }
 
-        ttl += `# TODO: Implement transformation for Property: ${prp.id}\n`;
+        // Note: Shape-specific details (maxLength, minCount, maxCount, pattern, 
+        // minInclusive, maxInclusive, defaultValue, unit) are omitted here.
+        // These will be added to a SHACL shape later.
 
-        return ttl;
+        return ttl + rdf.newLine();
     }
 
     /**
@@ -220,17 +290,26 @@ class GetTTL {
      */
     static link(lnk: Link, options?: IOptionsTTL): string {
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
-        // TODO: Implement Link to Turtle transformation
         let ttl = '';
 
-        if (options?.includePrefixes) {
-            ttl += '# Link transformation\n';
-        }
+        // Use xMetadataForClasses for basic metamodel properties
+        ttl += this.xMetadataForClasses(lnk, 'owl:ObjectProperty', 'rdfs:subPropertyOf', rdf, options);
 
-        ttl += `# TODO: Implement transformation for Link: ${lnk.id}\n`;
+    /*    // enumeratedEndpoint (mandatory array of Entity/Relationship URIs)
+        if (LIB.isArrayWithContent(lnk.enumeratedEndpoint)) {
+            const endpoints = lnk.enumeratedEndpoint as TPigId[];
+            ttl += rdf.tab1('cas:enumeratedEndpoint', this.formatTurtleId(endpoints[0]));
+            for (let i = 1; i < endpoints.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(endpoints[i]));
+            }
+        } */
 
-        return ttl;
+        // Note: Shape-specific details (minCount, maxCount) are omitted here.
+        // These will be added to a SHACL shape later.
+
+        return ttl + rdf.newLine();
     }
 
     /**
@@ -241,17 +320,37 @@ class GetTTL {
      */
     static entity(itm: Entity, options?: IOptionsTTL): string {
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
-        // TODO: Implement Entity to Turtle transformation
         let ttl = '';
 
-        if (options?.includePrefixes) {
-            ttl += '# Entity transformation\n';
+        // Use xMetadataForClasses for basic metamodel properties
+        ttl += this.xMetadataForClasses(itm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
+
+    /*    // enumeratedProperty (optional array of Property URIs)
+        if (LIB.isArrayWithContent(itm.enumeratedProperty)) {
+            const properties = itm.enumeratedProperty as TPigId[];
+            ttl += rdf.tab1('cas:enumeratedProperty', this.formatTurtleId(properties[0]));
+            for (let i = 1; i < properties.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(properties[i]));
+            }
         }
 
-        ttl += `# TODO: Implement transformation for Entity: ${itm.id}\n`;
+    /*    // enumeratedTargetLink (optional array of Link URIs)
+        if (LIB.isArrayWithContent(itm.enumeratedTargetLink)) {
+            const links = itm.enumeratedTargetLink as TPigId[];
+            ttl += rdf.tab1('cas:enumeratedTargetLink', this.formatTurtleId(links[0]));
+            for (let i = 1; i < links.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(links[i]));
+            }
+        } */
 
-        return ttl;
+        // icon (optional)
+        if (itm.icon?.value) {
+            ttl += rdf.tab1('cas:icon', `"${itm.icon.value}"`);
+        }
+
+        return ttl + rdf.newLine();
     }
 
     /**
@@ -262,17 +361,46 @@ class GetTTL {
      */
     static relationship(rel: Relationship, options?: IOptionsTTL): string {
         const indent = options?.indent ?? '\t';
+        const rdf = new CToTtl(indent);
 
-        // TODO: Implement Relationship to Turtle transformation
         let ttl = '';
 
-        if (options?.includePrefixes) {
-            ttl += '# Relationship transformation\n';
+        // Use xMetadataForClasses for basic metamodel properties
+        ttl += this.xMetadataForClasses(rel, 'owl:Class', 'rdfs:subClassOf', rdf, options);
+
+    /*    // enumeratedProperty (optional array of Property URIs)
+        if (LIB.isArrayWithContent(rel.enumeratedProperty)) {
+            const properties = rel.enumeratedProperty as TPigId[];
+            ttl += rdf.tab1('cas:enumeratedProperty', this.formatTurtleId(properties[0]));
+            for (let i = 1; i < properties.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(properties[i]));
+            }
         }
 
-        ttl += `# TODO: Implement transformation for Relationship: ${rel.id}\n`;
+        // enumeratedSourceLink (optional, exactly 1 as checked by schema)
+        if (LIB.isArrayWithContent(rel.enumeratedSourceLink)) {
+            const sourceLinks = rel.enumeratedSourceLink as TPigId[];
+            ttl += rdf.tab1('cas:enumeratedSourceLink', this.formatTurtleId(sourceLinks[0]));
+            for (let i = 1; i < sourceLinks.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(sourceLinks[i]));
+            }
+        }
 
-        return ttl;
+        // enumeratedTargetLink (optional, exactly 1 as checked by schema)
+        if (LIB.isArrayWithContent(rel.enumeratedTargetLink)) {
+            const targetLinks = rel.enumeratedTargetLink as TPigId[];
+            ttl += rdf.tab1('cas:enumeratedTargetLink', this.formatTurtleId(targetLinks[0]));
+            for (let i = 1; i < targetLinks.length; i++) {
+                ttl += rdf.tab2(this.formatTurtleId(targetLinks[i]));
+            }
+        } */
+
+        // icon (optional)
+        if (rel.icon?.value) {
+            ttl += rdf.tab1('cas:icon', `"${rel.icon.value}"`);
+        }
+
+        return ttl + rdf.newLine();
     }
 
     /**
@@ -284,7 +412,7 @@ class GetTTL {
      * Internal format: context = [{ tag: "cas:", uri: "https://..." }, ...]
      * Turtle format:   @prefix cas: <https://...> .
      */
-    private static xContextToTTL(pkg: APackage, rdf: CToTtl): string {
+    private static xContext(pkg: APackage, rdf: CToTtl): string {
         const ctx = pkg.context;
 
         if (!ctx || !Array.isArray(ctx)) {
@@ -334,67 +462,132 @@ class GetTTL {
     }
 
     /**
-     * Transform package metadata to Turtle format
-     * @param pkg - APackage instance
+     * Transform metadata to Turtle format - common base function for both instances and classes
+     * @param itm - Item with Identifiable properties (id, itemType, title, description, etc.)
      * @param rdf - CToTtl instance for building Turtle output
-     * @returns Turtle representation of package metadata
+     * @returns Turtle representation of common metadata properties
      */
-    private static xPackageMetadataToTTL(pkg: APackage, rdf: CToTtl): string {
+    private static xMetadata(
+        itm: APackage | AnEntity | ARelationship | Property | Link | Entity | Relationship | Enumeration,
+        rdf: CToTtl
+    ): string {
         let ttl = '';
 
-        // Package ID as subject
-        const subjectId = this.formatTurtleId(pkg.id);
-        ttl += rdf.tab0(subjectId);
-
-        // itemType
-        ttl += rdf.tab1('a', `cas:${pkg.itemType}`);
-
         // title (multi-language)
-        if (pkg.title && Array.isArray(pkg.title) && pkg.title.length > 0) {
-            ttl += rdf.tab1('dcterms:title', pkg.title);
+        if (LIB.isArrayWithContent(itm.title)) {
+            ttl += rdf.tab1('dcterms:title', itm.title);
         }
 
         // description (multi-language)
-        if (pkg.description && Array.isArray(pkg.description) && pkg.description.length > 0) {
-            ttl += rdf.tab1('dcterms:description', pkg.description);
+        if (LIB.isArrayWithContent(itm.description)) {
+            ttl += rdf.tab1('dcterms:description', itm.description);
         }
 
         // definition (multi-language)
-        if (pkg.definition && Array.isArray(pkg.definition) && pkg.definition.length > 0) {
-            ttl += rdf.tab1('skos:definition', pkg.definition);
-        }
-
-        // specializes
-        if (pkg.specializes) {
-            const specializesId = this.formatTurtleId(pkg.specializes);
-            ttl += rdf.tab1('rdfs:subClassOf', specializesId);
+        if (LIB.isArrayWithContent(itm.definition)) {
+            ttl += rdf.tab1('skos:definition', itm.definition);
         }
 
         // revision
-        if (pkg.revision) {
-            ttl += rdf.tab1('schema:version', pkg.revision);
+        if (itm.revision) {
+            ttl += rdf.tab1('cas:revision', itm.revision); // subProperty of 'schema:version'
         }
 
         // priorRevision
-        if (pkg.priorRevision && Array.isArray(pkg.priorRevision) && pkg.priorRevision.length > 0) {
-            ttl += rdf.tab1('cas:priorRevision', pkg.priorRevision[0]);
-            for (let i = 1; i < pkg.priorRevision.length; i++) {
-                ttl += rdf.tab2(pkg.priorRevision[i]);
+        if (LIB.isArrayWithContent(itm.priorRevision)) {
+            const priorRevisions = itm.priorRevision as string[];
+            ttl += rdf.tab1('cas:priorRevision', priorRevisions[0]);
+            for (let i = 1; i < priorRevisions.length; i++) {
+                ttl += rdf.tab2(priorRevisions[i]);
             }
         }
 
         // modified (ISO date string)
-        if (pkg.modified) {
-            ttl += rdf.tab1('dcterms:modified', `"${pkg.modified}"^^xs:dateTime`);
+        if (itm.modified) {
+            ttl += rdf.tab1('dcterms:modified', `"${itm.modified}"^^xs:dateTime`);
         }
 
         // creator
-        if (pkg.creator) {
-            ttl += rdf.tab1('dcterms:creator', pkg.creator);
+        if (itm.creator) {
+            ttl += rdf.tab1('dcterms:creator', itm.creator);
         }
 
-        ttl += rdf.newLine();
+        // Note: Do NOT call rdf.newLine() here - let the caller decide when to end the triple
+        // This allows adding more predicates after metadata
         return ttl;
+    }
+
+    /**
+     * Wrapper for instances (APackage, AnEntity, ARelationship)
+     * Adds instance-specific properties like hasClass
+     * @param itm - Instance item
+     * @param rdf - CToTtl instance for building Turtle output
+     * @param options - controls whether to add optional triples like cas:itemType
+     * @returns Turtle representation of instance metadata
+     */
+    private static xMetadataForInstances(
+        itm: APackage | AnEntity | ARelationship,
+        rdf: CToTtl,
+        options?: { addItemTypes?: boolean }
+    ): string {
+        let ttl = '';
+
+        // Item ID as subject
+        const subjectId = this.formatTurtleId(itm.id);
+        ttl += rdf.tab0(subjectId);
+
+        // hasClass (the item's class/type) - required for instances according to schema
+        ttl += rdf.tab1('a', this.formatTurtleId(itm.hasClass));
+
+        if (options?.addItemTypes) {
+            ttl += rdf.tab1('cas:itemType', itm.itemType);
+        }
+
+        ttl += this.xMetadata(itm, rdf);
+
+        return ttl;
+    }
+
+    /**
+     * Wrapper for metamodel classes (Property, Link, Entity, Relationship, Enumeration)
+     * Uses common metadata without hasClass (classes don't have hasClass)
+     * @param itm - Metamodel class item
+     * @param rdf - CToTtl instance for building Turtle output
+     * @param options - controls whether to add optional triples like cas:itemType
+     * @returns Turtle representation of class metadata
+     */
+    private static xMetadataForClasses(
+        itm: Property | Link | Entity | Relationship | Enumeration,
+        owlClassification: string,
+        rdfSpecialization: string,
+        rdf: CToTtl,
+        options?: { addItemTypes?: boolean, addExplicitSubTypes?: boolean }
+    ): string {
+        // For classes, just use the common metadata (no hasClass)
+        let ttl = '';
+
+        if (!rdfSpecialization || !owlClassification) // both are defined or not, but anyways both are checked to satisfy the TS type guard
+            throw Error(`xMetadataForClasses: Unsupported itemType ${itm.itemType} for class metadata; expected Property, Link, Entity, Relationship, or Enumeration.`);
+
+        // Item ID as subject
+        const subjectId = this.formatTurtleId(itm.id);
+        ttl += rdf.tab0(subjectId);
+        // OWL classification only if specializes is not defined or if addExplicitSubTypes is true
+        if (!itm.specializes || itm.specializes == itm.itemType || options?.addExplicitSubTypes) {
+            ttl += rdf.tab1('a', owlClassification);
+        }
+
+        // specializes
+        if (itm.specializes && itm.specializes != itm.itemType) {
+            const specializesId = this.formatTurtleId(itm.specializes);
+            ttl += rdf.tab1(rdfSpecialization, specializesId);
+        }
+
+        if (options?.addItemTypes && itm.itemType != itm.id) {
+            ttl += rdf.tab1('cas:itemType', itm.itemType);
+        }
+
+        return ttl += this.xMetadata(itm, rdf);
     }
 
     /**
@@ -404,10 +597,11 @@ class GetTTL {
      * @param indent - Indentation string
      * @returns Turtle representation of graph items
      */
-    private static xGraphToTTL(
+    private static xGraph(
         pkg: APackage,
         filterTypes: PigItemTypeValue[] | undefined,
-        rdf: CToTtl
+        rdf: CToTtl,
+        options?: { addItemTypes?: boolean }
     ): string {
         const graph = pkg.graph;
 
@@ -424,7 +618,7 @@ class GetTTL {
 
         // Transform each graph item to Turtle
         for (const item of items) {
-            ttl += getTTL(item);
+            ttl += getTTL(item, options);
         }
 
         ttl += rdf.newLine();
@@ -454,8 +648,166 @@ class GetTTL {
         // Otherwise, return as-is (might need context-specific handling)
         return id;
     }
+
+    /**
+     * Transform hasProperty array to Turtle format
+     * Properties are configurable instances with hasClass, value, and/or idRef
+     * @param properties - Array of AProperty instances
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of properties
+     */
+    private static xProperties(properties: AProperty[], rdf: CToTtl): string {
+        let ttl = '';
+
+        // Group properties by their hasClass (property type)
+        const grouped = new Map<TPigId, AProperty[]>();
+
+        for (const prop of properties) {
+            if (!prop.hasClass) continue;
+
+            if (!grouped.has(prop.hasClass)) {
+                grouped.set(prop.hasClass, []);
+            }
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            grouped.get(prop.hasClass)!.push(prop);
+        }
+
+        // Generate Turtle for each property group
+        for (const [propertyClass, propInstances] of grouped) {
+            const predicate = this.formatTurtleId(propertyClass);
+
+            // Add first property value
+            const firstProp = propInstances[0];
+            ttl += rdf.tab1(predicate, this.formatPropertyValue(firstProp));
+
+            // Add additional values for the same property (if any)
+            for (let i = 1; i < propInstances.length; i++) {
+                ttl += rdf.tab2(this.formatPropertyValue(propInstances[i]));
+            }
+        }
+
+        return ttl;
+    }
+
+    /**
+     * Format a single property value for Turtle output
+     * @param prop - AProperty instance
+     * @returns Formatted value string
+     */
+    private static formatPropertyValue(prop: AProperty): string {
+        // If it has an idRef, it's a reference to another resource (e.g., enumeration value)
+        if (prop.idRef) {
+            return this.formatTurtleId(prop.idRef);
+        }
+
+        // If it has a value, return the literal value (will be quoted by CToTtl)
+        if (prop.value !== undefined) {
+            return prop.value;
+        }
+
+        // If it has composes, it's a composed property - format as blank node or list
+        if (LIB.isArrayWithContent(prop.composes)) {
+            const composes = prop.composes as TPigId[];
+            // For now, format as a list of references
+            const refs = composes.map((id: TPigId) => this.formatTurtleId(id)).join(', ');
+            return `( ${refs} )`;
+        }
+
+        // Default: empty string
+        return '';
+    }
+
+    /**
+     * Transform hasTargetLink array to Turtle format
+     * Links are references to other entities
+     * @param links - Array of ATargetLink instances
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of target links
+     */
+    private static xTargetLinks(links: ATargetLink[], rdf: CToTtl): string {
+        let ttl = '';
+
+        // Group links by their hasClass (link type)
+        const grouped = new Map<TPigId, ATargetLink[]>();
+
+        for (const link of links) {
+            if (!link.hasClass) continue;
+
+            if (!grouped.has(link.hasClass)) {
+                grouped.set(link.hasClass, []);
+            }
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            grouped.get(link.hasClass)!.push(link);
+        }
+
+        // Generate Turtle for each link group
+        for (const [linkClass, linkInstances] of grouped) {
+            const predicate = this.formatTurtleId(linkClass);
+
+            // Add first link reference
+            const firstLink = linkInstances[0];
+            if (firstLink.idRef) {
+                ttl += rdf.tab1(predicate, this.formatTurtleId(firstLink.idRef));
+
+                // Add additional links for the same link type (if any)
+                for (let i = 1; i < linkInstances.length; i++) {
+                    if (linkInstances[i].idRef) {
+                        ttl += rdf.tab2(this.formatTurtleId(linkInstances[i].idRef));
+                    }
+                }
+            }
+        }
+
+        // Note: Do NOT call rdf.newLine() here - let the caller decide when to end the triple
+        // This allows adding more predicates after the common metamodel properties
+        return ttl;
+    }
+
+    /**
+     * Transform hasSourceLink array to Turtle format
+     * Links are references to other entities (source side of relationships)
+     * @param links - Array of ASourceLink instances
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of source links
+     */
+    private static xSourceLinks(links: ASourceLink[], rdf: CToTtl): string {
+        let ttl = '';
+
+        // Group links by their hasClass (link type)
+        const grouped = new Map<TPigId, ASourceLink[]>();
+
+        for (const link of links) {
+            if (!link.hasClass) continue;
+
+            if (!grouped.has(link.hasClass)) {
+                grouped.set(link.hasClass, []);
+            }
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            grouped.get(link.hasClass)!.push(link);
+        }
+
+        // Generate Turtle for each link group
+        for (const [linkClass, linkInstances] of grouped) {
+            const predicate = this.formatTurtleId(linkClass);
+
+            // Add first link reference
+            const firstLink = linkInstances[0];
+            if (firstLink.idRef) {
+                ttl += rdf.tab1(predicate, this.formatTurtleId(firstLink.idRef));
+
+                // Add additional links for the same link type (if any)
+                for (let i = 1; i < linkInstances.length; i++) {
+                    if (linkInstances[i].idRef) {
+                        ttl += rdf.tab2(this.formatTurtleId(linkInstances[i].idRef));
+                    }
+                }
+            }
+        }
+
+        return ttl;
+    }
 }
-function makeShapeId(id: string) {
+/*function makeShapeId(id: string) {
     // Make a name for a shape given for an element;
     // it is assumed that the id has a namespace.
     return id.startsWith(DEF.defaultOntologyNamespace) ? id + DEF.suffixShape : DEF.prefixShape + id;
@@ -463,7 +815,7 @@ function makeShapeId(id: string) {
 interface ShaclAssertion {
     prd: string;
     obj: string;
-}
+}*/
 
 /**
  * Helper class for building RDF/Turtle triples with proper formatting.

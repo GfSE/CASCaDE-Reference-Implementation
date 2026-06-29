@@ -298,7 +298,7 @@ describe('import XML - ID normalization', () => {
         // 9. Check aRelationship instance
         expect(relationship).toBeDefined();
         expect(relationship?.id).toBe('d:Dep-001');  // Instances get 'd:' prefix
-        expect(relationship?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
+        expect((relationship as any)?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
         expect((relationship as any)?.hasSourceLink).toBeDefined();
         expect(Array.isArray((relationship as any)?.hasSourceLink)).toBe(true);
         expect((relationship as any)?.hasSourceLink?.length).toBe(1);

@@ -115,6 +115,7 @@ export enum XsDataType {
     ComplexType = 'xs:complexType'
 }
 
+// Must coincide with TPigClass
 const PIG_CLASSES = new Set<PigItemTypeValue>([
     PigItemType.Enumeration,
     PigItemType.Property,
@@ -308,6 +309,7 @@ export class PigItem {
      * - ARelationship: title, description
      *
      * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
+     * @ToDo:consolidate with validate MultiLanguageText() to avoid duplication of logic
      */
     static isMultiLanguageText(value: unknown): boolean {
 
@@ -349,6 +351,112 @@ export class PigItem {
             'definition'
         ].includes(localName);
     }
+    // Normalize language tags/values ---
+    static normalizeLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText {
+        //    LOG.debug('normalizeLanguageText', src);
+        if (!src)
+            return { value: '' };
+
+        let value: string;
+        let lang: tagIETF | undefined;
+
+        if (typeof src === 'object') {
+            // Extract value from ILanguageText object
+            value = (src.value ?? '') as string;
+            lang = src.lang as tagIETF | undefined;
+        } else if (typeof src === 'string') {
+            // Use string directly as value
+            value = src;
+        } else {
+            // Convert other types to string
+            value = String(src);
+        }
+
+        // Strip control characters from HTML-formatted content if requested
+        // This must happen BEFORE stripHTML
+        if (options?.stripCtrlFromHTML && value) {
+            // Check if value contains HTML: either paired tags <tag>...</tag> or self-closing tags <tag />
+            if (RE.hasHTML.test(value)) {
+                // Process control characters based on context:
+                // - REMOVE if at beginning/end or between tags (e.g., \n<div>, </p>\n<div>, </p>\n)
+                // - REPLACE with space if within text or between text and tag
+
+                // Step 1: Remove control chars at the beginning before first tag
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/^[\x00-\x20\x7F]+(?=<)/, '');
+
+                // Step 2: Remove control chars at the end after last tag
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/(?<=>)[\x00-\x20\x7F]+$/, '');
+
+                // Step 3: Remove control chars between tags (only whitespace between tags)
+                // Pattern: > followed by only whitespace/control chars followed by <
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/>[\x00-\x20\x7F]+</g, '><');
+
+                // Step 4: Replace remaining control chars with space
+                // These are within text content or between text and tags
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/[\x00-\x1F\x7F]/g, ' ');
+
+                // Step 5: Normalize multiple consecutive spaces to single space
+                value = value.replace(/ {2,}/g, ' ');
+            }
+        }
+
+        // Strip HTML from the value if requested (applies to both strings and ILanguageText.value)
+        if (options?.stripHTML && value) {
+            value = LIB.stripHTML(value);
+        }
+
+        return {
+            value: value,
+            lang: lang
+        };
+    }
+    static normalizeMultiLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText[] | undefined {
+        if (!src) return undefined;
+        if (Array.isArray(src)) return src.map(item => PigItem.normalizeLanguageText(item, options));
+        return [PigItem.normalizeLanguageText(src, options)];
+    }
+    /* Validate that a value is an array of ILanguageText with the rule:
+       - if array length === 0 -> OK
+       - if array length === 1 -> 'lang' may be missing
+       - if array length > 1 -> each entry must have a string 'lang' and string 'value'
+       Returns IRsp (rspOK on success, error IRsp on failure)
+    */
+    static validateMultiLanguageText(arr: any, fieldName: string): IRsp {
+        //    LOG.debug('PigItem.validateMultiLanguageText',arr,fieldName);
+        if (!Array.isArray(arr)) {
+            return Msg.create(640, fieldName);
+        }
+        if (arr.length === 0) return rspOK;
+        if (arr.length === 1) {
+            const e = arr[0];
+            if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
+                return Msg.create(641, fieldName);
+            }
+            // single entry: lang optional
+            if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
+                return Msg.create(642, fieldName);
+            }
+            return rspOK;
+        }
+        // length > 1: every entry must have value:string and lang:string
+        for (let i = 0; i < arr.length; i++) {
+            const e = arr[i];
+            if (!e || typeof e !== 'object') {
+                return Msg.create(643, fieldName, i);
+            }
+            if (typeof (e as any).value !== 'string') {
+                return Msg.create(644, fieldName, i);
+            }
+            if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
+                return Msg.create(645, fieldName, i);
+            }
+        }
+        return rspOK;
+    }
     /**
      * Normalize ID by adding namespace prefix if missing
      * 
@@ -380,7 +488,7 @@ export class PigItem {
         }
 
         const normalized = `${prefix}${id}`;
-        LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
+        // LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
 
         return normalized;
     }
@@ -402,15 +510,16 @@ These capture who, what, when, where, and how of data access or changes:
 
 interface IItem {
     itemType: PigItemTypeValue;
-    hasClass?: TPigId;  // must be URI of the item's respective class, translates to @type resp. rdf:type
+    hasClass: TPigId;  // required for ALL itemTypes according to JSON schema
 }
+// Constructor parameter type: hasClass is not used in constructor, set later via .set()
+type TConstructItem = Pick<IItem, 'itemType'>;
+
 abstract class Item implements IItem {
     readonly itemType!: PigItemTypeValue;
-    // All items may have a hasClass reference, some require it;
-    // concrete subclasses enforce that in their validate() methods:
-    hasClass?: TPigId;
+    hasClass!: TPigId;  // required for ALL itemTypes according to JSON schema
     protected lastStatus!: IRsp;
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         this.itemType = itm.itemType;
     }
     status(): IRsp {
@@ -455,7 +564,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
     priorRevision?: TRevision[];
     modified?: TISODateString;
     creator?: string;
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         super(itm); // actual itemType set in concrete class
     }
     protected validate(itm: IIdentifiable) {
@@ -470,21 +579,22 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // Runtime guards:
         // This is more constraining than the schema,
         // as the presence of 'lang' is required when there are multiple values
-        // Ensure title is a multi-language text (array of ILanguageText),
-        // title is optional only for anEntity:
+        // Normalize and validate title (optional for anEntity), strip HTML from title:
         if (itm.title) {
-            const tRes = validateMultiLanguageText(itm.title, 'title');
+            itm.title = PigItem.normalizeMultiLanguageText(itm.title, { stripCtrlFromHTML: true, stripHTML: true });
+            const tRes = PigItem.validateMultiLanguageText(itm.title, 'title');
             if (!tRes.ok) return tRes;
         }
-        // description is optional, but when present must be an array of ILanguageText
+        // Normalize and validate description (optional, but when present must be an array of ILanguageText):
         if (itm.description) {
-            const dRes = validateMultiLanguageText(itm.description, 'description');
+            itm.description = PigItem.normalizeMultiLanguageText(itm.description, { stripCtrlFromHTML: true });
+            const dRes = PigItem.validateMultiLanguageText(itm.description, 'description');
             if (!dRes.ok) return dRes;
         }
-
-        // definition is mandatory for classes:
+        // Normalize and validate definition (mandatory for classes):
         if (itm.definition) {
-            const dRes = validateMultiLanguageText(itm.definition, 'definition');
+            itm.definition = PigItem.normalizeMultiLanguageText(itm.definition, { stripCtrlFromHTML: true });
+            const dRes = PigItem.validateMultiLanguageText(itm.definition, 'definition');
             if (!dRes.ok) return dRes;
         }
 
@@ -498,6 +608,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         super.set(itm);
         this.id = itm.id;  // redundant, because it has (should have) been set by validate()
         this.specializes = itm.specializes;
+        // Multi-language texts have been normalized in validate()
         this.title = itm.title;
         this.description = itm.description;
         this.definition = itm.definition;
@@ -532,14 +643,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // 2. Replace id-objects with id-strings
         ld = replaceIdObjects(ld);
 
-        // 3. Normalize multi-language texts (from abstract normalize)
-        //    Not all are necessarily present - this is checked by the schemata.
-        if (ld.title)
-            ld.title = normalizeMultiLanguageText(ld.title);
-        if (ld.description)
-            ld.description = normalizeMultiLanguageText(ld.description);
-        if (ld.definition)
-            ld.definition = normalizeMultiLanguageText(ld.definition);
+        // Multi-language text normalization now happens in set() method
 
         // Set the normalized object in the concrete subclass
         return ld;
@@ -563,7 +667,7 @@ interface IALink extends IItem {
 }
 abstract class ALink extends Item implements IALink {
     idRef!: TPigId;
-    constructor(itm: IItem) {
+    constructor(itm: TConstructItem) {
         super(itm);
     }
     protected validate(itm: IALink) {
@@ -598,7 +702,7 @@ interface IElement extends IIdentifiable {
 abstract class Element extends Identifiable implements IElement {
     enumeratedProperty?: TPigId[];
     icon?: IText;
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         super(itm); // actual itemType set in concrete class
     }
     protected set(itm: IElement) {
@@ -625,7 +729,7 @@ interface IAnElement extends IIdentifiable {
 abstract class AnElement extends Identifiable implements IAnElement {
     hasProperty!: AProperty[]; // instantiated AProperty items
     hasTargetLink!: ATargetLink[];  // array must have exactly one element as checked by the JSON schema
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         super(itm);
     }
 /*    protected validate(itm: IAnElement) {
@@ -1172,6 +1276,7 @@ export class AProperty extends Item implements IAProperty {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
+            this.hasClass = itm.hasClass;  // Set hasClass for property instances
             this.composes = itm.composes;
             this.value = itm.value;
             this.idRef = itm.idRef;
@@ -1343,6 +1448,7 @@ export class ARelationship extends AnElement implements IARelationship {
 }
 // For packages:
 export interface IAPackage extends IAnElement {
+    hasClass: TPigId;  // required for APackage according to JSON schema
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[];
 }
@@ -1632,15 +1738,9 @@ export class APackage extends AnElement implements IAPackage {
         json = replaceIdObjects(json);
 
         // LOG.debug('ldToJson after tag renaming and id replacement: ', JSON.stringify(json, null, 2));
-        // 3. Normalize multi-language texts
-        if (json.title) 
-            json.title = normalizeMultiLanguageText(json.title);
-        if (json.description)
-            json.description = normalizeMultiLanguageText(json.description);
-        if (json.definition)
-            json.definition = normalizeMultiLanguageText(json.definition);
+        // Multi-language text normalization now happens in set() method
 
-        // 4. Normalize datatype (Property-specific)
+        // 3. Normalize datatype (Property-specific)
         if (json.datatype) {
             json.datatype = json.datatype.replace(/^xsd:/, 'xs:');
         }
@@ -2074,65 +2174,6 @@ function normalizeDateTime(dateStr: any): string | undefined {
     return normalized;
 }
 
-// Normalize language tags/values ---
-function normalizeLanguageText(src: any): ILanguageText {
-//    LOG.debug('normalizeLanguageText', src);
-    if (!src)
-        return { value: '' };
-    if (typeof src === 'object') {
-        return {
-            value: (src.value ?? '') as string,
-            lang: src.lang as tagIETF | undefined
-        };
-    }
-    if (typeof src === 'string')
-        return { value: src };
-    return { value: String(src) };
-}
-
-function normalizeMultiLanguageText(src: any): ILanguageText[] | undefined {
-    if (!src) return undefined;
-    if (Array.isArray(src)) return src.map(normalizeLanguageText);
-    return [normalizeLanguageText(src)];
-}
-/* Helper: validate that a value is an array of ILanguageText with the rule:
-   - if array length === 0 -> OK
-   - if array length === 1 -> 'lang' may be missing
-   - if array length > 1 -> each entry must have a string 'lang' and string 'value'
-   Returns IRsp (rspOK on success, error IRsp on failure)
-*/
-function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
-//    LOG.debug('validateMultiLanguageText',arr,fieldName);
-    if (!Array.isArray(arr)) {
-        return Msg.create(640, fieldName);
-    }
-    if (arr.length === 0) return rspOK;
-    if (arr.length === 1) {
-        const e = arr[0];
-        if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
-            return Msg.create(641, fieldName);
-        }
-        // single entry: lang optional
-        if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
-            return Msg.create(642, fieldName);
-        }
-        return rspOK;
-    }
-    // length > 1: every entry must have value:string and lang:string
-    for (let i = 0; i < arr.length; i++) {
-        const e = arr[i];
-        if (!e || typeof e !== 'object') {
-            return Msg.create(643, fieldName, i);
-        }
-        if (typeof (e as any).value !== 'string') {
-            return Msg.create(644, fieldName, i);
-        }
-        if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
-            return Msg.create(645, fieldName, i);
-        }
-    }
-    return rspOK;
-}
 /**
  * Parse XML string and convert to JSON object
  * Recursively traverses the XML structure without assuming specific tag names

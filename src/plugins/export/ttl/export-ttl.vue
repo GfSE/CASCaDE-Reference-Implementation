@@ -151,7 +151,7 @@ import { LOG } from '../../../common/lib/helpers';
             // Use toRaw to unwrap Pinia's reactive proxies
             const ttlPackages = pkgs.map((pkg: any) => {
                 const rawPkg = toRaw(pkg);
-                return getTTL(rawPkg, { includePrefixes: true });
+                return getTTL(rawPkg, { addServedOntologies: true, addItemTypes: true });
             });
 
             // Combine all TTL strings with line breaks

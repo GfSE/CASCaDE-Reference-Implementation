@@ -35,7 +35,8 @@
  *   ✅ - enumeratedEndpoint in Link classes (all or none point to Enumerations)
  *   ✅ - enumeratedTargetLink and enumeratedSourceLink → Link
  * Phase 2 (important):
- *      check aPackage.hasClass, class and specializes references and consistency with classes (similarly to anEntity)
+ *      check aPackage.hasClass references and consistency with classes (similarly to anEntity)
+ *      check all classes wrt hasClass (owl:Class, owl:DatatypeProperty, owl:ObjectProperty)
  *      namespace prefixes are defined in the context
  *      subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
  *      subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
@@ -632,7 +633,7 @@ function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp 
 
         // Check anEntity instances (hasTargetLink)
         if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itemType)) {
-            const classId = item.hasClass;
+            const classId = (item as TPigAnElement).hasClass;
 
             if (!classId) {
                 continue;
@@ -1144,7 +1145,7 @@ function checkLinkHasClass(
 }
 
 /**
- * Check that Entity/Relationship references (hasClass or specializes) point to valid items
+ * Check that Entity/Relationship references (hasClass for instances or specializes for classes) point to valid items
  * @param pkg - Package to validate
  * @param itemTypeMap - Map from ID to itemType for reference lookup
  * @param referenceType - Type of reference to check: 'hasClass' or 'specializes'
@@ -1163,13 +1164,9 @@ function checkEntityOrRelationshipReferences(
         const iType = (item as any).itemType;
         const iId = (item as any)['@id'] ?? (item as any).id;
 
-        // Check Entity items (both anEntity for hasClass, and Entity for specializes)
-        const isInstance = [PigItemType.anEntity, PigItemType.aRelationship].includes(iType);
-        const isClass = [PigItemType.Entity, PigItemType.Relationship].includes(iType);
-
         if (iType == itemType)
-            if ((isHasClass && isInstance) || (!isHasClass && isClass)) {
-                const referenceValue = item[referenceType];
+            if ((isHasClass && PigItem.isInstance(iType)) || (!isHasClass && PigItem.isClass(iType))) {
+                const referenceValue = (item as any)[referenceType];
 
                 //    LOG.debug('checkEntityOrRelationshipReferences: ',item);
 
@@ -1198,7 +1195,9 @@ function checkEntityOrRelationshipReferences(
                     return Msg.create(675, iId, i, referenceType, referenceValue, `expected ${expectedType}, found ${targetType}`);
                 }
             }
-
+            else
+                // The data has been validated by the schema, so this should not happen. It is assumed to be a programming error if it does:
+                throw new Error(`checkEntityOrRelationshipReferences: Unexpected itemType ${iType} for referenceType ${referenceType}`);
     }
 
     return rspOK;
