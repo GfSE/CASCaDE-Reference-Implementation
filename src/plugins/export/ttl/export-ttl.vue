@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' @click='openDialog'>Export Turtle (TTL)</v-btn>
+    <v-btn color='secondary' class='text-none' @click='openDialog'>🡖 CASCaRA Turtle (TTL)</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Export Packages as Turtle (TTL)</v-card-title>
@@ -18,6 +18,39 @@
                         :rules='[rules.required, rules.extension]'
                         :disabled='isExporting'
                     ></v-text-field>
+
+                    <!-- Export Options -->
+                    <div class='mt-4'>
+                        <h4 class='mb-2'>Export Options</h4>
+                        <v-checkbox
+                            v-model='options.addShapes'
+                            label='Include SHACL shapes'
+                            density='compact'
+                            hide-details
+                            :disabled='isExporting'
+                        ></v-checkbox>
+                        <v-checkbox
+                            v-model='options.addHostedOntologies'
+                            label='Include hosted ontologies'
+                            density='compact'
+                            hide-details
+                            :disabled='isExporting'
+                        ></v-checkbox>
+                        <v-checkbox
+                            v-model='options.addExplicitSubTypes'
+                            label='Add explicit rdfs:subClassOf / rdfs:subPropertyOf'
+                            density='compact'
+                            hide-details
+                            :disabled='isExporting'
+                        ></v-checkbox>
+                        <v-checkbox
+                            v-model='options.addItemTypes'
+                            label='Include cas:itemType statements'
+                            density='compact'
+                            hide-details
+                            :disabled='isExporting'
+                        ></v-checkbox>
+                    </div>
                 </div>
 
                 <!-- Error Display -->
@@ -66,7 +99,7 @@ import { toRaw } from 'vue';
 import { PackageCache } from '../../../stores/package-cache';
 import { getTTL } from '../../../common/export/ttl/getTTL';
 import { PLI } from '../../../common/lib/platform-independence';
-import { LOG } from '../../../common/lib/helpers';
+import { LIB, LOG } from '../../../common/lib/helpers';
 
 @Options({
   data() {
@@ -77,12 +110,19 @@ import { LOG } from '../../../common/lib/helpers';
         isExporting: false,
         errorMessage: '',
         successMessage: '',
+        // Export options matching IOptionsTTL interface with default values
+        options: {
+            addShapes: true,
+            addHostedOntologies: true,
+            addExplicitSubTypes: false,
+            addItemTypes: true
+        },
         rules: {
             required: (value: string) => !!value || 'Filename is required',
             extension: (value: string) => {
                 if (!value) return true;
-                const hasExtension = value.endsWith('.ttl');
-                return hasExtension || 'Filename should end with .ttl';
+                const hasExtension = value.endsWith('.cas.ttl');
+                return hasExtension || 'Filename should end with .cas.ttl';
             }
         }
     }
@@ -90,7 +130,7 @@ import { LOG } from '../../../common/lib/helpers';
   computed: {
     isFilenameValid(): boolean {
         const fn = this.filename as string;
-        return fn.length > 0 && fn.endsWith('.ttl');
+        return fn.length > 0 && fn.endsWith('.cas.ttl');
     }
   },
   methods: {
@@ -131,10 +171,10 @@ import { LOG } from '../../../common/lib/helpers';
             }
 
             // Sanitize filename: remove invalid characters
-            const sanitized = titleText.replace(/[<>:"/\\|?*]/g, '_');
-            this.filename = `${sanitized}.ttl`;
+            const sanitized = LIB.makeFilename(titleText);
+            this.filename = `${sanitized}.cas.ttl`;
         } else {
-            this.filename = 'export.ttl';
+            this.filename = 'export.cas.ttl';
         }
     },
     async exportPackages() {
@@ -151,7 +191,7 @@ import { LOG } from '../../../common/lib/helpers';
             // Use toRaw to unwrap Pinia's reactive proxies
             const ttlPackages = pkgs.map((pkg: any) => {
                 const rawPkg = toRaw(pkg);
-                return getTTL(rawPkg, { addServedOntologies: true, addItemTypes: true });
+                return getTTL(rawPkg, this.options);
             });
 
             // Combine all TTL strings with line breaks

@@ -29,10 +29,13 @@
  * - Use a class with static methods for better organization and extensibility.
  * - Follow the same pattern as getJSONLD for consistency.
  * - For creating a Turtle representation call getTTL(item, options) instead of item.getTTL().
+ * - At first, only cas: ontology terms get a shape.
+ * - Those cas: shapes will be served from the same URL as the terms themselves
+ * - Do not add rdfs:domain for links, as it can be inferred from relationships.
  *
  */
 
-import { RE } from '../../lib/definitions';
+import { DEF, RE } from '../../lib/definitions';
 import { LIB, LOG, ILanguageText } from '../../lib/helpers';
 import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
@@ -44,12 +47,12 @@ import {
 export interface IOptionsTTL {
     /** Indentation string (default: '\t' for tab) */
     indent?: string;
-    /** Filter which item types to include in package graph (default: all) */
+    /** Filter which item types to include in package graph (default: all, empty array means none which is obviously useless) */
     filterItemType?: PigItemTypeValue[];
     /** Include shapes (default: false) */
     addShapes?: boolean;
     /** Include any ontology even if available on a server (default: false) */
-    addServedOntologies?: boolean;
+    addHostedOntologies?: boolean;
     /** 
      * Add explicit rdfs:subClassOf or rdfs:subPropertyOf statements (default: false)
      * - For Entity/Relationship classes: adds rdfs:subClassOf to parent class
@@ -156,7 +159,7 @@ class GetTTL {
         const rdf = new CToTtl(indent);
 
         let ttl = '';
-        LOG.debug(`Exporting AnEntity ${itm.id} to Turtle, options: ${JSON.stringify(options)}`);
+        // LOG.debug(`Exporting AnEntity ${itm.id} to Turtle, options: ${JSON.stringify(options)}`);
 
         // Add entity metadata
         ttl += this.xMetadataForInstances(itm, rdf, options);
@@ -168,7 +171,7 @@ class GetTTL {
 
         // hasTargetLink - transform configurable target links
         if (LIB.isArrayWithContent(itm.hasTargetLink)) {
-            ttl += this.xTargetLinks(itm.hasTargetLink, rdf);
+            ttl += this.xLinks(itm.hasTargetLink, rdf);
         }
 
         ttl += rdf.newLine();
@@ -197,12 +200,12 @@ class GetTTL {
 
         // hasSourceLink - transform configurable source links
         if (LIB.isArrayWithContent(rel.hasSourceLink)) {
-            ttl += this.xSourceLinks(rel.hasSourceLink, rdf);
+            ttl += this.xLinks(rel.hasSourceLink, rdf);
         }
 
         // hasTargetLink - transform configurable target links
         if (LIB.isArrayWithContent(rel.hasTargetLink)) {
-            ttl += this.xTargetLinks(rel.hasTargetLink, rdf);
+            ttl += this.xLinks(rel.hasTargetLink, rdf);
         }
 
         ttl += rdf.newLine();
@@ -221,7 +224,7 @@ class GetTTL {
 
         let ttl = '';
 
-        // Use xMetadataForClasses for basic metamodel properties
+        // Add basic metamodel properties
         ttl += this.xMetadataForClasses(enm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
         // enumeratedValue (mandatory array of allowed values)
@@ -244,6 +247,8 @@ class GetTTL {
         }
 
         return ttl + rdf.newLine();
+        // No shape for enumerations, as they are never instantiated.
+        // The allowed values are defined by the enumeratedValue property.
     }
 
     /**
@@ -258,13 +263,18 @@ class GetTTL {
 
         let ttl = '';
 
-        // Use xMetadataForClasses for basic metamodel properties
+        // Add basic metamodel properties
         ttl += this.xMetadataForClasses(prp, 'owl:DatatypeProperty', 'rdfs:subPropertyOf', rdf, options);
 
-    /*    // datatype --> include in shape later
-        if (prp.datatype) {
-            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(prp.datatype));
-        } */
+        // defaultValue
+        if (prp.defaultValue !== undefined) {
+            ttl += rdf.tab1('sh:defaultValue', `"${prp.defaultValue}"`);
+        }
+
+        // unit
+        if (prp.unit) {
+            ttl += rdf.tab1('cas:unit', `"${prp.unit}"`);
+        }
 
         // composes (references to other Properties)
         if (LIB.isArrayWithContent(prp.composes)) {
@@ -279,7 +289,14 @@ class GetTTL {
         // minInclusive, maxInclusive, defaultValue, unit) are omitted here.
         // These will be added to a SHACL shape later.
 
-        return ttl + rdf.newLine();
+        ttl += rdf.newLine();
+
+        // Add SHACL shape if requested
+        if (options?.addShapes) {
+            ttl += this.makePropertyShape(prp, rdf);
+        }
+
+        return ttl;
     }
 
     /**
@@ -294,22 +311,45 @@ class GetTTL {
 
         let ttl = '';
 
-        // Use xMetadataForClasses for basic metamodel properties
+        // Add basic metamodel properties
         ttl += this.xMetadataForClasses(lnk, 'owl:ObjectProperty', 'rdfs:subPropertyOf', rdf, options);
 
-    /*    // enumeratedEndpoint (mandatory array of Entity/Relationship URIs)
+    /*  // We would need to look for relationships using this link to determine the domain,
+        // but that requires scanning the entire graph.
+        // Design decision: We will not add rdfs:domain for links, as it can be inferred from relationships.
+        // rdfs:domain - Links can be used by Entity or Relationship instances
+        // If the link specializes another link, domain is inherited
+        // Otherwise, add explicit domain as union of Entity and Relationship
+        if (!lnk.specializes || lnk.specializes === lnk.itemType) {
+            // Base link: domain is union of Entity and Relationship
+            ttl += rdf.tab1('rdfs:domain', `[ owl:unionOf ( cas:Entity cas:Relationship ) ]`);
+        } */
+
+        // rdfs:range based on enumeratedEndpoint (mandatory array of Entity/Relationship URIs)
         if (LIB.isArrayWithContent(lnk.enumeratedEndpoint)) {
             const endpoints = lnk.enumeratedEndpoint as TPigId[];
-            ttl += rdf.tab1('cas:enumeratedEndpoint', this.formatTurtleId(endpoints[0]));
-            for (let i = 1; i < endpoints.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(endpoints[i]));
+
+            if (endpoints.length === 1) {
+                // Single endpoint: simple range
+                ttl += rdf.tab1('rdfs:range', this.formatTurtleId(endpoints[0]));
+            } else {
+                // Multiple endpoints: use owl:unionOf
+                const endpointList = endpoints.map(ep => this.formatTurtleId(ep)).join(' ');
+                ttl += rdf.tab1('rdfs:range', `[ owl:unionOf ( ${endpointList} ) ]`);
             }
-        } */
+        }
 
         // Note: Shape-specific details (minCount, maxCount) are omitted here.
         // These will be added to a SHACL shape later.
 
-        return ttl + rdf.newLine();
+        ttl += rdf.newLine();
+
+        // Add SHACL shape if requested
+        if (options?.addShapes) {
+            ttl += this.makeLinkShape(lnk, rdf);
+        }
+
+        return ttl;
     }
 
     /**
@@ -324,33 +364,22 @@ class GetTTL {
 
         let ttl = '';
 
-        // Use xMetadataForClasses for basic metamodel properties
+        // Add basic metamodel properties
         ttl += this.xMetadataForClasses(itm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
-
-    /*    // enumeratedProperty (optional array of Property URIs)
-        if (LIB.isArrayWithContent(itm.enumeratedProperty)) {
-            const properties = itm.enumeratedProperty as TPigId[];
-            ttl += rdf.tab1('cas:enumeratedProperty', this.formatTurtleId(properties[0]));
-            for (let i = 1; i < properties.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(properties[i]));
-            }
-        }
-
-    /*    // enumeratedTargetLink (optional array of Link URIs)
-        if (LIB.isArrayWithContent(itm.enumeratedTargetLink)) {
-            const links = itm.enumeratedTargetLink as TPigId[];
-            ttl += rdf.tab1('cas:enumeratedTargetLink', this.formatTurtleId(links[0]));
-            for (let i = 1; i < links.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(links[i]));
-            }
-        } */
 
         // icon (optional)
         if (itm.icon?.value) {
             ttl += rdf.tab1('cas:icon', `"${itm.icon.value}"`);
         }
 
-        return ttl + rdf.newLine();
+        ttl += rdf.newLine();
+
+        // Add SHACL shape if requested
+        if (options?.addShapes) {
+            ttl += this.makeElementShape(itm, rdf);
+        }
+
+        return ttl;
     }
 
     /**
@@ -365,42 +394,22 @@ class GetTTL {
 
         let ttl = '';
 
-        // Use xMetadataForClasses for basic metamodel properties
+        // Add basic metamodel properties
         ttl += this.xMetadataForClasses(rel, 'owl:Class', 'rdfs:subClassOf', rdf, options);
-
-    /*    // enumeratedProperty (optional array of Property URIs)
-        if (LIB.isArrayWithContent(rel.enumeratedProperty)) {
-            const properties = rel.enumeratedProperty as TPigId[];
-            ttl += rdf.tab1('cas:enumeratedProperty', this.formatTurtleId(properties[0]));
-            for (let i = 1; i < properties.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(properties[i]));
-            }
-        }
-
-        // enumeratedSourceLink (optional, exactly 1 as checked by schema)
-        if (LIB.isArrayWithContent(rel.enumeratedSourceLink)) {
-            const sourceLinks = rel.enumeratedSourceLink as TPigId[];
-            ttl += rdf.tab1('cas:enumeratedSourceLink', this.formatTurtleId(sourceLinks[0]));
-            for (let i = 1; i < sourceLinks.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(sourceLinks[i]));
-            }
-        }
-
-        // enumeratedTargetLink (optional, exactly 1 as checked by schema)
-        if (LIB.isArrayWithContent(rel.enumeratedTargetLink)) {
-            const targetLinks = rel.enumeratedTargetLink as TPigId[];
-            ttl += rdf.tab1('cas:enumeratedTargetLink', this.formatTurtleId(targetLinks[0]));
-            for (let i = 1; i < targetLinks.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(targetLinks[i]));
-            }
-        } */
 
         // icon (optional)
         if (rel.icon?.value) {
             ttl += rdf.tab1('cas:icon', `"${rel.icon.value}"`);
         }
 
-        return ttl + rdf.newLine();
+        ttl += rdf.newLine();
+
+        // Add SHACL shape if requested
+        if (options?.addShapes) {
+            ttl += this.makeElementShape(rel, rdf);
+        }
+
+        return ttl;
     }
 
     /**
@@ -422,7 +431,7 @@ class GetTTL {
 
         let ttl = '';
 
-        // Add standard prefixes that are commonly needed
+    /*    // Add standard prefixes that are commonly needed
         const standardPrefixes = [
             { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
             { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' },
@@ -437,7 +446,7 @@ class GetTTL {
         for (const prefix of standardPrefixes) {
             ttl += rdf.prefix(prefix.tag, prefix.uri);
         }
-
+    */
         // Transform INamespace[] to Turtle @prefix declarations
         for (const ns of ctx) {
             // Skip if not a valid object
@@ -475,12 +484,12 @@ class GetTTL {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            ttl += rdf.tab1('dcterms:title', itm.title);
+            ttl += rdf.tab1('rdfs:label', itm.title);
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            ttl += rdf.tab1('dcterms:description', itm.description);
+            ttl += rdf.tab1('rdfs:comment', itm.description);
         }
 
         // definition (multi-language)
@@ -567,18 +576,19 @@ class GetTTL {
         let ttl = '';
 
         if (!rdfSpecialization || !owlClassification) // both are defined or not, but anyways both are checked to satisfy the TS type guard
-            throw Error(`xMetadataForClasses: Unsupported itemType ${itm.itemType} for class metadata; expected Property, Link, Entity, Relationship, or Enumeration.`);
+            throw Error(`xMetadataForClasses: Missing parameter(s) when creating metadata for ${itm.id}`);
 
         // Item ID as subject
         const subjectId = this.formatTurtleId(itm.id);
         ttl += rdf.tab0(subjectId);
         // OWL classification only if specializes is not defined or if addExplicitSubTypes is true
-        if (!itm.specializes || itm.specializes == itm.itemType || options?.addExplicitSubTypes) {
+        // in case of a context ontology, we want to add the OWL classification, as we are not sure how it is defined
+        if (!itm.specializes || LIB.isContextId(itm.specializes) || options?.addExplicitSubTypes) {
             ttl += rdf.tab1('a', owlClassification);
         }
 
         // specializes
-        if (itm.specializes && itm.specializes != itm.itemType) {
+        if (itm.specializes) {
             const specializesId = this.formatTurtleId(itm.specializes);
             ttl += rdf.tab1(rdfSpecialization, specializesId);
         }
@@ -718,17 +728,17 @@ class GetTTL {
     }
 
     /**
-     * Transform hasTargetLink array to Turtle format
+     * Abstract method to transform link arrays (source or target) to Turtle format
      * Links are references to other entities
-     * @param links - Array of ATargetLink instances
+     * @param links - Array of ASourceLink or ATargetLink instances
      * @param rdf - CToTtl instance for building Turtle output
-     * @returns Turtle representation of target links
+     * @returns Turtle representation of links
      */
-    private static xTargetLinks(links: ATargetLink[], rdf: CToTtl): string {
+    private static xLinks(links: (ASourceLink | ATargetLink)[], rdf: CToTtl): string {
         let ttl = '';
 
         // Group links by their hasClass (link type)
-        const grouped = new Map<TPigId, ATargetLink[]>();
+        const grouped = new Map<TPigId, (ASourceLink | ATargetLink)[]>();
 
         for (const link of links) {
             if (!link.hasClass) continue;
@@ -764,47 +774,178 @@ class GetTTL {
     }
 
     /**
-     * Transform hasSourceLink array to Turtle format
-     * Links are references to other entities (source side of relationships)
-     * @param links - Array of ASourceLink instances
+     * Generate SHACL PropertyShape for a Property class
+     * @param prp - Property instance
      * @param rdf - CToTtl instance for building Turtle output
-     * @returns Turtle representation of source links
+     * @returns Turtle representation of SHACL PropertyShape
      */
-    private static xSourceLinks(links: ASourceLink[], rdf: CToTtl): string {
+    private static makePropertyShape(prp: Property, rdf: CToTtl): string {
+        // LOG.debug(`Generating SHACL PropertyShape for property ${JSON.stringify(prp)}`);
+
+        // No shapes for metamodel items, as they should not be instanciated:
+        if (prp.itemType == prp.id)
+            return '';
+
         let ttl = '';
 
-        // Group links by their hasClass (link type)
-        const grouped = new Map<TPigId, ASourceLink[]>();
+        // Create shape ID by appending 'Shape' to the property ID
+        const shapeId = this.formatTurtleId(prp.id) + DEF.suffixShape; // for CASCaRA ontology terms
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:PropertyShape');
+        ttl += rdf.tab1('sh:path', this.formatTurtleId(prp.id));
 
-        for (const link of links) {
-            if (!link.hasClass) continue;
-
-            if (!grouped.has(link.hasClass)) {
-                grouped.set(link.hasClass, []);
-            }
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            grouped.get(link.hasClass)!.push(link);
+        // datatype
+        if (prp.datatype) {
+            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(prp.datatype));
         }
 
-        // Generate Turtle for each link group
-        for (const [linkClass, linkInstances] of grouped) {
-            const predicate = this.formatTurtleId(linkClass);
+        // minCount
+        if (prp.minCount !== undefined) {
+            ttl += rdf.tab1('sh:minCount', prp.minCount);
+        }
 
-            // Add first link reference
-            const firstLink = linkInstances[0];
-            if (firstLink.idRef) {
-                ttl += rdf.tab1(predicate, this.formatTurtleId(firstLink.idRef));
+        // maxCount
+        if (prp.maxCount !== undefined) {
+            ttl += rdf.tab1('sh:maxCount', prp.maxCount);
+        }
 
-                // Add additional links for the same link type (if any)
-                for (let i = 1; i < linkInstances.length; i++) {
-                    if (linkInstances[i].idRef) {
-                        ttl += rdf.tab2(this.formatTurtleId(linkInstances[i].idRef));
-                    }
-                }
+        // maxLength (for string datatype)
+        if (prp.maxLength !== undefined) {
+            ttl += rdf.tab1('sh:maxLength', prp.maxLength);
+        }
+
+        // pattern (for string datatype)
+        if (prp.pattern) {
+            ttl += rdf.tab1('sh:pattern', `"${prp.pattern}"`);
+        }
+
+        // minInclusive (for numeric datatypes)
+        if (prp.minInclusive !== undefined) {
+            ttl += rdf.tab1('sh:minInclusive', prp.minInclusive);
+        }
+
+        // maxInclusive (for numeric datatypes)
+        if (prp.maxInclusive !== undefined) {
+            ttl += rdf.tab1('sh:maxInclusive', prp.maxInclusive);
+        }
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL PropertyShape for a Link class
+     * @param lnk - Link instance
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL PropertyShape
+     */
+    private static makeLinkShape(lnk: Link, rdf: CToTtl): string {
+        // LOG.debug(`Generating SHACL PropertyShape for link ${JSON.stringify(lnk)}`);
+
+        // No shapes for metamodel items, as they should not be instantiated:
+        if (lnk.itemType == lnk.id)
+            return '';
+
+        let ttl = '';
+
+        // Create shape ID by appending 'Shape' to the link ID
+        const shapeId = this.formatTurtleId(lnk.id) + DEF.suffixShape; // for CASCaRA ontology terms
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:PropertyShape');
+        ttl += rdf.tab1('sh:path', this.formatTurtleId(lnk.id));
+
+        // sh:class or sh:or based on enumeratedEndpoint
+        if (LIB.isArrayWithContent(lnk.enumeratedEndpoint)) {
+            const endpoints = lnk.enumeratedEndpoint as TPigId[];
+
+            if (endpoints.length === 1) {
+                // Single endpoint: use sh:class
+                ttl += rdf.tab1('sh:class', this.formatTurtleId(endpoints[0]));
+            } else {
+                // Multiple endpoints: use sh:or with sh:class for each
+                const classConstraints = endpoints
+                    .map(ep => `[ sh:class ${this.formatTurtleId(ep)} ]`)
+                    .join(' ');
+                ttl += rdf.tab1('sh:or', `( ${classConstraints} )`);
             }
         }
 
-        return ttl;
+        // minCount
+        if (lnk.minCount !== undefined) {
+            ttl += rdf.tab1('sh:minCount', lnk.minCount);
+        }
+
+        // maxCount
+        if (lnk.maxCount !== undefined) {
+            ttl += rdf.tab1('sh:maxCount', lnk.maxCount);
+        }
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape for Entity or Relationship classes
+     * Determines the type by checking for enumeratedSourceLink existence:
+     * - Relationship MUST have enumeratedSourceLink
+     * - Entity does NOT have enumeratedSourceLink
+     * @param elem - Entity or Relationship instance
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape
+     */
+    private static makeElementShape(elem: Entity | Relationship, rdf: CToTtl): string {
+        // LOG.debug(`Generating SHACL NodeShape for element ${JSON.stringify(elem)}`);
+
+        // No shapes for metamodel items, as they should not be instantiated:
+        if (elem.itemType == elem.id)
+            return '';
+
+        // Determine if this is a Relationship by checking for enumeratedSourceLink
+        const isRelationship = 'enumeratedSourceLink' in elem && elem.enumeratedSourceLink !== undefined;
+
+        let ttl = '';
+
+        // Create shape ID by appending 'Shape' to the element ID
+        const shapeId = this.formatTurtleId(elem.id) + DEF.suffixShape; // for CASCaRA ontology terms
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('sh:targetClass', this.formatTurtleId(elem.id));
+
+        // For entity instances: require either rdfs:label or rdfs:comment
+        // For relationship instances: both are optional
+        if (!isRelationship) {
+            ttl += rdf.tab1('sh:or', '( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] )');
+        }
+
+        // List enumerated properties - each property should have its own PropertyShape
+        if (LIB.isArrayWithContent(elem.enumeratedProperty)) {
+            const properties = elem.enumeratedProperty as TPigId[];
+            for (const propId of properties) {
+                // Reference the property's shape (which should be defined separately)
+                const propShapeId = this.formatTurtleId(propId) + DEF.suffixShape;
+                ttl += rdf.tab1('sh:property', propShapeId);
+            }
+        }
+
+        // List enumerated source links - only for Relationship
+        if (isRelationship && 'enumeratedSourceLink' in elem && LIB.isArrayWithContent(elem.enumeratedSourceLink)) {
+            const links = elem.enumeratedSourceLink as TPigId[];
+            for (const linkId of links) {
+                // Reference the link's shape (which should be defined separately)
+                const linkShapeId = this.formatTurtleId(linkId) + DEF.suffixShape;
+                ttl += rdf.tab1('sh:property', linkShapeId);
+            }
+        }
+
+        // List enumerated target links - both Entity and Relationship can have these
+        if (LIB.isArrayWithContent(elem.enumeratedTargetLink)) {
+            const links = elem.enumeratedTargetLink as TPigId[];
+            for (const linkId of links) {
+                // Reference the link's shape (which should be defined separately)
+                const linkShapeId = this.formatTurtleId(linkId) + DEF.suffixShape;
+                ttl += rdf.tab1('sh:property', linkShapeId);
+            }
+        }
+
+        return ttl + rdf.newLine();
     }
 }
 /*function makeShapeId(id: string) {

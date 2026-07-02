@@ -379,24 +379,24 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
 
     // Package constraint validation (670-679)
     670: {
-        en: (index) =>
-            `Package validation failed: item at index ${index} is missing id`,
-        de: (index) =>
-            `Paket-Validierung fehlgeschlagen: Element mit Index ${index} hat keine id`,
-        fr: (index) =>
-            `Échec de la validation du package: élément à l'index ${index} n'a pas d'id`,
-        es: (index) =>
-            `Error en la validación del paquete: elemento en índice ${index} no tiene id`
+        en: (pkgId, index) =>
+            `Package '${pkgId}' validation failed: item at index ${index} is missing id`,
+        de: (pkgId, index) =>
+            `Paket '${pkgId}' Validierung fehlgeschlagen: Element mit Index ${index} hat keine id`,
+        fr: (pkgId, index) =>
+            `Échec de la validation du package '${pkgId}': élément à l'index ${index} n'a pas d'id`,
+        es: (pkgId, index) =>
+            `Error en la validación del paquete '${pkgId}': elemento en índice ${index} no tiene id`
     },
     671: {
-        en: (id, firstIndex, secondIndex) =>
-            `Package validation failed: duplicate ID '${id}' found at indices ${firstIndex} and ${secondIndex}`,
-        de: (id, firstIndex, secondIndex) =>
-            `Paket-Validierung fehlgeschlagen: doppelte ID '${id}' bei Indizes ${firstIndex} und ${secondIndex} gefunden`,
-        fr: (id, firstIndex, secondIndex) =>
-            `Échec de la validation du package: ID dupliqué '${id}' trouvé aux indices ${firstIndex} et ${secondIndex}`,
-        es: (id, firstIndex, secondIndex) =>
-            `Error en la validación del paquete: ID duplicado '${id}' encontrado en índices ${firstIndex} y ${secondIndex}`
+        en: (pkgId, id, firstIndex, secondIndex) =>
+            `Package '${pkgId}' validation failed: duplicate ID '${id}' found at ${firstIndex === 'package' ? 'package' : `index ${firstIndex}`} and index ${secondIndex}`,
+        de: (pkgId, id, firstIndex, secondIndex) =>
+            `Paket '${pkgId}' Validierung fehlgeschlagen: doppelte ID '${id}' bei ${firstIndex === 'package' ? 'Paket' : `Index ${firstIndex}`} und Index ${secondIndex} gefunden`,
+        fr: (pkgId, id, firstIndex, secondIndex) =>
+            `Échec de la validation du package '${pkgId}': ID dupliqué '${id}' trouvé au ${firstIndex === 'package' ? 'package' : `indice ${firstIndex}`} et indice ${secondIndex}`,
+        es: (pkgId, id, firstIndex, secondIndex) =>
+            `Error en la validación del paquete '${pkgId}': ID duplicado '${id}' encontrado en ${firstIndex === 'package' ? 'paquete' : `índice ${firstIndex}`} e índice ${secondIndex}`
     },
     672: {
         en: (parentId, propIndex, msg) =>
@@ -539,6 +539,16 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `${classType} '${classId}' ${arrayName}[${index}] référence '${linkId}' - ${msg}`,
         es: (classId, classType, arrayName, index, linkId, msg) =>
             `${classType} '${classId}' ${arrayName}[${index}] referencia '${linkId}' - ${msg}`
+    },
+    686: {
+        en: (prefix, itemId) =>
+            `Package validation failed: namespace prefix '${prefix}' used in item '${itemId}' is not defined in package context`,
+        de: (prefix, itemId) =>
+            `Paket-Validierung fehlgeschlagen: Namespace-Präfix '${prefix}' in Element '${itemId}' ist nicht im Paket-Kontext definiert`,
+        fr: (prefix, itemId) =>
+            `Échec de la validation du package: le préfixe d'espace de noms '${prefix}' utilisé dans l'élément '${itemId}' n'est pas défini dans le contexte du package`,
+        es: (prefix, itemId) =>
+            `Error en la validación del paquete: el prefijo de espacio de nombres '${prefix}' usado en el elemento '${itemId}' no está definido en el contexto del paquete`
     },
 
     // General errors (690-699)

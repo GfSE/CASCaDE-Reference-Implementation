@@ -48,21 +48,22 @@
  * @ToDo:
  * ✅ Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check?
  * ✅ This does also concern enumerations, which have minCount and maxCount at present --> (perhaps) move it to the link class!
+ * - allow packages to be nested
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
+ * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
  * - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *   PigItem.normalizeId() shortly before validate() in set() ?
  * ✅ Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
  * ✅ Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed? --> YES.
- * - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names using normalizeId()
- * - allow packages to be nested
- * - implement the import of configurable properties and links for aPackage.
+ * ✅ Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names using normalizeId()
+ * ✅ implement the import of configurable properties and links for aPackage.
  * - Consider the storage of numeric and boolean values: should be string?
  * ✅ Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}? --> keep as is
  * - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
  *   This code could just *ignore* additional properties.
- * - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
+ * - Consider the schema of cas.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  * - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
- * - There are redundant transformations from JSON-LD to internal format for individual items and a whole package.
+ * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -481,16 +482,32 @@ export class PigItem {
         let prefix: string;
         if (!itemType || PigItem.isClass(itemType)) {
             prefix = DEF.defaultOntologyNamespace; // add a default namespace prefix for classes if missing
+            PigItem.usedDefaultNamespaces.add(prefix);
         //  else if (PigItem.isInstance(itemType)) {
         } else {
             // includes all references within instances where itemType is undefined
             prefix = DEF.defaultDataNamespace; // add a default namespace prefix for instances if missing
+            PigItem.usedDefaultNamespaces.add(prefix);
         }
 
         const normalized = `${prefix}${id}`;
         // LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
 
         return normalized;
+    }
+
+    /**
+     * Track which default namespaces ('o:', 'd:') have been assigned by normalizeId()
+     * This allows APackage to add only the namespaces that are actually being used.
+     */
+    static usedDefaultNamespaces: Set<string> = new Set<string>();
+
+    /**
+     * Clear the set of used default namespaces.
+     * Should be called before processing a new package.
+     */
+    static clearUsedDefaultNamespaces(): void {
+        PigItem.usedDefaultNamespaces.clear();
     }
 }
 
@@ -1500,7 +1517,7 @@ export class APackage extends AnElement implements IAPackage {
         // Instantiate each graph item:
         const instantiatedGraph: TPigItem[] = [];
         const errors: string[] = [];
-    
+
         for (const item of _pkg.graph) {
             // LOG.debug(`APackage.set: instantiating item ${JSON.stringify(item, null, 2)}`);
             const result = this.createItem(item, { defaultModified: _pkg.modified, source: 'any' });
@@ -1514,13 +1531,18 @@ export class APackage extends AnElement implements IAPackage {
         }
         // LOG.debug('APackage.set: ',JSON.stringify(_pkg, null, 2));
 
+        // Ensure default namespace prefixes exist in context BEFORE validation
+        // Only adds namespaces that were actually used during normalization
+        const _context = this.ensureDefaultNamespaces(_pkg.context);
+
+        // Validate the package with all preprocessing completed
         const pkgValidation = this.validate(_pkg, options);
         if (!pkgValidation.ok)
             errors.push(`${pkgValidation.statusText} (${pkgValidation.status})` || 'Unknown constraint error');
 
-        // Set the package properties and the instantiated graph, even if some errors have occurred:
+        // Now set the package properties and instantiated graph (with errors if any)
         super.set(_pkg);
-        this.context = _pkg.context;
+        this.context = _context;
         this.graph = instantiatedGraph;
 
         if (errors.length > 0) {
@@ -1533,6 +1555,83 @@ export class APackage extends AnElement implements IAPackage {
 
         // LOG.debug(`APackage.set: package ${_pkg.id} set with ${instantiatedGraph.length} of ${_pkg.graph.length} items, status:`, this.lastStatus);
         return this;
+    }
+
+    /**
+     * Ensure default namespace prefixes 'o:' and 'd:' exist in the package context
+     * if they have been assigned by normalizeId() during import.
+     * 
+     * This method only adds namespaces that are tracked in PigItem.usedDefaultNamespaces,
+     * meaning they were actually assigned to IDs lacking explicit namespaces.
+     * 
+     * If a prefix is already defined in context, the existing definition is kept.
+     * If not defined but was used, a dummy namespace is added with a descriptive URI.
+     * 
+     * This prevents namespace validation errors for locally-defined terms.
+     * 
+     * @param context - The context from the package
+     * @returns Updated context with necessary default namespaces
+     */
+    private ensureDefaultNamespaces(context?: INamespace[] | string | Record<string, string>): INamespace[] | string | Record<string, string> | undefined {
+        // If no default namespaces were used, return context unchanged
+        if (PigItem.usedDefaultNamespaces.size === 0) {
+            return context;
+        }
+
+        // If no context exists, create an empty array
+        if (!context) {
+            context = [];
+        }
+
+        // Convert context to array format if needed
+        let contextArray: INamespace[];
+
+        if (Array.isArray(context)) {
+            contextArray = context as INamespace[];
+        } else if (typeof context === 'object') {
+            // Convert JSON-LD object format to INamespace array
+            contextArray = Object.entries(context).map(([key, value]) => ({
+                tag: key.endsWith(':') ? key : `${key}:`,
+                uri: value as string
+            }));
+        } else {
+            // Context is a string (URI) - rare case, just create new array
+            contextArray = [];
+        }
+
+        // Check which used default namespaces are missing from context
+        for (const usedPrefix of PigItem.usedDefaultNamespaces) {
+            // Normalize prefix (remove colon for comparison)
+            const prefixWithoutColon = usedPrefix.endsWith(':') ? usedPrefix.slice(0, -1) : usedPrefix;
+
+            // Check if this prefix already exists in context
+            const prefixExists = contextArray.some(ns => {
+                const tag = ns.tag.endsWith(':') ? ns.tag.slice(0, -1) : ns.tag;
+                return tag === prefixWithoutColon;
+            });
+
+            // Add missing namespace
+            if (!prefixExists) {
+                let uri: string;
+                if (usedPrefix === DEF.defaultOntologyNamespace) {
+                    uri = `${DEF.pigPath}ontology/application#`;
+                } else if (usedPrefix === DEF.defaultDataNamespace) {
+                    uri = `${DEF.pigPath}example#`;
+                } else {
+                    // Fallback for any other default prefix
+                    uri = `${DEF.pigPath}default/${prefixWithoutColon}#`;
+                }
+
+                contextArray.push({
+                    tag: usedPrefix,
+                    uri: uri
+                });
+                // LOG.debug(`APackage: Added default namespace '${usedPrefix}' to context (was used during normalization)`);
+            }
+        }
+
+        // Return the modified context array
+        return contextArray;
     }
 
     get() {
@@ -1548,15 +1647,18 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     setJSONLD(doc: any, options?:any) {
+        // Clear the tracker for used default namespaces before transformation
+        PigItem.clearUsedDefaultNamespaces();
+
         // @ToDo: Perhaps we must normalize the ids like in XML import to assure they have a namespace or are an URI
         // LOG.debug(`APackage.setJSONLD: ${JSON.stringify(doc, null, 2)}`);
 
         // Extract @context
         const ctx = this.extractContextLD(doc);
-        
+
         // Extract package metadata
         const meta = this.extractMetadataLD(doc);
-        
+
         // Extract and process @graph
         const graph: any[] = Array.isArray(doc['@graph']) 
             ? doc['@graph'] 
@@ -1583,6 +1685,9 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     setXML(xmlString: stringXML, options?:any) {
+        // Clear the tracker for used default namespaces before transformation
+        PigItem.clearUsedDefaultNamespaces();
+
         // 1. Parse XML string to JSON
         //    The context is skipped here, as it is extracted separately below.
         const parsed = xmlToJson(xmlString);
@@ -1817,13 +1922,13 @@ export class APackage extends AnElement implements IAPackage {
      * 
      * @example
      * Input XML:
-     * <cas:aPackage xmlns:pig="https://pig.gfse.org/" 
+     * <cas:aPackage xmlns:pig="https://cas.gfse.org/" 
      *               xmlns:dcterms="http://purl.org/dc/terms/"
      *               xmlns="http://default.org/">
      * 
      * Output:
      * [
-     *   { tag: "cas:", uri: "https://pig.gfse.org/" },
+     *   { tag: "cas:", uri: "https://cas.gfse.org/" },
      *   { tag: "dcterms:", uri: "http://purl.org/dc/terms/" },
      *   { tag: "@vocab", uri: "http://default.org/" }
      * ]

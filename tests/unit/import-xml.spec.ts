@@ -104,6 +104,7 @@ describe('import XML - ID normalization', () => {
                           xmlns:dcterms="http://purl.org/dc/terms/"
                           xmlns:skos="http://www.w3.org/2004/02/skos/core#"
                           xmlns:owl="http://www.w3.org/2002/07/owl#"
+                          xmlns:xs="http://www.w3.org/2001/XMLSchema#"
                           xmlns:o="https://example.org/ontology#"
                           xmlns:d="https://example.org/data#"
                           id="TestPackage">

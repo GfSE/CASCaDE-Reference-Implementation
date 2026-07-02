@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' @click='openDialog'>Export JSON-LD</v-btn>
+    <v-btn color='secondary' class='text-none' @click='openDialog'>🡖 CASCaRA JSON-LD</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Export Packages as JSON-LD</v-card-title>
@@ -66,7 +66,7 @@ import { toRaw } from 'vue';
 import { PackageCache } from '../../../stores/package-cache';
 import { getJSONLD } from '../../../common/export/jsonld/getJSONLD';
 import { PLI } from '../../../common/lib/platform-independence';
-import { LOG } from '../../../common/lib/helpers';
+import { LIB, LOG } from '../../../common/lib/helpers';
 
 @Options({
   data() {
@@ -81,8 +81,8 @@ import { LOG } from '../../../common/lib/helpers';
             required: (value: string) => !!value || 'Filename is required',
             extension: (value: string) => {
                 if (!value) return true;
-                const hasExtension = value.endsWith('.jsonld') || value.endsWith('.json');
-                return hasExtension || 'Filename should end with .jsonld or .json';
+                const hasExtension = value.endsWith('.cas.jsonld') || value.endsWith('.cas.json');
+                return hasExtension || 'Filename should end with .cas.jsonld or .cas.json';
             }
         }
     }
@@ -90,7 +90,7 @@ import { LOG } from '../../../common/lib/helpers';
   computed: {
     isFilenameValid(): boolean {
         const fn = this.filename as string;
-        return fn.length > 0 && (fn.endsWith('.jsonld') || fn.endsWith('.json'));
+        return fn.length > 0 && (fn.endsWith('.cas.jsonld') || fn.endsWith('.cas.json'));
     }
   },
   methods: {
@@ -137,10 +137,10 @@ import { LOG } from '../../../common/lib/helpers';
             }
 
             // Sanitize filename: remove invalid characters
-            const sanitized = titleText.replace(/[<>:"/\\|?*]/g, '_');
-            this.filename = `${sanitized}.jsonld`;
+            const sanitized = LIB.makeFilename(titleText);
+            this.filename = `${sanitized}.cas.jsonld`;
         } else {
-            this.filename = 'export.jsonld';
+            this.filename = 'export.cas.jsonld';
         }
     },
     async exportPackages() {

@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' @click='dialog = true'>Import JSON-LD</v-btn>
+    <v-btn color='secondary' class='text-none' @click='dialog = true'>CASCaRA JSON-LD 🡕</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Select JSON-LD Files</v-card-title>
