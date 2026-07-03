@@ -433,23 +433,16 @@ class GetTTL {
 
         let ttl = '';
 
-    /*    // Add standard prefixes that are commonly needed
-        const standardPrefixes = [
-            { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
-            { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' },
-            { tag: 'skos', uri: 'https://www.w3.org/TR/skos-reference/' },
+        // Check which required prefixes are present in the context
+        const requiredPrefixes = [
             { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' },
-            { tag: 'sh', uri: 'http://www.w3.org/ns/shacl#' },
-            { tag: 'xs', uri: 'http://www.w3.org/2001/XMLSchema#' },
-            { tag: 'dcterms', uri: 'http://purl.org/dc/terms/' },
-            { tag: 'schema', uri: 'http://schema.org/' }
+            { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
+            { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' }
         ];
 
-        for (const prefix of standardPrefixes) {
-            ttl += rdf.prefix(prefix.tag, prefix.uri);
-        }
-    */
-        // Transform INamespace[] to Turtle @prefix declarations
+        const existingTags = new Set<string>();
+
+        // First pass: collect existing tags and output them
         for (const ns of ctx) {
             // Skip if not a valid object
             if (!ns || typeof ns !== 'object' || Array.isArray(ns)) {
@@ -464,7 +457,16 @@ class GetTTL {
 
             // Ensure tag and uri are strings
             if (typeof tag === 'string' && typeof uri === 'string') {
+                existingTags.add(tag);
                 ttl += rdf.prefix(tag, uri);
+            }
+        }
+
+        // Second pass: add any missing required prefixes
+        // ... as those are not necessarily needed in other formats, but are required for Turtle
+        for (const prefix of requiredPrefixes) {
+            if (!existingTags.has(prefix.tag)) {
+                ttl += rdf.prefix(prefix.tag, prefix.uri);
             }
         }
 
