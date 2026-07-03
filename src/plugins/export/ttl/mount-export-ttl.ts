@@ -1,7 +1,7 @@
 import { App, Plugin } from 'vue';
 import TtlExportComponent from "./export-ttl.vue";
 
-const rdfExportPlugin: Plugin = {
+const ttlExportPlugin: Plugin = {
     install(app: App /*, options?*/) {
         // global property
         // app.config.globalProperties.$definedproperty = 'Example Global Property';
@@ -17,4 +17,4 @@ const rdfExportPlugin: Plugin = {
     }
 }
 
-export default rdfExportPlugin;
+export default ttlExportPlugin;
