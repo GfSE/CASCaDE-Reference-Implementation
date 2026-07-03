@@ -893,12 +893,12 @@ export interface IEnumeratedValue {
 export interface IEnumeration extends IIdentifiable {
     datatype: string; // must be of XsDataType
     enumeratedValue: IEnumeratedValue[]; // array of allowed values, datatype-dependent
-    unit?: string;  // according to SI units
+//    unit?: string;  // according to SI units
 }
 export class Enumeration extends Identifiable implements IEnumeration {
     datatype!: string;
     enumeratedValue!: IEnumeratedValue[]; 
-    unit?: string;
+//    unit?: string;
     constructor() {
         super({itemType:PigItemType.Enumeration});
     }
@@ -944,7 +944,7 @@ export class Enumeration extends Identifiable implements IEnumeration {
             super.set(_itm);
             this.datatype = _itm.datatype;
             this.enumeratedValue = _itm.enumeratedValue;
-            this.unit = _itm.unit;
+            // this.unit = _itm.unit;
         }
         return this; // make chainable
     }
@@ -953,7 +953,7 @@ export class Enumeration extends Identifiable implements IEnumeration {
             ...super.get(),
             datatype: this.datatype,
             enumeratedValue: this.enumeratedValue,
-            unit: this.unit
+            // unit: this.unit
         }) as IEnumeration;
     }
     fromJSONLD(itm: any) {
@@ -979,7 +979,7 @@ export interface IProperty extends IIdentifiable {
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
     defaultValue?: string;   // in PIG, values of all datatypes are strings
-    unit?: string;  // according to SI units
+    // unit?: string;  // according to SI units
     composes?: TPigId[];  // must be URI of another Property, no cyclic references
 }
 export class Property extends Identifiable implements IProperty {
@@ -991,7 +991,7 @@ export class Property extends Identifiable implements IProperty {
     minInclusive?: number;
     maxInclusive?: number;
     defaultValue?: string;
-    unit?: string;
+    // unit?: string;
     composes?: TPigId[];
     constructor() {
         super({itemType:PigItemType.Property});
@@ -1043,7 +1043,7 @@ export class Property extends Identifiable implements IProperty {
             this.minInclusive = _itm.minInclusive;
             this.maxInclusive = _itm.maxInclusive;
             this.defaultValue = _itm.defaultValue;
-            this.unit = _itm.unit;
+            // this.unit = _itm.unit;
             this.composes = _itm.composes;
         }
         return this; // make chainable
@@ -1059,7 +1059,7 @@ export class Property extends Identifiable implements IProperty {
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
             defaultValue: this.defaultValue,
-            unit: this.unit,
+            // unit: this.unit,
             composes: this.composes
         }) as IProperty;
     }

@@ -858,7 +858,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         '@type': 'owl:DatatypeProperty',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         'sh:datatype': { '@id': 'xs:integer' },
-                        [`${DEF.pfxNsMeta}unit`]: 'MB',
+                    //    [`${DEF.pfxNsMeta}unit`]: 'MB',  -> now we need to use an entity for a value with unit
                         [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Volume' }
                         ],

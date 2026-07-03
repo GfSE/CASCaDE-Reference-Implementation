@@ -23,19 +23,22 @@
                     <div class='mt-4'>
                         <h4 class='mb-2'>Export Options</h4>
                         <v-checkbox
-                            v-model='options.addShapes'
-                            label='Include SHACL shapes'
+                            v-model='options.skipShapes'
+                            label='Skip SHACL shapes for read-only applications'
                             density='compact'
                             hide-details
                             :disabled='isExporting'
                         ></v-checkbox>
                         <v-checkbox
-                            v-model='options.addHostedOntologies'
-                            label='Include hosted ontologies'
+                            v-model='options.skipHostedOntologies'
                             density='compact'
                             hide-details
                             :disabled='isExporting'
-                        ></v-checkbox>
+                        >
+                            <template v-slot:label>
+                                Skip hosted ontologies <i>(not yet implemented)</i>
+                            </template>
+                        </v-checkbox>
                         <v-checkbox
                             v-model='options.addExplicitSubTypes'
                             label='Add explicit rdfs:subClassOf / rdfs:subPropertyOf'
@@ -45,7 +48,7 @@
                         ></v-checkbox>
                         <v-checkbox
                             v-model='options.addItemTypes'
-                            label='Include cas:itemType statements'
+                            label='Add cas:itemType statements for easier transformation'
                             density='compact'
                             hide-details
                             :disabled='isExporting'
@@ -110,12 +113,12 @@ import { LIB, LOG } from '../../../common/lib/helpers';
         isExporting: false,
         errorMessage: '',
         successMessage: '',
-        // Export options matching IOptionsTTL interface with default values
+        // Export options - negated for those that default to true, so all checkboxes default to false
         options: {
-            addShapes: true,
-            addHostedOntologies: true,
-            addExplicitSubTypes: false,
-            addItemTypes: true
+            skipShapes: false,              // Will be negated to addShapes: true
+            skipHostedOntologies: false,    // Will be negated to addHostedOntologies: true
+            addExplicitSubTypes: false,     // Passed as-is (false = don't add)
+            addItemTypes: false             // Passed as-is (false = don't add, must be ticked to add)
         },
         rules: {
             required: (value: string) => !!value || 'Filename is required',
@@ -191,7 +194,13 @@ import { LIB, LOG } from '../../../common/lib/helpers';
             // Use toRaw to unwrap Pinia's reactive proxies
             const ttlPackages = pkgs.map((pkg: any) => {
                 const rawPkg = toRaw(pkg);
-                return getTTL(rawPkg, this.options);
+                // Negate the skip options to match getTTL's expected interface
+                return getTTL(rawPkg, {
+                    addShapes: !this.options.skipShapes,
+                    addHostedOntologies: !this.options.skipHostedOntologies,
+                    addExplicitSubTypes: this.options.addExplicitSubTypes,
+                    addItemTypes: this.options.addItemTypes
+                });
             });
 
             // Combine all TTL strings with line breaks

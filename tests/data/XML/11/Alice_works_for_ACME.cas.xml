@@ -18,12 +18,6 @@
     
     <graph>
         <!-- Entity Classes -->
-        <cas:Entity id="cas:Entity" cas:hasClass="owl:Class">
-            <dcterms:title xml:lang="en">Entity</dcterms:title>
-            <skos:definition xml:lang="en">A CASCaRA meta-model item used for entities (aka resources or artifacts).</skos:definition>
-            <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-        </cas:Entity>
-
         <cas:Entity id="cas:Organizer" cas:hasClass="owl:Class">
             <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title xml:lang="en">Organizer</dcterms:title>
@@ -52,24 +46,9 @@
             <cas:enumeratedTargetLink>cas:lists</cas:enumeratedTargetLink>
         </cas:Entity>
 
-        <!-- Relationship Class -->
-        <cas:Relationship id="cas:Relationship" cas:hasClass="owl:Class">
-            <dcterms:title xml:lang="en">Relationship</dcterms:title>
-            <skos:definition xml:lang="en">A CASCaRA meta-model item used for reified relationships (aka predicates).</skos:definition>
-            <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-            <cas:enumeratedSourceLink>cas:linksSource</cas:enumeratedSourceLink>
-            <cas:enumeratedTargetLink>cas:linksTarget</cas:enumeratedTargetLink>
-        </cas:Relationship>
+        <!-- Relationship Classes -->
 
         <!-- Property Classes -->
-        <cas:Property id="cas:Property" cas:hasClass="owl:DatatypeProperty">
-            <dcterms:title xml:lang="en">Property</dcterms:title>
-            <skos:definition xml:lang="en">A CASCaRA meta-model item used for properties (aka attributes).</skos:definition>
-            <xs:simpleType>
-                <xs:restriction base="xs:anyType"/>
-            </xs:simpleType>
-        </cas:Property>
-
         <cas:Property id="cas:Category" cas:hasClass="owl:DatatypeProperty">
             <cas:specializes>cas:Property</cas:specializes>
             <dcterms:title xml:lang="en">has category</dcterms:title>

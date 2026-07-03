@@ -28,45 +28,6 @@
     "dcterms:modified": "2026-05-14T08:07:52.031Z",
     "@graph": [
         {
-            "@id": "cas:Enumeration",
-            "@type": "owl:Class",
-            "cas:itemType": {
-                "@id": "cas:Enumeration"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "Enumeration"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "A CASCaRA meta-model item used for value enumerations."
-                }
-            ]
-        },
-        {
-            "@id": "cas:Entity",
-            "@type": "owl:Class",
-            "cas:itemType": {
-                "@id": "cas:Entity"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "Entity"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "A CASCaRA meta-model item used for entities (aka resources or artifacts)."
-                }
-            ],
-            "cas:enumeratedProperty": [
-                {
-                    "@id": "cas:Category"
-                }
-            ]
-        },
-        {
             "@id": "cas:Organizer",
             "@type": "owl:Class",
             "cas:specializes": {
@@ -202,58 +163,6 @@
             ]
         },
         {
-            "@id": "cas:Relationship",
-            "@type": "owl:Class",
-            "cas:itemType": {
-                "@id": "cas:Relationship"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "Relationship"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "A CASCaRA meta-model item used for reified relationships (aka predicates)."
-                }
-            ],
-            "cas:enumeratedProperty": [
-                {
-                    "@id": "cas:Category"
-                }
-            ],
-            "cas:enumeratedSourceLink": [
-                {
-                    "@id": "cas:linksSource"
-                }
-            ],
-            "cas:enumeratedTargetLink": [
-                {
-                    "@id": "cas:linksTarget"
-                }
-            ]
-        },
-        {
-            "@id": "cas:Property",
-            "@type": "owl:DatatypeProperty",
-            "cas:itemType": {
-                "@id": "cas:Property"
-            },
-            "dcterms:title": [
-                {
-                    "@value": "Property"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "A CASCaRA meta-model item used for properties (aka attributes)."
-                }
-            ],
-            "sh:datatype": {
-                "@id": "xs:anyType"
-            }
-        },
-        {
             "@id": "cas:Diagram",
             "@type": "owl:DatatypeProperty",
             "cas:specializes": {
@@ -327,31 +236,6 @@
             },
             "sh:minCount": 0,
             "sh:maxCount": 1
-        },
-        {
-            "@id": "cas:Link",
-            "@type": "owl:ObjectProperty",
-            "cas:itemType": {
-                "@id": "cas:Link"
-            },
-            "cas:enumeratedEndpoint": [
-                {
-                    "@id": "cas:Entity"
-                },
-                {
-                    "@id": "cas:Relationship"
-                }
-            ],
-            "dcterms:title": [
-                {
-                    "@value": "linked with"
-                }
-            ],
-            "skos:definition": [
-                {
-                    "@value": "A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element."
-                }
-            ]
         },
         {
             "@id": "cas:linksSource",

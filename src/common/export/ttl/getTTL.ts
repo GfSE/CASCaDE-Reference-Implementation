@@ -142,7 +142,7 @@ class GetTTL {
         // End the package metadata triple (no properties follow for packages)
         ttl += rdf.newLine();
 
-        // Add graph items
+        // Add graph items (including metamodel class shapes if requested)
         ttl += this.xGraph(pkg, filterTypes, rdf, options);
 
         return ttl;
@@ -241,10 +241,10 @@ class GetTTL {
             ttl += rdf.tab1('sh:datatype', this.formatTurtleId(enm.datatype));
         } */
 
-        // unit (optional)
+    /*    // unit (optional)
         if (enm.unit) {
             ttl += rdf.tab1('cas:unit', `"${enm.unit}"`);
-        }
+        } */
 
         return ttl + rdf.newLine();
         // No shape for enumerations, as they are never instantiated.
@@ -271,10 +271,10 @@ class GetTTL {
             ttl += rdf.tab1('sh:defaultValue', `"${prp.defaultValue}"`);
         }
 
-        // unit
+    /*    // unit
         if (prp.unit) {
             ttl += rdf.tab1('cas:unit', `"${prp.unit}"`);
-        }
+        } */
 
         // composes (references to other Properties)
         if (LIB.isArrayWithContent(prp.composes)) {
@@ -294,6 +294,8 @@ class GetTTL {
         // Add SHACL shape if requested
         if (options?.addShapes) {
             ttl += this.makePropertyShape(prp, rdf);
+            // Note: Property class shape (for validating property class definitions) 
+            // is generated once per package, not per property
         }
 
         return ttl;
@@ -611,7 +613,7 @@ class GetTTL {
         pkg: APackage,
         filterTypes: PigItemTypeValue[] | undefined,
         rdf: CToTtl,
-        options?: { addItemTypes?: boolean }
+        options?: IOptionsTTL
     ): string {
         const graph = pkg.graph;
 
@@ -629,6 +631,22 @@ class GetTTL {
         // Transform each graph item to Turtle
         for (const item of items) {
             ttl += getTTL(item, options);
+        }
+
+        // Add metamodel class shapes for Property, Link, Enumeration, Entity, and Relationship classes (once per package)
+        if (options?.addShapes) {
+            ttl += rdf.newLine();
+            ttl += rdf.heading('Metamodel Class Shapes');
+            ttl += this.makePropertyClassShape(rdf);
+            ttl += this.makePropertyShapeShape(rdf);
+            ttl += this.makeLinkClassShape(rdf);
+            ttl += this.makeLinkShapeShape(rdf);
+            ttl += this.makeEnumerationClassShape(rdf);
+            ttl += this.makeEnumerationShapeShape(rdf);
+            ttl += this.makeEntityClassShape(rdf);
+            ttl += this.makeEntityShapeShape(rdf);
+            ttl += this.makeRelationshipClassShape(rdf);
+            ttl += this.makeRelationshipShapeShape(rdf);
         }
 
         ttl += rdf.newLine();
@@ -828,6 +846,482 @@ class GetTTL {
         if (prp.maxInclusive !== undefined) {
             ttl += rdf.tab1('sh:maxInclusive', prp.maxInclusive);
         }
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape for Property classes in general
+     * This shape validates that any Property class follows the CASCaRA metamodel
+     * It is generated once per package, not per individual property
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for all Property classes
+     */
+    private static makePropertyClassShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create a single shape ID for all Property classes
+        const classShapeId = this.formatTurtleId(PigItemType.Property) + '_class' + DEF.suffixShape;
+        ttl += rdf.tab0(classShapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all classes that are subclasses of cas:Property
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
+        // Also target direct instances of owl:DatatypeProperty in the CASCaRA namespace
+        ttl += rdf.tab1('sh:targetClass', 'owl:DatatypeProperty');
+
+        // Close the shape - no additional properties allowed beyond those explicitly defined
+        ttl += rdf.tab1('sh:closed', 'true');
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+
+        // Require either rdf:type owl:DatatypeProperty OR rdfs:subPropertyOf or both
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:DatatypeProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] )');
+
+        // Required property: rdfs:label (title)
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+
+        // Optional properties with constraints
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path sh:defaultValue ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:composes ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape that validates Property classes have a corresponding PropertyShape with datatype
+     * This is a separate metamodel validation shape generated once per package
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for PropertyShape requirement
+     */
+    private static makePropertyShapeShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create shape ID for PropertyShape requirement validation
+        const shapeId = this.formatTurtleId(PigItemType.Property) + DEF.suffixShape + DEF.suffixShape;
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all Property classes (same targets as the class shape)
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
+        ttl += rdf.tab1('sh:targetClass', 'owl:DatatypeProperty');
+
+        // Each Property class must have a corresponding PropertyShape with at least sh:datatype
+        // Using sh:sparql with FILTER NOT EXISTS to check for the required shape
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Property class must have a corresponding PropertyShape with at least sh:datatype defined" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:PropertyShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:path $this ;`;
+        ttl += `\n\t\t\t\t\t\tsh:datatype ?dt .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape for Link classes in general
+     * This shape validates that any Link class follows the CASCaRA metamodel
+     * It is generated once per package, not per individual link
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for all Link classes
+     */
+    private static makeLinkClassShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create a single shape ID for all Link classes
+        const classShapeId = this.formatTurtleId(PigItemType.Link) + '_class' + DEF.suffixShape;
+        ttl += rdf.tab0(classShapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all classes that are subclasses of cas:Link
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
+        // Also target direct instances of owl:ObjectProperty in the CASCaDE namespace
+        ttl += rdf.tab1('sh:targetClass', 'owl:ObjectProperty');
+
+        // Close the shape - no additional properties allowed beyond those explicitly defined
+        ttl += rdf.tab1('sh:closed', 'true');
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+
+        // Require either rdf:type owl:ObjectProperty OR rdfs:subPropertyOf (or both)
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:ObjectProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] )');
+
+        // Required property: rdfs:label (title)
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+
+        // Required property: rdfs:range (from enumeratedEndpoint)
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:range ; sh:minCount 1 ]');
+
+        // Optional properties with constraints
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape that validates Link classes have a corresponding PropertyShape with class constraint
+     * This is a separate metamodel validation shape generated once per package
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for PropertyShape requirement
+     */
+    private static makeLinkShapeShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create shape ID for PropertyShape requirement validation
+        const shapeId = this.formatTurtleId(PigItemType.Link) + '_shape_requirement' + DEF.suffixShape;
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all Link classes (same targets as the class shape)
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
+        ttl += rdf.tab1('sh:targetClass', 'owl:ObjectProperty');
+
+        // Each Link class must have a corresponding PropertyShape with at least sh:class or sh:or
+        // Using sh:sparql with FILTER NOT EXISTS to check for the required shape
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Link class must have a corresponding PropertyShape with at least sh:class or sh:or constraint defined" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:PropertyShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:path $this .`;
+        ttl += `\n\t\t\t\t\tFILTER ( EXISTS { ?shape sh:class ?c } || EXISTS { ?shape sh:or ?o } )`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape for Enumeration classes in general
+     * This shape validates that any Enumeration class follows the CASCaRA metamodel
+     * It is generated once per package, not per individual enumeration
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for all Enumeration classes
+     */
+    private static makeEnumerationClassShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create a single shape ID for all Enumeration classes
+        const classShapeId = this.formatTurtleId(PigItemType.Enumeration) + '_class' + DEF.suffixShape;
+        ttl += rdf.tab0(classShapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all classes that are subclasses of cas:Enumeration
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        // Also target direct instances of owl:Class in the CASCaDE namespace
+        ttl += rdf.tab1('sh:targetClass', 'owl:Class');
+
+        // Close the shape - no additional properties allowed beyond those explicitly defined
+        ttl += rdf.tab1('sh:closed', 'true');
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+
+        // Require either rdf:type owl:Class OR rdfs:subClassOf (or both)
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )');
+
+        // Required property: rdfs:label (title)
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+
+        // Required property: cas:enumeratedValue (array of allowed values)
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:enumeratedValue ; sh:minCount 1 ]');
+
+        // Optional properties with constraints
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape that validates Enumeration classes have proper enumerated values
+     * This is a separate metamodel validation shape generated once per package
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for enumerated value validation
+     */
+    private static makeEnumerationShapeShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create shape ID for enumerated value validation
+        const shapeId = this.formatTurtleId(PigItemType.Enumeration) + '_shape' + DEF.suffixShape;
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all Enumeration classes (same targets as the class shape)
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        ttl += rdf.tab1('sh:targetClass', 'owl:Class');
+
+        // Each Enumeration class must have at least one enumerated value defined
+        // Using sh:sparql to validate that cas:enumeratedValue points to valid resources
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Enumeration class must have at least one valid enumeratedValue" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t$this cas:enumeratedValue ?value .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape for Entity classes in general
+     * This shape validates that any Entity class follows the CASCaRA metamodel
+     * It is generated once per package, not per individual entity
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for all Entity classes
+     */
+    private static makeEntityClassShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create a single shape ID for all Entity classes
+        const classShapeId = this.formatTurtleId(PigItemType.Entity) + '_class' + DEF.suffixShape;
+        ttl += rdf.tab0(classShapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all classes that are subclasses of cas:Entity
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        // Also target direct instances of owl:Class that are Entities in the CASCaDE namespace
+        ttl += rdf.tab1('sh:targetClass', 'cas:Entity');
+
+        // Close the shape - no additional properties allowed beyond those explicitly defined
+        ttl += rdf.tab1('sh:closed', 'true');
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+
+        // Require either rdf:type owl:Class OR rdfs:subClassOf (or both)
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )');
+
+        // Required property: rdfs:label (title)
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+
+        // Optional properties with constraints
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:icon ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape that validates Entity classes have proper NodeShapes
+     * This is a separate metamodel validation shape generated once per package
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for Entity shape validation
+     */
+    private static makeEntityShapeShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create shape ID for Entity shape validation
+        const shapeId = this.formatTurtleId(PigItemType.Entity) + '_shape' + DEF.suffixShape;
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all Entity classes (same targets as the class shape)
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        ttl += rdf.tab1('sh:targetClass', 'cas:Entity');
+
+        // Each Entity class should have a corresponding NodeShape
+        // Using sh:sparql to validate that a NodeShape with sh:targetClass pointing to this entity exists
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Entity class should have a corresponding NodeShape with sh:targetClass constraint" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:NodeShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:targetClass $this .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        // Validate that the entity's shape has sh:property for each enumeratedProperty
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Entity shape should have sh:property for each enumeratedProperty defined in the class" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this ?prop`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\t$this cas:enumeratedProperty ?prop .`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:NodeShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:targetClass $this ;`;
+        ttl += `\n\t\t\t\t\t\tsh:property ?propShape .`;
+        ttl += `\n\t\t\t\t\t?propShape sh:path ?prop .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        // Validate that the entity's shape has sh:property for each enumeratedTargetLink
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Entity shape should have sh:property for each enumeratedTargetLink defined in the class" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this ?link`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\t$this cas:enumeratedTargetLink ?link .`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:NodeShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:targetClass $this ;`;
+        ttl += `\n\t\t\t\t\t\tsh:property ?linkShape .`;
+        ttl += `\n\t\t\t\t\t?linkShape sh:path ?link .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape for Relationship classes in general
+     * This shape validates that any Relationship class follows the CASCaRA metamodel
+     * It is generated once per package, not per individual relationship
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for all Relationship classes
+     */
+    private static makeRelationshipClassShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create a single shape ID for all Relationship classes
+        const classShapeId = this.formatTurtleId(PigItemType.Relationship) + '_class' + DEF.suffixShape;
+        ttl += rdf.tab0(classShapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all classes that are subclasses of cas:Relationship
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        // Also target direct instances of owl:Class that are Relationships in the CASCaDE namespace
+        ttl += rdf.tab1('sh:targetClass', 'cas:Relationship');
+
+        // Close the shape - no additional properties allowed beyond those explicitly defined
+        ttl += rdf.tab1('sh:closed', 'true');
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+
+        // Require either rdf:type owl:Class OR rdfs:subClassOf (or both)
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )');
+
+        // Required property: rdfs:label (title)
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+
+        // Optional properties with constraints
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:icon ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape that validates Relationship classes have proper NodeShapes
+     * This is a separate metamodel validation shape generated once per package
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape for Relationship shape validation
+     */
+    private static makeRelationshipShapeShape(rdf: CToTtl): string {
+        let ttl = '';
+
+        // Create shape ID for Relationship shape validation
+        const shapeId = this.formatTurtleId(PigItemType.Relationship) + '_shape' + DEF.suffixShape;
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        // Target all Relationship classes (same targets as the class shape)
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        ttl += rdf.tab1('sh:targetClass', 'cas:Relationship');
+
+        // Each Relationship class should have a corresponding NodeShape
+        // Using sh:sparql to validate that a NodeShape with sh:targetClass pointing to this relationship exists
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Relationship class should have a corresponding NodeShape with sh:targetClass constraint" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:NodeShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:targetClass $this .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        // Validate that the relationship's shape has sh:property for each enumeratedProperty
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Relationship shape should have sh:property for each enumeratedProperty defined in the class" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this ?prop`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\t$this cas:enumeratedProperty ?prop .`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:NodeShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:targetClass $this ;`;
+        ttl += `\n\t\t\t\t\t\tsh:property ?propShape .`;
+        ttl += `\n\t\t\t\t\t?propShape sh:path ?prop .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        // Validate that the relationship's shape has sh:property for each enumeratedSourceLink
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Relationship shape should have sh:property for each enumeratedSourceLink defined in the class" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this ?link`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\t$this cas:enumeratedSourceLink ?link .`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:NodeShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:targetClass $this ;`;
+        ttl += `\n\t\t\t\t\t\tsh:property ?linkShape .`;
+        ttl += `\n\t\t\t\t\t?linkShape sh:path ?link .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
+
+        // Validate that the relationship's shape has sh:property for each enumeratedTargetLink
+        ttl += ` ;\n\tsh:sparql [`;
+        ttl += `\n\t\tsh:message "Relationship shape should have sh:property for each enumeratedTargetLink defined in the class" ;`;
+        ttl += `\n\t\tsh:select """`;
+        ttl += `\n\t\t\tSELECT $this ?link`;
+        ttl += `\n\t\t\tWHERE {`;
+        ttl += `\n\t\t\t\t$this cas:enumeratedTargetLink ?link .`;
+        ttl += `\n\t\t\t\tFILTER NOT EXISTS {`;
+        ttl += `\n\t\t\t\t\t?shape a sh:NodeShape ;`;
+        ttl += `\n\t\t\t\t\t\tsh:targetClass $this ;`;
+        ttl += `\n\t\t\t\t\t\tsh:property ?linkShape .`;
+        ttl += `\n\t\t\t\t\t?linkShape sh:path ?link .`;
+        ttl += `\n\t\t\t\t}`;
+        ttl += `\n\t\t\t}`;
+        ttl += `\n\t\t"""`;
+        ttl += `\n\t]`;
 
         return ttl + rdf.newLine();
     }

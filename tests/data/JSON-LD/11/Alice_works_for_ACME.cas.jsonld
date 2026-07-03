@@ -14,30 +14,6 @@
   "@type": "cas:Package",
   "@graph": [
     {
-      "@id": "cas:Entity",
-      "@type": "owl:Class",
-      "cas:itemType": {
-        "@id": "cas:Entity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "Entity",
-          "@language": "en"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A CASCaRA meta-model item used for entities (aka resources or artifacts).",
-          "@language": "en"
-        }
-      ],
-      "cas:enumeratedProperty": [
-        {
-          "@id": "cas:Category"
-        }
-      ]
-    },
-    {
       "@id": "cas:Organizer",
       "@type": "owl:Class",
       "cas:itemType": {
@@ -146,62 +122,6 @@
       ]
     },
     {
-      "@id": "cas:Relationship",
-      "@type": "owl:Class",
-      "cas:itemType": {
-        "@id": "cas:Relationship"
-      },
-      "dcterms:title": [
-        {
-          "@value": "Relationship",
-          "@language": "en"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A CASCaRA meta-model item used for reified relationships (aka predicates).",
-          "@language": "en"
-        }
-      ],
-      "cas:enumeratedProperty": [
-        {
-          "@id": "cas:Category"
-        }
-      ],
-      "cas:enumeratedSourceLink": [
-        {
-          "@id": "cas:linksSource"
-        }
-      ],
-      "cas:enumeratedTargetLink": [
-        {
-          "@id": "cas:linksTarget"
-        }
-      ]
-    },
-    {
-      "@id": "cas:Property",
-      "@type": "owl:DatatypeProperty",
-      "cas:itemType": {
-        "@id": "cas:Property"
-      },
-      "dcterms:title": [
-        {
-          "@value": "Property",
-          "@language": "en"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A CASCaRA meta-model item used for properties (aka attributes).",
-          "@language": "en"
-        }
-      ],
-      "sh:datatype": {
-        "@id": "xs:anyType"
-      }
-    },
-    {
       "@id": "cas:Category",
       "@type": "owl:DatatypeProperty",
       "cas:itemType": {
@@ -228,33 +148,6 @@
       "sh:maxCount": 1,
       "sh:maxLength": 32,
       "sh:minCount": 0
-    },
-    {
-      "@id": "cas:Link",
-      "@type": "owl:ObjectProperty",
-      "cas:itemType": {
-        "@id": "cas:Link"
-      },
-      "dcterms:title": [
-        {
-          "@value": "linked with",
-          "@language": "en"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A CASCaRA meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element",
-          "@language": "en"
-        }
-      ],
-      "cas:enumeratedEndpoint": [
-        {
-          "@id": "cas:Entity"
-        },
-        {
-          "@id": "cas:Relationship"
-        }
-      ]
     },
     {
       "@id": "cas:linksSource",

@@ -20,11 +20,6 @@
 
     <graph>
         <!-- Metamodel Classes and Semantic Infrastructure -->
-        <cas:Entity id="cas:Entity" cas:hasClass="owl:Class">
-            <dcterms:title>Entity</dcterms:title>
-            <skos:definition>A CASCaRA meta-model item used for entities (aka resources or artifacts).</skos:definition>
-            <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-        </cas:Entity>
         <cas:Entity id="cas:Package" cas:hasClass="owl:Class">
             <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title>Package</dcterms:title>
@@ -71,20 +66,6 @@
             <dcterms:title>Enumeration</dcterms:title>
             <skos:definition>A CASCaRA meta-model item used for enumerations of values.</skos:definition>
         </cas:Entity>
-        <cas:Relationship id="cas:Relationship" cas:hasClass="owl:Class">
-            <dcterms:title>Relationship</dcterms:title>
-            <skos:definition>A CASCaRA meta-model item used for reified relationships (aka predicates).</skos:definition>
-            <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
-            <cas:enumeratedSourceLink>cas:linksSource</cas:enumeratedSourceLink>
-            <cas:enumeratedTargetLink>cas:linksTarget</cas:enumeratedTargetLink>
-        </cas:Relationship>
-        <cas:Property id="cas:Property" cas:hasClass="owl:DatatypeProperty">
-            <dcterms:title>Property</dcterms:title>
-            <skos:definition>A CASCaRA meta-model item used for properties (aka attributes).</skos:definition>
-            <xs:simpleType>
-                <xs:restriction base="xs:anyType"/>
-            </xs:simpleType>
-        </cas:Property>
         <cas:Property id="cas:Diagram" cas:hasClass="owl:DatatypeProperty">
             <cas:specializes>cas:Property</cas:specializes>
             <dcterms:title>Diagram</dcterms:title>
@@ -111,12 +92,6 @@
         </cas:Property>
 		
         <!-- Links -->
-        <cas:Link id="cas:Link" cas:hasClass="owl:ObjectProperty">
-            <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
-            <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
-            <dcterms:title>linked with</dcterms:title>
-            <skos:definition>A PIG meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element.</skos:definition>
-        </cas:Link>
         <cas:Link id="cas:linksSource" cas:hasClass="owl:ObjectProperty">
             <cas:specializes>cas:Link</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
@@ -142,12 +117,12 @@
 		
         <!-- Enumerations -->
         <cas:Enumeration id="SpecIF:Priority-Value" cas:hasClass="owl:Class">
+            <cas:specializes>cas:Enumeration</cas:specializes>
             <dcterms:title xml:lang="en">Priority</dcterms:title>
             <dcterms:title xml:lang="de">Priorität</dcterms:title>
             <dcterms:title xml:lang="fr">Priorité</dcterms:title>
             <skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
             <dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
-            <cas:specializes>cas:Enumeration</cas:specializes>
             <xs:simpleType>
                 <xs:restriction base="xs:string"/>
             </xs:simpleType>
