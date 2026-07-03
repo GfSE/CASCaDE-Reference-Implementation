@@ -10,7 +10,7 @@
     "skos": "https://www.w3.org/TR/skos-reference/",
     "xs": "http://www.w3.org/2001/XMLSchema#"
   },
-  "@id": "d:Alice_worksFor_ACME",
+  "@id": "d:Alice_works_for_ACME",
   "@type": "cas:Package",
   "@graph": [
     {
