@@ -40,7 +40,9 @@
  *      check aPackage.hasClass references and consistency with classes (similarly to anEntity)
  *      No cyclic specialization
  *      subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
+ *      - the range of a subProperty must be included in the range of its superProperty
  *      subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
+ *      - a subClass has all properties and links of its superClass
  *      enumeratedProperty references
  *      Link endpoint compliance
  * Phase 3 (useful):
