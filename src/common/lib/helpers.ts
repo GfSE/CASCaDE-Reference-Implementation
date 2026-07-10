@@ -460,6 +460,85 @@ export const LIB = {
 
         // Fallback to first available text
         return texts[0].value;
+    },
+    /**
+     * Check if a tag is a context ontology
+     * If an ontology is neither context nor hosted, it must be included in the export.
+     * @param tag - The namespace tag to check (e.g., 'dcterms:', 'schema:')
+     * @returns True if the tag is a context ontology
+     */
+    isContext(tag: string): boolean {
+        return DEF.contextOntologies.some(ont => ont.tag === tag);
+    },
+    /**
+     * Check if an ID belongs to a context ontology
+     * @param id - The ID to check (e.g., 'dcterms:title', 'schema:name', or full URI)
+     * @returns True if the ID belongs to a context ontology
+     */
+    isContextId(id: string): boolean {
+        if (!id || typeof id !== 'string') return false;
+
+        // Extract namespace with colon from prefixed name (e.g., 'dcterms:title' -> 'dcterms:')
+        const colonIndex = id.indexOf(':');
+        if (colonIndex > 0 && !id.startsWith('http://') && !id.startsWith('https://')) {
+            const tag = id.substring(0, colonIndex + 1); // Include the colon
+            return this.isContext(tag);
+        }
+
+        // Check if it's a full URI that starts with a context ontology URI
+        return DEF.contextOntologies.some(ont => id.startsWith(ont.uri));
+    },
+    /**
+     * Check if a tag is a hosted ontology
+     * If an ontology is neither context nor hosted, it must be included in the export.
+     * @param tag - The namespace tag to check (e.g., 'dcterms:', 'schema:')
+     * @returns True if the tag is a hosted ontology
+     */
+    isHostedOntology(tag: string): boolean {
+        return DEF.hostedOntologies.some(ont => ont.tag === tag);
+    },
+    /**
+     * Check if an ID belongs to a hosted ontology
+     * @param id - The ID to check (e.g., 'dcterms:title', 'schema:name', or full URI)
+     * @returns True if the ID belongs to a hosted ontology
+     */
+    isHostedOntologyId(id: string): boolean {
+        if (!id || typeof id !== 'string') return false;
+
+        // Extract namespace with colon from prefixed name (e.g., 'dcterms:title' -> 'dcterms:')
+        const colonIndex = id.indexOf(':');
+        if (colonIndex > 0 && !id.startsWith('http://') && !id.startsWith('https://')) {
+            const tag = id.substring(0, colonIndex + 1); // Include the colon
+            return this.isHostedOntology(tag);
+        }
+
+        // Check if it's a full URI that starts with a hosted ontology URI
+        return DEF.hostedOntologies.some(ont => id.startsWith(ont.uri));
+    },
+    /**
+     * Get the shape identifier for a term.
+     * - If the term is from a hosted ontology, return an URI relative to the CASCaRA URI.
+     * - Otherwise, return the term with a suffix.
+     * @param term - The term to get the shape identifier for.
+     * @returns The shape identifier for the term.
+     */
+    makeShapeId(term: string): string {
+        // Get namespace prefix (e.g., 'dcterms:') from term:
+        const colonIndex = term.indexOf(':');
+        if (colonIndex > 0) {
+            const tag = term.substring(0, colonIndex + 1); // Include the colon
+            const ontology = DEF.hostedOntologies.find(ont => ont.tag === tag);
+            if (ontology) {
+                return ontology.uri + term.substring(colonIndex + 1);
+            }
+        }
+        // Fallback to term with a suffix
+        return term + DEF.suffixShape;
+    },
+    makeFilename(str: string): string {
+        // Replace invalid filename characters with underscores
+        // return str.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
+        return str.replace(/[<>:"/\\|?*\s]/g, '_').trim()
     }
 };
 

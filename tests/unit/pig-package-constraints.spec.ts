@@ -14,8 +14,10 @@ describe('PIG Package Constraint Validation', () => {
             const validPackageJsonLd = {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -159,8 +161,10 @@ describe('PIG Package Constraint Validation', () => {
             const packageWithRelationship = {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -359,6 +363,8 @@ describe('PIG Package Constraint Validation', () => {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'sh': 'http://www.w3.org/ns/shacl#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
@@ -427,6 +433,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -474,6 +482,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -539,6 +549,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -620,6 +632,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -630,7 +644,7 @@ describe('PIG Package Constraint Validation', () => {
                 '@graph': [
                     {
                         '@id': `${DEF.pfxNsMeta}Entity`,
-                        '@type': 'owl:class',
+                        '@type': 'owl:Class',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                         [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Entity', '@language': 'en' }
@@ -712,6 +726,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -846,6 +862,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -889,6 +907,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -937,6 +957,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -986,6 +1008,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -1072,6 +1096,8 @@ describe('PIG Package Constraint Validation', () => {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                     'dcterms': 'http://purl.org/dc/terms/',
                     'sh': 'http://www.w3.org/ns/shacl#',
+                    'owl:': 'http://www.w3.org/2002/07/owl#',
+                    'xs:': 'http://www.w3.org/2001/XMLSchema#',
                     'o': 'https://example.org/ontology/',
                     'd': 'https://example.org/data/'
                 },
@@ -1168,6 +1194,8 @@ describe('PIG Package Constraint Validation', () => {
                         [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                         'dcterms': 'http://purl.org/dc/terms/',
                         'sh': 'http://www.w3.org/ns/shacl#',
+                        'owl:': 'http://www.w3.org/2002/07/owl#',
+                        'xs:': 'http://www.w3.org/2001/XMLSchema#',
                         'o': 'https://example.org/ontology/',
                         'd': 'https://example.org/data/'
                     },
@@ -1217,6 +1245,8 @@ describe('PIG Package Constraint Validation', () => {
                         [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
                         'dcterms': 'http://purl.org/dc/terms/',
                         'sh': 'http://www.w3.org/ns/shacl#',
+                        'owl:': 'http://www.w3.org/2002/07/owl#',
+                        'xs:': 'http://www.w3.org/2001/XMLSchema#',
                         'o': 'https://example.org/ontology/',
                         'd': 'https://example.org/data/'
                     },
@@ -1269,6 +1299,7 @@ describe('PIG Package Constraint Validation', () => {
                 const packageData = {
                     '@context': {
                         [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'owl:': 'http://www.w3.org/2002/07/owl#',
                         'dcterms': 'http://purl.org/dc/terms/',
                         'o': 'https://example.org/ontology/',
                         'd': 'https://example.org/data/'
@@ -1307,6 +1338,7 @@ describe('PIG Package Constraint Validation', () => {
                 const packageData = {
                     '@context': {
                         [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'owl:': 'http://www.w3.org/2002/07/owl#',
                         'dcterms': 'http://purl.org/dc/terms/',
                         'o': 'https://example.org/ontology/',
                         'd': 'https://example.org/data/'
@@ -1364,6 +1396,7 @@ describe('PIG Package Constraint Validation', () => {
                 const packageData = {
                     '@context': {
                         [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'owl:': 'http://www.w3.org/2002/07/owl#',
                         'dcterms': 'http://purl.org/dc/terms/',
                         'o': 'https://example.org/ontology/',
                         'd': 'https://example.org/data/'
@@ -1426,6 +1459,7 @@ describe('PIG Package Constraint Validation', () => {
                 const packageData = {
                     '@context': {
                         [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
+                        'owl:': 'http://www.w3.org/2002/07/owl#',
                         'dcterms': 'http://purl.org/dc/terms/',
                         'o': 'https://example.org/ontology/',
                         'd': 'https://example.org/data/'

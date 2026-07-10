@@ -48,21 +48,22 @@
  * @ToDo:
  * ✅ Must a Link specify minCount and maxCount for hasEndpoint of its instances? How to handle cardinality of links in the overall consistency check?
  * ✅ This does also concern enumerations, which have minCount and maxCount at present --> (perhaps) move it to the link class!
+ * - allow packages to be nested
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
+ * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
  * - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *   PigItem.normalizeId() shortly before validate() in set() ?
  * ✅ Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
  * ✅ Reconsider aSourceLink and aTargetLink use: empty list means none allowed and no list means all allowed? --> YES.
- * - Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names using normalizeId()
- * - allow packages to be nested
- * - implement the import of configurable properties and links for aPackage.
+ * ✅ Add dummy namespaces for 'o:' and 'd:' in case they have been added to a package with local names using normalizeId()
+ * ✅ implement the import of configurable properties and links for aPackage.
  * - Consider the storage of numeric and boolean values: should be string?
  * ✅ Consider the storage of namespaces: now object with properties tag and uri: should be objects with {tag: uri}? --> keep as is
  * - Consider: In the schemata, additionalProperties=false is widely used. This prevents upward compatibility.
  *   This code could just *ignore* additional properties.
- * - Consider the schema of pig.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
+ * - Consider the schema of cas.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  * - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
- * - There are redundant transformations from JSON-LD to internal format for individual items and a whole package.
+ * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -115,6 +116,7 @@ export enum XsDataType {
     ComplexType = 'xs:complexType'
 }
 
+// Must coincide with TPigClass
 const PIG_CLASSES = new Set<PigItemTypeValue>([
     PigItemType.Enumeration,
     PigItemType.Property,
@@ -308,38 +310,153 @@ export class PigItem {
      * - ARelationship: title, description
      *
      * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
+     * @ToDo:consolidate with validate MultiLanguageText() to avoid duplication of logic
      */
-    static isMultiLanguageText(propertyName: string, value?: unknown): boolean {
+    static isMultiLanguageText(value: unknown): boolean {
 
-        // 1. Name-based: title or description
-        // Remove namespace prefix for checking
-        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-        // All multi-language fields from PIG schemata that use LanguageText[]
-        const multiLangFields = new Set([
-            'title',
-            'description',
-            'definition'
-        ]);
-        if (multiLangFields.has(localName)) {
-            return true;
-        }
-
-        // 2. Structure-based: Array of ILanguageText
+        // Structure-based: Array of ILanguageText
+        // If length > 1, lang is mandatory for all items; if length = 1, lang is optional
         if (Array.isArray(value) && value.length > 0) {
+            const requireLang = value.length > 1;
+
             return value.every(
                 v =>
                     typeof v === 'object' &&
                     v !== null &&
                     typeof (v as any).value === 'string' &&
                     (
-                        (v as any).lang === undefined ||
-                        typeof (v as any).lang === 'string'
+                        requireLang
+                            ? typeof (v as any).lang === 'string'  // lang required when length > 1
+                            : ((v as any).lang === undefined || typeof (v as any).lang === 'string')  // lang optional when length = 1
                     )
             );
         }
 
         return false;
+    }
+    /**
+     * Check if a property requires multi-language text format (ILanguageText[])
+     * @param propertyName - Property name to check (with or without namespace prefix)
+     * @returns true if the property is title, description, or definition
+     */
+    static needsMultiLanguageText(propertyName: string): boolean {
+
+        // Name-based: title or description
+        // Remove namespace prefix for checking
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // All multi-language fields from PIG schemata that use LanguageText[]
+        return [
+            'title',
+            'description',
+            'definition'
+        ].includes(localName);
+    }
+    // Normalize language tags/values ---
+    static normalizeLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText {
+        //    LOG.debug('normalizeLanguageText', src);
+        if (!src)
+            return { value: '' };
+
+        let value: string;
+        let lang: tagIETF | undefined;
+
+        if (typeof src === 'object') {
+            // Extract value from ILanguageText object
+            value = (src.value ?? '') as string;
+            lang = src.lang as tagIETF | undefined;
+        } else if (typeof src === 'string') {
+            // Use string directly as value
+            value = src;
+        } else {
+            // Convert other types to string
+            value = String(src);
+        }
+
+        // Strip control characters from HTML-formatted content if requested
+        // This must happen BEFORE stripHTML
+        if (options?.stripCtrlFromHTML && value) {
+            // Check if value contains HTML: either paired tags <tag>...</tag> or self-closing tags <tag />
+            if (RE.hasHTML.test(value)) {
+                // Process control characters based on context:
+                // - REMOVE if at beginning/end or between tags (e.g., \n<div>, </p>\n<div>, </p>\n)
+                // - REPLACE with space if within text or between text and tag
+
+                // Step 1: Remove control chars at the beginning before first tag
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/^[\x00-\x20\x7F]+(?=<)/, '');
+
+                // Step 2: Remove control chars at the end after last tag
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/(?<=>)[\x00-\x20\x7F]+$/, '');
+
+                // Step 3: Remove control chars between tags (only whitespace between tags)
+                // Pattern: > followed by only whitespace/control chars followed by <
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/>[\x00-\x20\x7F]+</g, '><');
+
+                // Step 4: Replace remaining control chars with space
+                // These are within text content or between text and tags
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/[\x00-\x1F\x7F]/g, ' ');
+
+                // Step 5: Normalize multiple consecutive spaces to single space
+                value = value.replace(/ {2,}/g, ' ');
+            }
+        }
+
+        // Strip HTML from the value if requested (applies to both strings and ILanguageText.value)
+        if (options?.stripHTML && value) {
+            value = LIB.stripHTML(value);
+        }
+
+        return {
+            value: value,
+            lang: lang
+        };
+    }
+    static normalizeMultiLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText[] | undefined {
+        if (!src) return undefined;
+        if (Array.isArray(src)) return src.map(item => PigItem.normalizeLanguageText(item, options));
+        return [PigItem.normalizeLanguageText(src, options)];
+    }
+    /* Validate that a value is an array of ILanguageText with the rule:
+       - if array length === 0 -> OK
+       - if array length === 1 -> 'lang' may be missing
+       - if array length > 1 -> each entry must have a string 'lang' and string 'value'
+       Returns IRsp (rspOK on success, error IRsp on failure)
+    */
+    static validateMultiLanguageText(arr: any, fieldName: string): IRsp {
+        //    LOG.debug('PigItem.validateMultiLanguageText',arr,fieldName);
+        if (!Array.isArray(arr)) {
+            return Msg.create(640, fieldName);
+        }
+        if (arr.length === 0) return rspOK;
+        if (arr.length === 1) {
+            const e = arr[0];
+            if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
+                return Msg.create(641, fieldName);
+            }
+            // single entry: lang optional
+            if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
+                return Msg.create(642, fieldName);
+            }
+            return rspOK;
+        }
+        // length > 1: every entry must have value:string and lang:string
+        for (let i = 0; i < arr.length; i++) {
+            const e = arr[i];
+            if (!e || typeof e !== 'object') {
+                return Msg.create(643, fieldName, i);
+            }
+            if (typeof (e as any).value !== 'string') {
+                return Msg.create(644, fieldName, i);
+            }
+            if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
+                return Msg.create(645, fieldName, i);
+            }
+        }
+        return rspOK;
     }
     /**
      * Normalize ID by adding namespace prefix if missing
@@ -365,16 +482,32 @@ export class PigItem {
         let prefix: string;
         if (!itemType || PigItem.isClass(itemType)) {
             prefix = DEF.defaultOntologyNamespace; // add a default namespace prefix for classes if missing
+            PigItem.usedDefaultNamespaces.add(prefix);
         //  else if (PigItem.isInstance(itemType)) {
         } else {
             // includes all references within instances where itemType is undefined
             prefix = DEF.defaultDataNamespace; // add a default namespace prefix for instances if missing
+            PigItem.usedDefaultNamespaces.add(prefix);
         }
 
         const normalized = `${prefix}${id}`;
-        LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
+        // LOG.info(`ID normalized: '${id}' → '${normalized}' (${itemType})`);
 
         return normalized;
+    }
+
+    /**
+     * Track which default namespaces ('o:', 'd:') have been assigned by normalizeId()
+     * This allows APackage to add only the namespaces that are actually being used.
+     */
+    static usedDefaultNamespaces: Set<string> = new Set<string>();
+
+    /**
+     * Clear the set of used default namespaces.
+     * Should be called before processing a new package.
+     */
+    static clearUsedDefaultNamespaces(): void {
+        PigItem.usedDefaultNamespaces.clear();
     }
 }
 
@@ -394,15 +527,16 @@ These capture who, what, when, where, and how of data access or changes:
 
 interface IItem {
     itemType: PigItemTypeValue;
-    hasClass?: TPigId;  // must be URI of the item's respective class, translates to @type resp. rdf:type
+    hasClass: TPigId;  // required for ALL itemTypes according to JSON schema
 }
+// Constructor parameter type: hasClass is not used in constructor, set later via .set()
+type TConstructItem = Pick<IItem, 'itemType'>;
+
 abstract class Item implements IItem {
     readonly itemType!: PigItemTypeValue;
-    // All items may have a hasClass reference, some require it;
-    // concrete subclasses enforce that in their validate() methods:
-    hasClass?: TPigId;
+    hasClass!: TPigId;  // required for ALL itemTypes according to JSON schema
     protected lastStatus!: IRsp;
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         this.itemType = itm.itemType;
     }
     status(): IRsp {
@@ -447,7 +581,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
     priorRevision?: TRevision[];
     modified?: TISODateString;
     creator?: string;
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         super(itm); // actual itemType set in concrete class
     }
     protected validate(itm: IIdentifiable) {
@@ -462,21 +596,22 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // Runtime guards:
         // This is more constraining than the schema,
         // as the presence of 'lang' is required when there are multiple values
-        // Ensure title is a multi-language text (array of ILanguageText),
-        // title is optional only for anEntity:
+        // Normalize and validate title (optional for anEntity), strip HTML from title:
         if (itm.title) {
-            const tRes = validateMultiLanguageText(itm.title, 'title');
+            itm.title = PigItem.normalizeMultiLanguageText(itm.title, { stripCtrlFromHTML: true, stripHTML: true });
+            const tRes = PigItem.validateMultiLanguageText(itm.title, 'title');
             if (!tRes.ok) return tRes;
         }
-        // description is optional, but when present must be an array of ILanguageText
+        // Normalize and validate description (optional, but when present must be an array of ILanguageText):
         if (itm.description) {
-            const dRes = validateMultiLanguageText(itm.description, 'description');
+            itm.description = PigItem.normalizeMultiLanguageText(itm.description, { stripCtrlFromHTML: true });
+            const dRes = PigItem.validateMultiLanguageText(itm.description, 'description');
             if (!dRes.ok) return dRes;
         }
-
-        // definition is mandatory for classes:
+        // Normalize and validate definition (mandatory for classes):
         if (itm.definition) {
-            const dRes = validateMultiLanguageText(itm.definition, 'definition');
+            itm.definition = PigItem.normalizeMultiLanguageText(itm.definition, { stripCtrlFromHTML: true });
+            const dRes = PigItem.validateMultiLanguageText(itm.definition, 'definition');
             if (!dRes.ok) return dRes;
         }
 
@@ -490,6 +625,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         super.set(itm);
         this.id = itm.id;  // redundant, because it has (should have) been set by validate()
         this.specializes = itm.specializes;
+        // Multi-language texts have been normalized in validate()
         this.title = itm.title;
         this.description = itm.description;
         this.definition = itm.definition;
@@ -524,14 +660,7 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // 2. Replace id-objects with id-strings
         ld = replaceIdObjects(ld);
 
-        // 3. Normalize multi-language texts (from abstract normalize)
-        //    Not all are necessarily present - this is checked by the schemata.
-        if (ld.title)
-            ld.title = normalizeMultiLanguageText(ld.title);
-        if (ld.description)
-            ld.description = normalizeMultiLanguageText(ld.description);
-        if (ld.definition)
-            ld.definition = normalizeMultiLanguageText(ld.definition);
+        // Multi-language text normalization now happens in set() method
 
         // Set the normalized object in the concrete subclass
         return ld;
@@ -555,7 +684,7 @@ interface IALink extends IItem {
 }
 abstract class ALink extends Item implements IALink {
     idRef!: TPigId;
-    constructor(itm: IItem) {
+    constructor(itm: TConstructItem) {
         super(itm);
     }
     protected validate(itm: IALink) {
@@ -590,7 +719,7 @@ interface IElement extends IIdentifiable {
 abstract class Element extends Identifiable implements IElement {
     enumeratedProperty?: TPigId[];
     icon?: IText;
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         super(itm); // actual itemType set in concrete class
     }
     protected set(itm: IElement) {
@@ -617,7 +746,7 @@ interface IAnElement extends IIdentifiable {
 abstract class AnElement extends Identifiable implements IAnElement {
     hasProperty!: AProperty[]; // instantiated AProperty items
     hasTargetLink!: ATargetLink[];  // array must have exactly one element as checked by the JSON schema
-    protected constructor(itm: IItem) {
+    protected constructor(itm: TConstructItem) {
         super(itm);
     }
 /*    protected validate(itm: IAnElement) {
@@ -764,12 +893,12 @@ export interface IEnumeratedValue {
 export interface IEnumeration extends IIdentifiable {
     datatype: string; // must be of XsDataType
     enumeratedValue: IEnumeratedValue[]; // array of allowed values, datatype-dependent
-    unit?: string;  // according to SI units
+//    unit?: string;  // according to SI units
 }
 export class Enumeration extends Identifiable implements IEnumeration {
     datatype!: string;
     enumeratedValue!: IEnumeratedValue[]; 
-    unit?: string;
+//    unit?: string;
     constructor() {
         super({itemType:PigItemType.Enumeration});
     }
@@ -815,7 +944,7 @@ export class Enumeration extends Identifiable implements IEnumeration {
             super.set(_itm);
             this.datatype = _itm.datatype;
             this.enumeratedValue = _itm.enumeratedValue;
-            this.unit = _itm.unit;
+            // this.unit = _itm.unit;
         }
         return this; // make chainable
     }
@@ -824,7 +953,7 @@ export class Enumeration extends Identifiable implements IEnumeration {
             ...super.get(),
             datatype: this.datatype,
             enumeratedValue: this.enumeratedValue,
-            unit: this.unit
+            // unit: this.unit
         }) as IEnumeration;
     }
     fromJSONLD(itm: any) {
@@ -850,7 +979,7 @@ export interface IProperty extends IIdentifiable {
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
     defaultValue?: string;   // in PIG, values of all datatypes are strings
-    unit?: string;  // according to SI units
+    // unit?: string;  // according to SI units
     composes?: TPigId[];  // must be URI of another Property, no cyclic references
 }
 export class Property extends Identifiable implements IProperty {
@@ -862,7 +991,7 @@ export class Property extends Identifiable implements IProperty {
     minInclusive?: number;
     maxInclusive?: number;
     defaultValue?: string;
-    unit?: string;
+    // unit?: string;
     composes?: TPigId[];
     constructor() {
         super({itemType:PigItemType.Property});
@@ -914,7 +1043,7 @@ export class Property extends Identifiable implements IProperty {
             this.minInclusive = _itm.minInclusive;
             this.maxInclusive = _itm.maxInclusive;
             this.defaultValue = _itm.defaultValue;
-            this.unit = _itm.unit;
+            // this.unit = _itm.unit;
             this.composes = _itm.composes;
         }
         return this; // make chainable
@@ -930,7 +1059,7 @@ export class Property extends Identifiable implements IProperty {
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
             defaultValue: this.defaultValue,
-            unit: this.unit,
+            // unit: this.unit,
             composes: this.composes
         }) as IProperty;
     }
@@ -1164,6 +1293,7 @@ export class AProperty extends Item implements IAProperty {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
+            this.hasClass = itm.hasClass;  // Set hasClass for property instances
             this.composes = itm.composes;
             this.value = itm.value;
             this.idRef = itm.idRef;
@@ -1335,6 +1465,7 @@ export class ARelationship extends AnElement implements IARelationship {
 }
 // For packages:
 export interface IAPackage extends IAnElement {
+    hasClass: TPigId;  // required for APackage according to JSON schema
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[];
 }
@@ -1386,7 +1517,7 @@ export class APackage extends AnElement implements IAPackage {
         // Instantiate each graph item:
         const instantiatedGraph: TPigItem[] = [];
         const errors: string[] = [];
-    
+
         for (const item of _pkg.graph) {
             // LOG.debug(`APackage.set: instantiating item ${JSON.stringify(item, null, 2)}`);
             const result = this.createItem(item, { defaultModified: _pkg.modified, source: 'any' });
@@ -1400,13 +1531,18 @@ export class APackage extends AnElement implements IAPackage {
         }
         // LOG.debug('APackage.set: ',JSON.stringify(_pkg, null, 2));
 
+        // Ensure default namespace prefixes exist in context BEFORE validation
+        // Only adds namespaces that were actually used during normalization
+        const _context = this.ensureDefaultNamespaces(_pkg.context);
+
+        // Validate the package with all preprocessing completed
         const pkgValidation = this.validate(_pkg, options);
         if (!pkgValidation.ok)
             errors.push(`${pkgValidation.statusText} (${pkgValidation.status})` || 'Unknown constraint error');
 
-        // Set the package properties and the instantiated graph, even if some errors have occurred:
+        // Now set the package properties and instantiated graph (with errors if any)
         super.set(_pkg);
-        this.context = _pkg.context;
+        this.context = _context;
         this.graph = instantiatedGraph;
 
         if (errors.length > 0) {
@@ -1419,6 +1555,83 @@ export class APackage extends AnElement implements IAPackage {
 
         // LOG.debug(`APackage.set: package ${_pkg.id} set with ${instantiatedGraph.length} of ${_pkg.graph.length} items, status:`, this.lastStatus);
         return this;
+    }
+
+    /**
+     * Ensure default namespace prefixes 'o:' and 'd:' exist in the package context
+     * if they have been assigned by normalizeId() during import.
+     * 
+     * This method only adds namespaces that are tracked in PigItem.usedDefaultNamespaces,
+     * meaning they were actually assigned to IDs lacking explicit namespaces.
+     * 
+     * If a prefix is already defined in context, the existing definition is kept.
+     * If not defined but was used, a dummy namespace is added with a descriptive URI.
+     * 
+     * This prevents namespace validation errors for locally-defined terms.
+     * 
+     * @param context - The context from the package
+     * @returns Updated context with necessary default namespaces
+     */
+    private ensureDefaultNamespaces(context?: INamespace[] | string | Record<string, string>): INamespace[] | string | Record<string, string> | undefined {
+        // If no default namespaces were used, return context unchanged
+        if (PigItem.usedDefaultNamespaces.size === 0) {
+            return context;
+        }
+
+        // If no context exists, create an empty array
+        if (!context) {
+            context = [];
+        }
+
+        // Convert context to array format if needed
+        let contextArray: INamespace[];
+
+        if (Array.isArray(context)) {
+            contextArray = context as INamespace[];
+        } else if (typeof context === 'object') {
+            // Convert JSON-LD object format to INamespace array
+            contextArray = Object.entries(context).map(([key, value]) => ({
+                tag: key.endsWith(':') ? key : `${key}:`,
+                uri: value as string
+            }));
+        } else {
+            // Context is a string (URI) - rare case, just create new array
+            contextArray = [];
+        }
+
+        // Check which used default namespaces are missing from context
+        for (const usedPrefix of PigItem.usedDefaultNamespaces) {
+            // Normalize prefix (remove colon for comparison)
+            const prefixWithoutColon = usedPrefix.endsWith(':') ? usedPrefix.slice(0, -1) : usedPrefix;
+
+            // Check if this prefix already exists in context
+            const prefixExists = contextArray.some(ns => {
+                const tag = ns.tag.endsWith(':') ? ns.tag.slice(0, -1) : ns.tag;
+                return tag === prefixWithoutColon;
+            });
+
+            // Add missing namespace
+            if (!prefixExists) {
+                let uri: string;
+                if (usedPrefix === DEF.defaultOntologyNamespace) {
+                    uri = `${DEF.pigPath}ontology/application#`;
+                } else if (usedPrefix === DEF.defaultDataNamespace) {
+                    uri = `${DEF.pigPath}example#`;
+                } else {
+                    // Fallback for any other default prefix
+                    uri = `${DEF.pigPath}default/${prefixWithoutColon}#`;
+                }
+
+                contextArray.push({
+                    tag: usedPrefix,
+                    uri: uri
+                });
+                // LOG.debug(`APackage: Added default namespace '${usedPrefix}' to context (was used during normalization)`);
+            }
+        }
+
+        // Return the modified context array
+        return contextArray;
     }
 
     get() {
@@ -1434,15 +1647,18 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     setJSONLD(doc: any, options?:any) {
+        // Clear the tracker for used default namespaces before transformation
+        PigItem.clearUsedDefaultNamespaces();
+
         // @ToDo: Perhaps we must normalize the ids like in XML import to assure they have a namespace or are an URI
         // LOG.debug(`APackage.setJSONLD: ${JSON.stringify(doc, null, 2)}`);
 
         // Extract @context
         const ctx = this.extractContextLD(doc);
-        
+
         // Extract package metadata
         const meta = this.extractMetadataLD(doc);
-        
+
         // Extract and process @graph
         const graph: any[] = Array.isArray(doc['@graph']) 
             ? doc['@graph'] 
@@ -1469,6 +1685,9 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     setXML(xmlString: stringXML, options?:any) {
+        // Clear the tracker for used default namespaces before transformation
+        PigItem.clearUsedDefaultNamespaces();
+
         // 1. Parse XML string to JSON
         //    The context is skipped here, as it is extracted separately below.
         const parsed = xmlToJson(xmlString);
@@ -1624,15 +1843,9 @@ export class APackage extends AnElement implements IAPackage {
         json = replaceIdObjects(json);
 
         // LOG.debug('ldToJson after tag renaming and id replacement: ', JSON.stringify(json, null, 2));
-        // 3. Normalize multi-language texts
-        if (json.title) 
-            json.title = normalizeMultiLanguageText(json.title);
-        if (json.description)
-            json.description = normalizeMultiLanguageText(json.description);
-        if (json.definition)
-            json.definition = normalizeMultiLanguageText(json.definition);
+        // Multi-language text normalization now happens in set() method
 
-        // 4. Normalize datatype (Property-specific)
+        // 3. Normalize datatype (Property-specific)
         if (json.datatype) {
             json.datatype = json.datatype.replace(/^xsd:/, 'xs:');
         }
@@ -1709,13 +1922,13 @@ export class APackage extends AnElement implements IAPackage {
      * 
      * @example
      * Input XML:
-     * <cas:aPackage xmlns:pig="https://pig.gfse.org/" 
+     * <cas:aPackage xmlns:pig="https://cas.gfse.org/" 
      *               xmlns:dcterms="http://purl.org/dc/terms/"
      *               xmlns="http://default.org/">
      * 
      * Output:
      * [
-     *   { tag: "cas:", uri: "https://pig.gfse.org/" },
+     *   { tag: "cas:", uri: "https://cas.gfse.org/" },
      *   { tag: "dcterms:", uri: "http://purl.org/dc/terms/" },
      *   { tag: "@vocab", uri: "http://default.org/" }
      * ]
@@ -2066,65 +2279,6 @@ function normalizeDateTime(dateStr: any): string | undefined {
     return normalized;
 }
 
-// Normalize language tags/values ---
-function normalizeLanguageText(src: any): ILanguageText {
-//    LOG.debug('normalizeLanguageText', src);
-    if (!src)
-        return { value: '' };
-    if (typeof src === 'object') {
-        return {
-            value: (src.value ?? '') as string,
-            lang: src.lang as tagIETF | undefined
-        };
-    }
-    if (typeof src === 'string')
-        return { value: src };
-    return { value: String(src) };
-}
-
-function normalizeMultiLanguageText(src: any): ILanguageText[] | undefined {
-    if (!src) return undefined;
-    if (Array.isArray(src)) return src.map(normalizeLanguageText);
-    return [normalizeLanguageText(src)];
-}
-/* Helper: validate that a value is an array of ILanguageText with the rule:
-   - if array length === 0 -> OK
-   - if array length === 1 -> 'lang' may be missing
-   - if array length > 1 -> each entry must have a string 'lang' and string 'value'
-   Returns IRsp (rspOK on success, error IRsp on failure)
-*/
-function validateMultiLanguageText(arr: any, fieldName: string): IRsp {
-//    LOG.debug('validateMultiLanguageText',arr,fieldName);
-    if (!Array.isArray(arr)) {
-        return Msg.create(640, fieldName);
-    }
-    if (arr.length === 0) return rspOK;
-    if (arr.length === 1) {
-        const e = arr[0];
-        if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
-            return Msg.create(641, fieldName);
-        }
-        // single entry: lang optional
-        if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
-            return Msg.create(642, fieldName);
-        }
-        return rspOK;
-    }
-    // length > 1: every entry must have value:string and lang:string
-    for (let i = 0; i < arr.length; i++) {
-        const e = arr[i];
-        if (!e || typeof e !== 'object') {
-            return Msg.create(643, fieldName, i);
-        }
-        if (typeof (e as any).value !== 'string') {
-            return Msg.create(644, fieldName, i);
-        }
-        if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
-            return Msg.create(645, fieldName, i);
-        }
-    }
-    return rspOK;
-}
 /**
  * Parse XML string and convert to JSON object
  * Recursively traverses the XML structure without assuming specific tag names
@@ -2320,7 +2474,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         const propertyName = MVF.mapTerm(tagName, MVF.fromXML) as string;
 
         // Check if this property is a multi-language text field
-        const isMultiLang = PigItem.isMultiLanguageText(propertyName);
+        const isMultiLang = PigItem.needsMultiLanguageText(propertyName);
 
         // Check if this property needs IText wrapping (e.g. icon)
         const needsTextWrapper = requiresIText(propertyName);

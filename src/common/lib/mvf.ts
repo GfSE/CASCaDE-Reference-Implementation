@@ -10,7 +10,7 @@
  * Copyright 2026 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
- * Handles mapping between different vocabulary representations (JSON-LD, XML, internal format)
+ * Handles mapping between different vocabulary representations (JSON-LD, XML, RDF/Turtle, internal format)
  * Dependencies: helpers.ts (for JsonValue types and LOG)
  */
 
@@ -110,6 +110,46 @@ const TO_XML = new Map<string, string>(
     Array.from(FROM_XML.entries()).map(([a, b]) => [b, a])
 );
 
+// Map entries for RDF/Turtle import/export:
+const FROM_RDF = new Map<string, string>([
+    ['a', 'hasClass'],
+    ['rdf:type', 'hasClass'],
+    ['rdfs:subClassOf', 'specializes'],
+    ['rdfs:subPropertyOf', 'specializes'],
+    [`${DEF.pfxNsDcmi}title`, 'title'],
+    ['rdfs:label', 'title'],
+    [`${DEF.pfxNsDcmi}description`, 'description'],
+    ['rdfs:comment', 'description'],
+    ['skos:definition', 'definition'],
+    [`${DEF.pfxNsMeta}specializes`, 'specializes'],
+    [`${DEF.pfxNsMeta}itemType`, 'itemType'],
+    [`${DEF.pfxNsMeta}revision`, 'revision'],
+    [`${DEF.pfxNsMeta}priorRevision`, 'priorRevision'],
+    [`${DEF.pfxNsMeta}enumeratedProperty`, 'enumeratedProperty'],
+    [`${DEF.pfxNsMeta}enumeratedSourceLink`, 'enumeratedSourceLink'],
+    [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
+    [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
+    [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
+    [`${DEF.pfxNsMeta}Icon`, 'icon'],
+    [`${DEF.pfxNsMeta}icon`, 'icon'],
+    [`${DEF.pfxNsMeta}Unit`, 'unit'],
+    [`${DEF.pfxNsMeta}unit`, 'unit'],
+    ['sh:datatype', 'datatype'],
+    ['sh:minCount', 'minCount'],
+    ['sh:maxCount', 'maxCount'],
+    ['sh:maxLength', 'maxLength'],
+    ['sh:defaultValue', 'defaultValue'],
+    ['sh:pattern', 'pattern'],
+    ['sh:minInclusive', 'minInclusive'],
+    ['sh:maxInclusive', 'maxInclusive'],
+    [`${DEF.pfxNsDcmi}created`, 'created'],
+    [`${DEF.pfxNsDcmi}modified`, 'modified'],
+    [`${DEF.pfxNsDcmi}creator`, 'creator']
+]);
+const TO_RDF = new Map<string, string>(
+    Array.from(FROM_RDF.entries()).map(([a, b]) => [b, a])
+);
+
 // Map entries with the same keys: The second prevails.
 const FROM_REQIF = new Map<string, string>([
 ]);
@@ -135,6 +175,12 @@ export const MVF = {
     fromXML: FROM_XML,
 
     /**
+     * Mapping between internal format and RDF/Turtle
+     */
+    toRDF: TO_RDF,
+    fromRDF: FROM_RDF,
+
+    /**
      * Mapping between internal format and ReqIF
      */
     toReqIF: TO_REQIF,
@@ -150,6 +196,8 @@ export const MVF = {
      * - MVF.renameJsonTags(node, MVF.fromJSONLD)      // Convert from JSON-LD
      * - MVF.renameJsonTags(node, MVF.toXML)           // Convert to XML format
      * - MVF.renameJsonTags(node, MVF.fromXML)         // Convert from XML format
+     * - MVF.renameJsonTags(node, MVF.toRDF)           // Convert to RDF/Turtle format
+     * - MVF.renameJsonTags(node, MVF.fromRDF)         // Convert from RDF/Turtle format
      * 
      * ⚠️ WARNING: Use { mutate: true } only when:
      * - Working with very large objects (performance critical)

@@ -24,7 +24,7 @@ class PigSchemaFactory {
         return 'http://json-schema.org/draft-07/schema#';
     }
     static getSchemaPath() {
-        return 'https://product-information-graph.org/schema/2026-05-08/cas/';
+        return 'https://product-information-graph.org/schema/2026-07-03/cas/';
     }
     static getDefs() {
         return {
@@ -129,7 +129,6 @@ class PigSchemaFactory {
                     type: 'string',
                     pattern: '^xsd?:[A-Za-z]+$'
                 },
-                unit: { type: 'string' },
                 enumeratedValue: {
                     type: 'array',
                     items: {
@@ -174,7 +173,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes; enumeratedValue and datatype may be omitted for upper levels in the generalization hierarchy.
+            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'], // change info is optional for classes; enumeratedValue may be omitted for upper levels in the generalization hierarchy.
             $defs: this.getDefs()
         };
     }
@@ -209,7 +208,6 @@ class PigSchemaFactory {
                 minInclusive: { type: 'number' },
                 maxInclusive: { type: 'number' },
                 pattern: { type: 'string' },
-                unit: { type: 'string' },
                 defaultValue: { type: 'string' },
                 composedProperty: {
                     type: 'array',
@@ -228,7 +226,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'], // change info is optional for classes
             $defs: this.getDefs()
         };
     }

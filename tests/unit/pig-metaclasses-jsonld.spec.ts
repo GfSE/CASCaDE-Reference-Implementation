@@ -435,7 +435,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ],
                 [`${DEF.pfxNsDcmi}description`]: [
                     {
-                        '@value': "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The  particular use or original type is specified with a dcterms:type property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>",
+                        '@value': "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a dcterms:type property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>",
                         '@language': 'en'
                     },
                     {
@@ -858,7 +858,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         '@type': 'owl:DatatypeProperty',
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                         'sh:datatype': { '@id': 'xs:integer' },
-                        [`${DEF.pfxNsMeta}unit`]: 'MB',
+                    //    [`${DEF.pfxNsMeta}unit`]: 'MB',  -> now we need to use an entity for a value with unit
                         [`${DEF.pfxNsDcmi}title`]: [
                             { '@value': 'Volume' }
                         ],

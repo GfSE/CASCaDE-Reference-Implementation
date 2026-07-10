@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://product-information-graph.org/schema/2026-05-08/jsonld/aPackage.json",
+  "$id": "http://product-information-graph.org/schema/2026-07-03/jsonld/aPackage.json",
   "title": "CASCaRA aPackage Schema for JSON-LD",
   "description": "Validates a complete JSON-LD document (CASCaRA aPackage) with @context (namespace and vocabulary definitions) as well as @graph (array of PIG items). The graph contains a mix of item classes (Property, Link, Entity, Relationship) and instances (anEntity, aRelationship). Package-level metadata includes optional dcterms:modified, dcterms:creator, dcterms:title, and dcterms:description. Validates each item against its corresponding schema based on cas:itemType.",
   "type": "object",
@@ -127,7 +127,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/anEntity.json"
+              "$ref": "http://product-information-graph.org/schema/2026-07-03/jsonld/anEntity.json"
             }
           },
           {
@@ -143,7 +143,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/aRelationship.json"
+              "$ref": "http://product-information-graph.org/schema/2026-07-03/jsonld/aRelationship.json"
             }
           },
           {
@@ -159,7 +159,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Property.json"
+              "$ref": "http://product-information-graph.org/schema/2026-07-03/jsonld/Property.json"
             }
           },
           {
@@ -175,7 +175,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Link.json"
+              "$ref": "http://product-information-graph.org/schema/2026-07-03/jsonld/Link.json"
             }
           },
           {
@@ -191,7 +191,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Entity.json"
+              "$ref": "http://product-information-graph.org/schema/2026-07-03/jsonld/Entity.json"
             }
           },
           {
@@ -207,7 +207,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Relationship.json"
+              "$ref": "http://product-information-graph.org/schema/2026-07-03/jsonld/Relationship.json"
             }
           },
           {
@@ -223,7 +223,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-05-08/jsonld/Enumeration.json"
+              "$ref": "http://product-information-graph.org/schema/2026-07-03/jsonld/Enumeration.json"
             }
           }
         ]
@@ -232,107 +232,107 @@
   },
   "patternProperties": {
     "^(?!cas:itemType|cas:revision|cas:priorRevision|@id|@type|dcterms:modified|dcterms:creator|dcterms:title|dcterms:description)([A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$": {
-        "type": "array",
-        "description": "Configurable properties and links with namespaced keys",
-        "items": {
-          "type": "object",
-          "properties": {
-            "cas:itemType": {
-              "type": "object",
-              "required": [ "@id" ],
-              "properties": {
-                "@id": {
-                  "type": "string",
-                  "enum": [ "cas:aProperty", "cas:aTargetLink" ],
-                  "description": "Type of configurable item: property value or target link"
-                }
-              },
-              "additionalProperties": false
-            },
-            "@value": {
-              "type": "string",
-              "description": "Direct property value (for aProperty)"
-            },
-            "@id": {
-              "$ref": "#/$defs/idString",
-              "description": "Reference to enumeration value or linked entity/relationship"
-            }
-          },
-          "required": [ "cas:itemType" ],
-          "oneOf": [
-            {
-              "type": "object",
-              "description": "aProperty with direct value",
-              "properties": {
-                "cas:itemType": {
-                  "type": "object",
-                  "properties": {
-                    "@id": {
-                      "const": "cas:aProperty"
-                    }
-                  }
-                }
-              },
-              "required": [ "@value" ],
-              "not": {
-                "required": [ "@id" ]
-              }
-            },
-            {
-              "type": "object",
-              "description": "aTargetLink to an enumeration, entity or relationship",
-              "properties": {
-                "cas:itemType": {
-                  "type": "object",
-                  "properties": {
-                    "@id": {
-                      "const": "cas:aTargetLink"
-                    }
-                  }
-                }
-              },
-              "required": [ "@id" ],
-              "not": {
-                "required": [ "@value" ]
-              }
-            }
-          ],
-          "additionalProperties": false
-        }
-      }
-    },
-    "required": [
-      "@context",
-      "@id",
-      "@type",
-      "cas:itemType",
-      "@graph",
-      "dcterms:modified"
-    ],
-    "additionalProperties": true,
-    "$defs": {
-      "idString": {
-        "type": "string",
-        "pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$",
-        "description": "Valid identifier format: namespace:name or full URI (e.g., 'cas:Property', 'http://example.org/id')"
-      },
-      "languageValue": {
+      "type": "array",
+      "description": "Configurable properties and links with namespaced keys",
+      "items": {
         "type": "object",
-        "required": [ "@value" ],
         "properties": {
+          "cas:itemType": {
+            "type": "object",
+            "required": [ "@id" ],
+            "properties": {
+              "@id": {
+                "type": "string",
+                "enum": [ "cas:aProperty", "cas:aTargetLink" ],
+                "description": "Type of configurable item: property value or target link"
+              }
+            },
+            "additionalProperties": false
+          },
           "@value": {
             "type": "string",
-            "minLength": 1,
-            "description": "The actual text content"
+            "description": "Direct property value (for aProperty)"
           },
-          "@language": {
-            "type": "string",
-            "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
-            "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+          "@id": {
+            "$ref": "#/$defs/idString",
+            "description": "Reference to enumeration value or linked entity/relationship"
           }
         },
-        "additionalProperties": false,
-        "description": "Multi-language text value with optional language tag"
+        "required": [ "cas:itemType" ],
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "aProperty with direct value",
+            "properties": {
+              "cas:itemType": {
+                "type": "object",
+                "properties": {
+                  "@id": {
+                    "const": "cas:aProperty"
+                  }
+                }
+              }
+            },
+            "required": [ "@value" ],
+            "not": {
+              "required": [ "@id" ]
+            }
+          },
+          {
+            "type": "object",
+            "description": "aTargetLink to an enumeration, entity or relationship",
+            "properties": {
+              "cas:itemType": {
+                "type": "object",
+                "properties": {
+                  "@id": {
+                    "const": "cas:aTargetLink"
+                  }
+                }
+              }
+            },
+            "required": [ "@id" ],
+            "not": {
+              "required": [ "@value" ]
+            }
+          }
+        ],
+        "additionalProperties": false
       }
     }
+  },
+  "required": [
+    "@context",
+    "@id",
+    "@type",
+    "cas:itemType",
+    "@graph",
+    "dcterms:modified"
+  ],
+  "additionalProperties": true,
+  "$defs": {
+    "idString": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$",
+      "description": "Valid identifier format: namespace:name or full URI (e.g., 'cas:Property', 'http://example.org/id')"
+    },
+    "languageValue": {
+      "type": "object",
+      "required": [ "@value" ],
+      "properties": {
+        "@value": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The actual text content"
+        },
+        "@language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+          "description": "IETF language tag (e.g., 'en', 'de', 'en-US')"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Multi-language text value with optional language tag"
+    }
   }
+}

@@ -104,6 +104,7 @@ describe('import XML - ID normalization', () => {
                           xmlns:dcterms="http://purl.org/dc/terms/"
                           xmlns:skos="http://www.w3.org/2004/02/skos/core#"
                           xmlns:owl="http://www.w3.org/2002/07/owl#"
+                          xmlns:xs="http://www.w3.org/2001/XMLSchema#"
                           xmlns:o="https://example.org/ontology#"
                           xmlns:d="https://example.org/data#"
                           id="TestPackage">
@@ -298,7 +299,7 @@ describe('import XML - ID normalization', () => {
         // 9. Check aRelationship instance
         expect(relationship).toBeDefined();
         expect(relationship?.id).toBe('d:Dep-001');  // Instances get 'd:' prefix
-        expect(relationship?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
+        expect((relationship as any)?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
         expect((relationship as any)?.hasSourceLink).toBeDefined();
         expect(Array.isArray((relationship as any)?.hasSourceLink)).toBe(true);
         expect((relationship as any)?.hasSourceLink?.length).toBe(1);
