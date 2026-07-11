@@ -1534,6 +1534,7 @@ export class APackage extends AnElement implements IAPackage {
         // Ensure default namespace prefixes exist in context BEFORE validation
         // Only adds namespaces that were actually used during normalization
         const _context = this.ensureDefaultNamespaces(_pkg.context);
+        _pkg.context = _context;
 
         // Validate the package with all preprocessing completed
         const pkgValidation = this.validate(_pkg, options);
