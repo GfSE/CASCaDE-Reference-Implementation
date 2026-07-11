@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' @click='dialog = true'>Import XML</v-btn>
+    <v-btn color='secondary' class='text-none' @click='dialog = true'>CASCaRA XML 🡕</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Select XML Files</v-card-title>

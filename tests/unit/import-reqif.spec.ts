@@ -172,9 +172,10 @@ describe('ReqIF Import', () => {
             expect(items[0]).toBeTruthy();
             expect(items[0].itemType).toBe(PigItemType.aPackage);
 
-            // Should have additional graph items
-            expect(items.length).toBe(15);
-            expect(items[2].itemType).toBe(PigItemType.Property);
+            // Should have a certain number of graph items
+            expect(items.length).toBe(19);
+            expect(items[2].itemType).toBe(PigItemType.Entity);
+            expect(items[6].itemType).toBe(PigItemType.Property);
             console.log(`Package structure validated: ${items.length - 1} graph items`);
         });
 

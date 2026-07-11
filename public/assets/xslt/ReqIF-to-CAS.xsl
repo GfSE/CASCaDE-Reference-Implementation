@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cas="http://product-information-graph.org" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:csc="http://omg.org/CASCaRA/cas/" xmlns:reqif="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd" xmlns:sh="http://www.w3.org/ns/shacl#" xmlns:xs="http://www.w3.org/2001/XMLSchema#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cas="http://product-information-graph.org" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:csc="http://omg.org/CASCaRA/cas/" xmlns:reqif="http://www.omg.org/spec/ReqIF/20110401/reqif.xsd" xmlns:sh="http://www.w3.org/ns/shacl#" xmlns:xs="http://www.w3.org/2001/XMLSchema#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:skos="https://www.w3.org/TR/skos-reference/">
     <xsl:output method="xml" encoding="UTF-8" indent="yes" standalone="yes"/>
     <!-- Root template -->
     <xsl:template match="/">
@@ -49,6 +49,32 @@
                 </xsl:if>
             </dcterms:modified>
             <graph>
+                <!-- Define semantic infrastructure -->
+                <cas:Entity id="cas:Organizer" cas:hasClass="owl:Class">
+                    <cas:specializes>cas:Entity</cas:specializes>
+                    <dcterms:title>Organizer</dcterms:title>
+                    <skos:definition>A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation.</skos:definition>
+                </cas:Entity>
+                <cas:Entity id="cas:Root" cas:hasClass="owl:Class">
+                    <cas:specializes>cas:Organizer</cas:specializes>
+                    <dcterms:title>Root</dcterms:title>
+                    <skos:definition>A subclass of cas:Organizer serving as a root for trees and tables.</skos:definition>
+                    <cas:enumeratedTargetLink>cas:lists</cas:enumeratedTargetLink>
+                </cas:Entity>
+                <cas:Link id="cas:linksTarget" cas:hasClass="owl:ObjectProperty">
+                    <cas:specializes>cas:Link</cas:specializes>
+                    <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+                    <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
+                    <dcterms:title>to target</dcterms:title>
+                    <skos:definition>Connects the target of a reified relationship or an organizer.</skos:definition>
+                </cas:Link>
+                <cas:Link id="cas:lists" cas:hasClass="owl:ObjectProperty">
+                    <cas:specializes>cas:linksTarget</cas:specializes>
+                    <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
+                    <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
+                    <dcterms:title>lists</dcterms:title>
+                    <skos:definition>Lists an entity, a relationship or a subordinated organizer.</skos:definition>
+                </cas:Link>
                 <!-- Collect all ATTRIBUTE-DEFINITIONS from all OBJECT-TYPEs -->
                 <xsl:apply-templates select="//*[local-name()='SPEC-OBJECT-TYPE']/*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]"/>
                 <xsl:apply-templates select="//*[local-name()='SPECIFICATION-TYPE']/*[local-name()='SPEC-ATTRIBUTES']/*[starts-with(local-name(), 'ATTRIBUTE-DEFINITION-')]"/>

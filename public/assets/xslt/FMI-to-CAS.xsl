@@ -827,6 +827,7 @@
                     </skos:definition>
                 </xsl:if>
                 <cas:specializes>cas:Enumeration</cas:specializes>
+                <sh:datatype>xs:string</sh:datatype>
                 <xsl:for-each select="$items">
                     <xsl:variable name="vid" select="if (@value and string-length(string(@value)) &gt; 0) then string(@value) else string(position())"/>
                     <cas:enumeratedValue id="fmi:enum-{$enumPos}-{$vid}">

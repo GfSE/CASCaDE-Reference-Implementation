@@ -20,13 +20,12 @@
                     {{ name }}
                 </li>
             </ul>
-            <!--
         <h3>Export Plugins</h3>
         <ul>
             <li v-for="(component, name) in exportComponents" :key="name">
                 {{ name }}
             </li>
-        </ul>  -->
+        </ul>
         </section>
 
         <!-- Build Information Table -->

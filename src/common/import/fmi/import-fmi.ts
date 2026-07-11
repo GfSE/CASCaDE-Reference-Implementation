@@ -140,15 +140,11 @@ export class FmiImporter {
 
         let result: IRsp;
         if (actualCount === expectedCount) {
-            LOG.info(
-                `FmiImporter: successfully imported ${filename} with all ${actualCount} items`
-            );
+        //    LOG.info( `FmiImporter: successfully imported ${filename} with all ${actualCount} items` );
             result = Rsp.create(0, allItems, 'json');
         } else {
             const errorDetails = this.buildErrorReport(allItems);
-            LOG.warn(
-                `FmiImporter: imported ${actualCount} of ${expectedCount} items from ${filename}${errorDetails}`
-            );
+            LOG.warn( `FmiImporter: imported ${actualCount} of ${expectedCount} items from ${filename}${errorDetails}` );
             result = Rsp.create(604, allItems, 'json', 'FMI', actualCount, expectedCount);
         }
 
