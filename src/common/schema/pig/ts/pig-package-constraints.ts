@@ -1532,11 +1532,11 @@ function checkNamespacePrefixes(pkg: IAPackage): IRsp {
     // Helper function to extract prefixes from IDs
     function extractPrefix(id: TPigId | undefined): string | null {
         if (!id || typeof id !== 'string') return null;
+        // Ignore full IRIs (e.g., https://example.org/...) which don't rely on context prefixes
+        if (id.includes('://')) return null;
+
         const colonIndex = id.indexOf(':');
-        if (colonIndex > 0) {
-            return id.substring(0, colonIndex);
-        }
-        return null;
+        return colonIndex > 0 ? id.substring(0, colonIndex) : null;
     }
 
     // Helper function to collect all IDs from an item
