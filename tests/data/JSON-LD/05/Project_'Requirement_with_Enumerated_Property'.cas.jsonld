@@ -1,0 +1,682 @@
+{
+  "@context": {
+    "FMC": "http://fmc-modeling.org#",
+    "IREB": "https://cpre.ireb.org/en/downloads-and-resources/glossary#",
+    "SpecIF": "https://specif.de/v1.2/schema#",
+    "cas": "https://product-information-graph.org/ontology/2026-05-08/metamodel#",
+    "d": "https://product-information-graph.org/examples/05_Requirement-with-Enumerated-Property.specif#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "o": "https://product-information-graph.org/ontology/custom#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "skos": "https://www.w3.org/TR/skos-reference/",
+    "xs": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "d:P-Requirement-with-Enumerated-Property",
+  "@type": "cas:Package",
+  "@graph": [
+    {
+      "@id": "cas:Package",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Package"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances."
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "dcterms:contributor"
+        },
+        {
+          "@id": "dcterms:license"
+        }
+      ]
+    },
+    {
+      "@id": "FMC:Actor",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Actor"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A fundamental model-element class for actors (e.g. users, functions, systems, components, ...)."
+        }
+      ]
+    },
+    {
+      "@id": "FMC:State",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "State"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A fundamental model-element class for states (e.g. system or process states, information, form, color, ...)."
+        }
+      ]
+    },
+    {
+      "@id": "FMC:Event",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Event"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A fundamental model-element class for events (e.g. environmental or process events, ...)."
+        }
+      ]
+    },
+    {
+      "@id": "cas:Organizer",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Organizer"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation."
+        }
+      ]
+    },
+    {
+      "@id": "cas:Root",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Root"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subclass of cas:Organizer serving as a root for trees and tables."
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Tree",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Tree"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships."
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Outline",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Tree"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Outline"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
+        }
+      ]
+    },
+    {
+      "@id": "cas:Enumeration",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Enumeration"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for enumerations of values."
+        }
+      ]
+    },
+    {
+      "@id": "cas:Diagram",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Diagram"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A diagram illustrating the resource or a link to a diagram."
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "cas:Category",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "has category"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Specifies a category for an element (entity, relationship or organizer)."
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "cas:Notation",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Category"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Notation"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A reference to a notation defining the syntax and semantics of a diagram."
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "cas:linksSource",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "to source"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the source of a reified relationship."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:linksTarget",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "to target"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the target of a reified relationship or an organizer."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:lists",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "lists"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Lists an entity, a relationship or a subordinated organizer."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        },
+        {
+          "@id": "cas:Organizer"
+        }
+      ]
+    },
+    {
+      "@id": "SpecIF:Priority-Value",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Enumeration"
+      },
+      "cas:specializes": {
+        "@id": "cas:Enumeration"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Priority",
+          "@language": "en"
+        },
+        {
+          "@value": "Priorität",
+          "@language": "de"
+        },
+        {
+          "@value": "Priorité",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Enumerated values for the 'Priority' of the resource.",
+          "@language": "en"
+        }
+      ],
+      "dcterms:modified": "2020-03-26T22:59:00+02:00",
+      "cas:enumeratedValue": [
+        {
+          "@id": "SpecIF:priorityHigh",
+          "dcterms:title": [
+            {
+              "@value": "high",
+              "@language": "en"
+            },
+            {
+              "@value": "hoch",
+              "@language": "de"
+            },
+            {
+              "@value": "haut",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityRatherHigh",
+          "dcterms:title": [
+            {
+              "@value": "rather high",
+              "@language": "en"
+            },
+            {
+              "@value": "eher hoch",
+              "@language": "de"
+            },
+            {
+              "@value": "plutôt haut",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityMedium",
+          "dcterms:title": [
+            {
+              "@value": "medium",
+              "@language": "en"
+            },
+            {
+              "@value": "mittel",
+              "@language": "de"
+            },
+            {
+              "@value": "moyen",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityRatherLow",
+          "dcterms:title": [
+            {
+              "@value": "rather low",
+              "@language": "en"
+            },
+            {
+              "@value": "eher niedrig",
+              "@language": "de"
+            },
+            {
+              "@value": "plutôt bas",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityLow",
+          "dcterms:title": [
+            {
+              "@value": "low",
+              "@language": "en"
+            },
+            {
+              "@value": "niedrig",
+              "@language": "de"
+            },
+            {
+              "@value": "bas",
+              "@language": "fr"
+            }
+          ]
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "SpecIF:Priority",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Priority",
+          "@language": "en"
+        },
+        {
+          "@value": "Priorität",
+          "@language": "de"
+        },
+        {
+          "@value": "Priorité",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Enumerated value for the 'Priority' of the resource.",
+          "@language": "en"
+        }
+      ],
+      "dcterms:modified": "2020-03-26T22:59:00+02:00",
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "SpecIF:Priority-Value"
+        }
+      ]
+    },
+    {
+      "@id": "IREB:Requirement",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Requirement",
+          "@language": "en"
+        },
+        {
+          "@value": "Anforderung",
+          "@language": "de"
+        },
+        {
+          "@value": "Exigence",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p> A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p> Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>",
+          "@language": "de"
+        },
+        {
+          "@value": "<p> Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>",
+          "@language": "fr"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "SpecIF:Priority"
+        }
+      ],
+      "cas:icon": {
+        "@value": "↯"
+      }
+    },
+    {
+      "@id": "d:Req-35100bca2b005ba",
+      "@type": "IREB:Requirement",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Minimum button size",
+          "@language": "en"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>The <i>button size</i> MUST not be less than 20mm in diameter.</p>",
+          "@language": "en"
+        }
+      ],
+      "dcterms:modified": "2020-03-26T22:59:00+02:00",
+      "SpecIF:Priority": [
+        {
+          "@id": "SpecIF:priorityRatherHigh",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:HierarchyRoot-P-Requirement-with-Enumerated-Property",
+      "@type": "cas:Root",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Hierarchy Root"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "... anchoring all hierarchies of this graph (package)"
+        }
+      ],
+      "dcterms:modified": "2026-04-08T08:14:32.112Z",
+      "cas:lists": [
+        {
+          "@id": "d:HR-bca801377e3d1547",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:HR-bca801377e3d1547",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Project 'Requirement with Enumerated Property'"
+        }
+      ],
+      "dcterms:modified": "2026-04-08T08:14:32.065Z",
+      "cas:Category": [
+        {
+          "@value": "ReqIF:HierarchyRoot",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:lists": [
+        {
+          "@id": "d:Req-35100bca2b005ba",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    }
+  ],
+  "cas:itemType": {
+    "@id": "cas:aPackage"
+  },
+  "dcterms:title": [
+    {
+      "@value": "Project 'Requirement with Enumerated Property'"
+    }
+  ],
+  "dcterms:modified": "2026-04-08T08:14:32.015Z",
+  "dcterms:contributor": [
+    {
+      "@value": "mailto:oskar.dungern@gfse.org",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ],
+  "dcterms:license": [
+    {
+      "@value": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ]
+}

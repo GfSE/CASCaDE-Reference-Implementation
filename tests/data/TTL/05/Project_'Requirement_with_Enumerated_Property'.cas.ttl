@@ -1,45 +1,83 @@
 
-@prefix o: <https://product-information-graph.org/v0.2/ontology#> .
-@prefix d: <https://product-information-graph.org/examples/05_Requirement-with-Enumerated-Property.specif#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix skos: <https://www.w3.org/TR/skos-reference/> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cas: <https://product-information-graph.org/ontology/2026-05-08/metamodel#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <https://www.w3.org/TR/skos-reference/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix FMC: <http://fmc-modeling.org#> .
 @prefix IREB: <https://cpre.ireb.org/en/downloads-and-resources/glossary#> .
-@prefix cas: <https://product-information-graph.org/v0.2/metamodel#> .
 @prefix SpecIF: <https://specif.de/v1.2/schema#> .
+@prefix o: <https://product-information-graph.org/ontology/custom#> .
+@prefix d: <https://product-information-graph.org/examples/05_Requirement-with-Enumerated-Property.specif#> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+d:P-Requirement-with-Enumerated-Property_ontology
+	a owl:Ontology ;
+	dcterms:contributor "mailto:oskar.dungern@gfse.org" ;
+	dcterms:license "https://creativecommons.org/licenses/by-sa/4.0/" ;
+	owl:versionInfo "2026-07-03" .
 
 d:P-Requirement-with-Enumerated-Property
 	a cas:Package ;
 	rdfs:label "Project 'Requirement with Enumerated Property'" ;
-	dcterms:modified "2026-05-14T08:33:28.561Z"^^xs:dateTime .
+	dcterms:modified "2026-04-08T08:14:32.015Z"^^xs:dateTime .
 
 #################################################################
 # Graph Items
 #################################################################
 
-cas:Organizer
-	rdfs:subClassOf cas:Entity ;
-	rdfs:label "Organizer" ;
-	skos:definition "A CASCaRA meta-model item for organizing model-elements. An example is a list of requirements or a diagram using a certain notation." .
-
-cas:Organizer_shape
-	a sh:NodeShape ;
-	sh:targetClass cas:Organizer ;
-	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
-
 cas:Package
-	rdfs:subClassOf cas:Organizer ;
+	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Package" ;
-	skos:definition "A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions." .
+	skos:definition "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances." .
 
 cas:Package_shape
 	a sh:NodeShape ;
 	sh:targetClass cas:Package ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+FMC:Actor
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Actor" ;
+	skos:definition "A fundamental model-element class for actors (e.g. users, functions, systems, components, ...)." .
+
+FMC:Actor_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:Actor ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+FMC:State
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "State" ;
+	skos:definition "A fundamental model-element class for states (e.g. system or process states, information, form, color, ...)." .
+
+FMC:State_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:State ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+FMC:Event
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Event" ;
+	skos:definition "A fundamental model-element class for events (e.g. environmental or process events, ...)." .
+
+FMC:Event_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:Event ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+cas:Organizer
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Organizer" ;
+	skos:definition "A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation." .
+
+cas:Organizer_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Organizer ;
 	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
 
 cas:Root
@@ -74,6 +112,16 @@ cas:Outline_shape
 	sh:targetClass cas:Outline ;
 	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
 
+cas:Enumeration
+	a owl:Class ;
+	rdfs:label "Enumeration" ;
+	skos:definition "A CASCaRA meta-model item used for enumerations of values." .
+
+cas:Enumeration_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Enumeration ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
 cas:Diagram
 	rdfs:subPropertyOf cas:Property ;
 	rdfs:label "Diagram" ;
@@ -82,8 +130,7 @@ cas:Diagram
 cas:Diagram_shape
 	a sh:PropertyShape ;
 	sh:path cas:Diagram ;
-	sh:datatype xs:string ;
-	sh:minCount 0 .
+	sh:datatype xs:string .
 
 cas:Category
 	rdfs:subPropertyOf cas:Property ;
@@ -93,10 +140,7 @@ cas:Category
 cas:Category_shape
 	a sh:PropertyShape ;
 	sh:path cas:Category ;
-	sh:datatype xs:string ;
-	sh:minCount 0 ;
-	sh:maxCount 1 ;
-	sh:maxLength 32 .
+	sh:datatype xs:string .
 
 cas:Notation
 	rdfs:subPropertyOf cas:Category ;
@@ -106,9 +150,7 @@ cas:Notation
 cas:Notation_shape
 	a sh:PropertyShape ;
 	sh:path cas:Notation ;
-	sh:datatype xs:string ;
-	sh:minCount 0 ;
-	sh:maxCount 1 .
+	sh:datatype xs:string .
 
 cas:linksSource
 	rdfs:subPropertyOf cas:Link ;
@@ -143,7 +185,7 @@ cas:lists_shape
 	sh:path cas:lists ;
 	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] [ sh:class cas:Organizer ] ) .
 
-SpecIF:Priority-Enumeration
+SpecIF:Priority-Value
 	rdfs:subClassOf cas:Enumeration ;
 	rdfs:label "Priority"@en ,
 		"Priorität"@de ,
@@ -157,52 +199,34 @@ SpecIF:Priority-Enumeration
 		SpecIF:priorityLow .
 
 SpecIF:Priority
-	rdfs:subPropertyOf cas:Link ;
+	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "Priority"@en ,
 		"Priorität"@de ,
 		"Priorité"@fr ;
-	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	skos:definition "Enumerated value for the 'Priority' of the resource."@en ;
 	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
-	rdfs:range SpecIF:Priority-Enumeration .
+	rdfs:range SpecIF:Priority-Value .
 
 SpecIF:Priority_shape
 	a sh:PropertyShape ;
 	sh:path SpecIF:Priority ;
-	sh:class SpecIF:Priority-Enumeration .
+	sh:class SpecIF:Priority-Value .
 
 IREB:Requirement
 	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Requirement"@en ,
 		"Anforderung"@de ,
 		"Exigence"@fr ;
-	skos:definition "<p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
-		"<p>Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
-		"<p>Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
-	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
-	cas:icon "\"&#8623;\"" .
+	rdfs:comment "<p> A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
+		"<p> Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
+		"<p> Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
+	cas:icon "\"↯\"" .
 
 IREB:Requirement_shape
 	a sh:NodeShape ;
 	sh:targetClass IREB:Requirement ;
 	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
 	sh:property SpecIF:Priority_shape .
-
-SpecIF:Paragraph
-	rdfs:subClassOf cas:Entity ;
-	rdfs:label "Paragraph"@en ,
-		"Textabsatz"@de ,
-		"Paragraphe"@fr ;
-	skos:definition "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
-		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de ;
-	cas:revision "1.1" ;
-	dcterms:modified "2024-03-02T20:55:23.295Z"^^xs:dateTime .
-
-SpecIF:Paragraph_shape
-	a sh:NodeShape ;
-	sh:targetClass SpecIF:Paragraph ;
-	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
-	sh:property cas:Diagram_shape ;
-	sh:property cas:Category_shape .
 
 d:Req-35100bca2b005ba
 	a IREB:Requirement ;
@@ -215,13 +239,13 @@ d:HierarchyRoot-P-Requirement-with-Enumerated-Property
 	a cas:Root ;
 	rdfs:label "Hierarchy Root" ;
 	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
-	dcterms:modified "2026-05-14T08:33:28.683Z"^^xs:dateTime ;
+	dcterms:modified "2026-04-08T08:14:32.112Z"^^xs:dateTime ;
 	cas:lists d:HR-bca801377e3d1547 .
 
 d:HR-bca801377e3d1547
 	a cas:Outline ;
 	rdfs:label "Project 'Requirement with Enumerated Property'" ;
-	dcterms:modified "2026-05-14T08:33:28.620Z"^^xs:dateTime ;
+	dcterms:modified "2026-04-08T08:14:32.065Z"^^xs:dateTime ;
 	cas:Category ReqIF:HierarchyRoot ;
 	cas:lists d:Req-35100bca2b005ba .
 

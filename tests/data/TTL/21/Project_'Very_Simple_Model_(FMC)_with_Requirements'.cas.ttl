@@ -1,0 +1,807 @@
+
+@prefix cas: <https://product-information-graph.org/ontology/2026-05-08/metamodel#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <https://www.w3.org/TR/skos-reference/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix o: <https://product-information-graph.org/ontology/custom#> .
+@prefix d: <https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix FMC: <http://fmc-modeling.org#> .
+@prefix IREB: <https://cpre.ireb.org/en/downloads-and-resources/glossary#> .
+@prefix ReqIF: <https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#> .
+@prefix oslc_rm: <http://open-services.net/ns/rm#> .
+@prefix SpecIF: <https://specif.de/v1.2/schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+d:ACP-Very-Simple-Model-FMC-with-Requirements_ontology
+	a owl:Ontology ;
+	dcterms:contributor "mailto:oskar.dungern@gfse.org" ;
+	dcterms:license "https://creativecommons.org/licenses/by-sa/4.0/" ;
+	owl:versionInfo "2026-07-03" .
+
+d:ACP-Very-Simple-Model-FMC-with-Requirements
+	a cas:Package ;
+	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
+	dcterms:modified "2026-01-17T22:38:19.595Z"^^xs:dateTime .
+
+#################################################################
+# Graph Items
+#################################################################
+
+cas:Package
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Package" ;
+	skos:definition "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances." .
+
+cas:Package_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Package ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+cas:Organizer
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Organizer" ;
+	skos:definition "An element organizing model elements. An example is a list of requirements or a diagram using a certain notation." .
+
+cas:Organizer_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Organizer ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Category_shape .
+
+cas:Root
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Hierarchy Root" ;
+	skos:definition "A subclass of CASCaRA organizer serving as a root for hierarchically organized graph elements." .
+
+cas:Root_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Root ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:lists_shape .
+
+cas:Outline
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Outline" ;
+	skos:definition "A subclass of CASCaRA organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized." .
+
+cas:Outline_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Outline ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Category_shape ;
+	sh:property cas:lists_shape .
+
+cas:View
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "View" ;
+	skos:definition "A subclass of CASCaRA organizer representing a model view (diagram) using a certain notation showing selected model elements." .
+
+cas:View_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:View ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Category_shape ;
+	sh:property cas:Diagram_shape ;
+	sh:property cas:shows_shape ;
+	sh:property cas:depicts_shape .
+
+cas:Category
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "has category" ;
+	skos:definition "Specifies a category for an element (entity, relationship or organizer)." .
+
+cas:Category_shape
+	a sh:PropertyShape ;
+	sh:path cas:Category ;
+	sh:datatype xs:string ;
+	sh:minCount 0 ;
+	sh:maxCount 1 ;
+	sh:maxLength 32 .
+
+cas:linksSource
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "to source" ;
+	skos:definition "Connects the source of a reified relationship." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship ) ] .
+
+cas:linksSource_shape
+	a sh:PropertyShape ;
+	sh:path cas:linksSource ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
+
+cas:linksTarget
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "to target" ;
+	skos:definition "Connects the target of a reified relationship or an organizer." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship ) ] .
+
+cas:linksTarget_shape
+	a sh:PropertyShape ;
+	sh:path cas:linksTarget ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
+
+cas:lists
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "lists" ;
+	skos:definition "Lists an entity, a relationship or a subordinated organizer." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship cas:Organizer ) ] .
+
+cas:lists_shape
+	a sh:PropertyShape ;
+	sh:path cas:lists ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] [ sh:class cas:Organizer ] ) .
+
+cas:shows
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "shows" ;
+	skos:definition "Shows an entity or a relationship." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship ) ] .
+
+cas:shows_shape
+	a sh:PropertyShape ;
+	sh:path cas:shows ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
+
+cas:depicts
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "depicts" ;
+	skos:definition "Depicts an entity; inverse of uml:ownedDiagram." ;
+	rdfs:range cas:Entity .
+
+cas:depicts_shape
+	a sh:PropertyShape ;
+	sh:path cas:depicts ;
+	sh:class cas:Entity .
+
+dcterms:title
+	a owl:DatatypeProperty ;
+	rdfs:label "Title"@en ,
+		"Titel"@de ,
+		"Titre"@fr ;
+	rdfs:comment "<p> A name given to the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/title\">DCMI</a></i>) </small></p><p> Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>"@en .
+
+dcterms:title_shape
+	a sh:PropertyShape ;
+	sh:path dcterms:title ;
+	sh:datatype xs:string ;
+	sh:maxCount 1 ;
+	sh:maxLength 256 .
+
+dcterms:description
+	a owl:DatatypeProperty ;
+	rdfs:label "Description"@en ,
+		"Beschreibung"@de ,
+		"Description"@fr ;
+	rdfs:comment "<p> An account of the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/description\">DCMI</a></i>) </small></p><p> Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>"@en .
+
+dcterms:description_shape
+	a sh:PropertyShape ;
+	sh:path dcterms:description ;
+	sh:datatype xs:string ;
+	sh:maxCount 1 .
+
+cas:Diagram
+	a owl:DatatypeProperty ;
+	rdfs:label "Diagram"@en ,
+		"Diagramm"@de ,
+		"Diagramme"@fr ;
+	skos:definition "A diagram illustrating the resource or a link to a diagram."@en .
+
+cas:Diagram_shape
+	a sh:PropertyShape ;
+	sh:path cas:Diagram ;
+	sh:datatype xs:string .
+
+SpecIF:Paragraph
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Paragraph"@en ,
+		"Textabsatz"@de ,
+		"Paragraphe"@fr ;
+	rdfs:comment "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
+		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de .
+
+SpecIF:Paragraph_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:Paragraph ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Diagram_shape ;
+	sh:property cas:Category_shape .
+
+FMC:Actor
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Actor"@en ,
+		"Akteur"@de ,
+		"Acteur"@fr ;
+	rdfs:comment "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>"@en ,
+		"<p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>"@de ,
+		"<p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>"@fr ;
+	cas:icon "\"□\"" .
+
+FMC:Actor_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:Actor ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Category_shape .
+
+FMC:State
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "State"@en ,
+		"Zustand"@de ,
+		"État"@fr ;
+	rdfs:comment "<p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].</p>"@en ,
+		"<p>Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].</p>"@de ,
+		"<p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p>"@fr ;
+	cas:icon "\"○\"" .
+
+FMC:State_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:State ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Category_shape .
+
+FMC:Event
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Event"@en ,
+		"Ereignis"@de ,
+		"Évenement"@fr ;
+	rdfs:comment "<p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>"@en ,
+		"<p>Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].</p>"@de ,
+		"<p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p>"@fr ;
+	cas:icon "\"♢\"" .
+
+FMC:Event_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:Event ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Category_shape .
+
+IREB:Requirement
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Requirement"@en ,
+		"Anforderung"@de ,
+		"Exigence"@fr ;
+	rdfs:comment "<p> A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
+		"<p> Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
+		"<p> Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
+	cas:icon "\"↯\"" .
+
+IREB:Requirement_shape
+	a sh:NodeShape ;
+	sh:targetClass IREB:Requirement ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property SpecIF:Priority_shape .
+
+SpecIF:writes
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "writes"@en ,
+		"schreibt"@de ,
+		"écrit"@fr ;
+	rdfs:comment "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]]."@en .
+
+SpecIF:writes_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:writes ;
+	sh:property SpecIF:writes-toSource_shape ;
+	sh:property SpecIF:writes-toTarget_shape .
+
+SpecIF:writes-toSource
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SpecIF:writes to source" ;
+	skos:definition "Connects the source of SpecIF:writes" ;
+	rdfs:range FMC:Actor .
+
+SpecIF:writes-toSource_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:writes-toSource ;
+	sh:class FMC:Actor .
+
+SpecIF:writes-toTarget
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SpecIF:writes to target" ;
+	skos:definition "Connects the target of SpecIF:writes" ;
+	rdfs:range FMC:State .
+
+SpecIF:writes-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:writes-toTarget ;
+	sh:class FMC:State .
+
+SpecIF:reads
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "reads"@en ,
+		"liest"@de ,
+		"lit"@fr ;
+	rdfs:comment "A [[FMC:Actor]] 'reads' a [[FMC:State]]."@en .
+
+SpecIF:reads_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:reads ;
+	sh:property SpecIF:reads-toSource_shape ;
+	sh:property SpecIF:reads-toTarget_shape .
+
+SpecIF:reads-toSource
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SpecIF:reads to source" ;
+	skos:definition "Connects the source of SpecIF:reads" ;
+	rdfs:range FMC:Actor .
+
+SpecIF:reads-toSource_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:reads-toSource ;
+	sh:class FMC:Actor .
+
+SpecIF:reads-toTarget
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SpecIF:reads to target" ;
+	skos:definition "Connects the target of SpecIF:reads" ;
+	rdfs:range FMC:State .
+
+SpecIF:reads-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:reads-toTarget ;
+	sh:class FMC:State .
+
+oslc_rm:satisfies
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "satisfies"@en ,
+		"erfüllt"@de ,
+		"satisfait"@fr ;
+	rdfs:comment "<p> The object is satisfied by the subject. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p><p> SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'. </p>"@en .
+
+oslc_rm:satisfies_shape
+	a sh:NodeShape ;
+	sh:targetClass oslc_rm:satisfies ;
+	sh:property oslc_rm:satisfies-toSource_shape ;
+	sh:property oslc_rm:satisfies-toTarget_shape .
+
+oslc_rm:satisfies-toSource
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "oslc_rm:satisfies to source" ;
+	skos:definition "Connects the source of oslc_rm:satisfies" ;
+	rdfs:range [ owl:unionOf ( FMC:Actor FMC:State ) ] .
+
+oslc_rm:satisfies-toSource_shape
+	a sh:PropertyShape ;
+	sh:path oslc_rm:satisfies-toSource ;
+	sh:or ( [ sh:class FMC:Actor ] [ sh:class FMC:State ] ) .
+
+oslc_rm:satisfies-toTarget
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "oslc_rm:satisfies to target" ;
+	skos:definition "Connects the target of oslc_rm:satisfies" ;
+	rdfs:range IREB:Requirement .
+
+oslc_rm:satisfies-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path oslc_rm:satisfies-toTarget ;
+	sh:class IREB:Requirement .
+
+SpecIF:Priority-Value
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
+	cas:enumeratedValue SpecIF:priorityHigh ,
+		SpecIF:priorityRatherHigh ,
+		SpecIF:priorityMedium ,
+		SpecIF:priorityRatherLow ,
+		SpecIF:priorityLow .
+
+SpecIF:Priority
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
+	rdfs:range SpecIF:Priority-Value .
+
+SpecIF:Priority_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:Priority ;
+	sh:class SpecIF:Priority-Value .
+
+d:Req-1a8016e2872e78ecadc50feddc00029b
+	a IREB:Requirement ;
+	rdfs:label "Data Volume" ;
+	rdfs:comment "<p>The data store MUST support a total volume up to 850 GB.</p>" ;
+	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
+	SpecIF:Priority SpecIF:priorityHigh .
+
+d:Req-0Z7916e2872e78ecadc50feddc00918a
+	a IREB:Requirement ;
+	rdfs:label "Consistency" ;
+	rdfs:comment "<p>The data store MUST be consistent at all times.</p>" ;
+	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
+	SpecIF:Priority SpecIF:priorityHigh .
+
+d:Req-2b9016e2872e78ecadc50feddc0013Ac
+	a IREB:Requirement ;
+	rdfs:label "Response Time" ;
+	rdfs:comment "<p>The system SHOULD respond on user queries within 300 ms.</p>" ;
+	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
+	SpecIF:Priority SpecIF:priorityMedium .
+
+d:Diagram-aec0df7900010000017001eaf53e8876
+	a cas:View ;
+	rdfs:label "IT-Integration: FiCo-Application and FiCo-Data" ;
+	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
+	cas:Diagram "\n                    <p class=\"inline-label\">Model Diagram:</p>\n                    <p>\n                        <object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object>\n                    </p>\n                " ;
+	cas:Category "FMC Block Diagram" ;
+	cas:shows d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ,
+		d:MEl-50feddc00029b1a8016e2872e78ecadc ,
+		d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc ,
+		d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc .
+
+d:MEl-50fbfe8f0029b1a8016ea86245a9d83a
+	a FMC:Actor ;
+	rdfs:label "FiCo-Application" ;
+	rdfs:comment "<p>IT-Application for Finance and Controlling.</p>" ;
+	dcterms:modified "2020-03-06T09:04:00+01:00"^^xs:dateTime .
+
+d:MEl-50feddc00029b1a8016e2872e78ecadc
+	a FMC:State ;
+	rdfs:label "FiCo-Data" ;
+	rdfs:comment "<p>Finance and Controlling Data, such as cost-units per project with budget, accrued cost etc.</p>" ;
+	dcterms:modified "2020-03-06T09:03:00+01:00"^^xs:dateTime .
+
+d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc
+	a SpecIF:writes ;
+	rdfs:comment "'FiCo-Application' writes 'FiCo-Data'" ;
+	dcterms:modified "2020-03-06T09:05:00+01:00"^^xs:dateTime ;
+	SpecIF:writes-toSource d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ;
+	SpecIF:writes-toTarget d:MEl-50feddc00029b1a8016e2872e78ecadc .
+
+d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc
+	a SpecIF:reads ;
+	rdfs:comment "'FiCo-Application' reads 'FiCo-Data'" ;
+	dcterms:modified "2020-03-06T09:05:00+01:00"^^xs:dateTime ;
+	SpecIF:reads-toSource d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ;
+	SpecIF:reads-toTarget d:MEl-50feddc00029b1a8016e2872e78ecadc .
+
+d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b
+	a oslc_rm:satisfies ;
+	rdfs:comment "'FiCo-Data' satisfies 'Data Volume'" ;
+	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
+	oslc_rm:satisfies-toSource d:MEl-50feddc00029b1a8016e2872e78ecadc ;
+	oslc_rm:satisfies-toTarget d:Req-1a8016e2872e78ecadc50feddc00029b .
+
+d:Ssat-50feddc00029b1a8016e2872e78ecadc-0Z7916e2872e78ecadc50feddc00918a
+	a oslc_rm:satisfies ;
+	rdfs:comment "'FiCo-Data' satisfies 'Consistency'" ;
+	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
+	oslc_rm:satisfies-toSource d:MEl-50feddc00029b1a8016e2872e78ecadc ;
+	oslc_rm:satisfies-toTarget d:Req-0Z7916e2872e78ecadc50feddc00918a .
+
+d:Ssat-50fbfe8f0029b1a8016ea86245a9d83a-2b9016e2872e78ecadc50feddc0013Ac
+	a oslc_rm:satisfies ;
+	rdfs:comment "'FiCo-Application' satisfies 'Response Time'" ;
+	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
+	oslc_rm:satisfies-toSource d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ;
+	oslc_rm:satisfies-toTarget d:Req-2b9016e2872e78ecadc50feddc0013Ac .
+
+d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements
+	a cas:Root ;
+	rdfs:label "Hierarchy Root" ;
+	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
+	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
+	cas:lists d:HR-Folder-Introduction ,
+		d:HR-Folder-Requirements ,
+		d:HR-Folder-SystemModel ,
+		d:HR-FolderGlossary-10875487071 .
+
+d:Folder-Introduction
+	a cas:Outline ;
+	rdfs:label "Introduction" ;
+	rdfs:comment "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in <a href=\"https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html\" target=\"_blank\">Tutorial 6: Very Simple Model (FMC)</a> and <a href=\"https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html\" target=\"_blank\">Tutorial 9: Very Simple Model (FMC) with Requirements</a>. </p>" ;
+	dcterms:modified "2025-02-07T08:32:00+01:00"^^xs:dateTime .
+
+d:HR-Folder-Introduction
+	a cas:Outline ;
+	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
+	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
+	cas:Category ReqIF:HierarchyRoot ;
+	cas:lists d:Folder-Introduction .
+
+d:Folder-Requirements
+	a cas:Outline ;
+	rdfs:label "Requirements" ;
+	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
+	cas:lists d:Req-1a8016e2872e78ecadc50feddc00029b ,
+		d:Req-0Z7916e2872e78ecadc50feddc00918a ,
+		d:Req-2b9016e2872e78ecadc50feddc0013Ac .
+
+d:HR-Folder-Requirements
+	a cas:Outline ;
+	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
+	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
+	cas:Category ReqIF:HierarchyRoot ;
+	cas:lists d:Folder-Requirements .
+
+d:Folder-SystemModel
+	a cas:Outline ;
+	rdfs:label "System Model" ;
+	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
+	cas:lists d:Diagram-aec0df7900010000017001eaf53e8876 .
+
+d:HR-Folder-SystemModel
+	a cas:Outline ;
+	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
+	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
+	cas:Category ReqIF:HierarchyRoot ;
+	cas:lists d:Folder-SystemModel .
+
+d:FolderGlossary-10875487071
+	a cas:Outline ;
+	rdfs:label "Model Elements (Glossary)" ;
+	dcterms:modified "2026-01-17T22:38:13.953Z"^^xs:dateTime ;
+	cas:Category SpecIF:Glossary ;
+	cas:lists d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ,
+		d:MEl-50feddc00029b1a8016e2872e78ecadc .
+
+d:HR-FolderGlossary-10875487071
+	a cas:Outline ;
+	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
+	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
+	cas:Category ReqIF:HierarchyRoot ;
+	cas:lists d:FolderGlossary-10875487071 .
+
+
+#################################################################
+# Metamodel Class Shapes
+#################################################################
+
+cas:Property_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:DatatypeProperty ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:DatatypeProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path sh:defaultValue ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:composes ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Property_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:DatatypeProperty ;
+	sh:sparql [
+		sh:message "Property class must have a corresponding PropertyShape with at least sh:datatype defined" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:PropertyShape ;
+						sh:path $this ;
+						sh:datatype ?dt .
+				}
+			}
+		"""
+	] .
+
+cas:Link_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:ObjectProperty ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:ObjectProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:range ; sh:minCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Link_shape_requirement_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:ObjectProperty ;
+	sh:sparql [
+		sh:message "Link class must have a corresponding PropertyShape with at least sh:class or sh:or constraint defined" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:PropertyShape ;
+						sh:path $this .
+					FILTER ( EXISTS { ?shape sh:class ?c } || EXISTS { ?shape sh:or ?o } )
+				}
+			}
+		"""
+	] .
+
+cas:Enumeration_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass owl:Class ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:enumeratedValue ; sh:minCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Enumeration_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass owl:Class ;
+	sh:sparql [
+		sh:message "Enumeration class must have at least one valid enumeratedValue" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					$this cas:enumeratedValue ?value .
+				}
+			}
+		"""
+	] .
+
+cas:Entity_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Entity ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:icon ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Entity_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Entity ;
+	sh:sparql [
+		sh:message "Entity class should have a corresponding NodeShape with sh:targetClass constraint" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Entity shape should have sh:property for each enumeratedProperty defined in the class" ;
+		sh:select """
+			SELECT $this ?prop
+			WHERE {
+				$this cas:enumeratedProperty ?prop .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?propShape .
+					?propShape sh:path ?prop .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Entity shape should have sh:property for each enumeratedTargetLink defined in the class" ;
+		sh:select """
+			SELECT $this ?link
+			WHERE {
+				$this cas:enumeratedTargetLink ?link .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?linkShape .
+					?linkShape sh:path ?link .
+				}
+			}
+		"""
+	] .
+
+cas:Relationship_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Relationship ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:icon ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Relationship_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Relationship ;
+	sh:sparql [
+		sh:message "Relationship class should have a corresponding NodeShape with sh:targetClass constraint" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Relationship shape should have sh:property for each enumeratedProperty defined in the class" ;
+		sh:select """
+			SELECT $this ?prop
+			WHERE {
+				$this cas:enumeratedProperty ?prop .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?propShape .
+					?propShape sh:path ?prop .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Relationship shape should have sh:property for each enumeratedSourceLink defined in the class" ;
+		sh:select """
+			SELECT $this ?link
+			WHERE {
+				$this cas:enumeratedSourceLink ?link .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?linkShape .
+					?linkShape sh:path ?link .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Relationship shape should have sh:property for each enumeratedTargetLink defined in the class" ;
+		sh:select """
+			SELECT $this ?link
+			WHERE {
+				$this cas:enumeratedTargetLink ?link .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?linkShape .
+					?linkShape sh:path ?link .
+				}
+			}
+		"""
+	] .
+
