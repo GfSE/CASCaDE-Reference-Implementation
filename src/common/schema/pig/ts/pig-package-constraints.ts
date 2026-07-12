@@ -552,12 +552,58 @@ function resolveEnumeratedSourceLinks(
 }
 
 /**
- * Check that all properties in anEntity and aRelationship instances are declared as enumerated in their classes
+ * Check that all properties in aPackage, anEntity and aRelationship instances are declared as enumerated in their classes
  * @param pkg - Package to validate
  * @param classMap - Map of class definitions
  * @returns IRsp (rspOK on success, error on invalid property)
  */
 function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
+    // Helper function to check properties for a single instance
+    function checkInstanceProperties(instance: any, itemId: TPigId, itemType: string): IRsp {
+        const classId = instance.hasClass;
+
+        if (!classId) {
+            return rspOK; // hasClass is validated elsewhere
+        }
+
+        // Resolve enumerated properties for this class
+        const enumeratedProperties = resolveEnumeratedProperties(classId, classMap);
+
+        // If no properties are defined, nothing to validate
+        if (!instance.hasProperty || !Array.isArray(instance.hasProperty)) {
+            return rspOK;
+        }
+
+        // Check each property against enumerated properties
+        for (let j = 0; j < instance.hasProperty.length; j++) {
+            const prop = instance.hasProperty[j];
+            const propClassId = prop.hasClass;
+
+            /*    if (!propClassId) {
+                    continue; // hasClass is validated elsewhere
+                } */
+
+            // If enumeratedProperty is undefined ('*'), all properties are allowed
+            if (enumeratedProperties.includes('*')) {
+                continue;
+            }
+
+            // Check if this property class is in the enumerated list
+            if (!enumeratedProperties.includes(propClassId)) {
+                return Msg.create(676, itemId, itemType, 'hasProperty', j, propClassId, classId);
+            }
+        }
+
+        return rspOK;
+    }
+
+    // Check the package itself
+    const pkgResult = checkInstanceProperties(pkg, pkg.id, PigItemType.aPackage);
+    if (!pkgResult.ok) {
+        return pkgResult;
+    }
+
+    // Check anEntity and aRelationship instances in the graph
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
         const itemType = (item as any).itemType;
@@ -565,39 +611,9 @@ function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): 
 
         // Check anEntity and aRelationship instances
         if (itemType === PigItemType.anEntity || itemType === PigItemType.aRelationship) {
-            const instance = item as any;
-            const classId = instance.hasClass;
-
-            if (!classId) {
-                continue; // hasClass is validated elsewhere
-            }
-
-            // Resolve enumerated properties for this class
-            const enumeratedProperties = resolveEnumeratedProperties(classId, classMap);
-
-            // If no properties are defined, check if class allows properties
-            if (!instance.hasProperty || !Array.isArray(instance.hasProperty)) {
-                continue; // No properties to validate
-            }
-
-            // Check each property against enumerated properties
-            for (let j = 0; j < instance.hasProperty.length; j++) {
-                const prop = instance.hasProperty[j];
-                const propClassId = prop.hasClass;
-
-                /*    if (!propClassId) {
-                        continue; // hasClass is validated elsewhere
-                    } */
-
-                // If enumeratedProperty is undefined ('*'), all properties are allowed
-                if (enumeratedProperties.includes('*')) {
-                    continue;
-                }
-
-                // Check if this property class is in the enumerated list
-                if (!enumeratedProperties.includes(propClassId)) {
-                    return Msg.create(676, itemId, itemType, 'hasProperty', j, propClassId, classId);
-                }
+            const result = checkInstanceProperties(item, itemId, itemType);
+            if (!result.ok) {
+                return result;
             }
         }
     }
@@ -606,18 +622,48 @@ function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): 
 }
 
 /**
- * Check that all links in anEntity and aRelationship instances are declared as enumerated in their classes
+ * Check that all links in aPackage, anEntity and aRelationship instances are declared as enumerated in their classes
  * @param pkg - Package to validate
  * @param classMap - Map of class definitions
  * @returns IRsp (rspOK on success, error on invalid link)
  */
 function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
+    // Helper function to check target links for an instance
+    function checkTargetLinks(instance: any, itemId: TPigId, itemType: string, classId: TPigId): IRsp {
+        const enumeratedLinks = resolveEnumeratedTargetLinks(classId, classMap);
+
+        if (Array.isArray(instance.hasTargetLink)) {
+            for (let j = 0; j < instance.hasTargetLink.length; j++) {
+                const link = instance.hasTargetLink[j];
+                const linkClassId = link.hasClass as string;
+
+                if (enumeratedLinks.includes('*'))  // all links allowed
+                    continue;
+
+                if (!enumeratedLinks.includes(linkClassId)) {
+                    return Msg.create(676, itemId, itemType, 'hasTargetLink', j, linkClassId, classId);
+                }
+            }
+        }
+
+        return rspOK;
+    }
+
+    // Check the package itself (hasTargetLink only)
+    if (pkg.hasClass) {
+        const result = checkTargetLinks(pkg, pkg.id, PigItemType.aPackage, pkg.hasClass);
+        if (!result.ok) {
+            return result;
+        }
+    }
+
+    // Check instances in the graph
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
         const itemType = (item as any).itemType;
         const itemId = (item as any)['@id'] ?? (item as any).id;
 
-        // Check anEntity instances (hasTargetLink)
+        // Check anEntity and aRelationship instances (hasTargetLink)
         if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itemType)) {
             const classId = (item as TPigAnElement).hasClass;
 
@@ -625,29 +671,13 @@ function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp 
                 continue;
             }
 
-            const enumeratedLinks = resolveEnumeratedTargetLinks(classId, classMap);
-            // LOG.debug(`Checking enumerated links for ${itemType} ${itemId}: enumeratedTargetLinks = ${JSON.stringify(enumeratedTargetLinks)}`);
-
-            if (Array.isArray((item as TPigAnElement).hasTargetLink)) {
-                for (let j = 0; j < (item as TPigAnElement).hasTargetLink.length; j++) {
-                    const link = (item as TPigAnElement).hasTargetLink[j];
-                    const linkClassId = link.hasClass as string;
-
-                    /*        if (!linkClassId) {
-                                continue;
-                            } */
-
-                    if (enumeratedLinks.includes('*'))  // set by resolveEnumeratedLinks() for "all links allowed"
-                        continue;
-
-                    if (!enumeratedLinks.includes(linkClassId)) {
-                        return Msg.create(676, itemId, itemType, 'hasTargetLink', j, linkClassId, classId);
-                    }
-                }
+            const result = checkTargetLinks(item, itemId, itemType, classId);
+            if (!result.ok) {
+                return result;
             }
         }
 
-        // Check aRelationship instances (hasSourceLink and hasTargetLink)
+        // Check aRelationship instances (hasSourceLink)
         if (itemType === PigItemType.aRelationship) {
             const rel = item as any;
             const classId = rel.hasClass;
@@ -658,20 +688,13 @@ function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp 
 
             const enumeratedSourceLinks = resolveEnumeratedSourceLinks(classId, classMap);
 
-            // LOG.debug(`Checking enumerated links for aRelationship`,JSON.stringify(rel,null,2));
-            // LOG.debug(`Checking enumerated links for aRelationship ${itemId}: enumeratedSourceLinks = ${JSON.stringify(enumeratedSourceLinks)}}`);
-
             // Check source links
             if (Array.isArray(rel.hasSourceLink)) {
                 for (let j = 0; j < rel.hasSourceLink.length; j++) {
                     const link = rel.hasSourceLink[j];
                     const linkClassId = link.hasClass;
 
-                    /*        if (!linkClassId) {
-                                continue;
-                            } */
-
-                    if (enumeratedSourceLinks.includes('*'))  // set by resolveEnumeratedLinks() for "all links allowed"
+                    if (enumeratedSourceLinks.includes('*'))  // all links allowed
                         continue;
 
                     if (!enumeratedSourceLinks.includes(linkClassId)) {

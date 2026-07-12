@@ -25,7 +25,7 @@ export interface IHostedOntology {
 }
 
 const CAS_DOMAIN = 'http://product-information-graph.org/';
-const CAS_VERSION = '2026-05-08';
+const CAS_VERSION = '2026-07-03';
 const CAS_NS = 'cas:';
 const DCMI_NS = 'dcterms:';
 

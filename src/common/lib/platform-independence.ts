@@ -586,6 +586,20 @@ export const PLI = {
     getExtension(filename: string): string {
         const ext = filename.split('.').pop();
         return ext ? `.${ext}` : '';
+    },
+
+    makeUUID(): string {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            return crypto.randomUUID();
+        }
+        // Copilot: Math.random(), which can produce low - entropy UUIDs and increases collision risk
+        // (and is not suitable if any caller later uses UUIDs for security - relevant identifiers).
+        // Prefer a crypto.getRandomValues - based fallback when randomUUID is unavailable.
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+            const r = crypto.getRandomValues(new Uint8Array(1))[0] % 16;
+            const v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
     }
 };
 /**

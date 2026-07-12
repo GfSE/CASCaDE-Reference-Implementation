@@ -17,13 +17,21 @@
 
     <dcterms:title>Project 'Requirement with Enumerated Property'</dcterms:title>
     <dcterms:modified>2026-04-08T08:14:32.015Z</dcterms:modified>
+	<cas:aProperty cas:hasClass="dcterms:contributor">
+		<value>mailto:oskar.dungern@gfse.org</value>
+	</cas:aProperty>
+	<cas:aProperty cas:hasClass="dcterms:license">
+		<value>https://creativecommons.org/licenses/by-sa/4.0/</value>
+	</cas:aProperty>
 
     <graph>
         <!-- Metamodel Classes and Semantic Infrastructure -->
         <cas:Entity id="cas:Package" cas:hasClass="owl:Class">
             <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title>Package</dcterms:title>
-            <skos:definition>A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages.</skos:definition>
+            <skos:definition>A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances.</skos:definition>
+            <cas:enumeratedProperty>dcterms:contributor</cas:enumeratedProperty>
+            <cas:enumeratedProperty>dcterms:license</cas:enumeratedProperty>
         </cas:Entity>
         <cas:Entity id="FMC:Actor" cas:hasClass="owl:Class">
             <cas:specializes>cas:Entity</cas:specializes>

@@ -35,7 +35,7 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { JsonObject, JsonValue, JsonArray, LIB, LOG } from '../../lib/helpers';
+import { JsonObject, JsonValue, JsonArray, LOG } from '../../lib/helpers';
 import { MVF } from '../../lib/mvf';
 import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
@@ -122,9 +122,12 @@ class GetJSONLD {
      * @returns JSON-LD representation with @context and @graph
      */
     static aPackage(pkg: APackage, options?: IOptionsJSONLD): JsonObject {
-        const filterTypes = options?.itemType;
+        // const filterTypes = options?.itemType;
 
-        const jld = this.getAsJSONLD(pkg, options);
+        let jld = this.getAsJSONLD(pkg, options);
+
+        jld = this.xConfigurablesToJSONLD(jld, pkg, 'hasProperty');
+        jld = this.xConfigurablesToJSONLD(jld, pkg, 'hasTargetLink');
 
         jld['@context'] = xContextToJSONLD(pkg);
         jld['@graph'] = xGraphToJSONLD(pkg);
