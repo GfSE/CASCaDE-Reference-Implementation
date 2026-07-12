@@ -86,6 +86,7 @@ class GetHTML {
 
         const titleText = passify(LIB.stripHTML(LIB.getLocalText(pkg.title, lang)));
         const descText = passify(LIB.getLocalText(pkg.description, lang));
+        const propertiesHTML = propertiesToHTML(pkg, lang);
 
         const pkgHTML = `<div class="meta-aPackage">
                 <div class="col-main" style="flex: 0 0 ${widthMain};">
@@ -93,12 +94,10 @@ class GetHTML {
                     ${descText ? `<div class="meta-description">${descText}</div>` : ''}
                     ${errHTML}
                 </div>
-                <div class="col-right">
-                    <dl class="dl-horizontal">
-                        ${metadataToHTML(pkg, lang)}
-                        <dt>Items in Graph</dt><dd>${pkg.graph.length}</dd>
-                    </dl>
-                </div>
+                <div class="col-right" ><dl class="dl-horizontal">
+                    ${propertiesHTML}
+                    <dt>Items in Graph</dt><dd>${pkg.graph.length}</dd>
+                </dl></div>
             </div>`;
 
         const result: stringHTML[] = [pkgHTML];
@@ -126,31 +125,16 @@ class GetHTML {
 
         const titleText = passify(LIB.stripHTML(LIB.getLocalText(entity.title, lang)));
         const descText = passify(LIB.getLocalText(entity.description, lang));
-
-        let propertiesHTML = '';
-        propertiesHTML = '<div class="col-right"><dl class="dl-horizontal">';
-        if (entity.hasProperty?.length > 0) {
-            // the configured properties:
-            for (const prop of entity.hasProperty) {
-                const propData = prop.get() as IAProperty;
-                if (propData && propData.hasClass) {
-                    const propValue = passify((propData.value || propData.idRef) as string); // one of the two must be present according to the schema
-                    const propClass = passify(propData.hasClass);
-                    propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
-                }
-            }
-        }
-        propertiesHTML += metadataToHTML(entity, lang);
-        propertiesHTML += '</dl></div>';
+        const propertiesHTML = propertiesToHTML(entity, lang);
 
         return `<div class="meta-anEntity">
                     <div class="col-main" style="flex: 0 0 ${widthMain};">
                         ${titleText ? `<h3 class="meta-title">${titleText}</h3>` : ''}
                         ${descText ? `<div class="meta-description">${descText}</div>` : ''}
                     </div>
-                    <div class="col-right" >
+                    <div class="col-right" ><dl class="dl-horizontal">
                         ${propertiesHTML}
-                    </div>
+                    </dl></div>
                 </div>`;
     }
 
@@ -346,4 +330,20 @@ function metadataToHTML(item: TPigAnElement, lang: tagIETF): string {
                 + (item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : '')
                 + (item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : '')
                 + (item.priorRevision && item.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${item.priorRevision.map((r: string) => passify(r)).join(', ')}</dd>` : '');
+}
+function propertiesToHTML(el: TPigAnElement, lang: tagIETF): string {
+    let propertiesHTML = '';
+    if (el.hasProperty?.length > 0) {
+        // the configured properties:
+        for (const prop of el.hasProperty) {
+            const propData = prop.get() as IAProperty;
+            if (propData && propData.hasClass) {
+                const propValue = passify((propData.value || propData.idRef) as string); // one of the two must be present according to the schema
+                const propClass = passify(propData.hasClass);
+                propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
+            }
+        }
+    }
+    propertiesHTML += metadataToHTML(el, lang);
+    return propertiesHTML;
 }

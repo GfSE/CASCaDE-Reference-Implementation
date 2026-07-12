@@ -559,7 +559,7 @@ abstract class Item implements IItem {
         } as IItem;
     }
 }
-interface IIdentifiable extends IItem {
+export interface IIdentifiable extends IItem {
     id: TPigId;  // translates to @id in JSON-LD
     specializes?: TPigId;  // must be URI of a cas:item with equal itemType, no cyclic references, translates to rdfs:subClassOf
     // Any one or both of the following must be present and have at least one item; see schemata:
@@ -1529,7 +1529,7 @@ export class APackage extends AnElement implements IAPackage {
                 // LOG.debug(`APackage.set: failed to instantiate item: `, JSON.stringify(item, null, 2));
             }
         }
-        // LOG.debug('APackage.set: ',JSON.stringify(_pkg, null, 2));
+        LOG.debug('APackage.set: ',JSON.stringify(_pkg, null, 2));
 
         // Ensure default namespace prefixes exist in context BEFORE validation
         // Only adds namespaces that were actually used during normalization
@@ -1718,17 +1718,10 @@ export class APackage extends AnElement implements IAPackage {
 
         // 5. Build and validate package
         this.set({
-            id: doc.id,
-            hasClass: doc.hasClass,
+            ...doc,
             itemType: PigItemType.aPackage,  // ToDo: obtain from doc - want to check whether the input is correct
-            title: doc.title,
-            description: doc.description,
             context: ctx,
-            graph: graph,
-            revision: doc.revision,
-            priorRevision: doc.priorRevision,
-            modified: doc.modified,
-            creator: doc.creator
+            graph: graph
         } as unknown as IAPackage, options);
 
         // LOG.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);

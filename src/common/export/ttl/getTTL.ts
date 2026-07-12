@@ -29,10 +29,16 @@
  * - Use a class with static methods for better organization and extensibility.
  * - Follow the same pattern as getJSONLD for consistency.
  * - For creating a Turtle representation call getTTL(item, options) instead of item.getTTL().
+ * - Entity and Relationship classes declare their properties and links via shapes
+ * - ... but Property and Link classes do not declare their domain to avoid a potentially huge union.
  * - At first, only cas: ontology terms get a shape.
  * - Those cas: shapes will be served from the same URL as the terms themselves
- * - Do not add rdfs:domain for links, as it can be inferred from relationships.
+ * - On TTL export, the configurable properties will be added to the ontology declaration.
+ * - ... and the configurable links will be added to the package class declaration.
  *
+ * ToDo:
+ * - Add itemTypes as superClasses for all ontolology classes (Property, Link, Entity, Relationship, Enumeration)
+ * - ... with definitions for enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink, enumeratedEndpoint.
  */
 
 import { DEF, RE } from '../../lib/definitions';
@@ -134,7 +140,10 @@ class GetTTL {
         let ttl = '';
 
         // Add prefix definitions
-        ttl += this.xContext(pkg, rdf);
+        ttl += this.xContext(pkg, rdf, options);
+
+        // Add ontology definition
+        ttl += this.makeOntologyDefinition(pkg, rdf, options);
 
         // Add package metadata
         ttl += this.xMetadataForInstances(pkg, rdf, options);
@@ -418,12 +427,13 @@ class GetTTL {
      * Transform context from internal INamespace[] format to Turtle @prefix format
      * @param pkg - APackage instance
      * @param rdf - CToTtl instance for building Turtle output
+     * @param options - Export options
      * @returns Turtle @prefix declarations
      * 
      * Internal format: context = [{ tag: "cas:", uri: "https://..." }, ...]
      * Turtle format:   @prefix cas: <https://...> .
      */
-    private static xContext(pkg: APackage, rdf: CToTtl): string {
+    private static xContext(pkg: APackage, rdf: CToTtl, options?: IOptionsTTL): string {
         const ctx = pkg.context;
 
         if (!ctx || !Array.isArray(ctx)) {
@@ -474,10 +484,35 @@ class GetTTL {
         return ttl;
     }
 
+    private static makeOntologyDefinition(
+        pkg: APackage,
+        rdf: CToTtl,
+        options?: IOptionsTTL
+    ): string {
+        let ttl = '';
+
+        // Item ID as subject
+        const subjectId = this.formatTurtleId(pkg.id + '_ontology');
+        ttl += rdf.tab0(subjectId);
+        ttl += rdf.tab1('a', 'owl:Ontology');
+
+        // Add configured properties from the package (e.g., dcterms:contributor, dcterms:license)
+        if (LIB.isArrayWithContent(pkg.hasProperty)) {
+            ttl += this.xProperties(pkg.hasProperty, rdf);
+        }
+
+        // Imports (optional) - if the package has contained packages, add them as owl:imports
+
+        ttl += rdf.tab1('owl:versionInfo', DEF.pigVersion);
+        ttl += rdf.newLine();
+        return ttl;
+    }
+
     /**
      * Transform metadata to Turtle format - common base function for both instances and classes
      * @param itm - Item with Identifiable properties (id, itemType, title, description, etc.)
      * @param rdf - CToTtl instance for building Turtle output
+     * @param options - controls whether to add optional triples like cas:itemType
      * @returns Turtle representation of common metadata properties
      */
     private static xMetadata(
@@ -1399,11 +1434,28 @@ class GetTTL {
 
         let ttl = '';
 
+        // Local helper function to add property constraints
+        const addPropertyConstraints = (itemIds: TPigId[]): void => {
+            for (const itemId of itemIds) {
+                // Check if item belongs to an external/context ontology
+                if (LIB.isContextId(itemId) || LIB.isHostedOntologyId(itemId)) {
+                    // Create inline property constraint for external ontology items
+                    const itemPath = this.formatTurtleId(itemId);
+                    ttl += rdf.tab1('sh:property', `[ sh:path ${itemPath} ]`);
+                } else {
+                    // Reference the item's shape (which should be defined separately) for CASCaRA items
+                    const itemShapeId = this.formatTurtleId(itemId) + DEF.suffixShape;
+                    ttl += rdf.tab1('sh:property', itemShapeId);
+                }
+            }
+        };
+
         // Create shape ID by appending 'Shape' to the element ID
-        const shapeId = this.formatTurtleId(elem.id) + DEF.suffixShape; // for CASCaRA ontology terms
+        const elemId = this.formatTurtleId(elem.id);
+        const shapeId = elemId + DEF.suffixShape; // for CASCaRA ontology terms
         ttl += rdf.tab0(shapeId);
         ttl += rdf.tab1('a', 'sh:NodeShape');
-        ttl += rdf.tab1('sh:targetClass', this.formatTurtleId(elem.id));
+        ttl += rdf.tab1('sh:targetClass', elemId);
 
         // For entity instances: require either rdfs:label or rdfs:comment
         // For relationship instances: both are optional
@@ -1411,34 +1463,20 @@ class GetTTL {
             ttl += rdf.tab1('sh:or', '( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] )');
         }
 
-        // List enumerated properties - each property should have its own PropertyShape
-        if (LIB.isArrayWithContent(elem.enumeratedProperty)) {
-            const properties = elem.enumeratedProperty as TPigId[];
-            for (const propId of properties) {
-                // Reference the property's shape (which should be defined separately)
-                const propShapeId = this.formatTurtleId(propId) + DEF.suffixShape;
-                ttl += rdf.tab1('sh:property', propShapeId);
-            }
+        // List enumerated properties
+        // In case of a package class, we skip enumeratedProperty constraints, as configurable properties will be appended to the ontology
+        if (LIB.isArrayWithContent(elem.enumeratedProperty) && elemId != 'cas:Package') {
+            addPropertyConstraints(elem.enumeratedProperty as TPigId[]);
         }
 
         // List enumerated source links - only for Relationship
-        if (isRelationship && 'enumeratedSourceLink' in elem && LIB.isArrayWithContent(elem.enumeratedSourceLink)) {
-            const links = elem.enumeratedSourceLink as TPigId[];
-            for (const linkId of links) {
-                // Reference the link's shape (which should be defined separately)
-                const linkShapeId = this.formatTurtleId(linkId) + DEF.suffixShape;
-                ttl += rdf.tab1('sh:property', linkShapeId);
-            }
+        if (isRelationship && LIB.isArrayWithContent(elem.enumeratedSourceLink)) {
+            addPropertyConstraints(elem.enumeratedSourceLink as TPigId[]);
         }
 
         // List enumerated target links - both Entity and Relationship can have these
         if (LIB.isArrayWithContent(elem.enumeratedTargetLink)) {
-            const links = elem.enumeratedTargetLink as TPigId[];
-            for (const linkId of links) {
-                // Reference the link's shape (which should be defined separately)
-                const linkShapeId = this.formatTurtleId(linkId) + DEF.suffixShape;
-                ttl += rdf.tab1('sh:property', linkShapeId);
-            }
+            addPropertyConstraints(elem.enumeratedTargetLink as TPigId[]);
         }
 
         return ttl + rdf.newLine();

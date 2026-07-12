@@ -14,7 +14,12 @@
     
     <dcterms:title xml:lang="en">Alice works for ACME</dcterms:title>
     <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
-    <dcterms:license>https://creativecommons.org/licenses/by-sa/4.0/</dcterms:license>
+	<cas:aProperty cas:hasClass="dcterms:contributor">
+		<value>mailto:oskar.dungern@gfse.org</value>
+	</cas:aProperty>
+	<cas:aProperty cas:hasClass="dcterms:license">
+		<value>https://creativecommons.org/licenses/by-sa/4.0/</value>
+	</cas:aProperty>
     
     <graph>
         <!-- Entity Classes -->
@@ -28,7 +33,9 @@
         <cas:Entity id="cas:Package" cas:hasClass="owl:Class">
             <cas:specializes>cas:Organizer</cas:specializes>
             <dcterms:title xml:lang="en">Package</dcterms:title>
-            <skos:definition xml:lang="en">A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions.</skos:definition>
+            <skos:definition>A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances.</skos:definition>
+            <cas:enumeratedProperty>dcterms:contributor</cas:enumeratedProperty>
+            <cas:enumeratedProperty>dcterms:license</cas:enumeratedProperty>
         </cas:Entity>
 
         <cas:Entity id="cas:Root" cas:hasClass="owl:Class">
