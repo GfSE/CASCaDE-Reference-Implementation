@@ -63,11 +63,6 @@ export class RevisionTracker {
     }
 
     static updateWithRevision<T extends IIdentifiable>(newElement: T, existingElement: T): T {
-        let titleStr: string | undefined;
-        if (Array.isArray(newElement.title) && newElement.title.length > 0) {
-            titleStr = typeof newElement.title[0] === 'object' ? (newElement.title[0] as any).value : String(newElement.title[0]);
-        }
-
         const newRevision = this.makeRevision();
         const priorRev: string[] = [];
         
