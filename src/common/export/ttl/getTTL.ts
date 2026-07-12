@@ -512,7 +512,7 @@ class GetTTL {
      * Transform metadata to Turtle format - common base function for both instances and classes
      * @param itm - Item with Identifiable properties (id, itemType, title, description, etc.)
      * @param rdf - CToTtl instance for building Turtle output
-     * @param options - controls whether to add optional triples like cas:itemType
+     * Note: instance-/class-specific optional triples (e.g. cas:itemType) are handled by the wrapper methods.
      * @returns Turtle representation of common metadata properties
      */
     private static xMetadata(
