@@ -254,8 +254,9 @@ export class PigItem {
      * @returns true if string type
      */
     static isSupportedStringDatatype(datatype: string): boolean {
-        const stringTypes = ['xs:string', 'xsd:string'];
-        return stringTypes.includes(datatype);
+        return [
+            'xs:string', 'xsd:string'
+        ].includes(datatype);
     }
 
     /**
@@ -264,7 +265,7 @@ export class PigItem {
      * @returns true if numeric type
      */
     static isSupportedNumericDatatype(datatype: string): boolean {
-        const numericTypes = [
+        return [
             'xs:integer', 'xsd:integer',
             'xs:int', 'xsd:int',
             'xs:long', 'xsd:long',
@@ -281,9 +282,7 @@ export class PigItem {
             'xs:unsignedInt', 'xsd:unsignedInt',
             'xs:unsignedShort', 'xsd:unsignedShort',
             'xs:unsignedByte', 'xsd:unsignedByte'
-        ];
-    
-        return numericTypes.includes(datatype);
+        ].includes(datatype);
     }
 
     /**
@@ -352,6 +351,61 @@ export class PigItem {
             'definition'
         ].includes(localName);
     }
+    /**
+     * Check if a property needs IText wrapper ({ value: "..." })
+     * Currently only 'icon' according to IElement interface
+     */
+    static needsIText(propertyName: string): boolean {
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // Fields that need IText wrapper: { value: string }
+        const textWrapperFields = new Set([
+            'icon'
+        ]);
+
+        return textWrapperFields.has(localName);
+    }
+    /**
+     * Check if a property must always be represented as an array
+     * Even when only a single element is present in XML
+     * 
+     * Context detection is done via the parent element's itemType
+     */
+    static needsArray(propertyName: string /*, parentItemType?: PigItemTypeValue */): boolean {
+        // Remove namespace prefix for checking
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // Properties that ALWAYS require arrays
+        return [
+            'enumeratedValue',        // Property.enumeratedValue: IEnumeratedValue[]
+            'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
+            'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
+            'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]'
+            'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
+            'composedProperty',     // Property.composedProperty?: TPigId[]
+            'priorRevision'         // AnElement.priorRevision?: TRevision[]
+        ].includes(localName);
+    }
+    /**
+     * Check if a property contains IDs that should be normalized
+     * These properties reference other PIG items and need namespace prefixes
+     */
+    static needsIdNormalization(propertyName: string): boolean {
+        // Remove namespace prefix for checking
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // Properties that contain TPigId references to other items
+        return [
+            'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
+            'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
+            'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]
+            'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
+            'composedProperty',       // Property.composedProperty?: TPigId[]
+            'specializes',            // Class.specializes?: TPigId
+            'hasClass'                // Instance hasClass references a class
+        ].includes(localName);
+    }
+
     // Normalize language tags/values ---
     static normalizeLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText {
         //    LOG.debug('normalizeLanguageText', src);
@@ -2471,15 +2525,15 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         const isMultiLang = PigItem.needsMultiLanguageText(propertyName);
 
         // Check if this property needs IText wrapping (e.g. icon)
-        const needsTextWrapper = requiresIText(propertyName);
+        const needsTextWrapper = PigItem.needsIText(propertyName);
 
         // Pass parent itemType for context-aware array detection
-        const mustBeArray = requiresArray(propertyName /*, result.itemType as PigItemTypeValue */);
+        const needsArray = PigItem.needsArray(propertyName /*, result.itemType as PigItemTypeValue */);
 
         // Check if this property contains IDs that need normalization
-        const needsIdNormalization = requiresIdNormalization(propertyName);
+        const needsIdNormalization = PigItem.needsIdNormalization(propertyName);
 
-        if (elements.length === 1 && !mustBeArray) {
+        if (elements.length === 1 && !needsArray) {
             // Single element (and not forced to be array)
             const elem = elements[0];
             const childText = getXmlElementText(elem);
@@ -2567,46 +2621,6 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     // LOG.debug('xmlElementToJson: ', /*xmlElement.attributes, '\n',*/ JSON.stringify(result,null,2)) ;
 
     return result;
-}
-/**
- * Check if a property must always be represented as an array
- * Even when only a single element is present in XML
- * 
- * Context detection is done via the parent element's itemType
- */
-function requiresArray(propertyName: string /*, parentItemType?: PigItemTypeValue */): boolean {
-    // Remove namespace prefix for checking
-    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-    // Properties that ALWAYS require arrays
-    return [
-        'enumeratedValue',        // Property.enumeratedValue: IEnumeratedValue[]
-        'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
-        'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
-        'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]'
-        'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
-        'composedProperty',     // Property.composedProperty?: TPigId[]
-        'priorRevision'         // AnElement.priorRevision?: TRevision[]
-    ].includes(localName);
-}
-/**
- * Check if a property contains IDs that should be normalized
- * These properties reference other PIG items and need namespace prefixes
- */
-function requiresIdNormalization(propertyName: string): boolean {
-    // Remove namespace prefix for checking
-    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-    // Properties that contain TPigId references to other items
-    return [
-        'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
-        'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
-        'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]
-        'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
-        'composedProperty',       // Property.composedProperty?: TPigId[]
-        'specializes',            // Class.specializes?: TPigId
-        'hasClass'                // Instance hasClass references a class
-    ].includes(localName);
 }
 /**
  * Process cas:aProperty element
@@ -2825,21 +2839,6 @@ function findEntityOrEnumerationInGraph(element: ElementXML, targetId: string): 
         current = current.parentNode;
     }
     return null;
-}
-
-/**
- * Check if a property needs IText wrapper ({ value: "..." })
- * Currently only 'icon' according to IElement interface
- */
-function requiresIText(propertyName: string): boolean {
-    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-    // Fields that need IText wrapper: { value: string }
-    const textWrapperFields = new Set([
-        'icon'
-    ]);
-
-    return textWrapperFields.has(localName);
 }
 
 /**

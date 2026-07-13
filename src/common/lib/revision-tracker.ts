@@ -70,10 +70,6 @@ export class RevisionTracker {
             priorRev.push(existingElement.revision);
         }
         
-        if (Array.isArray(existingElement.priorRevision)) {
-            priorRev.push(...existingElement.priorRevision);
-        }
-
         const updatedElement = { ...newElement, revision: newRevision, priorRevision: priorRev.length > 0 ? priorRev : undefined };
 
         LOG.info(`Updated element ${newElement.id} with new revision ${newRevision}`);
