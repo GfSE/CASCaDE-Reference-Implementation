@@ -1255,5 +1255,12 @@ Major requirements (capabilities and characteristics) must be satisfied:&#xD;
 - Extend the software using a documented, if possible standardized plug-in mechanism.&#xD;
 &#xD;
 This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The CASCaRA App will support a similar workflow (among others) for the source data formats chosen.&#xD;
+&#xD;
+The [ArchiMate notation](https://www.opengroup.org/sites/default/files/docs/downloads/n221p.pdf) uses the following background colors per model element:&#xD;
+- **Motivation** level: light violet for stakeholders, goals, outcomes etc.&#xD;
+- **Strategy** level: beige for competencies, course of action, value streams etc.&#xD;
+- **Business** level: light yellow for roles, business functions and processes etc.&#xD;
+- **Application** level: light blue for applications, data objects etc.&#xD;
+- **Technology** level: light green for operating resources etc.&#xD;
 </purpose>
 </archimate:model>

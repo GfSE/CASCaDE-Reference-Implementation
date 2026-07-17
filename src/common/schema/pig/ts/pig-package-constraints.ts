@@ -45,6 +45,7 @@
  *      - a subClass has all properties and links of its superClass
  *      enumeratedProperty references
  *      Link endpoint compliance
+ *      aLink must specify identifier and revision of the endpoints, if its class has revisionAware set to true
  * Phase 3 (useful):
  *      No cyclic composition of properties
  *      Relationship structure

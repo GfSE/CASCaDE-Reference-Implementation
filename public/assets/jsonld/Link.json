@@ -77,6 +77,10 @@
         "$ref": "#/$defs/idObject"
       }
     },
+    "cas:revisionAware": {
+      "type": "boolean",
+      "description": "Indicates whether the link is version-aware. If true, instances must specify identifier and revision of the endpoints."
+    },
     "sh:minCount": {
       "type": "integer",
       "minimum": 0

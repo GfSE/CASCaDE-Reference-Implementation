@@ -41,8 +41,8 @@
  * - Programming errors result in exceptions, data errors in IMsg return values.
  * - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
  *   and is now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
- * - CASCaRA (PIG) classes (as derived from the ontology) get version information it their URL path.
- * - All others must at least specify the 'modified' attribute to capture the version history of the item;
+ * - CASCaRA (PIG) classes (as derived from the ontology) get revision information it their URL path.
+ * - All others must at least specify the 'modified' attribute to capture the revision history of the item;
  *   it is recommended to maintain revision and priorRevision as well for better configuration management and traceability.
  *
  * @ToDo:
@@ -51,6 +51,8 @@
  * - allow packages to be nested
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
  * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
+ * ✅ implement 'revisionAware' for Link.
+ * - Consequently aSourceLink and aTargetLink must specify the endpoints by identifier and revision, if their class specifies revisionAware=true.
  * - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *   PigItem.normalizeId() shortly before validate() in set() ?
  * ✅ Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
@@ -1133,11 +1135,13 @@ export class Property extends Identifiable implements IProperty {
 }
 export interface ILink extends IIdentifiable {
     enumeratedEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
+    revisionAware?: boolean; // optional, default is false
     minCount?: number;
     maxCount?: number;
 }
 export class Link extends Identifiable implements ILink {
     enumeratedEndpoint!: TPigId[];
+    revisionAware?: boolean;
     minCount?: number;
     maxCount?: number;
     constructor() {
@@ -1172,6 +1176,7 @@ export class Link extends Identifiable implements ILink {
         if (this.lastStatus.ok) {
             super.set(_itm);
             this.enumeratedEndpoint = _itm.enumeratedEndpoint;
+            this.revisionAware = _itm.revisionAware;
             this.minCount = _itm.minCount;
             this.maxCount = _itm.maxCount;
         }
@@ -1181,6 +1186,7 @@ export class Link extends Identifiable implements ILink {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
             enumeratedEndpoint: this.enumeratedEndpoint,
+            revisionAware: this.revisionAware,
             minCount: this.minCount,
             maxCount: this.maxCount
         }) as ILink;

@@ -1179,10 +1179,10 @@ Subject to validation:&#xD;
         <sourceConnection xsi:type="archimate:Connection" id="id-0ab77cac46bc43e7983e3fefee837b46" source="id-8cc0074b463f4f88a18267283aad6c53" target="id-d6149b2c7eee47628c886d8e16fe69b6" archimateRelationship="id-99bca21995b44ac69efe740eb45e3f8f"/>
         <sourceConnection xsi:type="archimate:Connection" id="id-5d56e776a24f49e388212edf1eac0ea3" source="id-8cc0074b463f4f88a18267283aad6c53" target="id-fc4f087f0c51477b819afe8a9d36b7a4" archimateRelationship="id-5c87f59b40c44dc587feaff9eae59077"/>
         <child xsi:type="archimate:DiagramObject" id="id-d6149b2c7eee47628c886d8e16fe69b6" targetConnections="id-0ab77cac46bc43e7983e3fefee837b46" textPosition="1" archimateElement="id-8b0a9929440147a2b4aa7b8d4e6cdd40">
-          <bounds x="16" y="144" width="120" height="37"/>
+          <bounds x="36" y="144" width="120" height="37"/>
         </child>
         <child xsi:type="archimate:DiagramObject" id="id-fc4f087f0c51477b819afe8a9d36b7a4" targetConnections="id-5d56e776a24f49e388212edf1eac0ea3" textPosition="1" archimateElement="id-d6d5d5dd3f5647fc96608825d21ed329">
-          <bounds x="16" y="192" width="120" height="37"/>
+          <bounds x="36" y="192" width="120" height="37"/>
         </child>
       </child>
       <child xsi:type="archimate:DiagramObject" id="id-a6a9637228594a229c2a179aea290f38" font="1|Segoe UI|12.0|0|WINDOWS|1|-16|0|0|0|400|0|0|0|0|3|2|1|34|Segoe UI" textPosition="1" archimateElement="id-38c956c5b33947c88f70acd9dd92acf9">
@@ -1255,5 +1255,12 @@ Major requirements (capabilities and characteristics) must be satisfied:&#xD;
 - Extend the software using a documented, if possible standardized plug-in mechanism.&#xD;
 &#xD;
 This model is authored with [Archi](https://www.archimatetool.com/) using the ArchiMate 3.2 notation, then transformed to [SpecIF](https://specif.de) via ArchiMate Open Exchange file format and then transformed to HTML. The CASCaRA App will support a similar workflow (among others) for the source data formats chosen.&#xD;
+&#xD;
+The [ArchiMate notation](https://www.opengroup.org/sites/default/files/docs/downloads/n190p_5.pdf) uses the following background colors per model element:&#xD;
+- **Motivation** level: light violet for stakeholders, goals, outcomes etc.&#xD;
+- **Strategy** level: beige for competencies, course of action, value streams etc.&#xD;
+- **Business** level: light yellow for roles, business functions and processes etc.&#xD;
+- **Application** level: light blue for applications, data objects etc.&#xD;
+- **Technology** level: light green for operating resources etc.&#xD;
 </purpose>
 </archimate:model>
