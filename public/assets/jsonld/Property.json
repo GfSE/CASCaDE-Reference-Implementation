@@ -74,6 +74,10 @@
     "sh:datatype": {
       "$ref": "#/$defs/idObject"
     },
+    "cas:readOnly": {
+      "type": "boolean",
+      "description": "If true, the property value of an instance cannot be changed once assigned; default is false"
+    },
     "sh:minCount": {
       "type": "integer",
       "minimum": 0

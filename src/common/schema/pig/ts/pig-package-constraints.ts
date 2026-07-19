@@ -48,6 +48,7 @@
  *      aLink must specify identifier and revision of the endpoints, if its class has revisionAware set to true
  * Phase 3 (useful):
  *      No cyclic composition of properties
+ *      Check if defaultValue is consistent with the datatype of the property
  *      Relationship structure
  *      Referenced Enumerations have a datatype
  *      enumerations at the lowest specialization level must have datatype and enumerated values

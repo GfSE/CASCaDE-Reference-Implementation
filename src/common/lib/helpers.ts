@@ -16,6 +16,7 @@
  *  -
  */
 
+import { IIdentifiable } from '../schema/pig/ts/pig-metaclasses';
 import { DEF } from './definitions';
 
 /**
@@ -535,10 +536,22 @@ export const LIB = {
         // Fallback to term with a suffix
         return term + DEF.suffixShape;
     },
-    makeFilename(str: string): string {
+    makeFilenameFromString(str: string): string {
         // Replace invalid filename characters with underscores
         // return str.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
         return str.replace(/[<>:"/\\|?*\s]/g, '_').trim()
+    },
+    makeFilename(itm: IIdentifiable): string {
+        let str: string;
+        if (typeof itm.title === 'string') {
+            str = itm.title;
+        } else if (Array.isArray(itm.title) && itm.title.length > 0) {
+            str = itm.title[0].value;
+        } else {
+            str = itm.id;
+        }
+
+        return LIB.makeFilenameFromString(str);
     }
 };
 

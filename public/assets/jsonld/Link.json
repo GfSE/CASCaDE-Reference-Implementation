@@ -81,6 +81,10 @@
       "type": "boolean",
       "description": "Indicates whether the link is version-aware. If true, instances must specify identifier and revision of the endpoints."
     },
+    "cas:readOnly": {
+      "type": "boolean",
+      "description": "If true, the link value of an instance cannot be changed once assigned; default is false"
+    },
     "sh:minCount": {
       "type": "integer",
       "minimum": 0

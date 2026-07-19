@@ -441,16 +441,8 @@ class GetTTL {
             return '';
         }
 
-        let ttl = '';
-
-        // Check which required prefixes are present in the context
-        const requiredPrefixes = [
-            { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' },
-            { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
-            { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' }
-        ];
-
         const existingTags = new Set<string>();
+        let ttl = '';
 
         // First pass: collect existing tags and output them
         for (const ns of ctx) {
@@ -474,6 +466,18 @@ class GetTTL {
 
         // Second pass: add any missing required prefixes
         // ... as those are not necessarily needed in other formats, but are required for Turtle
+        // Define required prefixes in the context
+        const requiredPrefixes = [
+            { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
+            { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' },
+            { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' }
+        ];
+        if (options?.addShapes) {
+            requiredPrefixes.push(
+                { tag: 'sh', uri: 'http://www.w3.org/ns/shacl#' }
+            )
+        }
+
         for (const prefix of requiredPrefixes) {
             if (!existingTags.has(prefix.tag)) {
                 ttl += rdf.prefix(prefix.tag, prefix.uri);
@@ -760,11 +764,6 @@ class GetTTL {
      * @returns Formatted value string
      */
     private static formatPropertyValue(prop: AProperty): string {
-        // If it has an idRef, it's a reference to another resource (e.g., enumeration value)
-        if (prop.idRef) {
-            return this.formatTurtleId(prop.idRef);
-        }
-
         // If it has a value, return the literal value (will be quoted by CToTtl)
         if (prop.value !== undefined) {
             return prop.value;

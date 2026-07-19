@@ -68,17 +68,12 @@ class PigSchemaFactory {
                         type: 'string',
                         minLength: 1
                     },
-                    idRef: { $ref: '#/$defs/idString' },
                     aComposedProperty: {
                         type: 'array',
                         items: { $ref: '#/$defs/idString' }
                     }
                 },
-                required: ['itemType', 'hasClass'],
-                oneOf: [
-                    { required: ['value'] },
-                    { required: ['idRef'] }
-                ],
+                required: ['itemType', 'hasClass', 'value'],
                 additionalProperties: false
             }
         }
@@ -202,6 +197,7 @@ class PigSchemaFactory {
                     type: 'string',
                     pattern: '^xsd?:[A-Za-z]+$'
                 },
+                readOnly: { type: 'boolean' },
                 minCount: { type: 'integer', minimum: 0 },
                 maxCount: { type: 'integer', minimum: 1 },
                 maxLength: { type: 'integer', minimum: 1 },
@@ -256,6 +252,7 @@ class PigSchemaFactory {
                     minItems: 1,
                     items: { $ref: '#/$defs/idString' }
                 },
+                readOnly: { type: 'boolean' },
                 revisionAware: { type: 'boolean' },
                 minCount: { type: 'integer', minimum: 0 },
                 maxCount: { type: 'integer', minimum: 1 },

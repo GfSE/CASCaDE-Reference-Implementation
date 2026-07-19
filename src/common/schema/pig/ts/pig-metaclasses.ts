@@ -52,6 +52,8 @@
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
  * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
  * ✅ implement 'revisionAware' for Link.
+ * - Assign defaultValue, when a aProperty is instantiated as part of anEntity or aRelationship.
+ * - Prohibit aProperty or aLink to be updated or deleted, if readOnly=true in its class.
  * - Consequently aSourceLink and aTargetLink must specify the endpoints by identifier and revision, if their class specifies revisionAware=true.
  * - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *   PigItem.normalizeId() shortly before validate() in set() ?
@@ -834,8 +836,8 @@ abstract class AnElement extends Identifiable implements IAnElement {
         // collect them here in a hasProperty array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
 
-        _itm.hasProperty = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aProperty) as IAProperty[];
-        _itm.hasTargetLink = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
+        _itm.hasProperty = this.collectConfigurablePropertiesFromJSONLD(_itm) as IAProperty[];
+        _itm.hasTargetLink = this.collectConfigurableLinksFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
         //    LOG.debug('AnElement.setJSONLD: '+ JSON.stringify(_itm, null, 2));
 
         // Set the normalized object in the concrete subclass
@@ -847,19 +849,22 @@ abstract class AnElement extends Identifiable implements IAnElement {
         return this.set(_itm);
     }
     /**
-     * Collect configurable properties and references from a JSON-LD object.
+     * Collect configurable properties from a JSON-LD object.
      * In JSON-LD, configurable properties have an ID-string as key (namespace:name or URI)
      * and their value is an array of objects with itemType 'cas:aProperty'.
      * This function extracts those properties and transforms them into a hasProperty array,
      * where the original key becomes the 'hasClass' field of each property.
      * 
-     * @param obj - The input object (typically from JSON-LD)
+     * @param obj - The input object
      * @returns Array of IAProperty objects, or undefined if no properties found
      */
-    protected collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAProperty[] | IALink[] | undefined {
+    protected collectConfigurablePropertiesFromJSONLD(
+        obj: any
+    ): IAProperty[] | undefined {
+
         if (!obj || typeof obj !== 'object') return undefined;
 
-        const properties: IAProperty[] = [];
+        const configurables: IAProperty[] = [];
 
         // Standard PIG fields that should NOT be collected as properties;
         // the tags have already been renamed with MVF.renameJsonTags( ..., MVF.fromJSONLD):
@@ -870,61 +875,58 @@ abstract class AnElement extends Identifiable implements IAnElement {
             // Skip known metadata keys and standard PIG fields
             if (skipKeys.has(key)) continue;
 
-            // Check if key is a valid ID string (namespace:name or URI)
+            // Check if key (configurable property or link) is a valid ID string (namespace:name or URI)
             const isValid = PigItem.isValidIdString(key);
-            // LOG.info(`collectConfigurablesFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
-            if (!isValid) continue;
+            // LOG.info(`collectConfigurablePropertiesFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
+            if (!isValid) continue;   // the schema should reject invalid keys, so we skip them here
 
             const val = obj[key];
             //LOG.debug('collect 2', key,val);
 
             // Handle array of property values
-            if (Array.isArray(val)) {
+            if (LIB.isArrayWithContent(val)) {
                 for (const item of val) {
+                    // The tags have already been renamed:
                     if (item && typeof item === 'object') {
-                        // Check if it has itemType 'cas:aProperty' (may be an id-object)
-                        // the tags have already been renamed:
-                        const itemTypeValue = item.itemType /* || (item['cas:itemType'] && extractId(item['cas:itemType'])) */;
+                        // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                        const itemTypeValue = item.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
 
-                        if (itemTypeValue === itype /* || !itemTypeValue*/) {
-                            // Add the property with the key as its hasClass reference
-                            properties.push({
-                                itemType: itype,
-                                hasClass: key,
-                                // itype == PigItemType.Property: value in case of a plain value 
-                                value: item.value /*|| item['@value'] */,
-                                // itype == PigItemType.Link: idRef is mandatory
-                                idRef: item.id,
-                                composes: item.composes
-                            });
+                        // Add the property with the key as its hasClass reference
+                        if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue*/) {
+                            if (item.value || item.composes) {
+                                configurables.push({
+                                    itemType: PigItemType.aProperty,
+                                    hasClass: key,
+                                    value: item.value /*|| item['@value'] */,
+                                    composes: item.composes
+                                });
+                            }
                             delete obj[key]; // remove processed property
                         }
                     }
                 }
             }
-            // Handle single property value (non-array)
+            // Handle single property or link values (non-array)
             else if (val && typeof val === 'object') {
-                const nameItemType = `${DEF.pfxNsMeta}itemType`;
-                const itemTypeValue = val.itemType || (val[nameItemType] && extractId(val[nameItemType]));
+                // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                const itemTypeValue = val.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
 
-                if (itemTypeValue === itype /* || !itemTypeValue */) {
-                    properties.push({
-                        itemType: itype,
-                        hasClass: key,
-                        // itype == PigItemType.Property: value in case of a plain value 
-                        value: val.value /*|| item['@value'] */,
-                        // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
-                        // itype == PigItemType.Link: idRef is mandatory
-                        idRef: val.id,
-                        composes: val.composes
-                    });
+                if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue */) {
+                    if (val.value || val.composes) {
+                        configurables.push({
+                            itemType: PigItemType.aProperty,
+                            hasClass: key,
+                            value: val.value /*|| item['@value'] */,
+                            composes: val.composes
+                        });
+                    }
                     delete obj[key]; // remove processed property
                 }
             }
             // Handle primitive values (string, number, boolean) - create simple properties
-            else if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
-                properties.push({
-                    itemType: itype,
+            else if (val && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')) {
+                configurables.push({
+                    itemType: PigItemType.aProperty,
                     hasClass: key,
                     value: String(val)
                 });
@@ -932,7 +934,97 @@ abstract class AnElement extends Identifiable implements IAnElement {
             }
         }
 
-        return properties;
+        return configurables.length > 0 ? configurables : undefined;
+    }
+    /**
+     * Collect configurable links from a JSON-LD object.
+     * In JSON-LD, configurable links have an ID-string as key (namespace:name or URI)
+     * and their value is an array of objects with itemType 'cas:aLink'.
+     * This function extracts those links and transforms them into a hasLink array,
+     * where the original key becomes the 'hasClass' field of each link.
+     * 
+     * @param obj - The input object (typically from JSON-LD)
+     * @param itype - The expected itemType for the links (PigItemType.aSourceLink or PigItemType.aTargetLink)
+     * @returns Array of IALink objects, or undefined if no links found
+     */
+    protected collectConfigurableLinksFromJSONLD(
+        obj: any,
+        itype: typeof PigItemType.aSourceLink | typeof PigItemType.aTargetLink
+    ): IALink[] | undefined {
+
+        if (!obj || typeof obj !== 'object') return undefined;
+
+        const configurables: IALink[] = [];
+
+        // Standard PIG fields that should NOT be collected as configurables;
+        // the tags have already been renamed with MVF.renameJsonTags( ..., MVF.fromJSONLD):
+        const skipKeys = new Set(MVF.toJSONLD.keys());
+
+        //LOG.debug('collect 1',obj,itype);
+        for (const key of Object.keys(obj)) {
+            // Skip known metadata keys and standard PIG fields
+            if (skipKeys.has(key)) continue;
+
+            // Check if key (configurable property or link) is a valid ID string (namespace:name or URI)
+            const isValid = PigItem.isValidIdString(key);
+            // LOG.info(`collectConfigurableLinksFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
+            if (!isValid) continue;   // the schema should reject invalid keys, so we skip them here
+
+            const val = obj[key];
+            //LOG.debug('collect 2', key,val);
+
+            // Handle array of property or link values
+            if (LIB.isArrayWithContent(val)) {
+                for (const item of val) {
+                    if (item && typeof item === 'object') {
+                        // The tags have already been renamed:
+
+                        // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                        const itemTypeValue = item.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
+
+                        // Check if it has itemType 'cas:aSourceLink' or 'cas:aTargetLink' (may be an id-object)
+                        if (itemTypeValue === itype /* || !itemTypeValue*/) {
+                            // Add the property with the key as its hasClass reference
+                            if (PigItem.isValidIdString(item.id)) {
+                                configurables.push({
+                                    itemType: itype,
+                                    hasClass: key,
+                                    idRef: item.id
+                                });
+                            }
+                            delete obj[key]; // remove processed property
+                        }
+                    }
+                }
+            }
+            // Handle single property or link values (non-array)
+            else if (val && typeof val === 'object') {
+                // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                const itemTypeValue = val.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
+
+                if (itemTypeValue === itype /* || !itemTypeValue */) {
+                    if (PigItem.isValidIdString(val.id)) {
+                        configurables.push({
+                            itemType: itype,
+                            hasClass: key,
+                            idRef: val.id
+                        });
+                    }
+                    delete obj[key]; // remove processed property
+                }
+            }
+            // Handle primitive value - create simple configurables
+            else if (PigItem.isValidIdString(val)) {
+                configurables.push({
+                    itemType: itype,
+                    hasClass: key,
+                    idRef: val
+                });
+                delete obj[key]; // remove processed property
+            }
+        }
+
+        return configurables.length > 0 ? configurables : undefined;
     }
 }
 
@@ -1028,18 +1120,20 @@ export class Enumeration extends Identifiable implements IEnumeration {
 }
 export interface IProperty extends IIdentifiable {
     datatype: string; // must be of XsDataType
+    readOnly?: boolean;  // if true, the property value of an instance cannot be changed once assigned; default is false
     minCount?: number;
     maxCount?: number;
     maxLength?: number;  // only used for string datatype
     pattern?: string;  // a RegExp pattern, only used for string datatype
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
-    defaultValue?: string;   // in PIG, values of all datatypes are strings
+    defaultValue?: string;   // assigned when an instance is created without a value for this property; it may be changed afterwards
     // unit?: string;  // according to SI units
     composes?: TPigId[];  // must be URI of another Property, no cyclic references
 }
 export class Property extends Identifiable implements IProperty {
     datatype!: string;
+    readOnly?: boolean;
     minCount?: number;
     maxCount?: number;
     maxLength?: number;
@@ -1099,6 +1193,7 @@ export class Property extends Identifiable implements IProperty {
             this.minInclusive = _itm.minInclusive;
             this.maxInclusive = _itm.maxInclusive;
             this.defaultValue = _itm.defaultValue;
+            this.readOnly = _itm.readOnly;
             // this.unit = _itm.unit;
             this.composes = _itm.composes;
         }
@@ -1115,6 +1210,7 @@ export class Property extends Identifiable implements IProperty {
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
             defaultValue: this.defaultValue,
+            readOnly: this.readOnly,
             // unit: this.unit,
             composes: this.composes
         }) as IProperty;
@@ -1135,12 +1231,14 @@ export class Property extends Identifiable implements IProperty {
 }
 export interface ILink extends IIdentifiable {
     enumeratedEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
+    readOnly?: boolean; // if true, the link value of an instance cannot be changed once assigned; default is false
     revisionAware?: boolean; // optional, default is false
     minCount?: number;
     maxCount?: number;
 }
 export class Link extends Identifiable implements ILink {
     enumeratedEndpoint!: TPigId[];
+    readOnly?: boolean;
     revisionAware?: boolean;
     minCount?: number;
     maxCount?: number;
@@ -1177,6 +1275,7 @@ export class Link extends Identifiable implements ILink {
             super.set(_itm);
             this.enumeratedEndpoint = _itm.enumeratedEndpoint;
             this.revisionAware = _itm.revisionAware;
+            this.readOnly = _itm.readOnly;
             this.minCount = _itm.minCount;
             this.maxCount = _itm.maxCount;
         }
@@ -1187,6 +1286,7 @@ export class Link extends Identifiable implements ILink {
             ...super.get(),
             enumeratedEndpoint: this.enumeratedEndpoint,
             revisionAware: this.revisionAware,
+            readOnly: this.readOnly,
             minCount: this.minCount,
             maxCount: this.maxCount
         }) as ILink;
@@ -1332,13 +1432,11 @@ export class Relationship extends Element implements IRelationship {
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
-    value?: string;       // a. Literal value (string, number, boolean, date - all as string)
-    idRef?: TPigId;       // b. Reference to enumeratedValue (for enumerations)
+    value?: string;       // Literal value (string, number, boolean, date - all as string)
     composes?: TPigId[];  // for composed properties: nests other properties, as properties have no id
 }
 export class AProperty extends Item implements IAProperty {
     value?: string;
-    idRef?: TPigId;
     composes?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.aProperty });
@@ -1356,7 +1454,6 @@ export class AProperty extends Item implements IAProperty {
             this.hasClass = itm.hasClass;  // Set hasClass for property instances
             this.composes = itm.composes;
             this.value = itm.value;
-            this.idRef = itm.idRef;
         }
         return this;
     }
@@ -1365,7 +1462,6 @@ export class AProperty extends Item implements IAProperty {
             ...super.get(),
             composes: this.composes,
             value: this.value,
-            idRef: this.idRef
         } as IAProperty );
     }
 }
@@ -1519,7 +1615,7 @@ export class ARelationship extends AnElement implements IARelationship {
     }
     fromJSONLD(itm: any) {
         const _itm = super.fromJSONLD(itm) as any;
-        _itm.hasSourceLink = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
+        _itm.hasSourceLink = this.collectConfigurableLinksFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
         return _itm;
     }
 }
@@ -1589,7 +1685,7 @@ export class APackage extends AnElement implements IAPackage {
                 // LOG.debug(`APackage.set: failed to instantiate item: `, JSON.stringify(item, null, 2));
             }
         }
-        LOG.debug('APackage.set: ',JSON.stringify(_pkg, null, 2));
+        // LOG.debug('APackage.set: ',JSON.stringify(_pkg, null, 2));
 
         // Ensure default namespace prefixes exist in context BEFORE validation
         // Only adds namespaces that were actually used during normalization
@@ -1907,11 +2003,11 @@ export class APackage extends AnElement implements IAPackage {
         // 5. Collect configurable properties from JSON-LD format
         // In JSON-LD, configurable properties have ID-string as tag
         if ([PigItemType.anEntity, PigItemType.aRelationship].includes(json.itemType)) {
-            json.hasProperty = this.collectConfigurablesFromJSONLD(json, PigItemType.aProperty) as IAProperty[];
-            json.hasTargetLink = this.collectConfigurablesFromJSONLD(json, PigItemType.aTargetLink) as IALink[];
+            json.hasProperty = this.collectConfigurablePropertiesFromJSONLD(json) as IAProperty[];
+            json.hasTargetLink = this.collectConfigurableLinksFromJSONLD(json, PigItemType.aTargetLink) as IALink[];
         }
         if ([PigItemType.aRelationship].includes(json.itemType)) {
-            json.hasSourceLink = this.collectConfigurablesFromJSONLD(json, PigItemType.aSourceLink) as IALink[];
+            json.hasSourceLink = this.collectConfigurableLinksFromJSONLD(json, PigItemType.aSourceLink) as IALink[];
         }
 
         return json;
