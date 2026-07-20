@@ -474,7 +474,8 @@ class GetTTL {
         ];
         if (options?.addShapes) {
             requiredPrefixes.push(
-                { tag: 'sh', uri: 'http://www.w3.org/ns/shacl#' }
+                { tag: 'sh', uri: 'http://www.w3.org/ns/shacl#' },
+                { tag: 'dash', uri: 'http://datashapes.org/dash#' }
             )
         }
 

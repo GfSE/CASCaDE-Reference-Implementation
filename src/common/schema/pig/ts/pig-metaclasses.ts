@@ -51,7 +51,9 @@
  * - allow packages to be nested
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
  * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
+ * - implement abstract class 'Configurable' for Property and Link to avoid code duplication
  * ✅ implement 'revisionAware' for Link.
+ * - include revision as part of a pointer in aSourceLink and aTargetLink, if the link class specifies revisionAware=true, both schema and code.
  * - Assign defaultValue, when a aProperty is instantiated as part of anEntity or aRelationship.
  * - Prohibit aProperty or aLink to be updated or deleted, if readOnly=true in its class.
  * - Consequently aSourceLink and aTargetLink must specify the endpoints by identifier and revision, if their class specifies revisionAware=true.
@@ -68,6 +70,7 @@
  * - Consider the schema of cas.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  * - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
  * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
+ * - set lastStatus also on JSON-LD import
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -479,7 +482,7 @@ export class PigItem {
         return [PigItem.normalizeLanguageText(src, options)];
     }
     /* Validate that a value is an array of ILanguageText with the rule:
-       - if array length === 0 -> OK
+       - if array length < 1 -> OK
        - if array length === 1 -> 'lang' may be missing
        - if array length > 1 -> each entry must have a string 'lang' and string 'value'
        Returns IRsp (rspOK on success, error IRsp on failure)
@@ -489,7 +492,7 @@ export class PigItem {
         if (!Array.isArray(arr)) {
             return Msg.create(640, fieldName);
         }
-        if (arr.length === 0) return rspOK;
+        if (arr.length < 1) return rspOK;
         if (arr.length === 1) {
             const e = arr[0];
             if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
@@ -723,6 +726,10 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // Set the normalized object in the concrete subclass
         return ld;
     }
+    setJSONLD(itm: any) {
+        const _itm = this.fromJSONLD(itm) as any;
+        return this.set(_itm);
+    }
     /**
      * Generic XML parsing for all Identifiable subclasses
      * Parses XML to JSON and delegates to set()
@@ -842,11 +849,6 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
         // Set the normalized object in the concrete subclass
         return _itm;
-    }
-    setJSONLD(itm: any) {
-        // ... not superseded by any subclass, thus *not* protected.
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
     }
     /**
      * Collect configurable properties from a JSON-LD object.
@@ -1105,17 +1107,11 @@ export class Enumeration extends Element implements IEnumeration {
         }) as IEnumeration;
     }
     fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-
         // Normalize datatype (Property-specific)
-        if (_itm.datatype) {
-            _itm.datatype = _itm.datatype.replace(/^xsd:/, 'xs:');
+        if (itm.datatype) {
+            itm.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
         }
-
-        return this.set(_itm);
+        return super.fromJSONLD(itm) as any;
     }
 }
 export interface IProperty extends IIdentifiable {
@@ -1216,17 +1212,11 @@ export class Property extends Identifiable implements IProperty {
         }) as IProperty;
     }
     fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-
         // Normalize datatype (Property-specific)
-        if (_itm.datatype) {
-            _itm.datatype = _itm.datatype.replace(/^xsd:/, 'xs:');
+        if (itm.datatype) {
+            itm.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
         }
-
-        return this.set(_itm);
+        return super.fromJSONLD(itm) as any;
     }
 }
 export interface ILink extends IIdentifiable {
@@ -1295,13 +1285,6 @@ export class Link extends Identifiable implements ILink {
             defaultValue: this.defaultValue
         }) as ILink;
     }
-    fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
-    }
 }
 
 export interface IEntity extends IElement {
@@ -1356,13 +1339,6 @@ export class Entity extends Element implements IEntity {
             ...super.get(),
             enumeratedTargetLink: this.enumeratedTargetLink // undefined: all allowed, empty array: none allowed, array with items: only those allowed
         }) as IEntity;
-    }
-    fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
     }
 }
 
@@ -1424,13 +1400,6 @@ export class Relationship extends Element implements IRelationship {
             enumeratedSourceLink: this.enumeratedSourceLink, // undefined: all allowed, empty array: none allowed, array with items: only those allowed
             enumeratedTargetLink: this.enumeratedTargetLink // as above
         }) as IRelationship;
-    }
-    fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
     }
 }
 
@@ -1542,6 +1511,11 @@ export class AnEntity extends AnElement implements IAnElement {
             return Msg.create(681, 'anEntity', itm.id, err?.message ?? String(err));
         }
 
+        // Call parent validation
+        const rsp = super.validate(itm);
+        if (!rsp.ok)
+            return rsp;
+
         // Runtime guards:
         // id and itemType checked in superclass
         if (!itm.hasClass)
@@ -1589,6 +1563,11 @@ export class ARelationship extends AnElement implements IARelationship {
         } catch (err: any) {
             return Msg.create(681, 'aRelationship', itm.id, err?.message ?? String(err));
         }
+
+        // Call parent validation
+        const rsp = super.validate(itm);
+        if (!rsp.ok)
+            return rsp;
 
         // Runtime guards:
         // id and itemType checked in superclass
@@ -1653,9 +1632,13 @@ export class APackage extends AnElement implements IAPackage {
 
         // Call parent validation
         let rsp = super.validate(pkg);
-        if (!rsp.ok) {
+        if (!rsp.ok)
             return rsp;
-        }
+
+        // Runtime guards:
+        // id and itemType checked in superclass
+        if (!pkg.hasClass)
+            return Msg.create(612, PigItemType.aPackage);
 
         rsp = checkConstraintsForPackage(pkg, options);
         // if (pkg.id == 'd:test-invalid-prop')
@@ -1718,6 +1701,18 @@ export class APackage extends AnElement implements IAPackage {
         return this;
     }
 
+    get() {
+        // Build complete package representation
+        const pkg = {
+            ...super.get(),
+            context: this.context,
+            graph: this.graph?.map(item => {
+                return item.get();
+            })
+        } as IAPackage;
+        return LIB.stripUndefinedAndNull(pkg);
+    }
+
     /**
      * Ensure default namespace prefixes 'o:' and 'd:' exist in the package context
      * if they have been assigned by normalizeId() during import.
@@ -1735,7 +1730,7 @@ export class APackage extends AnElement implements IAPackage {
      */
     private ensureDefaultNamespaces(context?: INamespace[] | string | Record<string, string>): INamespace[] | string | Record<string, string> | undefined {
         // If no default namespaces were used, return context unchanged
-        if (PigItem.usedDefaultNamespaces.size === 0) {
+        if (PigItem.usedDefaultNamespaces.size < 1) {
             return context;
         }
 
@@ -1795,37 +1790,21 @@ export class APackage extends AnElement implements IAPackage {
         return contextArray;
     }
 
-    get() {
-        // Build complete package representation
-        const pkg = {
-            ...super.get(),
-            context: this.context,
-            graph: this.graph?.map(item => {
-                return item.get();
-            })
-        } as IAPackage;
-        return LIB.stripUndefinedAndNull(pkg);
-    }
-
-    setJSONLD(doc: any, options?:any) {
+    setJSONLD(docLD: any, options?:any) {
         // Clear the tracker for used default namespaces before transformation
         PigItem.clearUsedDefaultNamespaces();
 
         // @ToDo: Perhaps we must normalize the ids like in XML import to assure they have a namespace or are an URI
+        const doc = this.fromJSONLD(docLD) as any;
         // LOG.debug(`APackage.setJSONLD: ${JSON.stringify(doc, null, 2)}`);
 
         // Extract @context
-        const ctx = this.extractContextLD(doc);
-
-        // Extract package metadata
-        const meta = this.extractMetadataLD(doc);
+        const ctx = this.xContextLD(doc);
 
         // Extract and process @graph
-        const graph: any[] = Array.isArray(doc['@graph']) 
-            ? doc['@graph'] 
-            : (Array.isArray(doc.graph) ? doc.graph : []);
+        const graph: any[] = (Array.isArray(doc.graph) ? doc.graph : []);
 
-        if (graph.length === 0) {
+        if (graph.length < 1) {
             LOG.warn(`APackage.setJSONLD: @graph of ${doc.id} is empty`);
         }
 
@@ -1835,7 +1814,8 @@ export class APackage extends AnElement implements IAPackage {
         // Call set to validate and set all items including package
         // LOG.debug('aPackage.setJSONLD',doc,graphJson);
         this.set({
-            ...meta,
+            ...doc,
+        //    itemType: PigItemType.aPackage,  // ToDo: obtain from doc - want to check whether the input is correct
             context: ctx,
             graph: graphJson
         } as unknown as IAPackage, options);
@@ -1864,7 +1844,7 @@ export class APackage extends AnElement implements IAPackage {
         // LOG.debug('APackage.setXML: parsed XML to JSON', doc);
 
         // 2. Extract namespaces
-        const ctx = this.extractContextXML(xmlString, doc.id as string);
+        const ctx = this.xContextXML(xmlString, doc.id as string);
 
         // 3. Extract package metadata
         //    ... can be obtained directly from doc (result from parsing)
@@ -1872,7 +1852,7 @@ export class APackage extends AnElement implements IAPackage {
         // 4. Extract and process graph items
         const graph: any[] = Array.isArray(doc.graph) ? doc.graph : [];
 
-        if (graph.length === 0) {
+        if (graph.length < 1) {
             LOG.warn(`APackage ${doc.id}: @graph is empty`);
         }
 
@@ -2021,9 +2001,9 @@ export class APackage extends AnElement implements IAPackage {
      * @param doc - Parsed JSON-LD document
      * @returns Context as INamespace[], string, Record<string, string>, or undefined
      */
-    private extractContextLD(doc: any): INamespace[]{
+    private xContextLD(doc: any): INamespace[]{
         const ctx = doc['@context'] || doc.context;
-        // LOG.debug('extractContextLD (1): ',ctx);
+        // LOG.debug('xContextLD (1): ',ctx);
 
         if (!ctx) {
             LOG.warn(`JSON-LD Package ${doc.id || 'unknown' }: no @context found`);
@@ -2087,7 +2067,7 @@ export class APackage extends AnElement implements IAPackage {
      *   { tag: "@vocab", uri: "http://default.org/" }
      * ]
      */
-    private extractContextXML(xmlString: stringXML, docId:string): INamespace[] {
+    private xContextXML(xmlString: stringXML, docId:string): INamespace[] {
         const namespaces: INamespace[] = [];
 
         // Global regex to find all xmlns declarations
@@ -2115,69 +2095,13 @@ export class APackage extends AnElement implements IAPackage {
             }
         }
 
-        if (namespaces.length === 0) {
+        if (namespaces.length < 1) {
             LOG.warn(`XML Package ${docId || 'unknown' }: no namespaces found`);
             return [];
         }
 
-        // LOG.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
+        // LOG.debug(`xContextXML: extracted ${namespaces.length} namespace(s)`);
         return namespaces;
-    }
-    /**
-     * Extract package metadata from JSON-LD document
-     * @param doc - Parsed JSON-LD document
-     * @returns Metadata object with id, modified, creator, title, and description
-     */
-    private extractMetadataLD(doc: any): {
-        id: TPigId;
-        hasClass: string;
-        itemType?: PigItemTypeValue;
-        revision?: string;
-        priorRevision?: string;
-        modified?: TISODateString;
-        creator?: string;
-        title?: ILanguageText[];
-        description?: ILanguageText[];
-    } {
-        // LOG.debug('APackage.extractMetadataLD', JSON.stringify(doc, null, 2));
-        const metadata = {
-            id: PigItem.normalizeId(doc['@id'] || doc.id, PigItemType.aPackage),
-            hasClass: doc['@type'],
-            itemType: extractId(doc[`${DEF.pfxNsMeta}itemType`]) as PigItemTypeValue,
-            revision: doc.revision,
-            priorRevision: doc.priorRevision,
-            modified: normalizeDateTime(doc[`${DEF.pfxNsDcmi}modified`] || doc.modified) || new Date().toISOString(), // TISODateString
-            creator: doc[`${DEF.pfxNsDcmi}creator`] || doc.creator, // string
-            title: undefined as ILanguageText[] | undefined, // to be extracted
-            description: undefined as ILanguageText[] | undefined // to be extracted
-        };
-        // LOG.debug(`APackage.extractMetadataLD: package ${metadata.id}:`, metadata);
-
-        // Extract dcterms:title (first language value)
-        const titleArray = doc[`${DEF.pfxNsDcmi}title`] || doc.title;
-        if (Array.isArray(titleArray) && titleArray.length > 0) {
-            metadata.title = [{
-                value: titleArray[0]['@value'] || titleArray[0].value || titleArray[0],
-                lang: titleArray[0]['@language'] || titleArray[0].language
-            }];
-        } else if (typeof titleArray === 'string') {
-            metadata.title = [{ value: titleArray }];
-        }
-
-        // Extract dcterms:description (first language value)
-        const descArray = doc[`${DEF.pfxNsDcmi}description`] || doc.description;
-        if (Array.isArray(descArray) && descArray.length > 0) {
-            metadata.description = [{
-                value: descArray[0]['@value'] || descArray[0].value || descArray[0],
-                lang: descArray[0]['@language'] || descArray[0].language || 'en'
-            }];
-        } else if (typeof descArray === 'string') {
-            metadata.description = [{ value: descArray, lang: 'en' }];
-        }
-
-        // LOG.debug(`APackage metadata: id=${metadata.id}, title=${metadata.title?.[0]?.value}, modified=${metadata.modified}, creator=${metadata.creator}`);
-
-        return metadata;
     }
 
     /**
@@ -2334,7 +2258,7 @@ function extractId(obj: unknown): string | undefined {
     if (!Array.isArray(input)) {
         return Msg.create(630, fieldName);
     }
-    if (input.length === 0) {
+    if (input.length < 1) {
         return Msg.create(631, fieldName, 1);
     }
 
@@ -2710,7 +2634,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     }
 
     // 5. If element has only text content and no child elements, add as value
-    if (childElementsByTag.size === 0 && textContent.length > 0) {
+    if (childElementsByTag.size < 1 && textContent.length > 0) {
         result.value = textContent.join(' ');
     }
 
