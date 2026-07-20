@@ -22,37 +22,29 @@
                     <!-- Export Options -->
                     <div class='mt-4'>
                         <h4 class='mb-2'>Export Options</h4>
-                        <v-checkbox
-                            v-model='options.skipShapes'
-                            label='Skip SHACL shapes for read-only applications'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        ></v-checkbox>
-                        <v-checkbox
-                            v-model='options.skipHostedOntologies'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        >
+                        <v-checkbox v-model='options.skipHostedOntologies'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'>
                             <template v-slot:label>
                                 Skip hosted ontologies <i>(not yet implemented)</i>
                             </template>
                         </v-checkbox>
-                        <v-checkbox
-                            v-model='options.addExplicitSubTypes'
-                            label='Add explicit rdfs:subClassOf / rdfs:subPropertyOf'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        ></v-checkbox>
-                        <v-checkbox
-                            v-model='options.addItemTypes'
-                            label='Add cas:itemType statements for easier transformation'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        ></v-checkbox>
+                        <v-checkbox v-model='options.skipShapes'
+                                    label='Skip SHACL shapes for read-only applications'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'></v-checkbox>
+                        <v-checkbox v-model='options.addExplicitTypeToAllClasses'
+                                    label='Add explicit rdf:type triples to subClasses and subProperties'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'></v-checkbox>
+                        <v-checkbox v-model='options.addItemTypes'
+                                    label='Add cas:itemType triples for easier transformation'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'></v-checkbox>
                     </div>
                 </div>
 
@@ -188,7 +180,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
                 return getTTL(rawPkg, {
                     addShapes: !this.options.skipShapes,
                     addHostedOntologies: !this.options.skipHostedOntologies,
-                    addExplicitSubTypes: this.options.addExplicitSubTypes,
+                    addExplicitTypeToAllClasses: this.options.addExplicitTypeToAllClasses,
                     addItemTypes: this.options.addItemTypes
                 });
             });
