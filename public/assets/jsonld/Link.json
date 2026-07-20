@@ -27,6 +27,10 @@
       },
       "additionalProperties": false
     },
+    "sh:defaultValue": {
+      "$ref": "#/$defs/idObject",
+      "description": "Default value for this property"
+    },
     "cas:revision": {
       "type": "string",
       "description": "Revision identifier for version control"

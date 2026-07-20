@@ -1038,12 +1038,12 @@ export interface IEnumeratedValue {
     // in PIG, values of all datatypes are strings; the datatype is defined in the respective Property
     value?: string;  
 }
-export interface IEnumeration extends IIdentifiable {
+export interface IEnumeration extends IElement {
     datatype: string; // must be of XsDataType
     enumeratedValue: IEnumeratedValue[]; // array of allowed values, datatype-dependent
 //    unit?: string;  // according to SI units
 }
-export class Enumeration extends Identifiable implements IEnumeration {
+export class Enumeration extends Element implements IEnumeration {
     datatype!: string;
     enumeratedValue!: IEnumeratedValue[]; 
 //    unit?: string;
@@ -1235,6 +1235,7 @@ export interface ILink extends IIdentifiable {
     revisionAware?: boolean; // optional, default is false
     minCount?: number;
     maxCount?: number;
+    defaultValue?: TPigId;   // assigned when an instance is created without a value for this property; it may be changed afterwards
 }
 export class Link extends Identifiable implements ILink {
     enumeratedEndpoint!: TPigId[];
@@ -1242,6 +1243,7 @@ export class Link extends Identifiable implements ILink {
     revisionAware?: boolean;
     minCount?: number;
     maxCount?: number;
+    defaultValue?: TPigId;
     constructor() {
         super({ itemType: PigItemType.Link });
     }
@@ -1278,6 +1280,7 @@ export class Link extends Identifiable implements ILink {
             this.readOnly = _itm.readOnly;
             this.minCount = _itm.minCount;
             this.maxCount = _itm.maxCount;
+            this.defaultValue = _itm.defaultValue;
         }
         return this;
     }
@@ -1288,7 +1291,8 @@ export class Link extends Identifiable implements ILink {
             revisionAware: this.revisionAware,
             readOnly: this.readOnly,
             minCount: this.minCount,
-            maxCount: this.maxCount
+            maxCount: this.maxCount,
+            defaultValue: this.defaultValue
         }) as ILink;
     }
     fromJSONLD(itm: any) {

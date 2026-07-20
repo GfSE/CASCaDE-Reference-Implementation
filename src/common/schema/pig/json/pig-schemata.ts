@@ -256,6 +256,7 @@ class PigSchemaFactory {
                 revisionAware: { type: 'boolean' },
                 minCount: { type: 'integer', minimum: 0 },
                 maxCount: { type: 'integer', minimum: 1 },
+                defaultValue: { $ref: '#/$defs/idString' },
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
