@@ -109,7 +109,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
         options: {
             skipShapes: false,              // Will be negated to addShapes: true
             skipHostedOntologies: false,    // Will be negated to addHostedOntologies: true
-            addExplicitSubTypes: false,     // Passed as-is (false = don't add)
+            addExplicitTypeToAllClasses: false,     // Passed as-is (false = don't add)
             addItemTypes: false             // Passed as-is (false = don't add, must be ticked to add)
         },
         rules: {

@@ -895,7 +895,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
                         // Add the property with the key as its hasClass reference
                         if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue*/) {
-                            if (item.value || item.composes) {
+                            if (item.value !== undefined || item.composes) {
                                 configurables.push({
                                     itemType: PigItemType.aProperty,
                                     hasClass: key,
@@ -914,7 +914,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
                 const itemTypeValue = val.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
 
                 if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue */) {
-                    if (val.value || val.composes) {
+                    if (val.value !== undefined || val.composes) {
                         configurables.push({
                             itemType: PigItemType.aProperty,
                             hasClass: key,
@@ -926,7 +926,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
                 }
             }
             // Handle primitive values (string, number, boolean) - create simple properties
-            else if (val && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')) {
+            else if (val !== undefined && val !== null && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')) {
                 configurables.push({
                     itemType: PigItemType.aProperty,
                     hasClass: key,

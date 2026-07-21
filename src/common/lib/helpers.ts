@@ -13,10 +13,10 @@
  *  -
  *
  *  @ToDo:
- *  -
+ *  - Resolve circular dependency between helpers.ts and pig-metaclasses.ts (IIdentifiable)
  */
 
-import { IIdentifiable } from '../schema/pig/ts/pig-metaclasses';
+import type { IIdentifiable } from '../schema/pig/ts/pig-metaclasses';
 import { DEF } from './definitions';
 
 /**
