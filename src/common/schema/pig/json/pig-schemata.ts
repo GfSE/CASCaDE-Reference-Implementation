@@ -24,7 +24,7 @@ class PigSchemaFactory {
         return 'http://json-schema.org/draft-07/schema#';
     }
     static getSchemaPath() {
-        return 'https://product-information-graph.org/schema/2026-07-03/cas/';
+        return `https://product-information-graph.org/schema/${DEF.pigVersion}/cas/`;
     }
     static getDefs() {
         return {
