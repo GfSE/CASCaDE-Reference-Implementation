@@ -52,7 +52,7 @@ class PigSchemaFactory {
             }
         }
     }
-    static getPropertyRef() {
+    static getAPropertySchema() {
         return {
             type: 'array',
             items: {
@@ -65,7 +65,7 @@ class PigSchemaFactory {
                         description: `The itemType for ${DEF.pfxNsMeta}aProperty`
                     },
                     value: {
-                        type: 'string',
+                        type: 'string',  // all number types are stored as string, but validated against the datatype and range of the property
                         minLength: 1
                     },
                     aComposedProperty: {
@@ -78,7 +78,7 @@ class PigSchemaFactory {
             }
         }
     }
-    static getLinkRef(linkType:string, minI?:number, maxI?:number) {
+    static getALinkSchema(linkType:string, minI?:number, maxI?:number) {
         return {
             type: 'array',
             minItems: minI,
@@ -203,7 +203,7 @@ class PigSchemaFactory {
                 maxLength: { type: 'integer', minimum: 1 },
                 minInclusive: { type: 'number' },
                 maxInclusive: { type: 'number' },
-                pattern: { type: 'string' },
+                pattern: { type: 'string' },  // must be a valid regex
                 defaultValue: { type: 'string' },
                 composedProperty: {
                     type: 'array',
@@ -407,8 +407,8 @@ class PigSchemaFactory {
                 },
                 title: { $ref: '#/$defs/MultiLanguageText' },
                 description: { $ref: '#/$defs/MultiLanguageText' },
-                hasProperty: this.getPropertyRef(),
-                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`),
+                hasProperty: this.getAPropertySchema(),
+                hasTargetLink: this.getALinkSchema(`${DEF.pfxNsMeta}aTargetLink`), // 0..1 pointing to anEntity or aRelationship - OR - 0..n pointing to enumerations
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
@@ -446,9 +446,9 @@ class PigSchemaFactory {
                 },
                 title: { $ref: '#/$defs/MultiLanguageText' },
                 description: { $ref: '#/$defs/MultiLanguageText' },
-                hasProperty: this.getPropertyRef(),
-                hasSourceLink: this.getLinkRef(`${DEF.pfxNsMeta}aSourceLink`, 1, 1),
-                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`, 1), // exactly 1 which is not pointing to an enumeration plus 0..n which are pointing to enumerations
+                hasProperty: this.getAPropertySchema(),
+                hasSourceLink: this.getALinkSchema(`${DEF.pfxNsMeta}aSourceLink`, 1),
+                hasTargetLink: this.getALinkSchema(`${DEF.pfxNsMeta}aTargetLink`, 1),
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',
@@ -497,8 +497,8 @@ class PigSchemaFactory {
                 },
                 title: { $ref: '#/$defs/MultiLanguageText' },
                 description: { $ref: '#/$defs/MultiLanguageText' },
-                hasProperty: this.getPropertyRef(),
-                hasTargetLink: this.getLinkRef(`${DEF.pfxNsMeta}aTargetLink`),
+                hasProperty: this.getAPropertySchema(),
+                hasTargetLink: this.getALinkSchema(`${DEF.pfxNsMeta}aTargetLink`),
                 revision: { type: 'string' },
                 priorRevision: {
                     type: 'array',

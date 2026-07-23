@@ -69,6 +69,7 @@
  *   This code could just *ignore* additional properties.
  * - Consider the schema of cas.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  * - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
+ * - Include valid datatypes in the schemata for Property and Link.
  * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
  * - set lastStatus also on JSON-LD import
  */
