@@ -1,5 +1,5 @@
 import { JsonValue } from '../../lib/helpers';
-import { APackage, TPigItem, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage, TPigItem as TCascaraItem, PigItemTypeValue as TCascaraItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsCypher {
     includeConstraints?: boolean;
@@ -14,15 +14,15 @@ export interface IOptionsCypher {
 }
 
 /**
- * CASCaRA/PIG -> Neo4j Cypher export.
+ * CASCaRA/Cascara -> Neo4j Cypher export.
  *
  * Important modeling rule:
- * Every exported graph item receives the shared :PigItem label plus a type label
+ * Every exported graph item receives the shared :CascaraItem label plus a type label
  * such as :Entity, :Property, :Link, :Enumeration, or :anEntity. Relationships
- * then match by (:PigItem {id}) so they connect to the detailed node instead of
+ * then match by (:CascaraItem {id}) so they connect to the detailed node instead of
  * accidentally creating placeholder duplicates.
  */
-export function getCypher(item: TPigItem, options?: IOptionsCypher): string {
+export function getCypher(item: TCascaraItem, options?: IOptionsCypher): string {
     const opts: Required<IOptionsCypher> = {
         includeConstraints: true,
         includePackageContains: true,
@@ -31,7 +31,7 @@ export function getCypher(item: TPigItem, options?: IOptionsCypher): string {
     };
 
     const statements: string[] = [];
-    statements.push('// CASCaRA/PIG -> Neo4j Cypher export');
+    statements.push('// CASCaRA/Cascara -> Neo4j Cypher export');
     statements.push(`// Generated ${new Date().toISOString()}`);
 
     if (opts.includeConstraints) {
@@ -52,7 +52,7 @@ function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string
     const graphItems = Array.isArray(pkg.graph) ? pkg.graph : [];
 
     // Pass 1: create all real nodes first.
-    statements.push(createMergeNode(itemLabels(pkg as unknown as TPigItem), pkg.id, itemProperties(pkg as unknown as TPigItem, options)));
+statements.push(createMergeNode(itemLabels(pkg as unknown as TCascaraItem), pkg.id, itemProperties(pkg as unknown as TCascaraItem, options)));
 
     for (const graphItem of graphItems) {
         statements.push(createMergeNode(itemLabels(graphItem), graphItem.id, itemProperties(graphItem, options)));
@@ -74,7 +74,7 @@ function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string
     return statements;
 }
 
-function exportSingleItem(item: TPigItem, options: Required<IOptionsCypher>): string[] {
+function exportSingleItem(item: TCascaraItem, options: Required<IOptionsCypher>): string[] {
     return [
         createMergeNode(itemLabels(item), item.id, itemProperties(item, options)),
         ...createEnumerationValueNodes(item),
@@ -82,7 +82,7 @@ function exportSingleItem(item: TPigItem, options: Required<IOptionsCypher>): st
     ];
 }
 
-function graphItemRelations(item: TPigItem): string[] {
+function graphItemRelations(item: TCascaraItem): string[] {
     const statements: string[] = [];
 
     if ((item as any).specializes) {
@@ -106,7 +106,7 @@ function graphItemRelations(item: TPigItem): string[] {
 function getDefaultConstraints(): string[] {
     return [
         'CREATE CONSTRAINT package_id_unique IF NOT EXISTS FOR (n:Package) REQUIRE n.id IS UNIQUE;',
-        'CREATE CONSTRAINT pigitem_id_unique IF NOT EXISTS FOR (n:PigItem) REQUIRE n.id IS UNIQUE;'
+        'CREATE CONSTRAINT cascaraitem_id_unique IF NOT EXISTS FOR (n:CascaraItem) REQUIRE n.id IS UNIQUE;'
     ];
 }
 
@@ -127,14 +127,14 @@ function createRelation(
     const setProps = Object.keys(props).length > 0 ? `\nSET r += ${propsLiteral}` : '';
 
     return [
-        `MERGE (source:PigItem {id: ${toCypherValue(sourceId)}})`,
-        `MERGE (target:PigItem {id: ${toCypherValue(targetId)}})`,
+        `MERGE (source:CascaraItem {id: ${toCypherValue(sourceId)}})`,
+        `MERGE (target:CascaraItem {id: ${toCypherValue(targetId)}})`,
         `MERGE (source)-[r:${safeType}]->(target)${setProps};`
     ].join('\n');
 }
 
-function itemLabels(item: TPigItem): string[] {
-    const labels = ['PigItem'];
+function itemLabels(item: TCascaraItem): string[] {
+    const labels = ['CascaraItem'];
 
     if (item.itemType === 'cas:aPackage') {
         labels.push('Package');
@@ -147,7 +147,7 @@ function itemLabels(item: TPigItem): string[] {
     return Array.from(new Set(labels));
 }
 
-function sanitizeTypeLabel(itemType: PigItemTypeValue): string {
+function sanitizeTypeLabel(itemType: TCascaraItemTypeValue): string {
     const raw = String(itemType);
     const suffix = raw.replace(/^.*[:#\\/]/, '');
     return safeLabelName(suffix || raw);
@@ -155,12 +155,12 @@ function sanitizeTypeLabel(itemType: PigItemTypeValue): string {
 
 function normalizeLabels(labels: string[]): string {
     const safe = Array.from(new Set(labels.map(safeLabelName).filter(Boolean)));
-    return safe.length > 0 ? safe.join(':') : 'PigItem';
+    return safe.length > 0 ? safe.join(':') : 'CascaraItem';
 }
 
 function safeLabelName(label: string): string {
     const cleaned = String(label).replace(/[^A-Za-z0-9_]/g, '_');
-    const normalized = cleaned.length === 0 ? 'PigItem' : cleaned;
+    const normalized = cleaned.length === 0 ? 'CascaraItem' : cleaned;
     return /^[A-Za-z_]/.test(normalized) ? normalized : `_${normalized}`;
 }
 
@@ -183,7 +183,7 @@ const RELATIONSHIP_FIELDS = new Set([
     'hasProperty'
 ]);
 
-function itemProperties(item: TPigItem, options: Required<IOptionsCypher>): Record<string, JsonValue> {
+function itemProperties(item: TCascaraItem, options: Required<IOptionsCypher>): Record<string, JsonValue> {
     const raw = (item as any).get ? (item as any).get() : (item as any);
     const props: Record<string, JsonValue> = {};
 
@@ -224,7 +224,7 @@ function normalizeTextArray(value: unknown): string {
         .join(' | ');
 }
 
-function createLinkRelations(item: TPigItem, field: 'hasSourceLink' | 'hasTargetLink'): string[] {
+function createLinkRelations(item: TCascaraItem, field: 'hasSourceLink' | 'hasTargetLink'): string[] {
     const relations: string[] = [];
     const cfgs = (item as any)[field];
 
@@ -246,7 +246,7 @@ function createLinkRelations(item: TPigItem, field: 'hasSourceLink' | 'hasTarget
     return relations;
 }
 
-function createIdArrayRelations(item: TPigItem, field: string, relationType: string): string[] {
+function createIdArrayRelations(item: TCascaraItem, field: string, relationType: string): string[] {
     const relations: string[] = [];
     const values = (item as any)[field];
 
@@ -261,7 +261,7 @@ function createIdArrayRelations(item: TPigItem, field: string, relationType: str
     return relations;
 }
 
-function createEnumerationValueNodes(item: TPigItem): string[] {
+function createEnumerationValueNodes(item: TCascaraItem): string[] {
     const statements: string[] = [];
     const values = (item as any).enumeratedValue;
 
@@ -270,13 +270,13 @@ function createEnumerationValueNodes(item: TPigItem): string[] {
     for (const value of values) {
         if (!value || typeof value !== 'object' || typeof value.id !== 'string') continue;
 
-        statements.push(createMergeNode(['PigItem', 'EnumerationValue'], value.id, embeddedObjectProperties(value)));
+        statements.push(createMergeNode(['CascaraItem', 'EnumerationValue'], value.id, embeddedObjectProperties(value)));
     }
 
     return statements;
 }
 
-function createEnumerationValueRelations(item: TPigItem): string[] {
+function createEnumerationValueRelations(item: TCascaraItem): string[] {
     const statements: string[] = [];
     const values = (item as any).enumeratedValue;
 
@@ -290,7 +290,7 @@ function createEnumerationValueRelations(item: TPigItem): string[] {
     return statements;
 }
 
-function createPropertyRelations(item: TPigItem): string[] {
+function createPropertyRelations(item: TCascaraItem): string[] {
     const statements: string[] = [];
     const props = (item as any).hasProperty;
 
