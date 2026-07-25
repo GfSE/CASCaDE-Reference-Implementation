@@ -1,0 +1,1687 @@
+{
+  "@context": {
+    "FMC": "http://fmc-modeling.org#",
+    "IREB": "https://cpre.ireb.org/en/downloads-and-resources/glossary#",
+    "ReqIF": "https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#",
+    "SpecIF": "https://specif.de/v1.2/schema#",
+    "cas": "https://product-information-graph.org/ontology/2026-05-08/metamodel#",
+    "d": "https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "o": "https://product-information-graph.org/ontology/custom#",
+    "oslc_rm": "http://open-services.net/ns/rm#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "skos": "https://www.w3.org/TR/skos-reference/",
+    "xs": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "d:ACP-Very-Simple-Model-FMC-with-Requirements",
+  "@type": "cas:Package",
+  "@graph": [
+    {
+      "@id": "cas:Package",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Package"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances."
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "dcterms:contributor"
+        },
+        {
+          "@id": "dcterms:license"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Organizer",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Organizer"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "An element organizing model elements. An example is a list of requirements or a diagram using a certain notation."
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Root",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Hierarchy Root"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subclass of CASCaRA organizer serving as a root for hierarchically organized graph elements."
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Outline",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Outline"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subclass of CASCaRA organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized."
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:View",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "View"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subclass of CASCaRA organizer representing a model view (diagram) using a certain notation showing selected model elements."
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        },
+        {
+          "@id": "cas:Diagram"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:shows"
+        },
+        {
+          "@id": "cas:depicts"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Category",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "has category"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Specifies a category for an element (entity, relationship or organizer)."
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:maxCount": 1,
+      "sh:maxLength": 32,
+      "sh:minCount": 0
+    },
+    {
+      "@id": "cas:linksSource",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "to source"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the source of a reified relationship."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:linksTarget",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "to target"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the target of a reified relationship or an organizer."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:lists",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "lists"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Lists an entity, a relationship or a subordinated organizer."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        },
+        {
+          "@id": "cas:Organizer"
+        }
+      ]
+    },
+    {
+      "@id": "cas:shows",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "shows"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Shows an entity or a relationship."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:depicts",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "depicts"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Depicts an entity; inverse of uml:ownedDiagram."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        }
+      ]
+    },
+    {
+      "@id": "dcterms:title",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Title",
+          "@language": "en"
+        },
+        {
+          "@value": "Titel",
+          "@language": "de"
+        },
+        {
+          "@value": "Titre",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p> A name given to the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/title\">DCMI</a></i>) </small></p><p> Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>",
+          "@language": "en"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:maxCount": 1,
+      "sh:maxLength": 256
+    },
+    {
+      "@id": "dcterms:description",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Description",
+          "@language": "en"
+        },
+        {
+          "@value": "Beschreibung",
+          "@language": "de"
+        },
+        {
+          "@value": "Description",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p> An account of the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/description\">DCMI</a></i>) </small></p><p> Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>",
+          "@language": "en"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "cas:Diagram",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Diagram",
+          "@language": "en"
+        },
+        {
+          "@value": "Diagramm",
+          "@language": "de"
+        },
+        {
+          "@value": "Diagramme",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A diagram illustrating the resource or a link to a diagram.",
+          "@language": "en"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "SpecIF:Paragraph",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Paragraph",
+          "@language": "en"
+        },
+        {
+          "@value": "Textabsatz",
+          "@language": "de"
+        },
+        {
+          "@value": "Paragraphe",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
+          "@language": "de"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Diagram"
+        },
+        {
+          "@id": "cas:Category"
+        }
+      ]
+    },
+    {
+      "@id": "FMC:Actor",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Actor",
+          "@language": "en"
+        },
+        {
+          "@value": "Akteur",
+          "@language": "de"
+        },
+        {
+          "@value": "Acteur",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>",
+          "@language": "de"
+        },
+        {
+          "@value": "<p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>",
+          "@language": "fr"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:icon": {
+        "@value": "□"
+      }
+    },
+    {
+      "@id": "FMC:State",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "State",
+          "@language": "en"
+        },
+        {
+          "@value": "Zustand",
+          "@language": "de"
+        },
+        {
+          "@value": "État",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].</p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].</p>",
+          "@language": "de"
+        },
+        {
+          "@value": "<p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p>",
+          "@language": "fr"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:icon": {
+        "@value": "○"
+      }
+    },
+    {
+      "@id": "FMC:Event",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Event",
+          "@language": "en"
+        },
+        {
+          "@value": "Ereignis",
+          "@language": "de"
+        },
+        {
+          "@value": "Évenement",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].</p>",
+          "@language": "de"
+        },
+        {
+          "@value": "<p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p>",
+          "@language": "fr"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:icon": {
+        "@value": "♢"
+      }
+    },
+    {
+      "@id": "IREB:Requirement",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Requirement",
+          "@language": "en"
+        },
+        {
+          "@value": "Anforderung",
+          "@language": "de"
+        },
+        {
+          "@value": "Exigence",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p> A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p> Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>",
+          "@language": "de"
+        },
+        {
+          "@value": "<p> Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>",
+          "@language": "fr"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "SpecIF:Priority"
+        }
+      ],
+      "cas:icon": {
+        "@value": "↯"
+      }
+    },
+    {
+      "@id": "SpecIF:writes",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Relationship"
+      },
+      "cas:specializes": {
+        "@id": "cas:Relationship"
+      },
+      "dcterms:title": [
+        {
+          "@value": "writes",
+          "@language": "en"
+        },
+        {
+          "@value": "schreibt",
+          "@language": "de"
+        },
+        {
+          "@value": "écrit",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedSourceLink": [
+        {
+          "@id": "SpecIF:writes-toSource"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "SpecIF:writes-toTarget"
+        }
+      ]
+    },
+    {
+      "@id": "SpecIF:writes-toSource",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksSource"
+      },
+      "dcterms:title": [
+        {
+          "@value": "SpecIF:writes to source"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the source of SpecIF:writes"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "FMC:Actor"
+        }
+      ]
+    },
+    {
+      "@id": "SpecIF:writes-toTarget",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "SpecIF:writes to target"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the target of SpecIF:writes"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "FMC:State"
+        }
+      ]
+    },
+    {
+      "@id": "SpecIF:reads",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Relationship"
+      },
+      "cas:specializes": {
+        "@id": "cas:Relationship"
+      },
+      "dcterms:title": [
+        {
+          "@value": "reads",
+          "@language": "en"
+        },
+        {
+          "@value": "liest",
+          "@language": "de"
+        },
+        {
+          "@value": "lit",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "A [[FMC:Actor]] 'reads' a [[FMC:State]].",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedSourceLink": [
+        {
+          "@id": "SpecIF:reads-toSource"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "SpecIF:reads-toTarget"
+        }
+      ]
+    },
+    {
+      "@id": "SpecIF:reads-toSource",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksSource"
+      },
+      "dcterms:title": [
+        {
+          "@value": "SpecIF:reads to source"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the source of SpecIF:reads"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "FMC:Actor"
+        }
+      ]
+    },
+    {
+      "@id": "SpecIF:reads-toTarget",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "SpecIF:reads to target"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the target of SpecIF:reads"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "FMC:State"
+        }
+      ]
+    },
+    {
+      "@id": "oslc_rm:satisfies",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Relationship"
+      },
+      "cas:specializes": {
+        "@id": "cas:Relationship"
+      },
+      "dcterms:title": [
+        {
+          "@value": "satisfies",
+          "@language": "en"
+        },
+        {
+          "@value": "erfüllt",
+          "@language": "de"
+        },
+        {
+          "@value": "satisfait",
+          "@language": "fr"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p> The object is satisfied by the subject. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p><p> SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'. </p>",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedSourceLink": [
+        {
+          "@id": "oslc_rm:satisfies-toSource"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "oslc_rm:satisfies-toTarget"
+        }
+      ]
+    },
+    {
+      "@id": "oslc_rm:satisfies-toSource",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksSource"
+      },
+      "dcterms:title": [
+        {
+          "@value": "oslc_rm:satisfies to source"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the source of oslc_rm:satisfies"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "FMC:Actor"
+        },
+        {
+          "@id": "FMC:State"
+        }
+      ]
+    },
+    {
+      "@id": "oslc_rm:satisfies-toTarget",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "oslc_rm:satisfies to target"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the target of oslc_rm:satisfies"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "IREB:Requirement"
+        }
+      ]
+    },
+    {
+      "@id": "SpecIF:Priority-Value",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Enumeration"
+      },
+      "cas:specializes": {
+        "@id": "cas:Enumeration"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Priority",
+          "@language": "en"
+        },
+        {
+          "@value": "Priorität",
+          "@language": "de"
+        },
+        {
+          "@value": "Priorité",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Enumerated values for the 'Priority' of the resource.",
+          "@language": "en"
+        }
+      ],
+      "dcterms:modified": "2020-03-26T22:59:00+02:00",
+      "cas:enumeratedValue": [
+        {
+          "@id": "SpecIF:priorityHigh",
+          "dcterms:title": [
+            {
+              "@value": "high",
+              "@language": "en"
+            },
+            {
+              "@value": "hoch",
+              "@language": "de"
+            },
+            {
+              "@value": "haut",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityRatherHigh",
+          "dcterms:title": [
+            {
+              "@value": "rather high",
+              "@language": "en"
+            },
+            {
+              "@value": "eher hoch",
+              "@language": "de"
+            },
+            {
+              "@value": "plutôt haut",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityMedium",
+          "dcterms:title": [
+            {
+              "@value": "medium",
+              "@language": "en"
+            },
+            {
+              "@value": "mittel",
+              "@language": "de"
+            },
+            {
+              "@value": "moyen",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityRatherLow",
+          "dcterms:title": [
+            {
+              "@value": "rather low",
+              "@language": "en"
+            },
+            {
+              "@value": "eher niedrig",
+              "@language": "de"
+            },
+            {
+              "@value": "plutôt bas",
+              "@language": "fr"
+            }
+          ]
+        },
+        {
+          "@id": "SpecIF:priorityLow",
+          "dcterms:title": [
+            {
+              "@value": "low",
+              "@language": "en"
+            },
+            {
+              "@value": "niedrig",
+              "@language": "de"
+            },
+            {
+              "@value": "bas",
+              "@language": "fr"
+            }
+          ]
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "SpecIF:Priority",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Priority",
+          "@language": "en"
+        },
+        {
+          "@value": "Priorität",
+          "@language": "de"
+        },
+        {
+          "@value": "Priorité",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Enumerated values for the 'Priority' of the resource.",
+          "@language": "en"
+        }
+      ],
+      "dcterms:modified": "2020-03-26T22:59:00+02:00",
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "SpecIF:Priority-Value"
+        }
+      ]
+    },
+    {
+      "@id": "d:Req-1a8016e2872e78ecadc50feddc00029b",
+      "@type": "IREB:Requirement",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Data Volume"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>The data store MUST support a total volume up to 850 GB.</p>"
+        }
+      ],
+      "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "SpecIF:Priority": [
+        {
+          "@id": "SpecIF:priorityHigh",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Req-0Z7916e2872e78ecadc50feddc00918a",
+      "@type": "IREB:Requirement",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Consistency"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>The data store MUST be consistent at all times.</p>"
+        }
+      ],
+      "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "SpecIF:Priority": [
+        {
+          "@id": "SpecIF:priorityHigh",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Req-2b9016e2872e78ecadc50feddc0013Ac",
+      "@type": "IREB:Requirement",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Response Time"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>The system SHOULD respond on user queries within 300 ms.</p>"
+        }
+      ],
+      "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "SpecIF:Priority": [
+        {
+          "@id": "SpecIF:priorityMedium",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Diagram-aec0df7900010000017001eaf53e8876",
+      "@type": "cas:View",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "IT-Integration: FiCo-Application and FiCo-Data"
+        }
+      ],
+      "dcterms:modified": "2020-03-06T08:32:00+01:00",
+      "cas:Category": [
+        {
+          "@value": "FMC Block Diagram",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:Diagram": [
+        {
+          "@value": "\n                    <p class=\"inline-label\">Model Diagram:</p>\n                    <p>\n                        <object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object>\n                    </p>\n                ",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:shows": [
+        {
+          "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
+      "@type": "FMC:Actor",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "FiCo-Application"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>IT-Application for Finance and Controlling.</p>"
+        }
+      ],
+      "dcterms:modified": "2020-03-06T09:04:00+01:00"
+    },
+    {
+      "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
+      "@type": "FMC:State",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "FiCo-Data"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>Finance and Controlling Data, such as cost-units per project with budget, accrued cost etc.</p>"
+        }
+      ],
+      "dcterms:modified": "2020-03-06T09:03:00+01:00"
+    },
+    {
+      "@id": "d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:description": [
+        {
+          "@value": "'FiCo-Application' writes 'FiCo-Data'"
+        }
+      ],
+      "dcterms:modified": "2020-03-06T09:05:00+01:00",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:description": [
+        {
+          "@value": "'FiCo-Application' reads 'FiCo-Data'"
+        }
+      ],
+      "dcterms:modified": "2020-03-06T09:05:00+01:00",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
+        {
+          "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:description": [
+        {
+          "@value": "'FiCo-Data' satisfies 'Data Volume'"
+        }
+      ],
+      "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-1a8016e2872e78ecadc50feddc00029b",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Ssat-50feddc00029b1a8016e2872e78ecadc-0Z7916e2872e78ecadc50feddc00918a",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:description": [
+        {
+          "@value": "'FiCo-Data' satisfies 'Consistency'"
+        }
+      ],
+      "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-0Z7916e2872e78ecadc50feddc00918a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Ssat-50fbfe8f0029b1a8016ea86245a9d83a-2b9016e2872e78ecadc50feddc0013Ac",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:description": [
+        {
+          "@value": "'FiCo-Application' satisfies 'Response Time'"
+        }
+      ],
+      "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-2b9016e2872e78ecadc50feddc0013Ac",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements",
+      "@type": "cas:Root",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Hierarchy Root"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "... anchoring all hierarchies of this graph (package)"
+        }
+      ],
+      "dcterms:modified": "2026-01-17T22:38:20.041Z",
+      "cas:lists": [
+        {
+          "@id": "d:HR-Folder-Introduction",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:HR-Folder-Requirements",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:HR-Folder-SystemModel",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:HR-FolderGlossary-10875487071",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Folder-Introduction",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Introduction"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in <a href=\"https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html\" target=\"_blank\">Tutorial 6: Very Simple Model (FMC)</a> and <a href=\"https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html\" target=\"_blank\">Tutorial 9: Very Simple Model (FMC) with Requirements</a>. </p>"
+        }
+      ],
+      "dcterms:modified": "2025-02-07T08:32:00+01:00"
+    },
+    {
+      "@id": "d:HR-Folder-Introduction",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
+        }
+      ],
+      "dcterms:modified": "2026-01-17T22:38:19.821Z",
+      "cas:Category": [
+        {
+          "@value": "ReqIF:HierarchyRoot",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:lists": [
+        {
+          "@id": "d:Folder-Introduction",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Folder-Requirements",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Requirements"
+        }
+      ],
+      "dcterms:modified": "2020-03-06T08:32:00+01:00",
+      "cas:lists": [
+        {
+          "@id": "d:Req-1a8016e2872e78ecadc50feddc00029b",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-0Z7916e2872e78ecadc50feddc00918a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-2b9016e2872e78ecadc50feddc0013Ac",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:HR-Folder-Requirements",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
+        }
+      ],
+      "dcterms:modified": "2026-01-17T22:38:19.821Z",
+      "cas:Category": [
+        {
+          "@value": "ReqIF:HierarchyRoot",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:lists": [
+        {
+          "@id": "d:Folder-Requirements",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Folder-SystemModel",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "System Model"
+        }
+      ],
+      "dcterms:modified": "2020-03-06T08:32:00+01:00",
+      "cas:lists": [
+        {
+          "@id": "d:Diagram-aec0df7900010000017001eaf53e8876",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:HR-Folder-SystemModel",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
+        }
+      ],
+      "dcterms:modified": "2026-01-17T22:38:19.821Z",
+      "cas:Category": [
+        {
+          "@value": "ReqIF:HierarchyRoot",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:lists": [
+        {
+          "@id": "d:Folder-SystemModel",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:FolderGlossary-10875487071",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Model Elements (Glossary)"
+        }
+      ],
+      "dcterms:modified": "2026-01-17T22:38:13.953Z",
+      "cas:Category": [
+        {
+          "@value": "SpecIF:Glossary",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:lists": [
+        {
+          "@id": "d:MEl-50fbfe8f0029b1a8016ea86245a9d83a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-50feddc00029b1a8016e2872e78ecadc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:HR-FolderGlossary-10875487071",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
+        }
+      ],
+      "dcterms:modified": "2026-01-17T22:38:19.821Z",
+      "cas:Category": [
+        {
+          "@value": "ReqIF:HierarchyRoot",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ],
+      "cas:lists": [
+        {
+          "@id": "d:FolderGlossary-10875487071",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    }
+  ],
+  "cas:itemType": {
+    "@id": "cas:aPackage"
+  },
+  "dcterms:title": [
+    {
+      "@value": "Project 'Very Simple Model (FMC) with Requirements'"
+    }
+  ],
+  "dcterms:modified": "2026-01-17T22:38:19.595Z",
+  "dcterms:contributor": [
+    {
+      "@value": "mailto:oskar.dungern@gfse.org",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ],
+  "dcterms:license": [
+    {
+      "@value": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ]
+}

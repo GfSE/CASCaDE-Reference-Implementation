@@ -81,11 +81,6 @@ export class JsonldImporter {
         // Instantiate APackage and load the document
         const aPackage = new APackage().setJSONLD(doc);
 
-        // Check if package was successfully created
-        if (!aPackage.status().ok) {
-            return aPackage.status();
-        }
-
         // Get all items (package + graph items)
         const allItems = aPackage.getItems();
 

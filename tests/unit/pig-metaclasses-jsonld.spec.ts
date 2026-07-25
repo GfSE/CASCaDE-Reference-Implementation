@@ -608,7 +608,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 'SpecIF:Priority': [
                     {
                         '@id': 'SpecIF:priorityHigh',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
                     }
                 ],
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` }

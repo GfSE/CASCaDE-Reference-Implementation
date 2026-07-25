@@ -84,7 +84,7 @@ describe('import JSONLD - Dynamic Test Files', () => {
                 const rsp = itm.status();
                 if (!rsp.ok) {
                     console.info(`Instance ${index}:`, rsp.statusText ?? rsp.status);
-                    console.debug(JSON.stringify(itm.get(), null, 2));
+                    // console.debug(JSON.stringify(itm.get(), null, 2));
                 }
                 expect(rsp.status).toBe(0);
                 expect(rsp.ok).toBe(true);
@@ -112,7 +112,7 @@ describe('import JSONLD - Dynamic Test Files', () => {
             Object.entries(itemTypeCounts).forEach(([type, count]) => {
                 entries += `\n   - ${type}: ${count}`;
             });
-            console.log(`\n📦 ${filename}:\n   - Package ID: ${pkg.id}\n   - Graph items: ${graphItems.length}${entries}`);
+            // console.log(`\n📦 ${filename}:\n   - Package ID: ${pkg.id}\n   - Graph items: ${graphItems.length}${entries}`);
         });
     });
 });

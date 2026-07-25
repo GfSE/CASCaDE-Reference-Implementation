@@ -1,6 +1,6 @@
 {
   "name": "CASCaRA-Validation-Tool",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "private": true,
   "scripts": {
     "prebuild": "node scripts/generate-build-info.js",

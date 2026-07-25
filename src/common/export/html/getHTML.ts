@@ -338,7 +338,7 @@ function propertiesToHTML(el: TPigAnElement, lang: tagIETF): string {
         for (const prop of el.hasProperty) {
             const propData = prop.get() as IAProperty;
             if (propData && propData.hasClass) {
-                const propValue = passify((propData.value || propData.idRef) as string); // one of the two must be present according to the schema
+                const propValue = passify((propData.value) as string);
                 const propClass = passify(propData.hasClass);
                 propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
             }

@@ -55,19 +55,21 @@ export interface IOptionsTTL {
     indent?: string;
     /** Filter which item types to include in package graph (default: all, empty array means none which is obviously useless) */
     filterItemType?: PigItemTypeValue[];
-    /** Include shapes (default: false) */
-    addShapes?: boolean;
     /** Include any ontology even if available on a server (default: false) */
     addHostedOntologies?: boolean;
+    /** Include shapes (default: false)
+     * @ToDo: Consider to add shapes only if addHostedOntologies is true
+     */
+    addShapes?: boolean;
     /** 
-     * Add explicit rdfs:subClassOf or rdfs:subPropertyOf statements (default: false)
-     * - For Entity/Relationship classes: adds rdfs:subClassOf to parent class
-     * - For Property classes: adds rdfs:subPropertyOf to parent property
-     * - For Link classes: adds rdfs:subPropertyOf to parent link
+     * Add explicit rdf:type triples also to subClasses and subProperties (default: false)
+     * - For Entity/Relationship classes: adds rdf:type owl:Class also to subClasses
+     * - For Property classes: adds rdf:type owl:DatatypeProperty to subProperties
+     * - For Link classes: adds rdf:type owl:ObjectProperty to subProperties
      * These statements are redundant but can improve readability.
      * Also, some tools may not infer them properly.
      */
-    addExplicitSubTypes?: boolean;
+    addExplicitTypeToAllClasses?: boolean;
     addItemTypes?: boolean;
 }
 
@@ -380,7 +382,7 @@ class GetTTL {
 
         // icon (optional)
         if (itm.icon?.value) {
-            ttl += rdf.tab1('cas:icon', `"${itm.icon.value}"`);
+            ttl += rdf.tab1('cas:icon', `${itm.icon.value}`);
         }
 
         ttl += rdf.newLine();
@@ -441,16 +443,8 @@ class GetTTL {
             return '';
         }
 
-        let ttl = '';
-
-        // Check which required prefixes are present in the context
-        const requiredPrefixes = [
-            { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' },
-            { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
-            { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' }
-        ];
-
         const existingTags = new Set<string>();
+        let ttl = '';
 
         // First pass: collect existing tags and output them
         for (const ns of ctx) {
@@ -462,7 +456,7 @@ class GetTTL {
                 continue;
             }
 
-            const tag = ns.tag;
+            const tag = ns.tag.endsWith(':') ? ns.tag.slice(0, -1) : ns.tag;
             const uri = ns.uri;
 
             // Ensure tag and uri are strings
@@ -474,6 +468,20 @@ class GetTTL {
 
         // Second pass: add any missing required prefixes
         // ... as those are not necessarily needed in other formats, but are required for Turtle
+        // Define required prefixes in the context
+        const requiredPrefixes = [
+            { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
+            { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' },
+            { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' }
+        ];
+        if (options?.addShapes) {
+            requiredPrefixes.push(
+                { tag: 'sh', uri: 'http://www.w3.org/ns/shacl#' },
+                { tag: 'dash', uri: 'http://datashapes.org/dash#' }
+            )
+        }
+        // LOG.debug('xContext', { existingTags, requiredPrefixes });
+
         for (const prefix of requiredPrefixes) {
             if (!existingTags.has(prefix.tag)) {
                 ttl += rdf.prefix(prefix.tag, prefix.uri);
@@ -609,7 +617,7 @@ class GetTTL {
         owlClassification: string,
         rdfSpecialization: string,
         rdf: CToTtl,
-        options?: { addItemTypes?: boolean, addExplicitSubTypes?: boolean }
+        options?: { addItemTypes?: boolean, addExplicitTypeToAllClasses?: boolean }
     ): string {
         // For classes, just use the common metadata (no hasClass)
         let ttl = '';
@@ -620,9 +628,9 @@ class GetTTL {
         // Item ID as subject
         const subjectId = this.formatTurtleId(itm.id);
         ttl += rdf.tab0(subjectId);
-        // OWL classification only if specializes is not defined or if addExplicitSubTypes is true
+        // OWL classification only if specializes is not defined or if addExplicitTypeToAllClasses is true
         // in case of a context ontology, we want to add the OWL classification, as we are not sure how it is defined
-        if (!itm.specializes || LIB.isContextId(itm.specializes) || options?.addExplicitSubTypes) {
+        if (!itm.specializes || LIB.isContextId(itm.specializes) || options?.addExplicitTypeToAllClasses) {
             ttl += rdf.tab1('a', owlClassification);
         }
 
@@ -760,11 +768,6 @@ class GetTTL {
      * @returns Formatted value string
      */
     private static formatPropertyValue(prop: AProperty): string {
-        // If it has an idRef, it's a reference to another resource (e.g., enumeration value)
-        if (prop.idRef) {
-            return this.formatTurtleId(prop.idRef);
-        }
-
         // If it has a value, return the literal value (will be quoted by CToTtl)
         if (prop.value !== undefined) {
             return prop.value;
@@ -967,6 +970,51 @@ class GetTTL {
     }
 
     /**
+     * Generate SHACL PropertyShape for a Link class
+     * @param lnk - Link instance
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL PropertyShape
+     */
+    private static makeLinkShape(lnk: Link, rdf: CToTtl): string {
+        // LOG.debug(`Generating SHACL PropertyShape for link ${JSON.stringify(lnk)}`);
+
+        // No shapes for metamodel items, as they should not be instantiated:
+        if (lnk.itemType == lnk.id)
+            return '';
+
+        let ttl = '';
+
+        // Create shape ID by appending 'Shape' to the link ID
+        const shapeId = this.formatTurtleId(lnk.id) + DEF.suffixShape; // for CASCaRA ontology terms
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:PropertyShape');
+        ttl += rdf.tab1('sh:path', this.formatTurtleId(lnk.id));
+
+        // sh:class or sh:or based on enumeratedEndpoint
+        if (LIB.isArrayWithContent(lnk.enumeratedEndpoint)) {
+            const endpoints = lnk.enumeratedEndpoint as TPigId[];
+
+            if (endpoints.length === 1) {
+                // Single endpoint: use sh:class
+                ttl += rdf.tab1('sh:class', this.formatTurtleId(endpoints[0]));
+            } else {
+                // Multiple endpoints: use sh:or with sh:class for each
+                const classConstraints = endpoints
+                    .map(ep => `[ sh:class ${this.formatTurtleId(ep)} ]`)
+                    .join(' ');
+                ttl += rdf.tab1('sh:or', `( ${classConstraints} )`);
+            }
+        }
+
+        if (lnk.minCount !== undefined)
+            ttl += rdf.tab1('sh:minCount', lnk.minCount);
+        if (lnk.maxCount !== undefined)
+            ttl += rdf.tab1('sh:maxCount', lnk.maxCount);
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
      * Generate SHACL NodeShape for Link classes in general
      * This shape validates that any Link class follows the CASCaRA metamodel
      * It is generated once per package, not per individual link
@@ -1042,6 +1090,75 @@ class GetTTL {
         ttl += `\n\t\t\t}`;
         ttl += `\n\t\t"""`;
         ttl += `\n\t]`;
+
+        return ttl + rdf.newLine();
+    }
+
+    /**
+     * Generate SHACL NodeShape for Entity or Relationship classes
+     * Determines the type by checking for enumeratedSourceLink existence:
+     * - Relationship MUST have enumeratedSourceLink
+     * - Entity does NOT have enumeratedSourceLink
+     * @param elem - Entity or Relationship instance
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of SHACL NodeShape
+     */
+    private static makeElementShape(elem: Entity | Relationship, rdf: CToTtl): string {
+        // LOG.debug(`Generating SHACL NodeShape for element ${JSON.stringify(elem)}`);
+
+        // No shapes for metamodel items, as they should not be instantiated:
+        if (elem.itemType == elem.id)
+            return '';
+
+        // Determine if this is a Relationship by checking for enumeratedSourceLink
+        const isRelationship = 'enumeratedSourceLink' in elem && elem.enumeratedSourceLink !== undefined;
+
+        let ttl = '';
+
+        // Local helper function to add property constraints
+        const addPropertyConstraints = (itemIds: TPigId[]): void => {
+            for (const itemId of itemIds) {
+                // Check if item belongs to an external/context ontology
+                if (LIB.isContextId(itemId) || LIB.isHostedOntologyId(itemId)) {
+                    // Create inline property constraint for external ontology items
+                    const itemPath = this.formatTurtleId(itemId);
+                    ttl += rdf.tab1('sh:property', `[ sh:path ${itemPath} ]`);
+                } else {
+                    // Reference the item's shape (which should be defined separately) for CASCaRA items
+                    const itemShapeId = this.formatTurtleId(itemId) + DEF.suffixShape;
+                    ttl += rdf.tab1('sh:property', itemShapeId);
+                }
+            }
+        };
+
+        // Create shape ID by appending 'Shape' to the element ID
+        const elemId = this.formatTurtleId(elem.id);
+        const shapeId = elemId + DEF.suffixShape; // for CASCaRA ontology terms
+        ttl += rdf.tab0(shapeId);
+        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('sh:targetClass', elemId);
+
+        // For entity instances: require either rdfs:label or rdfs:comment
+        // For relationship instances: both are optional
+        if (!isRelationship) {
+            ttl += rdf.tab1('sh:or', '( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] )');
+        }
+
+        // List enumerated properties
+        // In case of a package class, we skip enumeratedProperty constraints, as configurable properties will be appended to the ontology
+        if (LIB.isArrayWithContent(elem.enumeratedProperty) && elemId != 'cas:Package') {
+            addPropertyConstraints(elem.enumeratedProperty as TPigId[]);
+        }
+
+        // List enumerated source links - only for Relationship
+        if (isRelationship && LIB.isArrayWithContent(elem.enumeratedSourceLink)) {
+            addPropertyConstraints(elem.enumeratedSourceLink as TPigId[]);
+        }
+
+        // List enumerated target links - both Entity and Relationship can have these
+        if (LIB.isArrayWithContent(elem.enumeratedTargetLink)) {
+            addPropertyConstraints(elem.enumeratedTargetLink as TPigId[]);
+        }
 
         return ttl + rdf.newLine();
     }
@@ -1363,124 +1480,6 @@ class GetTTL {
         return ttl + rdf.newLine();
     }
 
-    /**
-     * Generate SHACL PropertyShape for a Link class
-     * @param lnk - Link instance
-     * @param rdf - CToTtl instance for building Turtle output
-     * @returns Turtle representation of SHACL PropertyShape
-     */
-    private static makeLinkShape(lnk: Link, rdf: CToTtl): string {
-        // LOG.debug(`Generating SHACL PropertyShape for link ${JSON.stringify(lnk)}`);
-
-        // No shapes for metamodel items, as they should not be instantiated:
-        if (lnk.itemType == lnk.id)
-            return '';
-
-        let ttl = '';
-
-        // Create shape ID by appending 'Shape' to the link ID
-        const shapeId = this.formatTurtleId(lnk.id) + DEF.suffixShape; // for CASCaRA ontology terms
-        ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:PropertyShape');
-        ttl += rdf.tab1('sh:path', this.formatTurtleId(lnk.id));
-
-        // sh:class or sh:or based on enumeratedEndpoint
-        if (LIB.isArrayWithContent(lnk.enumeratedEndpoint)) {
-            const endpoints = lnk.enumeratedEndpoint as TPigId[];
-
-            if (endpoints.length === 1) {
-                // Single endpoint: use sh:class
-                ttl += rdf.tab1('sh:class', this.formatTurtleId(endpoints[0]));
-            } else {
-                // Multiple endpoints: use sh:or with sh:class for each
-                const classConstraints = endpoints
-                    .map(ep => `[ sh:class ${this.formatTurtleId(ep)} ]`)
-                    .join(' ');
-                ttl += rdf.tab1('sh:or', `( ${classConstraints} )`);
-            }
-        }
-
-        // minCount
-        if (lnk.minCount !== undefined) {
-            ttl += rdf.tab1('sh:minCount', lnk.minCount);
-        }
-
-        // maxCount
-        if (lnk.maxCount !== undefined) {
-            ttl += rdf.tab1('sh:maxCount', lnk.maxCount);
-        }
-
-        return ttl + rdf.newLine();
-    }
-
-    /**
-     * Generate SHACL NodeShape for Entity or Relationship classes
-     * Determines the type by checking for enumeratedSourceLink existence:
-     * - Relationship MUST have enumeratedSourceLink
-     * - Entity does NOT have enumeratedSourceLink
-     * @param elem - Entity or Relationship instance
-     * @param rdf - CToTtl instance for building Turtle output
-     * @returns Turtle representation of SHACL NodeShape
-     */
-    private static makeElementShape(elem: Entity | Relationship, rdf: CToTtl): string {
-        // LOG.debug(`Generating SHACL NodeShape for element ${JSON.stringify(elem)}`);
-
-        // No shapes for metamodel items, as they should not be instantiated:
-        if (elem.itemType == elem.id)
-            return '';
-
-        // Determine if this is a Relationship by checking for enumeratedSourceLink
-        const isRelationship = 'enumeratedSourceLink' in elem && elem.enumeratedSourceLink !== undefined;
-
-        let ttl = '';
-
-        // Local helper function to add property constraints
-        const addPropertyConstraints = (itemIds: TPigId[]): void => {
-            for (const itemId of itemIds) {
-                // Check if item belongs to an external/context ontology
-                if (LIB.isContextId(itemId) || LIB.isHostedOntologyId(itemId)) {
-                    // Create inline property constraint for external ontology items
-                    const itemPath = this.formatTurtleId(itemId);
-                    ttl += rdf.tab1('sh:property', `[ sh:path ${itemPath} ]`);
-                } else {
-                    // Reference the item's shape (which should be defined separately) for CASCaRA items
-                    const itemShapeId = this.formatTurtleId(itemId) + DEF.suffixShape;
-                    ttl += rdf.tab1('sh:property', itemShapeId);
-                }
-            }
-        };
-
-        // Create shape ID by appending 'Shape' to the element ID
-        const elemId = this.formatTurtleId(elem.id);
-        const shapeId = elemId + DEF.suffixShape; // for CASCaRA ontology terms
-        ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
-        ttl += rdf.tab1('sh:targetClass', elemId);
-
-        // For entity instances: require either rdfs:label or rdfs:comment
-        // For relationship instances: both are optional
-        if (!isRelationship) {
-            ttl += rdf.tab1('sh:or', '( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] )');
-        }
-
-        // List enumerated properties
-        // In case of a package class, we skip enumeratedProperty constraints, as configurable properties will be appended to the ontology
-        if (LIB.isArrayWithContent(elem.enumeratedProperty) && elemId != 'cas:Package') {
-            addPropertyConstraints(elem.enumeratedProperty as TPigId[]);
-        }
-
-        // List enumerated source links - only for Relationship
-        if (isRelationship && LIB.isArrayWithContent(elem.enumeratedSourceLink)) {
-            addPropertyConstraints(elem.enumeratedSourceLink as TPigId[]);
-        }
-
-        // List enumerated target links - both Entity and Relationship can have these
-        if (LIB.isArrayWithContent(elem.enumeratedTargetLink)) {
-            addPropertyConstraints(elem.enumeratedTargetLink as TPigId[]);
-        }
-
-        return ttl + rdf.newLine();
-    }
 }
 /*function makeShapeId(id: string) {
     // Make a name for a shape given for an element;
