@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' class='text-none' @click='dialog = true'>CASCaRA XML 🡕</v-btn>
+    <v-btn color='secondary' class='text-none' @click='dialog = true'>any XML 🡕</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Select XML Files</v-card-title>
@@ -14,6 +14,16 @@
                               :disabled='isLoading'
                               hint='Select one or more XML files to import'
                               persistent-hint>
+                </v-file-input>
+                <v-file-input v-model="selectedSefFile"
+                              accept=".sef.json"
+                              label="SEF Input"
+                              prepend-icon="mdi-file-code"
+                              :loading="isLoading"
+                              :disabled="isLoading"
+                              hint="Select a SEF file for XSL-Transformation"
+                              persistent-hint
+                              :multiple="false">
                 </v-file-input>
 
                 <!-- Error Display -->
@@ -52,7 +62,7 @@
                 </v-btn>
                 <v-btn color='primary'
                        @click='onSubmit'
-                       :disabled='!selectedXmlFiles.length || isLoading'
+                       :disabled='!selectedXmlFiles.length || !selectedSefFile || isLoading'
                        :loading='isLoading'>
                     Import
                 </v-btn>
@@ -75,6 +85,7 @@
             return {
                 dialog: false,
                 selectedXmlFiles: [] as File[],
+                selectedSefFile: null as File | null,
                 isLoading: false,
                 errorMessages: [] as string[],
                 successMessage: ''
@@ -85,13 +96,15 @@
              * Handle submit button click
              */
             async onSubmit() {
-                if (!this.selectedXmlFiles.length) {
-                    this.errorMessages = ['Please select at least one file'];
+                this.errorMessages = [];
+                if (!this.selectedXmlFiles.length)
+                    this.errorMessages.push('Please select at least one XML file');
+                if (!this.selectedSefFile)
+                    this.errorMessages.push('Please select a SEF file');
+                if (this.errorMessages.length > 0)
                     return;
-                }
 
                 this.isLoading = true;
-                this.errorMessages = [];
                 this.successMessage = '';
 
                 try {
@@ -146,7 +159,7 @@
 
                 for (const file of this.selectedXmlFiles) {
                     try {
-                        const options = undefined;
+                        const options = { sef: this.selectedSefFile };
                         const rsp = await XmlImporter.import(file, options);
                         results.push(rsp);
                     } catch (error: any) {
@@ -180,15 +193,17 @@
             onCancel() {
                 this.dialog = false;
                 this.selectedXmlFiles = [];
+                this.selectedSefFile = null;
                 this.errorMessages = [];
                 this.successMessage = '';
             }
         }
     })
 
-    export default class XmlImportComponent extends Vue {
+    export default class AnyXmlImportComponent extends Vue {
         dialog!: boolean;
         selectedXmlFiles!: File[];
+        selectedSefFile!: File | null;
         isLoading!: boolean;
         errorMessages!: string[];
         successMessage!: string;
