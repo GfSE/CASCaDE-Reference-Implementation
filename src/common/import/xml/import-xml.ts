@@ -176,8 +176,8 @@ export class XmlImporter {
                 if (node.nodeType === 1) {
                     const elem = node as Element;
                     const tag = elem.tagName as PigItemTypeValue;
-                    // Check if tag is instantiable
-                    if (!PigItem.isInstantiable(tag)) {
+                    // Check if tag is instantiable (identifiable)
+                    if (!PigItem.isIdentifiable(tag)) {
                         invalidTags.push(tag);
                     }
                     else {

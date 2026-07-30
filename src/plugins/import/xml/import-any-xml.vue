@@ -5,7 +5,7 @@
             <v-card-title>Select XML Files</v-card-title>
 
             <v-card-text>
-                <v-file-input v-model='selectedXmlFiles'
+                <v-file-input v-model='selectedFiles'
                               accept='.xml'
                               label='XML Input'
                               prepend-icon='mdi-folder-open'
@@ -62,7 +62,7 @@
                 </v-btn>
                 <v-btn color='primary'
                        @click='onSubmit'
-                       :disabled='!selectedXmlFiles.length || !selectedSefFile || isLoading'
+                       :disabled='!selectedFiles.length || !selectedSefFile || isLoading'
                        :loading='isLoading'>
                     Import
                 </v-btn>
@@ -84,7 +84,7 @@
         data() {
             return {
                 dialog: false,
-                selectedXmlFiles: [] as File[],
+                selectedFiles: [] as File[],
                 selectedSefFile: null as File | null,
                 isLoading: false,
                 errorMessages: [] as string[],
@@ -97,7 +97,7 @@
              */
             async onSubmit() {
                 this.errorMessages = [];
-                if (!this.selectedXmlFiles.length)
+                if (!this.selectedFiles.length)
                     this.errorMessages.push('Please select at least one XML file');
                 if (!this.selectedSefFile)
                     this.errorMessages.push('Please select a SEF file');
@@ -157,7 +157,7 @@
             async importAllFiles(): Promise<IRsp<unknown>[]> {
                 const results: IRsp<unknown>[] = [];
 
-                for (const file of this.selectedXmlFiles) {
+                for (const file of this.selectedFiles) {
                     try {
                         const options = { sef: this.selectedSefFile };
                         const rsp = await XmlImporter.import(file, options);
@@ -192,7 +192,7 @@
              */
             onCancel() {
                 this.dialog = false;
-                this.selectedXmlFiles = [];
+                this.selectedFiles = [];
                 this.selectedSefFile = null;
                 this.errorMessages = [];
                 this.successMessage = '';
@@ -202,7 +202,7 @@
 
     export default class AnyXmlImportComponent extends Vue {
         dialog!: boolean;
-        selectedXmlFiles!: File[];
+        selectedFiles!: File[];
         selectedSefFile!: File | null;
         isLoading!: boolean;
         errorMessages!: string[];

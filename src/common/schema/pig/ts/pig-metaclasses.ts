@@ -7,7 +7,7 @@
 /**
  * CASCaRA Graph (cas:) Metaclasses - the basic object structure
  * -------------------------------------------------------------
- * Authors: oskar.dungern@gfse.org
+ * Author: oskar.dungern@gfse.org
  * Copyright 2026 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
@@ -53,6 +53,7 @@
  * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
  * - implement abstract class 'Configurable' for Property and Link to avoid code duplication
  * ✅ implement 'revisionAware' for Link.
+ * - implement 'globalTitle' for all classes and 'globalReversed' for Relationship
  * - include revision as part of a pointer in aSourceLink and aTargetLink, if the link class specifies revisionAware=true, both schema and code.
  * - Assign defaultValue, when a aProperty is instantiated as part of anEntity or aRelationship.
  * - Prohibit aProperty or aLink to be updated or deleted, if readOnly=true in its class.
@@ -135,9 +136,6 @@ const PIG_CLASSES = new Set<PigItemTypeValue>([
 
 const PIG_INSTANCE_ARRAY = [
     PigItemType.aPackage,
-    // PigItemType.aProperty,
-    // PigItemType.aSourceLink,
-    // PigItemType.aTargetLink,
     PigItemType.anEntity,
     PigItemType.aRelationship
 ] as const;
@@ -208,34 +206,25 @@ export class PigItem {
     /**
      * Check if itemType is a PIG class (Property, Link, Entity, Relationship)
      */
-    static isClass(itemType: PigItemTypeValue): boolean {
-        return PIG_CLASSES.has(itemType);
+    static isClass(iType: PigItemTypeValue): boolean {
+        return PIG_CLASSES.has(iType);
     }
     /**
      * Check if itemType is a PIG instance (anEntity, aRelationship, aProperty, aSourceLink, aTargetLink)
      */
-    static isInstance(itemType: PigItemTypeValue): boolean {
-        return PIG_INSTANCES.has(itemType);
+    static isInstance(iType: PigItemTypeValue): boolean {
+        return PIG_INSTANCES.has(iType);
     }
     /**
-     * Check if item type is allowed for instantiation.
-     * The following types are not allowed in a graph:
+     * Identifiables are allowed for instantiation.
+     * The following item types are not allowed in a graph:
         PigItemType.aProperty,     // Embedded in anEntity/aRelationship
         PigItemType.aSourceLink,   // Embedded in aRelationship
         PigItemType.aTargetLink    // Embedded in anEntity/aRelationship
 
      */
-    static isInstantiable(itype: PigItemTypeValue): boolean {
-        return ([
-            PigItemType.Enumeration,
-            PigItemType.Property,
-            PigItemType.Link,
-            PigItemType.Entity,
-            PigItemType.Relationship,
-            PigItemType.anEntity,
-            PigItemType.aRelationship,
-            PigItemType.aPackage
-        ] as unknown as PigItemTypeValue).includes(itype);
+    static isIdentifiable(iType: PigItemTypeValue): boolean {
+        return this.isInstance(iType) || this.isClass(iType);
     }
 
     /**
@@ -251,10 +240,10 @@ export class PigItem {
     /**
      * Get all supported item types
      * @returns Array of all PigItemTypeValue values
-     */
-    static getSupportedTypes(): PigItemTypeValue[] {
+     * /
+    static getSupportedItemTypes(): PigItemTypeValue[] {
         return Object.values(PigItemType);
-    }
+    } */
 
     /**
      * Check if a datatype is a string type
@@ -2123,7 +2112,7 @@ export class APackage extends AnElement implements IAPackage {
         const itype: any = item.itemType;
 
         // Filter allowed item types
-        if (!PigItem.isInstantiable(itype)) {
+        if (!PigItem.isIdentifiable(itype)) {
         //    LOG.error(`APackage.createItem: skipping item type '${itype}' which is not allowed in a graph`);
             return Msg.create(651, `Instantiation of ${id} from ${source}`, itype);
         }
@@ -2166,7 +2155,7 @@ export class APackage extends AnElement implements IAPackage {
  * - { '@id': 'xyz' } -> 'xyz'
  * - 'xyz' -> 'xyz'
  * Returns undefined when no usable id found.
- */
+ * /
 function extractId(obj: unknown): string | undefined {
     if (obj === null || obj === undefined)
         return undefined;
@@ -2181,6 +2170,7 @@ function extractId(obj: unknown): string | undefined {
     }
     return undefined;
 }
+*/
 
 /* function validateIdString(input: unknown, fieldName = 'id'): IRsp {
     if (typeof input === 'string') {
