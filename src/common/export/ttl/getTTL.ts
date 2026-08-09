@@ -39,6 +39,7 @@
  * ToDo:
  * - Add itemTypes as superClasses for all ontolology classes (Property, Link, Entity, Relationship, Enumeration)
  * - ... with definitions for enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink, enumeratedEndpoint.
+ * - Add TTL output for enumerations with datatypes other than string.
  */
 
 import { DEF, RE } from '../../lib/definitions';
@@ -238,24 +239,40 @@ class GetTTL {
         // Add basic metamodel properties
         ttl += this.xMetadataForClasses(enm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
+        // datatype
+        if (enm.datatype) {
+            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(enm.datatype));
+        }
+        else {
+            // should not happen, as datatype is mandatory for Enumeration:
+            LOG.error(`Enumeration ${enm.id} has no datatype defined`);
+        }
+
         // enumeratedValue (mandatory array of allowed values)
         if (LIB.isArrayWithContent(enm.enumeratedValue)) {
             const values = enm.enumeratedValue;
-            ttl += rdf.tab1('cas:enumeratedValue', this.formatTurtleId(values[0].id));
-            for (let i = 1; i < values.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(values[i].id));
+            const rdfList = '(\n\t\t' + values.map(n => this.formatTurtleId(n.id)).join('\n\t\t') +'\n\t)';
+            ttl += rdf.tab1('owl:oneOf', rdfList);
+            // now define the enumerated values themselves as individuals of the enumeration class:
+            for (const val of values) {
+                ttl += rdf.tab0(this.formatTurtleId(val.id));
+                ttl += rdf.tab1('a', this.formatTurtleId(enm.id));
+                if (enm.datatype.includes('string')) {
+                    // title (multi-language)
+                    if (LIB.isArrayWithContent(val.title)) {
+                        ttl += rdf.tab1('rdfs:label', val.title);
+                    }
+                }
+                else {
+                // ToDo: For non-string datatypes, add a literal value
+                // ttl += rdf.tab1('rdfs:label', val.title);
+                }
             }
         }
-
-    /*    // datatype
-        if (enm.datatype) {
-            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(enm.datatype));
-        } */
-
-    /*    // unit (optional)
-        if (enm.unit) {
-            ttl += rdf.tab1('cas:unit', `"${enm.unit}"`);
-        } */
+        else {
+            // should not happen, as enumeratedValue is mandatory for Enumeration:
+            LOG.error(`Enumeration ${enm.id} has no enumeratedValue defined`);
+        }
 
         return ttl + rdf.newLine();
         // No shape for enumerations, as they are never instantiated.
