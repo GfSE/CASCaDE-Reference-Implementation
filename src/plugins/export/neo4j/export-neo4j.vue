@@ -149,10 +149,7 @@ import { LOG } from '../../../common/lib/helpers';
                 database: this.database
             });
 
-            if (result.ok) {
-                this.successMessage = result.message;
-                LOG.info('[Export Neo4j] Export placeholder completed');
-                setTimeout(() => { this.dialog = false; }, 1500);
+                LOG.info('[Export Neo4j] Export completed');
             } else {
                 this.errorMessage = result.message;
                 LOG.error('[Export Neo4j] Export failed:', result.message);
