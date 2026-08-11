@@ -3,6 +3,7 @@ import CypherExportComponent from './export-cypher.vue';
 
 const cypherExportPlugin: Plugin = {
     install(app: App) {
+        // Don't change the name, it is used to filter the component in main.ts
         app.component('Export-Cypher', CypherExportComponent);
     }
 };
