@@ -121,7 +121,7 @@ import { LOG } from '../../../common/lib/helpers';
         this.errorMessage = '';
         this.successMessage = '';
         this.isExporting = false;
-
+        this.password = '';
         const cache = PackageCache();
         if (cache.packages.length === 0) {
             LOG.info('[Export Neo4j] Cache is empty, loading from storage...');
