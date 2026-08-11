@@ -11,9 +11,9 @@ export interface INeo4jExportResult {
 }
 
 /**
- * Placeholder for a future Neo4j direct export implementation.
- * This function currently returns a successful stub response so the UI
- * can present a Neo4j export option without implementing the actual driver.
+ * Export Cypher text to a Neo4j server via the HTTP transaction endpoint.
+ * Statements are split and schema statements are sent before data statements.
+ * Note: this uses HTTP only (no Bolt/Neo4j driver).
  */
 export async function exportToNeo4j(
     cypherText: string,
