@@ -31,8 +31,6 @@ export async function exportToNeo4j(
 
     console.info('[Export Neo4j] schemaStatements count:', schemaStatements.length);
     console.info('[Export Neo4j] dataStatements count:', dataStatements.length);
-    console.info('[Export Neo4j] first schemaStatement:', schemaStatements[0]);
-    console.info('[Export Neo4j] first dataStatement:', dataStatements[0]);
 
     for (const statement of schemaStatements) {
         const result = await sendNeo4jSingleStatement(endpoint, authHeader, statement);
