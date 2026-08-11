@@ -242,7 +242,7 @@
             </dcterms:description>
             <cas:specializes>cas:Entity</cas:specializes>
             <cas:icon>&#8623;</cas:icon>
-            <cas:enumeratedProperty>SpecIF:Priority</cas:enumeratedProperty>
+            <cas:enumeratedTargetLink>SpecIF:Priority</cas:enumeratedTargetLink>
         </cas:Entity>
 
         <!-- Instances -->

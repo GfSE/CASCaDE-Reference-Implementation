@@ -37,7 +37,7 @@ Initially, test-data should be small and cover relevant and typical aspects of t
     </element>
     <element xsi:type="archimate:BusinessFunction" name="Detect Format and Model Type (optional)" id="id-1f35ae4ca87a4ecb8a337966e82d381d"/>
     <element xsi:type="archimate:BusinessFunction" name="Match Ontology Terms" id="id-99b140fa19a44efe96cd0e7347a6bb90">
-      <documentation>All class names (Enumeration, Entity, Relationship, Property and Link) are mapped to the concept of the Multi-Vocabulary-Facility (MVF). If the class name is a synonym of a concept, the latter is assumed as globalTitle for use in the global graph.</documentation>
+      <documentation>All class names (Enumeration, Entity, Relationship, Property and Link) are mapped to a matching concept of the Multi-Vocabulary-Facility (MVF). If the class name is a synonym of a concept, the latter is assumed as globalTitle for use in the global graph.</documentation>
     </element>
     <element xsi:type="archimate:BusinessObject" name="CASCaRA Subgraph" id="id-d9a74c4574104e0aa9a096cb820d4c2b">
       <documentation>The partial graph resulting from the syntactical transformation of the original [[Partial Information]].  It complies with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
@@ -1340,7 +1340,13 @@ Subject to validation:&#xD;
 • FMI/SSP&#xD;
 • ...</content>
       </child>
-      <documentation>An overview of the process to integrate [[Partial Information]] to a global [[CASCaRA Graph]].</documentation>
+      <documentation>An overview of the process to integrate [[Partial Information]] from diverse sources to a global [[CASCaRA Graph]].&#xD;
+&#xD;
+At this point in time, the following transformations are available as an example:&#xD;
+- [ReqIF → CASCaRA XML (XSL)](https://github.com/GfSE/CASCaDE-Transformations/blob/main/ReqIF/ReqIF-to-CAS.xsl)&#xD;
+- [FMI → CASCaRA XML (XSL)](https://github.com/GfSE/CASCaDE-Transformations/blob/main/FMI/FMI-to-CAS.xsl).&#xD;
+&#xD;
+Further [CASCaRA Transformations](https://github.com/GfSE/CASCaDE-Transformations) are in development.</documentation>
     </element>
   </folder>
   <property key="Report:Model:Hide:Business" value="false"/>

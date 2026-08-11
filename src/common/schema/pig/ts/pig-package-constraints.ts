@@ -11,7 +11,7 @@
  * Copyright 2026 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  * 
- * This module validates cross-item constraints that cannot be checked at the individual item level:
+ * This module validates cross-item constraints that cannot be checked at the level of individual items:
  * - Uniqueness of primary IDs across all items in a package
  * - Validity of hasClass references in aProperty instances
  * - Validity of hasClass references in aLink instances (aSourceLink, aTargetLink)
@@ -20,48 +20,52 @@
  * - enumeratedEndpoint consistency (Link classes)
  * - enumeratedTargetLink and enumeratedSourceLink reference validation
  * 
+ * The constraints are documented in
+ * - https://github.com/GfSE/CASCaDE-Metamodel/tree/main/Metamodel%20%5BCameo%5D/1_Source
+ * - https://product-information-graph.org/doc/metamodel/latest/
+ * 
  * List of constraint checks:
  * Phase 1 (critical):
- *   ✅ Unique IDs
- *   ✅ aProperty.hasClass → Property
- *   ✅ aLink.hasClass → Link
- *   ✅ anEntity and aRelationship class references
- *   ✅ Entity and Relationship specializes references                                               
- *   ✅ Instances are consistent with their classes:
- *   ✅ - properties and links are enumerated
- *   ✅ - occurrence (minCount, maxCount) with language-aware validation for xs:string
- *   ✅ - value range
- *   ✅ - reference to enumerated values (enumerations)
- *   ✅ - enumeratedEndpoint in Link classes (all or none point to Enumerations)
- *   ✅ - enumeratedTargetLink and enumeratedSourceLink → Link
+ * ✅ Unique IDs
+ * ✅ aProperty.hasClass → Property
+ * ✅ aLink.hasClass → Link
+ * ✅ anEntity and aRelationship class references
+ * ✅ Entity and Relationship specializes references                                               
+ * ✅ Instances are consistent with their classes:
+ * ✅ - properties and links are enumerated
+ * ✅ - occurrence (minCount, maxCount) with language-aware validation for xs:string
+ * ✅ - value range
+ * ✅ - reference to enumerated values (enumerations)
+ * ✅ - enumeratedEndpoint in Link classes (all or none point to Enumerations)
+ * ✅ - enumeratedTargetLink and enumeratedSourceLink → Link
  * Phase 2 (important):
- *   ✅ namespace prefixes are defined in the context
- *   ✅ check all classes wrt hasClass (owl:Class, owl:DatatypeProperty, owl:ObjectProperty) --> done via schema validation
- *      check aPackage.hasClass references and consistency with classes (similarly to anEntity)
- *      No cyclic specialization
- *      subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
- *      - the range of a subProperty must be included in the range of its superProperty
- *      subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
- *      - a subClass has all properties and links of its superClass
- *      enumeratedProperty references
- *      Link endpoint compliance
- *      aLink must specify identifier and revision of the endpoints, if its class has revisionAware set to true
+ * ✅ namespace prefixes are defined in the context
+ * ✅ check all classes wrt hasClass (owl:Class, owl:DatatypeProperty, owl:ObjectProperty) --> done via schema validation
+ *    check aPackage.hasClass references and consistency with classes (similarly to anEntity)
+ *    No cyclic specialization
+ *    subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
+ *    - the range of a subProperty must be included in the range of its superProperty
+ *    subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
+ *    - a subClass has all properties and links of its superClass
+ *    enumeratedProperty references
+ *    Link endpoint compliance
+ *    aLink must specify identifier and revision of the endpoints, if its class has revisionAware set to true
  * Phase 3 (useful):
- *      No cyclic composition of properties
- *      Check if defaultValue is consistent with the datatype of the property
- *      Relationship structure
- *      Referenced Enumerations have a datatype
- *      enumerations at the lowest specialization level must have datatype and enumerated values
- *      enumerated values as defined comply with the datatype of the enumeration class
- *      Entity and Relationship classes should not have configurable properties
- *           with the same name as a native property (e.g. skos:definition, dcterms:modified, ..)
+ *    No cyclic composition of properties
+ *    Check if defaultValue is consistent with the datatype of the property
+ *    Relationship structure
+ *    Referenced Enumerations have a datatype
+ *    enumerations at the lowest specialization level must have datatype and enumerated values
+ *    enumerated values as defined comply with the datatype of the enumeration class
+ *    Entity and Relationship classes should not have configurable properties
+ *         with the same name as a native property (e.g. skos:definition, dcterms:modified, ..)
  * Phase 4 (optional):
- *      Orphaned items
- *      - nodes without reference by an organizer AND
- *      - nodes without reference by a relationship
- *      Language tag consistency
- *   ✅ Namespace usage --> covered by normalizeId()
- *   ✅ Modification date validation --> covered by normalizeDateTime()
+ *    Orphaned items
+ *    - nodes without reference by an organizer AND
+ *    - nodes without reference by a relationship
+ *    Language tag consistency
+ * ✅ Namespace usage --> covered by normalizeId()
+ * ✅ Modification date validation --> covered by normalizeDateTime()
  *
  * To be discussed:
  * - Handling (error responses vs log messages)
@@ -1451,8 +1455,8 @@ function checkEnumeratedValues(
     // Helper function to check targetLinks for a given element
     function checkTargetLinks(
         hasTargetLink: any,
-        elementId: TPigId,
-        elementLabel: string
+        elementId: TPigId
+    //    elementLabel: string
     ): IRsp {
         if (Array.isArray(hasTargetLink)) {
             for (let j = 0; j < hasTargetLink.length; j++) {
@@ -1499,7 +1503,7 @@ function checkEnumeratedValues(
 
     // Check the aPackage itself
     if (pkg.hasTargetLink) {
-        const rsp = checkTargetLinks(pkg.hasTargetLink, pkg.id ?? 'aPackage', 'aPackage');
+        const rsp = checkTargetLinks(pkg.hasTargetLink, pkg.id ?? 'aPackage'/*, 'aPackage'*/);
         if (!rsp.ok) {
             return rsp;
         }
@@ -1517,7 +1521,7 @@ function checkEnumeratedValues(
 
             // Check hasTargetLink array
             if (instance.hasTargetLink) {
-                const rsp = checkTargetLinks(instance.hasTargetLink, itemId, itemType);
+                const rsp = checkTargetLinks(instance.hasTargetLink, itemId/*, itemType*/);
                 if (!rsp.ok) {
                     return rsp;
                 }

@@ -253,6 +253,7 @@ class GetTTL {
             const values = enm.enumeratedValue;
             const rdfList = '(\n\t\t' + values.map(n => this.formatTurtleId(n.id)).join('\n\t\t') +'\n\t)';
             ttl += rdf.tab1('owl:oneOf', rdfList);
+
             // now define the enumerated values themselves as individuals of the enumeration class:
             for (const val of values) {
                 ttl += rdf.tab0(this.formatTurtleId(val.id));
