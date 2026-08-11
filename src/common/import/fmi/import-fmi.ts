@@ -128,10 +128,10 @@ export class FmiImporter {
         // Instantiate APackage from transformed XML
         const aPackage = new APackage().setXML(xmlString);
 
-        if (!aPackage.status().ok) {
+    /*    if (!aPackage.status().ok) {
             return aPackage.status();
         }
-
+    */
         // Get all items (package + graph items)
         const allItems = aPackage.getItems();
 

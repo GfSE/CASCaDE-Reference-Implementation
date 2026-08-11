@@ -113,31 +113,15 @@ import { LIB, LOG } from '../../../common/lib/helpers';
 
         const pkgs = cache.packages;
 
-     /*   // Debug output
-        LOG.debug('[Export JSON-LD] packageCache:', cache);
-        LOG.debug('[Export JSON-LD] packages:', pkgs);
-        LOG.debug('[Export JSON-LD] packages.length:', pkgs.length);
-    */
-
         this.packageCount = pkgs.length;
 
         // Set default filename from first package title
-        if (pkgs && pkgs.length > 0) {
+        if (LIB.isArrayWithContent(pkgs)) {
             // Use toRaw to unwrap Pinia's reactive proxy
             const firstPackage = toRaw(pkgs[0]);
 
-            // Handle multilingual title field
-            let titleText: string;
-            if (typeof firstPackage.title === 'string') {
-                titleText = firstPackage.title;
-            } else if (Array.isArray(firstPackage.title) && firstPackage.title.length > 0) {
-                titleText = firstPackage.title[0].value;
-            } else {
-                titleText = firstPackage.id || 'export';
-            }
-
-            // Sanitize filename: remove invalid characters
-            const sanitized = LIB.makeFilename(titleText);
+            // Derive filename from package title or ID and remove invalid characters:
+            const sanitized = LIB.makeFilename(firstPackage);
             this.filename = `${sanitized}.cas.jsonld`;
         } else {
             this.filename = 'export.cas.jsonld';

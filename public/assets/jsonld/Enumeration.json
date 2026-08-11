@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://product-information-graph.org/schema/2026-07-03/jsonld/Enumeration.json",
+  "$id": "http://product-information-graph.org/schema/2026-07-20/jsonld/Enumeration.json",
   "title": "CASCaRA Enumeration Schema for JSON-LD",
   "description": "Validates Enumeration class definitions. Must include datatype specification (string, integer, double, boolean, dateTime, etc.), enumeration values (cas:enumeratedValue), measurement units.",
   "type": "object",

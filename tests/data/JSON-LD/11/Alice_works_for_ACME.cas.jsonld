@@ -57,8 +57,15 @@
       ],
       "skos:definition": [
         {
-          "@value": "A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions.",
-          "@language": "en"
+          "@value": "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances."
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "dcterms:contributor"
+        },
+        {
+          "@id": "dcterms:license"
         }
       ]
     },
@@ -148,6 +155,33 @@
       "sh:maxCount": 1,
       "sh:maxLength": 32,
       "sh:minCount": 0
+    },
+    {
+      "@id": "cas:Link",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "linked with",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
     },
     {
       "@id": "cas:linksSource",
@@ -654,5 +688,21 @@
       "@language": "en"
     }
   ],
-  "dcterms:modified": "2026-01-20T09:38:26.464Z"
+  "dcterms:modified": "2026-01-20T09:38:26.464Z",
+  "dcterms:contributor": [
+    {
+      "@value": "mailto:oskar.dungern@gfse.org",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ],
+  "dcterms:license": [
+    {
+      "@value": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ]
 }

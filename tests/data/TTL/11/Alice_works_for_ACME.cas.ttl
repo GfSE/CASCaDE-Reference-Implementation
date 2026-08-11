@@ -1,15 +1,22 @@
 
 @prefix cas: <https://product-information-graph.org/ontology/2026-05-08/metamodel#> .
-@prefix d: <https://alice.org/data#> .
+@prefix skos: <https://www.w3.org/TR/skos-reference/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix schema: <http://schema.org/> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix o: <https://alice.org/ontology#> .
+@prefix d: <https://alice.org/data#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix schema: <http://schema.org/> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
-@prefix skos: <https://www.w3.org/TR/skos-reference/> .
-@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+
+d:Alice_works_for_ACME_ontology
+	a owl:Ontology ;
+	dcterms:contributor "mailto:oskar.dungern@gfse.org" ;
+	dcterms:license "https://creativecommons.org/licenses/by-sa/4.0/" ;
+	owl:versionInfo "2026-07-03" .
 
 d:Alice_works_for_ACME
 	a cas:Package ;
@@ -34,7 +41,7 @@ cas:Organizer_shape
 cas:Package
 	rdfs:subClassOf cas:Organizer ;
 	rdfs:label "Package"@en ;
-	skos:definition "A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions."@en .
+	skos:definition "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances." .
 
 cas:Package_shape
 	a sh:NodeShape ;
@@ -76,6 +83,12 @@ cas:Category_shape
 	sh:minCount 0 ;
 	sh:maxCount 1 ;
 	sh:maxLength 32 .
+
+cas:Link
+	a owl:ObjectProperty ;
+	rdfs:label "linked with"@en ;
+	skos:definition "A CASCaRA meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element"@en ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship ) ] .
 
 cas:linksSource
 	rdfs:subPropertyOf cas:Link ;

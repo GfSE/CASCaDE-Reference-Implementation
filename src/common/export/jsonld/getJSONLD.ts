@@ -126,11 +126,11 @@ class GetJSONLD {
 
         let jld = this.getAsJSONLD(pkg, options);
 
-        jld = this.xConfigurablesToJSONLD(jld, pkg, 'hasProperty');
-        jld = this.xConfigurablesToJSONLD(jld, pkg, 'hasTargetLink');
+        jld = this.xConfigurables(jld, pkg, 'hasProperty');
+        jld = this.xConfigurables(jld, pkg, 'hasTargetLink');
 
-        jld['@context'] = xContextToJSONLD(pkg);
-        jld['@graph'] = xGraphToJSONLD(pkg);
+        jld['@context'] = xContext(pkg);
+        jld['@graph'] = xGraph(pkg);
 
     /*  ... coded by Copilot, but not yet tested:
         // Filter graph items if itemType filter is specified
@@ -160,7 +160,7 @@ class GetJSONLD {
          * Internal format: @context = [{ tag: "cas:", uri: "https://..." }, ...]
          * JSON-LD format:  @context = { "cas": "https://...", ... }
          */
-        function xContextToJSONLD(pkg: APackage): JsonObject {
+        function xContext(pkg: APackage): JsonObject {
             const ctx = pkg.context;
 
             if (!ctx || !Array.isArray(ctx)) {
@@ -200,7 +200,7 @@ class GetJSONLD {
          * @param pkg - APackage instance
          * @returns Array of JSON-LD items
          */
-        function xGraphToJSONLD(pkg: APackage): JsonObject[] {
+        function xGraph(pkg: APackage): JsonObject[] {
             const graph = pkg.graph;
 
             if (!graph || !Array.isArray(graph) || graph.length === 0)
@@ -224,8 +224,8 @@ class GetJSONLD {
     static anEntity(itm: AnEntity, options?: IOptionsJSONLD): JsonObject {
         let jld = this.getAsJSONLD(itm, options);
 
-        jld = this.xConfigurablesToJSONLD(jld, itm, 'hasProperty');
-        jld = this.xConfigurablesToJSONLD(jld, itm, 'hasTargetLink');
+        jld = this.xConfigurables(jld, itm, 'hasProperty');
+        jld = this.xConfigurables(jld, itm, 'hasTargetLink');
         return this.sortJsonLdKeys(jld);
     }
 
@@ -238,9 +238,9 @@ class GetJSONLD {
     static aRelationship(rel: ARelationship, options?: IOptionsJSONLD): JsonObject {
         let jld = this.getAsJSONLD(rel, options);
 
-        jld = this.xConfigurablesToJSONLD(jld, rel, 'hasProperty');
-        jld = this.xConfigurablesToJSONLD(jld, rel, 'hasTargetLink');
-        jld = this.xConfigurablesToJSONLD(jld, rel, 'hasSourceLink');
+        jld = this.xConfigurables(jld, rel, 'hasProperty');
+        jld = this.xConfigurables(jld, rel, 'hasTargetLink');
+        jld = this.xConfigurables(jld, rel, 'hasSourceLink');
         return this.sortJsonLdKeys(jld);
     }
 
@@ -302,13 +302,13 @@ class GetJSONLD {
      * Transform hasProperty, hasSourceLink or hasTargetLink arrays for JSON-LD output.
      * It is assumed that the native property names have already been renamed with MVF.renameJsonTags( ..., MVF.toJSONLD).
      */
-    private static xConfigurablesToJSONLD(
+    private static xConfigurables(
         jld: JsonObject,
         itm: TPigItem,
         hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
     ): JsonObject {
         const cfgs = (itm as any)[hasX];
-        // LOG.debug('xConfigurablesToJSONLD:', jld, itm, hasX, cfgs);
+        // LOG.debug('xConfigurables:', jld, itm, hasX, cfgs);
         if (!Array.isArray(cfgs)) {
             return jld;
         }

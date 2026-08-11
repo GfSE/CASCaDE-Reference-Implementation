@@ -139,11 +139,11 @@ export class ReqifImporter {
             ] as ConstraintCheckType[]
         } */);
 
-        // Check if package was successfully created
+    /*    // Check if package was successfully created
         if (!aPackage.status().ok) {
             return aPackage.status();
         }
-
+    */
         // Get all items (package + graph items)
         const allItems = aPackage.getItems();
 
