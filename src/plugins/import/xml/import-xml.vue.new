@@ -228,7 +228,7 @@ function resetImport() {
 
 function exportToJsonLD() {
     // @ToDo: Implement JSON-LD export
-    console.log('Export to JSON-LD not yet implemented');
+    LOG.info('Export to JSON-LD not yet implemented');
     alert('Export to JSON-LD functionality will be implemented soon');
 }
 

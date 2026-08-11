@@ -1,3 +1,5 @@
+import { LOG } from '../../../common/lib/helpers';
+
 export interface INeo4jExportOptions {
     uri: string;
     username: string;
@@ -11,9 +13,9 @@ export interface INeo4jExportResult {
 }
 
 /**
- * Placeholder for a future Neo4j direct export implementation.
- * This function currently returns a successful stub response so the UI
- * can present a Neo4j export option without implementing the actual driver.
+ * Export Cypher text to a Neo4j server via the HTTP transaction endpoint.
+ * Statements are split and schema statements are sent before data statements.
+ * Note: this uses HTTP only (no Bolt/Neo4j driver).
  */
 export async function exportToNeo4j(
     cypherText: string,
@@ -29,10 +31,8 @@ export async function exportToNeo4j(
     const schemaStatements = statements.filter(isSchemaStatement);
     const dataStatements = statements.filter(statement => !isSchemaStatement(statement));
 
-    console.info('[Export Neo4j] schemaStatements count:', schemaStatements.length);
-    console.info('[Export Neo4j] dataStatements count:', dataStatements.length);
-    console.info('[Export Neo4j] first schemaStatement:', schemaStatements[0]);
-    console.info('[Export Neo4j] first dataStatement:', dataStatements[0]);
+    LOG.info('[Export Neo4j] schemaStatements count:', schemaStatements.length);
+    LOG.info('[Export Neo4j] dataStatements count:', dataStatements.length);
 
     for (const statement of schemaStatements) {
         const result = await sendNeo4jSingleStatement(endpoint, authHeader, statement);

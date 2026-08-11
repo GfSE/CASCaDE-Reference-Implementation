@@ -52,7 +52,7 @@ function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string
     const graphItems = Array.isArray(pkg.graph) ? pkg.graph : [];
 
     // Pass 1: create all real nodes first.
-statements.push(createMergeNode(itemLabels(pkg as unknown as TCascaraItem), pkg.id, itemProperties(pkg as unknown as TCascaraItem, options)));
+    statements.push(createMergeNode(itemLabels(pkg as unknown as TCascaraItem), pkg.id, itemProperties(pkg as unknown as TCascaraItem, options)));
 
     for (const graphItem of graphItems) {
         statements.push(createMergeNode(itemLabels(graphItem), graphItem.id, itemProperties(graphItem, options)));

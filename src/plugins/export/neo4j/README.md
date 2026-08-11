@@ -45,6 +45,7 @@ The Neo4j Export plugin lets users send generated Cypher statements directly to 
 
 ### Code Example
 ```typescript
+import { toRaw } from 'vue';
 import { PackageCache } from '../../../stores/package-cache';
 import { getCypher } from '../../../common/export/cypher/getCypher';
 import { exportToNeo4j } from './neo4j-export';

@@ -121,6 +121,8 @@ import { LOG } from '../../../common/lib/helpers';
         this.errorMessage = '';
         this.successMessage = '';
         this.isExporting = false;
+        // Clear password reduces the risk of re-exposing credentials if the dialog is reopened or the screen is shared:
+        this.password = '';
 
         const cache = PackageCache();
         if (cache.packages.length === 0) {
@@ -151,7 +153,7 @@ import { LOG } from '../../../common/lib/helpers';
 
             if (result.ok) {
                 this.successMessage = result.message;
-                LOG.info('[Export Neo4j] Export placeholder completed');
+                LOG.info('[Export Neo4j] Export completed');
                 setTimeout(() => { this.dialog = false; }, 1500);
             } else {
                 this.errorMessage = result.message;

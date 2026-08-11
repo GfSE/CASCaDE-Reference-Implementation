@@ -246,7 +246,7 @@ export const PLI = {
      * const doc = parser.parseFromString(xml, 'text/xml');
      * const error = PLI.getXmlParseError(doc);
      * if (error) {
-     *     console.error('Parse error:', error.textContent);
+     *     LOG.error('Parse error:', error.textContent);
      * }
      */
     getXmlParseError(doc: Document): Element | null {
@@ -381,7 +381,7 @@ export const PLI = {
      * @example
      * // Browser and Node.js compatible
      * const html = PLI.innerHTML(element);
-     * console.log(html); // "<p>Hello</p><span>World</span>"
+     * LOG.info('HTML content:', html); // "<p>Hello</p><span>World</span>"
      */
     innerHTML(element: Element): string {
         // Browser: Use native innerHTML if available
