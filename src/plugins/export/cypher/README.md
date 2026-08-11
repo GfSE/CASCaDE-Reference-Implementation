@@ -46,7 +46,6 @@ import { toRaw } from 'vue';
 import { PackageCache } from '../../../stores/package-cache';
 import { getCypher } from '../../../common/export/cypher/getCypher';
 import { PLI } from '../../../common/lib/platform-independence';
-
 const cache = PackageCache();
 const cypherText = cache.packages
   .map(pkg => getCypher(toRaw(pkg), { includeConstraints: true }))

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://product-information-graph.org/schema/2026-07-03/jsonld/Relationship.json",
+  "$id": "http://product-information-graph.org/schema/2026-07-20/jsonld/Relationship.json",
   "title": "CASCaRA Relationship Schema for JSON-LD",
   "description": "Validates <strong>Relationship</strong> class definitions for directed connections between entities. Configures which properties (cas:enumeratedProperty), source links (cas:enumeratedSourceLink) and target links (cas:enumeratedTargetLink) are allowed. Relationships are reified connections that can carry their own properties, enabling rich traceability and dependency modeling (e.g., 'Refinement' relationships with rationale and traceability status). Relationships classify meaningful statements including a subject and an object, where both the subject and the object is an entity or relationship instance. Supports specialization hierarchies and optional icons.",
   "type": "object",

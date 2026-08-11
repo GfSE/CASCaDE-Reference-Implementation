@@ -49,7 +49,6 @@ import { toRaw } from 'vue';
 import { PackageCache } from '../../../stores/package-cache';
 import { getCypher } from '../../../common/export/cypher/getCypher';
 import { exportToNeo4j } from './neo4j-export';
-
 const cache = PackageCache();
 const cypherText = cache.packages
   .map(pkg => getCypher(toRaw(pkg), { includeConstraints: true }))

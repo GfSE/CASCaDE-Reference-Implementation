@@ -65,15 +65,12 @@ export class RevisionTracker {
     static updateWithRevision<T extends IIdentifiable>(newElement: T, existingElement: T): T {
         const newRevision = this.makeRevision();
         const priorRev: string[] = [];
-        
+
+        // priorRevision shall remember the revision of the existing element. Usually there is one entry and two in case of a merge.
         if (existingElement.revision) {
             priorRev.push(existingElement.revision);
         }
         
-        if (Array.isArray(existingElement.priorRevision)) {
-            priorRev.push(...existingElement.priorRevision);
-        }
-
         const updatedElement = { ...newElement, revision: newRevision, priorRevision: priorRev.length > 0 ? priorRev : undefined };
 
         LOG.info(`Updated element ${newElement.id} with new revision ${newRevision}`);
