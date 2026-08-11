@@ -42,10 +42,10 @@ The Cypher Export plugin allows users to export all packages from the `packageCa
 
 ### Code Example
 ```typescript
+import { toRaw } from 'vue';
 import { PackageCache } from '../../../stores/package-cache';
 import { getCypher } from '../../../common/export/cypher/getCypher';
 import { PLI } from '../../../common/lib/platform-independence';
-
 const cache = PackageCache();
 const cypherText = cache.packages
   .map(pkg => getCypher(toRaw(pkg), { includeConstraints: true }))
