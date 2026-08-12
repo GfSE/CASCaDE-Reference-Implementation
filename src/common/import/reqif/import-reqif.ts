@@ -139,36 +139,7 @@ export class ReqifImporter {
             ] as ConstraintCheckType[]
         } */);
 
-    /*    // Check if package was successfully created
-        if (!aPackage.status().ok) {
-            return aPackage.status();
-        }
-    */
-        // Get all items (package + graph items)
-        const allItems = aPackage.getItems();
-
-        // Calculate import statistics
-        const expectedCount = aPackage.graph?.length || 0;
-        const actualCount = allItems.length - 1; // -1 for package itself
-
-        // Build result response
-        let result: IRsp;
-        if (actualCount === expectedCount) {
-            LOG.info(
-                `ReqifImporter: successfully imported ${filename} with all ${actualCount} items`
-            );
-            result = Rsp.create(0, allItems, 'json');
-        } else {
-            // Log details about erroneous items
-            const errorDetails = this.buildErrorReport(allItems);
-            LOG.warn(
-                `ReqifImporter: imported ${actualCount} of ${expectedCount} items from ${filename}${errorDetails}`
-            );
-
-            result = Rsp.create(604, allItems, 'json', 'ReqIF', actualCount, expectedCount);
-        }
-
-        return result;
+        return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
     }
 
     /**

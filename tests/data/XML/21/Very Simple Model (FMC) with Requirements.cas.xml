@@ -17,7 +17,7 @@
     id="d:ACP-Very-Simple-Model-FMC-with-Requirements"
     rdf:type="cas:Package">
 
-    <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
+    <dcterms:title>Very Simple Model (FMC) with Requirements</dcterms:title>
     <dcterms:modified>2026-01-17T22:38:19.595Z</dcterms:modified>
 	<cas:aProperty cas:hasClass="dcterms:contributor">
 		<value>mailto:oskar.dungern@gfse.org</value>
@@ -340,7 +340,7 @@
             </dcterms:description>
             <cas:specializes>cas:Entity</cas:specializes>
             <cas:icon>&#8623;</cas:icon>
-            <cas:enumeratedProperty>SpecIF:Priority</cas:enumeratedProperty>
+            <cas:enumeratedTargetLink>SpecIF:Priority</cas:enumeratedTargetLink>
         </cas:Entity>
 
         <!-- Domain-Specific Relationship Classes -->
@@ -620,16 +620,24 @@
             <dcterms:title>Hierarchy Root</dcterms:title>
             <dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
             <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:HR-Folder-Introduction</idRef>
+                <idRef>d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements</idRef>
+            </cas:aTargetLink>
+        </cas:anEntity>
+
+        <cas:anEntity id="d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements" rdf:type="cas:Outline">
+            <dcterms:modified>2026-01-17T22:38:20.041Z</dcterms:modified>
+            <dcterms:title>Very Simple Model (FMC) with Requirements</dcterms:title>
+            <cas:aTargetLink rdf:type="cas:lists">
+                <idRef>d:Folder-Introduction</idRef>
             </cas:aTargetLink>
             <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:HR-Folder-Requirements</idRef>
+                <idRef>d:Folder-Requirements</idRef>
             </cas:aTargetLink>
             <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:HR-Folder-SystemModel</idRef>
+                <idRef>d:Folder-SystemModel</idRef>
             </cas:aTargetLink>
             <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:HR-FolderGlossary-10875487071</idRef>
+                <idRef>d:FolderGlossary-10875487071</idRef>
             </cas:aTargetLink>
         </cas:anEntity>
 
@@ -638,20 +646,9 @@
             <dcterms:title>Introduction</dcterms:title>
             <dcterms:description>
                 <p>
-                    This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in <a href="https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html" target="_blank">Tutorial 6: Very Simple Model (FMC)</a> and <a href="https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html" target="_blank">Tutorial 9: Very Simple Model (FMC) with Requirements</a>.
+                    This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated.
                 </p>
             </dcterms:description>
-        </cas:anEntity>
-
-        <cas:anEntity id="d:HR-Folder-Introduction" rdf:type="cas:Outline">
-            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
-            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
-            <cas:aProperty rdf:type="cas:Category">
-                <value>ReqIF:HierarchyRoot</value>
-            </cas:aProperty>
-            <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:Folder-Introduction</idRef>
-            </cas:aTargetLink>
         </cas:anEntity>
 
         <cas:anEntity id="d:Folder-Requirements" rdf:type="cas:Outline">
@@ -668,33 +665,11 @@
             </cas:aTargetLink>
         </cas:anEntity>
 
-        <cas:anEntity id="d:HR-Folder-Requirements" rdf:type="cas:Outline">
-            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
-            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
-            <cas:aProperty rdf:type="cas:Category">
-                <value>ReqIF:HierarchyRoot</value>
-            </cas:aProperty>
-            <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:Folder-Requirements</idRef>
-            </cas:aTargetLink>
-        </cas:anEntity>
-
         <cas:anEntity id="d:Folder-SystemModel" rdf:type="cas:Outline">
             <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
             <dcterms:title>System Model</dcterms:title>
             <cas:aTargetLink rdf:type="cas:lists">
                 <idRef>d:Diagram-aec0df7900010000017001eaf53e8876</idRef>
-            </cas:aTargetLink>
-        </cas:anEntity>
-
-        <cas:anEntity id="d:HR-Folder-SystemModel" rdf:type="cas:Outline">
-            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
-            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
-            <cas:aProperty rdf:type="cas:Category">
-                <value>ReqIF:HierarchyRoot</value>
-            </cas:aProperty>
-            <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:Folder-SystemModel</idRef>
             </cas:aTargetLink>
         </cas:anEntity>
 
@@ -709,17 +684,6 @@
             </cas:aTargetLink>
             <cas:aTargetLink rdf:type="cas:lists">
                 <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-            </cas:aTargetLink>
-        </cas:anEntity>
-
-        <cas:anEntity id="d:HR-FolderGlossary-10875487071" rdf:type="cas:Outline">
-            <dcterms:modified>2026-01-17T22:38:19.821Z</dcterms:modified>
-            <dcterms:title>Project 'Very Simple Model (FMC) with Requirements'</dcterms:title>
-            <cas:aProperty rdf:type="cas:Category">
-                <value>ReqIF:HierarchyRoot</value>
-            </cas:aProperty>
-            <cas:aTargetLink rdf:type="cas:lists">
-                <idRef>d:FolderGlossary-10875487071</idRef>
             </cas:aTargetLink>
         </cas:anEntity>
     </graph>

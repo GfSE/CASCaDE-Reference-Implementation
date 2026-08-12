@@ -98,31 +98,7 @@ export class XmlImporter {
         // - Graph item instantiation
         const aPackage = new APackage().setXML(xmlString);
 
-        // Get all items (package + graph items)
-        const allItems = aPackage.getItems();
-
-        // Calculate import statistics
-        const expectedCount = aPackage.graph?.length || 0;
-        const actualCount = allItems.length - 1; // -1 for package itself
-
-        // Build result response
-        let result: IRsp;
-        if (actualCount === expectedCount) {
-            LOG.info(
-                `XmlImporter: successfully imported package with ${actualCount} item(s)`
-            );
-            result = Rsp.create(0, allItems, 'json');
-        } else {
-            // Log details about erroneous items
-            const errorDetails = this.buildErrorReport(allItems);
-            LOG.warn(
-                `XmlImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
-            );
-
-            result = Rsp.create(604, allItems, 'json', 'XML', actualCount, expectedCount);
-        }
-
-        return result as IRsp<TPigItem[]>;
+        return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
     }
 
     /**

@@ -149,7 +149,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
                 ? jsonldPackages[0] 
                 : jsonldPackages;
 
-            // Write to file using PLI
+            // Write to file (platform-independent)
             const result = await PLI.writeFile(exportData, this.filename);
 
             if (result.ok) {

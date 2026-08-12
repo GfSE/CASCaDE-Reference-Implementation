@@ -188,7 +188,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
             // Combine all TTL strings with line breaks
             const exportData = ttlPackages.join('\n\n');
 
-            // Write to file using PLI
+            // Write to file (platform-independent)
             const result = await PLI.writeFile(exportData, this.filename);
 
             if (result.ok) {

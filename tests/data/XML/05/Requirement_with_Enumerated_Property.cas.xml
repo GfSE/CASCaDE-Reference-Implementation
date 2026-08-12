@@ -15,7 +15,7 @@
     id="d:P-Requirement-with-Enumerated-Property"
     cas:hasClass="cas:Package">
 
-    <dcterms:title>Project 'Requirement with Enumerated Property'</dcterms:title>
+    <dcterms:title>Requirement with Enumerated Property</dcterms:title>
     <dcterms:modified>2026-04-08T08:14:32.015Z</dcterms:modified>
 	<cas:aProperty cas:hasClass="dcterms:contributor">
 		<value>mailto:oskar.dungern@gfse.org</value>
@@ -264,7 +264,7 @@
         </cas:anEntity>
         <cas:anEntity id="d:HR-bca801377e3d1547" cas:hasClass="cas:Outline">
             <dcterms:modified>2026-04-08T08:14:32.065Z</dcterms:modified>
-            <dcterms:title>Project 'Requirement with Enumerated Property'</dcterms:title>
+            <dcterms:title>Requirement with Enumerated Property</dcterms:title>
             <cas:aProperty cas:hasClass="cas:Category">
                 <value>ReqIF:HierarchyRoot</value>
             </cas:aProperty>

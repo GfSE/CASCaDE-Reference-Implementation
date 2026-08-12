@@ -55,7 +55,7 @@ cas:Organizer_shape
 cas:Root
 	rdfs:subClassOf cas:Organizer ;
 	rdfs:label "Hierarchy Root" ;
-	skos:definition "A root for hierarchically organized graph elements." .
+	skos:definition "A subclass of CASCaRA organizer serving as a root for hierarchically organized graph elements." .
 
 cas:Root_shape
 	a sh:NodeShape ;
@@ -66,7 +66,7 @@ cas:Root_shape
 cas:Outline
 	rdfs:subClassOf cas:Organizer ;
 	rdfs:label "Outline" ;
-	skos:definition "Comprises all information items of a human-readable document. As usual, the outline is hierarchically organized." .
+	skos:definition "A subclass of CASCaRA organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized." .
 
 cas:Outline_shape
 	a sh:NodeShape ;
@@ -78,7 +78,7 @@ cas:Outline_shape
 cas:View
 	rdfs:subClassOf cas:Organizer ;
 	rdfs:label "View" ;
-	skos:definition "Represents a model view (diagram) using a certain notation showing selected model elements." .
+	skos:definition "A subclass of CASCaRA organizer representing a model view (diagram) using a certain notation showing selected model elements." .
 
 cas:View_shape
 	a sh:NodeShape ;
@@ -157,6 +157,33 @@ cas:depicts_shape
 	sh:path cas:depicts ;
 	sh:class cas:Entity .
 
+dcterms:title
+	a owl:DatatypeProperty ;
+	rdfs:label "Title"@en ,
+		"Titel"@de ,
+		"Titre"@fr ;
+	rdfs:comment "<p> A name given to the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/title\">DCMI</a></i>) </small></p><p> Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>"@en .
+
+dcterms:title_shape
+	a sh:PropertyShape ;
+	sh:path dcterms:title ;
+	sh:datatype xs:string ;
+	sh:maxCount 1 ;
+	sh:maxLength 256 .
+
+dcterms:description
+	a owl:DatatypeProperty ;
+	rdfs:label "Description"@en ,
+		"Beschreibung"@de ,
+		"Description"@fr ;
+	rdfs:comment "<p> An account of the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/description\">DCMI</a></i>) </small></p><p> Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>"@en .
+
+dcterms:description_shape
+	a sh:PropertyShape ;
+	sh:path dcterms:description ;
+	sh:datatype xs:string ;
+	sh:maxCount 1 .
+
 cas:Diagram
 	a owl:DatatypeProperty ;
 	rdfs:label "Diagram"@en ,
@@ -168,6 +195,21 @@ cas:Diagram_shape
 	a sh:PropertyShape ;
 	sh:path cas:Diagram ;
 	sh:datatype xs:string .
+
+SpecIF:Paragraph
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Paragraph"@en ,
+		"Textabsatz"@de ,
+		"Paragraphe"@fr ;
+	rdfs:comment "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
+		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de .
+
+SpecIF:Paragraph_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:Paragraph ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Diagram_shape ;
+	sh:property cas:Category_shape .
 
 FMC:Actor
 	rdfs:subClassOf cas:Entity ;
@@ -308,7 +350,7 @@ oslc_rm:satisfies
 	rdfs:label "satisfies"@en ,
 		"erfüllt"@de ,
 		"satisfait"@fr ;
-	rdfs:comment "<p>The object is satisfied by the subject. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p><p>SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.</p>"@en .
+	rdfs:comment "<p> The object is satisfied by the subject. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p><p> SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'. </p>"@en .
 
 oslc_rm:satisfies_shape
 	a sh:NodeShape ;
@@ -346,7 +388,7 @@ SpecIF:Priority-Value
 	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
 	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
 	sh:datatype xs:string ;
-	owl:oneOf (
+	owl:anyOf (
 		SpecIF:priorityHigh
 		SpecIF:priorityRatherHigh
 		SpecIF:priorityMedium
@@ -416,60 +458,60 @@ d:Req-2b9016e2872e78ecadc50feddc0013Ac
 
 d:Diagram-aec0df7900010000017001eaf53e8876
 	a cas:View ;
-	rdfs:label "FiCo-Architecure Diagram" ;
+	rdfs:label "IT-Integration: FiCo-Application and FiCo-Data" ;
 	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
-	cas:Diagram "\n                    <p class=\"inline-label\">Model Diagram:</p>\n                    <p><object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object></p>\n                " ;
+	cas:Diagram "\n                    <p class=\"inline-label\">Model Diagram:</p>\n                    <p>\n                        <object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object>\n                    </p>\n                " ;
 	cas:Category "FMC Block Diagram" ;
-	cas:shows d:Actor-50fbfe8f0029b1a8016ea86245a9d83a ,
-		d:State-50feddc00029b1a8016e2872e78ecadc ,
-		d:Writes-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc ,
-		d:Reads--50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc .
+	cas:shows d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ,
+		d:MEl-50feddc00029b1a8016e2872e78ecadc ,
+		d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc ,
+		d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc .
 
-d:Actor-50fbfe8f0029b1a8016ea86245a9d83a
+d:MEl-50fbfe8f0029b1a8016ea86245a9d83a
 	a FMC:Actor ;
 	rdfs:label "FiCo-Application" ;
 	rdfs:comment "<p>IT-Application for Finance and Controlling.</p>" ;
 	dcterms:modified "2020-03-06T09:04:00+01:00"^^xs:dateTime .
 
-d:State-50feddc00029b1a8016e2872e78ecadc
+d:MEl-50feddc00029b1a8016e2872e78ecadc
 	a FMC:State ;
 	rdfs:label "FiCo-Data" ;
 	rdfs:comment "<p>Finance and Controlling Data, such as cost-units per project with budget, accrued cost etc.</p>" ;
 	dcterms:modified "2020-03-06T09:03:00+01:00"^^xs:dateTime .
 
-d:Writes-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc
+d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc
 	a SpecIF:writes ;
 	rdfs:comment "'FiCo-Application' writes 'FiCo-Data'" ;
 	dcterms:modified "2020-03-06T09:05:00+01:00"^^xs:dateTime ;
-	SpecIF:writes-toSource d:Actor-50fbfe8f0029b1a8016ea86245a9d83a ;
-	SpecIF:writes-toTarget d:State-50feddc00029b1a8016e2872e78ecadc .
+	SpecIF:writes-toSource d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ;
+	SpecIF:writes-toTarget d:MEl-50feddc00029b1a8016e2872e78ecadc .
 
-d:Reads--50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc
+d:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc
 	a SpecIF:reads ;
 	rdfs:comment "'FiCo-Application' reads 'FiCo-Data'" ;
 	dcterms:modified "2020-03-06T09:05:00+01:00"^^xs:dateTime ;
-	SpecIF:reads-toSource d:Actor-50fbfe8f0029b1a8016ea86245a9d83a ;
-	SpecIF:reads-toTarget d:State-50feddc00029b1a8016e2872e78ecadc .
+	SpecIF:reads-toSource d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ;
+	SpecIF:reads-toTarget d:MEl-50feddc00029b1a8016e2872e78ecadc .
 
-d:Satisfies-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b
+d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b
 	a oslc_rm:satisfies ;
 	rdfs:comment "'FiCo-Data' satisfies 'Data Volume'" ;
 	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
-	oslc_rm:satisfies-toSource d:State-50feddc00029b1a8016e2872e78ecadc ;
+	oslc_rm:satisfies-toSource d:MEl-50feddc00029b1a8016e2872e78ecadc ;
 	oslc_rm:satisfies-toTarget d:Req-1a8016e2872e78ecadc50feddc00029b .
 
-d:Satisfies-50feddc00029b1a8016e2872e78ecadc-0Z7916e2872e78ecadc50feddc00918a
+d:Ssat-50feddc00029b1a8016e2872e78ecadc-0Z7916e2872e78ecadc50feddc00918a
 	a oslc_rm:satisfies ;
 	rdfs:comment "'FiCo-Data' satisfies 'Consistency'" ;
 	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
-	oslc_rm:satisfies-toSource d:State-50feddc00029b1a8016e2872e78ecadc ;
+	oslc_rm:satisfies-toSource d:MEl-50feddc00029b1a8016e2872e78ecadc ;
 	oslc_rm:satisfies-toTarget d:Req-0Z7916e2872e78ecadc50feddc00918a .
 
-d:Satisfies-50fbfe8f0029b1a8016ea86245a9d83a-2b9016e2872e78ecadc50feddc0013Ac
+d:Ssat-50fbfe8f0029b1a8016ea86245a9d83a-2b9016e2872e78ecadc50feddc0013Ac
 	a oslc_rm:satisfies ;
 	rdfs:comment "'FiCo-Application' satisfies 'Response Time'" ;
 	dcterms:modified "2020-10-17T10:00:00+01:00"^^xs:dateTime ;
-	oslc_rm:satisfies-toSource d:Actor-50fbfe8f0029b1a8016ea86245a9d83a ;
+	oslc_rm:satisfies-toSource d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ;
 	oslc_rm:satisfies-toTarget d:Req-2b9016e2872e78ecadc50feddc0013Ac .
 
 d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements
@@ -477,15 +519,21 @@ d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements
 	rdfs:label "Hierarchy Root" ;
 	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
 	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
+	cas:lists d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements .
+
+d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements
+	a cas:Outline ;
+	rdfs:label "Very Simple Model (FMC) with Requirements" ;
+	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
 	cas:lists d:Folder-Introduction ,
 		d:Folder-Requirements ,
-		d:Folder-SystemDiagrams ,
+		d:Folder-SystemModel ,
 		d:FolderGlossary-10875487071 .
 
 d:Folder-Introduction
 	a cas:Outline ;
 	rdfs:label "Introduction" ;
-	rdfs:comment "<p>This is a minimal showcase of a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated.</p>" ;
+	rdfs:comment "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. </p>" ;
 	dcterms:modified "2025-02-07T08:32:00+01:00"^^xs:dateTime .
 
 d:Folder-Requirements
@@ -496,19 +544,19 @@ d:Folder-Requirements
 		d:Req-0Z7916e2872e78ecadc50feddc00918a ,
 		d:Req-2b9016e2872e78ecadc50feddc0013Ac .
 
-d:Folder-SystemDiagrams
+d:Folder-SystemModel
 	a cas:Outline ;
-	rdfs:label "System Diagrams" ;
+	rdfs:label "System Model" ;
 	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
 	cas:lists d:Diagram-aec0df7900010000017001eaf53e8876 .
 
 d:FolderGlossary-10875487071
 	a cas:Outline ;
-	rdfs:label "Glossary" ;
+	rdfs:label "Model Elements (Glossary)" ;
 	dcterms:modified "2026-01-17T22:38:13.953Z"^^xs:dateTime ;
 	cas:Category SpecIF:Glossary ;
-	cas:lists d:Actor-50fbfe8f0029b1a8016ea86245a9d83a ,
-		d:State-50feddc00029b1a8016e2872e78ecadc .
+	cas:lists d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ,
+		d:MEl-50feddc00029b1a8016e2872e78ecadc .
 
 
 #################################################################

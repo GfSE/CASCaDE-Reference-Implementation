@@ -561,7 +561,7 @@
           "@language": "fr"
         }
       ],
-      "cas:enumeratedProperty": [
+      "cas:enumeratedTargetLink": [
         {
           "@id": "SpecIF:Priority"
         }
@@ -632,7 +632,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "Project 'Requirement with Enumerated Property'"
+          "@value": "Requirement with Enumerated Property"
         }
       ],
       "dcterms:modified": "2026-04-08T08:14:32.065Z",
@@ -659,7 +659,7 @@
   },
   "dcterms:title": [
     {
-      "@value": "Project 'Requirement with Enumerated Property'"
+      "@value": "Requirement with Enumerated Property"
     }
   ],
   "dcterms:modified": "2026-04-08T08:14:32.015Z",

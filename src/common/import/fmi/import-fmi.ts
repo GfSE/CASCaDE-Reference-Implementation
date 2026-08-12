@@ -128,27 +128,10 @@ export class FmiImporter {
         // Instantiate APackage from transformed XML
         const aPackage = new APackage().setXML(xmlString);
 
-    /*    if (!aPackage.status().ok) {
-            return aPackage.status();
-        }
-    */
-        // Get all items (package + graph items)
-        const allItems = aPackage.getItems();
+        // Write to file (platform-independent)
+        // const toFile = await PLI.writeFile(JSON.stringify(aPackage,null,2), "from-FMI.json");
 
-        const expectedCount = aPackage.graph?.length || 0;
-        const actualCount = allItems.length - 1; // -1 for package itself
-
-        let result: IRsp;
-        if (actualCount === expectedCount) {
-        //    LOG.info( `FmiImporter: successfully imported ${filename} with all ${actualCount} items` );
-            result = Rsp.create(0, allItems, 'json');
-        } else {
-            const errorDetails = this.buildErrorReport(allItems);
-            LOG.warn( `FmiImporter: imported ${actualCount} of ${expectedCount} items from ${filename}${errorDetails}` );
-            result = Rsp.create(604, allItems, 'json', 'FMI', actualCount, expectedCount);
-        }
-
-        return result;
+        return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
     }
 
     /**
