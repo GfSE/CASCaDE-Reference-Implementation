@@ -122,10 +122,16 @@ export class ReqifImporter {
         const xmlString = rspTransform.response as string;
         // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
 
+        // Write to file (platform-independent)
+        await PLI.writeFile(JSON.stringify(xmlString, null, 2), "from-ReqIF.xml");
+
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
         if (!schemaResult.ok)
             return schemaResult;
+
+        // Write to file (platform-independent)
+        // await PLI.writeFile(JSON.stringify(xmlString,null,2), "from-ReqIF.xml");
 
         // Instantiate APackage from transformed XML
         const aPackage = new APackage().setXML(xmlString /*, {

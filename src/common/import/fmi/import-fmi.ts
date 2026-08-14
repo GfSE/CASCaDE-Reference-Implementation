@@ -129,7 +129,7 @@ export class FmiImporter {
         const aPackage = new APackage().setXML(xmlString);
 
         // Write to file (platform-independent)
-        // const toFile = await PLI.writeFile(JSON.stringify(aPackage,null,2), "from-FMI.json");
+        // await PLI.writeFile(JSON.stringify(aPackage,null,2), "from-FMI.json");
 
         return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
     }

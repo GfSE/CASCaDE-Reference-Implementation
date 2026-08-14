@@ -23,8 +23,11 @@
  * - All names are always in singular form, even if they have multiple values.
  * - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
  * - The 'aProperty' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
- * - Similarly, the 'aLink' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
- * - Both 'aProperty' and 'aLink' have no identifier and no revision history of their own.
+ * - Similarly, the 'aSourceLink' and 'aTargetLink' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
+ * - Both 'aProperty', 'aSourceLink' and 'aTargetLink' have no identifier and no revision history of their own.
+ * - 'aLink' and their subclasses have a single idRef attribute;
+ *   the parent objects have a list of 'aLink' instances to allow multiple links of the same type to different endpoints.
+ *   There is no need to distinguish between no list and an empty list in case of the instances.
  * - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
  *   This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
  * - aRelationship.hasTargetLink is an array with maxCount=1 to have the same structure as anEntity.hasTargetLink.
@@ -34,10 +37,10 @@
  *   those references are expanded to id objects only when serializing to JSON-LD.
  * - The 'set' methods are chainable to allow concise code when creating new instances.
  * - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
- * - The 'setJSONLD' methods handles conversion from JSON-LD representation.
+ * - The 'setJSONLD' methods handles conversion from JSON-LD representation; similarly, 'setXML' methods handle conversion from XML representation.
  * - There are no 'getJSONLD' methods for the core classes. Instead, the data is transformed to JSON-LD in a separate module
  *   providing a getJSONLD() function for all itemTypes. The reason is to avoid that this module is getting huge.
- * - Similar for getHTML() and others.
+ * - Similar for getHTML(), getXML() and others.
  * - Programming errors result in exceptions, data errors in IMsg return values.
  * - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
  *   and is now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
@@ -52,6 +55,11 @@
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
  * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
  * - implement abstract class 'Configurable' for Property and Link to avoid code duplication
+ * - allow a list of idRef in aSourceLink and aTargetLink for grouping of endpoints of the same link type;
+ *   now links of the same type are collected during export.
+ *   In fact, this is in contrast to a design decision listed above.
+ * - Make sure that an empty list of enumeratedEndpoint, enumeratedProperty, enumeratedSourceLink and enumeratedTargetLink means "none allowed";
+ *   it should be an empty array in the native JSON ... and not undefined. If undefined, it means "all allowed".
  * ✅ implement 'revisionAware' for Link.
  * - implement 'globalTitle' for all classes and 'globalReversed' for Relationship
  * - include revision as part of a pointer in aSourceLink and aTargetLink, if the link class specifies revisionAware=true, both schema and code.
@@ -750,14 +758,17 @@ abstract class ALink extends Item implements IALink {
         // - Check class reference; must be an existing Link URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
-    protected set(itm: IALink): this {
-        super.set(itm);
-        this.idRef = itm.idRef;
+    set(itm: IALink) {
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus.ok) {
+            super.set(itm);
+            this.idRef = itm.idRef;
+        }
         return this;
     }
-    protected get() {
+    get() {
         return LIB.stripUndefinedAndNull({
-            ...super.get(),
+            ... super.get(),
             idRef: this.idRef
         }) as IALink;
     }
@@ -1440,18 +1451,6 @@ export class ASourceLink extends ALink implements IALink {
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
-    set(itm: IALink) {
-        this.lastStatus = this.validate(itm);
-        if (this.lastStatus.ok) {
-            super.set(itm);
-        }
-        return this;
-    }
-    get() {
-        return LIB.stripUndefinedAndNull({
-            ... super.get(),
-        });
-    }
 }
 export class ATargetLink extends ALink implements IALink {
     constructor() {
@@ -1464,18 +1463,6 @@ export class ATargetLink extends ALink implements IALink {
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
-    }
-    set(itm: IALink) {
-        this.lastStatus = this.validate(itm);
-        if (this.lastStatus.ok) {
-            super.set(itm);
-        }
-        return this;
-    }
-    get() {
-        return LIB.stripUndefinedAndNull({
-            ... super.get(),
-        });
     }
 }
 
@@ -1522,13 +1509,12 @@ export class AnEntity extends AnElement implements IAnElement {
     //    LOG.debug('AnEntity.set status and input: ' + JSON.stringify(this.lastStatus), JSON.stringify(_itm, null, 2));
         if (this.lastStatus.ok) {
             super.set(_itm);
-            this.hasTargetLink = _itm.hasTargetLink ? _itm.hasTargetLink.map(r => new ATargetLink().set(r)) : [];
         }
         return this;
     }
     get() {
         return LIB.stripUndefinedAndNull({
-            ... super.get(),
+            ... super.get(), // make a new object to avoid side effects
         });
     }
 }
@@ -2486,11 +2472,11 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 continue;
             }
             if (childTagName === PigItemType.aSourceLink) {
-                configurableSourceLinks.push(configurableLinkToJson(childElement, PigItemType.aSourceLink));
+                configurableSourceLinks.push(...configurableLinkToJson(childElement, PigItemType.aSourceLink));
                 continue;
             }
             if (childTagName === PigItemType.aTargetLink) {
-                configurableTargetLinks.push(configurableLinkToJson(childElement, PigItemType.aTargetLink));
+                configurableTargetLinks.push(...configurableLinkToJson(childElement, PigItemType.aTargetLink));
                 continue;
             }
 
@@ -2669,8 +2655,8 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
 
             if (childTagName === 'value') {
                 prop.value = getXmlElementText(childElement);
-            } else if (childTagName === 'idRef') {
-                prop.idRef = PigItem.normalizeId(childElement.textContent?.trim() as string);
+        /*    } else if (childTagName === 'idRef') {
+                prop.idRef = PigItem.normalizeId(childElement.textContent?.trim() as string); */
             } else if (childTagName.endsWith('type')  || childTagName.endsWith('hasClass')) {
                 prop.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if (childTagName === 'composes') {
@@ -2693,8 +2679,8 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
  * - <idRef> → idRef
  * - itemType → cas:aSourceLink or cas:aTargetLink
  */
-function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): JsonObject {
-    const link: JsonObject = {
+function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): JsonObject[] {
+    const linkTemplate: JsonObject = {
         itemType: itemType
     };
 
@@ -2702,8 +2688,11 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
     const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
         || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
-        link.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
+        linkTemplate.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
     }
+
+    // Array to collect multiple idRef values
+    const idRefs: string[] = [];
 
     // Extract child elements
     for (const child of Array.from(elem.childNodes)) {
@@ -2719,9 +2708,9 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                 // Otherwise, idRef points to an instance and uses data namespace (d:)
                 let targetItemType: PigItemTypeValue = PigItemType.anEntity; // default: data namespace
 
-                if (link.hasClass) {
+                if (linkTemplate.hasClass) {
                     // Try to find the link class definition in the graph
-                    const linkClassId = link.hasClass as string;
+                    const linkClassId = linkTemplate.hasClass as string;
                     const linkClassElem = findLinkClassInGraph(elem, linkClassId);
                     if (linkClassElem && enumeratedEndpointPointsToEnumeration(linkClassElem)) {
                         // Link's enumeratedEndpoint points to an Enumeration, so idRef should use ontology namespace
@@ -2729,14 +2718,20 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                     }
                 }
 
-                link.idRef = PigItem.normalizeId(idRefValue, targetItemType);
+                idRefs.push(PigItem.normalizeId(idRefValue, targetItemType));
             } else if (childTagName.endsWith('hasClass')) {
-                link.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
+                linkTemplate.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
             }
         }
     }
 
-    return link;
+    // Create one link object per idRef
+    const links: JsonObject[] = idRefs.map(idRef => ({
+        ...linkTemplate,
+        idRef: idRef
+    }));
+
+    return links;
 }
 
 /**
