@@ -24,7 +24,7 @@ Initially, test-data should be small and cover relevant and typical aspects of t
       <documentation>The global CASCaRA Graph integrating partial information from different sources. It complies with the [CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/).</documentation>
     </element>
     <element xsi:type="archimate:BusinessObject" name="Partial Information" id="id-916cd771f88d4929868c23d366e576c3">
-      <documentation>Data provided by various authoring tools such as System Engineering Modeling Tools, Mechanical or Electrical CAD Tools. All are partial information concerning the same product and shall be analyzed and used in a common context.</documentation>
+      <documentation>Source data provided by various authoring tools such as System Engineering Modeling Tools, Mechanical or Electrical CAD Tools. All are partial information concerning the same product and shall be analyzed and used in a common context.</documentation>
     </element>
     <element xsi:type="archimate:BusinessFunction" name="CASCaRA Import Transformation" id="id-f84f7551c14544bf90944c5d019eddbb">
       <documentation>The process to integrate [[Partial Information]] to a [[CASCaRA Graph]]. It entails transforming the source data to a subgraph following the[CASCARA Metamodel](https://product-information-graph.org/doc/metamodel/latest/), matching class names with the ontology and finally weaving the subgraph into the global graph.</documentation>

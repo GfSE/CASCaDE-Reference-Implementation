@@ -176,17 +176,3 @@ import { LIB, LOG } from '../../../common/lib/helpers';
 
 export default class JsonExportComponent extends Vue {}
 </script>
-
-<style scoped>
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mt-4 {
-    margin-top: 16px;
-}
-
-.v-alert {
-    white-space: pre-line;
-}
-</style>

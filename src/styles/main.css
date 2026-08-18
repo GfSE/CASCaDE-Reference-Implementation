@@ -137,6 +137,13 @@ h3 {
 .v-alert {
     white-space: pre-line;
 }
+.mb-4 {
+    margin-bottom: 16px;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
 
 /*.meta-aProperty {
     flex: 1;
