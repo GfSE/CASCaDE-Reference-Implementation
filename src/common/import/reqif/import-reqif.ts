@@ -122,8 +122,8 @@ export class ReqifImporter {
         const xmlString = rspTransform.response as string;
         // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
 
-        // Write to file (platform-independent)
-        await PLI.writeFile(JSON.stringify(xmlString, null, 2), "from-ReqIF.xml");
+        // (debug) optionally persist transformed XML here if needed
+        // await PLI.writeFile(xmlString, 'from-ReqIF.xml');
 
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);

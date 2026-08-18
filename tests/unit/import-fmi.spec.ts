@@ -376,7 +376,7 @@ describe('FMI Import', () => {
             }
 
             const result = await FmiImporter.import(plantXml);
-            logResponse(`import plant xml`, {status: result.status, statusText: result.statusText});
+            logResponse(`import plant xml`, result);
 
             expect(result.status).toBe(0);
             expect(result.responseType).toBe('json');
