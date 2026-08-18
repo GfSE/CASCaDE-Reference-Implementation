@@ -25,7 +25,6 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import type { PropType } from 'vue'
-//    import type { OutlineNode } from './outline-types'
     import type { stringHTML } from '@/common/export/html/getHTML'
 
     // A single node of the document outline tree, built recursively from

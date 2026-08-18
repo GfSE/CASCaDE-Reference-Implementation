@@ -232,13 +232,6 @@
             extractTitle
         },
         mounted() {
-        /*    // Load packages from storage if cache is empty
-            const cache = PackageCache()
-            if (cache.packages.length === 0) {
-                LOG.info('[PageDocument] Cache is empty, loading from storage...')
-                cache.loadFromStorage()
-            } */
-
             // Select the first item when opening the view:
             if (this.flatOutline.length > 0) {
                 this.selectedId = this.flatOutline[0].id
