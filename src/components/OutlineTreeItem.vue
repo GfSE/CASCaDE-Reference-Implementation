@@ -1,9 +1,28 @@
+<!--
+    Renders a single node of the document Outline pane, recursively rendering its
+    children as nested outline-tree-item instances. A node with children is shown
+    as a collapsible Vuetify v-list-group (folder); a node without children is a
+    plain, non-collapsible v-list-item (leaf).
+
+    Selection: there is exactly one "selected" state, driven purely by native DOM
+    focus (see PageDocument.vue, which is the single source of truth for
+    selectedId and moves focus programmatically for arrow-key navigation). Each
+    item therefore carries a stable DOM id (outline-item-<node.id>) so it can be
+    looked up and focused, and a data-outline-id attribute so PageDocument can
+    identify it again when native focus changes for any other reason (mouse
+    click, Tab key, ...). The visual highlight itself is implemented purely via
+    :focus/:focus-visible CSS below - selectedId is not used for styling here.
+
+    Clicking an item both selects it (@select, handled by the parent) and, for a
+    folder, toggles it open/closed via Vuetify's own v-list-group behavior.
+-->
 <template>
     <v-list-group v-if="node.children && node.children.length > 0" :value="node.id">
         <template v-slot:activator="{ props: activatorProps }">
             <v-list-item v-bind="activatorProps"
+                         :id="`outline-item-${node.id}`"
+                         :data-outline-id="node.id"
                          density="compact"
-                         :active="selectedId === node.id"
                          @click="onSelect">
                 <v-list-item-title class="text-body-2">{{ node.title }}</v-list-item-title>
             </v-list-item>
@@ -15,8 +34,9 @@
                             @select="onChildSelect" />
     </v-list-group>
     <v-list-item v-else
+                 :id="`outline-item-${node.id}`"
+                 :data-outline-id="node.id"
                  density="compact"
-                 :active="selectedId === node.id"
                  @click="onSelect">
         <v-list-item-title class="text-body-2">{{ node.title }}</v-list-item-title>
     </v-list-item>
@@ -57,3 +77,19 @@
         selectedId!: string | null
     }
 </script>
+
+<style scoped>
+    /* Native DOM focus is the single source of truth for the 'selected' item
+       (see PageDocument.vue); style it grey instead of the browser/Vuetify
+       default outline or highlight color: */
+    :deep(.v-list-item:focus),
+    :deep(.v-list-item:focus-visible) {
+        outline: none !important;
+        background-color: rgba(0, 0, 0, 0.12) !important;
+    }
+
+    :deep(.v-list-item:focus .v-list-item__overlay),
+    :deep(.v-list-item:focus-visible .v-list-item__overlay) {
+        opacity: 0 !important;
+    }
+</style>

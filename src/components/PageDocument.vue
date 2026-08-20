@@ -1,3 +1,14 @@
+<!--
+    PageDocument shows a document as an Outline pane (left) plus a Content pane
+    (right):
+    - the Outline is a collapsible tree of anEntity instances, built by
+    following aTargetLink instances of class 'cas:lists' starting at anElement items
+    with class cas:Root.
+    - The Content pane renders the HTML of whichever outline node is currently selected.
+
+    See the comment above flattenOutline() below for the full description of
+    the Outline pane's mouse/keyboard selection and navigation behavior.
+-->
 <template>
     <v-container fluid class="page-document-container">
         <v-row class="fill-height">
@@ -7,7 +18,7 @@
                     <v-card-title tag="h2">Outline</v-card-title>
                     <v-divider />
                     <div class="pane-scroll pa-0">
-                        <v-list density="compact" @keydown="handleArrowKeys">
+                        <v-list density="compact" v-model:opened="openedIds" @keydown.capture="handleArrowKeys" @focusin="handleFocusIn">
                             <outline-tree-item v-for="node in outlineTree"
                                                 :key="node.id"
                                                 :node="node"
@@ -79,6 +90,30 @@
     const RECYCLE_BIN_ID = 'cas:RecycleBin'
     const RECYCLE_BIN_TITLE = 'Unreferenced Items (Recycle Bin)'
 
+    // Desired Outline pane selection/navigation behavior:
+    // - Mouse click: selects the clicked item (folder or leaf) and gives it native
+    //   DOM focus; clicking a folder's activator also toggles it open/closed
+    //   (Vuetify's own v-list-group behavior).
+    // - Up/Down arrow keys: move the selection one step up/down through the
+    //   currently *visible* tree only, i.e. the children of a closed folder are
+    //   skipped; they never open or close a folder.
+    // - Right arrow key: if the selected item is a closed collapsible folder, it
+    //   is opened in place (selection stays on it); otherwise (open folder or
+    //   leaf) the selection moves down to the next item in the *whole* tree
+    //   (pre-order), which may step into a folder that isn't visible yet.
+    //   When stepping out of a folder past its last descendant, that folder is
+    //   closed again.
+    // - Left arrow key: the mirror image of the right arrow key: if the selected
+    //   item is an open collapsible folder, it is closed in place (selection
+    //   stays on it); otherwise (closed folder or leaf) the selection moves up
+    //   to the previous item in the *whole* tree, re-opening any folder that is
+    //   stepped back into.
+    // - Native DOM focus is the single source of truth for "selected": there is
+    //   exactly one visual selection state, driven purely by :focus/:focus-visible
+    //   styling (see OutlineTreeItem.vue), and selectedId always mirrors it,
+    //   regardless of whether the focus change was caused by a mouse click, the
+    //   arrow keys above, or e.g. Tab-key browser navigation.
+
     // Flatten an outline tree (pre-order) into a single array, e.g. for arrow-key navigation:
     function flattenOutline(nodes: OutlineNode[]): OutlineNode[] {
         const result: OutlineNode[] = []
@@ -96,7 +131,9 @@
         },
         data() {
             return {
-                selectedId: null as string | null
+                selectedId: null as string | null,
+                // Ids of outline nodes whose children are currently expanded (Vuetify v-list 'opened' model):
+                openedIds: [] as string[]
             }
         },
         computed: {
@@ -195,38 +232,171 @@
                 return result
             },
 
+            // Full pre-order traversal of the *entire* tree, regardless of which
+            // folders are currently expanded; used by the left/right arrow keys,
+            // which walk through the whole tree, opening/closing folders as needed:
             flatOutline(): OutlineNode[] {
                 return flattenOutline(this.outlineTree)
             },
 
+            // Pre-order traversal of only the *visible* part of the tree, i.e. a node's
+            // children are only included while the node itself is expanded; used by the
+            // up/down arrow keys, which only walk the currently visible tree:
+            visibleFlatOutline(): OutlineNode[] {
+                const result: OutlineNode[] = []
+                const visit = (nodes: OutlineNode[]) => {
+                    for (const node of nodes) {
+                        result.push(node)
+                        if (node.children.length > 0 && this.openedIds.includes(node.id)) {
+                            visit(node.children)
+                        }
+                    }
+                }
+                visit(this.outlineTree)
+                return result
+            },
+
+            // Maps a node id to its own OutlineNode instance, for quick lookup by id:
+            nodeById(): Map<string, OutlineNode> {
+                const map = new Map<string, OutlineNode>()
+                for (const node of this.flatOutline as OutlineNode[]) map.set(node.id, node)
+                return map
+            },
+
+            // Maps a node id to its parent's id (or undefined for top-level nodes):
+            parentMap(): Map<string, string> {
+                const map = new Map<string, string>()
+                const visit = (nodes: OutlineNode[], parentId: string | null) => {
+                    for (const node of nodes) {
+                        if (parentId !== null) map.set(node.id, parentId)
+                        if (node.children.length > 0) visit(node.children, node.id)
+                    }
+                }
+                visit(this.outlineTree, null)
+                return map
+            },
+
             selectedHtml(): stringHTML | null {
                 if (this.selectedId === null) return null
-                const node = this.flatOutline.find((n: OutlineNode) => n.id === this.selectedId)
-                return node?.html ?? null
+                return this.nodeById.get(this.selectedId)?.html ?? null
             }
         },
         methods: {
             selectItem(id: string) {
                 this.selectedId = id
+                this.focusItem(id)
             },
+
+            // Native DOM focus is the single source of truth for the 'selected' item;
+            // this keeps selectedId in sync whenever focus moves for any reason
+            // (mouse click, Tab key, or our own programmatic focusItem calls):
+            handleFocusIn(event: FocusEvent) {
+                const target = event.target as HTMLElement | null
+                const item = target?.closest('[data-outline-id]') as HTMLElement | null
+                const id = item?.dataset.outlineId
+                if (id && id !== this.selectedId) this.selectedId = id
+            },
+
+            // Moves native focus to the outline item with the given id, so that the
+            // browser's own focus/active styling always matches our selection state:
+            focusItem(id: string | null) {
+                if (!id) return
+                this.$nextTick(() => {
+                    const el = document.getElementById(`outline-item-${id}`)
+                    el?.focus()
+                })
+            },
+
+            // Returns the list of ancestor ids of a node, ordered from the root down
+            // to (but excluding) the node itself:
+            ancestorChain(id: string): string[] {
+                const chain: string[] = []
+                let current: string | undefined = this.parentMap.get(id)
+                while (current) {
+                    chain.unshift(current)
+                    current = this.parentMap.get(current)
+                }
+                return chain
+            },
+
             handleArrowKeys(event: KeyboardEvent) {
-                const flat = this.flatOutline as OutlineNode[]
-                if (flat.length === 0) return
-                const currentIndex = flat.findIndex(n => n.id === this.selectedId)
-                if (event.key === 'ArrowDown') {
-                    event.preventDefault()
-                    if (currentIndex === -1) {
-                        this.selectedId = flat[0].id
-                    } else if (currentIndex < flat.length - 1) {
-                        this.selectedId = flat[currentIndex + 1].id
+                if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp' && event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return
+                // Vuetify's v-list-item has its own built-in roving-tabindex keyboard
+                // navigation bound directly to the focused item; that listener runs during
+                // the bubble phase before the event would reach our listener on v-list, so
+                // we intercept during the capture phase (@keydown.capture) instead and stop
+                // the event here, before it can reach the item and trigger a second move:
+                event.stopPropagation()
+                event.preventDefault()
+
+                if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                    // Up/down: walk the visible tree only.
+                    const visible = this.visibleFlatOutline as OutlineNode[]
+                    if (visible.length === 0) return
+                    const currentIndex = visible.findIndex(n => n.id === this.selectedId)
+                    if (event.key === 'ArrowDown') {
+                        if (currentIndex === -1) {
+                            this.selectedId = visible[0].id
+                        } else if (currentIndex < visible.length - 1) {
+                            this.selectedId = visible[currentIndex + 1].id
+                        }
+                    } else {
+                        if (currentIndex === -1) {
+                            this.selectedId = visible[0].id
+                        } else if (currentIndex > 0) {
+                            this.selectedId = visible[currentIndex - 1].id
+                        }
                     }
-                } else if (event.key === 'ArrowUp') {
-                    event.preventDefault()
-                    if (currentIndex === -1) {
-                        this.selectedId = flat[0].id
-                    } else if (currentIndex > 0) {
-                        this.selectedId = flat[currentIndex - 1].id
+                    this.focusItem(this.selectedId)
+                    return
+                }
+
+                if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return
+
+                // Left/right: walk the whole tree, opening/closing folders as needed.
+                const full = this.flatOutline as OutlineNode[]
+                if (full.length === 0 || this.selectedId === null) return
+                const node = this.nodeById.get(this.selectedId)
+                if (!node) return
+
+                if (event.key === 'ArrowRight') {
+                    if (node.children.length > 0 && !this.openedIds.includes(node.id)) {
+                        // Closed collapsible folder: open it in place.
+                        this.openedIds.push(node.id)
+                        return
                     }
+                    // Open folder or leaf: move down to the next node in the whole tree.
+                    const currentIndex = full.findIndex(n => n.id === node.id)
+                    if (currentIndex === -1 || currentIndex >= full.length - 1) return
+                    const nextNode = full[currentIndex + 1]
+                    // Close any folders we're stepping out of (i.e. ancestors of the
+                    // current node that are not ancestors of the next node):
+                    const nextAncestors = this.ancestorChain(nextNode.id)
+                    const exited = this.ancestorChain(node.id).filter((a: string) => !nextAncestors.includes(a))
+                    if (exited.length > 0) {
+                        this.openedIds = this.openedIds.filter((id: string) => !exited.includes(id))
+                    }
+                    this.selectedId = nextNode.id
+                    this.focusItem(this.selectedId)
+                } else {
+                    if (node.children.length > 0 && this.openedIds.includes(node.id)) {
+                        // Open collapsible folder: close it in place.
+                        this.openedIds = this.openedIds.filter((id: string) => id !== node.id)
+                        return
+                    }
+                    // Closed folder or leaf: move up to the previous node in the whole tree.
+                    const currentIndex = full.findIndex(n => n.id === node.id)
+                    if (currentIndex <= 0) return
+                    const prevNode = full[currentIndex - 1]
+                    // Open any folders we're stepping back into (i.e. ancestors of the
+                    // previous node that are not ancestors of the current node):
+                    const currentAncestors = this.ancestorChain(node.id)
+                    const entered = this.ancestorChain(prevNode.id).filter((a: string) => !currentAncestors.includes(a))
+                    for (const id of entered) {
+                        if (!this.openedIds.includes(id)) this.openedIds.push(id)
+                    }
+                    this.selectedId = prevNode.id
+                    this.focusItem(this.selectedId)
                 }
             },
             extractTitle
@@ -235,6 +405,7 @@
             // Select the first item when opening the view:
             if (this.flatOutline.length > 0) {
                 this.selectedId = this.flatOutline[0].id
+                this.focusItem(this.selectedId)
             }
         }
     })
