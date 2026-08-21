@@ -1174,61 +1174,60 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
         it('should accept numeric value from enumeratedValue list with XML input', () => {
             const pkgXML = `<?xml version="1.0" encoding="UTF-8"?>
-            <${DEF.pfxNsMeta}aPackage xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
+            <${DEF.pfxNsMeta}Package xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
                           xmlns:o="https://product-information-graph.org/v0.2/ontology#"
                           xmlns:d="https://product-information-graph.org/examples/fibonacci.zip#"
                           xmlns:dcterms="http://purl.org/dc/terms/"
-                          id="d:test-enum-numeric-xml">
-                <${DEF.pfxNsMeta}hasClass>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}hasClass>
-                <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}aPackage</${DEF.pfxNsMeta}itemType>
+                          id="d:test-enum-numeric-xml"
+                          ${DEF.pfxNsMeta}itemType="${DEF.pfxNsMeta}aPackage">
                 <${DEF.pfxNsDcmi}modified>2026-02-16T12:00:00Z</${DEF.pfxNsDcmi}modified>
                 <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Estimation Example</${DEF.pfxNsDcmi}title>
                 <graph>
-                    <${DEF.pfxNsMeta}Enumeration id="o:Fibonacci-Values" ${DEF.pfxNsMeta}specializes="${DEF.pfxNsMeta}Enumeration">
+                    <owl:Class id="o:Fibonacci-Values" itemType="${DEF.pfxNsMeta}Enumeration">
+                        <cas:specializes>${DEF.pfxNsMeta}specializes="${DEF.pfxNsMeta}Enumeration</cas:specializes>
                         <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Numbers</${DEF.pfxNsDcmi}title>
                         <skos:definition xml:lang="en">Enumerated Fibonacci sequence values for estimation</skos:definition>
                         <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
                         <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}Enumeration</${DEF.pfxNsMeta}itemType>
-                        <datatype>xs:integer</datatype>
-                        <enumeratedValue id="o:Fibonacci-1">
+                        <sh:datatype>xs:integer</sh:datatype>
+                        <cas:enumeratedValue id="o:Fibonacci-1">
                             <value>1</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-2">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-2">
                             <value>2</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-3">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-3">
                             <value>3</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-5">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-5">
                             <value>5</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-8">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-8">
                             <value>8</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-13">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-13">
                             <value>13</value>
-                        </enumeratedValue>
+                        </cas:enumeratedValue>
                     </${DEF.pfxNsMeta}Enumeration>
 
-                    <${DEF.pfxNsMeta}Link id="o:hasEstimate" ${DEF.pfxNsMeta}hasClass="owl:ObjectProperty">
+                    <owl:ObjectProperty id="o:hasEstimate" cas:itemType="${DEF.pfxNsMeta}Link">
                         <${DEF.pfxNsDcmi}title xml:lang="en">Estimate</${DEF.pfxNsDcmi}title>
                         <skos:definition xml:lang="en">Assigns a Fibonacci number to an entity.</skos:definition>
-                        <!-- <${DEF.pfxNsMeta}enumeratedEndpoint rdf:resource="o:Fibonacci-Values" /> -->
-                        <${DEF.pfxNsMeta}enumeratedEndpoint>o:Fibonacci-Values</${DEF.pfxNsMeta}enumeratedEndpoint>
-                    </${DEF.pfxNsMeta}Link>
+                        <${DEF.pfxNsMeta}enumeratedEndpoint><idRef>o:Fibonacci-Values</idRef></${DEF.pfxNsMeta}enumeratedEndpoint>
+                    </owl:ObjectProperty>
         
-                    <${DEF.pfxNsMeta}anEntity id="d:Est-Task-4711" rdf:type="o:Estimate">
+                    <o:Estimate id="d:Est-Task-4711" itemType="${DEF.pfxNsMeta}anEntity">
                         <${DEF.pfxNsMeta}hasClass>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}hasClass>
                         <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}anEntity</${DEF.pfxNsMeta}itemType>
                         <${DEF.pfxNsDcmi}modified>2026-01-15T14:30:00Z</${DEF.pfxNsDcmi}modified>
                         <${DEF.pfxNsDcmi}title xml:lang="en">Implement User Authentication</${DEF.pfxNsDcmi}title>
                         <${DEF.pfxNsDcmi}description xml:lang="en"><![CDATA[<p>Task requires implementation of OAuth2 authentication</p>]]></${DEF.pfxNsDcmi}description>
-                        <${DEF.pfxNsMeta}aTargetLink rdf:type="o:hasEstimate">
+                        <o:hasEstimate itemType="${DEF.pfxNsMeta}aTargetLink" >
                             <idRef>o:Fibonacci-8</idRef>
-                        </${DEF.pfxNsMeta}aTargetLink>
-                    </${DEF.pfxNsMeta}anEntity>
+                        </o:hasEstimate>
+                    </o:Estimate>
                 </graph>
-            </${DEF.pfxNsMeta}aPackage>`;
+            </${DEF.pfxNsMeta}Package>`;
 
             // A. Test with XML input via setXML
             const rsp = new APackage().setXML(pkgXML, {

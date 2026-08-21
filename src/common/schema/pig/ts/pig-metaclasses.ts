@@ -133,11 +133,10 @@ const PIG_CLASSES = new Set<PigItemTypeValue>([
     PigItemType.Relationship
 ]);
 
+// PigItemType.aProperty, PigItemType.aSourceLink and PigItemType.aTargetLink
+// are embedded in aPackage, anEntity and aRelationship and cannot be instantiated standalone.
 const PIG_INSTANCE_ARRAY = [
     PigItemType.aPackage,
-    // PigItemType.aProperty,
-    // PigItemType.aSourceLink,
-    // PigItemType.aTargetLink,
     PigItemType.anEntity,
     PigItemType.aRelationship
 ] as const;
@@ -220,10 +219,9 @@ export class PigItem {
     /**
      * Check if item type is allowed for instantiation.
      * The following types are not allowed in a graph:
-        PigItemType.aProperty,     // Embedded in anEntity/aRelationship
-        PigItemType.aSourceLink,   // Embedded in aRelationship
-        PigItemType.aTargetLink    // Embedded in anEntity/aRelationship
-
+        PigItemType.aProperty,     // embedded in aPackage/anEntity/aRelationship
+        PigItemType.aSourceLink,   // embedded in aRelationship
+        PigItemType.aTargetLink    // embedded in aPackage/anEntity/aRelationship
      */
     static isInstantiable(itype: PigItemTypeValue): boolean {
         return ([
