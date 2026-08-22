@@ -2160,7 +2160,7 @@ export class APackage extends AnElement implements IAPackage {
  * - { '@id': 'xyz' } -> 'xyz'
  * - 'xyz' -> 'xyz'
  * Returns undefined when no usable id found.
- */
+ * /
 function extractId(obj: unknown): string | undefined {
     if (obj === null || obj === undefined)
         return undefined;

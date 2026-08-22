@@ -859,10 +859,12 @@ class GetXML {
         const groups = new Map<string, AProperty[]>();
         for (const p of props) {
             const tag = p.hasClass;
-            if (!groups.has(tag)) {
-                groups.set(tag, []);
+            const group = groups.get(tag);
+            if (group) {
+                group.push(p);
+            } else {
+                groups.set(tag, [p]);
             }
-            groups.get(tag)!.push(p);
         }
 
         for (const [tag, group] of groups) {
@@ -901,10 +903,12 @@ class GetXML {
         const groups = new Map<string, (ASourceLink | ATargetLink)[]>();
         for (const l of links) {
             const tag = l.hasClass;
-            if (!groups.has(tag)) {
-                groups.set(tag, []);
+            const group = groups.get(tag);
+            if (group) {
+                group.push(l);
+            } else {
+                groups.set(tag, [l]);
             }
-            groups.get(tag)!.push(l);
         }
 
         for (const [tag, group] of groups) {

@@ -1451,8 +1451,8 @@ function checkEnumeratedValues(
     // Helper function to check targetLinks for a given element
     function checkTargetLinks(
         hasTargetLink: any,
-        elementId: TPigId,
-        elementLabel: string
+        elementId: TPigId
+        // elementLabel: string
     ): IRsp {
         if (Array.isArray(hasTargetLink)) {
             for (let j = 0; j < hasTargetLink.length; j++) {
@@ -1499,7 +1499,7 @@ function checkEnumeratedValues(
 
     // Check the aPackage itself
     if (pkg.hasTargetLink) {
-        const rsp = checkTargetLinks(pkg.hasTargetLink, pkg.id ?? 'aPackage', 'aPackage');
+        const rsp = checkTargetLinks(pkg.hasTargetLink, pkg.id ?? 'aPackage' /*, 'aPackage'*/);
         if (!rsp.ok) {
             return rsp;
         }
@@ -1517,7 +1517,7 @@ function checkEnumeratedValues(
 
             // Check hasTargetLink array
             if (instance.hasTargetLink) {
-                const rsp = checkTargetLinks(instance.hasTargetLink, itemId, itemType);
+                const rsp = checkTargetLinks(instance.hasTargetLink, itemId /*, itemType*/);
                 if (!rsp.ok) {
                     return rsp;
                 }
