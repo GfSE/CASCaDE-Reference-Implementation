@@ -30,14 +30,12 @@
  * - Follow the same pattern as getTTL and getJSONLD for consistency.
  * - For creating a CASCaRA XML representation call getXML(item, options) instead of item.getXML().
  *
- * ToDo:
- * - Implement the actual transformation methods (this is a scaffold only, see issue #112).
  */
 
-import { DEF } from '../../lib/definitions';
+// import { DEF } from '../../lib/definitions';
 import { LIB, LOG, ILanguageText, INamespace } from '../../lib/helpers';
 import {
-    TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue,
+    TPigItem, PigItemType, PigItemTypeValue,
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
     AProperty, ATargetLink, ASourceLink
@@ -147,14 +145,14 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(pkg.title)) {
-            for (const t of pkg.title!) {
+            for (const t of pkg.title) {
                 xml += this.xLanguageText(i1, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(pkg.description)) {
-            for (const t of pkg.description!) {
+            for (const t of pkg.description) {
                 xml += this.xLanguageText(i1, 'dcterms:description', t, true);
             }
         }
@@ -209,14 +207,14 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            for (const t of itm.title!) {
+            for (const t of itm.title) {
                 xml += this.xLanguageText(i2, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            for (const t of itm.description!) {
+            for (const t of itm.description) {
                 xml += this.xLanguageText(i2, 'dcterms:description', t, true);
             }
         }
@@ -269,14 +267,14 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            for (const t of itm.title!) {
+            for (const t of itm.title) {
                 xml += this.xLanguageText(i2, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            for (const t of itm.description!) {
+            for (const t of itm.description) {
                 xml += this.xLanguageText(i2, 'dcterms:description', t, true);
             }
         }
@@ -336,21 +334,21 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(enm.title)) {
-            for (const t of enm.title!) {
+            for (const t of enm.title) {
                 xml += this.xLanguageText(i2, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(enm.description)) {
-            for (const t of enm.description!) {
+            for (const t of enm.description) {
                 xml += this.xLanguageText(i2, 'dcterms:description', t, true);
             }
         }
 
         // definition (multi-language)
         if (LIB.isArrayWithContent(enm.definition)) {
-            for (const t of enm.definition!) {
+            for (const t of enm.definition) {
                 xml += this.xLanguageText(i2, 'skos:definition', t, true);
             }
         }
@@ -377,7 +375,7 @@ class GetXML {
             for (const val of enm.enumeratedValue) {
                 xml += `${i2}<cas:enumeratedValue id="${val.id}">\n`;
                 if (LIB.isArrayWithContent(val.title)) {
-                    for (const t of val.title!) {
+                    for (const t of val.title) {
                         xml += this.xLanguageText(i3, 'dcterms:title', t);
                     }
                 }
@@ -428,21 +426,21 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            for (const t of itm.title!) {
+            for (const t of itm.title) {
                 xml += this.xLanguageText(i2, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            for (const t of itm.description!) {
+            for (const t of itm.description) {
                 xml += this.xLanguageText(i2, 'dcterms:description', t, true);
             }
         }
 
         // definition (multi-language)
         if (LIB.isArrayWithContent(itm.definition)) {
-            for (const t of itm.definition!) {
+            for (const t of itm.definition) {
                 xml += this.xLanguageText(i2, 'skos:definition', t, true);
             }
         }
@@ -498,7 +496,7 @@ class GetXML {
 
         // composes (references to other Properties)
         if (LIB.isArrayWithContent(itm.composes)) {
-            for (const c of itm.composes!) {
+            for (const c of itm.composes) {
                 xml += `${i2}<cas:composes>${this.escapeXmlText(c)}</cas:composes>\n`;
             }
         }
@@ -536,21 +534,21 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            for (const t of itm.title!) {
+            for (const t of itm.title) {
                 xml += this.xLanguageText(i2, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            for (const t of itm.description!) {
+            for (const t of itm.description) {
                 xml += this.xLanguageText(i2, 'dcterms:description', t, true);
             }
         }
 
         // definition (multi-language)
         if (LIB.isArrayWithContent(itm.definition)) {
-            for (const t of itm.definition!) {
+            for (const t of itm.definition) {
                 xml += this.xLanguageText(i2, 'skos:definition', t, true);
             }
         }
@@ -629,21 +627,21 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            for (const t of itm.title!) {
+            for (const t of itm.title) {
                 xml += this.xLanguageText(i2, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            for (const t of itm.description!) {
+            for (const t of itm.description) {
                 xml += this.xLanguageText(i2, 'dcterms:description', t, true);
             }
         }
 
         // definition (multi-language)
         if (LIB.isArrayWithContent(itm.definition)) {
-            for (const t of itm.definition!) {
+            for (const t of itm.definition) {
                 xml += this.xLanguageText(i2, 'skos:definition', t);
             }
         }
@@ -713,21 +711,21 @@ class GetXML {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            for (const t of itm.title!) {
+            for (const t of itm.title) {
                 xml += this.xLanguageText(i2, 'dcterms:title', t);
             }
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            for (const t of itm.description!) {
+            for (const t of itm.description) {
                 xml += this.xLanguageText(i2, 'dcterms:description', t, true);
             }
         }
 
         // definition (multi-language)
         if (LIB.isArrayWithContent(itm.definition)) {
-            for (const t of itm.definition!) {
+            for (const t of itm.definition) {
                 xml += this.xLanguageText(i2, 'skos:definition', t);
             }
         }

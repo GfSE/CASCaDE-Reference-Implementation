@@ -182,14 +182,6 @@ export class PigItem {
             case PigItemType.aPackage:
                 return new APackage();
 
-        /*    // Embedded instances (not typically instantiated standalone)
-            case PigItemType.aProperty:
-                return new AProperty();
-            case PigItemType.aSourceLink:
-                return new ASourceLink();
-            case PigItemType.aTargetLink:
-                return new ATargetLink();
-        */
             default:
                 LOG.error(`PigItemFactory.create: unknown itemType '${itemType}'`);
                 return null;
@@ -201,7 +193,7 @@ export class PigItem {
      * @param input - String to check
      * @returns true if valid ID
      */
-    static isValidIdString(input: string): boolean {
+    static isValidIdString(input: string|undefined|null): boolean {
         return typeof (input) == 'string' && (RE.termWithNamespace.test(input) || RE.uri.test(input));
     }
     /**
@@ -886,20 +878,21 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
             // Handle array of property values
             if (LIB.isArrayWithContent(val)) {
-                for (const item of val) {
+                for (const item of val as any[]) {
                     // The tags have already been renamed:
                     if (item && typeof item === 'object') {
+                        const aProp: Partial<IAProperty> = item;
                         // const nameItemType = `${DEF.pfxNsMeta}itemType`;
-                        const itemTypeValue = item.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
+                        const itemTypeValue = aProp.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
 
                         // Add the property with the key as its hasClass reference
                         if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue*/) {
-                            if (item.value !== undefined || item.composes) {
+                            if (aProp.value !== undefined || aProp.composes) {
                                 configurables.push({
                                     itemType: PigItemType.aProperty,
                                     hasClass: key,
-                                    value: item.value /*|| item['@value'] */,
-                                    composes: item.composes
+                                    value: aProp.value /*|| item['@value'] */,
+                                    composes: aProp.composes
                                 });
                             }
                             delete obj[key]; // remove processed property
@@ -909,16 +902,17 @@ abstract class AnElement extends Identifiable implements IAnElement {
             }
             // Handle single property or link values (non-array)
             else if (val && typeof val === 'object') {
+                const aProp: Partial<IAProperty> = val;
                 // const nameItemType = `${DEF.pfxNsMeta}itemType`;
-                const itemTypeValue = val.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
+                const itemTypeValue = aProp.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
 
                 if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue */) {
-                    if (val.value !== undefined || val.composes) {
+                    if (aProp.value !== undefined || aProp.composes) {
                         configurables.push({
                             itemType: PigItemType.aProperty,
                             hasClass: key,
-                            value: val.value /*|| item['@value'] */,
-                            composes: val.composes
+                            value: aProp.value /*|| item['@value'] */,
+                            composes: aProp.composes
                         });
                     }
                     delete obj[key]; // remove processed property
@@ -976,21 +970,22 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
             // Handle array of property or link values
             if (LIB.isArrayWithContent(val)) {
-                for (const item of val) {
+                for (const item of val as any[]) {
                     if (item && typeof item === 'object') {
+                        const aLink: Partial<IALink> & { id?: TPigId } = item;
                         // The tags have already been renamed:
 
                         // const nameItemType = `${DEF.pfxNsMeta}itemType`;
-                        const itemTypeValue = item.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
+                        const itemTypeValue = aLink.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
 
                         // Check if it has itemType 'cas:aSourceLink' or 'cas:aTargetLink' (may be an id-object)
                         if (itemTypeValue === itype /* || !itemTypeValue*/) {
                             // Add the property with the key as its hasClass reference
-                            if (PigItem.isValidIdString(item.id)) {
+                            if (PigItem.isValidIdString(aLink.id)) {
                                 configurables.push({
                                     itemType: itype,
                                     hasClass: key,
-                                    idRef: item.id
+                                    idRef: aLink.id as TPigId
                                 });
                             }
                             delete obj[key]; // remove processed property
@@ -1000,15 +995,16 @@ abstract class AnElement extends Identifiable implements IAnElement {
             }
             // Handle single property or link values (non-array)
             else if (val && typeof val === 'object') {
+                const aLink: Partial<IALink> & { id?: TPigId } = val;
                 // const nameItemType = `${DEF.pfxNsMeta}itemType`;
-                const itemTypeValue = val.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
+                const itemTypeValue = aLink.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
 
                 if (itemTypeValue === itype /* || !itemTypeValue */) {
-                    if (PigItem.isValidIdString(val.id)) {
+                    if (aLink.id !== undefined && PigItem.isValidIdString(aLink.id)) {
                         configurables.push({
                             itemType: itype,
                             hasClass: key,
-                            idRef: val.id
+                            idRef: aLink.id as TPigId
                         });
                     }
                     delete obj[key]; // remove processed property

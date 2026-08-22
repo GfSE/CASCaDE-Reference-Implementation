@@ -488,7 +488,10 @@ class GetJSONLD {
         }
         return out;
     }
-    private static getAsJSONLD(itm: TPigItem, options?: IOptionsJSONLD): JsonObject {
+    private static getAsJSONLD(
+        itm: TPigItem,
+        options?: IOptionsJSONLD
+    ): JsonObject {
         const jld = MVF.renameJsonTags(itm.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
         return this.makeIdObjects(jld) as JsonObject;
     }
