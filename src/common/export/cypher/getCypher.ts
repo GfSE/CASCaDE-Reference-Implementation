@@ -7,8 +7,9 @@ export interface IOptionsCypher {
 
     /**
      * Keep false for Neo4j visualization imports.
-     * The package graph/context fields can be very large JSON blobs and are already
-     * represented by the generated nodes and relationships.
+     * The package graph can be a very large JSON blob and is already represented by
+     * generated nodes and relationships. Package context is preserved separately as
+     * contextJson because it is required to resolve compact identifiers.
      */
     includeRawPackageJson?: boolean;
 }
@@ -63,10 +64,19 @@ function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string
         statements.push(...createEnumerationValueNodes(graphItem));
     }
 
-    // Pass 3: create relationships.
+    // Pass 3: clear relationships previously managed by this exporter. This makes
+    // repeated exports reflect removed or reordered embedded links/properties.
+    statements.push(clearManagedRelations(pkg.id));
     for (const graphItem of graphItems) {
+        statements.push(clearManagedRelations(graphItem.id));
+    }
+
+    // Pass 4: create relationships.
+    statements.push(...graphItemRelations(pkg as unknown as TCascaraItem));
+    for (let graphIndex = 0; graphIndex < graphItems.length; graphIndex++) {
+        const graphItem = graphItems[graphIndex];
         if (options.includePackageContains) {
-            statements.push(createRelation(pkg.id, graphItem.id, 'CONTAINS'));
+            statements.push(createRelation(pkg.id, graphItem.id, 'CONTAINS', {}, relationKey('contains', graphIndex)));
         }
         statements.push(...graphItemRelations(graphItem));
     }
@@ -78,6 +88,7 @@ function exportSingleItem(item: TCascaraItem, options: Required<IOptionsCypher>)
     return [
         createMergeNode(itemLabels(item), item.id, itemProperties(item, options)),
         ...createEnumerationValueNodes(item),
+        clearManagedRelations(item.id),
         ...graphItemRelations(item)
     ];
 }
@@ -96,6 +107,7 @@ function graphItemRelations(item: TCascaraItem): string[] {
     statements.push(...createIdArrayRelations(item, 'enumeratedSourceLink', 'HAS_ENUMERATED_SOURCE_LINK'));
     statements.push(...createIdArrayRelations(item, 'enumeratedTargetLink', 'HAS_ENUMERATED_TARGET_LINK'));
     statements.push(...createIdArrayRelations(item, 'enumeratedEndpoint', 'HAS_ENUMERATED_ENDPOINT'));
+    statements.push(...createIdArrayRelations(item, 'composes', 'COMPOSES'));
 
     statements.push(...createEnumerationValueRelations(item));
     statements.push(...createPropertyRelations(item));
@@ -112,25 +124,53 @@ function getDefaultConstraints(): string[] {
 
 function createMergeNode(labels: string[], id: string, props: Record<string, JsonValue>): string {
     const safeLabels = normalizeLabels(labels);
-    const propsLiteral = objectToCypherMap(props);
-    return `MERGE (n:${safeLabels} {id: ${toCypherValue(id)}})\nSET n += ${propsLiteral};`;
+    const propsLiteral = objectToCypherMap({ id, ...props });
+
+    // Match only on the shared identity label. A relationship may have created a
+    // CascaraItem placeholder before the detailed item is exported; matching with
+    // all type labels here would try to create a second node and violate the unique
+    // CascaraItem id constraint.
+    return [
+        `MERGE (n:CascaraItem {id: ${toCypherValue(id)}})`,
+        `SET n:${safeLabels}`,
+        `SET n = ${propsLiteral};`
+    ].join('\n');
 }
 
 function createRelation(
     sourceId: string,
     targetId: string,
     relationType: string,
-    props: Record<string, JsonValue> = {}
+    props: Record<string, JsonValue> = {},
+    identityProps: Record<string, JsonValue> = {}
 ): string {
     const safeType = safeRelationType(relationType);
-    const propsLiteral = objectToCypherMap(props);
-    const setProps = Object.keys(props).length > 0 ? `\nSET r += ${propsLiteral}` : '';
+    const mergeProps = objectToCypherMap(identityProps);
+    const relationshipPattern = Object.keys(identityProps).length > 0
+        ? `[r:${safeType} ${mergeProps}]`
+        : `[r:${safeType}]`;
+    const allProps = { ...identityProps, ...props, cascaraManaged: true };
 
     return [
         `MERGE (source:CascaraItem {id: ${toCypherValue(sourceId)}})`,
+        `ON CREATE SET source.referenceOnly = true, source.title = ${toCypherValue(sourceId)}`,
         `MERGE (target:CascaraItem {id: ${toCypherValue(targetId)}})`,
-        `MERGE (source)-[r:${safeType}]->(target)${setProps};`
+        `ON CREATE SET target.referenceOnly = true, target.title = ${toCypherValue(targetId)}`,
+        `MERGE (source)-${relationshipPattern}->(target)`,
+        `SET r = ${objectToCypherMap(allProps)};`
     ].join('\n');
+}
+
+function clearManagedRelations(sourceId: string): string {
+    return [
+        `MATCH (source:CascaraItem {id: ${toCypherValue(sourceId)}})-[r]->()`,
+        'WHERE r.cascaraManaged = true',
+        'DELETE r;'
+    ].join('\n');
+}
+
+function relationKey(field: string, index: number): Record<string, JsonValue> {
+    return { cascaraKey: `${field}:${index}` };
 }
 
 function itemLabels(item: TCascaraItem): string[] {
@@ -179,6 +219,7 @@ const RELATIONSHIP_FIELDS = new Set([
     'enumeratedSourceLink',
     'enumeratedTargetLink',
     'enumeratedEndpoint',
+    'composes',
     'enumeratedValue',
     'hasProperty'
 ]);
@@ -188,17 +229,24 @@ function itemProperties(item: TCascaraItem, options: Required<IOptionsCypher>): 
     const props: Record<string, JsonValue> = {};
 
     for (const [key, value] of Object.entries(raw)) {
-        if (key === 'id' || key === 'itemType') continue;
+        if (key === 'id') continue;
         if (value === undefined || value === null) continue;
         if (RELATIONSHIP_FIELDS.has(key)) continue;
 
-        // These package fields are already represented by exported graph nodes.
-        // Keeping them as one huge JSON property makes Neo4j imports hard to read
-        // and can create escaping problems.
-        if (!options.includeRawPackageJson && (key === 'graph' || key === 'context')) continue;
+        // The graph is already represented by exported nodes. Context is different:
+        // without it compact identifiers such as d:item cannot be resolved, so retain
+        // an exact serialized copy even in visualization-oriented exports.
+        if (!options.includeRawPackageJson && key === 'graph') continue;
+        if (!options.includeRawPackageJson && key === 'context') {
+            props.contextJson = JSON.stringify(value);
+            continue;
+        }
 
         if (key === 'title' || key === 'description' || key === 'definition') {
             props[key] = normalizeTextArray(value);
+            if (Array.isArray(value) || typeof value === 'object') {
+                props[`${key}Json`] = JSON.stringify(value);
+            }
             continue;
         }
 
@@ -230,16 +278,22 @@ function createLinkRelations(item: TCascaraItem, field: 'hasSourceLink' | 'hasTa
 
     if (!Array.isArray(cfgs)) return relations;
 
-    for (const cfg of cfgs) {
+    for (let index = 0; index < cfgs.length; index++) {
+        const cfg = cfgs[index];
         if (!cfg || typeof cfg !== 'object') continue;
 
         const targetId = cfg.idRef;
         const relType = cfg.hasClass ? String(cfg.hasClass) : field;
 
         if (typeof targetId === 'string' && targetId.length > 0) {
-            relations.push(createRelation(item.id, targetId, relType, {
-                linkDirection: field
-            }));
+            const relProps: Record<string, JsonValue> = {
+                linkDirection: field,
+                linkClass: typeof cfg.hasClass === 'string' ? cfg.hasClass : field
+            };
+            if (typeof cfg.itemType === 'string') {
+                relProps.linkItemType = cfg.itemType;
+            }
+            relations.push(createRelation(item.id, targetId, relType, relProps, relationKey(field, index)));
         }
     }
 
@@ -252,9 +306,10 @@ function createIdArrayRelations(item: TCascaraItem, field: string, relationType:
 
     if (!Array.isArray(values)) return relations;
 
-    for (const targetId of values) {
+    for (let index = 0; index < values.length; index++) {
+        const targetId = values[index];
         if (typeof targetId === 'string' && targetId.length > 0) {
-            relations.push(createRelation(item.id, targetId, relationType));
+            relations.push(createRelation(item.id, targetId, relationType, {}, relationKey(field, index)));
         }
     }
 
@@ -282,9 +337,10 @@ function createEnumerationValueRelations(item: TCascaraItem): string[] {
 
     if (!Array.isArray(values)) return statements;
 
-    for (const value of values) {
+    for (let index = 0; index < values.length; index++) {
+        const value = values[index];
         if (!value || typeof value !== 'object' || typeof value.id !== 'string') continue;
-        statements.push(createRelation(item.id, value.id, 'HAS_ENUMERATED_VALUE'));
+        statements.push(createRelation(item.id, value.id, 'HAS_ENUMERATED_VALUE', {}, relationKey('enumeratedValue', index)));
     }
 
     return statements;
@@ -296,18 +352,24 @@ function createPropertyRelations(item: TCascaraItem): string[] {
 
     if (!Array.isArray(props)) return statements;
 
-    for (const prop of props) {
+    for (let index = 0; index < props.length; index++) {
+        const prop = props[index];
         if (!prop || typeof prop !== 'object' || typeof prop.hasClass !== 'string') continue;
 
-        const relProps: Record<string, JsonValue> = {};
+        const relProps: Record<string, JsonValue> = {
+            propertyClass: prop.hasClass
+        };
         if (prop.value !== undefined && prop.value !== null) {
             relProps.value = typeof prop.value === 'object' ? JSON.stringify(prop.value) : prop.value;
         }
         if (typeof prop.itemType === 'string') {
             relProps.itemType = prop.itemType;
         }
+        if (Array.isArray(prop.composes)) {
+            relProps.composesJson = JSON.stringify(prop.composes);
+        }
 
-        statements.push(createRelation(item.id, prop.hasClass, 'HAS_PROPERTY', relProps));
+        statements.push(createRelation(item.id, prop.hasClass, 'HAS_PROPERTY', relProps, relationKey('hasProperty', index)));
     }
 
     return statements;
@@ -322,6 +384,9 @@ function embeddedObjectProperties(obj: Record<string, unknown>): Record<string, 
 
         if (key === 'title' || key === 'description' || key === 'definition') {
             props[key] = normalizeTextArray(value);
+            if (Array.isArray(value) || typeof value === 'object') {
+                props[`${key}Json`] = JSON.stringify(value);
+            }
         } else if (Array.isArray(value) || typeof value === 'object') {
             props[key] = JSON.stringify(value);
         } else {
