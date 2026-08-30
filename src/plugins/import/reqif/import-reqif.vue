@@ -193,18 +193,3 @@
         successMessage!: string;
     }
 </script>
-
-<style scoped>
-    .v-card {
-        padding: 1rem;
-    }
-
-    .v-card-title {
-        font-size: 1.5rem;
-        font-weight: 500;
-    }
-
-    .v-alert {
-        white-space: pre-line;
-    }
-</style>

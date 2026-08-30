@@ -1,8 +1,8 @@
 <template>
-    <v-btn color='secondary' class='text-none' @click='openDialog'>🡖 CASCaRA JSON-LD</v-btn>
+    <v-btn color='secondary' class='text-none export-button' @click='openDialog'>🡖 CASCaRA Cypher</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-            <v-card-title>Export Packages as JSON-LD</v-card-title>
+            <v-card-title>Export Packages as Cypher</v-card-title>
             <v-card-text>
                 <v-alert v-if='packageCount === 0' type='warning' class='mb-4'>
                     No packages available in cache. Please import packages first.
@@ -12,7 +12,7 @@
                     <v-text-field
                         v-model='filename'
                         label='Filename'
-                        hint='Enter filename for the exported JSON-LD file'
+                        hint='Enter filename for the exported Cypher file'
                         persistent-hint
                         required
                         :rules='[rules.required, rules.extension]'
@@ -20,7 +20,6 @@
                     ></v-text-field>
                 </div>
 
-                <!-- Error Display -->
                 <v-alert v-if='errorMessage'
                          type='error'
                          dismissible
@@ -29,7 +28,6 @@
                     {{ errorMessage }}
                 </v-alert>
 
-                <!-- Success Display -->
                 <v-alert v-if='successMessage'
                          type='success'
                          dismissible
@@ -38,7 +36,6 @@
                     {{ successMessage }}
                 </v-alert>
 
-                <!-- Progress Indicator -->
                 <v-progress-linear v-if='isExporting'
                                    indeterminate
                                    color='primary'
@@ -47,8 +44,8 @@
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color='grey' @click='dialog = false' :disabled='isExporting'>Cancel</v-btn>
-                <v-btn 
-                    color='primary' 
+                <v-btn
+                    color='primary'
                     @click='exportPackages'
                     :disabled='packageCount === 0 || !isFilenameValid || isExporting'
                     :loading='isExporting'
@@ -64,9 +61,9 @@
 import { Options, Vue } from 'vue-class-component';
 import { toRaw } from 'vue';
 import { PackageCache } from '../../../stores/package-cache';
-import { getJSONLD } from '../../../common/export/jsonld/getJSONLD';
+import { getCypher } from '../../../common/export/cypher/getCypher';
 import { PLI } from '../../../common/lib/platform-independence';
-import { LIB, LOG } from '../../../common/lib/helpers';
+import { LOG } from '../../../common/lib/helpers';
 
 @Options({
   data() {
@@ -81,8 +78,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
             required: (value: string) => !!value || 'Filename is required',
             extension: (value: string) => {
                 if (!value) return true;
-                const hasExtension = value.endsWith('.cas.jsonld') || value.endsWith('.cas.json');
-                return hasExtension || 'Filename should end with .cas.jsonld or .cas.json';
+                return value.endsWith('.cypher') || 'Filename should end with .cypher';
             }
         }
     }
@@ -90,45 +86,39 @@ import { LIB, LOG } from '../../../common/lib/helpers';
   computed: {
     isFilenameValid(): boolean {
         const fn = this.filename as string;
-        return fn.length > 0 && (fn.endsWith('.cas.jsonld') || fn.endsWith('.cas.json'));
+        return fn.length > 0 && fn.endsWith('.cypher');
     }
   },
   methods: {
     openDialog() {
         this.dialog = true;
-
-        // Reset messages and state
         this.errorMessage = '';
         this.successMessage = '';
         this.isExporting = false;
 
-        // Get packages and update count
         const cache = PackageCache();
-
-        // Load from storage if cache is empty
         if (cache.packages.length === 0) {
-            LOG.info('[Export JSON-LD] Cache is empty, loading from storage...');
+            LOG.info('[Export Cypher] Cache is empty, loading from storage...');
             cache.loadFromStorage();
         }
 
         const pkgs = cache.packages;
-
         this.packageCount = pkgs.length;
 
-        // Set default filename from first package title
-        if (LIB.isArrayWithContent(pkgs)) {
-            // Use toRaw to unwrap Pinia's reactive proxy
+        if (pkgs && pkgs.length > 0) {
             const firstPackage = toRaw(pkgs[0]);
-
-            // Derive filename from package title or ID and remove invalid characters:
-            const sanitized = LIB.makeFilename(firstPackage);
-            this.filename = `${sanitized}.cas.jsonld`;
+            const titleText = typeof firstPackage.title === 'string'
+                ? firstPackage.title
+                : Array.isArray(firstPackage.title) && firstPackage.title.length > 0
+                    ? firstPackage.title[0].value
+                    : firstPackage.id || 'export';
+            const sanitized = titleText.replace(/[<>:"/\\|?*]/g, '_');
+            this.filename = `${sanitized}.cypher`;
         } else {
-            this.filename = 'export.cas.jsonld';
+            this.filename = 'export.cypher';
         }
     },
     async exportPackages() {
-        // Reset messages
         this.errorMessage = '';
         this.successMessage = '';
         this.isExporting = true;
@@ -136,37 +126,24 @@ import { LIB, LOG } from '../../../common/lib/helpers';
         try {
             const cache = PackageCache();
             const pkgs = cache.packages;
+            const cypherText = pkgs
+                .map((pkg: any) => getCypher(toRaw(pkg), { includeConstraints: true }))
+                .join('\n\n');
 
-            // Transform all packages to JSON-LD
-            // Use toRaw to unwrap Pinia's reactive proxies
-            const jsonldPackages = pkgs.map((pkg: any) => {
-                const rawPkg = toRaw(pkg);
-                return getJSONLD(rawPkg, { stringify: false });
-            });
-
-            // If single package, export directly; if multiple, wrap in array
-            const exportData = jsonldPackages.length === 1 
-                ? jsonldPackages[0] 
-                : jsonldPackages;
-
-            // Write to file (platform-independent)
-            const result = await PLI.writeFile(exportData, this.filename);
-
+            const result = await PLI.writeFile(cypherText, this.filename);
             if (result.ok) {
                 this.successMessage = `Successfully exported ${pkgs.length} package(s) to ${this.filename}`;
-                LOG.info('[Export JSON-LD] Export successful:', this.filename);
-
-                // Close dialog after short delay to show success message
+                LOG.info('[Export Cypher] Export successful:', this.filename);
                 setTimeout(() => {
                     this.dialog = false;
                 }, 1500);
             } else {
                 this.errorMessage = `Export failed: ${result.statusText}`;
-                LOG.error('[Export JSON-LD] Export failed:', result.statusText);
+                LOG.error('[Export Cypher] Export failed:', result.statusText);
             }
         } catch (error) {
             this.errorMessage = `Export error: ${error instanceof Error ? error.message : String(error)}`;
-            LOG.error('[Export JSON-LD] Export error:', error);
+            LOG.error('[Export Cypher] Export error:', error);
         } finally {
             this.isExporting = false;
         }
@@ -174,5 +151,16 @@ import { LIB, LOG } from '../../../common/lib/helpers';
   }
 })
 
-export default class JsonExportComponent extends Vue {}
+export default class CypherExportComponent extends Vue {}
 </script>
+
+<style scoped>
+.mb-4 {
+    margin-bottom: 16px;
+}
+
+.export-button {
+    font-weight: 400;
+    letter-spacing: 0.01em;
+}
+</style>

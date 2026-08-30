@@ -13,19 +13,18 @@
 @prefix ReqIF: <https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#> .
 @prefix oslc_rm: <http://open-services.net/ns/rm#> .
 @prefix SpecIF: <https://specif.de/v1.2/schema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dash: <http://datashapes.org/dash#> .
 
 d:ACP-Very-Simple-Model-FMC-with-Requirements_ontology
 	a owl:Ontology ;
 	dcterms:contributor "mailto:oskar.dungern@gfse.org" ;
 	dcterms:license "https://creativecommons.org/licenses/by-sa/4.0/" ;
-	owl:versionInfo "2026-07-03" .
+	owl:versionInfo "2026-07-20" .
 
 d:ACP-Very-Simple-Model-FMC-with-Requirements
 	a cas:Package ;
-	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
+	rdfs:label "Very Simple Model (FMC) with Requirements" ;
 	dcterms:modified "2026-01-17T22:38:19.595Z"^^xs:dateTime .
 
 #################################################################
@@ -220,7 +219,7 @@ FMC:Actor
 	rdfs:comment "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>"@en ,
 		"<p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>"@de ,
 		"<p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>"@fr ;
-	cas:icon "\"□\"" .
+	cas:icon "□" .
 
 FMC:Actor_shape
 	a sh:NodeShape ;
@@ -236,7 +235,7 @@ FMC:State
 	rdfs:comment "<p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].</p>"@en ,
 		"<p>Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].</p>"@de ,
 		"<p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p>"@fr ;
-	cas:icon "\"○\"" .
+	cas:icon "○" .
 
 FMC:State_shape
 	a sh:NodeShape ;
@@ -252,7 +251,7 @@ FMC:Event
 	rdfs:comment "<p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>"@en ,
 		"<p>Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].</p>"@de ,
 		"<p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p>"@fr ;
-	cas:icon "\"♢\"" .
+	cas:icon "♢" .
 
 FMC:Event_shape
 	a sh:NodeShape ;
@@ -268,7 +267,7 @@ IREB:Requirement
 	rdfs:comment "<p> A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
 		"<p> Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
 		"<p> Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
-	cas:icon "\"↯\"" .
+	cas:icon "↯" .
 
 IREB:Requirement_shape
 	a sh:NodeShape ;
@@ -388,11 +387,39 @@ SpecIF:Priority-Value
 		"Priorité"@fr ;
 	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
 	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
-	cas:enumeratedValue SpecIF:priorityHigh ,
-		SpecIF:priorityRatherHigh ,
-		SpecIF:priorityMedium ,
-		SpecIF:priorityRatherLow ,
-		SpecIF:priorityLow .
+	sh:datatype xs:string ;
+	owl:anyOf (
+		SpecIF:priorityHigh
+		SpecIF:priorityRatherHigh
+		SpecIF:priorityMedium
+		SpecIF:priorityRatherLow
+		SpecIF:priorityLow
+	) .
+SpecIF:priorityHigh
+	a SpecIF:Priority-Value ;
+	rdfs:label "high"@en ,
+		"hoch"@de ,
+		"haut"@fr .
+SpecIF:priorityRatherHigh
+	a SpecIF:Priority-Value ;
+	rdfs:label "rather high"@en ,
+		"eher hoch"@de ,
+		"plutôt haut"@fr .
+SpecIF:priorityMedium
+	a SpecIF:Priority-Value ;
+	rdfs:label "medium"@en ,
+		"mittel"@de ,
+		"moyen"@fr .
+SpecIF:priorityRatherLow
+	a SpecIF:Priority-Value ;
+	rdfs:label "rather low"@en ,
+		"eher niedrig"@de ,
+		"plutôt bas"@fr .
+SpecIF:priorityLow
+	a SpecIF:Priority-Value ;
+	rdfs:label "low"@en ,
+		"niedrig"@de ,
+		"bas"@fr .
 
 SpecIF:Priority
 	rdfs:subPropertyOf cas:linksTarget ;
@@ -492,23 +519,22 @@ d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements
 	rdfs:label "Hierarchy Root" ;
 	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
 	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
-	cas:lists d:HR-Folder-Introduction ,
-		d:HR-Folder-Requirements ,
-		d:HR-Folder-SystemModel ,
-		d:HR-FolderGlossary-10875487071 .
+	cas:lists d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements .
+
+d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements
+	a cas:Outline ;
+	rdfs:label "Very Simple Model (FMC) with Requirements" ;
+	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
+	cas:lists d:Folder-Introduction ,
+		d:Folder-Requirements ,
+		d:Folder-SystemModel ,
+		d:FolderGlossary-10875487071 .
 
 d:Folder-Introduction
 	a cas:Outline ;
 	rdfs:label "Introduction" ;
-	rdfs:comment "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in <a href=\"https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html\" target=\"_blank\">Tutorial 6: Very Simple Model (FMC)</a> and <a href=\"https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html\" target=\"_blank\">Tutorial 9: Very Simple Model (FMC) with Requirements</a>. </p>" ;
+	rdfs:comment "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. </p>" ;
 	dcterms:modified "2025-02-07T08:32:00+01:00"^^xs:dateTime .
-
-d:HR-Folder-Introduction
-	a cas:Outline ;
-	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
-	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
-	cas:Category ReqIF:HierarchyRoot ;
-	cas:lists d:Folder-Introduction .
 
 d:Folder-Requirements
 	a cas:Outline ;
@@ -518,25 +544,11 @@ d:Folder-Requirements
 		d:Req-0Z7916e2872e78ecadc50feddc00918a ,
 		d:Req-2b9016e2872e78ecadc50feddc0013Ac .
 
-d:HR-Folder-Requirements
-	a cas:Outline ;
-	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
-	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
-	cas:Category ReqIF:HierarchyRoot ;
-	cas:lists d:Folder-Requirements .
-
 d:Folder-SystemModel
 	a cas:Outline ;
 	rdfs:label "System Model" ;
 	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
 	cas:lists d:Diagram-aec0df7900010000017001eaf53e8876 .
-
-d:HR-Folder-SystemModel
-	a cas:Outline ;
-	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
-	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
-	cas:Category ReqIF:HierarchyRoot ;
-	cas:lists d:Folder-SystemModel .
 
 d:FolderGlossary-10875487071
 	a cas:Outline ;
@@ -545,13 +557,6 @@ d:FolderGlossary-10875487071
 	cas:Category SpecIF:Glossary ;
 	cas:lists d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ,
 		d:MEl-50feddc00029b1a8016e2872e78ecadc .
-
-d:HR-FolderGlossary-10875487071
-	a cas:Outline ;
-	rdfs:label "Project 'Very Simple Model (FMC) with Requirements'" ;
-	dcterms:modified "2026-01-17T22:38:19.821Z"^^xs:dateTime ;
-	cas:Category ReqIF:HierarchyRoot ;
-	cas:lists d:FolderGlossary-10875487071 .
 
 
 #################################################################

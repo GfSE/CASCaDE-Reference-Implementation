@@ -1,5 +1,5 @@
 /*!
- * Import Plugin Registration for CASCaRA XML
+ * XML Import Plugin Registration
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
@@ -13,29 +13,11 @@
  */
 
 import type { App, Plugin } from 'vue';
-import XmlImportPlugin from './import-xml.vue';
+import type { XmlImportPluginOptions } from './mount-import-xml';
+import AnyXmlImportPlugin from './import-any-xml.vue';
 import { LOG } from '@/common/lib/helpers';
 
-/**
- * Plugin configuration options
- */
-export type XmlImportPluginOptions = {
-    /**
-     * Maximum file size in bytes (default: 6MB)
-     */
-    maxFileSize?: number;
-
-    /**
-     * Custom error handler
-     */
-    onError?: (error: Error) => void;
-}
-
-/**
- * XML Import Plugin installer
- * Implements Vue Plugin interface for use with app.use()
- */
-export const xmlImportPlugin: Plugin = {
+const anyXmlImportPlugin: Plugin = {
     install(app: App, options: XmlImportPluginOptions = {}) {
         // Store options in app.config.globalProperties for component access
         app.config.globalProperties.$xmlImportOptions = {
@@ -45,27 +27,10 @@ export const xmlImportPlugin: Plugin = {
 
         // Mount component globally
         // Don't change the name, it is used to filter the component in main.ts
-        app.component('Import-XML', XmlImportPlugin);
+        app.component('Import-Any-XML', AnyXmlImportPlugin);
 
         // all mounted components are logged in main.ts ...
     }
 };
 
-/**
- * Export business logic for programmatic use
- */
-// export { XmlImporter } from '../../../common/import/xml/import-xml';
-
-/**
- * Type declarations for global properties
- */
-declare module '@vue/runtime-core' {
-    interface ComponentCustomProperties {
-        $xmlImportOptions?: {
-            maxFileSize: number;
-            onError: (error: Error) => void;
-        };
-    }
-}
-
-export default xmlImportPlugin;
+export default anyXmlImportPlugin;
