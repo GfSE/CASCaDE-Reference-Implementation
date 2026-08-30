@@ -342,7 +342,7 @@ export class PigItem {
         // Remove namespace prefix for checking
         const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
 
-        // All multi-language fields from PIG schemata that use LanguageText[]
+        // All multi-language fields from CASCaRA schemata that use LanguageText[]
         return [
             'title',
             'description',
@@ -350,18 +350,15 @@ export class PigItem {
         ].includes(localName);
     }
     /**
-     * Check if a property needs IText wrapper ({ value: "..." })
+     * Check if a property needs IText wrapper { value: "..." }
      * Currently only 'icon' according to IElement interface
      */
     static needsIText(propertyName: string): boolean {
         const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
 
-        // Fields that need IText wrapper: { value: string }
-        const textWrapperFields = new Set([
+        return [
             'icon'
-        ]);
-
-        return textWrapperFields.has(localName);
+        ].includes(localName);
     }
     /**
      * Check if a property must always be represented as an array
@@ -380,8 +377,8 @@ export class PigItem {
             'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
             'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]'
             'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
-            'composedProperty',     // Property.composedProperty?: TPigId[]
-            'priorRevision'         // AnElement.priorRevision?: TRevision[]
+            'composedProperty',       // Property.composedProperty?: TPigId[]
+            'priorRevision'           // AnElement.priorRevision?: TRevision[]
         ].includes(localName);
     }
     /**
@@ -2409,7 +2406,7 @@ function xmlToJson(xml: stringXML): IRsp<unknown> {
         };
 
     } catch (err: any) {
-        LOG.error('xmlToJson: exception:', err);
+        LOG.error('xmlToJson exception:', err);
         return Msg.create(690, 'XML', err?.message ?? String(err));
     }
 }
@@ -2434,6 +2431,8 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     const isValidPigElement = PigItem.isValidItemType(tagName);
     if (isValidPigElement) {
         result.itemType = tagName;
+    } else {
+        LOG.error(`xmlElementToJson: Encountered unknown CASCaRA element type '${tagName}'.`);
     }
 
     // 2. Extract all attributes (within tag) as properties
@@ -2484,7 +2483,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             const childElement = child as ElementXML;
             const childTagName = childElement.tagName;
 
-            // Special handling for configurable properties and links
+            // Special handling for configurable properties and links of instances (anEntity, aRelationship, aPackage)
             if (childTagName === PigItemType.aProperty) {
                 configurableProperties.push(configurablePropertyToJson(childElement));
                 continue;
@@ -2498,7 +2497,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 continue;
             }
 
-            // Group regular child elements by tag name
+            // Group child elements by tag name for processing further down:
             const elements = childElementsByTag.get(childTagName);
             if (elements) {
                 // push to respective group childElementsByTag, if it already exists
@@ -2508,7 +2507,9 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 childElementsByTag.set(childTagName, [childElement]);
             }
 
+            LOG.debug('#1a', childTagName, childElementsByTag);
         } else if (child.nodeType === NodeType.TEXT_NODE) {
+            // LOG.debug('#1b', JSON.stringify(child, null, 2));
             const text = child.textContent?.trim();
             if (text) {
                 textContent.push(text);
@@ -2549,11 +2550,11 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         // Check if this property is a multi-language text field
         const isMultiLang = PigItem.needsMultiLanguageText(propertyName);
 
-        // Check if this property needs IText wrapping (e.g. icon)
-        const needsTextWrapper = PigItem.needsIText(propertyName);
+        // Check if this property needs IText wrapper { value: "..." } (e.g. icon)
+        const needsIText = PigItem.needsIText(propertyName);
 
-        // Pass parent itemType for context-aware array detection
-        const needsArray = PigItem.needsArray(propertyName /*, result.itemType as PigItemTypeValue */);
+        // Check if this property is expected to be an array (even if only one element)
+        const needsArray = PigItem.needsArray(propertyName);
 
         // Check if this property contains IDs that need normalization
         const needsIdNormalization = PigItem.needsIdNormalization(propertyName);
@@ -2572,7 +2573,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 }];
             }
             // IText wrapper for icon and perhaps other fields:
-            else if (needsTextWrapper) {
+            else if (needsIText) {
                 result[propertyName] = { value: childText };
             }
             // Regular fields
@@ -2660,7 +2661,8 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
     };
 
     // Extract rdf:type and cas:hasClass as hasClass
-    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
+    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
+        || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
         prop.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
     }
@@ -2673,8 +2675,6 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
 
             if (childTagName === 'value') {
                 prop.value = getXmlElementText(childElement);
-            } else if (childTagName === 'idRef') {
-                prop.idRef = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if (childTagName.endsWith('type')  || childTagName.endsWith('hasClass')) {
                 prop.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if (childTagName === 'composes') {
@@ -2734,7 +2734,7 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                 }
 
                 link.idRef = PigItem.normalizeId(idRefValue, targetItemType);
-            } else if (childTagName.endsWith('hasClass')) {
+            } else if (childTagName.endsWith('type') || childTagName.endsWith('hasClass')) {
                 link.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
             }
         }

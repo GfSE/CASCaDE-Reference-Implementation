@@ -193,7 +193,7 @@ export class XmlImporter {
                             // Check for class requirements
                             if (PigItem.isClass(tag)) {
                                 // Must have either 'pig:specializes' or 'pig:hasClass' as attribute or child
-                                // XML is more tolerant than JSON-LD, as it allows both pig and RDF/OWL terms for specialization and classification
+                                // XML import is more tolerant than JSON-LD, as it allows both pig and RDF/OWL terms for specialization and classification
                                 // The MVF must however map both to the same internal keys
                                 // LOG.debug('import-xml 1', elem.getAttribute('pig:specializes'), elem.getAttribute('owl:subClassOf'), elem.getAttribute('pig:hasClass'), elem.getAttribute('rdf:type') );
                                 const specializesAttr = elem.getAttribute(`${DEF.pfxNsMeta}specializes`) || elem.getAttribute('owl:subClassOf');  // don't use '??'
@@ -235,7 +235,7 @@ export class XmlImporter {
                                 }
                             }
                             else
-                                throw new Error(`import-xml: After checking the itemType, the element must be either class od instance`);
+                                throw new Error(`import-xml: After checking the itemType, the element must be either class or instance`);
                         }
                     }
 

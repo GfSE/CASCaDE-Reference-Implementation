@@ -1174,22 +1174,22 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
         it('should accept numeric value from enumeratedValue list with XML input', () => {
             const pkgXML = `<?xml version="1.0" encoding="UTF-8"?>
-            <${DEF.pfxNsMeta}Package xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
+            <${DEF.pfxNsMeta}aPackage xmlns:pig="https://product-information-graph.org/v0.2/metamodel#"
                           xmlns:o="https://product-information-graph.org/v0.2/ontology#"
                           xmlns:d="https://product-information-graph.org/examples/fibonacci.zip#"
                           xmlns:dcterms="http://purl.org/dc/terms/"
-                          id="d:test-enum-numeric-xml"
-                          ${DEF.pfxNsMeta}itemType="${DEF.pfxNsMeta}aPackage">
+                          id="d:test-enum-numeric-xml">
+                <${DEF.pfxNsMeta}hasClass>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}hasClass>
+                <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}aPackage</${DEF.pfxNsMeta}itemType>
                 <${DEF.pfxNsDcmi}modified>2026-02-16T12:00:00Z</${DEF.pfxNsDcmi}modified>
                 <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Estimation Example</${DEF.pfxNsDcmi}title>
                 <graph>
-                    <owl:Class id="o:Fibonacci-Values" itemType="${DEF.pfxNsMeta}Enumeration">
-                        <cas:specializes>${DEF.pfxNsMeta}specializes="${DEF.pfxNsMeta}Enumeration</cas:specializes>
+                    <${DEF.pfxNsMeta}Enumeration id="o:Fibonacci-Values" ${DEF.pfxNsMeta}specializes="${DEF.pfxNsMeta}Enumeration">
                         <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Numbers</${DEF.pfxNsDcmi}title>
                         <skos:definition xml:lang="en">Enumerated Fibonacci sequence values for estimation</skos:definition>
                         <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
                         <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}Enumeration</${DEF.pfxNsMeta}itemType>
-                        <sh:datatype>xs:integer</sh:datatype>
+                        <datatype>xs:integer</datatype>
                         <cas:enumeratedValue id="o:Fibonacci-1">
                             <value>1</value>
                         </cas:enumeratedValue>
@@ -1210,24 +1210,25 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         </cas:enumeratedValue>
                     </${DEF.pfxNsMeta}Enumeration>
 
-                    <owl:ObjectProperty id="o:hasEstimate" cas:itemType="${DEF.pfxNsMeta}Link">
+                    <${DEF.pfxNsMeta}Link id="o:hasEstimate" ${DEF.pfxNsMeta}hasClass="owl:ObjectProperty">
                         <${DEF.pfxNsDcmi}title xml:lang="en">Estimate</${DEF.pfxNsDcmi}title>
                         <skos:definition xml:lang="en">Assigns a Fibonacci number to an entity.</skos:definition>
-                        <${DEF.pfxNsMeta}enumeratedEndpoint><idRef>o:Fibonacci-Values</idRef></${DEF.pfxNsMeta}enumeratedEndpoint>
-                    </owl:ObjectProperty>
+                        <!-- <${DEF.pfxNsMeta}enumeratedEndpoint rdf:resource="o:Fibonacci-Values" /> -->
+                        <${DEF.pfxNsMeta}enumeratedEndpoint>o:Fibonacci-Values</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    </${DEF.pfxNsMeta}Link>
         
-                    <o:Estimate id="d:Est-Task-4711" itemType="${DEF.pfxNsMeta}anEntity">
+                    <${DEF.pfxNsMeta}anEntity id="d:Est-Task-4711" rdf:type="o:Estimate">
                         <${DEF.pfxNsMeta}hasClass>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}hasClass>
                         <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}anEntity</${DEF.pfxNsMeta}itemType>
                         <${DEF.pfxNsDcmi}modified>2026-01-15T14:30:00Z</${DEF.pfxNsDcmi}modified>
                         <${DEF.pfxNsDcmi}title xml:lang="en">Implement User Authentication</${DEF.pfxNsDcmi}title>
                         <${DEF.pfxNsDcmi}description xml:lang="en"><![CDATA[<p>Task requires implementation of OAuth2 authentication</p>]]></${DEF.pfxNsDcmi}description>
-                        <o:hasEstimate itemType="${DEF.pfxNsMeta}aTargetLink" >
+                        <${DEF.pfxNsMeta}aTargetLink rdf:type="o:hasEstimate">
                             <idRef>o:Fibonacci-8</idRef>
-                        </o:hasEstimate>
-                    </o:Estimate>
+                        </${DEF.pfxNsMeta}aTargetLink>
+                    </${DEF.pfxNsMeta}anEntity>
                 </graph>
-            </${DEF.pfxNsMeta}Package>`;
+            </${DEF.pfxNsMeta}aPackage>`;
 
             // A. Test with XML input via setXML
             const rsp = new APackage().setXML(pkgXML, {
