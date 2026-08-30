@@ -8,7 +8,7 @@ const jsonImportPlugin: Plugin = {
 
         // global method
         // app.config.globalProperties.$definedMethods = () => {
-        //   console.log('Example Method');
+        //   LOG.info('Example Method');
         // };
 
         // Mount component globally
