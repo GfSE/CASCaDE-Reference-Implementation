@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' class='text-none export-button' @click='openDialog'>🡖 CASCaRA Neo4j</v-btn>
+    <v-btn color='secondary' class='text-none export-button' @click='openDialog'>🡖 Neo4j API</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Export Packages to Neo4j</v-card-title>

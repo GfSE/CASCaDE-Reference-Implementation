@@ -1,4 +1,4 @@
-import { LOG } from '../../../common/lib/helpers';
+import { LIB, LOG } from '../../../common/lib/helpers';
 
 export interface INeo4jExportOptions {
     uri: string;
@@ -25,8 +25,17 @@ export async function exportToNeo4j(
     const httpBaseUri = normalizeNeo4jUri(options.uri.trim());
     const endpoint = `${httpBaseUri.replace(/\/+$/, '')}/db/${encodeURIComponent(database)}/tx/commit`;
 
+    try {
+        const endpointUrl = new URL(endpoint);
+        if (endpointUrl.protocol === 'http:' && !['localhost', '127.0.0.1', '::1'].includes(endpointUrl.hostname)) {
+            LOG.warn('[Export Neo4j] Using HTTP Basic auth over an insecure connection. Prefer https:// for non-local Neo4j endpoints.');
+        }
+    } catch {
+        // Ignore invalid URLs and continue; request will fail later if endpoint is unusable.
+    }
+
     const statements = splitCypherStatements(cypherText);
-    const authHeader = `Basic ${base64Encode(`${options.username}:${options.password}`)}`;
+    const authHeader = `Basic ${LIB.encodeBase64(`${options.username}:${options.password}`)}`;
 
     const schemaStatements = statements.filter(isSchemaStatement);
     const dataStatements = statements.filter(statement => !isSchemaStatement(statement));
@@ -226,16 +235,4 @@ function normalizeNeo4jUri(uri: string): string {
     }
 
     return normalizedUri.replace(/\/+$/, '');
-}
-
-function base64Encode(value: string): string {
-    if (typeof btoa === 'function') {
-        return btoa(value);
-    }
-
-    if (typeof Buffer !== 'undefined') {
-        return Buffer.from(value, 'utf-8').toString('base64');
-    }
-
-    throw new Error('Base64 encoding is not available in this environment.');
 }
