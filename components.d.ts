@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    OutlineTreeItem: typeof import('./src/components/OutlineTreeItem.vue')['default']
     PageDashboards: typeof import('./src/components/PageDashboards.vue')['default']
     PageDocument: typeof import('./src/components/PageDocument.vue')['default']
     PageHome: typeof import('./src/components/PageHome.vue')['default']

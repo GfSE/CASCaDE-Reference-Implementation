@@ -8,15 +8,15 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix o: <https://alice.org/ontology#> .
 @prefix d: <https://alice.org/data#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dash: <http://datashapes.org/dash#> .
 
 d:Alice_works_for_ACME_ontology
 	a owl:Ontology ;
 	dcterms:contributor "mailto:oskar.dungern@gfse.org" ;
 	dcterms:license "https://creativecommons.org/licenses/by-sa/4.0/" ;
-	owl:versionInfo "2026-07-03" .
+	owl:versionInfo "2026-07-20" .
 
 d:Alice_works_for_ACME
 	a cas:Package ;

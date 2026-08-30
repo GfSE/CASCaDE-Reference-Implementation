@@ -243,8 +243,6 @@
             <dcterms:description xml:lang="en">... anchoring all outlines of this graph (package)</dcterms:description>
             <cas:aTargetLink cas:hasClass="cas:lists">
                 <idRef>d:ACME</idRef>
-            </cas:aTargetLink>
-            <cas:aTargetLink cas:hasClass="cas:lists">
                 <idRef>d:Alice</idRef>
             </cas:aTargetLink>
         </cas:anEntity>

@@ -1,19 +1,30 @@
 <template>
-    <v-btn color='secondary' class='text-none' @click='dialog = true'>CASCaRA JSON-LD 🡕</v-btn>
+    <v-btn color='secondary' class='text-none' @click='dialog = true'>any XML 🡕</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-            <v-card-title>Select JSON-LD Files</v-card-title>
+            <v-card-title>Select XML Files</v-card-title>
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.cas.jsonld'
-                              label='JSON-LD Input'
+                              accept='.xml'
+                              label='XML Input'
                               prepend-icon='mdi-folder-open'
                               multiple
                               :loading='isLoading'
                               :disabled='isLoading'
-                              hint='Select one or more JSON-LD files to import'
-                              persistent-hint></v-file-input>
+                              hint='Select one or more XML files to import'
+                              persistent-hint>
+                </v-file-input>
+                <v-file-input v-model="selectedSefFile"
+                              accept=".sef.json"
+                              label="SEF Input"
+                              prepend-icon="mdi-file-code"
+                              :loading="isLoading"
+                              :disabled="isLoading"
+                              hint="Select a SEF file for XSL-Transformation"
+                              persistent-hint
+                              :multiple="false">
+                </v-file-input>
 
                 <!-- Error Display -->
                 <v-alert v-if="errorMessages.length > 0"
@@ -40,7 +51,8 @@
                 <v-progress-linear v-if='isLoading'
                                    indeterminate
                                    color='primary'
-                                   class='mt-4'></v-progress-linear>
+                                   class='mt-4'>
+                </v-progress-linear>
             </v-card-text>
 
             <v-card-actions>
@@ -50,7 +62,7 @@
                 </v-btn>
                 <v-btn color='primary'
                        @click='onSubmit'
-                       :disabled='!selectedFiles.length || isLoading'
+                       :disabled='!selectedFiles.length || !selectedSefFile || isLoading'
                        :loading='isLoading'>
                     Import
                 </v-btn>
@@ -62,17 +74,18 @@
 <script lang="ts">
     import { DEF } from '@/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
-    import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
+    import { XmlImporter } from '@/common/import/xml/import-xml';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { PackageCache } from '@/stores/package-cache';
     import { LOG } from '@/common/lib/helpers';
-    import { IRsp } from '@/common/lib/messages';
+    import { Msg, IRsp } from '@/common/lib/messages';
 
     @Options({
         data() {
             return {
                 dialog: false,
                 selectedFiles: [] as File[],
+                selectedSefFile: null as File | null,
                 isLoading: false,
                 errorMessages: [] as string[],
                 successMessage: ''
@@ -83,13 +96,15 @@
              * Handle submit button click
              */
             async onSubmit() {
-                if (!this.selectedFiles.length) {
-                    this.errorMessages = ['Please select at least one file'];
+                this.errorMessages = [];
+                if (!this.selectedFiles.length)
+                    this.errorMessages.push('Please select at least one XML file');
+                if (!this.selectedSefFile)
+                    this.errorMessages.push('Please select a SEF file');
+                if (this.errorMessages.length > 0)
                     return;
-                }
 
                 this.isLoading = true;
-                this.errorMessages = [];
                 this.successMessage = '';
 
                 try {
@@ -107,13 +122,13 @@
                         return allItems[0] as APackage;
                     });
 
-                    if(allPackages.length > 0) {
+                    if (allPackages.length > 0) {
                         // Store in Pinia store with persistence
                         const cache = PackageCache();
                         cache.set(allPackages);
 
                         // Show success message
-                        this.successMessage = `Imported ${successful.length} of ${results.length} file(s)`;
+                        this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
 
                         this.logFailedImports(failed);
 
@@ -123,8 +138,7 @@
                             this.dialog = false;
                             this.onCancel();
                         }, DEF.timeBetweenPages);
-                    }
-                    else {
+                    } else {
                         this.logFailedImports(failed);
                     }
 
@@ -145,19 +159,13 @@
 
                 for (const file of this.selectedFiles) {
                     try {
-                        const rsp = await JsonldImporter.import(file);
+                        const options = { sef: this.selectedSefFile };
+                        const rsp = await XmlImporter.import(file, options);
                         results.push(rsp);
                     } catch (error: any) {
-                        // Convert exception to IRsp format
-                        results.push({
-                            ok: false,
-                            status: 500,
-                            statusText: `${file.name}: ${error?.message || String(error)}`,
-                            responseType: 'json'
-                        });
+                        results.push(Msg.create(600, `${file.name}: ${error?.message || String(error)}`));
                     }
                 }
-
                 return results;
             },
 
@@ -185,15 +193,17 @@
             onCancel() {
                 this.dialog = false;
                 this.selectedFiles = [];
+                this.selectedSefFile = null;
                 this.errorMessages = [];
                 this.successMessage = '';
             }
         }
     })
 
-    export default class JsonImportComponent extends Vue {
+    export default class AnyXmlImportComponent extends Vue {
         dialog!: boolean;
         selectedFiles!: File[];
+        selectedSefFile!: File | null;
         isLoading!: boolean;
         errorMessages!: string[];
         successMessage!: string;

@@ -149,7 +149,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
                 ? jsonldPackages[0] 
                 : jsonldPackages;
 
-            // Write to file using PLI
+            // Write to file (platform-independent)
             const result = await PLI.writeFile(exportData, this.filename);
 
             if (result.ok) {
@@ -176,17 +176,3 @@ import { LIB, LOG } from '../../../common/lib/helpers';
 
 export default class JsonExportComponent extends Vue {}
 </script>
-
-<style scoped>
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mt-4 {
-    margin-top: 16px;
-}
-
-.v-alert {
-    white-space: pre-line;
-}
-</style>

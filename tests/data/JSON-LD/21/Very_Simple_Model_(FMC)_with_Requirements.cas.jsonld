@@ -638,7 +638,7 @@
           "@language": "fr"
         }
       ],
-      "cas:enumeratedProperty": [
+      "cas:enumeratedTargetLink": [
         {
           "@id": "SpecIF:Priority"
         }
@@ -1410,25 +1410,46 @@
       "dcterms:modified": "2026-01-17T22:38:20.041Z",
       "cas:lists": [
         {
-          "@id": "d:HR-Folder-Introduction",
+          "@id": "d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements",
+      "@type": "cas:Outline",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Very Simple Model (FMC) with Requirements"
+        }
+      ],
+      "dcterms:modified": "2026-01-17T22:38:20.041Z",
+      "cas:lists": [
+        {
+          "@id": "d:Folder-Introduction",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
         },
         {
-          "@id": "d:HR-Folder-Requirements",
+          "@id": "d:Folder-Requirements",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
         },
         {
-          "@id": "d:HR-Folder-SystemModel",
+          "@id": "d:Folder-SystemModel",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
         },
         {
-          "@id": "d:HR-FolderGlossary-10875487071",
+          "@id": "d:FolderGlossary-10875487071",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -1448,39 +1469,10 @@
       ],
       "dcterms:description": [
         {
-          "@value": "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. The example and its representation in SpecIF format is discussed in <a href=\"https://specif.de/Tutorials/06_Very-Simple-Model-FMC.html\" target=\"_blank\">Tutorial 6: Very Simple Model (FMC)</a> and <a href=\"https://specif.de/Tutorials/09_Very-Simple-Model-FMC-with-Requirements.html\" target=\"_blank\">Tutorial 9: Very Simple Model (FMC) with Requirements</a>. </p>"
+          "@value": "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. </p>"
         }
       ],
       "dcterms:modified": "2025-02-07T08:32:00+01:00"
-    },
-    {
-      "@id": "d:HR-Folder-Introduction",
-      "@type": "cas:Outline",
-      "cas:itemType": {
-        "@id": "cas:anEntity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
-        }
-      ],
-      "dcterms:modified": "2026-01-17T22:38:19.821Z",
-      "cas:Category": [
-        {
-          "@value": "ReqIF:HierarchyRoot",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
-        }
-      ],
-      "cas:lists": [
-        {
-          "@id": "d:Folder-Introduction",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
     },
     {
       "@id": "d:Folder-Requirements",
@@ -1516,35 +1508,6 @@
       ]
     },
     {
-      "@id": "d:HR-Folder-Requirements",
-      "@type": "cas:Outline",
-      "cas:itemType": {
-        "@id": "cas:anEntity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
-        }
-      ],
-      "dcterms:modified": "2026-01-17T22:38:19.821Z",
-      "cas:Category": [
-        {
-          "@value": "ReqIF:HierarchyRoot",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
-        }
-      ],
-      "cas:lists": [
-        {
-          "@id": "d:Folder-Requirements",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
       "@id": "d:Folder-SystemModel",
       "@type": "cas:Outline",
       "cas:itemType": {
@@ -1559,35 +1522,6 @@
       "cas:lists": [
         {
           "@id": "d:Diagram-aec0df7900010000017001eaf53e8876",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:HR-Folder-SystemModel",
-      "@type": "cas:Outline",
-      "cas:itemType": {
-        "@id": "cas:anEntity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
-        }
-      ],
-      "dcterms:modified": "2026-01-17T22:38:19.821Z",
-      "cas:Category": [
-        {
-          "@value": "ReqIF:HierarchyRoot",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
-        }
-      ],
-      "cas:lists": [
-        {
-          "@id": "d:Folder-SystemModel",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -1628,35 +1562,6 @@
           }
         }
       ]
-    },
-    {
-      "@id": "d:HR-FolderGlossary-10875487071",
-      "@type": "cas:Outline",
-      "cas:itemType": {
-        "@id": "cas:anEntity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "Project 'Very Simple Model (FMC) with Requirements'"
-        }
-      ],
-      "dcterms:modified": "2026-01-17T22:38:19.821Z",
-      "cas:Category": [
-        {
-          "@value": "ReqIF:HierarchyRoot",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
-        }
-      ],
-      "cas:lists": [
-        {
-          "@id": "d:FolderGlossary-10875487071",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
     }
   ],
   "cas:itemType": {
@@ -1664,7 +1569,7 @@
   },
   "dcterms:title": [
     {
-      "@value": "Project 'Very Simple Model (FMC) with Requirements'"
+      "@value": "Very Simple Model (FMC) with Requirements"
     }
   ],
   "dcterms:modified": "2026-01-17T22:38:19.595Z",

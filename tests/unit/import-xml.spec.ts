@@ -36,7 +36,7 @@ function findXmlFiles(dir: string, fileList: string[] = []): string[] {
     return fileList;
 }
 
-describe('import XML (file system)', () => {
+describe('Import XML (file system)', () => {
     // Automatically discover all *.xml files in tests/data/XML and subdirectories
     const testFilesDir = path.resolve(__dirname, '../data/XML');
     const xmlFiles: string[] = findXmlFiles(testFilesDir);
@@ -59,7 +59,7 @@ describe('import XML (file system)', () => {
         const relativePath = path.relative(testFilesDir, testFile);
         const testName = relativePath;
 
-        it(`imports ${testName} and instantiates PIG classes`, async () => {
+        it(`Import ${testName} and instantiates CASCaRA Metamodel classes`, async () => {
             // import and test
             const rsp = await XmlImporter.import(testFile);
             if (!rsp.ok)
@@ -96,8 +96,8 @@ describe('import XML (file system)', () => {
     });
 });
 
-describe('import XML - ID normalization', () => {
-    it('should normalize all IDs without namespace prefix', () => {
+describe('Import XML - ID normalization', () => {
+    it('Should normalize all IDs without namespace prefix', () => {
         // XML with IDs without namespace prefixes
         const xmlInput = `<?xml version="1.0" encoding="UTF-8"?>
             <${DEF.pfxNsMeta}aPackage xmlns:cas="${DEF.pigPath}${DEF.pigVersion}/metamodel#"
