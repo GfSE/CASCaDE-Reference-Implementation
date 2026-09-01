@@ -98,6 +98,7 @@ export function getXML(item: TPigItem, options?: IOptionsXML): string {
     return result;
 }
 
+const attrNameType = "rdf:type";  // or cas:hasClass
 /**
  * Static class containing CASCaRA XML export methods for all PIG types
  */
@@ -111,11 +112,11 @@ class GetXML {
      *
      * @example
      * <?xml version="1.0" encoding="UTF-8"?>
-     * <cas:Package
+     * <cas:aPackage
      *     xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
      *     xmlns:dcterms="http://purl.org/dc/terms/"
      *     id="d:ACP-Very-Simple-Model-FMC-with-Requirements"
-     *     cas:itemType="cas:aPackage">
+     *     rdf:type="cas:Package">
      *
      *     <dcterms:title>Very Simple Model (FMC) with Requirements</dcterms:title>
      *     <dcterms:modified>2026-01-17T22:38:19.595Z</dcterms:modified>
@@ -126,7 +127,7 @@ class GetXML {
      *     <graph>
      *         ...
      *     </graph>
-     * </cas:Package>
+     * </cas:aPackage>
      */
     static aPackage(pkg: APackage, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
@@ -134,14 +135,14 @@ class GetXML {
 
         let xml = '';
         xml += `<?xml version="1.0" encoding="UTF-8"?>\n`;
-        xml += `<cas:Package\n`;
+        xml += `<cas:aPackage\n`;
 
         // Namespace declarations (xmlns:...)
         xml += this.xNamespaces(pkg, i1);
 
         // Item ID and itemType as attributes
         xml += `${i1}id="${pkg.id}"\n`;
-        xml += `${i1}cas:itemType="cas:aPackage">\n\n`;
+        xml += `${i1}${attrNameType}="cas:Package">\n\n`;
 
         // title (multi-language)
         if (LIB.isArrayWithContent(pkg.title)) {
@@ -177,7 +178,7 @@ class GetXML {
         // Graph items (metamodel classes and instances)
         xml += this.xGraph(pkg, options?.filterItemType, i1, options);
 
-        xml += `</cas:Package>\n`;
+        xml += `</cas:aPackage>\n`;
         return xml;
     }
 
@@ -188,22 +189,22 @@ class GetXML {
      * @returns XML representation
      *
      * @example
-     * <cas:Outline id="d:Folder-SystemModel" cas:itemType="cas:anEntity">
+     * <cas:anEntity id="d:Folder-SystemModel" rdf:type="cas:Outline">
      *     <dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
      *     <dcterms:title>System Model</dcterms:title>
-     *     <cas:lists cas:itemType="cas:aTargetLink">
+     *     <cas:aTargetLink rdf:type="cas:lists">
      *         <idRef>d:Diagram-aec0df7900010000017001eaf53e8876</idRef>
-     *     </cas:lists>
-     * </cas:Outline>
+     *     </cas:aTargetLink>
+     * </cas:anEntity>
      */
     static anEntity(itm: AnEntity, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
         const i1 = indent.repeat(1);
         const i2 = indent.repeat(2);
 
-        const tag = itm.hasClass;
-        let xml = '';
-        xml += `${i1}<${tag} id="${itm.id}" cas:itemType="cas:anEntity">\n`;
+        const tag = "cas:anEntity";
+        const cl = itm.hasClass;
+        let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="${cl}">\n`;
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
@@ -261,9 +262,9 @@ class GetXML {
         const i1 = indent.repeat(1);
         const i2 = indent.repeat(2);
 
-        const tag = itm.hasClass;
-        let xml = '';
-        xml += `${i1}<${tag} id="${itm.id}" cas:itemType="cas:aRelationship">\n`;
+        const tag = "cas:aRelationship";
+        const cl = itm.hasClass;
+        let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="${cl}">\n`;
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
@@ -329,8 +330,8 @@ class GetXML {
         const i2 = indent.repeat(2);
         const i3 = indent.repeat(3);
 
-        let xml = '';
-        xml += `${i1}<owl:Class id="${enm.id}" cas:itemType="cas:Enumeration">\n`;
+        const tag = "cas:Enumeration";
+        let xml = `${i1}<${tag} id="${enm.id}" ${attrNameType}="owl:Class">\n`;
 
         // title (multi-language)
         if (LIB.isArrayWithContent(enm.title)) {
@@ -365,6 +366,7 @@ class GetXML {
 
         // datatype -> xs:simpleType/xs:restriction
         if (enm.datatype) {
+            // in fact, datatype is required by the schema, so should be defined in all cases
             xml += `${i2}<xs:simpleType>\n`;
             xml += `${i3}<xs:restriction base="${enm.datatype}"/>\n`;
             xml += `${i2}</xs:simpleType>\n`;
@@ -386,7 +388,7 @@ class GetXML {
             }
         }
 
-        xml += `${i1}</owl:Class>\n`;
+        xml += `${i1}</${tag}>\n`;
         return xml;
     }
 
@@ -416,8 +418,8 @@ class GetXML {
         const i2 = indent.repeat(2);
         const i3 = indent.repeat(3);
 
-        let xml = '';
-        xml += `${i1}<owl:DatatypeProperty id="${itm.id}" cas:itemType="cas:Property">\n`;
+        const tag = "cas:Property";
+        let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="owl:DatatypeProperty">\n`;
 
         // specializes
         if (itm.specializes) {
@@ -456,6 +458,7 @@ class GetXML {
             || itm.minCount !== undefined || itm.maxCount !== undefined;
 
         if (itm.datatype) {
+            // in fact, datatype is required by the schema, so should be defined in all cases
             xml += `${i2}<xs:simpleType>\n`;
             if (hasRestrictionDetails) {
                 xml += `${i3}<xs:restriction base="${itm.datatype}">\n`;
@@ -501,7 +504,7 @@ class GetXML {
             }
         }
 
-        xml += `${i1}</owl:DatatypeProperty>\n`;
+        xml += `${i1}</${tag}>\n`;
         return xml;
     }
 
@@ -524,8 +527,8 @@ class GetXML {
         const i1 = indent.repeat(1);
         const i2 = indent.repeat(2);
 
-        let xml = '';
-        xml += `${i1}<owl:ObjectProperty id="${itm.id}" cas:itemType="cas:Link">\n`;
+        const tag = "cas:Link";
+        let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="owl:ObjectProperty">\n`;
 
         // specializes
         if (itm.specializes) {
@@ -594,7 +597,7 @@ class GetXML {
             xml += `${i2}<cas:maxCount>${itm.maxCount}</cas:maxCount>\n`;
         }
 
-        xml += `${i1}</owl:ObjectProperty>\n`;
+        xml += `${i1}</${tag}>\n`;
         return xml;
     }
 
@@ -617,8 +620,8 @@ class GetXML {
         const i1 = indent.repeat(1);
         const i2 = indent.repeat(2);
 
-        let xml = '';
-        xml += `${i1}<owl:Class id="${itm.id}" cas:itemType="cas:Entity">\n`;
+        const tag = "cas:Entity";
+        let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="owl:Class">\n`;
 
         // specializes
         if (itm.specializes) {
@@ -682,7 +685,7 @@ class GetXML {
             xml += `${i2}</cas:enumeratedTargetLink>\n`;
         }
 
-        xml += `${i1}</owl:Class>\n`;
+        xml += `${i1}</${tag}>\n`;
         return xml;
     }
 
@@ -706,8 +709,8 @@ class GetXML {
         const i1 = indent.repeat(1);
         const i2 = indent.repeat(2);
 
-        let xml = '';
-        xml += `${i1}<owl:Class id="${itm.id}" cas:itemType="cas:Relationship">\n`;
+        const tag = "cas:Relationship";
+        let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="owl:Class">\n`;
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
@@ -784,7 +787,7 @@ class GetXML {
             xml += `${i2}</cas:enumeratedTargetLink>\n`;
         }
 
-        xml += `${i1}</owl:Class>\n`;
+        xml += `${i1}</${tag}>\n`;
         return xml;
     }
 
@@ -842,10 +845,10 @@ class GetXML {
 
     /**
      * Build XML elements for configurable properties (hasProperty), e.g.
-     * <dcterms:contributor cas:itemType="cas:aProperty">
+     * <cas:aProperty rdf:type="dcterms:contributor">
      *     <value>mailto:oskar.dungern@gfse.org</value>
-     * </dcterms:contributor>
-     * Properties sharing the same tag (property name) are grouped into a single element
+     * </cas:aProperty>
+     * Properties sharing the same class are grouped into a single element
      * with multiple <value> children, rather than emitting one element per property.
      * @param props - Array of AProperty instances
      * @param indent - Indentation string for the outer element
@@ -854,21 +857,20 @@ class GetXML {
     private static xProperties(props: AProperty[], indent: string): string {
         let xml = '';
         const inner = indent + '\t';
+        const tag = "cas:aProperty";
 
-        // group properties by tag, preserving first-seen order
+        // group properties by class, preserving first-seen order
         const groups = new Map<string, AProperty[]>();
         for (const p of props) {
-            const tag = p.hasClass;
-            const group = groups.get(tag);
-            if (group) {
+            const cl = p.hasClass;
+            const group = groups.get(cl);
+            if (group)
                 group.push(p);
-            } else {
-                groups.set(tag, [p]);
-            }
+            else
+                groups.set(cl, [p]);
         }
-
-        for (const [tag, group] of groups) {
-            xml += `${indent}<${tag} cas:itemType="cas:aProperty">\n`;
+        for (const [cl, group] of groups) {
+            xml += `${indent}<${tag} ${attrNameType}="${cl}">\n`;
             for (const p of group) {
                 if (p.value !== undefined) {
                     // Property values may contain embedded HTML/XHTML markup (e.g. cas:Diagram, rich text
@@ -879,17 +881,16 @@ class GetXML {
             }
             xml += `${indent}</${tag}>\n`;
         }
-
         return xml;
     }
 
     /**
      * Build XML elements for configurable links (hasSourceLink, hasTargetLink), e.g.
-     * <cas:lists cas:itemType="cas:aTargetLink">
+     * <cas:aTargetLink rdf:type="cas:lists">
      *     <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
      *     <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-     * </cas:lists>
-     * Links sharing the same tag (property name) are grouped into a single element
+     * </cas:aTargetLink>
+     * Links sharing the same class are grouped into a single element
      * with multiple <idRef> children, rather than emitting one element per link.
      * @param links - Array of ASourceLink or ATargetLink instances
      * @param indent - Indentation string for the outer element
@@ -898,28 +899,25 @@ class GetXML {
     private static xLinks(links: (ASourceLink | ATargetLink)[], indent: string): string {
         let xml = '';
         const inner = indent + '\t';
+        const tag = links[0].itemType === PigItemType.aSourceLink ? 'cas:aSourceLink' : 'cas:aTargetLink';
 
-        // group links by tag, preserving first-seen order
+        // group links by class, preserving first-seen order
         const groups = new Map<string, (ASourceLink | ATargetLink)[]>();
         for (const l of links) {
-            const tag = l.hasClass;
-            const group = groups.get(tag);
-            if (group) {
+            const cl = l.hasClass;
+            const group = groups.get(cl);
+            if (group)
                 group.push(l);
-            } else {
-                groups.set(tag, [l]);
-            }
+            else
+                groups.set(cl, [l]);
         }
-
-        for (const [tag, group] of groups) {
-            const itemTypeAttr = group[0].itemType === PigItemType.aSourceLink ? 'cas:aSourceLink' : 'cas:aTargetLink';
-            xml += `${indent}<${tag} cas:itemType="${itemTypeAttr}">\n`;
+        for (const [cl, group] of groups) {
+            xml += `${indent}<${tag} ${attrNameType}="${cl}">\n`;
             for (const l of group) {
                 xml += `${inner}<idRef>${this.escapeXmlText(l.idRef)}</idRef>\n`;
             }
             xml += `${indent}</${tag}>\n`;
         }
-
         return xml;
     }
 

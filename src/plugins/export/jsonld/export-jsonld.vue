@@ -141,7 +141,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
             // Use toRaw to unwrap Pinia's reactive proxies
             const jsonldPackages = pkgs.map((pkg: any) => {
                 const rawPkg = toRaw(pkg);
-                return getJSONLD(rawPkg, { stringify: false });
+                return getJSONLD(rawPkg/*, { stringify: false }*/);
             });
 
             // If single package, export directly; if multiple, wrap in array

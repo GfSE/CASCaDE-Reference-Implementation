@@ -23,8 +23,8 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { IRsp, Rsp, Msg, rspOK } from '../../lib/messages';
-import { LOG } from '../../lib/helpers';
+import { IRsp, Msg,/* Rsp,*/ rspOK } from '../../lib/messages';
+// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { APackage, TPigItem, PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
 

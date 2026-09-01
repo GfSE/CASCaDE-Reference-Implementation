@@ -146,7 +146,7 @@ class GetTTL {
         ttl += this.xContext(pkg, rdf, options);
 
         // Add ontology definition
-        ttl += this.makeOntologyDefinition(pkg, rdf, options);
+        ttl += this.makeOntologyDefinition(pkg, rdf);
 
         // Add package metadata
         ttl += this.xMetadataForInstances(pkg, rdf, options);
@@ -512,8 +512,8 @@ class GetTTL {
 
     private static makeOntologyDefinition(
         pkg: APackage,
-        rdf: CToTtl,
-        options?: IOptionsTTL
+        rdf: CToTtl
+        // options?: IOptionsTTL
     ): string {
         let ttl = '';
 
