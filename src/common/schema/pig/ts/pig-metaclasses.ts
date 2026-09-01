@@ -2406,12 +2406,10 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
 
     // 1. Extract itemType from element tag name (only for valid PIG types)
     const tagName = xmlElement.tagName as PigItemTypeValue;
-    // Check if this is a valid PIG element
-    const isValidPigElement = PigItem.isValidItemType(tagName);
-    if (isValidPigElement) {
+    if (PigItem.isValidItemType(tagName)) {
         result.itemType = tagName;
-    } else {
-        LOG.error(`xmlElementToJson: Encountered unknown CASCaRA element type '${tagName}'.`);
+    } else if (!tagName.endsWith('enumeratedValue')) {
+            LOG.error(`xmlElementToJson: Encountered unknown CASCaRA element type '${tagName}'.`);
     }
 
     // 2. Extract all attributes (within tag) as properties
@@ -2433,15 +2431,9 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 result.id = PigItem.normalizeId(attrValue, tagName);
             }
         } else if (attrName.endsWith('type') || attrName.endsWith('hasClass')) {
-            // normalize if we have a valid PIG type
-            result.hasClass = isValidPigElement
-                ? PigItem.normalizeId(attrValue)  // references always point to a class
-                : attrValue;
+            result.hasClass = PigItem.normalizeId(attrValue);  // references always point to a class
         } else if (attrName.endsWith('specializes')) {
-            // normalize if we have a valid PIG type
-            result.specializes = isValidPigElement
-                ? PigItem.normalizeId(attrValue)  // references always point to a class
-                : attrValue;
+            result.specializes = PigItem.normalizeId(attrValue);  // references always point to a class
         } else {
             result[attrName] = attrValue;
         }
@@ -2486,7 +2478,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 childElementsByTag.set(childTagName, [childElement]);
             }
 
-            LOG.debug('#1a', childTagName, childElementsByTag);
+            // LOG.debug('#1a', childTagName, childElementsByTag);
         } else if (child.nodeType === NodeType.TEXT_NODE) {
             // LOG.debug('#1b', JSON.stringify(child, null, 2));
             const text = child.textContent?.trim();
@@ -2537,6 +2529,34 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
 
         // Check if this property contains IDs that need normalization
         const needsIdNormalization = PigItem.needsIdNormalization(propertyName);
+
+        // Special handling for wrapper elements holding zero, one or more <idRef> children,
+        // e.g. enumeratedEndpoint, enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink, composedProperty.
+        // Each such wrapper element yields an array of normalized ids; a wrapper without any
+        // <idRef> children but with plain text is treated as a single-value array (convenience form);
+        // an empty wrapper element yields an empty array (meaning "none allowed"), whereas a completely
+        // missing wrapper element leaves the property undefined (meaning "all are eligible").
+        if (needsArray && needsIdNormalization) {
+            const values: TPigId[] = [];
+            for (const elem of elements) {
+                const idRefChildren = Array.from(elem.childNodes).filter(
+                    node => node.nodeType === NodeType.ELEMENT_NODE && (node as ElementXML).tagName === 'idRef'
+                ) as ElementXML[];
+
+                if (idRefChildren.length > 0) {
+                    for (const idRefElem of idRefChildren) {
+                        const idText = idRefElem.textContent?.trim();
+                        if (idText) values.push(PigItem.normalizeId(idText));
+                    }
+                } else {
+                    // convenience form: wrapper element with a single, directly embedded value
+                    const text = getXmlElementText(elem).trim();
+                    if (text) values.push(PigItem.normalizeId(text));
+                }
+            }
+            result[propertyName] = values;
+            continue;
+        }
 
         if (elements.length === 1 && !needsArray) {
             // Single element (and not forced to be array)
@@ -2679,7 +2699,7 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
  * - itemType → cas:aSourceLink or cas:aTargetLink
  */
 function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): JsonObject[] {
-    const linkTemplate: JsonObject = {
+    const link: JsonObject = {
         itemType: itemType
     };
 
@@ -2687,7 +2707,7 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
     const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
         || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
-        linkTemplate.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
+        link.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
     }
 
     // Array to collect multiple idRef values
@@ -2707,9 +2727,9 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                 // Otherwise, idRef points to an instance and uses data namespace (d:)
                 let targetItemType: PigItemTypeValue = PigItemType.anEntity; // default: data namespace
 
-                if (linkTemplate.hasClass) {
+                if (link.hasClass) {
                     // Try to find the link class definition in the graph
-                    const linkClassId = linkTemplate.hasClass as string;
+                    const linkClassId = link.hasClass as string;
                     const linkClassElem = findLinkClassInGraph(elem, linkClassId);
                     if (linkClassElem && enumeratedEndpointPointsToEnumeration(linkClassElem)) {
                         // Link's enumeratedEndpoint points to an Enumeration, so idRef should use ontology namespace
@@ -2717,7 +2737,7 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                     }
                 }
 
-                link.idRef = PigItem.normalizeId(idRefValue, targetItemType);
+                idRefs.push(PigItem.normalizeId(idRefValue, targetItemType));
             } else if (childTagName.endsWith('hasClass')) {
                 link.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
             }
@@ -2726,7 +2746,7 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
 
     // Create one link object per idRef
     const links: JsonObject[] = idRefs.map(idRef => ({
-        ...linkTemplate,
+        ...link,
         idRef: idRef
     }));
 
