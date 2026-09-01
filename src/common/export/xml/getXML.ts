@@ -246,16 +246,16 @@ class GetXML {
      * @returns XML representation
      *
      * @example
-     * <SpecIF:writes id="d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc" cas:itemType="cas:aRelationship">
+     * <cas:aRelationship id="d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc" rdf:type="SpecIF:writes">
      *     <dcterms:modified>2020-03-06T09:05:00+01:00</dcterms:modified>
      *     <dcterms:description>'FiCo-Application' writes 'FiCo-Data'</dcterms:description>
-     *     <SpecIF:writes-toSource cas:itemType="cas:aSourceLink">
+     *     <cas:aSourceLink rdf:type="SpecIF:writes-toSource">
      *         <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
-     *     </SpecIF:writes-toSource>
-     *     <SpecIF:writes-toTarget cas:itemType="cas:aTargetLink">
+     *     </cas:aSourceLink>
+     *     <cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
      *         <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-     *     </SpecIF:writes-toTarget>
-     * </SpecIF:writes>
+     *     </cas:aTargetLink>
+     * </cas:aRelationship>
      */
     static aRelationship(itm: ARelationship, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
@@ -311,7 +311,7 @@ class GetXML {
      * @returns XML representation
      *
      * @example
-     * <owl:Class id="SpecIF:Priority-Value" cas:itemType="cas:Enumeration">
+     * <cas:Enumeration id="SpecIF:Priority-Value" rdf:type="owl:Class">
      *     <dcterms:title xml:lang="en">Priority</dcterms:title>
      *     <skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
      *     <dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
@@ -322,7 +322,7 @@ class GetXML {
      *     <cas:enumeratedValue id="SpecIF:priorityHigh">
      *         <dcterms:title xml:lang="en">high</dcterms:title>
      *     </cas:enumeratedValue>
-     * </owl:Class>
+     * </cas:Enumeration>
      */
     static enumeration(enm: Enumeration, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
@@ -399,7 +399,7 @@ class GetXML {
      * @returns XML representation
      *
      * @example
-     * <owl:DatatypeProperty id="cas:Category" cas:itemType="cas:Property">
+     * <cas:Property id="cas:Category" rdf:type="owl:DatatypeProperty">
      *     <cas:specializes>cas:Property</cas:specializes>
      *     <dcterms:title>has category</dcterms:title>
      *     <skos:definition>Specifies a category for an element (entity, relationship or organizer).</skos:definition>
@@ -410,7 +410,7 @@ class GetXML {
      *             <xs:maxOccurs>1</xs:maxOccurs>
      *         </xs:restriction>
      *     </xs:simpleType>
-     * </owl:DatatypeProperty>
+     * </cas:Property>
      */
     static property(itm: Property, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
@@ -515,12 +515,14 @@ class GetXML {
      * @returns XML representation
      *
      * @example
-     * <owl:ObjectProperty id="SpecIF:writes-toSource" cas:itemType="cas:Link">
+     * <cas:Link id="SpecIF:writes-toSource" rdf:type="owl:ObjectProperty">
      *     <cas:specializes>cas:linksSource</cas:specializes>
      *     <dcterms:title>SpecIF:writes to source</dcterms:title>
      *     <skos:definition>Connects the source of SpecIF:writes</skos:definition>
-     *     <cas:enumeratedEndpoint>FMC:Actor</cas:enumeratedEndpoint>
-     * </owl:ObjectProperty>
+     *     <cas:enumeratedEndpoint>
+     *         <idRef>FMC:Actor</idRef>
+     *     </cas:enumeratedEndpoint>
+     * </cas:Link>
      */
     static link(itm: Link, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
@@ -608,12 +610,14 @@ class GetXML {
      * @returns XML representation
      *
      * @example
-     * <owl:Class id="cas:Root" cas:itemType="cas:Entity">
+     * <cas:Entity id="cas:Root" rdf:type="owl:Class">
      *     <cas:specializes>cas:Organizer</cas:specializes>
      *     <dcterms:title>Hierarchy Root</dcterms:title>
      *     <skos:definition>A subclass of CASCaRA organizer serving as a root for hierarchically organized graph elements.</skos:definition>
-     *     <cas:enumeratedTargetLink>cas:lists</cas:enumeratedTargetLink>
-     * </owl:Class>
+     *     <cas:enumeratedTargetLink>
+     *         <idRef>cas:lists</idRef>
+     *     </cas:enumeratedTargetLink>
+     * </cas:Entity>
      */
     static entity(itm: Entity, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
@@ -696,13 +700,17 @@ class GetXML {
      * @returns XML representation
      *
      * @example
-     * <owl:Class id="SpecIF:writes" cas:itemType="cas:Relationship">
+     * <cas:Relationship id="SpecIF:writes" rdf:type="owl:Class">
      *     <dcterms:title xml:lang="en">writes</dcterms:title>
      *     <dcterms:description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</dcterms:description>
      *     <cas:specializes>cas:Relationship</cas:specializes>
-     *     <cas:enumeratedSourceLink>SpecIF:writes-toSource</cas:enumeratedSourceLink>
-     *     <cas:enumeratedTargetLink>SpecIF:writes-toTarget</cas:enumeratedTargetLink>
-     * </owl:Class>
+     *     <cas:enumeratedSourceLink>
+     *         <idRef>SpecIF:writes-toSource</idRef>
+     *     </cas:enumeratedSourceLink>
+     *     <cas:enumeratedTargetLink>
+     *         <idRef>SpecIF:writes-toTarget</idRef>
+     *     </cas:enumeratedTargetLink>
+     * </cas:Relationship>
      */
     static relationship(itm: Relationship, options?: IOptionsXML): string {
         const indent = options?.indent ?? '\t';
