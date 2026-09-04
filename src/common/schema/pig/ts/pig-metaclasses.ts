@@ -2427,17 +2427,20 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 // enumeratedValue IDs are part of ontology definitions, not data instances
                 result.id = PigItem.normalizeId(attrValue, PigItemType.Enumeration);
             } else {
-                // normalize always, including enumerated values
                 result.id = PigItem.normalizeId(attrValue, tagName);
             }
-        } else if (attrName.endsWith('type') || attrName.endsWith('hasClass')) {
+        } else if (attrName === 'rdf:type' || attrName.endsWith('hasClass')) {
+            // an attribute ending with 'itemType' would not get here, because endsWith() is case-sensitive
             result.hasClass = PigItem.normalizeId(attrValue);  // references always point to a class
         } else if (attrName.endsWith('specializes')) {
             result.specializes = PigItem.normalizeId(attrValue);  // references always point to a class
         } else {
-            result[attrName] = attrValue;
+            // there should't be any other attribute:
+            LOG.warn(`[XML-Import] Ignoring an unsupported attribute ${attrName} within a XML-tag ${tagName}`);
+    //        result[attrName] = attrValue;
         }
     }
+
     // LOG.debug('xmlElementToJson: ', xmlElement.attributes, '\n', JSON.stringify(result,null,2)) ;
 
     // 3. Process child elements
