@@ -748,6 +748,7 @@ class GetTTL {
      * @returns Turtle representation of properties
      */
     private static xProperties(properties: AProperty[], rdf: CToTtl): string {
+        const forceQuotes = true; // it's a DatatypeProperty
         let ttl = '';
 
         // Group properties by their hasClass (property type)
@@ -769,11 +770,11 @@ class GetTTL {
 
             // Add first property value
             const firstProp = propInstances[0];
-            ttl += rdf.tab1(predicate, this.formatPropertyValue(firstProp));
+            ttl += rdf.tab1(predicate, this.formatPropertyValue(firstProp), forceQuotes);
 
             // Add additional values for the same property (if any)
             for (let i = 1; i < propInstances.length; i++) {
-                ttl += rdf.tab2(this.formatPropertyValue(propInstances[i]));
+                ttl += rdf.tab2(this.formatPropertyValue(propInstances[i]), forceQuotes);
             }
         }
 
@@ -786,7 +787,7 @@ class GetTTL {
      * @returns Formatted value string
      */
     private static formatPropertyValue(prop: AProperty): string {
-        // If it has a value, return the literal value (will be quoted by CToTtl)
+        // If it has a value, return the literal value (will always be quoted, see isLiteralPropertyValue)
         if (prop.value !== undefined) {
             return prop.value;
         }
@@ -1593,14 +1594,14 @@ export class CToTtl {
      * @param object - Object value (scalar or ILanguageText array)
      * @returns Formatted predicate-object line(s)
      */
-    tab1(predicate: string, object: undefined | number | boolean | string | ILanguageText[]): string {
+    tab1(predicate: string, object: undefined | number | boolean | string | ILanguageText[], forceQuotes = false): string {
         if (this.lastTab < 0) {
             throw new Error("CToTtl: Subject is missing");
         }
         if (object !== undefined) { // object may be 0 or false
             const ending = this.lastTab < 1 ? "" : " ;";
             this.lastTab = 1;
-            return this.makeLines(ending + `\n${this.indent}${predicate} `, object);
+            return this.makeLines(ending + `\n${this.indent}${predicate} `, object, forceQuotes);
         }
         return "";
     }
@@ -1608,16 +1609,17 @@ export class CToTtl {
     /**
      * Add an additional object to the current predicate (object list)
      * @param object - Object value (scalar or ILanguageText array)
+     * @param forceQuotes - When true, always quote string/scalar values (e.g. for datatype property literals) regardless of their apparent shape
      * @returns Formatted object line(s)
      */
-    tab2(object: undefined | number | boolean | string | ILanguageText[]): string {
+    tab2(object: undefined | number | boolean | string | ILanguageText[], forceQuotes = false): string {
         if (this.lastTab < 1) {
             throw new Error("CToTtl: Predicate is missing");
         }
         if (object !== undefined) { // object may be 0 or false
             const ending = " ,";
             this.lastTab = 2;
-            return this.makeLines(ending + `\n${this.indent}${this.indent}`, object);
+            return this.makeLines(ending + `\n${this.indent}${this.indent}`, object, forceQuotes);
         }
         return "";
     }
@@ -1628,7 +1630,7 @@ export class CToTtl {
      * @param object - Object value(s) to format
      * @returns Formatted object string(s)
      */
-    private makeLines(pred: string, object: undefined | number | boolean | string | ILanguageText[]): string {
+    private makeLines(pred: string, object: undefined | number | boolean | string | ILanguageText[], forceQuotes = false): string {
         switch (typeof object) {
             case 'undefined':
                 return "";
@@ -1638,10 +1640,10 @@ export class CToTtl {
                 return pred + object.toString();
 
             case 'string':
-                return this.formatStringObject(pred, object);
+                return this.formatStringObject(pred, object, forceQuotes);
 
             default:
-                return this.formatArrayObject(pred, object);
+                return this.formatArrayObject(pred, object, forceQuotes);
         }
     }
 
@@ -1649,12 +1651,13 @@ export class CToTtl {
      * Format a string object with proper quoting
      * @param pred - Prefix string
      * @param str - String value
+     * @param forceQuotes - When true, always quote the value (e.g. for datatype property literals)
      * @returns Formatted string
      */
-    private formatStringObject(pred: string, str: string): string {
+    private formatStringObject(pred: string, str: string, forceQuotes = false): string {
         if (str.length === 0) return "";
 
-        if (this.shouldSkipQuotes(pred, str)) {
+        if (!forceQuotes && this.skipQuotes(pred, str)) {
             return pred + str;
         }
         return pred + `"${this.escapeTtl(str)}"`;
@@ -1664,9 +1667,10 @@ export class CToTtl {
      * Format an array of objects (ILanguageText[] or scalar array)
      * @param pred - Prefix string
      * @param object - Array of values
+     * @param forceQuotes - When true, always quote scalar values (e.g. for datatype property literals)
      * @returns Formatted string with all values
      */
-    private formatArrayObject(pred: string, object: ILanguageText[]): string {
+    private formatArrayObject(pred: string, object: ILanguageText[], forceQuotes = false): string {
         if (!LIB.isArrayWithContent(object)) {
             LOG.error("CToTtl: Expecting an array with items but got:", object);
             return "";
@@ -1675,7 +1679,7 @@ export class CToTtl {
         if (PigItem.isMultiLanguageText(object)) {
             return this.formatMultiLanguageText(pred, object);
         }
-        return this.formatScalarArray(pred, object);
+        return this.formatScalarArray(pred, object, forceQuotes);
     }
 
     /**
@@ -1690,9 +1694,6 @@ export class CToTtl {
             const t = texts[0].value;
             const l = texts[0].lang;
 
-            if (this.shouldSkipQuotes(pred, t)) {
-                return pred + t;
-            }
             const languageTag = l ? `@${l}` : '';
             return pred + `"${this.escapeTtl(t)}"` + languageTag;
         }
@@ -1701,7 +1702,7 @@ export class CToTtl {
         let str = "";
         texts.forEach((v, i) => {
             if (!v.lang) {
-                LOG.error("CToTtl: Multi-language text must have a language specified for multiple versions:", v);
+                LOG.error("[CToTtl] Multi-language text must have a language specified for each value:", v);
             }
             const prefix = i === 0 ? pred : ` ,\n${this.indent}${this.indent}`;
             str += prefix + `"${this.escapeTtl(v.value)}"@${v.lang}`;
@@ -1715,7 +1716,7 @@ export class CToTtl {
      * @param values - Array of scalar values
      * @returns Formatted scalar array
      */
-    private formatScalarArray(pred: string, values: any[]): string {
+    private formatScalarArray(pred: string, values: any[], forceQuotes = false): string {
         let str = '';
         values.forEach((v, i) => {
             // Validate it's not an ILanguageText object
@@ -1727,7 +1728,7 @@ export class CToTtl {
             const scalarValue = String(v);
             const prefix = i === 0 ? pred : ` ,\n${this.indent}${this.indent}`;
 
-            if (this.shouldSkipQuotes(pred, scalarValue)) {
+            if (!forceQuotes && this.skipQuotes(pred, scalarValue)) {
                 str += prefix + scalarValue;
             } else {
                 str += prefix + `"${this.escapeTtl(scalarValue)}"`;
@@ -1742,7 +1743,7 @@ export class CToTtl {
      * @param str - Value to check
      * @returns True if quotes should be omitted
      */
-    private shouldSkipQuotes(pred: string, str: string): boolean {
+    private skipQuotes(pred: string, str: string): boolean {
         // Skip quotes for RDF resources, complex values (blank nodes, lists), and typed literals
         // Always use quotes for rdfs:label and rdfs:comment
         const isResource = RE.Namespace.test(str) 
