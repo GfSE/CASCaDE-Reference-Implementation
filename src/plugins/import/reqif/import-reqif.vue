@@ -124,7 +124,7 @@
                         // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
                         if (!persisted) {
-                            this.errorMessages = ['Warning: imported data could not be persisted to local storage. It may be lost after closing the browser tab.'];
+                            this.errorMessages = ['Warning: imported data could not be persisted to browser storage (IndexedDB). It may be lost after closing the browser tab.'];
                         }
 
                         this.logFailedImports(failed);
