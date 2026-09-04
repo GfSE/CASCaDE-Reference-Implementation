@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Partial XSD for CASCaRA XML: element tag 'cas:Entity' (metamodel class definition).
+  See tests/data/XML/21/Very_Simple_Model_(FMC)_with_Requirements.cas.xml.new for examples, e.g.:
+
+    <cas:Entity id="FMC:State" cas:hasClass="owl:Class">
+        <dcterms:title xml:lang="en">State</dcterms:title>
+        <dcterms:title xml:lang="de">Zustand</dcterms:title>
+        <dcterms:description xml:lang="en"><p>...</p></dcterms:description>
+        <cas:specializes>cas:Entity</cas:specializes>
+        <cas:icon>&#x25CB;</cas:icon>
+        <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
+    </cas:Entity>
+
+  Design notes:
+  - The tag name IS the metamodel itemType ('cas:Entity'); this is fixed, unlike aProperty/aLink/anEntity/
+    aRelationship *instances*, where the tag is freely chosen (e.g. FMC:Actor, SpecIF:writes) and the
+    itemType is instead carried by the cas:itemType attribute. Metamodel class definitions
+    (cas:Entity, cas:Relationship, cas:Link, cas:Property, cas:Enumeration) always use their itemType as tag.
+  - @id follows the TPigId "namespace:name" pattern, e.g. 'FMC:State', 'SpecIF:Paragraph', 'cas:Package'.
+  - Exactly one of @cas:hasClass or @rdf:type MUST be present; both reference the underlying RDF/OWL
+    construct (e.g. 'owl:Class') and are accepted as synonyms by the importer (see configurablePropertyToJson/
+    xmlElementToJson in pig-metaclasses.ts, which reads rdf:type, 'type', cas:hasClass and 'hasClass'
+    interchangeably). Neither is the CASCaRA itemType (that role is played by the tag name itself here).
+  - cas:specializes references exactly one other cas:Entity (the base class); the root class 'cas:Entity'
+    itself has no specializes element.
+  - cas:icon is an optional single character (or numeric character reference) used by tools to render
+    instances of this class.
+  - cas:enumeratedProperty declares which cas:Property classes are eligible for instances of this cas:Entity;
+    see common-types.xsd/TIdRefList for the supported forms (absent/empty/single-value/idRef-list).
+  - cas:enumeratedTargetLink declares which cas:Link classes are eligible as an outgoing (hasTargetLink)
+    link from instances of this cas:Entity, e.g. cas:Root/cas:Outline/cas:View allow 'cas:lists', 'cas:shows'
+    or 'cas:depicts'. Same TIdRefList semantics as cas:enumeratedProperty.
+  - dcterms:title/dcterms:description/skos:definition may repeat with different xml:lang attributes and may
+    contain embedded (X)HTML markup, e.g. <p>, <small>, <i>, <a> (written as-is, not escaped). skos:definition
+    is used interchangeably with dcterms:description for metamodel class definitions in the reference XML.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
+           xmlns:dcterms="http://purl.org/dc/terms/"
+           xmlns:skos="https://www.w3.org/TR/skos-reference/"
+           xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+           targetNamespace="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
+           elementFormDefault="qualified">
+
+    <xs:import namespace="https://product-information-graph.org/ontology/2026-05-08/metamodel#" schemaLocation="common-types.xsd"/>
+    <xs:import namespace="http://purl.org/dc/terms/" schemaLocation="dcterms.xsd"/>
+    <xs:import namespace="https://www.w3.org/TR/skos-reference/" schemaLocation="skos.xsd"/>
+    <xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" schemaLocation="rdf.xsd"/>
+
+    <xs:element name="Entity">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="dcterms:title" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="dcterms:description" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="skos:definition" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="specializes" type="cas:TPigId" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="icon" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="enumeratedProperty" type="cas:TIdRefList" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="enumeratedTargetLink" type="cas:TIdRefList" minOccurs="0" maxOccurs="1"/>
+                <!-- extension point: further configurable properties/metadata not yet modeled explicitly -->
+                <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute name="id" type="cas:TPigId" use="required"/>
+            <xs:attribute name="hasClass" type="cas:TPigId" use="optional" form="qualified"/>
+            <xs:attribute ref="rdf:type" use="optional"/>
+            <!-- Exactly one of @cas:hasClass or @rdf:type must be present (they are accepted as synonyms) -->
+            <xs:assert test="exists(@*:hasClass) or exists(@*:type)"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

@@ -52,7 +52,7 @@
                        @click='onSubmit'
                        :disabled='!selectedFiles.length || isLoading'
                        :loading='isLoading'>
-                    Import
+                    {{ submitLabel }}
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -77,6 +77,15 @@
                 errorMessages: [] as string[],
                 successMessage: ''
             };
+        },
+        computed: {
+            /**
+             * Label for the submit button: 'Replace' if the package cache already
+             * holds data (in memory or persisted), otherwise 'Import'
+             */
+            submitLabel(): string {
+                return PackageCache().hasData ? 'Replace' : 'Import';
+            }
         },
         methods: {
             /**
@@ -108,12 +117,15 @@
                     });
 
                     if(allPackages.length > 0) {
-                        // Store in Pinia store with persistence
+                        // Store in Pinia store with persistence (fully replaces any previous cache content)
                         const cache = PackageCache();
-                        cache.set(allPackages);
+                        const persisted = await cache.replace(allPackages);
 
                         // Show success message
                         this.successMessage = `Imported ${successful.length} of ${results.length} file(s)`;
+                        if (!persisted) {
+                            this.errorMessages = ['Warning: imported data could not be persisted to local storage. It may be lost after closing the browser tab.'];
+                        }
 
                         this.logFailedImports(failed);
 
@@ -161,19 +173,10 @@
                 return results;
             },
 
-            /**
-             * Extract filename from IRsp response for error messages
-             */
-            getFilenameFromResponse(rsp: IRsp<unknown>): string {
-                // Try to extract filename from statusText
-                const match = rsp.statusText?.match(/^([^:]+):/);
-                return match ? match[1] : 'Unknown file';
-            },
-
             logFailedImports(failed: IRsp<unknown>[]) {
                 if (failed.length > 0) {
                     this.errorMessages = failed.map((r: IRsp<unknown>) =>
-                        `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
+                        `${r.statusText || 'Unknown error'} (${r.status})`
                     );
                     // LOG.error('Failed imports:', failed);
                 }

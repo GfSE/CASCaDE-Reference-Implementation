@@ -44,7 +44,7 @@ export const DEF = {
  //   defaultDataURL: CAS_DOMAIN + 'default/data#',  // URL for data instances
  //   defaultOntologyURL: CAS_DOMAIN + 'default/ontology#',  // URL for (application or project) ontology
     ...BUILD_INFO,
-    minLengthId: 3,
+    minLengthId: 2,
     maxSizeXML: 6 * 1024 * 1024, // 6MB
     timeBetweenPages: 800,
     pfxNsMeta: CAS_NS,

@@ -97,11 +97,6 @@ import { LOG } from '../../../common/lib/helpers';
         this.isExporting = false;
 
         const cache = PackageCache();
-        if (cache.packages.length === 0) {
-            LOG.info('[Export Cypher] Cache is empty, loading from storage...');
-            cache.loadFromStorage();
-        }
-
         const pkgs = cache.packages;
         this.packageCount = pkgs.length;
 

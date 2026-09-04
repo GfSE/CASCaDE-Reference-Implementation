@@ -24,7 +24,7 @@
 
 import { DEF } from '../../lib/definitions';
 import { IRsp, Msg,/* Rsp,*/ rspOK } from '../../lib/messages';
-// import { LOG } from '../../lib/helpers';
+import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { APackage, TPigItem, PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
 
@@ -133,7 +133,7 @@ export class XmlImporter {
         const pkgId = root.getAttribute('id');
         //    if (!pkgId || !PigItem.isValidIdString(pkgId)) {
         if (typeof pkgId !== 'string' || pkgId.length<DEF.minLengthId) {
-            invalidIds.push(`aPackage: ${pkgId ?? '(missing)'}`);
+            invalidIds.push(`${pkgId ?? '(missing)'}`);
         }
 
         // Find graph element among child nodes (only element nodes)
@@ -162,7 +162,7 @@ export class XmlImporter {
                         const elId = elem.getAttribute('id');
                         // if (!elId || !PigItem.isValidIdString(elId)) {
                         if (typeof elId !== 'string' || elId.length < DEF.minLengthId) {
-                            invalidIds.push(`${tag}: ${elId ?? '(missing)'}`);
+                            invalidIds.push(`${elId ?? '(missing)'}`);
                         }
                         else {
                             // LOG.debug('import-xml', `Checking element <${tag}> with id="${elId}"`);
@@ -240,7 +240,7 @@ export class XmlImporter {
      * @param allItems - All items including package
      * @returns Formatted error report string
      * @private
-     */
+     * /
     private static buildErrorReport(allItems: TPigItem[]): string {
         let errorReport = '\nErroneous items:';
 
@@ -252,7 +252,7 @@ export class XmlImporter {
         }
 
         return errorReport;
-    }
+    } */
 }
 
 // Export convenience function for backward compatibility

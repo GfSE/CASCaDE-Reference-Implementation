@@ -125,11 +125,6 @@ import { LOG } from '../../../common/lib/helpers';
         this.password = '';
 
         const cache = PackageCache();
-        if (cache.packages.length === 0) {
-            LOG.info('[Export Neo4j] Cache is empty, loading from storage...');
-            cache.loadFromStorage();
-        }
-
         this.packageCount = cache.packages.length;
     },
     async exportPackages() {
