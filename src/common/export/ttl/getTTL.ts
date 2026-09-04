@@ -1592,6 +1592,7 @@ export class CToTtl {
      * Add a predicate-object pair (new predicate in predicate list)
      * @param predicate - Predicate IRI or prefixed name
      * @param object - Object value (scalar or ILanguageText array)
+     * @param forceQuotes - When true, always quote string/scalar values (e.g. for datatype property literals) regardless of their apparent shape
      * @returns Formatted predicate-object line(s)
      */
     tab1(predicate: string, object: undefined | number | boolean | string | ILanguageText[], forceQuotes = false): string {
