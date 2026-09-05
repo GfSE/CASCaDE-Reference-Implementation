@@ -28,9 +28,9 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { LOG } from '../../lib/helpers';
+// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
-import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
+import { IRsp, Msg/*, Rsp, rspOK*/ } from '../../lib/messages';
 import { APackage } from '../../schema/pig/ts/pig-metaclasses';
 import { XmlImporter } from '../xml/import-xml';
 // import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
@@ -116,8 +116,10 @@ export class ReqifImporter {
         // LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
         const rspTransform = await PLI.transformXSL(xmlToTransform, stylesheetPath);
-        if (!rspTransform.ok)
+        if (!rspTransform.ok) {
+            rspTransform.statusText = filename + ': ' + rspTransform.statusText;
             return rspTransform;
+        }
 
         const xmlString = rspTransform.response as string;
         // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
@@ -127,8 +129,10 @@ export class ReqifImporter {
 
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
-        if (!schemaResult.ok)
+        if (!schemaResult.ok) {
+            schemaResult.statusText = filename + ': ' + schemaResult.statusText;
             return schemaResult;
+        }
 
         // Write to file (platform-independent)
         // await PLI.writeFile(JSON.stringify(xmlString,null,2), "from-ReqIF.xml");
@@ -171,7 +175,7 @@ export class ReqifImporter {
      * @param allItems - All items including package
      * @returns Formatted error report string
      * @private
-     */
+     * /
     private static buildErrorReport(allItems: any[]): string {
         let errorReport = '\nErroneous items:';
 
@@ -183,7 +187,7 @@ export class ReqifImporter {
         }
 
         return errorReport;
-    }
+    } */
 
     /**
      * Validate that the XML document is a valid ReqIF document

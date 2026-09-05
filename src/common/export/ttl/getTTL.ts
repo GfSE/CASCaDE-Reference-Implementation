@@ -35,6 +35,7 @@
  * - Those cas: shapes will be served from the same URL as the terms themselves
  * - On TTL export, the configurable properties will be added to the ontology declaration.
  * - ... and the configurable links will be added to the package class declaration.
+ * - numeric and boolean values are emitted with quotes, even though Turtle shorthand allows no quotes.
  *
  * ToDo:
  * - Add itemTypes as superClasses for all ontolology classes (Property, Link, Entity, Relationship, Enumeration)
@@ -42,7 +43,7 @@
  * - Add TTL output for enumerations with datatypes other than string.
  */
 
-import { DEF, RE } from '../../lib/definitions';
+import { DEF } from '../../lib/definitions';
 import { LIB, LOG, ILanguageText } from '../../lib/helpers';
 import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
@@ -146,7 +147,7 @@ class GetTTL {
         ttl += this.xContext(pkg, rdf, options);
 
         // Add ontology definition
-        ttl += this.makeOntologyDefinition(pkg, rdf, options);
+        ttl += this.makeOntologyDefinition(pkg, rdf);
 
         // Add package metadata
         ttl += this.xMetadataForInstances(pkg, rdf, options);
@@ -241,7 +242,7 @@ class GetTTL {
 
         // datatype
         if (enm.datatype) {
-            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(enm.datatype));
+            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(enm.datatype), false); // is reference
         }
         else {
             // should not happen, as datatype is mandatory for Enumeration:
@@ -252,16 +253,16 @@ class GetTTL {
         if (LIB.isArrayWithContent(enm.enumeratedValue)) {
             const values = enm.enumeratedValue;
             const rdfList = '(\n\t\t' + values.map(n => this.formatTurtleId(n.id)).join('\n\t\t') +'\n\t)';
-            ttl += rdf.tab1('owl:anyOf', rdfList);
+            ttl += rdf.tab1('owl:anyOf', rdfList, false); // is reference
 
             // now define the enumerated values themselves as individuals of the enumeration class:
             for (const val of values) {
                 ttl += rdf.tab0(this.formatTurtleId(val.id));
-                ttl += rdf.tab1('a', this.formatTurtleId(enm.id));
+                ttl += rdf.tab1('a', this.formatTurtleId(enm.id), false); // is reference
                 if (enm.datatype.includes('string')) {
                     // title (multi-language)
                     if (LIB.isArrayWithContent(val.title)) {
-                        ttl += rdf.tab1('rdfs:label', val.title);
+                        ttl += rdf.tab1('rdfs:label', val.title, true); // is literal
                     }
                 }
                 else {
@@ -297,7 +298,7 @@ class GetTTL {
 
         // defaultValue
         if (prp.defaultValue !== undefined) {
-            ttl += rdf.tab1('sh:defaultValue', `"${prp.defaultValue}"`);
+            ttl += rdf.tab1('sh:defaultValue', prp.defaultValue as string | number | boolean, true); // is literal
         }
 
     /*    // unit
@@ -308,9 +309,9 @@ class GetTTL {
         // composes (references to other Properties)
         if (LIB.isArrayWithContent(prp.composes)) {
             const composes = prp.composes as TPigId[];
-            ttl += rdf.tab1('cas:composes', this.formatTurtleId(composes[0]));
+            ttl += rdf.tab1('cas:composes', this.formatTurtleId(composes[0]), false); // is reference
             for (let i = 1; i < composes.length; i++) {
-                ttl += rdf.tab2(this.formatTurtleId(composes[i]));
+                ttl += rdf.tab2(this.formatTurtleId(composes[i]), false); // is reference
             }
         }
 
@@ -353,7 +354,7 @@ class GetTTL {
         // Otherwise, add explicit domain as union of Entity and Relationship
         if (!lnk.specializes || lnk.specializes === lnk.itemType) {
             // Base link: domain is union of Entity and Relationship
-            ttl += rdf.tab1('rdfs:domain', `[ owl:unionOf ( cas:Entity cas:Relationship ) ]`);
+            ttl += rdf.tab1('rdfs:domain', `[ owl:unionOf ( cas:Entity cas:Relationship ) ]`, false); // is reference
         } */
 
         // rdfs:range based on enumeratedEndpoint (mandatory array of Entity/Relationship URIs)
@@ -362,11 +363,11 @@ class GetTTL {
 
             if (endpoints.length === 1) {
                 // Single endpoint: simple range
-                ttl += rdf.tab1('rdfs:range', this.formatTurtleId(endpoints[0]));
+                ttl += rdf.tab1('rdfs:range', this.formatTurtleId(endpoints[0]), false); // is reference
             } else {
                 // Multiple endpoints: use owl:unionOf
                 const endpointList = endpoints.map(ep => this.formatTurtleId(ep)).join(' ');
-                ttl += rdf.tab1('rdfs:range', `[ owl:unionOf ( ${endpointList} ) ]`);
+                ttl += rdf.tab1('rdfs:range', `[ owl:unionOf ( ${endpointList} ) ]`, false); // is reference
             }
         }
 
@@ -400,7 +401,7 @@ class GetTTL {
 
         // icon (optional)
         if (itm.icon?.value) {
-            ttl += rdf.tab1('cas:icon', `${itm.icon.value}`);
+            ttl += rdf.tab1('cas:icon', itm.icon.value, true); // is literal
         }
 
         ttl += rdf.newLine();
@@ -430,7 +431,7 @@ class GetTTL {
 
         // icon (optional)
         if (rel.icon?.value) {
-            ttl += rdf.tab1('cas:icon', `"${rel.icon.value}"`);
+            ttl += rdf.tab1('cas:icon', rel.icon.value, true); // is literal
         }
 
         ttl += rdf.newLine();
@@ -512,15 +513,15 @@ class GetTTL {
 
     private static makeOntologyDefinition(
         pkg: APackage,
-        rdf: CToTtl,
-        options?: IOptionsTTL
+        rdf: CToTtl
+        // options?: IOptionsTTL
     ): string {
         let ttl = '';
 
         // Item ID as subject
         const subjectId = this.formatTurtleId(pkg.id + '_ontology');
         ttl += rdf.tab0(subjectId);
-        ttl += rdf.tab1('a', 'owl:Ontology');
+        ttl += rdf.tab1('a', 'owl:Ontology', false); // is reference
 
         // Add configured properties from the package (e.g., dcterms:contributor, dcterms:license)
         if (LIB.isArrayWithContent(pkg.hasProperty)) {
@@ -529,7 +530,7 @@ class GetTTL {
 
         // Imports (optional) - if the package has contained packages, add them as owl:imports
 
-        ttl += rdf.tab1('owl:versionInfo', DEF.pigVersion);
+        ttl += rdf.tab1('owl:versionInfo', DEF.pigVersion, true); // is literal
         ttl += rdf.newLine();
         return ttl;
     }
@@ -549,41 +550,41 @@ class GetTTL {
 
         // title (multi-language)
         if (LIB.isArrayWithContent(itm.title)) {
-            ttl += rdf.tab1('rdfs:label', itm.title);
+            ttl += rdf.tab1('rdfs:label', itm.title, true); // is literal
         }
 
         // description (multi-language)
         if (LIB.isArrayWithContent(itm.description)) {
-            ttl += rdf.tab1('rdfs:comment', itm.description);
+            ttl += rdf.tab1('rdfs:comment', itm.description, true); // is literal
         }
 
         // definition (multi-language)
         if (LIB.isArrayWithContent(itm.definition)) {
-            ttl += rdf.tab1('skos:definition', itm.definition);
+            ttl += rdf.tab1('skos:definition', itm.definition, true); // is literal
         }
 
         // revision
         if (itm.revision) {
-            ttl += rdf.tab1('cas:revision', itm.revision); // subProperty of 'schema:version'
+            ttl += rdf.tab1('cas:revision', itm.revision, true); // subProperty of 'schema:version'
         }
 
         // priorRevision
         if (LIB.isArrayWithContent(itm.priorRevision)) {
             const priorRevisions = itm.priorRevision as string[];
-            ttl += rdf.tab1('cas:priorRevision', priorRevisions[0]);
+            ttl += rdf.tab1('cas:priorRevision', priorRevisions[0], true); // is literal
             for (let i = 1; i < priorRevisions.length; i++) {
-                ttl += rdf.tab2(priorRevisions[i]);
+                ttl += rdf.tab2(priorRevisions[i], true); // is literal
             }
         }
 
-        // modified (ISO date string)
+        // modified (ISO date string) - pre-formatted as a typed literal, so passed through as raw
         if (itm.modified) {
-            ttl += rdf.tab1('dcterms:modified', `"${itm.modified}"^^xs:dateTime`);
+            ttl += rdf.tab1('dcterms:modified', `"${itm.modified}"^^xs:dateTime`, false); // is reference
         }
 
         // creator
         if (itm.creator) {
-            ttl += rdf.tab1('dcterms:creator', itm.creator);
+            ttl += rdf.tab1('dcterms:creator', itm.creator, true); // is literal
         }
 
         // Note: Do NOT call rdf.newLine() here - let the caller decide when to end the triple
@@ -611,10 +612,10 @@ class GetTTL {
         ttl += rdf.tab0(subjectId);
 
         // hasClass (the item's class/type) - required for instances according to schema
-        ttl += rdf.tab1('a', this.formatTurtleId(itm.hasClass));
+        ttl += rdf.tab1('a', this.formatTurtleId(itm.hasClass), false); // is reference
 
         if (options?.addItemTypes) {
-            ttl += rdf.tab1('cas:itemType', itm.itemType);
+            ttl += rdf.tab1('cas:itemType', itm.itemType, true); // is literal
         }
 
         ttl += this.xMetadata(itm, rdf);
@@ -649,17 +650,17 @@ class GetTTL {
         // OWL classification only if specializes is not defined or if addExplicitTypeToAllClasses is true
         // in case of a context ontology, we want to add the OWL classification, as we are not sure how it is defined
         if (!itm.specializes || LIB.isContextId(itm.specializes) || options?.addExplicitTypeToAllClasses) {
-            ttl += rdf.tab1('a', owlClassification);
+            ttl += rdf.tab1('a', owlClassification, false); // is reference
         }
 
         // specializes
         if (itm.specializes) {
             const specializesId = this.formatTurtleId(itm.specializes);
-            ttl += rdf.tab1(rdfSpecialization, specializesId);
+            ttl += rdf.tab1(rdfSpecialization, specializesId, false); // is reference
         }
 
         if (options?.addItemTypes && itm.itemType != itm.id) {
-            ttl += rdf.tab1('cas:itemType', itm.itemType);
+            ttl += rdf.tab1('cas:itemType', itm.itemType, true); // is literal
         }
 
         return ttl += this.xMetadata(itm, rdf);
@@ -743,6 +744,8 @@ class GetTTL {
     /**
      * Transform hasProperty array to Turtle format
      * Properties are configurable instances with hasClass, value, and/or idRef
+     * Properties are always CASCaRA owl:DatatypeProperty terms, so their values are RDF literals -
+     * except for a composed property's list of references, which is a raw Turtle list expression.
      * @param properties - Array of AProperty instances
      * @param rdf - CToTtl instance for building Turtle output
      * @returns Turtle representation of properties
@@ -768,12 +771,13 @@ class GetTTL {
             const predicate = this.formatTurtleId(propertyClass);
 
             // Add first property value
-            const firstProp = propInstances[0];
-            ttl += rdf.tab1(predicate, this.formatPropertyValue(firstProp));
+            const firstProp = this.formatPropertyValue(propInstances[0]);
+            ttl += rdf.tab1(predicate, firstProp.value, firstProp.literal);
 
             // Add additional values for the same property (if any)
             for (let i = 1; i < propInstances.length; i++) {
-                ttl += rdf.tab2(this.formatPropertyValue(propInstances[i]));
+                const nextProp = this.formatPropertyValue(propInstances[i]);
+                ttl += rdf.tab2(nextProp.value, nextProp.literal);
             }
         }
 
@@ -783,29 +787,28 @@ class GetTTL {
     /**
      * Format a single property value for Turtle output
      * @param prop - AProperty instance
-     * @returns Formatted value string
+     * @returns Formatted value string together with whether it is an RDF literal (quoted) or a raw reference/list expression (unquoted)
      */
-    private static formatPropertyValue(prop: AProperty): string {
-        // If it has a value, return the literal value (will be quoted by CToTtl)
+    private static formatPropertyValue(prop: AProperty): { value: string, literal: boolean } {
+        // If it has a value, it's a plain DatatypeProperty literal
         if (prop.value !== undefined) {
-            return prop.value;
+            return { value: prop.value, literal: true };
         }
 
-        // If it has composes, it's a composed property - format as blank node or list
+        // If it has composes, it's a composed property - format as a list of references (not a literal)
         if (LIB.isArrayWithContent(prop.composes)) {
             const composes = prop.composes as TPigId[];
-            // For now, format as a list of references
             const refs = composes.map((id: TPigId) => this.formatTurtleId(id)).join(', ');
-            return `( ${refs} )`;
+            return { value: `( ${refs} )`, literal: false };
         }
 
         // Default: empty string
-        return '';
+        return { value: '', literal: true };
     }
 
     /**
      * Abstract method to transform link arrays (source or target) to Turtle format
-     * Links are references to other entities
+     * Links are always CASCaRA owl:ObjectProperty terms, so their values are references (never quoted)
      * @param links - Array of ASourceLink or ATargetLink instances
      * @param rdf - CToTtl instance for building Turtle output
      * @returns Turtle representation of links
@@ -833,12 +836,12 @@ class GetTTL {
             // Add first link reference
             const firstLink = linkInstances[0];
             if (firstLink.idRef) {
-                ttl += rdf.tab1(predicate, this.formatTurtleId(firstLink.idRef));
+                ttl += rdf.tab1(predicate, this.formatTurtleId(firstLink.idRef), false); // is reference
 
                 // Add additional links for the same link type (if any)
                 for (let i = 1; i < linkInstances.length; i++) {
                     if (linkInstances[i].idRef) {
-                        ttl += rdf.tab2(this.formatTurtleId(linkInstances[i].idRef));
+                        ttl += rdf.tab2(this.formatTurtleId(linkInstances[i].idRef), false); // is reference
                     }
                 }
             }
@@ -867,42 +870,42 @@ class GetTTL {
         // Create shape ID by appending 'Shape' to the property ID
         const shapeId = this.formatTurtleId(prp.id) + DEF.suffixShape; // for CASCaRA ontology terms
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:PropertyShape');
-        ttl += rdf.tab1('sh:path', this.formatTurtleId(prp.id));
+        ttl += rdf.tab1('a', 'sh:PropertyShape', false); // is reference
+        ttl += rdf.tab1('sh:path', this.formatTurtleId(prp.id), false); // is reference
 
         // datatype
         if (prp.datatype) {
-            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(prp.datatype));
+            ttl += rdf.tab1('sh:datatype', this.formatTurtleId(prp.datatype), false); // is reference
         }
 
         // minCount
         if (prp.minCount !== undefined) {
-            ttl += rdf.tab1('sh:minCount', prp.minCount);
+            ttl += rdf.tab1('sh:minCount', prp.minCount, true); // is literal
         }
 
         // maxCount
         if (prp.maxCount !== undefined) {
-            ttl += rdf.tab1('sh:maxCount', prp.maxCount);
+            ttl += rdf.tab1('sh:maxCount', prp.maxCount, true); // is literal
         }
 
-        // maxLength (for string datatype)
+        // maxLength
         if (prp.maxLength !== undefined) {
-            ttl += rdf.tab1('sh:maxLength', prp.maxLength);
+            ttl += rdf.tab1('sh:maxLength', prp.maxLength, true); // is literal
         }
 
         // pattern (for string datatype)
         if (prp.pattern) {
-            ttl += rdf.tab1('sh:pattern', `"${prp.pattern}"`);
+            ttl += rdf.tab1('sh:pattern', prp.pattern, true); // is literal
         }
 
-        // minInclusive (for numeric datatypes)
+        // minInclusive
         if (prp.minInclusive !== undefined) {
-            ttl += rdf.tab1('sh:minInclusive', prp.minInclusive);
+            ttl += rdf.tab1('sh:minInclusive', prp.minInclusive, true); // is literal
         }
 
-        // maxInclusive (for numeric datatypes)
+        // maxInclusive
         if (prp.maxInclusive !== undefined) {
-            ttl += rdf.tab1('sh:maxInclusive', prp.maxInclusive);
+            ttl += rdf.tab1('sh:maxInclusive', prp.maxInclusive, true); // is literal
         }
 
         return ttl + rdf.newLine();
@@ -921,32 +924,32 @@ class GetTTL {
         // Create a single shape ID for all Property classes
         const classShapeId = this.formatTurtleId(PigItemType.Property) + '_class' + DEF.suffixShape;
         ttl += rdf.tab0(classShapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all classes that are subclasses of cas:Property
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf', false); // is reference
         // Also target direct instances of owl:DatatypeProperty in the CASCaRA namespace
-        ttl += rdf.tab1('sh:targetClass', 'owl:DatatypeProperty');
+        ttl += rdf.tab1('sh:targetClass', 'owl:DatatypeProperty', false); // is reference
 
         // Close the shape - no additional properties allowed beyond those explicitly defined
-        ttl += rdf.tab1('sh:closed', 'true');
-        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+        ttl += rdf.tab1('sh:closed', 'true', true); // is literal
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )', false); // is reference
 
         // Require either rdf:type owl:DatatypeProperty OR rdfs:subPropertyOf or both
-        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:DatatypeProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] )');
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:DatatypeProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] )', false); // is reference
 
         // Required property: rdfs:label (title)
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]', false); // is reference
 
         // Optional properties with constraints
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path sh:defaultValue ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:composes ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path sh:defaultValue ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:composes ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]', false); // is reference
 
         return ttl + rdf.newLine();
     }
@@ -963,10 +966,10 @@ class GetTTL {
         // Create shape ID for PropertyShape requirement validation
         const shapeId = this.formatTurtleId(PigItemType.Property) + DEF.suffixShape + DEF.suffixShape;
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all Property classes (same targets as the class shape)
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
-        ttl += rdf.tab1('sh:targetClass', 'owl:DatatypeProperty');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf', false); // is reference
+        ttl += rdf.tab1('sh:targetClass', 'owl:DatatypeProperty', false); // is reference
 
         // Each Property class must have a corresponding PropertyShape with at least sh:datatype
         // Using sh:sparql with FILTER NOT EXISTS to check for the required shape
@@ -1005,8 +1008,8 @@ class GetTTL {
         // Create shape ID by appending 'Shape' to the link ID
         const shapeId = this.formatTurtleId(lnk.id) + DEF.suffixShape; // for CASCaRA ontology terms
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:PropertyShape');
-        ttl += rdf.tab1('sh:path', this.formatTurtleId(lnk.id));
+        ttl += rdf.tab1('a', 'sh:PropertyShape', false); // is reference
+        ttl += rdf.tab1('sh:path', this.formatTurtleId(lnk.id), false); // is reference
 
         // sh:class or sh:or based on enumeratedEndpoint
         if (LIB.isArrayWithContent(lnk.enumeratedEndpoint)) {
@@ -1014,20 +1017,20 @@ class GetTTL {
 
             if (endpoints.length === 1) {
                 // Single endpoint: use sh:class
-                ttl += rdf.tab1('sh:class', this.formatTurtleId(endpoints[0]));
+                ttl += rdf.tab1('sh:class', this.formatTurtleId(endpoints[0]), false); // is reference
             } else {
                 // Multiple endpoints: use sh:or with sh:class for each
                 const classConstraints = endpoints
                     .map(ep => `[ sh:class ${this.formatTurtleId(ep)} ]`)
                     .join(' ');
-                ttl += rdf.tab1('sh:or', `( ${classConstraints} )`);
+                ttl += rdf.tab1('sh:or', `( ${classConstraints} )`, false); // is reference
             }
         }
 
         if (lnk.minCount !== undefined)
-            ttl += rdf.tab1('sh:minCount', lnk.minCount);
+            ttl += rdf.tab1('sh:minCount', lnk.minCount, true); // is literal
         if (lnk.maxCount !== undefined)
-            ttl += rdf.tab1('sh:maxCount', lnk.maxCount);
+            ttl += rdf.tab1('sh:maxCount', lnk.maxCount, true); // is literal
 
         return ttl + rdf.newLine();
     }
@@ -1045,33 +1048,33 @@ class GetTTL {
         // Create a single shape ID for all Link classes
         const classShapeId = this.formatTurtleId(PigItemType.Link) + '_class' + DEF.suffixShape;
         ttl += rdf.tab0(classShapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all classes that are subclasses of cas:Link
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf', false); // is reference
         // Also target direct instances of owl:ObjectProperty in the CASCaDE namespace
-        ttl += rdf.tab1('sh:targetClass', 'owl:ObjectProperty');
+        ttl += rdf.tab1('sh:targetClass', 'owl:ObjectProperty', false); // is reference
 
         // Close the shape - no additional properties allowed beyond those explicitly defined
-        ttl += rdf.tab1('sh:closed', 'true');
-        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+        ttl += rdf.tab1('sh:closed', 'true', true); // is literal
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )', false); // is reference
 
         // Require either rdf:type owl:ObjectProperty OR rdfs:subPropertyOf (or both)
-        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:ObjectProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] )');
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:ObjectProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] )', false); // is reference
 
         // Required property: rdfs:label (title)
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]', false); // is reference
 
         // Required property: rdfs:range (from enumeratedEndpoint)
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:range ; sh:minCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:range ; sh:minCount 1 ]', false); // is reference
 
         // Optional properties with constraints
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]', false); // is reference
 
         return ttl + rdf.newLine();
     }
@@ -1088,10 +1091,10 @@ class GetTTL {
         // Create shape ID for PropertyShape requirement validation
         const shapeId = this.formatTurtleId(PigItemType.Link) + '_shape_requirement' + DEF.suffixShape;
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all Link classes (same targets as the class shape)
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf');
-        ttl += rdf.tab1('sh:targetClass', 'owl:ObjectProperty');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subPropertyOf', false); // is reference
+        ttl += rdf.tab1('sh:targetClass', 'owl:ObjectProperty', false); // is reference
 
         // Each Link class must have a corresponding PropertyShape with at least sh:class or sh:or
         // Using sh:sparql with FILTER NOT EXISTS to check for the required shape
@@ -1140,11 +1143,11 @@ class GetTTL {
                 if (LIB.isContextId(itemId) || LIB.isHostedOntologyId(itemId)) {
                     // Create inline property constraint for external ontology items
                     const itemPath = this.formatTurtleId(itemId);
-                    ttl += rdf.tab1('sh:property', `[ sh:path ${itemPath} ]`);
+                    ttl += rdf.tab1('sh:property', `[ sh:path ${itemPath} ]`, false); // is reference
                 } else {
                     // Reference the item's shape (which should be defined separately) for CASCaRA items
                     const itemShapeId = this.formatTurtleId(itemId) + DEF.suffixShape;
-                    ttl += rdf.tab1('sh:property', itemShapeId);
+                    ttl += rdf.tab1('sh:property', itemShapeId, false); // is reference
                 }
             }
         };
@@ -1153,13 +1156,13 @@ class GetTTL {
         const elemId = this.formatTurtleId(elem.id);
         const shapeId = elemId + DEF.suffixShape; // for CASCaRA ontology terms
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
-        ttl += rdf.tab1('sh:targetClass', elemId);
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
+        ttl += rdf.tab1('sh:targetClass', elemId, false); // is reference
 
         // For entity instances: require either rdfs:label or rdfs:comment
         // For relationship instances: both are optional
         if (!isRelationship) {
-            ttl += rdf.tab1('sh:or', '( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] )');
+            ttl += rdf.tab1('sh:or', '( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] )', false); // is reference
         }
 
         // List enumerated properties
@@ -1194,33 +1197,33 @@ class GetTTL {
         // Create a single shape ID for all Enumeration classes
         const classShapeId = this.formatTurtleId(PigItemType.Enumeration) + '_class' + DEF.suffixShape;
         ttl += rdf.tab0(classShapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all classes that are subclasses of cas:Enumeration
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf', false); // is reference
         // Also target direct instances of owl:Class in the CASCaDE namespace
-        ttl += rdf.tab1('sh:targetClass', 'owl:Class');
+        ttl += rdf.tab1('sh:targetClass', 'owl:Class', false); // is reference
 
         // Close the shape - no additional properties allowed beyond those explicitly defined
-        ttl += rdf.tab1('sh:closed', 'true');
-        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+        ttl += rdf.tab1('sh:closed', 'true', true); // is literal
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )', false); // is reference
 
         // Require either rdf:type owl:Class OR rdfs:subClassOf (or both)
-        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )');
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )', false); // is reference
 
         // Required property: rdfs:label (title)
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]', false); // is reference
 
         // Required property: cas:enumeratedValue (array of allowed values)
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:enumeratedValue ; sh:minCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:enumeratedValue ; sh:minCount 1 ]', false); // is reference
 
         // Optional properties with constraints
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]', false); // is reference
 
         return ttl + rdf.newLine();
     }
@@ -1237,10 +1240,10 @@ class GetTTL {
         // Create shape ID for enumerated value validation
         const shapeId = this.formatTurtleId(PigItemType.Enumeration) + '_shape' + DEF.suffixShape;
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all Enumeration classes (same targets as the class shape)
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
-        ttl += rdf.tab1('sh:targetClass', 'owl:Class');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf', false); // is reference
+        ttl += rdf.tab1('sh:targetClass', 'owl:Class', false); // is reference
 
         // Each Enumeration class must have at least one enumerated value defined
         // Using sh:sparql to validate that cas:enumeratedValue points to valid resources
@@ -1272,31 +1275,31 @@ class GetTTL {
         // Create a single shape ID for all Entity classes
         const classShapeId = this.formatTurtleId(PigItemType.Entity) + '_class' + DEF.suffixShape;
         ttl += rdf.tab0(classShapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all classes that are subclasses of cas:Entity
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf', false); // is reference
         // Also target direct instances of owl:Class that are Entities in the CASCaDE namespace
-        ttl += rdf.tab1('sh:targetClass', 'cas:Entity');
+        ttl += rdf.tab1('sh:targetClass', 'cas:Entity', false); // is reference
 
         // Close the shape - no additional properties allowed beyond those explicitly defined
-        ttl += rdf.tab1('sh:closed', 'true');
-        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+        ttl += rdf.tab1('sh:closed', 'true', true); // is literal
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )', false); // is reference
 
         // Require either rdf:type owl:Class OR rdfs:subClassOf (or both)
-        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )');
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )', false); // is reference
 
         // Required property: rdfs:label (title)
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]', false); // is reference
 
         // Optional properties with constraints
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:icon ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:icon ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]', false); // is reference
 
         return ttl + rdf.newLine();
     }
@@ -1313,10 +1316,10 @@ class GetTTL {
         // Create shape ID for Entity shape validation
         const shapeId = this.formatTurtleId(PigItemType.Entity) + '_shape' + DEF.suffixShape;
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all Entity classes (same targets as the class shape)
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
-        ttl += rdf.tab1('sh:targetClass', 'cas:Entity');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf', false); // is reference
+        ttl += rdf.tab1('sh:targetClass', 'cas:Entity', false); // is reference
 
         // Each Entity class should have a corresponding NodeShape
         // Using sh:sparql to validate that a NodeShape with sh:targetClass pointing to this entity exists
@@ -1383,31 +1386,31 @@ class GetTTL {
         // Create a single shape ID for all Relationship classes
         const classShapeId = this.formatTurtleId(PigItemType.Relationship) + '_class' + DEF.suffixShape;
         ttl += rdf.tab0(classShapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all classes that are subclasses of cas:Relationship
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf', false); // is reference
         // Also target direct instances of owl:Class that are Relationships in the CASCaDE namespace
-        ttl += rdf.tab1('sh:targetClass', 'cas:Relationship');
+        ttl += rdf.tab1('sh:targetClass', 'cas:Relationship', false); // is reference
 
         // Close the shape - no additional properties allowed beyond those explicitly defined
-        ttl += rdf.tab1('sh:closed', 'true');
-        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )');
+        ttl += rdf.tab1('sh:closed', 'true', true); // is literal
+        ttl += rdf.tab1('sh:ignoredProperties', '( rdf:type )', false); // is reference
 
         // Require either rdf:type owl:Class OR rdfs:subClassOf (or both)
-        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )');
+        ttl += rdf.tab1('sh:or', '( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] )', false); // is reference
 
         // Required property: rdfs:label (title)
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ]', false); // is reference
 
         // Optional properties with constraints
-        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:icon ; sh:maxCount 1 ]');
-        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]');
+        ttl += rdf.tab1('sh:property', '[ sh:path rdfs:comment ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path skos:definition ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:priorRevision ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path dcterms:creator ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:icon ; sh:maxCount 1 ]', false); // is reference
+        ttl += rdf.tab1('sh:property', '[ sh:path cas:itemType ; sh:maxCount 1 ]', false); // is reference
 
         return ttl + rdf.newLine();
     }
@@ -1424,10 +1427,10 @@ class GetTTL {
         // Create shape ID for Relationship shape validation
         const shapeId = this.formatTurtleId(PigItemType.Relationship) + '_shape' + DEF.suffixShape;
         ttl += rdf.tab0(shapeId);
-        ttl += rdf.tab1('a', 'sh:NodeShape');
+        ttl += rdf.tab1('a', 'sh:NodeShape', false); // is reference
         // Target all Relationship classes (same targets as the class shape)
-        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf');
-        ttl += rdf.tab1('sh:targetClass', 'cas:Relationship');
+        ttl += rdf.tab1('sh:targetSubjectsOf', 'rdfs:subClassOf', false); // is reference
+        ttl += rdf.tab1('sh:targetClass', 'cas:Relationship', false); // is reference
 
         // Each Relationship class should have a corresponding NodeShape
         // Using sh:sparql to validate that a NodeShape with sh:targetClass pointing to this relationship exists
@@ -1518,8 +1521,8 @@ interface ShaclAssertion {
  * const rdf = new CToTtl('\t');
  * let ttl = rdf.prefix('ex', 'http://example.org/');
  * ttl += rdf.tab0('ex:Subject');
- * ttl += rdf.tab1('rdf:type', 'ex:Class');
- * ttl += rdf.tab1('rdfs:label', 'Example');
+ * ttl += rdf.tab1('rdf:type', 'ex:Class', false); // is reference
+ * ttl += rdf.tab1('rdfs:label', 'Example', false); // is reference
  * ttl += rdf.newLine();
  * ```
  */
@@ -1591,16 +1594,18 @@ export class CToTtl {
      * Add a predicate-object pair (new predicate in predicate list)
      * @param predicate - Predicate IRI or prefixed name
      * @param object - Object value (scalar or ILanguageText array)
+     * @param literal - Whether the object is a literal value (quoted, incl. numbers/booleans) or a reference/raw Turtle expression (never quoted).
+     *                  Must be determined by the caller from context (e.g. DatatypeProperty vs. ObjectProperty), not guessed from the value's shape.
      * @returns Formatted predicate-object line(s)
      */
-    tab1(predicate: string, object: undefined | number | boolean | string | ILanguageText[]): string {
+    tab1(predicate: string, object: undefined | number | boolean | string | ILanguageText[], literal: boolean): string {
         if (this.lastTab < 0) {
             throw new Error("CToTtl: Subject is missing");
         }
         if (object !== undefined) { // object may be 0 or false
             const ending = this.lastTab < 1 ? "" : " ;";
             this.lastTab = 1;
-            return this.makeLines(ending + `\n${this.indent}${predicate} `, object);
+            return this.makeLines(ending + `\n${this.indent}${predicate} `, object, literal);
         }
         return "";
     }
@@ -1608,16 +1613,18 @@ export class CToTtl {
     /**
      * Add an additional object to the current predicate (object list)
      * @param object - Object value (scalar or ILanguageText array)
+     * @param literal - Whether the object is a literal value (quoted, incl. numbers/booleans) or a reference/raw Turtle expression (never quoted).
+     *                  Must be determined by the caller from context, not guessed from the value's shape.
      * @returns Formatted object line(s)
      */
-    tab2(object: undefined | number | boolean | string | ILanguageText[]): string {
+    tab2(object: undefined | number | boolean | string | ILanguageText[], literal: boolean): string {
         if (this.lastTab < 1) {
             throw new Error("CToTtl: Predicate is missing");
         }
         if (object !== undefined) { // object may be 0 or false
             const ending = " ,";
             this.lastTab = 2;
-            return this.makeLines(ending + `\n${this.indent}${this.indent}`, object);
+            return this.makeLines(ending + `\n${this.indent}${this.indent}`, object, literal);
         }
         return "";
     }
@@ -1626,22 +1633,23 @@ export class CToTtl {
      * Format object value(s) with proper quoting and language tags
      * @param pred - Prefix string (includes predicate for first value, or just indentation)
      * @param object - Object value(s) to format
+     * @param literal - Whether to render the value as a quoted literal (also for numbers/booleans) or as an unquoted reference/raw expression
      * @returns Formatted object string(s)
      */
-    private makeLines(pred: string, object: undefined | number | boolean | string | ILanguageText[]): string {
+    private makeLines(pred: string, object: undefined | number | boolean | string | ILanguageText[], literal: boolean): string {
         switch (typeof object) {
             case 'undefined':
                 return "";
 
             case 'number':
             case 'boolean':
-                return pred + object.toString();
+                return literal ? pred + `"${object.toString()}"` : pred + object.toString();
 
             case 'string':
-                return this.formatStringObject(pred, object);
+                return this.formatStringObject(pred, object, literal);
 
             default:
-                return this.formatArrayObject(pred, object);
+                return this.formatArrayObject(pred, object, literal);
         }
     }
 
@@ -1649,12 +1657,13 @@ export class CToTtl {
      * Format a string object with proper quoting
      * @param pred - Prefix string
      * @param str - String value
+     * @param literal - When true, quote and escape the value as an RDF literal; when false, output as-is (reference/raw Turtle expression)
      * @returns Formatted string
      */
-    private formatStringObject(pred: string, str: string): string {
+    private formatStringObject(pred: string, str: string, literal: boolean): string {
         if (str.length === 0) return "";
 
-        if (this.shouldSkipQuotes(pred, str)) {
+        if (!literal) {
             return pred + str;
         }
         return pred + `"${this.escapeTtl(str)}"`;
@@ -1664,9 +1673,10 @@ export class CToTtl {
      * Format an array of objects (ILanguageText[] or scalar array)
      * @param pred - Prefix string
      * @param object - Array of values
+     * @param literal - When true, quote scalar values as RDF literals (multi-language text is always quoted regardless)
      * @returns Formatted string with all values
      */
-    private formatArrayObject(pred: string, object: ILanguageText[]): string {
+    private formatArrayObject(pred: string, object: ILanguageText[], literal: boolean): string {
         if (!LIB.isArrayWithContent(object)) {
             LOG.error("CToTtl: Expecting an array with items but got:", object);
             return "";
@@ -1675,7 +1685,7 @@ export class CToTtl {
         if (PigItem.isMultiLanguageText(object)) {
             return this.formatMultiLanguageText(pred, object);
         }
-        return this.formatScalarArray(pred, object);
+        return this.formatScalarArray(pred, object, literal);
     }
 
     /**
@@ -1690,9 +1700,6 @@ export class CToTtl {
             const t = texts[0].value;
             const l = texts[0].lang;
 
-            if (this.shouldSkipQuotes(pred, t)) {
-                return pred + t;
-            }
             const languageTag = l ? `@${l}` : '';
             return pred + `"${this.escapeTtl(t)}"` + languageTag;
         }
@@ -1701,7 +1708,7 @@ export class CToTtl {
         let str = "";
         texts.forEach((v, i) => {
             if (!v.lang) {
-                LOG.error("CToTtl: Multi-language text must have a language specified for multiple versions:", v);
+                LOG.error("[CToTtl] Multi-language text must have a language specified for each value:", v);
             }
             const prefix = i === 0 ? pred : ` ,\n${this.indent}${this.indent}`;
             str += prefix + `"${this.escapeTtl(v.value)}"@${v.lang}`;
@@ -1713,9 +1720,10 @@ export class CToTtl {
      * Format an array of scalar values
      * @param pred - Prefix string
      * @param values - Array of scalar values
+     * @param literal - When true, quote and escape each value as an RDF literal; when false, output each value as-is
      * @returns Formatted scalar array
      */
-    private formatScalarArray(pred: string, values: any[]): string {
+    private formatScalarArray(pred: string, values: any[], literal: boolean): string {
         let str = '';
         values.forEach((v, i) => {
             // Validate it's not an ILanguageText object
@@ -1727,33 +1735,13 @@ export class CToTtl {
             const scalarValue = String(v);
             const prefix = i === 0 ? pred : ` ,\n${this.indent}${this.indent}`;
 
-            if (this.shouldSkipQuotes(pred, scalarValue)) {
+            if (!literal) {
                 str += prefix + scalarValue;
             } else {
                 str += prefix + `"${this.escapeTtl(scalarValue)}"`;
             }
         });
         return str;
-    }
-
-    /**
-     * Determine if quotes should be skipped for a value
-     * @param pred - Prefix string (may contain predicate name)
-     * @param str - Value to check
-     * @returns True if quotes should be omitted
-     */
-    private shouldSkipQuotes(pred: string, str: string): boolean {
-        // Skip quotes for RDF resources, complex values (blank nodes, lists), and typed literals
-        // Always use quotes for rdfs:label and rdfs:comment
-        const isResource = RE.Namespace.test(str) 
-            || str.startsWith('<http') 
-            || RE.contentInRoundBrackets.test(str) 
-            || RE.contentInSquareBrackets.test(str)
-            || str.includes('^^');  // Typed literals (e.g., "value"^^xs:dateTime)
-
-        const isLabelOrComment = pred.includes('rdfs:label') || pred.includes('rdfs:comment');
-
-        return isResource && !isLabelOrComment;
     }
 
     /**

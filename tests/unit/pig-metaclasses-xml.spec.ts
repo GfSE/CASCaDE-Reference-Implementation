@@ -128,8 +128,10 @@ describe('PIG Metaclasses XML Import', () => {
         it(`should import ${DEF.pfxNsMeta}Link`, () => {
             const xmlInput = `
                 <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}Link" rdf:type="owl:ObjectProperty">
-                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
-                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>
+                        <idRef>${DEF.pfxNsMeta}Entity</idRef>
+                        <idRef>${DEF.pfxNsMeta}Relationship</idRef>
+                    </${DEF.pfxNsMeta}enumeratedEndpoint>
                     <${DEF.pfxNsDcmi}title>linked with</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>Connects a reified relationship with its source or target. Also connects an organizer to a model element</${DEF.pfxNsDcmi}description>
                 </${DEF.pfxNsMeta}Link>
@@ -141,14 +143,18 @@ describe('PIG Metaclasses XML Import', () => {
             if (!link.status().ok)
                 console.error('status:', link.status());
             expect(link.status().ok).toBe(true);
+            expect(link.enumeratedEndpoint?.length).toBe(2);
+            expect(link.enumeratedEndpoint[0]).toContain('Entity');
         });
 
         it(`should import ${DEF.pfxNsMeta}SourceLink`, () => {
             const xmlInput = `
                 <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}SourceLink" rdf:type="owl:ObjectProperty">
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Link</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
-                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>
+                        <idRef>${DEF.pfxNsMeta}Entity</idRef>
+                        <idRef>${DEF.pfxNsMeta}Relationship</idRef>
+                    </${DEF.pfxNsMeta}enumeratedEndpoint>
                     <${DEF.pfxNsDcmi}title>to source</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>Connects the source of a reified relationship.</${DEF.pfxNsDcmi}description>
                 </${DEF.pfxNsMeta}Link>
@@ -160,6 +166,7 @@ describe('PIG Metaclasses XML Import', () => {
             if (!link.status().ok)
                 console.error('status:', link.status());
             expect(link.status().ok).toBe(true);
+            expect(link.specializes).toBe(`${DEF.pfxNsMeta}Link`);
         });
 
         it('should import SpecIF:writes-toSource', () => {
@@ -168,6 +175,7 @@ describe('PIG Metaclasses XML Import', () => {
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}SourceLink</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsDcmi}title>SpecIF:writes to source</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>Connects the source of SpecIF:writes</${DEF.pfxNsDcmi}description>
+                    <!-- enumeratedEndpoint without embedded idRef is supported for single values -->
                     <${DEF.pfxNsMeta}enumeratedEndpoint>FMC:Actor</${DEF.pfxNsMeta}enumeratedEndpoint>
                 </${DEF.pfxNsMeta}Link>
             `;
@@ -184,9 +192,11 @@ describe('PIG Metaclasses XML Import', () => {
             const xmlInput = `
                 <${DEF.pfxNsMeta}Link id="${DEF.pfxNsMeta}lists" rdf:type="owl:ObjectProperty">
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}TargetLink</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}enumeratedEndpoint>
-                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}enumeratedEndpoint>
-                    <${DEF.pfxNsMeta}enumeratedEndpoint>${DEF.pfxNsMeta}Organizer</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    <${DEF.pfxNsMeta}enumeratedEndpoint>
+                        <idRef>${DEF.pfxNsMeta}Entity</idRef>
+                        <idRef>${DEF.pfxNsMeta}Relationship</idRef>
+                        <idRef>${DEF.pfxNsMeta}Organizer</idRef>
+                    </${DEF.pfxNsMeta}enumeratedEndpoint>
                     <${DEF.pfxNsDcmi}title>lists</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>Lists an entity, a relationship or a subordinated organizer.</${DEF.pfxNsDcmi}description>
                 </${DEF.pfxNsMeta}Link>
@@ -207,7 +217,12 @@ describe('PIG Metaclasses XML Import', () => {
                 <${DEF.pfxNsMeta}Entity id="${DEF.pfxNsMeta}Entity" rdf:type="owl:Class">
                     <${DEF.pfxNsDcmi}title>Entity</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>A PIG meta-model element used for entities (aka resources or artifacts).</${DEF.pfxNsDcmi}description>
-                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
+                    <${DEF.pfxNsMeta}enumeratedProperty>
+                        <idRef>${DEF.pfxNsMeta}Category</idRef>
+                    </${DEF.pfxNsMeta}enumeratedProperty>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>
+                        <!-- no targetLinks allowed -->
+                    </${DEF.pfxNsMeta}enumeratedTargetLink>
                 </${DEF.pfxNsMeta}Entity>
             `;
 
@@ -217,6 +232,8 @@ describe('PIG Metaclasses XML Import', () => {
             if (!entity.status().ok)
                 console.error('status:', entity.status());
             expect(entity.status().ok).toBe(true);
+            expect(entity.enumeratedProperty?.length).toBe(1);
+            expect(entity.enumeratedTargetLink?.length).toBe(0);
         });
 
         it(`should import ${DEF.pfxNsMeta}HierarchyRoot`, () => {
@@ -225,7 +242,10 @@ describe('PIG Metaclasses XML Import', () => {
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Organizer</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsDcmi}title>Hierarchy Root</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>A subclass of PIG organizer serving as a root for hierarchically organized graph elements.</${DEF.pfxNsDcmi}description>
-                    <${DEF.pfxNsMeta}enumeratedTargetLink>${DEF.pfxNsMeta}lists</${DEF.pfxNsMeta}enumeratedTargetLink>
+                    <!-- all properties allowed -->
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>
+                        <idRef>${DEF.pfxNsMeta}lists</idRef>
+                    </${DEF.pfxNsMeta}enumeratedTargetLink>
                 </${DEF.pfxNsMeta}Entity>
             `;
 
@@ -235,6 +255,9 @@ describe('PIG Metaclasses XML Import', () => {
             if (!entity.status().ok)
                 console.error('status:', entity.status());
             expect(entity.status().ok).toBe(true);
+            expect(entity.enumeratedProperty).toBe(undefined);
+            expect(entity.enumeratedTargetLink?.length).toBe(1);
+            expect(entity.enumeratedTargetLink![0]).toBe(`${DEF.pfxNsMeta}lists`);
         });
 
         it('should import FMC:Actor', () => {
@@ -248,6 +271,7 @@ describe('PIG Metaclasses XML Import', () => {
                     </${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}specializes>
                     <${DEF.pfxNsMeta}icon>&#x25A1;</${DEF.pfxNsMeta}icon>
+                    <!-- enumeratedProperty without embedded idRef is supported for single values -->
                     <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
                 </${DEF.pfxNsMeta}Entity>
             `;
@@ -258,6 +282,13 @@ describe('PIG Metaclasses XML Import', () => {
             if (!entity.status().ok)
                 console.error('status:', entity.status());
             expect(entity.status().ok).toBe(true);
+            // console.debug('FMC:Actor', entity.title);
+            expect(entity.title!.length).toBe(3);
+            expect(entity.title![1].value).toBe('Akteur');
+            expect(entity.title![1].lang).toBe('de');
+            expect(entity.enumeratedProperty?.length).toBe(1);
+            expect(entity.enumeratedProperty![0]).toBe(`${DEF.pfxNsMeta}Category`);
+            expect(entity.enumeratedTargetLink).toBe(undefined);
         });
 
         it('should import IREB:Requirement', () => {
@@ -270,7 +301,9 @@ describe('PIG Metaclasses XML Import', () => {
                         <p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform.</p>
                     </${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsMeta}enumeratedProperty>SpecIF:Priority</${DEF.pfxNsMeta}enumeratedProperty>
+                    <${DEF.pfxNsMeta}enumeratedProperty>
+                        <idRef>SpecIF:Priority</idRef>
+                    </${DEF.pfxNsMeta}enumeratedProperty>
                 </${DEF.pfxNsMeta}Entity>
             `;
 
@@ -289,9 +322,15 @@ describe('PIG Metaclasses XML Import', () => {
                 <${DEF.pfxNsMeta}Relationship id="${DEF.pfxNsMeta}Relationship" rdf:type="owl:Class">
                     <${DEF.pfxNsDcmi}title>Relationship</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>A PIG meta-model element used for reified relationships (aka predicates).</${DEF.pfxNsDcmi}description>
-                    <${DEF.pfxNsMeta}enumeratedProperty>${DEF.pfxNsMeta}Category</${DEF.pfxNsMeta}enumeratedProperty>
-                    <${DEF.pfxNsMeta}enumeratedSourceLink>${DEF.pfxNsMeta}SourceLink</${DEF.pfxNsMeta}enumeratedSourceLink>
-                    <${DEF.pfxNsMeta}enumeratedTargetLink>${DEF.pfxNsMeta}TargetLink</${DEF.pfxNsMeta}enumeratedTargetLink>
+                    <${DEF.pfxNsMeta}enumeratedProperty>
+                        <idRef>${DEF.pfxNsMeta}Category</idRef>
+                    </${DEF.pfxNsMeta}enumeratedProperty>
+                    <${DEF.pfxNsMeta}enumeratedSourceLink>
+                        <idRef>${DEF.pfxNsMeta}SourceLink</idRef>
+                    </${DEF.pfxNsMeta}enumeratedSourceLink>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>
+                        <idRef>${DEF.pfxNsMeta}TargetLink</idRef>
+                    </${DEF.pfxNsMeta}enumeratedTargetLink>
                 </${DEF.pfxNsMeta}Relationship>
             `;
 
@@ -311,8 +350,12 @@ describe('PIG Metaclasses XML Import', () => {
                     <${DEF.pfxNsDcmi}title xml:lang="fr">écrit</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsMeta}enumeratedSourceLink>SpecIF:writes-toSource</${DEF.pfxNsMeta}enumeratedSourceLink>
-                    <${DEF.pfxNsMeta}enumeratedTargetLink>SpecIF:writes-toTarget</${DEF.pfxNsMeta}enumeratedTargetLink>
+                    <${DEF.pfxNsMeta}enumeratedSourceLink>
+                        <idRef>SpecIF:writes-toSource</idRef>
+                    </${DEF.pfxNsMeta}enumeratedSourceLink>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>
+                        <idRef>SpecIF:writes-toTarget</idRef>
+                    </${DEF.pfxNsMeta}enumeratedTargetLink>
                 </${DEF.pfxNsMeta}Relationship>
             `;
 
@@ -334,8 +377,12 @@ describe('PIG Metaclasses XML Import', () => {
                         <p>The object is satisfied by the subject.</p>
                     </${DEF.pfxNsDcmi}description>
                     <${DEF.pfxNsMeta}specializes>${DEF.pfxNsMeta}Relationship</${DEF.pfxNsMeta}specializes>
-                    <${DEF.pfxNsMeta}enumeratedSourceLink>oslc_rm:satisfies-toSource</${DEF.pfxNsMeta}enumeratedSourceLink>
-                    <${DEF.pfxNsMeta}enumeratedTargetLink>oslc_rm:satisfies-toTarget</${DEF.pfxNsMeta}enumeratedTargetLink>
+                    <${DEF.pfxNsMeta}enumeratedSourceLink>
+                        <idRef>oslc_rm:satisfies-toSource</idRef>
+                    </${DEF.pfxNsMeta}enumeratedSourceLink>
+                    <${DEF.pfxNsMeta}enumeratedTargetLink>
+                        <idRef>oslc_rm:satisfies-toTarget</idRef>
+                    </${DEF.pfxNsMeta}enumeratedTargetLink>
                 </${DEF.pfxNsMeta}Relationship>
             `;
 
@@ -389,8 +436,6 @@ describe('PIG Metaclasses XML Import', () => {
                     </${DEF.pfxNsMeta}aProperty>
                     <${DEF.pfxNsMeta}aTargetLink rdf:type="${DEF.pfxNsMeta}shows">
                         <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
-                    </${DEF.pfxNsMeta}aTargetLink>
-                    <${DEF.pfxNsMeta}aTargetLink rdf:type="${DEF.pfxNsMeta}shows">
                         <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
                     </${DEF.pfxNsMeta}aTargetLink>
                 </${DEF.pfxNsMeta}anEntity>
@@ -406,12 +451,15 @@ describe('PIG Metaclasses XML Import', () => {
 
             expect(anEntity.hasProperty?.length).toBe(2);
             expect(anEntity.hasProperty[1].hasClass).toBe(`${DEF.pfxNsMeta}Category`);
+            // console.debug('anEntity.hasTargetLink', anEntity.hasTargetLink);
+            expect(anEntity.hasTargetLink?.length).toBe(2);
+            expect(anEntity.hasTargetLink[0].idRef).toBe('d:MEl-50fbfe8f0029b1a8016ea86245a9d83a');
 
         });
 
         it('should import FMC:Actor entity', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}anEntity id="d:MEl-50fbfe8f0029b1a8016ea86245a9d83a" rdf:type="FMC:Actor">
+                <${DEF.pfxNsMeta}anEntity id="d:MEl-50fbfe8f0029b1a8016ea86245a9d83a" rdf:type="${DEF.pfxNsMeta}Actor">
                     <${DEF.pfxNsDcmi}modified>2020-03-06T09:04:00+01:00</${DEF.pfxNsDcmi}modified>
                     <${DEF.pfxNsDcmi}title>FiCo-Application</${DEF.pfxNsDcmi}title>
                     <${DEF.pfxNsDcmi}description>
@@ -430,37 +478,18 @@ describe('PIG Metaclasses XML Import', () => {
     });
 
     describe('ARelationship.setXML()', () => {
-        it('should import SpecIF:writes relationship', () => {
-            const xmlInput = `
-                <${DEF.pfxNsMeta}aRelationship id="d:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc" rdf:type="SpecIF:writes">
-                    <${DEF.pfxNsDcmi}modified>2020-03-06T09:05:00+01:00</${DEF.pfxNsDcmi}modified>
-                    <${DEF.pfxNsDcmi}description>'FiCo-Application' writes 'FiCo-Data'</${DEF.pfxNsDcmi}description>
-                    <${DEF.pfxNsMeta}aSourceLink rdf:type="SpecIF:writes-toSource">
-                        <idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>
-                    </${DEF.pfxNsMeta}aSourceLink>
-                    <${DEF.pfxNsMeta}aTargetLink rdf:type="SpecIF:writes-toTarget">
-                        <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-                    </${DEF.pfxNsMeta}aTargetLink>
-                </${DEF.pfxNsMeta}aRelationship>
-            `;
-
-            const aRel = new ARelationship().setXML(xmlInput);
-
-            // check the attribute values upon creation:
-            if (!aRel.status().ok)
-                console.error('status:', aRel.status());
-            expect(aRel.status().ok).toBe(true);
-        });
-
         it('should import oslc_rm:satisfies relationship', () => {
             const xmlInput = `
-                <${DEF.pfxNsMeta}aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b" rdf:type="oslc_rm:satisfies">
+                <${DEF.pfxNsMeta}aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b" rdf:type="${DEF.pfxNsMeta}satisfies">
                     <${DEF.pfxNsDcmi}modified>2020-10-17T10:00:00+01:00</${DEF.pfxNsDcmi}modified>
                     <${DEF.pfxNsDcmi}description>'FiCo-Data' satisfies 'Data Volume'</${DEF.pfxNsDcmi}description>
-                    <${DEF.pfxNsMeta}aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+                    <${DEF.pfxNsMeta}aProperty rdf:type="o:Reason">
+                        <value>see test-case 4711</value>
+                    </${DEF.pfxNsMeta}aProperty>
+                    <${DEF.pfxNsMeta}aSourceLink rdf:type="${DEF.pfxNsMeta}satisfies-toSource">
                         <idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
                     </${DEF.pfxNsMeta}aSourceLink>
-                    <${DEF.pfxNsMeta}aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+                    <${DEF.pfxNsMeta}aTargetLink rdf:type="${DEF.pfxNsMeta}satisfies-toTarget">
                         <idRef>d:Req-1a8016e2872e78ecadc50feddc00029b</idRef>
                     </${DEF.pfxNsMeta}aTargetLink>
                 </${DEF.pfxNsMeta}aRelationship>
@@ -472,6 +501,13 @@ describe('PIG Metaclasses XML Import', () => {
             if (!aRel.status().ok)
                 console.error('status:', aRel.status());
             expect(aRel.status().ok).toBe(true);
+            expect(aRel.modified).toBe('2020-10-17T10:00:00+01:00');
+            expect(aRel.hasProperty?.length).toBe(1);
+            expect(aRel.hasProperty[0].value).toContain('4711');
+            expect(aRel.hasSourceLink?.length).toBe(1);
+            expect(aRel.hasSourceLink[0].idRef).toBe('d:MEl-50feddc00029b1a8016e2872e78ecadc');
+            expect(aRel.hasTargetLink?.length).toBe(1);
+            expect(aRel.hasTargetLink[0].idRef).toBe('d:Req-1a8016e2872e78ecadc50feddc00029b');
         });
     });
 });

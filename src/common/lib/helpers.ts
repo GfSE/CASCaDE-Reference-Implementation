@@ -77,7 +77,7 @@ export const LIB = {
     isLeaf(node: JsonValue): boolean {
         return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
     },
-    isArrayWithContent(L: any): boolean {
+    isArrayWithContent<T>(L: T[] | undefined | null): L is T[] {
         return (Array.isArray(L) && L.length > 0);
     },
 

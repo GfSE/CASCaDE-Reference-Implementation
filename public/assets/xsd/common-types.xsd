@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Common simple/complex types shared across the partial CASCaRA XML schemata.
+  See tests/data/XML/21/Very_Simple_Model_(FMC)_with_Requirements.cas.xml.new for the reference XML.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
+           targetNamespace="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
+           elementFormDefault="qualified">
+
+    <!-- TPigId: "namespace:localName" (e.g. 'FMC:State', 'cas:Package') or an absolute URI -->
+    <xs:simpleType name="TPigId">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="([A-Za-z_][\w.-]*:[A-Za-z_][\w.-]*)|(https?://\S+)"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--
+      Wrapper element holding zero, one or more <idRef> children (e.g. cas:enumeratedProperty,
+      cas:enumeratedEndpoint, cas:enumeratedSourceLink, cas:enumeratedTargetLink):
+        - absent (property not present at all)     -> not restricted by this type (element itself omitted)
+        - <cas:enumeratedProperty/>                 -> empty array -> "none allowed"
+        - <cas:enumeratedProperty>x:Y</...>          -> single value convenience form -> one eligible id
+        - <cas:enumeratedProperty><idRef>..</idRef>* -> explicit list of eligible ids
+      The 'mixed' content model allows both plain text (convenience form) and <idRef> children.
+    -->
+    <xs:complexType name="TIdRefList" mixed="true">
+        <xs:sequence>
+            <xs:element name="idRef" type="cas:TPigId" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+</xs:schema>

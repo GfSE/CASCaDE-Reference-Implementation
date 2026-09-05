@@ -23,7 +23,7 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { IRsp, Rsp, Msg, rspOK } from '../../lib/messages';
+import { IRsp, Msg,/* Rsp,*/ rspOK } from '../../lib/messages';
 import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { APackage, TPigItem, PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
@@ -133,7 +133,7 @@ export class XmlImporter {
         const pkgId = root.getAttribute('id');
         //    if (!pkgId || !PigItem.isValidIdString(pkgId)) {
         if (typeof pkgId !== 'string' || pkgId.length<DEF.minLengthId) {
-            invalidIds.push(`aPackage: ${pkgId ?? '(missing)'}`);
+            invalidIds.push(`${pkgId ?? '(missing)'}`);
         }
 
         // Find graph element among child nodes (only element nodes)
@@ -162,14 +162,14 @@ export class XmlImporter {
                         const elId = elem.getAttribute('id');
                         // if (!elId || !PigItem.isValidIdString(elId)) {
                         if (typeof elId !== 'string' || elId.length < DEF.minLengthId) {
-                            invalidIds.push(`${tag}: ${elId ?? '(missing)'}`);
+                            invalidIds.push(`${elId ?? '(missing)'}`);
                         }
                         else {
                             // LOG.debug('import-xml', `Checking element <${tag}> with id="${elId}"`);
                             // Check for class requirements
                             if (PigItem.isClass(tag)) {
                                 // Must have either 'pig:specializes' or 'pig:hasClass' as attribute or child
-                                // XML is more tolerant than JSON-LD, as it allows both pig and RDF/OWL terms for specialization and classification
+                                // XML import is more tolerant than JSON-LD, as it allows both pig and RDF/OWL terms for specialization and classification
                                 // The MVF must however map both to the same internal keys
                                 // LOG.debug('import-xml 1', elem.getAttribute('pig:specializes'), elem.getAttribute('owl:subClassOf'), elem.getAttribute('pig:hasClass'), elem.getAttribute('rdf:type') );
                                 const specializesAttr = elem.getAttribute(`${DEF.pfxNsMeta}specializes`) || elem.getAttribute('owl:subClassOf');  // don't use '??'
@@ -211,7 +211,7 @@ export class XmlImporter {
                                 }
                             }
                             else
-                                throw new Error(`import-xml: After checking the itemType, the element must be either class od instance`);
+                                throw new Error(`import-xml: After checking the itemType, the element must be either class or instance`);
                         }
                     }
 
@@ -240,7 +240,7 @@ export class XmlImporter {
      * @param allItems - All items including package
      * @returns Formatted error report string
      * @private
-     */
+     * /
     private static buildErrorReport(allItems: TPigItem[]): string {
         let errorReport = '\nErroneous items:';
 
@@ -252,7 +252,7 @@ export class XmlImporter {
         }
 
         return errorReport;
-    }
+    } */
 }
 
 // Export convenience function for backward compatibility

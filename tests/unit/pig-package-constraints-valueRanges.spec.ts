@@ -1190,24 +1190,24 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
                         <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}Enumeration</${DEF.pfxNsMeta}itemType>
                         <datatype>xs:integer</datatype>
-                        <enumeratedValue id="o:Fibonacci-1">
+                        <cas:enumeratedValue id="o:Fibonacci-1">
                             <value>1</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-2">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-2">
                             <value>2</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-3">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-3">
                             <value>3</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-5">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-5">
                             <value>5</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-8">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-8">
                             <value>8</value>
-                        </enumeratedValue>
-                        <enumeratedValue id="o:Fibonacci-13">
+                        </cas:enumeratedValue>
+                        <cas:enumeratedValue id="o:Fibonacci-13">
                             <value>13</value>
-                        </enumeratedValue>
+                        </cas:enumeratedValue>
                     </${DEF.pfxNsMeta}Enumeration>
 
                     <${DEF.pfxNsMeta}Link id="o:hasEstimate" ${DEF.pfxNsMeta}hasClass="owl:ObjectProperty">

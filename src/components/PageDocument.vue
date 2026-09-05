@@ -139,7 +139,7 @@
         computed: {
             outlineTree(): OutlineNode[] {
                 const cache = PackageCache();
-                const packages = cache.get();
+                const packages = cache.packages;
 
                 if (!packages || packages.length === 0) {
                     return []

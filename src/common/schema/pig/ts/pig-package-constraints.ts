@@ -78,7 +78,7 @@
 import { DEF, RE } from '../../../lib/definitions';
 import { IRsp, rspOK, Msg } from '../../../lib/messages';
 import { LIB, LOG } from "../../../lib/helpers";
-import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigId, Enumeration, XsDataType } from './pig-metaclasses';
+import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigId, Enumeration, XsDataType, ASourceLink, ATargetLink } from './pig-metaclasses';
 
 /**
  * Available constraint check types
@@ -623,7 +623,7 @@ function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): 
 function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
     // Check source or target links for a single instance
     function checkLinks(instance: any, hasThisLink: 'hasTargetLink' | 'hasSourceLink'): IRsp {
-        const classId = instance.hasClass; // existence of hasClass has been checked by the schema
+        // const classId = instance.hasClass; // existence of hasClass has been checked by the schema
         const enumeratedLinks = hasThisLink === 'hasTargetLink' ? listEnumeratedTargetLinks(instance.hasClass, classMap) : listEnumeratedSourceLinks(instance.hasClass, classMap);
         const hasLinkArray = instance[hasThisLink];
 
@@ -631,7 +631,7 @@ function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp 
             // LOG.debug(`Enumerated ${hasThisLink === 'hasTargetLink' ? 'targetLinks' : 'sourceLinks'} for class ${classId}: ${JSON.stringify(enumeratedLinks)}`);
             // LOG.debug(`Enumerated ${hasThisLink === 'hasTargetLink' ? 'targetLinks' : 'sourceLinks'} of instance ${instance.id}: ${JSON.stringify(hasLinkArray)}`);
             for (let j = 0; j < hasLinkArray.length; j++) {
-                const link = hasLinkArray[j];
+                const link = hasLinkArray[j] as ASourceLink | ATargetLink;
                 const linkClassId = link.hasClass as string;
 
                 if (enumeratedLinks.includes('*'))  // all links allowed
@@ -1414,7 +1414,7 @@ function checkEnumeratedValues(
     function checkTargetLinks(
         hasTargetLink: any,
         elementId: TPigId
-    //    elementLabel: string
+        // elementLabel: string
     ): IRsp {
         if (Array.isArray(hasTargetLink)) {
             for (let j = 0; j < hasTargetLink.length; j++) {
