@@ -6,7 +6,7 @@
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.xml'
+                              accept='.xml,.xml.zip'
                               label='XML Input'
                               prepend-icon='mdi-folder-open'
                               multiple

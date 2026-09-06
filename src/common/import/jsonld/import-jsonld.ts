@@ -55,16 +55,31 @@ export class JsonldImporter {
      * const result = await JsonldImporter.import('https://example.org/data.jsonld');
      */
     static async import(source: string | File | Blob): Promise<IRsp> {
-        // Read file content
-        const rsp = await PLI.readFileAsText(source);
-        if (!rsp.ok) {
-            return rsp;
+        // Extract filename for zip detection (Blob without a name is treated as non-zipped)
+        const filename = typeof source === 'string' ? source : (source as File).name ?? '';
+        const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
+        const isZipped = normalized.endsWith('.zip');
+
+        // Read file content, unpacking the archive first if the file is zipped
+        let jsonToParse: string;
+        if (isZipped) {
+            const rspJson = await this.extractJsonLd(source, filename);
+            if (!rspJson.ok) {
+                return rspJson;
+            }
+            jsonToParse = rspJson.response as string;
+        } else {
+            const rsp = await PLI.readFileAsText(source);
+            if (!rsp.ok) {
+                return rsp;
+            }
+            jsonToParse = rsp.response as string;
         }
 
         // Parse JSON document
         let doc: JsonObject;
         try {
-            doc = JSON.parse(rsp.response as string) as JsonObject;
+            doc = JSON.parse(jsonToParse) as JsonObject;
         } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : String(err);
             return Msg.create(690, 'JSON-LD', errorMessage);
@@ -106,6 +121,30 @@ export class JsonldImporter {
         }
 
         return result as IRsp<TPigItem[]>;
+    }
+
+    /**
+     * Read a .cas.jsonld.zip archive and return the text content of the contained .jsonld file.
+     *
+     * @param source - File path (Node.js), URL, or File/Blob (Browser)
+     * @param filename - original filename for error messages
+     * @returns IRsp whose response is the JSON-LD text
+     * @private
+     */
+    private static async extractJsonLd(
+        source: string | File | Blob,
+        filename: string
+    ): Promise<IRsp> {
+        const rspBytes = await PLI.readFileAsBytes(source);
+        if (!rspBytes.ok) {
+            return rspBytes;
+        }
+
+        return PLI.extractFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name.toLowerCase().endsWith('.jsonld'),
+            filename
+        );
     }
 
     /**

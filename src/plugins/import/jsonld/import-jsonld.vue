@@ -6,7 +6,7 @@
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.cas.jsonld'
+                              accept='.cas.jsonld,.cas.jsonld.zip'
                               label='JSON-LD Input'
                               prepend-icon='mdi-folder-open'
                               multiple

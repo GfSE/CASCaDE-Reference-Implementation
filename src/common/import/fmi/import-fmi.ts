@@ -18,10 +18,7 @@
  * Authors: rakshit.mittal@uantwerpen.be
  */
 
-import { unzipSync, strFromU8 } from 'fflate';
-
 import { DEF } from '../../lib/definitions';
-// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp } from '../../lib/messages';
 import { APackage } from '../../schema/pig/ts/pig-metaclasses';
@@ -151,34 +148,12 @@ export class FmiImporter {
             return rspBytes;
         }
 
-        const bytes = rspBytes.response as Uint8Array;
-
-        let entries: Record<string, Uint8Array>;
-        try {
-            // Only the modelDescription.xml is needed from the archive.
-            entries = unzipSync(bytes, {
-                filter: (file) => file.name === this.modelDescriptionName
-            });
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : String(e);
-            return Msg.create(660, filename, `failed to read FMU archive: ${msg}`);
-        }
-
-        const entry = entries[this.modelDescriptionName];
-        if (!entry) {
-            return Msg.create(
-                660,
-                filename,
-                `archive does not contain ${this.modelDescriptionName}`
-            );
-        }
-
-        try {
-            return Rsp.create(0, strFromU8(entry), 'text');
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : String(e);
-            return Msg.create(660, filename, `failed to decode ${this.modelDescriptionName}: ${msg}`);
-        }
+        // Only the modelDescription.xml is needed from the archive.
+        return PLI.extractFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name === this.modelDescriptionName,
+            filename
+        );
     }
 
     /**
@@ -202,7 +177,7 @@ export class FmiImporter {
      * @param allItems - All items including the package
      * @returns Formatted error report string
      * @private
-     */
+     * /
     private static buildErrorReport(allItems: any[]): string {
         let errorReport = '\nErroneous items:';
 
@@ -214,7 +189,7 @@ export class FmiImporter {
         }
 
         return errorReport;
-    }
+    } */
 
     /**
      * Validate that the XML document is an FMI model description.

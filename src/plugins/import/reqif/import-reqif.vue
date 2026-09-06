@@ -6,7 +6,7 @@
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.reqif'
+                              accept='.reqif,.reqifz,.reqif.zip'
                               label='ReqIF Input'
                               prepend-icon='mdi-folder-open'
                               multiple

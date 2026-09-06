@@ -25,6 +25,7 @@
 
 import { IRsp, Rsp, Msg } from './messages';
 import { LOG } from './helpers';
+import { unzipSync, strFromU8 } from 'fflate';
 import SaxonJS from 'saxon-js';
 
 /**
@@ -366,6 +367,42 @@ export const PLI = {
         }
 
         return Msg.create(696); // unsupported source type
+    },
+
+    /**
+     * Extracts the text content of the first entry within a ZIP archive whose
+     * name matches the given predicate (e.g. by extension or exact name).
+     *
+     * Used to unpack zipped input files (e.g. .reqifz, .fmu, .cas.jsonld.zip)
+     * shared across the various importers. Centralized here (rather than in
+     * helpers.ts) so the underlying ZIP library (currently fflate) can be
+     * replaced in a single place if needed.
+     *
+     * @param bytes - raw bytes of the ZIP archive
+     * @param matches - predicate to select the desired entry by its name within the archive
+     * @param filename - original filename, used for error messages (optional)
+     * @returns IRsp whose response is the decoded (UTF-8) text content of the first matching entry
+     */
+    extractFromZip(bytes: Uint8Array, matches: (entryName: string) => boolean, filename = ''): IRsp<unknown> {
+        let entries: Record<string, Uint8Array>;
+        try {
+            entries = unzipSync(bytes, { filter: (file) => matches(file.name) });
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            return Msg.create(660, filename, `failed to read archive: ${msg}`);
+        }
+
+        const entryNames = Object.keys(entries);
+        if (entryNames.length === 0) {
+            return Msg.create(660, filename, 'archive does not contain a matching file');
+        }
+
+        try {
+            return Rsp.create(0, strFromU8(entries[entryNames[0]]), 'text');
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            return Msg.create(660, filename, `failed to decode ${entryNames[0]}: ${msg}`);
+        }
     },
 
     /**

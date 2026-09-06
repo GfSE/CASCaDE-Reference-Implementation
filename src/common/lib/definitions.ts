@@ -46,7 +46,7 @@ export const DEF = {
     ...BUILD_INFO,
     minLengthId: 2,
     maxSizeXML: 6 * 1024 * 1024, // 6MB
-    timeBetweenPages: 800,
+    timeBetweenPages: 400,
     pfxNsMeta: CAS_NS,
     pfxNsSemi: CAS_NS,
     pfxNsDcmi: DCMI_NS,
