@@ -77,7 +77,7 @@ describe('Importers unpack zipped input files', () => {
     it('ReqifImporter imports a real .reqifz archive', async () => {
         const reqifzPath = path.resolve(
             __dirname,
-            '../data/ReqIF-archive/Requirement-with-Image.reqifz'
+            '../data/ReqIF/Requirement-with-Image.reqifz'
         );
         expect(fs.existsSync(reqifzPath)).toBe(true);
 
