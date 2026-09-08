@@ -1,18 +1,18 @@
 <template>
-    <v-btn color='secondary' class='text-none' @click='dialog = true'>FMI 🡕</v-btn>
+    <v-btn color='secondary' class='text-none' @click='dialog = true'>{{ config.buttonLabel }}</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-            <v-card-title>Select FMI Files</v-card-title>
+            <v-card-title>{{ config.dialogTitle }}</v-card-title>
 
             <v-card-text>
                 <v-file-input v-model='selectedFiles'
-                              accept='.fmu,.xml'
-                              label='FMI Input'
+                              :accept='config.accept'
+                              :label='config.inputLabel'
                               prepend-icon='mdi-folder-open'
                               multiple
                               :loading='isLoading'
                               :disabled='isLoading'
-                              hint='Select one or more FMU archives (.fmu) or modelDescription.xml files'
+                              :hint='config.hint'
                               persistent-hint></v-file-input>
 
                 <!-- Error Display -->
@@ -62,13 +62,25 @@
 <script lang="ts">
     import { DEF } from '@/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
-    import { FmiImporter } from '@/common/import/fmi/import-fmi';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { PackageCache } from '@/stores/package-cache';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
+    import { ImportConfig } from '@/plugins/import/import-config';
 
+    /**
+     * Generic import dialog, driven by a format-specific ImportConfig
+     * (see import-config.ts). Used by import-jsonld, import-xml, import-fmi
+     * and import-reqif via their respective mount-import-*.ts files, which
+     * `extend` this component and supply the `config` prop.
+     */
     @Options({
+        props: {
+            config: {
+                type: Object as () => ImportConfig,
+                required: true
+            }
+        },
         data() {
             return {
                 dialog: false,
@@ -102,20 +114,26 @@
                 this.successMessage = '';
 
                 try {
+                    // Import all files and collect results
                     const results = await this.importAllFiles();
 
+                    // Separate successful and failed imports
+                    // @ToDo: results with 603 status (partial success) should be handled separately, but for now we treat them as failures:
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
+                    // Collect all packages from successful imports
                     const allPackages = successful.flatMap((r: IRsp<unknown>) => {
                         const allItems = r.response as TPigItem[];
                         return allItems[0] as APackage;
                     });
 
                     if (allPackages.length > 0) {
+                        // Store in Pinia store with persistence (fully replaces any previous cache content)
                         const cache = PackageCache();
                         const persisted = await cache.replace(allPackages);
 
+                        // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
                         if (!persisted) {
                             this.errorMessages = ['Warning: imported data could not be persisted to browser storage (IndexedDB). It may be lost after closing the browser tab.'];
@@ -123,6 +141,7 @@
 
                         this.logFailedImports(failed);
 
+                        // Navigate to the document viewing page after short delay
                         setTimeout(async () => {
                             await this.$router.push({ name: 'Document' });
                             this.dialog = false;
@@ -149,9 +168,10 @@
 
                 for (const file of this.selectedFiles) {
                     try {
-                        const rsp = await FmiImporter.import(file);
+                        const rsp = await (this.config as ImportConfig).importFn(file);
                         results.push(rsp);
                     } catch (error: any) {
+                        // Convert exception to IRsp format
                         results.push(Msg.create(600, `${file.name}: ${error?.message || String(error)}`));
                     }
                 }
@@ -164,6 +184,7 @@
                     this.errorMessages = failed.map((r: IRsp<unknown>) =>
                         `${r.statusText || 'Unknown error'} (${r.status})`
                     );
+                    // LOG.error('Failed imports:', failed);
                 }
             },
 
@@ -179,7 +200,8 @@
         }
     })
 
-    export default class FmiImportComponent extends Vue {
+    export default class ImportBaseComponent extends Vue {
+        config!: ImportConfig;
         dialog!: boolean;
         selectedFiles!: File[];
         isLoading!: boolean;
