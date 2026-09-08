@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' variant='flat' class='text-none import-btn' @click='dialog = true'>{{ config.buttonLabel }}</v-btn>
+    <v-btn color='secondary' variant='elevated' class='text-none import-btn' @click='dialog = true'>{{ config.buttonLabel }}</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>{{ config.dialogTitle }}</v-card-title>
@@ -57,11 +57,11 @@
 
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn :color="isLoading ? undefined : 'grey'" variant='flat' class='import-btn' @click='onCancel' :disabled='isLoading'>
+                <v-btn :color="isLoading ? undefined : 'grey'" variant='elevated' class='import-btn' @click='onCancel' :disabled='isLoading'>
                     Cancel
                 </v-btn>
                 <v-btn :color="isSubmitDisabled ? undefined : 'primary'"
-                       variant='flat'
+                       variant='elevated'
                        class='import-btn'
                        @click='onSubmit'
                        :disabled='isSubmitDisabled'
