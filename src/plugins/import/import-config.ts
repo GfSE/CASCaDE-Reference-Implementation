@@ -37,6 +37,32 @@ export interface ImportConfig {
      * Imports a single file and resolves with an IRsp result.
      * Implementations should not throw; unexpected errors are caught
      * by the caller and converted into a failed IRsp via Msg.create(600, ...).
+     * `secondFile` is passed through when `secondFile` config below is set.
      */
-    importFn: (file: File) => Promise<IRsp<unknown>>;
+    importFn: (file: File, secondFile?: File | null) => Promise<IRsp<unknown>>;
+
+    /**
+     * Optional second, single-file input shown below the main file-input
+     * (e.g. a SEF file used for XSL-Transformation of "any XML" imports).
+     * Leave undefined to hide the second field entirely.
+     */
+    secondFile?: {
+        /** Label of the second file-input field */
+        label: string;
+
+        /** Comma separated list of accepted file extensions */
+        accept: string;
+
+        /** Hint text shown below the second file-input field */
+        hint: string;
+
+        /** Icon shown in front of the field, defaults to 'mdi-file-code' */
+        icon?: string;
+
+        /** Whether the second file must be selected before submit is allowed (default: true) */
+        required?: boolean;
+
+        /** Error message shown when required and no file was selected */
+        requiredMessage?: string;
+    };
 }
