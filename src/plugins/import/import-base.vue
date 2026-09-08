@@ -9,23 +9,25 @@
                               :accept='config.accept'
                               :label='config.inputLabel'
                               prepend-icon='mdi-folder-open'
-                              multiple
+                             *       multiple
                               :loading='isLoading'
                               :disabled='isLoading'
                               :hint='config.hint'
-                              persistent-hint></v-file-input>
+                              persistent-hint>
+                </v-file-input>
 
-                <!-- Optional second, single-file input (e.g. a SEF file for XSL-Transformation) -->
-                <v-file-input v-if='config.secondFile'
-                              v-model='selectedSecondFile'
-                              :accept='config.secondFile.accept'
-                              :label='config.secondFile.label'
-                              :prepend-icon='config.secondFile.icon || "mdi-file-code"'
+                <!-- Optional auxiliary single-file input (e.g. a SEF file for XSL-Transformation) -->
+                <v-file-input v-if='config.auxiliaryFile'
+                              v-model='selectedAuxiliaryFile'
+                              :accept='config.auxiliaryFile.accept'
+                              :label='config.auxiliaryFile.label'
+                              :prepend-icon='config.auxiliaryFile.icon || "mdi-file-code"'
                               :loading='isLoading'
                               :disabled='isLoading'
-                              :hint='config.secondFile.hint'
+                              :hint='config.auxiliaryFile.hint'
                               persistent-hint
-                              :multiple='false'></v-file-input>
+                              :multiple='false'>
+                </v-file-input>
 
                 <!-- Error Display -->
                 <v-alert v-if="errorMessages.length > 0"
@@ -52,7 +54,8 @@
                 <v-progress-linear v-if='isLoading'
                                    indeterminate
                                    color='primary'
-                                   class='mt-4'></v-progress-linear>
+                                   class='mt-4'>
+                </v-progress-linear>
             </v-card-text>
 
             <v-card-actions>
@@ -83,10 +86,9 @@
     import { ImportConfig } from '@/plugins/import/import-config';
 
     /**
-     * Generic import dialog, driven by a format-specific ImportConfig
-     * (see import-config.ts). Used by import-jsonld, import-xml, import-fmi
-     * and import-reqif via their respective mount-import-*.ts files, which
-     * `extend` this component and supply the `config` prop.
+     * Generic import dialog, driven by a format-specific ImportConfig (see import-config.ts).
+     * Used by import-jsonld, import-xml, import-fmi and import-reqif via their respective mount-import-*.ts files, 
+     * which `extend` this component and supply the `config` prop.
      */
     @Options({
         props: {
@@ -99,7 +101,7 @@
             return {
                 dialog: false,
                 selectedFiles: [] as File[],
-                selectedSecondFile: null as File | null,
+                selectedAuxiliaryFile: null as File | null,
                 isLoading: false,
                 errorMessages: [] as string[],
                 successMessage: ''
@@ -122,7 +124,7 @@
                 const config = this.config as ImportConfig;
                 return !this.selectedFiles.length
                     || this.isLoading
-                    || !!(config.secondFile && config.secondFile.required !== false && !this.selectedSecondFile);
+                    || !!(config.auxiliaryFile && config.auxiliaryFile.required !== false && !this.selectedAuxiliaryFile);
             }
         },
         methods: {
@@ -135,8 +137,8 @@
                 if (!this.selectedFiles.length) {
                     errors.push('Please select at least one file');
                 }
-                if (config.secondFile && config.secondFile.required !== false && !this.selectedSecondFile) {
-                    errors.push(config.secondFile.requiredMessage || `Please select a ${config.secondFile.label}`);
+                if (config.auxiliaryFile && config.auxiliaryFile.required !== false && !this.selectedAuxiliaryFile) {
+                    errors.push(config.auxiliaryFile.requiredMessage || `Please select a ${config.auxiliaryFile.label}`);
                 }
                 if (errors.length > 0) {
                     this.errorMessages = errors;
@@ -202,7 +204,7 @@
 
                 for (const file of this.selectedFiles) {
                     try {
-                        const rsp = await (this.config as ImportConfig).importFn(file, this.selectedSecondFile);
+                        const rsp = await (this.config as ImportConfig).importFn(file, this.selectedAuxiliaryFile);
                         results.push(rsp);
                     } catch (error: any) {
                         // Convert exception to IRsp format
@@ -228,7 +230,7 @@
             onCancel() {
                 this.dialog = false;
                 this.selectedFiles = [];
-                this.selectedSecondFile = null;
+                this.selectedAuxiliaryFile = null;
                 this.errorMessages = [];
                 this.successMessage = '';
             }
@@ -239,7 +241,7 @@
         config!: ImportConfig;
         dialog!: boolean;
         selectedFiles!: File[];
-        selectedSecondFile!: File | null;
+        selectedAuxiliaryFile!: File | null;
         isLoading!: boolean;
         errorMessages!: string[];
         successMessage!: string;

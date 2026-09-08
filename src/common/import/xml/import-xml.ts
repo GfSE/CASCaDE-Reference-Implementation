@@ -20,13 +20,18 @@
  * - Node:   await XmlImporter.import('C:/path/to/file.xml')
  * - URL:    await XmlImporter.import('https://example/.../doc.xml')
  * - Browser: await XmlImporter.import(fileInput.files[0])
+ *
+ * @todo
+ * - extract multiple XML files from zip archive and call import() recursively for each XML file
+ * - extract other file types from zip archive (e.g. images) and store them in an asset-cache for later use
+ * - refuse to import if a filetype cannot be discovered (e.g. blob without name.ext and no type)
  */
 
 import { DEF } from '../../lib/definitions';
 import { IRsp, Msg,/* Rsp,*/ rspOK } from '../../lib/messages';
-import { LOG } from '../../lib/helpers';
+// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
-import { APackage, TPigItem, PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage,/* TPigItem,*/ PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
 
 /**
  * XML Importer

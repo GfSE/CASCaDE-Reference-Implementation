@@ -168,14 +168,6 @@ export default class Neo4jExportComponent extends Vue {}
 </script>
 
 <style scoped>
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mt-4 {
-    margin-top: 16px;
-}
-
 .export-button {
     font-weight: 400;
     letter-spacing: 0.01em;

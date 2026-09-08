@@ -21,7 +21,7 @@ import { LOG } from '@/common/lib/helpers';
 
 /**
  * Format-specific configuration for the generic ImportBase component.
- * Uses the optional `secondFile` field to show a SEF file input used
+ * Uses the optional `auxiliaryFile` field to show a SEF file input used
  * for XSL-Transformation of arbitrary XML documents.
  */
 const anyXmlImportConfig: ImportConfig = {
@@ -31,8 +31,8 @@ const anyXmlImportConfig: ImportConfig = {
     accept: '.xml,.xml.zip',
     hint: 'Select one or more XML files to import',
     componentName: 'Import-Any-XML',
-    importFn: (file: File, secondFile?: File | null) => XmlImporter.import(file, { sef: secondFile }),
-    secondFile: {
+    importFn: (file: File, auxiliaryFile?: File | null) => XmlImporter.import(file, { sef: auxiliaryFile }),
+    auxiliaryFile: {
         label: 'SEF Input',
         accept: '.sef.json',
         hint: 'Select a SEF file for XSL-Transformation',

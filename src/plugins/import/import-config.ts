@@ -37,16 +37,16 @@ export interface ImportConfig {
      * Imports a single file and resolves with an IRsp result.
      * Implementations should not throw; unexpected errors are caught
      * by the caller and converted into a failed IRsp via Msg.create(600, ...).
-     * `secondFile` is passed through when `secondFile` config below is set.
+     * `auxiliaryFile` is passed through when `auxiliaryFile` config below is set.
      */
-    importFn: (file: File, secondFile?: File | null) => Promise<IRsp<unknown>>;
+    importFn: (file: File, auxiliaryFile?: File | null) => Promise<IRsp<unknown>>;
 
     /**
      * Optional second, single-file input shown below the main file-input
      * (e.g. a SEF file used for XSL-Transformation of "any XML" imports).
      * Leave undefined to hide the second field entirely.
      */
-    secondFile?: {
+    auxiliaryFile?: {
         /** Label of the second file-input field */
         label: string;
 
