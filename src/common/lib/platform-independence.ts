@@ -382,6 +382,9 @@ export const PLI = {
      * @param matches - predicate to select the desired entry by its name within the archive
      * @param filename - original filename, used for error messages (optional)
      * @returns IRsp whose response is the decoded (UTF-8) text content of the first matching entry
+     *
+     * @todo
+     * - Accept multiple matches and return all of them in an array
      */
     extractFromZip(bytes: Uint8Array, matches: (entryName: string) => boolean, filename = ''): IRsp<unknown> {
         let entries: Record<string, Uint8Array>;
@@ -389,12 +392,12 @@ export const PLI = {
             entries = unzipSync(bytes, { filter: (file) => matches(file.name) });
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
-            return Msg.create(660, filename, `failed to read archive: ${msg}`);
+            return Msg.create(660, filename, `failed to read zip-archive: ${msg}`);
         }
 
         const entryNames = Object.keys(entries);
         if (entryNames.length === 0) {
-            return Msg.create(660, filename, 'archive does not contain a matching file');
+            return Msg.create(660, filename, 'zip-archive does not contain a matching file');
         }
 
         try {
