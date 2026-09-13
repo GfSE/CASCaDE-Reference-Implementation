@@ -35,22 +35,23 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { JsonObject, JsonValue, JsonArray, LIB, LOG } from '../../lib/helpers';
+import { JsonObject, JsonValue, JsonArray, LOG } from '../../lib/helpers';
 import { MVF } from '../../lib/mvf';
 import {
-    TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
+    TPigId, TPigItem, PigItem, PigItemType, /*PigItemTypeValue, */
     AnEntity, APackage, ARelationship,
     Entity, Relationship,Property, Link, Enumeration
 } from '../../schema/pig/ts/pig-metaclasses';
 
+/*
 export interface IOptionsJSONLD {
-    /** Stringify the output (default: false, returns JsonObject) */
+    // Stringify the output (default: false, returns JsonObject)
     stringify?: boolean;
-    /** Indentation for stringified output (default: 2) */
+    // Indentation for stringified output (default: 2)
     indent?: number;
-    /** Filter which item types to include in package graph (default: all) */
+    // Filter which item types to include in package graph (default: all)
     itemType?: PigItemTypeValue[];
-}
+}*/
 
 /**
  * Generic JSON-LD export function that dispatches to the appropriate method based on itemType
@@ -62,36 +63,36 @@ export interface IOptionsJSONLD {
  * import { getJSONLD } from './getJSONLD';
  * const jsonld = getJSONLD(item, { stringify: true });
  */
-export function getJSONLD(item: TPigItem, options?: IOptionsJSONLD): JsonObject | string {
+export function getJSONLD(item: TPigItem/*, options?: IOptionsJSONLD*/): JsonObject | string {
     let result: JsonObject;
 
     switch (item.itemType) {
         // Instances/Individuals
         case PigItemType.aPackage:
-            result = GetJSONLD.aPackage(item as APackage, options);
+            result = GetJSONLD.aPackage(item as APackage);
             break;
         case PigItemType.anEntity:
-            result = GetJSONLD.anEntity(item as AnEntity, options);
+            result = GetJSONLD.anEntity(item as AnEntity);
             break;
         case PigItemType.aRelationship:
-            result = GetJSONLD.aRelationship(item as ARelationship, options);
+            result = GetJSONLD.aRelationship(item as ARelationship);
             break;
 
         // Metamodel Classes
         case PigItemType.Enumeration:
-            result = GetJSONLD.enumeration(item as Enumeration, options);
+            result = GetJSONLD.enumeration(item as Enumeration);
             break;
         case PigItemType.Property:
-            result = GetJSONLD.property(item as Property, options);
+            result = GetJSONLD.property(item as Property);
             break;
         case PigItemType.Link:
-            result = GetJSONLD.link(item as Link, options);
+            result = GetJSONLD.link(item as Link);
             break;
         case PigItemType.Entity:
-            result = GetJSONLD.entity(item as Entity, options);
+            result = GetJSONLD.entity(item as Entity);
             break;
         case PigItemType.Relationship:
-            result = GetJSONLD.relationship(item as Relationship, options);
+            result = GetJSONLD.relationship(item as Relationship);
             break;
 
         default:
@@ -102,10 +103,10 @@ export function getJSONLD(item: TPigItem, options?: IOptionsJSONLD): JsonObject 
             };
     }
 
-    // Stringify if requested
+/*    // Stringify if requested
     if (options?.stringify) {
         return JSON.stringify(result, null, options?.indent ?? 2);
-    }
+    } */
 
     return result;
 }
@@ -121,13 +122,16 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation with @context and @graph
      */
-    static aPackage(pkg: APackage, options?: IOptionsJSONLD): JsonObject {
-        const filterTypes = options?.itemType;
+    static aPackage(pkg: APackage/*, options?: IOptionsJSONLD*/): JsonObject {
+        // const filterTypes = options?.itemType;
 
-        const jld = this.getAsJSONLD(pkg, options);
+        let jld = this.getAsJSONLD(pkg);
 
-        jld['@context'] = xContextToJSONLD(pkg);
-        jld['@graph'] = xGraphToJSONLD(pkg);
+        jld = this.xConfigurables(jld, pkg, 'hasProperty');
+        jld = this.xConfigurables(jld, pkg, 'hasTargetLink');
+
+        jld['@context'] = xContext(pkg);
+        jld['@graph'] = xGraph(pkg);
 
     /*  ... coded by Copilot, but not yet tested:
         // Filter graph items if itemType filter is specified
@@ -157,7 +161,7 @@ class GetJSONLD {
          * Internal format: @context = [{ tag: "cas:", uri: "https://..." }, ...]
          * JSON-LD format:  @context = { "cas": "https://...", ... }
          */
-        function xContextToJSONLD(pkg: APackage): JsonObject {
+        function xContext(pkg: APackage): JsonObject {
             const ctx = pkg.context;
 
             if (!ctx || !Array.isArray(ctx)) {
@@ -197,7 +201,7 @@ class GetJSONLD {
          * @param pkg - APackage instance
          * @returns Array of JSON-LD items
          */
-        function xGraphToJSONLD(pkg: APackage): JsonObject[] {
+        function xGraph(pkg: APackage): JsonObject[] {
             const graph = pkg.graph;
 
             if (!graph || !Array.isArray(graph) || graph.length === 0)
@@ -218,11 +222,11 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation
      */
-    static anEntity(itm: AnEntity, options?: IOptionsJSONLD): JsonObject {
-        let jld = this.getAsJSONLD(itm, options);
+    static anEntity(itm: AnEntity/*, options?: IOptionsJSONLD*/): JsonObject {
+        let jld = this.getAsJSONLD(itm);
 
-        jld = this.xConfigurablesToJSONLD(jld, itm, 'hasProperty');
-        jld = this.xConfigurablesToJSONLD(jld, itm, 'hasTargetLink');
+        jld = this.xConfigurables(jld, itm, 'hasProperty');
+        jld = this.xConfigurables(jld, itm, 'hasTargetLink');
         return this.sortJsonLdKeys(jld);
     }
 
@@ -232,12 +236,12 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation
      */
-    static aRelationship(rel: ARelationship, options?: IOptionsJSONLD): JsonObject {
-        let jld = this.getAsJSONLD(rel, options);
+    static aRelationship(rel: ARelationship/*, options?: IOptionsJSONLD*/): JsonObject {
+        let jld = this.getAsJSONLD(rel);
 
-        jld = this.xConfigurablesToJSONLD(jld, rel, 'hasProperty');
-        jld = this.xConfigurablesToJSONLD(jld, rel, 'hasTargetLink');
-        jld = this.xConfigurablesToJSONLD(jld, rel, 'hasSourceLink');
+        jld = this.xConfigurables(jld, rel, 'hasProperty');
+        jld = this.xConfigurables(jld, rel, 'hasTargetLink');
+        jld = this.xConfigurables(jld, rel, 'hasSourceLink');
         return this.sortJsonLdKeys(jld);
     }
 
@@ -247,8 +251,8 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation
      */
-    static enumeration(enm: Enumeration, options?: IOptionsJSONLD): JsonObject {
-        const jld = this.getAsJSONLD(enm, options);
+    static enumeration(enm: Enumeration/*, options?: IOptionsJSONLD*/): JsonObject {
+        const jld = this.getAsJSONLD(enm);
         return this.sortJsonLdKeys(jld);
     }
 
@@ -258,8 +262,8 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation
      */
-    static property(prp: Property, options?: IOptionsJSONLD): JsonObject {
-        const jld = this.getAsJSONLD(prp, options);
+    static property(prp: Property/*, options?: IOptionsJSONLD*/): JsonObject {
+        const jld = this.getAsJSONLD(prp);
         return this.sortJsonLdKeys(jld);
     }
 
@@ -269,8 +273,8 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation
      */
-    static link(lnk: Link, options?: IOptionsJSONLD): JsonObject {
-        const jld = this.getAsJSONLD(lnk, options);
+    static link(lnk: Link/*, options?: IOptionsJSONLD*/): JsonObject {
+        const jld = this.getAsJSONLD(lnk);
         return this.sortJsonLdKeys(jld);
     }
 
@@ -280,8 +284,8 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation
      */
-    static entity(itm: Entity, options?: IOptionsJSONLD): JsonObject {
-        const jld = this.getAsJSONLD(itm, options);
+    static entity(itm: Entity/*, options?: IOptionsJSONLD*/): JsonObject {
+        const jld = this.getAsJSONLD(itm);
         return this.sortJsonLdKeys(jld);
     }
 
@@ -291,21 +295,21 @@ class GetJSONLD {
      * @param options - Export options
      * @returns JSON-LD representation
      */
-    static relationship(rel: Relationship, options?: IOptionsJSONLD): JsonObject {
-        const jld = this.getAsJSONLD(rel, options);
+    static relationship(rel: Relationship/*, options?: IOptionsJSONLD*/): JsonObject {
+        const jld = this.getAsJSONLD(rel);
         return this.sortJsonLdKeys(jld);
     }
     /**
      * Transform hasProperty, hasSourceLink or hasTargetLink arrays for JSON-LD output.
      * It is assumed that the native property names have already been renamed with MVF.renameJsonTags( ..., MVF.toJSONLD).
      */
-    private static xConfigurablesToJSONLD(
+    private static xConfigurables(
         jld: JsonObject,
         itm: TPigItem,
         hasX: 'hasProperty' | 'hasSourceLink' | 'hasTargetLink'
     ): JsonObject {
         const cfgs = (itm as any)[hasX];
-        // LOG.debug('xConfigurablesToJSONLD:', jld, itm, hasX, cfgs);
+        // LOG.debug('xConfigurables:', jld, itm, hasX, cfgs);
         if (!Array.isArray(cfgs)) {
             return jld;
         }
@@ -485,7 +489,10 @@ class GetJSONLD {
         }
         return out;
     }
-    private static getAsJSONLD(itm: TPigItem, options?: IOptionsJSONLD): JsonObject {
+    private static getAsJSONLD(
+        itm: TPigItem
+        // options?: IOptionsJSONLD
+    ): JsonObject {
         const jld = MVF.renameJsonTags(itm.get() as unknown as JsonObject, MVF.toJSONLD, { mutate: false }) as JsonObject;
         return this.makeIdObjects(jld) as JsonObject;
     }

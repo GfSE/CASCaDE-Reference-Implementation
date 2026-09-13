@@ -102,42 +102,19 @@ import { LIB, LOG } from '../../../common/lib/helpers';
         this.successMessage = '';
         this.isExporting = false;
 
-        // Get packages and update count
+        // Get packages and update count (already loaded from storage at app startup)
         const cache = PackageCache();
-
-        // Load from storage if cache is empty
-        if (cache.packages.length === 0) {
-            LOG.info('[Export JSON-LD] Cache is empty, loading from storage...');
-            cache.loadFromStorage();
-        }
-
         const pkgs = cache.packages;
-
-     /*   // Debug output
-        LOG.debug('[Export JSON-LD] packageCache:', cache);
-        LOG.debug('[Export JSON-LD] packages:', pkgs);
-        LOG.debug('[Export JSON-LD] packages.length:', pkgs.length);
-    */
 
         this.packageCount = pkgs.length;
 
         // Set default filename from first package title
-        if (pkgs && pkgs.length > 0) {
+        if (LIB.isArrayWithContent(pkgs)) {
             // Use toRaw to unwrap Pinia's reactive proxy
             const firstPackage = toRaw(pkgs[0]);
 
-            // Handle multilingual title field
-            let titleText: string;
-            if (typeof firstPackage.title === 'string') {
-                titleText = firstPackage.title;
-            } else if (Array.isArray(firstPackage.title) && firstPackage.title.length > 0) {
-                titleText = firstPackage.title[0].value;
-            } else {
-                titleText = firstPackage.id || 'export';
-            }
-
-            // Sanitize filename: remove invalid characters
-            const sanitized = LIB.makeFilename(titleText);
+            // Derive filename from package title or ID and remove invalid characters:
+            const sanitized = LIB.makeFilename(firstPackage);
             this.filename = `${sanitized}.cas.jsonld`;
         } else {
             this.filename = 'export.cas.jsonld';
@@ -157,7 +134,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
             // Use toRaw to unwrap Pinia's reactive proxies
             const jsonldPackages = pkgs.map((pkg: any) => {
                 const rawPkg = toRaw(pkg);
-                return getJSONLD(rawPkg, { stringify: false });
+                return getJSONLD(rawPkg/*, { stringify: false }*/);
             });
 
             // If single package, export directly; if multiple, wrap in array
@@ -165,7 +142,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
                 ? jsonldPackages[0] 
                 : jsonldPackages;
 
-            // Write to file using PLI
+            // Write to file (platform-independent)
             const result = await PLI.writeFile(exportData, this.filename);
 
             if (result.ok) {
@@ -192,17 +169,3 @@ import { LIB, LOG } from '../../../common/lib/helpers';
 
 export default class JsonExportComponent extends Vue {}
 </script>
-
-<style scoped>
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mt-4 {
-    margin-top: 16px;
-}
-
-.v-alert {
-    white-space: pre-line;
-}
-</style>

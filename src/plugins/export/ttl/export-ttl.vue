@@ -22,37 +22,29 @@
                     <!-- Export Options -->
                     <div class='mt-4'>
                         <h4 class='mb-2'>Export Options</h4>
-                        <v-checkbox
-                            v-model='options.skipShapes'
-                            label='Skip SHACL shapes for read-only applications'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        ></v-checkbox>
-                        <v-checkbox
-                            v-model='options.skipHostedOntologies'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        >
+                        <v-checkbox v-model='options.skipHostedOntologies'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'>
                             <template v-slot:label>
                                 Skip hosted ontologies <i>(not yet implemented)</i>
                             </template>
                         </v-checkbox>
-                        <v-checkbox
-                            v-model='options.addExplicitSubTypes'
-                            label='Add explicit rdfs:subClassOf / rdfs:subPropertyOf'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        ></v-checkbox>
-                        <v-checkbox
-                            v-model='options.addItemTypes'
-                            label='Add cas:itemType statements for easier transformation'
-                            density='compact'
-                            hide-details
-                            :disabled='isExporting'
-                        ></v-checkbox>
+                        <v-checkbox v-model='options.skipShapes'
+                                    label='Skip SHACL shapes for read-only applications'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'></v-checkbox>
+                        <v-checkbox v-model='options.addExplicitTypeToAllClasses'
+                                    label='Add explicit rdf:type triples to subClasses and subProperties'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'></v-checkbox>
+                        <v-checkbox v-model='options.addItemTypes'
+                                    label='Add cas:itemType triples for easier transformation'
+                                    density='compact'
+                                    hide-details
+                                    :disabled='isExporting'></v-checkbox>
                     </div>
                 </div>
 
@@ -117,7 +109,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
         options: {
             skipShapes: false,              // Will be negated to addShapes: true
             skipHostedOntologies: false,    // Will be negated to addHostedOntologies: true
-            addExplicitSubTypes: false,     // Passed as-is (false = don't add)
+            addExplicitTypeToAllClasses: false,     // Passed as-is (false = don't add)
             addItemTypes: false             // Passed as-is (false = don't add, must be ticked to add)
         },
         rules: {
@@ -145,36 +137,19 @@ import { LIB, LOG } from '../../../common/lib/helpers';
         this.successMessage = '';
         this.isExporting = false;
 
-        // Get packages and update count
+        // Get packages and update count (already loaded from storage at app startup)
         const cache = PackageCache();
-
-        // Load from storage if cache is empty
-        if (cache.packages.length === 0) {
-            LOG.info('[Export TTL] Cache is empty, loading from storage...');
-            cache.loadFromStorage();
-        }
-
         const pkgs = cache.packages;
 
         this.packageCount = pkgs.length;
 
         // Set default filename from first package title
-        if (pkgs && pkgs.length > 0) {
+        if (LIB.isArrayWithContent(pkgs)) {
             // Use toRaw to unwrap Pinia's reactive proxy
             const firstPackage = toRaw(pkgs[0]);
 
-            // Handle multilingual title field
-            let titleText: string;
-            if (typeof firstPackage.title === 'string') {
-                titleText = firstPackage.title;
-            } else if (Array.isArray(firstPackage.title) && firstPackage.title.length > 0) {
-                titleText = firstPackage.title[0].value;
-            } else {
-                titleText = firstPackage.id || 'export';
-            }
-
-            // Sanitize filename: remove invalid characters
-            const sanitized = LIB.makeFilename(titleText);
+            // Derive filename from package title or ID and remove invalid characters:
+            const sanitized = LIB.makeFilename(firstPackage);
             this.filename = `${sanitized}.cas.ttl`;
         } else {
             this.filename = 'export.cas.ttl';
@@ -198,7 +173,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
                 return getTTL(rawPkg, {
                     addShapes: !this.options.skipShapes,
                     addHostedOntologies: !this.options.skipHostedOntologies,
-                    addExplicitSubTypes: this.options.addExplicitSubTypes,
+                    addExplicitTypeToAllClasses: this.options.addExplicitTypeToAllClasses,
                     addItemTypes: this.options.addItemTypes
                 });
             });
@@ -206,7 +181,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
             // Combine all TTL strings with line breaks
             const exportData = ttlPackages.join('\n\n');
 
-            // Write to file using PLI
+            // Write to file (platform-independent)
             const result = await PLI.writeFile(exportData, this.filename);
 
             if (result.ok) {
@@ -233,13 +208,3 @@ import { LIB, LOG } from '../../../common/lib/helpers';
 
 export default class TtlExportComponent extends Vue {}
 </script>
-
-<style scoped>
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mt-4 {
-    margin-top: 16px;
-}
-</style>

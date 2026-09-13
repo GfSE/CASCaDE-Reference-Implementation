@@ -13,9 +13,10 @@
  *  -
  *
  *  @ToDo:
- *  -
+ *  - Resolve circular dependency between helpers.ts and pig-metaclasses.ts (IIdentifiable)
  */
 
+import type { IIdentifiable } from '../schema/pig/ts/pig-metaclasses';
 import { DEF } from './definitions';
 
 /**
@@ -76,7 +77,7 @@ export const LIB = {
     isLeaf(node: JsonValue): boolean {
         return (typeof node === 'string' || typeof node === 'number' || typeof node === 'boolean');
     },
-    isArrayWithContent(L: any): boolean {
+    isArrayWithContent<T>(L: T[] | undefined | null): L is T[] {
         return (Array.isArray(L) && L.length > 0);
     },
 
@@ -535,10 +536,33 @@ export const LIB = {
         // Fallback to term with a suffix
         return term + DEF.suffixShape;
     },
-    makeFilename(str: string): string {
+    makeFilenameFromString(str: string): string {
         // Replace invalid filename characters with underscores
         // return str.replace(/[<>:"/\\|?*\x00-\x1F]/g, '_').trim();
         return str.replace(/[<>:"/\\|?*\s]/g, '_').trim()
+    },
+    makeFilename(itm: IIdentifiable): string {
+        let str: string;
+        if (typeof itm.title === 'string') {
+            str = itm.title;
+        } else if (Array.isArray(itm.title) && itm.title.length > 0) {
+            str = itm.title[0].value;
+        } else {
+            str = itm.id;
+        }
+
+        return LIB.makeFilenameFromString(str);
+    },
+    encodeBase64(value: string): string {
+        if (typeof btoa === 'function') {
+            return btoa(value);
+        }
+
+        if (typeof Buffer !== 'undefined') {
+            return Buffer.from(value, 'utf-8').toString('base64');
+        }
+
+        throw new Error('Base64 encoding is not available in this environment.');
     }
 };
 

@@ -1,5 +1,5 @@
 /*!
- * XML Import Plugin Registration
+ * Import Plugin Registration for CASCaRA XML
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
@@ -19,7 +19,7 @@ import { LOG } from '@/common/lib/helpers';
 /**
  * Plugin configuration options
  */
-export interface XmlImportPluginOptions {
+export type XmlImportPluginOptions = {
     /**
      * Maximum file size in bytes (default: 6MB)
      */

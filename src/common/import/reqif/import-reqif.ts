@@ -28,9 +28,9 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { LOG } from '../../lib/helpers';
+// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
-import { IRsp, Msg, Rsp /*, rspOK*/ } from '../../lib/messages';
+import { IRsp, Msg/*, Rsp, rspOK*/ } from '../../lib/messages';
 import { APackage } from '../../schema/pig/ts/pig-metaclasses';
 import { XmlImporter } from '../xml/import-xml';
 // import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
@@ -116,16 +116,26 @@ export class ReqifImporter {
         // LOG.debug(`ReqIFImporter: using stylesheet path: ${stylesheetPath}`);
 
         const rspTransform = await PLI.transformXSL(xmlToTransform, stylesheetPath);
-        if (!rspTransform.ok)
+        if (!rspTransform.ok) {
+            rspTransform.statusText = filename + ': ' + rspTransform.statusText;
             return rspTransform;
+        }
 
         const xmlString = rspTransform.response as string;
         // LOG.debug(`ReqIFImporter: transformed ${filename} to CAS format:`, xmlString);
 
+        // (debug) optionally persist transformed XML here if needed
+        // await PLI.writeFile(xmlString, 'from-ReqIF.xml');
+
         // check schema
         const schemaResult = XmlImporter.checkXmlSchema(xmlString);
-        if (!schemaResult.ok)
+        if (!schemaResult.ok) {
+            schemaResult.statusText = filename + ': ' + schemaResult.statusText;
             return schemaResult;
+        }
+
+        // Write to file (platform-independent)
+        // await PLI.writeFile(JSON.stringify(xmlString,null,2), "from-ReqIF.xml");
 
         // Instantiate APackage from transformed XML
         const aPackage = new APackage().setXML(xmlString /*, {
@@ -139,36 +149,7 @@ export class ReqifImporter {
             ] as ConstraintCheckType[]
         } */);
 
-        // Check if package was successfully created
-        if (!aPackage.status().ok) {
-            return aPackage.status();
-        }
-
-        // Get all items (package + graph items)
-        const allItems = aPackage.getItems();
-
-        // Calculate import statistics
-        const expectedCount = aPackage.graph?.length || 0;
-        const actualCount = allItems.length - 1; // -1 for package itself
-
-        // Build result response
-        let result: IRsp;
-        if (actualCount === expectedCount) {
-            LOG.info(
-                `ReqifImporter: successfully imported ${filename} with all ${actualCount} items`
-            );
-            result = Rsp.create(0, allItems, 'json');
-        } else {
-            // Log details about erroneous items
-            const errorDetails = this.buildErrorReport(allItems);
-            LOG.warn(
-                `ReqifImporter: imported ${actualCount} of ${expectedCount} items from ${filename}${errorDetails}`
-            );
-
-            result = Rsp.create(604, allItems, 'json', 'ReqIF', actualCount, expectedCount);
-        }
-
-        return result;
+        return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
     }
 
     /**
@@ -194,7 +175,7 @@ export class ReqifImporter {
      * @param allItems - All items including package
      * @returns Formatted error report string
      * @private
-     */
+     * /
     private static buildErrorReport(allItems: any[]): string {
         let errorReport = '\nErroneous items:';
 
@@ -206,7 +187,7 @@ export class ReqifImporter {
         }
 
         return errorReport;
-    }
+    } */
 
     /**
      * Validate that the XML document is a valid ReqIF document

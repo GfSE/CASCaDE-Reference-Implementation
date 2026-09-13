@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Minimal partial XSD for the RDF namespace, only declaring the single global
+  attribute 'rdf:type' as used by CASCaRA XML metamodel class definitions
+  (e.g. cas:Entity/@rdf:type="owl:Class") as a synonym for @cas:hasClass.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
+           targetNamespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+           elementFormDefault="qualified"
+           attributeFormDefault="qualified">
+
+    <xs:import namespace="https://product-information-graph.org/ontology/2026-05-08/metamodel#" schemaLocation="common-types.xsd"/>
+
+    <xs:attribute name="type" type="cas:TPigId"/>
+
+</xs:schema>

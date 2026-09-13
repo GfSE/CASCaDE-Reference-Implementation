@@ -229,3 +229,15 @@ footer {
 		grid-template-columns: 1fr;
 	}
 }
+table {
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 2px 12px;
+    text-align: left;
+}
+
+/* th {
+    background-color: var(--grey-light);
+}*/

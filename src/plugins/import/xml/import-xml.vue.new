@@ -199,7 +199,7 @@ async function handleFileSelect(event: Event) {
             // Full success
             importedItems.value = result.response as TPigItem[];
             importSuccess.value = true;
-        } else if (result.status === 604) {
+        } else if (result.status === 603) {
             // Partial success (some items failed)
             importedItems.value = result.response as TPigItem[];
             importWarning.value = result.statusText || 'Some items could not be imported';
@@ -228,7 +228,7 @@ function resetImport() {
 
 function exportToJsonLD() {
     // @ToDo: Implement JSON-LD export
-    console.log('Export to JSON-LD not yet implemented');
+    LOG.info('Export to JSON-LD not yet implemented');
     alert('Export to JSON-LD functionality will be implemented soon');
 }
 

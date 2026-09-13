@@ -5,8 +5,8 @@
             <v-card-title>Select XML Files</v-card-title>
 
             <v-card-text>
-                <v-file-input v-model='selectedXmlFiles'
-                              accept='.xml'
+                <v-file-input v-model='selectedFiles'
+                              accept='.cas.xml'
                               label='XML Input'
                               prepend-icon='mdi-folder-open'
                               multiple
@@ -14,16 +14,6 @@
                               :disabled='isLoading'
                               hint='Select one or more XML files to import'
                               persistent-hint>
-                </v-file-input>
-                <v-file-input v-model="selectedSefFile"
-                              accept=".sef.json"
-                              label="Optional SEF Input"
-                              prepend-icon="mdi-file-code"
-                              :loading="isLoading"
-                              :disabled="isLoading"
-                              hint="Optionally select a SEF file for XSL-Transformation"
-                              persistent-hint
-                              :multiple="false">
                 </v-file-input>
 
                 <!-- Error Display -->
@@ -62,9 +52,9 @@
                 </v-btn>
                 <v-btn color='primary'
                        @click='onSubmit'
-                       :disabled='!selectedXmlFiles.length || isLoading'
+                       :disabled='!selectedFiles.length || isLoading'
                        :loading='isLoading'>
-                    Import
+                    {{ submitLabel }}
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -84,19 +74,27 @@
         data() {
             return {
                 dialog: false,
-                selectedXmlFiles: [] as File[],
-                selectedSefFile: null as File | null,
+                selectedFiles: [] as File[],
                 isLoading: false,
                 errorMessages: [] as string[],
                 successMessage: ''
             };
+        },
+        computed: {
+            /**
+             * Label for the submit button: 'Replace' if the package cache already
+             * holds data (in memory or persisted), otherwise 'Import'
+             */
+            submitLabel(): string {
+                return PackageCache().hasData ? 'Replace' : 'Import';
+            }
         },
         methods: {
             /**
              * Handle submit button click
              */
             async onSubmit() {
-                if (!this.selectedXmlFiles.length) {
+                if (!this.selectedFiles.length) {
                     this.errorMessages = ['Please select at least one file'];
                     return;
                 }
@@ -110,7 +108,7 @@
                     const results = await this.importAllFiles();
 
                     // Separate successful and failed imports
-                    // @ToDo: results with 604 status (partial success) should be handled separately, but for now we treat them as failures:
+                    // @ToDo: results with 603 status (partial success) should be handled separately, but for now we treat them as failures:
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
 
@@ -121,12 +119,15 @@
                     });
 
                     if (allPackages.length > 0) {
-                        // Store in Pinia store with persistence
+                        // Store in Pinia store with persistence (fully replaces any previous cache content)
                         const cache = PackageCache();
-                        cache.set(allPackages);
+                        const persisted = await cache.replace(allPackages);
 
                         // Show success message
                         this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
+                        if (!persisted) {
+                            this.errorMessages = ['Warning: imported data could not be persisted to browser storage (IndexedDB). It may be lost after closing the browser tab.'];
+                        }
 
                         this.logFailedImports(failed);
 
@@ -155,9 +156,9 @@
             async importAllFiles(): Promise<IRsp<unknown>[]> {
                 const results: IRsp<unknown>[] = [];
 
-                for (const file of this.selectedXmlFiles) {
+                for (const file of this.selectedFiles) {
                     try {
-                        const options = this.selectedSefFile ? { sef: this.selectedSefFile } : undefined;
+                        const options = undefined;
                         const rsp = await XmlImporter.import(file, options);
                         results.push(rsp);
                     } catch (error: any) {
@@ -167,19 +168,10 @@
                 return results;
             },
 
-            /**
-             * Extract filename from IRsp response for error messages
-             */
-            getFilenameFromResponse(rsp: IRsp<unknown>): string {
-                // Try to extract filename from statusText
-                const match = rsp.statusText?.match(/^([^:]+):/);
-                return match ? match[1] : 'Unknown file';
-            },
-
             logFailedImports(failed: IRsp<unknown>[]) {
                 if (failed.length > 0) {
                     this.errorMessages = failed.map((r: IRsp<unknown>) =>
-                        `${this.getFilenameFromResponse(r)}: ${r.statusText || 'Unknown error'}`
+                        `${r.statusText || 'Unknown error'} (${r.status})`
                     );
                     // LOG.error('Failed imports:', failed);
                 }
@@ -190,8 +182,7 @@
              */
             onCancel() {
                 this.dialog = false;
-                this.selectedXmlFiles = [];
-                this.selectedSefFile = null;
+                this.selectedFiles = [];
                 this.errorMessages = [];
                 this.successMessage = '';
             }
@@ -200,24 +191,9 @@
 
     export default class XmlImportComponent extends Vue {
         dialog!: boolean;
-        selectedXmlFiles!: File[];
+        selectedFiles!: File[];
         isLoading!: boolean;
         errorMessages!: string[];
         successMessage!: string;
     }
 </script>
-
-<style scoped>
-    .v-card {
-        padding: 1rem;
-    }
-
-    .v-card-title {
-        font-size: 1.5rem;
-        font-weight: 500;
-    }
-
-    .v-alert {
-        white-space: pre-line;
-    }
-</style>

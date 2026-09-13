@@ -110,21 +110,41 @@ h3 {
     gap: 0.25rem 1.5rem;
     align-items: start;
 }
-    .dl-horizontal dt {
-        font-style: italic;
-        font-size: 90%;
-        text-align: right;
-        margin: 0;
-        grid-column: 1;
-        margin: 0;
-    }
+.dl-horizontal dt {
+    font-style: italic;
+    font-size: 90%;
+    text-align: right;
+    margin: 0;
+    grid-column: 1;
+    margin: 0;
+}
 
-    .dl-horizontal dd {
-        margin: 0;
-        grid-column: 2;
-        word-break: break-word;
-        white-space: normal;
-    }
+.dl-horizontal dd {
+    margin: 0;
+    grid-column: 2;
+    word-break: break-word;
+    white-space: normal;
+}
+.v-card {
+    padding: 1rem;
+}
+
+.v-card-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+}
+
+.v-alert {
+    white-space: pre-line;
+}
+.mb-4 {
+    margin-bottom: 16px;
+}
+
+.mt-4 {
+    margin-top: 16px;
+}
+
 /*.meta-aProperty {
     flex: 1;
     min-width: 0;

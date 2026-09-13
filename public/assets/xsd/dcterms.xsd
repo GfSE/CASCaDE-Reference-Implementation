@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Minimal partial schema for the subset of Dublin Core Terms (dcterms) elements used in CASCaRA XML.
+  Elements may repeat with different xml:lang attributes and may contain embedded (X)HTML markup
+  (e.g. <p>, <small>, <i>, <a>, <object>), which is written as-is (not escaped) in the CASCaRA exporter.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:dcterms="http://purl.org/dc/terms/"
+           targetNamespace="http://purl.org/dc/terms/"
+           elementFormDefault="qualified">
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+               schemaLocation="https://www.w3.org/2001/xml.xsd"/>
+
+    <!-- Mixed content: plain text or embedded (X)HTML elements, optionally tagged with xml:lang -->
+    <xs:complexType name="TLanguageText" mixed="true">
+        <xs:sequence>
+            <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:element name="title" type="dcterms:TLanguageText"/>
+    <xs:element name="description" type="dcterms:TLanguageText"/>
+    <xs:element name="modified" type="xs:dateTime"/>
+    <xs:element name="contributor" type="dcterms:TLanguageText"/>
+    <xs:element name="license" type="dcterms:TLanguageText"/>
+
+</xs:schema>

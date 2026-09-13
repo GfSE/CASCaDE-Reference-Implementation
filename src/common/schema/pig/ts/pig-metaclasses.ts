@@ -7,7 +7,7 @@
 /**
  * CASCaRA Graph (cas:) Metaclasses - the basic object structure
  * -------------------------------------------------------------
- * Authors: oskar.dungern@gfse.org
+ * Author: oskar.dungern@gfse.org
  * Copyright 2026 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  *
@@ -23,8 +23,11 @@
  * - All names are always in singular form, even if they have multiple values.
  * - The itemType is explicitly stored with each item to support searching (in the cache or database) ... and for runtime checking.
  * - The 'aProperty' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
- * - Similarly, the 'aLink' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
- * - Both 'aProperty' and 'aLink' have no identifier and no revision history of their own.
+ * - Similarly, the 'aSourceLink' and 'aTargetLink' instances are instantiated as part their parent objects 'anEntity', 'aRelationship' or 'aPackage'.
+ * - Both 'aProperty', 'aSourceLink' and 'aTargetLink' have no identifier and no revision history of their own.
+ * - 'aLink' and their subclasses have a single idRef attribute;
+ *   the parent objects have a list of 'aLink' instances to allow multiple links of the same type to different endpoints.
+ *   There is no need to distinguish between no list and an empty list in case of the instances.
  * - Other objects are referenced by URIs (TPigId) to avoid inadvertant duplication of objects ... at the cost of repeated cache access.
  *   This means the code must resolve any reference by reading the referenced object explicitly from cache, when needed.
  * - aRelationship.hasTargetLink is an array with maxCount=1 to have the same structure as anEntity.hasTargetLink.
@@ -34,15 +37,15 @@
  *   those references are expanded to id objects only when serializing to JSON-LD.
  * - The 'set' methods are chainable to allow concise code when creating new instances.
  * - The 'get' methods return plain JSON objects matching the interfaces, suitable for serialization and persistence.
- * - The 'setJSONLD' methods handles conversion from JSON-LD representation.
+ * - The 'setJSONLD' methods handles conversion from JSON-LD representation; similarly, 'setXML' methods handle conversion from XML representation.
  * - There are no 'getJSONLD' methods for the core classes. Instead, the data is transformed to JSON-LD in a separate module
  *   providing a getJSONLD() function for all itemTypes. The reason is to avoid that this module is getting huge.
- * - Similar for getHTML() and others.
+ * - Similar for getHTML(), getXML() and others.
  * - Programming errors result in exceptions, data errors in IMsg return values.
  * - The namespace prefixes are defined in definitions.ts and used consistently in the code; it was initially 'pig:'
  *   and is now pfxNsMeta: 'cas:' for the metamodel and pfxNsSemi: 'cas:' for the semantic infrastructure.
- * - CASCaRA (PIG) classes (as derived from the ontology) get version information it their URL path.
- * - All others must at least specify the 'modified' attribute to capture the version history of the item;
+ * - CASCaRA (PIG) classes (as derived from the ontology) get revision information it their URL path.
+ * - All others must at least specify the 'modified' attribute to capture the revision history of the item;
  *   it is recommended to maintain revision and priorRevision as well for better configuration management and traceability.
  *
  * @ToDo:
@@ -51,6 +54,18 @@
  * - allow packages to be nested
  * - implement 'composes' (formerly composedProperty) for Property and aProperty
  * - implement the inheritance of enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink and enumeratedEndpoint
+ * - implement abstract class 'Configurable' for Property and Link to avoid code duplication
+ * - allow a list of idRef in aSourceLink and aTargetLink for grouping of endpoints of the same link type;
+ *   now links of the same type are collected during export.
+ *   In fact, this is in contrast to a design decision listed above.
+ * - Make sure that an empty list of enumeratedEndpoint, enumeratedProperty, enumeratedSourceLink and enumeratedTargetLink means "none allowed";
+ *   it should be an empty array in the native JSON ... and not undefined. If undefined, it means "all allowed".
+ * ✅ implement 'revisionAware' for Link.
+ * - implement 'globalTitle' for all classes and 'globalReversed' for Relationship
+ * - include revision as part of a pointer in aSourceLink and aTargetLink, if the link class specifies revisionAware=true, both schema and code.
+ * - Assign defaultValue, when a aProperty is instantiated as part of anEntity or aRelationship.
+ * - Prohibit aProperty or aLink to be updated or deleted, if readOnly=true in its class.
+ * - Consequently aSourceLink and aTargetLink must specify the endpoints by identifier and revision, if their class specifies revisionAware=true.
  * - Check use of PigItem.normalizeId() in the setJSONLD() thread
  *   PigItem.normalizeId() shortly before validate() in set() ?
  * ✅ Check the result of PigItem.normalizeId in the setXML() thread in case of enumerated values
@@ -63,7 +78,9 @@
  *   This code could just *ignore* additional properties.
  * - Consider the schema of cas.xml: In RDF and JSON-LD the class names of aLink and aProperty are used as predicate.
  * - Consolidate XsDataType and PigItem.isSupportedDataType() to avoid duplication and inconsistencies.
+ * - Include valid datatypes in the schemata for Property and Link.
  * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
+ * - set lastStatus also on JSON-LD import
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -125,11 +142,10 @@ const PIG_CLASSES = new Set<PigItemTypeValue>([
     PigItemType.Relationship
 ]);
 
+// PigItemType.aProperty, PigItemType.aSourceLink and PigItemType.aTargetLink
+// are embedded in aPackage, anEntity and aRelationship and cannot be instantiated standalone.
 const PIG_INSTANCE_ARRAY = [
     PigItemType.aPackage,
-    // PigItemType.aProperty,
-    // PigItemType.aSourceLink,
-    // PigItemType.aTargetLink,
     PigItemType.anEntity,
     PigItemType.aRelationship
 ] as const;
@@ -175,14 +191,6 @@ export class PigItem {
             case PigItemType.aPackage:
                 return new APackage();
 
-        /*    // Embedded instances (not typically instantiated standalone)
-            case PigItemType.aProperty:
-                return new AProperty();
-            case PigItemType.aSourceLink:
-                return new ASourceLink();
-            case PigItemType.aTargetLink:
-                return new ATargetLink();
-        */
             default:
                 LOG.error(`PigItemFactory.create: unknown itemType '${itemType}'`);
                 return null;
@@ -194,40 +202,30 @@ export class PigItem {
      * @param input - String to check
      * @returns true if valid ID
      */
-    static isValidIdString(input: string): boolean {
+    static isValidIdString(input: string|undefined|null): boolean {
         return typeof (input) == 'string' && (RE.termWithNamespace.test(input) || RE.uri.test(input));
     }
     /**
      * Check if itemType is a PIG class (Property, Link, Entity, Relationship)
      */
-    static isClass(itemType: PigItemTypeValue): boolean {
-        return PIG_CLASSES.has(itemType);
+    static isClass(iType: PigItemTypeValue): boolean {
+        return PIG_CLASSES.has(iType);
     }
     /**
      * Check if itemType is a PIG instance (anEntity, aRelationship, aProperty, aSourceLink, aTargetLink)
      */
-    static isInstance(itemType: PigItemTypeValue): boolean {
-        return PIG_INSTANCES.has(itemType);
+    static isInstance(iType: PigItemTypeValue): boolean {
+        return PIG_INSTANCES.has(iType);
     }
     /**
      * Check if item type is allowed for instantiation.
-     * The following types are not allowed in a graph:
-        PigItemType.aProperty,     // Embedded in anEntity/aRelationship
-        PigItemType.aSourceLink,   // Embedded in aRelationship
-        PigItemType.aTargetLink    // Embedded in anEntity/aRelationship
-
+     * Identifiables are, but the following types are not allowed in a graph:
+        PigItemType.aProperty,     // embedded in aPackage/anEntity/aRelationship
+        PigItemType.aSourceLink,   // embedded in aRelationship
+        PigItemType.aTargetLink    // embedded in aPackage/anEntity/aRelationship
      */
-    static isInstantiable(itype: PigItemTypeValue): boolean {
-        return ([
-            PigItemType.Enumeration,
-            PigItemType.Property,
-            PigItemType.Link,
-            PigItemType.Entity,
-            PigItemType.Relationship,
-            PigItemType.anEntity,
-            PigItemType.aRelationship,
-            PigItemType.aPackage
-        ] as unknown as PigItemTypeValue).includes(itype);
+    static isIdentifiable(iType: PigItemTypeValue): boolean {
+        return this.isInstance(iType) || this.isClass(iType);
     }
 
     /**
@@ -243,10 +241,10 @@ export class PigItem {
     /**
      * Get all supported item types
      * @returns Array of all PigItemTypeValue values
-     */
-    static getSupportedTypes(): PigItemTypeValue[] {
+     * /
+    static getSupportedItemTypes(): PigItemTypeValue[] {
         return Object.values(PigItemType);
-    }
+    } */
 
     /**
      * Check if a datatype is a string type
@@ -254,8 +252,9 @@ export class PigItem {
      * @returns true if string type
      */
     static isSupportedStringDatatype(datatype: string): boolean {
-        const stringTypes = ['xs:string', 'xsd:string'];
-        return stringTypes.includes(datatype);
+        return [
+            'xs:string', 'xsd:string'
+        ].includes(datatype);
     }
 
     /**
@@ -264,7 +263,7 @@ export class PigItem {
      * @returns true if numeric type
      */
     static isSupportedNumericDatatype(datatype: string): boolean {
-        const numericTypes = [
+        return [
             'xs:integer', 'xsd:integer',
             'xs:int', 'xsd:int',
             'xs:long', 'xsd:long',
@@ -281,9 +280,7 @@ export class PigItem {
             'xs:unsignedInt', 'xsd:unsignedInt',
             'xs:unsignedShort', 'xsd:unsignedShort',
             'xs:unsignedByte', 'xsd:unsignedByte'
-        ];
-    
-        return numericTypes.includes(datatype);
+        ].includes(datatype);
     }
 
     /**
@@ -345,13 +342,65 @@ export class PigItem {
         // Remove namespace prefix for checking
         const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
 
-        // All multi-language fields from PIG schemata that use LanguageText[]
+        // All multi-language fields from CASCaRA schemata that use LanguageText[]
         return [
             'title',
             'description',
             'definition'
         ].includes(localName);
     }
+    /**
+     * Check if a property needs IText wrapper { value: "..." }
+     * Currently only 'icon' according to IElement interface
+     */
+    static needsIText(propertyName: string): boolean {
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        return [
+            'icon'
+        ].includes(localName);
+    }
+    /**
+     * Check if a property must always be represented as an array
+     * Even when only a single element is present in XML
+     * 
+     * Context detection is done via the parent element's itemType
+     */
+    static needsArray(propertyName: string /*, parentItemType?: PigItemTypeValue */): boolean {
+        // Remove namespace prefix for checking
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // Properties that ALWAYS require arrays
+        return [
+            'enumeratedValue',        // Property.enumeratedValue: IEnumeratedValue[]
+            'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
+            'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
+            'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]'
+            'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
+            'composedProperty',       // Property.composedProperty?: TPigId[]
+            'priorRevision'           // AnElement.priorRevision?: TRevision[]
+        ].includes(localName);
+    }
+    /**
+     * Check if a property contains IDs that should be normalized
+     * These properties reference other PIG items and need namespace prefixes
+     */
+    static needsIdNormalization(propertyName: string): boolean {
+        // Remove namespace prefix for checking
+        const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
+
+        // Properties that contain TPigId references to other items
+        return [
+            'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
+            'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
+            'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]
+            'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
+            'composedProperty',       // Property.composedProperty?: TPigId[]
+            'specializes',            // Class.specializes?: TPigId
+            'hasClass'                // Instance hasClass references a class
+        ].includes(localName);
+    }
+
     // Normalize language tags/values ---
     static normalizeLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText {
         //    LOG.debug('normalizeLanguageText', src);
@@ -421,7 +470,7 @@ export class PigItem {
         return [PigItem.normalizeLanguageText(src, options)];
     }
     /* Validate that a value is an array of ILanguageText with the rule:
-       - if array length === 0 -> OK
+       - if array length < 1 -> OK
        - if array length === 1 -> 'lang' may be missing
        - if array length > 1 -> each entry must have a string 'lang' and string 'value'
        Returns IRsp (rspOK on success, error IRsp on failure)
@@ -431,7 +480,7 @@ export class PigItem {
         if (!Array.isArray(arr)) {
             return Msg.create(640, fieldName);
         }
-        if (arr.length === 0) return rspOK;
+        if (arr.length < 1) return rspOK;
         if (arr.length === 1) {
             const e = arr[0];
             if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
@@ -559,7 +608,7 @@ abstract class Item implements IItem {
         } as IItem;
     }
 }
-interface IIdentifiable extends IItem {
+export interface IIdentifiable extends IItem {
     id: TPigId;  // translates to @id in JSON-LD
     specializes?: TPigId;  // must be URI of a cas:item with equal itemType, no cyclic references, translates to rdfs:subClassOf
     // Any one or both of the following must be present and have at least one item; see schemata:
@@ -665,6 +714,10 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // Set the normalized object in the concrete subclass
         return ld;
     }
+    setJSONLD(itm: any) {
+        const _itm = this.fromJSONLD(itm) as any;
+        return this.set(_itm);
+    }
     /**
      * Generic XML parsing for all Identifiable subclasses
      * Parses XML to JSON and delegates to set()
@@ -695,14 +748,17 @@ abstract class ALink extends Item implements IALink {
         // - Check class reference; must be an existing Link URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
-    protected set(itm: IALink): this {
-        super.set(itm);
-        this.idRef = itm.idRef;
+    set(itm: IALink) {
+        this.lastStatus = this.validate(itm);
+        if (this.lastStatus.ok) {
+            super.set(itm);
+            this.idRef = itm.idRef;
+        }
         return this;
     }
-    protected get() {
+    get() {
         return LIB.stripUndefinedAndNull({
-            ...super.get(),
+            ... super.get(),
             idRef: this.idRef
         }) as IALink;
     }
@@ -778,32 +834,30 @@ abstract class AnElement extends Identifiable implements IAnElement {
         // collect them here in a hasProperty array, where the tag becomes hasClass;
         // they will be instantiated as AProperty items in set():
 
-        _itm.hasProperty = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aProperty) as IAProperty[];
-        _itm.hasTargetLink = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
+        _itm.hasProperty = this.collectConfigurablePropertiesFromJSONLD(_itm) as IAProperty[];
+        _itm.hasTargetLink = this.collectConfigurableLinksFromJSONLD(_itm, PigItemType.aTargetLink) as IALink[];
         //    LOG.debug('AnElement.setJSONLD: '+ JSON.stringify(_itm, null, 2));
 
         // Set the normalized object in the concrete subclass
         return _itm;
     }
-    setJSONLD(itm: any) {
-        // ... not superseded by any subclass, thus *not* protected.
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
-    }
     /**
-     * Collect configurable properties and references from a JSON-LD object.
+     * Collect configurable properties from a JSON-LD object.
      * In JSON-LD, configurable properties have an ID-string as key (namespace:name or URI)
      * and their value is an array of objects with itemType 'cas:aProperty'.
      * This function extracts those properties and transforms them into a hasProperty array,
      * where the original key becomes the 'hasClass' field of each property.
      * 
-     * @param obj - The input object (typically from JSON-LD)
+     * @param obj - The input object
      * @returns Array of IAProperty objects, or undefined if no properties found
      */
-    protected collectConfigurablesFromJSONLD(obj: any, itype: PigItemTypeValue): IAProperty[] | IALink[] | undefined {
+    protected collectConfigurablePropertiesFromJSONLD(
+        obj: any
+    ): IAProperty[] | undefined {
+
         if (!obj || typeof obj !== 'object') return undefined;
 
-        const properties: IAProperty[] = [];
+        const configurables: IAProperty[] = [];
 
         // Standard PIG fields that should NOT be collected as properties;
         // the tags have already been renamed with MVF.renameJsonTags( ..., MVF.fromJSONLD):
@@ -814,61 +868,60 @@ abstract class AnElement extends Identifiable implements IAnElement {
             // Skip known metadata keys and standard PIG fields
             if (skipKeys.has(key)) continue;
 
-            // Check if key is a valid ID string (namespace:name or URI)
+            // Check if key (configurable property or link) is a valid ID string (namespace:name or URI)
             const isValid = PigItem.isValidIdString(key);
-            // LOG.info(`collectConfigurablesFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
-            if (!isValid) continue;
+            // LOG.info(`collectConfigurablePropertiesFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
+            if (!isValid) continue;   // the schema should reject invalid keys, so we skip them here
 
             const val = obj[key];
             //LOG.debug('collect 2', key,val);
 
             // Handle array of property values
-            if (Array.isArray(val)) {
-                for (const item of val) {
+            if (LIB.isArrayWithContent(val)) {
+                for (const item of val as any[]) {
+                    // The tags have already been renamed:
                     if (item && typeof item === 'object') {
-                        // Check if it has itemType 'cas:aProperty' (may be an id-object)
-                        // the tags have already been renamed:
-                        const itemTypeValue = item.itemType /* || (item['cas:itemType'] && extractId(item['cas:itemType'])) */;
+                        const aProp: Partial<IAProperty> = item;
+                        // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                        const itemTypeValue = aProp.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
 
-                        if (itemTypeValue === itype /* || !itemTypeValue*/) {
-                            // Add the property with the key as its hasClass reference
-                            properties.push({
-                                itemType: itype,
-                                hasClass: key,
-                                // itype == PigItemType.Property: value in case of a plain value 
-                                value: item.value /*|| item['@value'] */,
-                                // itype == PigItemType.Link: idRef is mandatory
-                                idRef: item.id,
-                                composes: item.composes
-                            });
+                        // Add the property with the key as its hasClass reference
+                        if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue*/) {
+                            if (aProp.value !== undefined || aProp.composes) {
+                                configurables.push({
+                                    itemType: PigItemType.aProperty,
+                                    hasClass: key,
+                                    value: aProp.value /*|| item['@value'] */,
+                                    composes: aProp.composes
+                                });
+                            }
                             delete obj[key]; // remove processed property
                         }
                     }
                 }
             }
-            // Handle single property value (non-array)
+            // Handle single property or link values (non-array)
             else if (val && typeof val === 'object') {
-                const nameItemType = `${DEF.pfxNsMeta}itemType`;
-                const itemTypeValue = val.itemType || (val[nameItemType] && extractId(val[nameItemType]));
+                const aProp: Partial<IAProperty> = val;
+                // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                const itemTypeValue = aProp.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
 
-                if (itemTypeValue === itype /* || !itemTypeValue */) {
-                    properties.push({
-                        itemType: itype,
-                        hasClass: key,
-                        // itype == PigItemType.Property: value in case of a plain value 
-                        value: val.value /*|| item['@value'] */,
-                        // itype == PigItemType.Property: idRef in case of an enumeration value(from enumeratedValue),
-                        // itype == PigItemType.Link: idRef is mandatory
-                        idRef: val.id,
-                        composes: val.composes
-                    });
+                if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue */) {
+                    if (aProp.value !== undefined || aProp.composes) {
+                        configurables.push({
+                            itemType: PigItemType.aProperty,
+                            hasClass: key,
+                            value: aProp.value /*|| item['@value'] */,
+                            composes: aProp.composes
+                        });
+                    }
                     delete obj[key]; // remove processed property
                 }
             }
             // Handle primitive values (string, number, boolean) - create simple properties
-            else if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') {
-                properties.push({
-                    itemType: itype,
+            else if (val !== undefined && val !== null && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')) {
+                configurables.push({
+                    itemType: PigItemType.aProperty,
                     hasClass: key,
                     value: String(val)
                 });
@@ -876,7 +929,99 @@ abstract class AnElement extends Identifiable implements IAnElement {
             }
         }
 
-        return properties;
+        return configurables.length > 0 ? configurables : undefined;
+    }
+    /**
+     * Collect configurable links from a JSON-LD object.
+     * In JSON-LD, configurable links have an ID-string as key (namespace:name or URI)
+     * and their value is an array of objects with itemType 'cas:aLink'.
+     * This function extracts those links and transforms them into a hasLink array,
+     * where the original key becomes the 'hasClass' field of each link.
+     * 
+     * @param obj - The input object (typically from JSON-LD)
+     * @param itype - The expected itemType for the links (PigItemType.aSourceLink or PigItemType.aTargetLink)
+     * @returns Array of IALink objects, or undefined if no links found
+     */
+    protected collectConfigurableLinksFromJSONLD(
+        obj: any,
+        itype: typeof PigItemType.aSourceLink | typeof PigItemType.aTargetLink
+    ): IALink[] | undefined {
+
+        if (!obj || typeof obj !== 'object') return undefined;
+
+        const configurables: IALink[] = [];
+
+        // Standard PIG fields that should NOT be collected as configurables;
+        // the tags have already been renamed with MVF.renameJsonTags( ..., MVF.fromJSONLD):
+        const skipKeys = new Set(MVF.toJSONLD.keys());
+
+        //LOG.debug('collect 1',obj,itype);
+        for (const key of Object.keys(obj)) {
+            // Skip known metadata keys and standard PIG fields
+            if (skipKeys.has(key)) continue;
+
+            // Check if key (configurable property or link) is a valid ID string (namespace:name or URI)
+            const isValid = PigItem.isValidIdString(key);
+            // LOG.info(`collectConfigurableLinksFromJSONLD: checking key="${key}", isValid=${isValid}, itype=${itype}`);
+            if (!isValid) continue;   // the schema should reject invalid keys, so we skip them here
+
+            const val = obj[key];
+            //LOG.debug('collect 2', key,val);
+
+            // Handle array of property or link values
+            if (LIB.isArrayWithContent(val)) {
+                for (const item of val as any[]) {
+                    if (item && typeof item === 'object') {
+                        const aLink: Partial<IALink> & { id?: TPigId } = item;
+                        // The tags have already been renamed:
+
+                        // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                        const itemTypeValue = aLink.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
+
+                        // Check if it has itemType 'cas:aSourceLink' or 'cas:aTargetLink' (may be an id-object)
+                        if (itemTypeValue === itype /* || !itemTypeValue*/) {
+                            // Add the property with the key as its hasClass reference
+                            if (PigItem.isValidIdString(aLink.id)) {
+                                configurables.push({
+                                    itemType: itype,
+                                    hasClass: key,
+                                    idRef: aLink.id as TPigId
+                                });
+                            }
+                            delete obj[key]; // remove processed property
+                        }
+                    }
+                }
+            }
+            // Handle single property or link values (non-array)
+            else if (val && typeof val === 'object') {
+                const aLink: Partial<IALink> & { id?: TPigId } = val;
+                // const nameItemType = `${DEF.pfxNsMeta}itemType`;
+                const itemTypeValue = aLink.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
+
+                if (itemTypeValue === itype /* || !itemTypeValue */) {
+                    if (aLink.id !== undefined && PigItem.isValidIdString(aLink.id)) {
+                        configurables.push({
+                            itemType: itype,
+                            hasClass: key,
+                            idRef: aLink.id as TPigId
+                        });
+                    }
+                    delete obj[key]; // remove processed property
+                }
+            }
+            // Handle primitive value - create simple configurables
+            else if (PigItem.isValidIdString(val)) {
+                configurables.push({
+                    itemType: itype,
+                    hasClass: key,
+                    idRef: val
+                });
+                delete obj[key]; // remove processed property
+            }
+        }
+
+        return configurables.length > 0 ? configurables : undefined;
     }
 }
 
@@ -890,12 +1035,12 @@ export interface IEnumeratedValue {
     // in PIG, values of all datatypes are strings; the datatype is defined in the respective Property
     value?: string;  
 }
-export interface IEnumeration extends IIdentifiable {
+export interface IEnumeration extends IElement {
     datatype: string; // must be of XsDataType
     enumeratedValue: IEnumeratedValue[]; // array of allowed values, datatype-dependent
 //    unit?: string;  // according to SI units
 }
-export class Enumeration extends Identifiable implements IEnumeration {
+export class Enumeration extends Element implements IEnumeration {
     datatype!: string;
     enumeratedValue!: IEnumeratedValue[]; 
 //    unit?: string;
@@ -957,33 +1102,29 @@ export class Enumeration extends Identifiable implements IEnumeration {
         }) as IEnumeration;
     }
     fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-
         // Normalize datatype (Property-specific)
-        if (_itm.datatype) {
-            _itm.datatype = _itm.datatype.replace(/^xsd:/, 'xs:');
+        if (itm.datatype) {
+            itm.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
         }
-
-        return this.set(_itm);
+        return super.fromJSONLD(itm) as any;
     }
 }
 export interface IProperty extends IIdentifiable {
     datatype: string; // must be of XsDataType
+    readOnly?: boolean;  // if true, the property value of an instance cannot be changed once assigned; default is false
     minCount?: number;
     maxCount?: number;
     maxLength?: number;  // only used for string datatype
     pattern?: string;  // a RegExp pattern, only used for string datatype
     minInclusive?: number;  // only used for numeric datatypes
     maxInclusive?: number;  // only used for numeric datatypes
-    defaultValue?: string;   // in PIG, values of all datatypes are strings
+    defaultValue?: string;   // assigned when an instance is created without a value for this property; it may be changed afterwards
     // unit?: string;  // according to SI units
     composes?: TPigId[];  // must be URI of another Property, no cyclic references
 }
 export class Property extends Identifiable implements IProperty {
     datatype!: string;
+    readOnly?: boolean;
     minCount?: number;
     maxCount?: number;
     maxLength?: number;
@@ -1043,6 +1184,7 @@ export class Property extends Identifiable implements IProperty {
             this.minInclusive = _itm.minInclusive;
             this.maxInclusive = _itm.maxInclusive;
             this.defaultValue = _itm.defaultValue;
+            this.readOnly = _itm.readOnly;
             // this.unit = _itm.unit;
             this.composes = _itm.composes;
         }
@@ -1059,33 +1201,34 @@ export class Property extends Identifiable implements IProperty {
             minInclusive: this.minInclusive,
             maxInclusive: this.maxInclusive,
             defaultValue: this.defaultValue,
+            readOnly: this.readOnly,
             // unit: this.unit,
             composes: this.composes
         }) as IProperty;
     }
     fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-
         // Normalize datatype (Property-specific)
-        if (_itm.datatype) {
-            _itm.datatype = _itm.datatype.replace(/^xsd:/, 'xs:');
+        if (itm.datatype) {
+            itm.datatype = itm.datatype.replace(/^xsd:/, 'xs:');
         }
-
-        return this.set(_itm);
+        return super.fromJSONLD(itm) as any;
     }
 }
 export interface ILink extends IIdentifiable {
     enumeratedEndpoint: TPigId[]; // must be URI of an Entity or Relationship (class)
+    readOnly?: boolean; // if true, the link value of an instance cannot be changed once assigned; default is false
+    revisionAware?: boolean; // optional, default is false
     minCount?: number;
     maxCount?: number;
+    defaultValue?: TPigId;   // assigned when an instance is created without a value for this property; it may be changed afterwards
 }
 export class Link extends Identifiable implements ILink {
     enumeratedEndpoint!: TPigId[];
+    readOnly?: boolean;
+    revisionAware?: boolean;
     minCount?: number;
     maxCount?: number;
+    defaultValue?: TPigId;
     constructor() {
         super({ itemType: PigItemType.Link });
     }
@@ -1118,8 +1261,11 @@ export class Link extends Identifiable implements ILink {
         if (this.lastStatus.ok) {
             super.set(_itm);
             this.enumeratedEndpoint = _itm.enumeratedEndpoint;
+            this.revisionAware = _itm.revisionAware;
+            this.readOnly = _itm.readOnly;
             this.minCount = _itm.minCount;
             this.maxCount = _itm.maxCount;
+            this.defaultValue = _itm.defaultValue;
         }
         return this;
     }
@@ -1127,16 +1273,12 @@ export class Link extends Identifiable implements ILink {
         return LIB.stripUndefinedAndNull({
             ...super.get(),
             enumeratedEndpoint: this.enumeratedEndpoint,
+            revisionAware: this.revisionAware,
+            readOnly: this.readOnly,
             minCount: this.minCount,
-            maxCount: this.maxCount
+            maxCount: this.maxCount,
+            defaultValue: this.defaultValue
         }) as ILink;
-    }
-    fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
     }
 }
 
@@ -1192,13 +1334,6 @@ export class Entity extends Element implements IEntity {
             ...super.get(),
             enumeratedTargetLink: this.enumeratedTargetLink // undefined: all allowed, empty array: none allowed, array with items: only those allowed
         }) as IEntity;
-    }
-    fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
     }
 }
 
@@ -1261,24 +1396,15 @@ export class Relationship extends Element implements IRelationship {
             enumeratedTargetLink: this.enumeratedTargetLink // as above
         }) as IRelationship;
     }
-    fromJSONLD(itm: any) {
-        return super.fromJSONLD(itm) as any;
-    }
-    setJSONLD(itm: any) {
-        const _itm = this.fromJSONLD(itm) as any;
-        return this.set(_itm);
-    }
 }
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
-    value?: string;       // a. Literal value (string, number, boolean, date - all as string)
-    idRef?: TPigId;       // b. Reference to enumeratedValue (for enumerations)
+    value?: string;       // Literal value (string, number, boolean, date - all as string)
     composes?: TPigId[];  // for composed properties: nests other properties, as properties have no id
 }
 export class AProperty extends Item implements IAProperty {
     value?: string;
-    idRef?: TPigId;
     composes?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.aProperty });
@@ -1296,7 +1422,6 @@ export class AProperty extends Item implements IAProperty {
             this.hasClass = itm.hasClass;  // Set hasClass for property instances
             this.composes = itm.composes;
             this.value = itm.value;
-            this.idRef = itm.idRef;
         }
         return this;
     }
@@ -1305,7 +1430,6 @@ export class AProperty extends Item implements IAProperty {
             ...super.get(),
             composes: this.composes,
             value: this.value,
-            idRef: this.idRef
         } as IAProperty );
     }
 }
@@ -1321,18 +1445,6 @@ export class ASourceLink extends ALink implements IALink {
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
     }
-    set(itm: IALink) {
-        this.lastStatus = this.validate(itm);
-        if (this.lastStatus.ok) {
-            super.set(itm);
-        }
-        return this;
-    }
-    get() {
-        return LIB.stripUndefinedAndNull({
-            ... super.get(),
-        });
-    }
 }
 export class ATargetLink extends ALink implements IALink {
     constructor() {
@@ -1345,18 +1457,6 @@ export class ATargetLink extends ALink implements IALink {
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
         return super.validate(itm);
-    }
-    set(itm: IALink) {
-        this.lastStatus = this.validate(itm);
-        if (this.lastStatus.ok) {
-            super.set(itm);
-        }
-        return this;
-    }
-    get() {
-        return LIB.stripUndefinedAndNull({
-            ... super.get(),
-        });
     }
 }
 
@@ -1382,6 +1482,11 @@ export class AnEntity extends AnElement implements IAnElement {
             return Msg.create(681, 'anEntity', itm.id, err?.message ?? String(err));
         }
 
+        // Call parent validation
+        const rsp = super.validate(itm);
+        if (!rsp.ok)
+            return rsp;
+
         // Runtime guards:
         // id and itemType checked in superclass
         if (!itm.hasClass)
@@ -1398,13 +1503,12 @@ export class AnEntity extends AnElement implements IAnElement {
     //    LOG.debug('AnEntity.set status and input: ' + JSON.stringify(this.lastStatus), JSON.stringify(_itm, null, 2));
         if (this.lastStatus.ok) {
             super.set(_itm);
-            this.hasTargetLink = _itm.hasTargetLink ? _itm.hasTargetLink.map(r => new ATargetLink().set(r)) : [];
         }
         return this;
     }
     get() {
         return LIB.stripUndefinedAndNull({
-            ... super.get(),
+            ... super.get(), // make a new object to avoid side effects
         });
     }
 }
@@ -1429,6 +1533,11 @@ export class ARelationship extends AnElement implements IARelationship {
         } catch (err: any) {
             return Msg.create(681, 'aRelationship', itm.id, err?.message ?? String(err));
         }
+
+        // Call parent validation
+        const rsp = super.validate(itm);
+        if (!rsp.ok)
+            return rsp;
 
         // Runtime guards:
         // id and itemType checked in superclass
@@ -1459,7 +1568,7 @@ export class ARelationship extends AnElement implements IARelationship {
     }
     fromJSONLD(itm: any) {
         const _itm = super.fromJSONLD(itm) as any;
-        _itm.hasSourceLink = this.collectConfigurablesFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
+        _itm.hasSourceLink = this.collectConfigurableLinksFromJSONLD(_itm, PigItemType.aSourceLink) as IALink[];
         return _itm;
     }
 }
@@ -1493,9 +1602,13 @@ export class APackage extends AnElement implements IAPackage {
 
         // Call parent validation
         let rsp = super.validate(pkg);
-        if (!rsp.ok) {
+        if (!rsp.ok)
             return rsp;
-        }
+
+        // Runtime guards:
+        // id and itemType checked in superclass
+        if (!pkg.hasClass)
+            return Msg.create(612, PigItemType.aPackage);
 
         rsp = checkConstraintsForPackage(pkg, options);
         // if (pkg.id == 'd:test-invalid-prop')
@@ -1558,6 +1671,18 @@ export class APackage extends AnElement implements IAPackage {
         return this;
     }
 
+    get() {
+        // Build complete package representation
+        const pkg = {
+            ...super.get(),
+            context: this.context,
+            graph: this.graph?.map(item => {
+                return item.get();
+            })
+        } as IAPackage;
+        return LIB.stripUndefinedAndNull(pkg);
+    }
+
     /**
      * Ensure default namespace prefixes 'o:' and 'd:' exist in the package context
      * if they have been assigned by normalizeId() during import.
@@ -1575,7 +1700,7 @@ export class APackage extends AnElement implements IAPackage {
      */
     private ensureDefaultNamespaces(context?: INamespace[] | string | Record<string, string>): INamespace[] | string | Record<string, string> | undefined {
         // If no default namespaces were used, return context unchanged
-        if (PigItem.usedDefaultNamespaces.size === 0) {
+        if (PigItem.usedDefaultNamespaces.size < 1) {
             return context;
         }
 
@@ -1635,37 +1760,21 @@ export class APackage extends AnElement implements IAPackage {
         return contextArray;
     }
 
-    get() {
-        // Build complete package representation
-        const pkg = {
-            ...super.get(),
-            context: this.context,
-            graph: this.graph?.map(item => {
-                return item.get();
-            })
-        } as IAPackage;
-        return LIB.stripUndefinedAndNull(pkg);
-    }
-
-    setJSONLD(doc: any, options?:any) {
+    setJSONLD(docLD: any, options?:any) {
         // Clear the tracker for used default namespaces before transformation
         PigItem.clearUsedDefaultNamespaces();
 
         // @ToDo: Perhaps we must normalize the ids like in XML import to assure they have a namespace or are an URI
+        const doc = this.fromJSONLD(docLD) as any;
         // LOG.debug(`APackage.setJSONLD: ${JSON.stringify(doc, null, 2)}`);
 
         // Extract @context
-        const ctx = this.extractContextLD(doc);
-
-        // Extract package metadata
-        const meta = this.extractMetadataLD(doc);
+        const ctx = this.xContextLD(doc);
 
         // Extract and process @graph
-        const graph: any[] = Array.isArray(doc['@graph']) 
-            ? doc['@graph'] 
-            : (Array.isArray(doc.graph) ? doc.graph : []);
+        const graph: any[] = (Array.isArray(doc.graph) ? doc.graph : []);
 
-        if (graph.length === 0) {
+        if (graph.length < 1) {
             LOG.warn(`APackage.setJSONLD: @graph of ${doc.id} is empty`);
         }
 
@@ -1675,7 +1784,8 @@ export class APackage extends AnElement implements IAPackage {
         // Call set to validate and set all items including package
         // LOG.debug('aPackage.setJSONLD',doc,graphJson);
         this.set({
-            ...meta,
+            ...doc,
+        //    itemType: PigItemType.aPackage,  // ToDo: obtain from doc - want to check whether the input is correct
             context: ctx,
             graph: graphJson
         } as unknown as IAPackage, options);
@@ -1704,7 +1814,7 @@ export class APackage extends AnElement implements IAPackage {
         // LOG.debug('APackage.setXML: parsed XML to JSON', doc);
 
         // 2. Extract namespaces
-        const ctx = this.extractContextXML(xmlString, doc.id as string);
+        const ctx = this.xContextXML(xmlString, doc.id as string);
 
         // 3. Extract package metadata
         //    ... can be obtained directly from doc (result from parsing)
@@ -1712,23 +1822,16 @@ export class APackage extends AnElement implements IAPackage {
         // 4. Extract and process graph items
         const graph: any[] = Array.isArray(doc.graph) ? doc.graph : [];
 
-        if (graph.length === 0) {
+        if (graph.length < 1) {
             LOG.warn(`APackage ${doc.id}: @graph is empty`);
         }
 
         // 5. Build and validate package
         this.set({
-            id: doc.id,
-            hasClass: doc.hasClass,
+            ...doc,
             itemType: PigItemType.aPackage,  // ToDo: obtain from doc - want to check whether the input is correct
-            title: doc.title,
-            description: doc.description,
             context: ctx,
-            graph: graph,
-            revision: doc.revision,
-            priorRevision: doc.priorRevision,
-            modified: doc.modified,
-            creator: doc.creator
+            graph: graph
         } as unknown as IAPackage, options);
 
         // LOG.debug(`APackage.setXML: package ${JSON.stringify(this,null,2)} set with status`, this.lastStatus);
@@ -1854,11 +1957,11 @@ export class APackage extends AnElement implements IAPackage {
         // 5. Collect configurable properties from JSON-LD format
         // In JSON-LD, configurable properties have ID-string as tag
         if ([PigItemType.anEntity, PigItemType.aRelationship].includes(json.itemType)) {
-            json.hasProperty = this.collectConfigurablesFromJSONLD(json, PigItemType.aProperty) as IAProperty[];
-            json.hasTargetLink = this.collectConfigurablesFromJSONLD(json, PigItemType.aTargetLink) as IALink[];
+            json.hasProperty = this.collectConfigurablePropertiesFromJSONLD(json) as IAProperty[];
+            json.hasTargetLink = this.collectConfigurableLinksFromJSONLD(json, PigItemType.aTargetLink) as IALink[];
         }
         if ([PigItemType.aRelationship].includes(json.itemType)) {
-            json.hasSourceLink = this.collectConfigurablesFromJSONLD(json, PigItemType.aSourceLink) as IALink[];
+            json.hasSourceLink = this.collectConfigurableLinksFromJSONLD(json, PigItemType.aSourceLink) as IALink[];
         }
 
         return json;
@@ -1868,9 +1971,9 @@ export class APackage extends AnElement implements IAPackage {
      * @param doc - Parsed JSON-LD document
      * @returns Context as INamespace[], string, Record<string, string>, or undefined
      */
-    private extractContextLD(doc: any): INamespace[]{
+    private xContextLD(doc: any): INamespace[]{
         const ctx = doc['@context'] || doc.context;
-        // LOG.debug('extractContextLD (1): ',ctx);
+        // LOG.debug('xContextLD (1): ',ctx);
 
         if (!ctx) {
             LOG.warn(`JSON-LD Package ${doc.id || 'unknown' }: no @context found`);
@@ -1934,7 +2037,7 @@ export class APackage extends AnElement implements IAPackage {
      *   { tag: "@vocab", uri: "http://default.org/" }
      * ]
      */
-    private extractContextXML(xmlString: stringXML, docId:string): INamespace[] {
+    private xContextXML(xmlString: stringXML, docId:string): INamespace[] {
         const namespaces: INamespace[] = [];
 
         // Global regex to find all xmlns declarations
@@ -1962,69 +2065,13 @@ export class APackage extends AnElement implements IAPackage {
             }
         }
 
-        if (namespaces.length === 0) {
+        if (namespaces.length < 1) {
             LOG.warn(`XML Package ${docId || 'unknown' }: no namespaces found`);
             return [];
         }
 
-        // LOG.debug(`extractContextXML: extracted ${namespaces.length} namespace(s)`);
+        // LOG.debug(`xContextXML: extracted ${namespaces.length} namespace(s)`);
         return namespaces;
-    }
-    /**
-     * Extract package metadata from JSON-LD document
-     * @param doc - Parsed JSON-LD document
-     * @returns Metadata object with id, modified, creator, title, and description
-     */
-    private extractMetadataLD(doc: any): {
-        id: TPigId;
-        hasClass: string;
-        itemType?: PigItemTypeValue;
-        revision?: string;
-        priorRevision?: string;
-        modified?: TISODateString;
-        creator?: string;
-        title?: ILanguageText[];
-        description?: ILanguageText[];
-    } {
-        // LOG.debug('APackage.extractMetadataLD', JSON.stringify(doc, null, 2));
-        const metadata = {
-            id: PigItem.normalizeId(doc['@id'] || doc.id, PigItemType.aPackage),
-            hasClass: doc['@type'],
-            itemType: extractId(doc[`${DEF.pfxNsMeta}itemType`]) as PigItemTypeValue,
-            revision: doc.revision,
-            priorRevision: doc.priorRevision,
-            modified: normalizeDateTime(doc[`${DEF.pfxNsDcmi}modified`] || doc.modified) || new Date().toISOString(), // TISODateString
-            creator: doc[`${DEF.pfxNsDcmi}creator`] || doc.creator, // string
-            title: undefined as ILanguageText[] | undefined, // to be extracted
-            description: undefined as ILanguageText[] | undefined // to be extracted
-        };
-        // LOG.debug(`APackage.extractMetadataLD: package ${metadata.id}:`, metadata);
-
-        // Extract dcterms:title (first language value)
-        const titleArray = doc[`${DEF.pfxNsDcmi}title`] || doc.title;
-        if (Array.isArray(titleArray) && titleArray.length > 0) {
-            metadata.title = [{
-                value: titleArray[0]['@value'] || titleArray[0].value || titleArray[0],
-                lang: titleArray[0]['@language'] || titleArray[0].language
-            }];
-        } else if (typeof titleArray === 'string') {
-            metadata.title = [{ value: titleArray }];
-        }
-
-        // Extract dcterms:description (first language value)
-        const descArray = doc[`${DEF.pfxNsDcmi}description`] || doc.description;
-        if (Array.isArray(descArray) && descArray.length > 0) {
-            metadata.description = [{
-                value: descArray[0]['@value'] || descArray[0].value || descArray[0],
-                lang: descArray[0]['@language'] || descArray[0].language || 'en'
-            }];
-        } else if (typeof descArray === 'string') {
-            metadata.description = [{ value: descArray, lang: 'en' }];
-        }
-
-        // LOG.debug(`APackage metadata: id=${metadata.id}, title=${metadata.title?.[0]?.value}, modified=${metadata.modified}, creator=${metadata.creator}`);
-
-        return metadata;
     }
 
     /**
@@ -2045,7 +2092,7 @@ export class APackage extends AnElement implements IAPackage {
         const itype: any = item.itemType;
 
         // Filter allowed item types
-        if (!PigItem.isInstantiable(itype)) {
+        if (!PigItem.isIdentifiable(itype)) {
         //    LOG.error(`APackage.createItem: skipping item type '${itype}' which is not allowed in a graph`);
             return Msg.create(651, `Instantiation of ${id} from ${source}`, itype);
         }
@@ -2088,7 +2135,7 @@ export class APackage extends AnElement implements IAPackage {
  * - { '@id': 'xyz' } -> 'xyz'
  * - 'xyz' -> 'xyz'
  * Returns undefined when no usable id found.
- */
+ * /
 function extractId(obj: unknown): string | undefined {
     if (obj === null || obj === undefined)
         return undefined;
@@ -2103,6 +2150,7 @@ function extractId(obj: unknown): string | undefined {
     }
     return undefined;
 }
+*/
 
 /* function validateIdString(input: unknown, fieldName = 'id'): IRsp {
     if (typeof input === 'string') {
@@ -2181,7 +2229,7 @@ function extractId(obj: unknown): string | undefined {
     if (!Array.isArray(input)) {
         return Msg.create(630, fieldName);
     }
-    if (input.length === 0) {
+    if (input.length < 1) {
         return Msg.create(631, fieldName, 1);
     }
 
@@ -2337,7 +2385,7 @@ function xmlToJson(xml: stringXML): IRsp<unknown> {
         };
 
     } catch (err: any) {
-        LOG.error('xmlToJson: exception:', err);
+        LOG.error('xmlToJson exception:', err);
         return Msg.create(690, 'XML', err?.message ?? String(err));
     }
 }
@@ -2358,10 +2406,10 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
 
     // 1. Extract itemType from element tag name (only for valid PIG types)
     const tagName = xmlElement.tagName as PigItemTypeValue;
-    // Check if this is a valid PIG element
-    const isValidPigElement = PigItem.isValidItemType(tagName);
-    if (isValidPigElement) {
+    if (PigItem.isValidItemType(tagName)) {
         result.itemType = tagName;
+    } else if (!tagName.endsWith('enumeratedValue')) {
+            LOG.error(`xmlElementToJson: Encountered unknown CASCaRA element type '${tagName}'.`);
     }
 
     // 2. Extract all attributes (within tag) as properties
@@ -2379,23 +2427,20 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 // enumeratedValue IDs are part of ontology definitions, not data instances
                 result.id = PigItem.normalizeId(attrValue, PigItemType.Enumeration);
             } else {
-                // normalize always, including enumerated values
                 result.id = PigItem.normalizeId(attrValue, tagName);
             }
-        } else if (attrName.endsWith('type') || attrName.endsWith('hasClass')) {
-            // normalize if we have a valid PIG type
-            result.hasClass = isValidPigElement
-                ? PigItem.normalizeId(attrValue)  // references always point to a class
-                : attrValue;
+        } else if (attrName === 'rdf:type' || attrName.endsWith('hasClass')) {
+            // an attribute ending with 'itemType' would not get here, because endsWith() is case-sensitive
+            result.hasClass = PigItem.normalizeId(attrValue);  // references always point to a class
         } else if (attrName.endsWith('specializes')) {
-            // normalize if we have a valid PIG type
-            result.specializes = isValidPigElement
-                ? PigItem.normalizeId(attrValue)  // references always point to a class
-                : attrValue;
+            result.specializes = PigItem.normalizeId(attrValue);  // references always point to a class
         } else {
-            result[attrName] = attrValue;
+            // there should't be any other attribute:
+            LOG.warn(`[XML-Import] Ignoring an unsupported attribute ${attrName} within a XML-tag ${tagName}`);
+    //        result[attrName] = attrValue;
         }
     }
+
     // LOG.debug('xmlElementToJson: ', xmlElement.attributes, '\n', JSON.stringify(result,null,2)) ;
 
     // 3. Process child elements
@@ -2412,21 +2457,21 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             const childElement = child as ElementXML;
             const childTagName = childElement.tagName;
 
-            // Special handling for configurable properties and links
+            // Special handling for configurable properties and links of instances (anEntity, aRelationship, aPackage)
             if (childTagName === PigItemType.aProperty) {
                 configurableProperties.push(configurablePropertyToJson(childElement));
                 continue;
             }
             if (childTagName === PigItemType.aSourceLink) {
-                configurableSourceLinks.push(configurableLinkToJson(childElement, PigItemType.aSourceLink));
+                configurableSourceLinks.push(...configurableLinkToJson(childElement, PigItemType.aSourceLink));
                 continue;
             }
             if (childTagName === PigItemType.aTargetLink) {
-                configurableTargetLinks.push(configurableLinkToJson(childElement, PigItemType.aTargetLink));
+                configurableTargetLinks.push(...configurableLinkToJson(childElement, PigItemType.aTargetLink));
                 continue;
             }
 
-            // Group regular child elements by tag name
+            // Group child elements by tag name for processing further down:
             const elements = childElementsByTag.get(childTagName);
             if (elements) {
                 // push to respective group childElementsByTag, if it already exists
@@ -2436,7 +2481,9 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 childElementsByTag.set(childTagName, [childElement]);
             }
 
+            // LOG.debug('#1a', childTagName, childElementsByTag);
         } else if (child.nodeType === NodeType.TEXT_NODE) {
+            // LOG.debug('#1b', JSON.stringify(child, null, 2));
             const text = child.textContent?.trim();
             if (text) {
                 textContent.push(text);
@@ -2477,16 +2524,44 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
         // Check if this property is a multi-language text field
         const isMultiLang = PigItem.needsMultiLanguageText(propertyName);
 
-        // Check if this property needs IText wrapping (e.g. icon)
-        const needsTextWrapper = requiresIText(propertyName);
+        // Check if this property needs IText wrapper { value: "..." } (e.g. icon)
+        const needsIText = PigItem.needsIText(propertyName);
 
-        // Pass parent itemType for context-aware array detection
-        const mustBeArray = requiresArray(propertyName /*, result.itemType as PigItemTypeValue */);
+        // Check if this property is expected to be an array (even if only one element)
+        const needsArray = PigItem.needsArray(propertyName);
 
         // Check if this property contains IDs that need normalization
-        const needsIdNormalization = requiresIdNormalization(propertyName);
+        const needsIdNormalization = PigItem.needsIdNormalization(propertyName);
 
-        if (elements.length === 1 && !mustBeArray) {
+        // Special handling for wrapper elements holding zero, one or more <idRef> children,
+        // e.g. enumeratedEndpoint, enumeratedProperty, enumeratedSourceLink, enumeratedTargetLink, composedProperty.
+        // Each such wrapper element yields an array of normalized ids; a wrapper without any
+        // <idRef> children but with plain text is treated as a single-value array (convenience form);
+        // an empty wrapper element yields an empty array (meaning "none allowed"), whereas a completely
+        // missing wrapper element leaves the property undefined (meaning "all are eligible").
+        if (needsArray && needsIdNormalization) {
+            const values: TPigId[] = [];
+            for (const elem of elements) {
+                const idRefChildren = Array.from(elem.childNodes).filter(
+                    node => node.nodeType === NodeType.ELEMENT_NODE && (node as ElementXML).tagName === 'idRef'
+                ) as ElementXML[];
+
+                if (idRefChildren.length > 0) {
+                    for (const idRefElem of idRefChildren) {
+                        const idText = idRefElem.textContent?.trim();
+                        if (idText) values.push(PigItem.normalizeId(idText));
+                    }
+                } else {
+                    // convenience form: wrapper element with a single, directly embedded value
+                    const text = getXmlElementText(elem).trim();
+                    if (text) values.push(PigItem.normalizeId(text));
+                }
+            }
+            result[propertyName] = values;
+            continue;
+        }
+
+        if (elements.length === 1 && !needsArray) {
             // Single element (and not forced to be array)
             const elem = elements[0];
             const childText = getXmlElementText(elem);
@@ -2500,7 +2575,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
                 }];
             }
             // IText wrapper for icon and perhaps other fields:
-            else if (needsTextWrapper) {
+            else if (needsIText) {
                 result[propertyName] = { value: childText };
             }
             // Regular fields
@@ -2557,7 +2632,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     }
 
     // 5. If element has only text content and no child elements, add as value
-    if (childElementsByTag.size === 0 && textContent.length > 0) {
+    if (childElementsByTag.size < 1 && textContent.length > 0) {
         result.value = textContent.join(' ');
     }
 
@@ -2576,46 +2651,6 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
     return result;
 }
 /**
- * Check if a property must always be represented as an array
- * Even when only a single element is present in XML
- * 
- * Context detection is done via the parent element's itemType
- */
-function requiresArray(propertyName: string /*, parentItemType?: PigItemTypeValue */): boolean {
-    // Remove namespace prefix for checking
-    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-    // Properties that ALWAYS require arrays
-    return [
-        'enumeratedValue',        // Property.enumeratedValue: IEnumeratedValue[]
-        'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
-        'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
-        'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]'
-        'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
-        'composedProperty',     // Property.composedProperty?: TPigId[]
-        'priorRevision'         // AnElement.priorRevision?: TRevision[]
-    ].includes(localName);
-}
-/**
- * Check if a property contains IDs that should be normalized
- * These properties reference other PIG items and need namespace prefixes
- */
-function requiresIdNormalization(propertyName: string): boolean {
-    // Remove namespace prefix for checking
-    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-    // Properties that contain TPigId references to other items
-    return [
-        'enumeratedEndpoint',     // Link.enumeratedEndpoint: TPigId[]
-        'enumeratedProperty',     // Entity/Relationship.enumeratedProperty?: TPigId[]
-        'enumeratedSourceLink',   // Relationship.enumeratedSourceLink?: TPigId[]
-        'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
-        'composedProperty',       // Property.composedProperty?: TPigId[]
-        'specializes',            // Class.specializes?: TPigId
-        'hasClass'                // Instance hasClass references a class
-    ].includes(localName);
-}
-/**
  * Process cas:aProperty element
  * Extracts:
  * - rdf:type → hasClass
@@ -2628,7 +2663,8 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
     };
 
     // Extract rdf:type and cas:hasClass as hasClass
-    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type') || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
+    const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
+        || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
     if (rdfType) {
         prop.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
     }
@@ -2665,7 +2701,7 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
  * - <idRef> → idRef
  * - itemType → cas:aSourceLink or cas:aTargetLink
  */
-function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): JsonObject {
+function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): JsonObject[] {
     const link: JsonObject = {
         itemType: itemType
     };
@@ -2676,6 +2712,9 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
     if (rdfType) {
         link.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
     }
+
+    // Array to collect multiple idRef values
+    const idRefs: string[] = [];
 
     // Extract child elements
     for (const child of Array.from(elem.childNodes)) {
@@ -2701,14 +2740,20 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                     }
                 }
 
-                link.idRef = PigItem.normalizeId(idRefValue, targetItemType);
+                idRefs.push(PigItem.normalizeId(idRefValue, targetItemType));
             } else if (childTagName.endsWith('hasClass')) {
                 link.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
             }
         }
     }
 
-    return link;
+    // Create one link object per idRef
+    const links: JsonObject[] = idRefs.map(idRef => ({
+        ...link,
+        idRef: idRef
+    }));
+
+    return links;
 }
 
 /**
@@ -2832,21 +2877,6 @@ function findEntityOrEnumerationInGraph(element: ElementXML, targetId: string): 
         current = current.parentNode;
     }
     return null;
-}
-
-/**
- * Check if a property needs IText wrapper ({ value: "..." })
- * Currently only 'icon' according to IElement interface
- */
-function requiresIText(propertyName: string): boolean {
-    const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
-
-    // Fields that need IText wrapper: { value: string }
-    const textWrapperFields = new Set([
-        'icon'
-    ]);
-
-    return textWrapperFields.has(localName);
 }
 
 /**

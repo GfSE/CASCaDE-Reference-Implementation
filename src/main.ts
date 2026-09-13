@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
 import { LOG } from './common/lib/helpers';
+import { PackageCache } from './stores/package-cache';
 // import { initModules } from './module-init-browser';
 
 import 'vuetify/styles'
@@ -50,7 +51,8 @@ const vuetify = createVuetify({
 
 const app = createApp(App);
 
-app.use(vuetify).use(router).use(ajvPlugin).use(createPinia());
+const pinia = createPinia();
+app.use(vuetify).use(router).use(ajvPlugin).use(pinia);
 
 // parameters: root, recursive, file to match
 const pluginFiles = require.context('./plugins', true, /\.ts$/);
@@ -75,4 +77,9 @@ app.provide('exportComponents', exportComponents);
 
 // initModules();
 
-app.mount('#app');
+// Ensure the package cache is loaded from persistent storage (IndexedDB)
+// before the app renders, so all components can rely on synchronous access
+// to cache.packages right from the start.
+PackageCache(pinia).loadFromStorage().finally(() => {
+    app.mount('#app');
+});

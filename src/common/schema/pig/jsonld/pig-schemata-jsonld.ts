@@ -317,7 +317,7 @@ export const SCH_LD = {
         const validator = await getValidator('AnEntity');
         /* Add detailed error logging
         if (validator.errors) {
-            console.log('AJV Validation Errors:', JSON.stringify(validator.errors, null, 2));
+            LOG.error('AJV Validation Errors:', JSON.stringify(validator.errors, null, 2));
         } */
         return ajv.errorsText(validator.errors, { separator: '; ' });
     },

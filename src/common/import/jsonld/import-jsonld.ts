@@ -81,11 +81,6 @@ export class JsonldImporter {
         // Instantiate APackage and load the document
         const aPackage = new APackage().setJSONLD(doc);
 
-        // Check if package was successfully created
-        if (!aPackage.status().ok) {
-            return aPackage.status();
-        }
-
         // Get all items (package + graph items)
         const allItems = aPackage.getItems();
 
@@ -107,7 +102,7 @@ export class JsonldImporter {
                 `JsonldImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
             );
 
-            result = Rsp.create(604, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
+            result = Rsp.create(603, allItems, 'json', 'Import JSON-LD', actualCount, expectedCount);
         }
 
         return result as IRsp<TPigItem[]>;

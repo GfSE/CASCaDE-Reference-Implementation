@@ -95,22 +95,6 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         fr: (txt) => `Erreur: ${txt}`,
         es: (txt) => `Error: ${txt}`
     },
-/*    601: {
-        en: (msg) => msg.toString(),
-        de: (msg) => msg.toString(),
-        fr: (msg) => msg.toString(),
-        es: (msg) => msg.toString()
-    },
-    602: {
-        en: (op, act, exp) =>
-            `${op}: Delivered ${act} of ${exp} graph items`,
-        de: (op, act, exp) =>
-            `${op}: ${act} von ${exp} Graph-Elementen geliefert`,
-        fr: (op, act, exp) =>
-            `${op}: ${act} éléments de graphe sur ${exp} livrés`,
-        es: (op, act, exp) =>
-            `${op}: Se entregaron ${act} de ${exp} elementos del grafo`
-    }, */
     603: {
         en: (op, act, exp, errors) =>
             `${op}: Created ${act} of ${exp} graph items` + (errors ? ` with errors: ${errors}` : ''),
@@ -121,7 +105,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
         es: (op, act, exp, errors) =>
             `${op}: Se crearon ${act} de ${exp} elementos del grafo` + (errors ? ` con errores: ${errors}` : '')
     },
-    604: {
+/*    604: {
         en: (format, created, total) =>
             `Imported ${created} of ${total} items from ${format}`,
         de: (format, created, total) =>
@@ -130,7 +114,7 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
             `${created} éléments sur ${total} importés depuis ${format}`,
         es: (format, created, total) =>
             `${created} de ${total} elementos importados desde ${format}`
-    },
+    }, */
 
     612: {
         en: (itemType) => 

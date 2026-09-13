@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://product-information-graph.org/schema/2026-07-03/jsonld/Property.json",
+  "$id": "http://product-information-graph.org/schema/2026-07-20/jsonld/Property.json",
   "title": "CASCaRA Property Schema for JSON-LD",
   "description": "Validates Property class definitions that specify attributes for entities and relationships. May include datatype specifications (string, integer, double, boolean, dateTime, etc.), cardinality constraints (sh:minCount, sh:maxCount, value constraints (sh:minInclusive, sh:maxInclusive, sh:maxLength, sh:pattern), default values, measurement units, and support for composed properties.",
   "type": "object",
@@ -73,6 +73,10 @@
     },
     "sh:datatype": {
       "$ref": "#/$defs/idObject"
+    },
+    "dash:readOnly": {
+      "type": "boolean",
+      "description": "If true, the property value of an instance cannot be changed once assigned; default is false"
     },
     "sh:minCount": {
       "type": "integer",

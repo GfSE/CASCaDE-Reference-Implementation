@@ -5,7 +5,7 @@
             <v-col cols="4">
                 <v-sheet border="dashed md"
                          color="surface-light"
-                         height="300"
+                         height="400"
                          rounded="lg">
                     <h2 class="column-title">Import from file</h2>
                     <ul>
@@ -20,7 +20,7 @@
             <v-col cols="4">
                 <v-sheet border="dashed md"
                          color="surface-light"
-                         height="300"
+                         height="400"
                          rounded="lg">
                     <h2 class="column-title">Load from database</h2>
                     <div style="text-align: center;"><p><i>List of packages available in a database<br/>(in preparation)</i></p></div>
@@ -31,7 +31,7 @@
             <v-col cols="4">
                 <v-sheet border="dashed md"
                          color="surface-light"
-                         height="300"
+                         height="400"
                          rounded="lg">
                     <h2 class="column-title">Export to file</h2>
                     <ul>
