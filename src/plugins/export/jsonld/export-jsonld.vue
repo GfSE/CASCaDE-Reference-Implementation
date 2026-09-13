@@ -102,15 +102,8 @@ import { LIB, LOG } from '../../../common/lib/helpers';
         this.successMessage = '';
         this.isExporting = false;
 
-        // Get packages and update count
+        // Get packages and update count (already loaded from storage at app startup)
         const cache = PackageCache();
-
-        // Load from storage if cache is empty
-        if (cache.packages.length === 0) {
-            LOG.info('[Export JSON-LD] Cache is empty, loading from storage...');
-            cache.loadFromStorage();
-        }
-
         const pkgs = cache.packages;
 
         this.packageCount = pkgs.length;
@@ -141,7 +134,7 @@ import { LIB, LOG } from '../../../common/lib/helpers';
             // Use toRaw to unwrap Pinia's reactive proxies
             const jsonldPackages = pkgs.map((pkg: any) => {
                 const rawPkg = toRaw(pkg);
-                return getJSONLD(rawPkg, { stringify: false });
+                return getJSONLD(rawPkg/*, { stringify: false }*/);
             });
 
             // If single package, export directly; if multiple, wrap in array

@@ -9,16 +9,16 @@
         <!-- Navigation Drawer -->
         <v-navigation-drawer v-model="drawer" app color="surface-light">
             <v-list nav>
-                <v-list-item border="md" href="/">
+                <v-list-item border="md" to="/">
                     <h3>Home</h3>
                 </v-list-item>
-                <v-list-item border="md" href="/dashboards">
+                <v-list-item border="md" to="/dashboards">
                     <h3>Dashboard</h3>
                 </v-list-item>
-                <v-list-item border="md" href="/interfaces">
+                <v-list-item border="md" to="/interfaces">
                     <h3>Interfaces</h3>
                 </v-list-item>
-                <v-list-item border="md" href="/document">
+                <v-list-item border="md" to="/document">
                     <h3>Document</h3>
                 </v-list-item>
                 <v-list-item border="md" @click="openGithubIssue">

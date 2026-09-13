@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Minimal partial schema for the skos:definition element used as an alternative to
+  dcterms:description in CASCaRA metamodel class definitions.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:skos="https://www.w3.org/TR/skos-reference/"
+           targetNamespace="https://www.w3.org/TR/skos-reference/"
+           elementFormDefault="qualified">
+
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace"
+               schemaLocation="https://www.w3.org/2001/xml.xsd"/>
+
+    <xs:complexType name="TLanguageText" mixed="true">
+        <xs:sequence>
+            <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute ref="xml:lang" use="optional"/>
+    </xs:complexType>
+
+    <xs:element name="definition" type="skos:TLanguageText"/>
+
+</xs:schema>

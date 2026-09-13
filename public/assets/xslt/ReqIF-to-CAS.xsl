@@ -593,7 +593,7 @@
                 </xsl:when>
                 <xsl:when test="not($hasDescription)">
                     <dcterms:title>
-                        <xsl:text>Specification with id </xsl:text>
+                        <xsl:text>Specification with id=</xsl:text>
                         <xsl:value-of select="$specId"/>
                     </dcterms:title>
                 </xsl:when>

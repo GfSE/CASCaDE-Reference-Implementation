@@ -21,7 +21,7 @@
 import { unzipSync, strFromU8 } from 'fflate';
 
 import { DEF } from '../../lib/definitions';
-import { LOG } from '../../lib/helpers';
+// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp } from '../../lib/messages';
 import { APackage } from '../../schema/pig/ts/pig-metaclasses';
