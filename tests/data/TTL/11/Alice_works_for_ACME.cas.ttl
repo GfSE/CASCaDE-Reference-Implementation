@@ -123,8 +123,21 @@ cas:lists_shape
 	sh:path cas:lists ;
 	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] [ sh:class cas:Organizer ] ) .
 
+## Class representation equivalent to JSON-LD, generate the owl-classes and shapes from here:
+cas:metaPerson
+      a cas:Entity ;
+      cas:specializes schema:Person ;
+      dcterms:title "Person"@en ;
+      skos:definition "A person (alive, dead, undead, or fictional)."@en ;
+      cas:enumeratedProperty
+			cas:familyName ,
+            cas:givenName ,
+            cas:birthDate .
+## can have shape with sh:targetClass 			
+
 cas:Person
 	a owl:Class ;
+	rdfs:subClass cas:Entity ; ## added
 	rdfs:subClassOf schema:Person ;
 	rdfs:label "Person"@en ;
 	skos:definition "A person (alive, dead, undead, or fictional)."@en .
@@ -227,24 +240,24 @@ cas:WorksFor_shape
 	sh:property o:Employee_shape ;
 	sh:property o:Employer_shape .
 
-o:Employee
+o:employee
 	rdfs:subPropertyOf cas:linksSource ;
 	rdfs:label "employee"@en ;
 	skos:definition "The employee in a 'worksFor' relationship"@en ;
 	rdfs:range cas:Person .
 
-o:Employee_shape
+o:employee_shape
 	a sh:PropertyShape ;
 	sh:path o:Employee ;
 	sh:class cas:Person .
 
-o:Employer
+o:employer
 	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "employer"@en ;
 	skos:definition "The employer in a 'worksFor' relationship"@en ;
 	rdfs:range cas:Organization .
 
-o:Employer_shape
+o:employer_shape
 	a sh:PropertyShape ;
 	sh:path o:Employer ;
 	sh:class cas:Organization .
@@ -266,16 +279,16 @@ d:Alice
 d:Alice_worksFor_ACME
 	a cas:WorksFor ;
 	dcterms:modified "2026-01-20T09:38:26.464Z"^^xs:dateTime ;
-	o:Employee d:Alice ;
-	o:Employer d:ACME .
+	o:employee d:Alice ;
+	o:employer d:ACME .
 
 d:Root_Alice_worksFor_ACME
 	a cas:Root ;
 	rdfs:label "Package Root"@en ;
 	rdfs:comment "... anchoring all outlines of this graph (package)"@en ;
 	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
-	cas:lists d:ACME ,
-		d:Alice .
+	cas:lists ( d:ACME 
+		d:Alice ).
 
 
 #################################################################
@@ -388,10 +401,15 @@ cas:Enumeration_shape_shape
 
 cas:Entity_class_shape
 	a sh:NodeShape ;
-	sh:targetSubjectsOf rdfs:subClassOf ;
-	sh:targetClass cas:Entity ;
-	sh:closed "true" ;
+### here we need to check all subClasses of cas:Entity:
+    sh:target [ sh:select "SELECT ? this WHERE {?this rdfs:subClassOf cas:Entity}" ]	
+### omit:
+#	sh:targetSubjectsOf rdfs:subClassOf ;
+#	sh:targetClass cas:Entity ;
+	sh:closed "true" ;  ## Pete: think about this!
 	sh:ignoredProperties ( rdf:type ) ;
+## looks suspect to Pete, where is the sh:property:
+## is probably redundant after all, because a subClass of cas:Entity is of type owl:Class ...
 	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] ) ;
 	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
 	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
@@ -400,8 +418,10 @@ cas:Entity_class_shape
 	sh:property [ sh:path cas:priorRevision ] ;
 	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
 	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
-	sh:property [ sh:path cas:icon ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:icon ; sh:maxCount 1 ] ; ## check content as well
 	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+## Pete: add sh:message with hint how to resolve the problem
+## also option to use sh:severity 
 
 cas:Entity_shape_shape
 	a sh:NodeShape ;

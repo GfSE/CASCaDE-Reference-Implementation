@@ -1,7 +1,8 @@
 # Architecting Software with Security from the Beginning
 **Prepared by:** [John Kimble](mailto:johnkimble@psg-inc.net)
 
-Building software with security from the start—often called security by design or secure-by-design (SbD)—means embedding security principles into the architecture and design phase before any code is written. This approach reduces vulnerabilities, lowers remediation costs, and ensures compliance with frameworks and regulations.
+Building software with security from the start—often called security by design or secure-by-design (SbD)—means embedding security principles into the architecture 
+and design phase before any code is written. This approach reduces vulnerabilities, lowers remediation costs, and ensures compliance with frameworks and regulations.
 
 **Core Principles**
 1. Zero Trust Architecture (ZTA)
@@ -28,11 +29,13 @@ Leverage cloud-native security services (e.g., AWS IAM, Secrets Manager, network
 Build in observability and logging to detect anomalies quickly, and define incident response plans.
 
 **Why It Matters**
-Security flaws introduced during design are often the most costly to fix—sometimes requiring major architectural changes. By starting with a security-first mindset, you create systems that are resilient, maintainable, and easier to verify.
+Security flaws introduced during design are often the most costly to fix—sometimes requiring major architectural changes. 
+By starting with a security-first mindset, you create systems that are resilient, maintainable, and easier to verify.
 
-In short: Start with zero trust, secure defaults, and threat modelling; use secure design patterns; integrate security into CI/CD; and validate designs before coding. This ensures security is not an afterthought, but a foundational element of your software.
+In short: Start with zero trust, secure defaults, and threat modelling; use secure design patterns; integrate security into CI/CD; 
+and validate designs before coding. This ensures security is not an afterthought, but a foundational element of your software.
 
 **References:**
-[OWASP Secure by Design Framework](https://owasp.org/www-project-secure-by-design-framework/)
-[Architecting Software with a Security-First Mindset](https://attomus.com/blog/2025-architecting-software-with-a-security-first-mindset/)
-[AWS Blog: Let's Architect Security in Software Architectures](https://aws.amazon.com/blogs/architecture/lets-architect-security-in-software-architectures/)
+- [OWASP Secure by Design Framework](https://owasp.org/www-project-secure-by-design-framework/)
+- [Architecting Software with a Security-First Mindset](https://attomus.com/blog/2025-architecting-software-with-a-security-first-mindset/)
+- [AWS Blog: Let's Architect Security in Software Architectures](https://aws.amazon.com/blogs/architecture/lets-architect-security-in-software-architectures/)

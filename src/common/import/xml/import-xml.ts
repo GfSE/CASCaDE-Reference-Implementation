@@ -195,43 +195,43 @@ export class XmlImporter {
                             // LOG.debug('import-xml', `Checking element <${tag}> with id="${elId}"`);
                             // Check for class requirements
                             if (PigItem.isClass(tag)) {
-                                // Must have either 'pig:specializes' or 'pig:hasClass' as attribute or child
+                                // Must have either 'cas:specializes' or 'cas:instanceOf' as attribute or child
                                 // XML import is more tolerant than JSON-LD, as it allows both pig and RDF/OWL terms for specialization and classification
                                 // The MVF must however map both to the same internal keys
-                                // LOG.debug('import-xml 1', elem.getAttribute('pig:specializes'), elem.getAttribute('owl:subClassOf'), elem.getAttribute('pig:hasClass'), elem.getAttribute('rdf:type') );
+                                // LOG.debug('import-xml 1', elem.getAttribute('pig:specializes'), elem.getAttribute('owl:subClassOf'), elem.getAttribute('cas:instanceOf'), elem.getAttribute('rdf:type') );
                                 const specializesAttr = elem.getAttribute(`${DEF.pfxNsMeta}specializes`) || elem.getAttribute('owl:subClassOf');  // don't use '??'
-                                const hasClassAttr = elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('rdf:type');  // don't use '??'
+                                const instanceOfAttr = elem.getAttribute(`${DEF.pfxNsMeta}instanceOf`) || elem.getAttribute('rdf:type');  // don't use '??'
                                 let specializesChild = false;
-                                let hasClassChild = false;
+                                let instanceOfChild = false;
                                 for (let j = 0; j < elem.childNodes.length; j++) {
                                     const child = elem.childNodes[j];
                                     if (child.nodeType === 1) {
                                         const childTag = (child as Element).tagName;
                                         if ([`${DEF.pfxNsMeta}specializes`, 'owl:subClassOf'].includes(childTag)) specializesChild = true;
-                                        if ([`${DEF.pfxNsMeta}hasClass`, 'rdf:type'].includes(childTag)) hasClassChild = true;
+                                        if ([`${DEF.pfxNsMeta}instanceOf`, 'rdf:type'].includes(childTag)) instanceOfChild = true;
                                     }
                                 }
-                                // LOG.debug('import-xml 2', specializesAttr, hasClassAttr, specializesChild, hasClassChild);
-                                if (!(specializesAttr || hasClassAttr || specializesChild || hasClassChild)) {
-                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires either '${DEF.pfxNsMeta}specializes' or '${DEF.pfxNsMeta}hasClass'`);
+                                // LOG.debug('import-xml 2', specializesAttr, instanceOfAttr, specializesChild, instanceOfChild);
+                                if (!(specializesAttr || instanceOfAttr || specializesChild || instanceOfChild)) {
+                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires either '${DEF.pfxNsMeta}specializes' or '${DEF.pfxNsMeta}instanceOf'`);
                                 }
                             }
                             // Check for instance requirements
                             else if (PigItem.isInstance(tag)) {
-                                // Must have 'pig:hasClass' as attribute or child and a child 'dcterms:modified'
-                                const hasClassAttr = elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('rdf:type');  // don't use '??'
-                                let hasClassChild = false;
+                                // Must have 'cas:instanceOf' as attribute or child and a child 'dcterms:modified'
+                                const instanceOfAttr = elem.getAttribute(`${DEF.pfxNsMeta}instanceOf`) || elem.getAttribute('rdf:type');  // don't use '??'
+                                let instanceOfChild = false;
                                 let modifiedChild = false;
                                 for (let j = 0; j < elem.childNodes.length; j++) {
                                     const child = elem.childNodes[j];
                                     if (child.nodeType === 1) {
                                         const childTag = (child as Element).tagName;
-                                        if ([`${DEF.pfxNsMeta}hasClass`, 'rdf:type'].includes(childTag)) hasClassChild = true;
+                                        if ([`${DEF.pfxNsMeta}instanceOf`, 'rdf:type'].includes(childTag)) instanceOfChild = true;
                                         if (childTag === `${DEF.pfxNsDcmi}modified`) modifiedChild = true;
                                     }
                                 }
-                                if (!(hasClassAttr || hasClassChild)) {
-                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsMeta}hasClass'`);
+                                if (!(instanceOfAttr || instanceOfChild)) {
+                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsMeta}instanceOf'`);
                                 }
                                 if (!modifiedChild) {
                                     missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsDcmi}modified'`);

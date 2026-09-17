@@ -10,27 +10,27 @@
     xmlns:o="https://alice.org/ontology#"
     xmlns:d="https://alice.org/data#"
     id="d:Alice_works_for_ACME"
-    cas:hasClass="cas:Package">
+    rdf:type="cas:Package">
     
     <dcterms:title xml:lang="en">Alice works for ACME</dcterms:title>
     <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
-	<cas:aProperty cas:hasClass="dcterms:contributor">
+	<cas:aProperty rdf:type="dcterms:contributor">
 		<value>mailto:oskar.dungern@gfse.org</value>
 	</cas:aProperty>
-	<cas:aProperty cas:hasClass="dcterms:license">
+	<cas:aProperty rdf:type="dcterms:license">
 		<value>https://creativecommons.org/licenses/by-sa/4.0/</value>
 	</cas:aProperty>
     
     <graph>
         <!-- Entity Classes -->
-        <cas:Entity id="cas:Organizer" cas:hasClass="owl:Class">
+        <cas:Entity id="cas:Organizer" rdf:type="owl:Class">
             <cas:specializes>cas:Entity</cas:specializes>
             <dcterms:title xml:lang="en">Organizer</dcterms:title>
             <skos:definition xml:lang="en">An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.</skos:definition>
             <cas:enumeratedProperty>cas:Category</cas:enumeratedProperty>
         </cas:Entity>
 
-        <cas:Entity id="cas:Package" cas:hasClass="owl:Class">
+        <cas:Entity id="cas:Package" rdf:type="owl:Class">
             <cas:specializes>cas:Organizer</cas:specializes>
             <dcterms:title xml:lang="en">Package</dcterms:title>
             <skos:definition>A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances.</skos:definition>
@@ -38,14 +38,14 @@
             <cas:enumeratedProperty>dcterms:license</cas:enumeratedProperty>
         </cas:Entity>
 
-        <cas:Entity id="cas:Root" cas:hasClass="owl:Class">
+        <cas:Entity id="cas:Root" rdf:type="owl:Class">
             <cas:specializes>cas:Organizer</cas:specializes>
             <dcterms:title xml:lang="en">Package Root</dcterms:title>
             <skos:definition xml:lang="en">A subclass of CASCaRA organizer serving as a root for trees and tables.</skos:definition>
             <cas:enumeratedTargetLink>cas:lists</cas:enumeratedTargetLink>
         </cas:Entity>
 
-        <cas:Entity id="cas:Outline" cas:hasClass="owl:Class">
+        <cas:Entity id="cas:Outline" rdf:type="owl:Class">
             <cas:specializes>cas:Organizer</cas:specializes>
             <dcterms:title xml:lang="en">Outline</dcterms:title>
             <skos:definition xml:lang="en">A subclass of CASCaRA organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</skos:definition>
@@ -56,7 +56,7 @@
         <!-- Relationship Classes -->
 
         <!-- Property Classes -->
-        <cas:Property id="cas:Category" cas:hasClass="owl:DatatypeProperty">
+        <cas:Property id="cas:Category" rdf:type="owl:DatatypeProperty">
             <cas:specializes>cas:Property</cas:specializes>
             <dcterms:title xml:lang="en">has category</dcterms:title>
             <skos:definition xml:lang="en">Specifies a category for an element (entity, relationship or organizer).</skos:definition>
@@ -70,14 +70,14 @@
         </cas:Property>
 
         <!-- Link Classes -->
-        <cas:Link id="cas:Link" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:Link" rdf:type="owl:ObjectProperty">
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
             <dcterms:title xml:lang="en">linked with</dcterms:title>
             <skos:definition xml:lang="en">A CASCaRA meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element</skos:definition>
         </cas:Link>
 
-        <cas:Link id="cas:linksSource" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:linksSource" rdf:type="owl:ObjectProperty">
             <cas:specializes>cas:Link</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -85,7 +85,7 @@
             <skos:definition xml:lang="en">Connects the source of a reified relationship.</skos:definition>
         </cas:Link>
 
-        <cas:Link id="cas:linksTarget" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:linksTarget" rdf:type="owl:ObjectProperty">
             <cas:specializes>cas:Link</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -93,7 +93,7 @@
             <skos:definition xml:lang="en">Connects the target of a reified relationship or an organizer.</skos:definition>
         </cas:Link>
 
-        <cas:Link id="cas:lists" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="cas:lists" rdf:type="owl:ObjectProperty">
             <cas:specializes>cas:linksTarget</cas:specializes>
             <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
             <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -103,7 +103,7 @@
         </cas:Link>
 
         <!-- Schema.org Entity Classes -->
-        <cas:Entity id="cas:Person" cas:hasClass="owl:Class">
+        <cas:Entity id="cas:Person" rdf:type="owl:Class">
             <cas:specializes>schema:Person</cas:specializes>
             <dcterms:title xml:lang="en">Person</dcterms:title>
             <skos:definition xml:lang="en">A person (alive, dead, undead, or fictional).</skos:definition>
@@ -112,7 +112,7 @@
             <cas:enumeratedProperty>cas:birthDate</cas:enumeratedProperty>
         </cas:Entity>
         
-        <cas:Entity id="cas:Organization" cas:hasClass="owl:Class">
+        <cas:Entity id="cas:Organization" rdf:type="owl:Class">
             <cas:specializes>schema:Organization</cas:specializes>
             <dcterms:title xml:lang="en">Organization</dcterms:title>
             <skos:definition xml:lang="en">An organization such as a school, NGO, corporation, club, etc.</skos:definition>
@@ -121,7 +121,7 @@
         </cas:Entity>
         
         <!-- Schema.org Property Classes -->
-        <cas:Property id="cas:birthDate" cas:hasClass="owl:DatatypeProperty">
+        <cas:Property id="cas:birthDate" rdf:type="owl:DatatypeProperty">
             <cas:specializes>schema:birthDate</cas:specializes>
             <dcterms:title xml:lang="en">birth date</dcterms:title>
             <skos:definition xml:lang="en">Date of birth.</skos:definition>
@@ -133,7 +133,7 @@
             </xs:simpleType>
         </cas:Property>
         
-        <cas:Property id="cas:familyName" cas:hasClass="owl:DatatypeProperty">
+        <cas:Property id="cas:familyName" rdf:type="owl:DatatypeProperty">
             <cas:specializes>schema:familyName</cas:specializes>
             <dcterms:title xml:lang="en">family name</dcterms:title>
             <skos:definition xml:lang="en">Family name. In the U.S., the last name of a Person.</skos:definition>
@@ -145,7 +145,7 @@
             </xs:simpleType>
         </cas:Property>
         
-        <cas:Property id="cas:givenName" cas:hasClass="owl:DatatypeProperty">
+        <cas:Property id="cas:givenName" rdf:type="owl:DatatypeProperty">
             <cas:specializes>schema:givenName</cas:specializes>
             <dcterms:title xml:lang="en">given name</dcterms:title>
             <skos:definition xml:lang="en">Given name. In the U.S., the first name of a Person.</skos:definition>
@@ -157,7 +157,7 @@
             </xs:simpleType>
         </cas:Property>
         
-        <cas:Property id="cas:legalName" cas:hasClass="owl:DatatypeProperty">
+        <cas:Property id="cas:legalName" rdf:type="owl:DatatypeProperty">
             <cas:specializes>schema:legalName</cas:specializes>
             <dcterms:title xml:lang="en">legal name</dcterms:title>
             <skos:definition xml:lang="en">The official name of the organization, e.g. the registered company name.</skos:definition>
@@ -169,7 +169,7 @@
             </xs:simpleType>
         </cas:Property>
         
-        <cas:Property id="cas:taxID" cas:hasClass="owl:DatatypeProperty">
+        <cas:Property id="cas:taxID" rdf:type="owl:DatatypeProperty">
             <cas:specializes>schema:taxID</cas:specializes>
             <dcterms:title xml:lang="en">tax ID</dcterms:title>
             <skos:definition xml:lang="en">The Tax / Fiscal ID of the organization or person, e.g. the TIN in the US or the CIF/NIF in Spain.</skos:definition>
@@ -180,7 +180,7 @@
         </cas:Property>
         
         <!-- Schema.org Relationship Class -->
-        <cas:Relationship id="cas:WorksFor" cas:hasClass="owl:Class">
+        <cas:Relationship id="cas:WorksFor" rdf:type="owl:Class">
             <cas:specializes>schema:WorksFor</cas:specializes>
             <dcterms:title xml:lang="en">works for</dcterms:title>
             <skos:definition xml:lang="en">Organizations that the person works for.</skos:definition>
@@ -189,14 +189,14 @@
         </cas:Relationship>
         
         <!-- Custom Link Classes -->
-        <cas:Link id="o:Employee" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="o:Employee" rdf:type="owl:ObjectProperty">
             <cas:specializes>cas:linksSource</cas:specializes>
             <dcterms:title xml:lang="en">employee</dcterms:title>
             <skos:definition xml:lang="en">The employee in a 'worksFor' relationship</skos:definition>
             <cas:enumeratedEndpoint>cas:Person</cas:enumeratedEndpoint>
         </cas:Link>
         
-        <cas:Link id="o:Employer" cas:hasClass="owl:ObjectProperty">
+        <cas:Link id="o:Employer" rdf:type="owl:ObjectProperty">
             <cas:specializes>cas:linksTarget</cas:specializes>
             <dcterms:title xml:lang="en">employer</dcterms:title>
             <skos:definition xml:lang="en">The employer in a 'worksFor' relationship</skos:definition>
@@ -204,44 +204,44 @@
         </cas:Link>
         
         <!-- Instances (Individuals) -->
-        <cas:anEntity id="d:ACME" cas:hasClass="cas:Organization">
+        <cas:anEntity id="d:ACME" rdf:type="cas:Organization">
             <dcterms:title xml:lang="en">ACME Corp.</dcterms:title>
             <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
-            <cas:aProperty cas:hasClass="cas:legalName">
+            <cas:aProperty rdf:type="cas:legalName">
                 <value>ACME Corp.</value>
             </cas:aProperty>
-            <cas:aProperty cas:hasClass="cas:taxID">
+            <cas:aProperty rdf:type="cas:taxID">
                 <value>DE_123456789</value>
             </cas:aProperty>
         </cas:anEntity>
         
-        <cas:anEntity id="d:Alice" cas:hasClass="cas:Person">
+        <cas:anEntity id="d:Alice" rdf:type="cas:Person">
             <dcterms:title xml:lang="en">Alice</dcterms:title>
             <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
-            <cas:aProperty cas:hasClass="cas:familyName">
+            <cas:aProperty rdf:type="cas:familyName">
                 <value>Carpenter</value>
             </cas:aProperty>
-            <cas:aProperty cas:hasClass="cas:givenName">
+            <cas:aProperty rdf:type="cas:givenName">
                 <value>Alice</value>
             </cas:aProperty>
         </cas:anEntity>
         
-        <cas:aRelationship id="d:Alice_worksFor_ACME" cas:hasClass="cas:WorksFor">
+        <cas:aRelationship id="d:Alice_worksFor_ACME" rdf:type="cas:WorksFor">
             <dcterms:modified>2026-01-20T09:38:26.464Z</dcterms:modified>
-            <cas:aSourceLink cas:hasClass="o:Employee">
+            <cas:aSourceLink rdf:type="o:Employee">
                 <idRef>d:Alice</idRef>
             </cas:aSourceLink>
-            <cas:aTargetLink cas:hasClass="o:Employer">
+            <cas:aTargetLink rdf:type="o:Employer">
                 <idRef>d:ACME</idRef>
             </cas:aTargetLink>
         </cas:aRelationship>
 
         <!-- Instance Data: Outline -->
-        <cas:anEntity id="d:Root_Alice_worksFor_ACME" cas:hasClass="cas:Root">
+        <cas:anEntity id="d:Root_Alice_worksFor_ACME" rdf:type="cas:Root">
             <dcterms:modified>2026-01-17T22:38:20.041Z</dcterms:modified>
             <dcterms:title xml:lang="en">Package Root</dcterms:title>
             <dcterms:description xml:lang="en">... anchoring all outlines of this graph (package)</dcterms:description>
-            <cas:aTargetLink cas:hasClass="cas:lists">
+            <cas:aTargetLink rdf:type="cas:lists">
                 <idRef>d:ACME</idRef>
                 <idRef>d:Alice</idRef>
             </cas:aTargetLink>

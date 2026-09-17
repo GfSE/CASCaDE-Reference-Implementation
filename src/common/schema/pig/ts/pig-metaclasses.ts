@@ -81,6 +81,7 @@
  * - Include valid datatypes in the schemata for Property and Link.
  * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
  * - set lastStatus also on JSON-LD import
+ * - consider the use of 'has' und 'is' in property names: has = 'besteht aus', is = Vererbung.
  */
 
 import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
@@ -397,7 +398,7 @@ export class PigItem {
             'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
             'composedProperty',       // Property.composedProperty?: TPigId[]
             'specializes',            // Class.specializes?: TPigId
-            'hasClass'                // Instance hasClass references a class
+            'instanceOf'                // Instance instanceOf references a class
         ].includes(localName);
     }
 
@@ -576,14 +577,14 @@ These capture who, what, when, where, and how of data access or changes:
 
 interface IItem {
     itemType: PigItemTypeValue;
-    hasClass: TPigId;  // required for ALL itemTypes according to JSON schema
+    instanceOf: TPigId;  // required for ALL itemTypes according to JSON schema
 }
-// Constructor parameter type: hasClass is not used in constructor, set later via .set()
+// Constructor parameter type: instanceOf is not used in constructor, set later via .set()
 type TConstructItem = Pick<IItem, 'itemType'>;
 
 abstract class Item implements IItem {
     readonly itemType!: PigItemTypeValue;
-    hasClass!: TPigId;  // required for ALL itemTypes according to JSON schema
+    instanceOf!: TPigId;  // required for ALL itemTypes according to JSON schema
     protected lastStatus!: IRsp;
     protected constructor(itm: TConstructItem) {
         this.itemType = itm.itemType;
@@ -597,14 +598,14 @@ abstract class Item implements IItem {
         return rspOK;
     }
     protected set(itm: IItem): this {
-        this.hasClass = itm.hasClass;
+        this.instanceOf = itm.instanceOf;
         return this;
     }
     protected get() {
         return {
         //    lastStatus: this.lastStatus,
             itemType: this.itemType,
-            hasClass: this.hasClass
+            instanceOf: this.instanceOf
         } as IItem;
     }
 }
@@ -742,7 +743,7 @@ abstract class ALink extends Item implements IALink {
     }
     protected validate(itm: IALink) {
         // id and itemType checked in superclass
-        if (!itm.hasClass)
+        if (!itm.instanceOf)
             return Msg.create(612, itm.itemType);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Link URI (requires access to the cache to resolve the class -> do it through overall consistency check):
@@ -831,7 +832,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
         const _itm = super.fromJSONLD(itm) as any;
 
         // In JSON-LD all configurable properties have an ID-string as tag and an itemType cas:aProperty;
-        // collect them here in a hasProperty array, where the tag becomes hasClass;
+        // collect them here in a hasProperty array, where the tag becomes instanceOf;
         // they will be instantiated as AProperty items in set():
 
         _itm.hasProperty = this.collectConfigurablePropertiesFromJSONLD(_itm) as IAProperty[];
@@ -846,7 +847,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
      * In JSON-LD, configurable properties have an ID-string as key (namespace:name or URI)
      * and their value is an array of objects with itemType 'cas:aProperty'.
      * This function extracts those properties and transforms them into a hasProperty array,
-     * where the original key becomes the 'hasClass' field of each property.
+     * where the original key becomes the 'instanceOf' field of each property.
      * 
      * @param obj - The input object
      * @returns Array of IAProperty objects, or undefined if no properties found
@@ -885,12 +886,12 @@ abstract class AnElement extends Identifiable implements IAnElement {
                         // const nameItemType = `${DEF.pfxNsMeta}itemType`;
                         const itemTypeValue = aProp.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
 
-                        // Add the property with the key as its hasClass reference
+                        // Add the property with the key as its instanceOf reference
                         if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue*/) {
                             if (aProp.value !== undefined || aProp.composes) {
                                 configurables.push({
                                     itemType: PigItemType.aProperty,
-                                    hasClass: key,
+                                    instanceOf: key,
                                     value: aProp.value /*|| item['@value'] */,
                                     composes: aProp.composes
                                 });
@@ -910,7 +911,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
                     if (aProp.value !== undefined || aProp.composes) {
                         configurables.push({
                             itemType: PigItemType.aProperty,
-                            hasClass: key,
+                            instanceOf: key,
                             value: aProp.value /*|| item['@value'] */,
                             composes: aProp.composes
                         });
@@ -922,7 +923,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
             else if (val !== undefined && val !== null && (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean')) {
                 configurables.push({
                     itemType: PigItemType.aProperty,
-                    hasClass: key,
+                    instanceOf: key,
                     value: String(val)
                 });
                 delete obj[key]; // remove processed property
@@ -936,7 +937,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
      * In JSON-LD, configurable links have an ID-string as key (namespace:name or URI)
      * and their value is an array of objects with itemType 'cas:aLink'.
      * This function extracts those links and transforms them into a hasLink array,
-     * where the original key becomes the 'hasClass' field of each link.
+     * where the original key becomes the 'instanceOf' field of each link.
      * 
      * @param obj - The input object (typically from JSON-LD)
      * @param itype - The expected itemType for the links (PigItemType.aSourceLink or PigItemType.aTargetLink)
@@ -980,11 +981,11 @@ abstract class AnElement extends Identifiable implements IAnElement {
 
                         // Check if it has itemType 'cas:aSourceLink' or 'cas:aTargetLink' (may be an id-object)
                         if (itemTypeValue === itype /* || !itemTypeValue*/) {
-                            // Add the property with the key as its hasClass reference
+                            // Add the property with the key as its instanceOf reference
                             if (PigItem.isValidIdString(aLink.id)) {
                                 configurables.push({
                                     itemType: itype,
-                                    hasClass: key,
+                                    instanceOf: key,
                                     idRef: aLink.id as TPigId
                                 });
                             }
@@ -1003,7 +1004,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
                     if (aLink.id !== undefined && PigItem.isValidIdString(aLink.id)) {
                         configurables.push({
                             itemType: itype,
-                            hasClass: key,
+                            instanceOf: key,
                             idRef: aLink.id as TPigId
                         });
                     }
@@ -1014,7 +1015,7 @@ abstract class AnElement extends Identifiable implements IAnElement {
             else if (PigItem.isValidIdString(val)) {
                 configurables.push({
                     itemType: itype,
-                    hasClass: key,
+                    instanceOf: key,
                     idRef: val
                 });
                 delete obj[key]; // remove processed property
@@ -1411,7 +1412,7 @@ export class AProperty extends Item implements IAProperty {
     }
     validate(itm: IAProperty) {
         // itemType checked in superclass
-        if (!itm.hasClass)
+        if (!itm.instanceOf)
             return Msg.create(612, PigItemType.aProperty);
         return super.validate(itm);
     }
@@ -1419,7 +1420,7 @@ export class AProperty extends Item implements IAProperty {
         this.lastStatus = this.validate(itm);
         if (this.lastStatus.ok) {
             super.set(itm);
-            this.hasClass = itm.hasClass;  // Set hasClass for property instances
+            this.instanceOf = itm.instanceOf;  // Set instanceOf for property instances
             this.composes = itm.composes;
             this.value = itm.value;
         }
@@ -1439,7 +1440,7 @@ export class ASourceLink extends ALink implements IALink {
     }
     validate(itm: IALink) {
         // itemType checked in superclass
-        if (!itm.hasClass)
+        if (!itm.instanceOf)
             return Msg.create(612, PigItemType.aSourceLink);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
@@ -1452,7 +1453,7 @@ export class ATargetLink extends ALink implements IALink {
     }
     validate(itm: IALink) {
         // itemType checked in superclass
-        if (!itm.hasClass)
+        if (!itm.instanceOf)
             return Msg.create(612, PigItemType.aTargetLink);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Property URI (requires access to the cache to resolve the class -> do it through overall consistency check):
@@ -1489,7 +1490,7 @@ export class AnEntity extends AnElement implements IAnElement {
 
         // Runtime guards:
         // id and itemType checked in superclass
-        if (!itm.hasClass)
+        if (!itm.instanceOf)
             return Msg.create(612, PigItemType.anEntity);
 
         return super.validate(itm);
@@ -1541,7 +1542,7 @@ export class ARelationship extends AnElement implements IARelationship {
 
         // Runtime guards:
         // id and itemType checked in superclass
-        if (!itm.hasClass)
+        if (!itm.instanceOf)
             return Msg.create(612, PigItemType.aRelationship);
         // @ToDo: implement further validation logic
         // - Check class reference; must be an existing Relationship URI (requires access to the cache to resolve the class -> do it through overall consistency check):
@@ -1574,7 +1575,7 @@ export class ARelationship extends AnElement implements IARelationship {
 }
 // For packages:
 export interface IAPackage extends IAnElement {
-    hasClass: TPigId;  // required for APackage according to JSON schema
+    instanceOf: TPigId;  // required for APackage according to JSON schema
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[];
 }
@@ -1607,7 +1608,7 @@ export class APackage extends AnElement implements IAPackage {
 
         // Runtime guards:
         // id and itemType checked in superclass
-        if (!pkg.hasClass)
+        if (!pkg.instanceOf)
             return Msg.create(612, PigItemType.aPackage);
 
         rsp = checkConstraintsForPackage(pkg, options);
@@ -2429,9 +2430,9 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
             } else {
                 result.id = PigItem.normalizeId(attrValue, tagName);
             }
-        } else if (attrName === 'rdf:type' || attrName.endsWith('hasClass')) {
+        } else if (attrName === 'rdf:type' || attrName.endsWith('instanceOf')) {
             // an attribute ending with 'itemType' would not get here, because endsWith() is case-sensitive
-            result.hasClass = PigItem.normalizeId(attrValue);  // references always point to a class
+            result.instanceOf = PigItem.normalizeId(attrValue);  // references always point to a class
         } else if (attrName.endsWith('specializes')) {
             result.specializes = PigItem.normalizeId(attrValue);  // references always point to a class
         } else {
@@ -2653,7 +2654,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
 /**
  * Process cas:aProperty element
  * Extracts:
- * - rdf:type → hasClass
+ * - rdf:type → instanceOf
  * - <value> → value
  * - itemType → cas:aProperty
  */
@@ -2662,11 +2663,11 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
         itemType: PigItemType.aProperty
     };
 
-    // Extract rdf:type and cas:hasClass as hasClass
+    // Extract rdf:type and cas:instanceOf as instanceOf
     const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
-        || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
+        || elem.getAttribute(`${DEF.pfxNsMeta}instanceOf`) || elem.getAttribute('instanceOf');
     if (rdfType) {
-        prop.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
+        prop.instanceOf = PigItem.normalizeId(rdfType);  // references always point to a class
     }
 
     // Extract child elements
@@ -2679,8 +2680,8 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
                 prop.value = getXmlElementText(childElement);
             } else if (childTagName === 'idRef') {
                 prop.idRef = PigItem.normalizeId(childElement.textContent?.trim() as string);
-            } else if (childTagName.endsWith('type')  || childTagName.endsWith('hasClass')) {
-                prop.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);
+            } else if ( childTagName === 'rdf:type'  || childTagName.endsWith('instanceOf')) {
+                prop.instanceOf = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if (childTagName === 'composes') {
                 if (!prop.composes) {
                     prop.composes = [];
@@ -2696,8 +2697,8 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
 /**
  * Import cas:aSourceLink or cas:aTargetLink element
  * Extracts:
- * - rdf:type → hasClass
- * - cas:hasClass → hasClass (accepted alternative to rdf:type)
+ * - rdf:type → instanceOf
+ * - cas:instanceOf → instanceOf (accepted alternative to rdf:type)
  * - <idRef> → idRef
  * - itemType → cas:aSourceLink or cas:aTargetLink
  */
@@ -2706,11 +2707,11 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
         itemType: itemType
     };
 
-    // Extract rdf:type and cas:hasClass as hasClass
+    // Extract rdf:type and cas:instanceOf as instanceOf
     const rdfType = elem.getAttribute('rdf:type') || elem.getAttribute('type')
-        || elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('hasClass');
+        || elem.getAttribute(`${DEF.pfxNsMeta}instanceOf`) || elem.getAttribute('instanceOf');
     if (rdfType) {
-        link.hasClass = PigItem.normalizeId(rdfType);  // references always point to a class
+        link.instanceOf = PigItem.normalizeId(rdfType);  // references always point to a class
     }
 
     // Array to collect multiple idRef values
@@ -2730,9 +2731,9 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                 // Otherwise, idRef points to an instance and uses data namespace (d:)
                 let targetItemType: PigItemTypeValue = PigItemType.anEntity; // default: data namespace
 
-                if (link.hasClass) {
+                if (link.instanceOf) {
                     // Try to find the link class definition in the graph
-                    const linkClassId = link.hasClass as string;
+                    const linkClassId = link.instanceOf as string;
                     const linkClassElem = findLinkClassInGraph(elem, linkClassId);
                     if (linkClassElem && enumeratedEndpointPointsToEnumeration(linkClassElem)) {
                         // Link's enumeratedEndpoint points to an Enumeration, so idRef should use ontology namespace
@@ -2741,8 +2742,8 @@ function configurableLinkToJson(elem: ElementXML, itemType: PigItemTypeValue): J
                 }
 
                 idRefs.push(PigItem.normalizeId(idRefValue, targetItemType));
-            } else if (childTagName.endsWith('hasClass')) {
-                link.hasClass = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
+            } else if (childTagName === 'rdf:type' || childTagName.endsWith('instanceOf')) {
+                link.instanceOf = PigItem.normalizeId(childElement.textContent?.trim() as string);  // references always point to a class
             }
         }
     }

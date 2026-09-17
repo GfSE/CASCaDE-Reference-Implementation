@@ -325,7 +325,7 @@ function passify(html: string): string {
 function metadataToHTML(item: TPigAnElement, lang: tagIETF): string {
     return `<dt>Item Type</dt><dd>${item.itemType}</dd>`
                 + `<dt>ID</dt><dd>${item.id}</dd>`
-                + `<dt>Class</dt><dd>${passify(item.hasClass || '—')}</dd>`
+                + `<dt>Class</dt><dd>${passify(item.instanceOf || '—')}</dd>`
                 + (item.modified ? `<dt>Modified</dt><dd>${LIB.getLocalDate(item.modified, lang)}</dd>` : '')
                 + (item.creator ? `<dt>Creator</dt><dd>${passify(item.creator)}</dd>` : '')
                 + (item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : '')
@@ -337,9 +337,9 @@ function propertiesToHTML(el: TPigAnElement, lang: tagIETF): string {
         // the configured properties:
         for (const prop of el.hasProperty) {
             const propData = prop.get() as IAProperty;
-            if (propData && propData.hasClass) {
+            if (propData && propData.instanceOf) {
                 const propValue = passify((propData.value) as string);
-                const propClass = passify(propData.hasClass);
+                const propClass = passify(propData.instanceOf);
                 propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
             }
         }

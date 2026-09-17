@@ -283,12 +283,12 @@ function createLinkRelations(item: TCascaraItem, field: 'hasSourceLink' | 'hasTa
         if (!cfg || typeof cfg !== 'object') continue;
 
         const targetId = cfg.idRef;
-        const relType = cfg.hasClass ? String(cfg.hasClass) : field;
+        const relType = cfg.instanceOf ? String(cfg.instanceOf) : field;
 
         if (typeof targetId === 'string' && targetId.length > 0) {
             const relProps: Record<string, JsonValue> = {
                 linkDirection: field,
-                linkClass: typeof cfg.hasClass === 'string' ? cfg.hasClass : field
+                linkClass: typeof cfg.instanceOf === 'string' ? cfg.instanceOf : field
             };
             if (typeof cfg.itemType === 'string') {
                 relProps.linkItemType = cfg.itemType;
@@ -354,10 +354,10 @@ function createPropertyRelations(item: TCascaraItem): string[] {
 
     for (let index = 0; index < props.length; index++) {
         const prop = props[index];
-        if (!prop || typeof prop !== 'object' || typeof prop.hasClass !== 'string') continue;
+        if (!prop || typeof prop !== 'object' || typeof prop.instanceOf !== 'string') continue;
 
         const relProps: Record<string, JsonValue> = {
-            propertyClass: prop.hasClass
+            propertyClass: prop.instanceOf
         };
         if (prop.value !== undefined && prop.value !== null) {
             relProps.value = typeof prop.value === 'object' ? JSON.stringify(prop.value) : prop.value;
@@ -369,7 +369,7 @@ function createPropertyRelations(item: TCascaraItem): string[] {
             relProps.composesJson = JSON.stringify(prop.composes);
         }
 
-        statements.push(createRelation(item.id, prop.hasClass, 'HAS_PROPERTY', relProps, relationKey('hasProperty', index)));
+        statements.push(createRelation(item.id, prop.instanceOf, 'HAS_PROPERTY', relProps, relationKey('hasProperty', index)));
     }
 
     return statements;

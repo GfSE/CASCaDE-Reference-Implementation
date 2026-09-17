@@ -98,7 +98,7 @@ export function getXML(item: TPigItem, options?: IOptionsXML): string {
     return result;
 }
 
-const attrNameType = "rdf:type";  // or cas:hasClass
+const attrNameType = "rdf:type";  // or cas:instanceOf
 /**
  * Static class containing CASCaRA XML export methods for all PIG types
  */
@@ -203,7 +203,7 @@ class GetXML {
         const i2 = indent.repeat(2);
 
         const tag = "cas:anEntity";
-        const cl = itm.hasClass;
+        const cl = itm.instanceOf;
         let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="${cl}">\n`;
 
         // title (multi-language)
@@ -263,7 +263,7 @@ class GetXML {
         const i2 = indent.repeat(2);
 
         const tag = "cas:aRelationship";
-        const cl = itm.hasClass;
+        const cl = itm.instanceOf;
         let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="${cl}">\n`;
 
         // title (multi-language)
@@ -870,7 +870,7 @@ class GetXML {
         // group properties by class, preserving first-seen order
         const groups = new Map<string, AProperty[]>();
         for (const p of props) {
-            const cl = p.hasClass;
+            const cl = p.instanceOf;
             const group = groups.get(cl);
             if (group)
                 group.push(p);
@@ -912,7 +912,7 @@ class GetXML {
         // group links by class, preserving first-seen order
         const groups = new Map<string, (ASourceLink | ATargetLink)[]>();
         for (const l of links) {
-            const cl = l.hasClass;
+            const cl = l.instanceOf;
             const group = groups.get(cl);
             if (group)
                 group.push(l);

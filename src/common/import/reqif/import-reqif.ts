@@ -152,10 +152,10 @@ export class ReqifImporter {
             checkConstraints: [
                 ConstraintCheckType.UniqueIds,
                 // Input has only instances, so omit constraint checks on classes
-                ConstraintCheckType.aPropertyHasClass,
-                ConstraintCheckType.aLinkHasClass
-                //    ConstraintCheckType.anEntityHasClass,
-                //    ConstraintCheckType.aRelationshipHasClass,
+                ConstraintCheckType.aPropertyInstanceOf,
+                ConstraintCheckType.aLinkInstanceOf
+                //    ConstraintCheckType.anEntityInstanceOf,
+                //    ConstraintCheckType.aRelationshipInstanceOf,
             ] as ConstraintCheckType[]
         } */);
 

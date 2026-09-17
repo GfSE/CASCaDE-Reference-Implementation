@@ -817,7 +817,7 @@
             <xsl:variable name="items" select="if (local-name() = 'EnumerationType')
                 then *[local-name()='Item']
                 else *[local-name()='Enumeration']/*[local-name()='Item']"/>
-            <cas:Enumeration cas:hasClass="owl:Class" id="fmi:enum-{$enumPos}">
+            <cas:Enumeration rdf:type="owl:Class" id="fmi:enum-{$enumPos}">
                 <dcterms:title>
                     <xsl:value-of select="@name"/>
                 </dcterms:title>

@@ -58,7 +58,7 @@ class PigSchemaFactory {
             items: {
                 type: 'object',
                 properties: {
-                    hasClass: { $ref: '#/$defs/idString' },
+                    instanceOf: { $ref: '#/$defs/idString' },
                     itemType: {
                         type: 'string',
                         enum: [`${DEF.pfxNsMeta}aProperty`],
@@ -73,7 +73,7 @@ class PigSchemaFactory {
                         items: { $ref: '#/$defs/idString' }
                     }
                 },
-                required: ['itemType', 'hasClass', 'value'],
+                required: ['itemType', 'instanceOf', 'value'],
                 additionalProperties: false
             }
         }
@@ -86,7 +86,7 @@ class PigSchemaFactory {
             items: {
                 type: 'object',
                 properties: {
-                    hasClass: { $ref: '#/$defs/idString' },
+                    instanceOf: { $ref: '#/$defs/idString' },
                     itemType: {
                         type: 'string',
                         enum: [`${linkType}`],
@@ -94,7 +94,7 @@ class PigSchemaFactory {
                     },
                     idRef: { $ref: '#/$defs/idString' }
                 },
-                required: ['itemType', 'hasClass', 'idRef'],
+                required: ['itemType', 'instanceOf', 'idRef'],
                 additionalProperties: false
             }
         }
@@ -107,7 +107,7 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: {
+                instanceOf: {
                     type: 'string',
                     enum: [`owl:Class`],
                 },
@@ -168,7 +168,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'], // change info is optional for classes; enumeratedValue may be omitted for upper levels in the generalization hierarchy.
+            required: ['id', 'instanceOf', 'itemType', 'title', 'datatype'], // change info is optional for classes; enumeratedValue may be omitted for upper levels in the generalization hierarchy.
             $defs: this.getDefs()
         };
     }
@@ -180,7 +180,7 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: {
+                instanceOf: {
                     type: 'string',
                     enum: [`owl:DatatypeProperty`],
                 },
@@ -222,7 +222,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title', 'datatype'], // change info is optional for classes
+            required: ['id', 'instanceOf', 'itemType', 'title', 'datatype'], // change info is optional for classes
             $defs: this.getDefs()
         };
     }
@@ -234,7 +234,7 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: {
+                instanceOf: {
                     type: 'string',
                     enum: [`owl:ObjectProperty`],
                 },
@@ -270,7 +270,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title', 'enumeratedEndpoint'], // change info is optional for classes
+            required: ['id', 'instanceOf', 'itemType', 'title', 'enumeratedEndpoint'], // change info is optional for classes
             $defs: this.getDefs()
         };
     }
@@ -282,7 +282,7 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: {
+                instanceOf: {
                     type: 'string',
                     enum: [`owl:Class`],
                 },
@@ -325,7 +325,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            required: ['id', 'instanceOf', 'itemType', 'title'], // change info is optional for classes
             $defs: this.getDefs()
         };
     }
@@ -337,7 +337,7 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: {
+                instanceOf: {
                     type: 'string',
                     enum: [`owl:Class`],
                 },
@@ -387,7 +387,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'title'], // change info is optional for classes
+            required: ['id', 'instanceOf', 'itemType', 'title'], // change info is optional for classes
             $defs: this.getDefs()
         };
     }
@@ -399,7 +399,7 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
+                instanceOf: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}anEntity`],
@@ -422,7 +422,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'modified'],
+            required: ['id', 'instanceOf', 'itemType', 'modified'],
             anyOf: [
                 { required: ['title'] },
                 { required: ['description'] }
@@ -438,7 +438,7 @@ class PigSchemaFactory {
             type: 'object',
             properties: {
                 id: { $ref: '#/$defs/idString' },
-                hasClass: { $ref: '#/$defs/idString' },
+                instanceOf: { $ref: '#/$defs/idString' },
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}aRelationship`],
@@ -462,7 +462,7 @@ class PigSchemaFactory {
                 creator: { type: 'string' }
             },
             additionalProperties: false,
-            required: ['id', 'hasClass', 'itemType', 'modified', 'hasSourceLink', 'hasTargetLink'], // but neither title nor description is required
+            required: ['id', 'instanceOf', 'itemType', 'modified', 'hasSourceLink', 'hasTargetLink'], // but neither title nor description is required
             $defs: this.getDefs()
         };
     }
@@ -486,7 +486,7 @@ class PigSchemaFactory {
                     }
                 },
                 id: { $ref: '#/$defs/idString' },
-                hasClass: {
+                instanceOf: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}Package`],
                 },
@@ -519,7 +519,7 @@ class PigSchemaFactory {
                 }
             },
             additionalProperties: false,
-            required: ['context', 'id', 'hasClass', 'itemType', 'modified', 'graph'],
+            required: ['context', 'id', 'instanceOf', 'itemType', 'modified', 'graph'],
             $defs: this.getDefs()
         };
     }

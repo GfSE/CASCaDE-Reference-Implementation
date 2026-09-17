@@ -6,6 +6,11 @@
  * Note:
  * - a roundtrip test via setXML() and getXML() and enumerated (enumerated) values
  *   is contained in pig-package-constraints-valueRanges.spec.ts
+ *
+ * @todo:
+ * - Check both ways to define a datatype via xs:datatype and sh:datatype
+ * - Check both ways to define the type with rdf:type and cas:instanceOf
+ * - Check both ways to define the type with an attribute and with an embedded element
  */
 
 import { DEF } from '../../src/common/lib/definitions';
@@ -450,7 +455,7 @@ describe('PIG Metaclasses XML Import', () => {
             expect(anEntity.status().ok).toBe(true);
 
             expect(anEntity.hasProperty?.length).toBe(2);
-            expect(anEntity.hasProperty[1].hasClass).toBe(`${DEF.pfxNsMeta}Category`);
+            expect(anEntity.hasProperty[1].instanceOf).toBe(`${DEF.pfxNsMeta}Category`);
             // console.debug('anEntity.hasTargetLink', anEntity.hasTargetLink);
             expect(anEntity.hasTargetLink?.length).toBe(2);
             expect(anEntity.hasTargetLink[0].idRef).toBe('d:MEl-50fbfe8f0029b1a8016ea86245a9d83a');

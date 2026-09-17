@@ -108,13 +108,13 @@ describe('Import XML - ID normalization', () => {
                           xmlns:o="https://example.org/ontology#"
                           xmlns:d="https://example.org/data#"
                           id="TestPackage">
-                <${DEF.pfxNsMeta}hasClass>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}hasClass>
+                <${DEF.pfxNsMeta}instanceOf>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}instanceOf>
                 <dcterms:modified>2026-01-01T12:00:00Z</dcterms:modified>
                 <dcterms:title xml:lang="en">Test Package for ID Normalization</dcterms:title>
                 <graph>
                     <!-- 1. Enumeration without namespace -->
                     <${DEF.pfxNsMeta}Enumeration id="Priority-Values">
-                        <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>owl:Class</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">Priority</dcterms:title>
                         <skos:definition xml:lang="en">Enumerated values for priority.</skos:definition>
                         <datatype>xs:string</datatype>
@@ -128,35 +128,35 @@ describe('Import XML - ID normalization', () => {
 
                     <!-- 2. Entity class with enumeratedTargetLink -->
                     <${DEF.pfxNsMeta}Entity id="Requirement">
-                        <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>owl:Class</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">Requirement</dcterms:title>
                         <${DEF.pfxNsMeta}enumeratedTargetLink>hasPriority</${DEF.pfxNsMeta}enumeratedTargetLink>
                     </${DEF.pfxNsMeta}Entity>
 
                     <!-- 3. Link class -->
                     <${DEF.pfxNsMeta}Link id="hasPriority">
-                        <${DEF.pfxNsMeta}hasClass>owl:ObjectProperty</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>owl:ObjectProperty</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">has Priority</dcterms:title>
                         <${DEF.pfxNsMeta}enumeratedEndpoint>Priority-Values</${DEF.pfxNsMeta}enumeratedEndpoint>
                     </${DEF.pfxNsMeta}Link>
 
                     <!-- 4. Link class for Relationship source -->
                     <${DEF.pfxNsMeta}Link id="toSource">
-                        <${DEF.pfxNsMeta}hasClass>owl:ObjectProperty</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>owl:ObjectProperty</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">to Source</dcterms:title>
                         <${DEF.pfxNsMeta}enumeratedEndpoint>Requirement</${DEF.pfxNsMeta}enumeratedEndpoint>
                     </${DEF.pfxNsMeta}Link>
 
                     <!-- 5. Link class for Relationship target -->
                     <${DEF.pfxNsMeta}Link id="toTarget">
-                        <${DEF.pfxNsMeta}hasClass>owl:ObjectProperty</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>owl:ObjectProperty</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">to Target</dcterms:title>
                         <${DEF.pfxNsMeta}enumeratedEndpoint>Requirement</${DEF.pfxNsMeta}enumeratedEndpoint>
                     </${DEF.pfxNsMeta}Link>
 
                     <!-- 6. Relationship class -->
                     <${DEF.pfxNsMeta}Relationship id="dependsOn">
-                        <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>owl:Class</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">depends on</dcterms:title>
                         <${DEF.pfxNsMeta}enumeratedSourceLink>toSource</${DEF.pfxNsMeta}enumeratedSourceLink>
                         <${DEF.pfxNsMeta}enumeratedTargetLink>toTarget</${DEF.pfxNsMeta}enumeratedTargetLink>
@@ -164,43 +164,43 @@ describe('Import XML - ID normalization', () => {
 
                     <!-- 7. First anEntity instance -->
                     <${DEF.pfxNsMeta}anEntity id="Req-001">
-                        <${DEF.pfxNsMeta}hasClass>Requirement</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>Requirement</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">System shall authenticate users</dcterms:title>
                         <dcterms:modified>2026-01-01T12:00:00Z</dcterms:modified>
                         <${DEF.pfxNsMeta}aTargetLink>
-                            <${DEF.pfxNsMeta}hasClass>hasPriority</${DEF.pfxNsMeta}hasClass>
+                            <${DEF.pfxNsMeta}instanceOf>hasPriority</${DEF.pfxNsMeta}instanceOf>
                             <idRef>priorityHigh</idRef>
                         </${DEF.pfxNsMeta}aTargetLink>
                     </${DEF.pfxNsMeta}anEntity>
 
                     <!-- 8. Second anEntity instance -->
                     <${DEF.pfxNsMeta}anEntity id="Req-002">
-                        <${DEF.pfxNsMeta}hasClass>Requirement</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>Requirement</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:title xml:lang="en">System shall log activities</dcterms:title>
                         <dcterms:modified>2026-01-01T12:00:00Z</dcterms:modified>
                         <${DEF.pfxNsMeta}aTargetLink>
-                            <${DEF.pfxNsMeta}hasClass>hasPriority</${DEF.pfxNsMeta}hasClass>
+                            <${DEF.pfxNsMeta}instanceOf>hasPriority</${DEF.pfxNsMeta}instanceOf>
                             <idRef>priorityLow</idRef>
                         </${DEF.pfxNsMeta}aTargetLink>
                     </${DEF.pfxNsMeta}anEntity>
 
                     <!-- 9. aRelationship instance -->
                     <${DEF.pfxNsMeta}aRelationship id="Dep-001">
-                        <${DEF.pfxNsMeta}hasClass>dependsOn</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>dependsOn</${DEF.pfxNsMeta}instanceOf>
                         <dcterms:modified>2026-01-01T12:00:00Z</dcterms:modified>
                         <${DEF.pfxNsMeta}aSourceLink>
-                            <${DEF.pfxNsMeta}hasClass>toSource</${DEF.pfxNsMeta}hasClass>
+                            <${DEF.pfxNsMeta}instanceOf>toSource</${DEF.pfxNsMeta}instanceOf>
                             <idRef>Req-001</idRef>
                         </${DEF.pfxNsMeta}aSourceLink>
                         <${DEF.pfxNsMeta}aTargetLink>
-                            <${DEF.pfxNsMeta}hasClass>toTarget</${DEF.pfxNsMeta}hasClass>
+                            <${DEF.pfxNsMeta}instanceOf>toTarget</${DEF.pfxNsMeta}instanceOf>
                             <idRef>Req-002</idRef>
                         </${DEF.pfxNsMeta}aTargetLink>
                     </${DEF.pfxNsMeta}aRelationship>
                 </graph>
             </${DEF.pfxNsMeta}aPackage>`;
 
-        // Import the package WITHOUT constraint checking to focus on ID normalization
+        // Import the package
         const pkg = new APackage().setXML(xmlInput);
 
         // Check import status
@@ -279,36 +279,99 @@ describe('Import XML - ID normalization', () => {
         // 7. Check first anEntity instance
         expect(entity1).toBeDefined();
         expect(entity1?.id).toBe('d:Req-001');  // Instances get 'd:' prefix
-        expect((entity1 as any)?.hasClass).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
+        expect((entity1 as any)?.instanceOf).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
         expect((entity1 as any)?.hasTargetLink).toBeDefined();
         expect(Array.isArray((entity1 as any)?.hasTargetLink)).toBe(true);
         expect((entity1 as any)?.hasTargetLink?.length).toBe(1);
-        expect((entity1 as any)?.hasTargetLink?.[0]?.hasClass).toBe('o:hasPriority');  // Reference to class gets 'o:' prefix
+        expect((entity1 as any)?.hasTargetLink?.[0]?.instanceOf).toBe('o:hasPriority');  // Reference to class gets 'o:' prefix
         expect((entity1 as any)?.hasTargetLink?.[0]?.idRef).toBe('o:priorityHigh');  // Reference to enumerated value gets 'o:' prefix (resolved via link class)
 
         // 8. Check second anEntity instance
         expect(entity2).toBeDefined();
         expect(entity2?.id).toBe('d:Req-002');  // Instances get 'd:' prefix
-        expect((entity2 as any)?.hasClass).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
+        expect((entity2 as any)?.instanceOf).toBe('o:Requirement');  // Reference to class gets 'o:' prefix
         expect((entity2 as any)?.hasTargetLink).toBeDefined();
         expect(Array.isArray((entity2 as any)?.hasTargetLink)).toBe(true);
         expect((entity2 as any)?.hasTargetLink?.length).toBe(1);
-        expect((entity2 as any)?.hasTargetLink?.[0]?.hasClass).toBe('o:hasPriority');  // Reference to class gets 'o:' prefix
+        expect((entity2 as any)?.hasTargetLink?.[0]?.instanceOf).toBe('o:hasPriority');  // Reference to class gets 'o:' prefix
         expect((entity2 as any)?.hasTargetLink?.[0]?.idRef).toBe('o:priorityLow');  // Reference to enumerated value gets 'o:' prefix (resolved via link class)
 
         // 9. Check aRelationship instance
         expect(relationship).toBeDefined();
         expect(relationship?.id).toBe('d:Dep-001');  // Instances get 'd:' prefix
-        expect((relationship as any)?.hasClass).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
+        expect((relationship as any)?.instanceOf).toBe('o:dependsOn');  // Reference to class gets 'o:' prefix
         expect((relationship as any)?.hasSourceLink).toBeDefined();
         expect(Array.isArray((relationship as any)?.hasSourceLink)).toBe(true);
         expect((relationship as any)?.hasSourceLink?.length).toBe(1);
-        expect((relationship as any)?.hasSourceLink?.[0]?.hasClass).toBe('o:toSource');  // Reference to Link class gets 'o:' prefix
+        expect((relationship as any)?.hasSourceLink?.[0]?.instanceOf).toBe('o:toSource');  // Reference to Link class gets 'o:' prefix
         expect((relationship as any)?.hasSourceLink?.[0]?.idRef).toBe('d:Req-001');  // Reference to instance gets 'd:' prefix
         expect((relationship as any)?.hasTargetLink).toBeDefined();
         expect(Array.isArray((relationship as any)?.hasTargetLink)).toBe(true);
         expect((relationship as any)?.hasTargetLink?.length).toBe(1);
-        expect((relationship as any)?.hasTargetLink?.[0]?.hasClass).toBe('o:toTarget');  // Reference to Link class gets 'o:' prefix
+        expect((relationship as any)?.hasTargetLink?.[0]?.instanceOf).toBe('o:toTarget');  // Reference to Link class gets 'o:' prefix
         expect((relationship as any)?.hasTargetLink?.[0]?.idRef).toBe('d:Req-002');  // Reference to instance gets 'd:' prefix
+    });
+});
+
+describe('Import XML - variant type attributes', () => {
+    it(`Should normalize ${DEF.pfxNsMeta}instanceOf and rdf:type`, () => {
+        // XML with IDs without namespace prefixes
+        const xmlInput = `<?xml version="1.0" encoding="UTF-8"?>
+            <${DEF.pfxNsMeta}aPackage xmlns:cas="${DEF.pigPath}${DEF.pigVersion}/metamodel#"
+                          xmlns:dcterms="http://purl.org/dc/terms/"
+                          xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+                          xmlns:owl="http://www.w3.org/2002/07/owl#"
+                          xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+                          xmlns:o="https://example.org/ontology#"
+                          xmlns:d="https://example.org/data#"
+                          id="TestPackage">
+                <${DEF.pfxNsMeta}instanceOf>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}instanceOf>
+                <dcterms:modified>2026-01-01T12:00:00Z</dcterms:modified>
+                <dcterms:title xml:lang="en">Test Package for ID Normalization</dcterms:title>
+                <graph>
+
+                    <!-- 1. Entity class with ${DEF.pfxNsMeta}instanceOf -->
+                    <${DEF.pfxNsMeta}Entity id="Requirement-1">
+                        <${DEF.pfxNsMeta}instanceOf>owl:Class</${DEF.pfxNsMeta}instanceOf>
+                        <dcterms:title xml:lang="en">Requirement</dcterms:title>
+                    </${DEF.pfxNsMeta}Entity>
+
+                    <!-- 2. Entity class with rdf:type -->
+                    <${DEF.pfxNsMeta}Entity id="Requirement-2">
+                        <rdf:type>owl:Class</rdf:type>
+                        <dcterms:title xml:lang="en">Requirement</dcterms:title>
+                    </${DEF.pfxNsMeta}Entity>
+
+                </graph>
+            </${DEF.pfxNsMeta}aPackage>`;
+
+        // Import the package
+        const pkg = new APackage().setXML(xmlInput);
+
+        // Check import status
+        const status = pkg.status();
+        if (!status.ok) {
+            console.error('Import failed:', status.statusText);
+        }
+        expect(status.ok).toBe(true);
+
+        // Get the package data
+        const pkgData = pkg.get();
+        expect(pkgData).toBeDefined();
+        expect(pkgData.graph).toBeDefined();
+        expect(Array.isArray(pkgData.graph)).toBe(true);
+
+        // Find items in graph
+        const entityClass1 = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Entity && item.id === 'o:Requirement-1');
+        const entityClass2 = pkgData.graph?.find((item: any) => item.itemType === PigItemType.Entity && item.id === 'o:Requirement-2');
+
+        // 2. Check Entity class ID and enumeratedTargetLink
+        expect(entityClass1).toBeDefined();
+        expect(entityClass1?.id).toBe('o:Requirement-1');  // Classes get 'o:' prefix
+        expect((entityClass1 as any)?.instanceOf).toBe('owl:Class');  // Should be normalized to 'owl:Class'
+
+        expect(entityClass2).toBeDefined();
+        expect(entityClass2?.id).toBe('o:Requirement-2');  // Classes get 'o:' prefix
+        expect((entityClass2 as any)?.instanceOf).toBe('owl:Class');  // Should be normalized to 'owl:Class'
     });
 });

@@ -331,7 +331,7 @@ class GetJSONLD {
                 propValue['@id'] = cfg.idRef;
             }
 
-            const key = cfg.hasClass as TPigId;
+            const key = cfg.instanceOf as TPigId;
             if (!grouped.has(key)) {
                 grouped.set(key, []);
             }

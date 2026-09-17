@@ -47,7 +47,7 @@ describe('PLI.extractFromZip', () => {
         const rsp = PLI.extractFromZip(garbage, () => true, 'corrupt.zip');
 
         expect(rsp.ok).toBe(false);
-        expect(rsp.statusText).toMatch(/failed to read archive/i);
+        expect(rsp.statusText).toMatch(/failed to read zip-archive/i);
     });
 
     it('picks the first matching entry when several are present', () => {

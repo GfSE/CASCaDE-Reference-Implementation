@@ -1,6 +1,5 @@
 <!--
-    PageDocument shows a document as an Outline pane (left) plus a Content pane
-    (right):
+    PageDocument shows a document as an Outline pane (left) plus a Content pane (right):
     - the Outline is a collapsible tree of anEntity instances, built by
     following aTargetLink instances of class 'cas:lists' starting at anElement items
     with class cas:Root.
@@ -78,7 +77,7 @@
 
         const children: OutlineNode[] = []
         for (const link of entity.hasTargetLink ?? []) {
-            if (link.hasClass !== 'cas:lists') continue
+            if (link.instanceOf !== 'cas:lists') continue
             const child = entityById.get(link.idRef)
             if (child && child.id && !ancestors.has(child.id)) {
                 children.push(buildOutlineNode(child, entityById, newAncestors, referencedIds))
@@ -167,14 +166,14 @@
                 const referencedIds = new Set<string>()
                 for (const rawPkg of rawPackages) {
                     for (const item of rawPkg.graph) {
-                        if (item.itemType !== PigItemType.anEntity || (item as AnEntity).hasClass !== 'cas:Root') {
+                        if (item.itemType !== PigItemType.anEntity || (item as AnEntity).instanceOf !== 'cas:Root') {
                             continue
                         }
                         const root = item as AnEntity
                         if (root.id) referencedIds.add(root.id)
                         const ancestors = new Set<string>(root.id ? [root.id] : [])
                         for (const link of root.hasTargetLink ?? []) {
-                            if (link.hasClass !== 'cas:lists') continue
+                            if (link.instanceOf !== 'cas:lists') continue
                             const child = entityById.get(link.idRef)
                             if (child) {
                                 result.push(buildOutlineNode(child, entityById, ancestors, referencedIds))
@@ -197,7 +196,7 @@
                 for (const entity of entityById.values()) {
                     if (!entity.id || referencedIds.has(entity.id)) continue
                     for (const link of entity.hasTargetLink ?? []) {
-                        if (link.hasClass !== 'cas:lists') continue
+                        if (link.instanceOf !== 'cas:lists') continue
                         const targetId = link.idRef
                         if (targetId && entityById.has(targetId) && !referencedIds.has(targetId)) {
                             childOfOrphan.add(targetId)

@@ -594,7 +594,7 @@ class GetTTL {
 
     /**
      * Wrapper for instances (APackage, AnEntity, ARelationship)
-     * Adds instance-specific properties like hasClass
+     * Adds instance-specific properties like instanceOf
      * @param itm - Instance item
      * @param rdf - CToTtl instance for building Turtle output
      * @param options - controls whether to add optional triples like cas:itemType
@@ -611,8 +611,8 @@ class GetTTL {
         const subjectId = this.formatTurtleId(itm.id);
         ttl += rdf.tab0(subjectId);
 
-        // hasClass (the item's class/type) - required for instances according to schema
-        ttl += rdf.tab1('a', this.formatTurtleId(itm.hasClass), false); // is reference
+        // instanceOf (the item's class/type) - required for instances according to schema
+        ttl += rdf.tab1('a', this.formatTurtleId(itm.instanceOf), false); // is reference
 
         if (options?.addItemTypes) {
             ttl += rdf.tab1('cas:itemType', itm.itemType, true); // is literal
@@ -625,7 +625,7 @@ class GetTTL {
 
     /**
      * Wrapper for metamodel classes (Property, Link, Entity, Relationship, Enumeration)
-     * Uses common metadata without hasClass (classes don't have hasClass)
+     * Uses common metadata without instanceOf (classes don't have instanceOf)
      * @param itm - Metamodel class item
      * @param rdf - CToTtl instance for building Turtle output
      * @param options - controls whether to add optional triples like cas:itemType
@@ -638,7 +638,7 @@ class GetTTL {
         rdf: CToTtl,
         options?: { addItemTypes?: boolean, addExplicitTypeToAllClasses?: boolean }
     ): string {
-        // For classes, just use the common metadata (no hasClass)
+        // For classes, just use the common metadata (no instanceOf)
         let ttl = '';
 
         if (!rdfSpecialization || !owlClassification) // both are defined or not, but anyways both are checked to satisfy the TS type guard
@@ -743,7 +743,7 @@ class GetTTL {
 
     /**
      * Transform hasProperty array to Turtle format
-     * Properties are configurable instances with hasClass, value, and/or idRef
+     * Properties are configurable instances with instanceOf, value, and/or idRef
      * Properties are always CASCaRA owl:DatatypeProperty terms, so their values are RDF literals -
      * except for a composed property's list of references, which is a raw Turtle list expression.
      * @param properties - Array of AProperty instances
@@ -753,17 +753,17 @@ class GetTTL {
     private static xProperties(properties: AProperty[], rdf: CToTtl): string {
         let ttl = '';
 
-        // Group properties by their hasClass (property type)
+        // Group properties by their instanceOf (property type)
         const grouped = new Map<TPigId, AProperty[]>();
 
         for (const prop of properties) {
-            if (!prop.hasClass) continue;
+            if (!prop.instanceOf) continue;
 
-            if (!grouped.has(prop.hasClass)) {
-                grouped.set(prop.hasClass, []);
+            if (!grouped.has(prop.instanceOf)) {
+                grouped.set(prop.instanceOf, []);
             }
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            grouped.get(prop.hasClass)!.push(prop);
+            grouped.get(prop.instanceOf)!.push(prop);
         }
 
         // Generate Turtle for each property group
@@ -816,17 +816,17 @@ class GetTTL {
     private static xLinks(links: (ASourceLink | ATargetLink)[], rdf: CToTtl): string {
         let ttl = '';
 
-        // Group links by their hasClass (link type)
+        // Group links by their instanceOf (link type)
         const grouped = new Map<TPigId, (ASourceLink | ATargetLink)[]>();
 
         for (const link of links) {
-            if (!link.hasClass) continue;
+            if (!link.instanceOf) continue;
 
-            if (!grouped.has(link.hasClass)) {
-                grouped.set(link.hasClass, []);
+            if (!grouped.has(link.instanceOf)) {
+                grouped.set(link.instanceOf, []);
             }
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            grouped.get(link.hasClass)!.push(link);
+            grouped.get(link.instanceOf)!.push(link);
         }
 
         // Generate Turtle for each link group

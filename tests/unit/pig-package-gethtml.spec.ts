@@ -75,7 +75,7 @@ describe('Test getHTML() function for CASCaRA Package', () => {
             };
 
             const pkg = new APackage().setJSONLD( validPackageWithEntity,
-                { checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass] }
+                { checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyInstanceOf] }
             );
 
             expect(pkg.status().ok).toBe(true);
@@ -147,7 +147,7 @@ describe('Test getHTML() function for CASCaRA Package', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithoutEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(packageWithoutEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyInstanceOf]});
 
             expect(pkg.status().ok).toBe(true);
 
@@ -232,7 +232,7 @@ describe('Test getHTML() function for CASCaRA Package', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithMixedItems, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(packageWithMixedItems, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyInstanceOf]});
 
             expect(pkg.status().ok).toBe(true);
 
@@ -260,7 +260,7 @@ describe('Test getHTML() function for CASCaRA Package', () => {
                 '@graph': [] // Empty graph
             };
 
-            const pkg = new APackage().setJSONLD(invalidPackage, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(invalidPackage, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyInstanceOf]});
 
             expect(pkg.status().ok).toBe(true);
 
@@ -330,7 +330,7 @@ describe('Test getHTML() function for CASCaRA Package', () => {
                 ]
             };
 
-            const pkg = new APackage().setJSONLD(packageWithMultipleEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyHasClass]});
+            const pkg = new APackage().setJSONLD(packageWithMultipleEntities, {checkConstraints: [ConstraintCheckType.UniqueIds, ConstraintCheckType.aPropertyInstanceOf]});
 
             const st = pkg.status();
             if (!st.ok) {
