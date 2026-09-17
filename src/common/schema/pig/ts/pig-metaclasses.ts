@@ -398,7 +398,7 @@ export class PigItem {
             'enumeratedTargetLink',   // Entity/Relationship.enumeratedTargetLink?: TPigId[]
             'composedProperty',       // Property.composedProperty?: TPigId[]
             'specializes',            // Class.specializes?: TPigId
-            'instanceOf'                // Instance instanceOf references a class
+            'instanceOf'              // Instance instanceOf references a class
         ].includes(localName);
     }
 

@@ -73,6 +73,8 @@ describe('PIG Metaclasses XML Import', () => {
             expect(prop.status().ok).toBe(true);
             expect(prop.title).toBeDefined();
             expect(prop.title!.length).toBe(3);
+            expect(prop.title![0]!.value).toBe('Title');
+            expect(prop.title![0]!.lang).toBe('en');
             expect(prop.datatype).toBe('xs:string');
             expect(prop.maxLength).toBe(256);
             expect(prop.maxCount).toBe(1);
@@ -81,9 +83,10 @@ describe('PIG Metaclasses XML Import', () => {
         it('should import native description', () => {
             const xmlInput = `
                 <${DEF.pfxNsMeta}Property id="${DEF.pfxNsDcmi}description" rdf:type="owl:DatatypeProperty">
-                    <${DEF.pfxNsDcmi}title xml:lang="en">Description</${DEF.pfxNsDcmi}title>
-                    <${DEF.pfxNsDcmi}title xml:lang="de">Beschreibung</${DEF.pfxNsDcmi}title>
-                    <${DEF.pfxNsDcmi}title xml:lang="fr">Description</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="en">Title</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description xml:lang="en">A Description</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsDcmi}description xml:lang="de">Eine Beschreibung</${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsDcmi}description xml:lang="fr">Une description</${DEF.pfxNsDcmi}description>
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:maxOccurs>1</xs:maxOccurs>
@@ -98,6 +101,14 @@ describe('PIG Metaclasses XML Import', () => {
             if (!prop.status().ok)
                 console.error('status:', prop.status());
             expect(prop.status().ok).toBe(true);
+            expect(prop.title).toBeDefined();
+            expect(prop.title!.length).toBe(1);
+            expect(prop.title![0]!.value).toBe('Title');
+            expect(prop.title![0]!.lang).toBe('en');
+            expect(prop.description).toBeDefined();
+            expect(prop.description!.length).toBe(3);
+            expect(prop.description![2]!.value).toBe('Une description');
+            expect(prop.description![2]!.lang).toBe('fr');
         });
 
         it('should import SpecIF:Priority property with enumeratedValues', () => {
