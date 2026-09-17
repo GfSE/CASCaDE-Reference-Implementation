@@ -7,10 +7,6 @@
  * - a roundtrip test via setXML() and getXML() and enumerated (enumerated) values
  *   is contained in pig-package-constraints-valueRanges.spec.ts
  *
- * @todo:
- * - Check both ways to define a datatype via xs:datatype and sh:datatype
- * - Check both ways to define the type with rdf:type and cas:instanceOf
- * - Check both ways to define the type with an attribute and with an embedded element
  */
 
 import { DEF } from '../../src/common/lib/definitions';
@@ -21,7 +17,7 @@ import {
 
 describe('PIG Metaclasses XML Import', () => {
     describe('Property.setXML()', () => {
-        it('should import dcterms:title property', () => {
+        it('should import native title and datatype (1)', () => {
             const xmlInput = `
                 <${DEF.pfxNsMeta}Property id="${DEF.pfxNsDcmi}title" rdf:type="owl:DatatypeProperty">
                     <${DEF.pfxNsDcmi}title xml:lang="en">Title</${DEF.pfxNsDcmi}title>
@@ -30,6 +26,7 @@ describe('PIG Metaclasses XML Import', () => {
                     <${DEF.pfxNsDcmi}description xml:lang="en">
                         <p>A name given to the resource. <small>(<i>source: <a href="http://purl.org/dc/elements/1.1/title">DCMI</a></i>)</small></p>
                     </${DEF.pfxNsDcmi}description>
+                    <!-- define datatype with XML schema terms -->
                     <xs:simpleType>
                         <xs:restriction base="xs:string">
                             <xs:maxLength value="256"/>
@@ -45,9 +42,43 @@ describe('PIG Metaclasses XML Import', () => {
             if (!prop.status().ok)
                 console.error('status:', prop.status());
             expect(prop.status().ok).toBe(true);
+            expect(prop.title).toBeDefined();
+            expect(prop.title!.length).toBe(3);
+            expect(prop.datatype).toBe('xs:string');
+            expect(prop.maxLength).toBe(256);
+            expect(prop.maxCount).toBe(1);
         });
 
-        it('should import dcterms:description property', () => {
+        it('should import native title and datatype (2)', () => {
+            const xmlInput = `
+                <${DEF.pfxNsMeta}Property id="${DEF.pfxNsDcmi}title" rdf:type="owl:DatatypeProperty">
+                    <${DEF.pfxNsDcmi}title xml:lang="en">Title</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="de">Titel</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}title xml:lang="fr">Titre</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description xml:lang="en">
+                        <p>A name given to the resource. <small>(<i>source: <a href="http://purl.org/dc/elements/1.1/title">DCMI</a></i>)</small></p>
+                    </${DEF.pfxNsDcmi}description>
+                    <!-- define datatype with SHACL terms -->
+                    <sh:datatype>xs:string</sh:datatype>
+                    <sh:maxLength>256</sh:maxLength>
+                    <sh:maxCount>1</sh:maxCount>
+                </${DEF.pfxNsMeta}Property>
+            `;
+
+            const prop = new Property().setXML(xmlInput);
+
+            // check the attribute values upon creation:
+            if (!prop.status().ok)
+                console.error('status:', prop.status());
+            expect(prop.status().ok).toBe(true);
+            expect(prop.title).toBeDefined();
+            expect(prop.title!.length).toBe(3);
+            expect(prop.datatype).toBe('xs:string');
+            expect(prop.maxLength).toBe(256);
+            expect(prop.maxCount).toBe(1);
+        });
+
+        it('should import native description', () => {
             const xmlInput = `
                 <${DEF.pfxNsMeta}Property id="${DEF.pfxNsDcmi}description" rdf:type="owl:DatatypeProperty">
                     <${DEF.pfxNsDcmi}title xml:lang="en">Description</${DEF.pfxNsDcmi}title>
@@ -401,7 +432,7 @@ describe('PIG Metaclasses XML Import', () => {
     });
 
     describe('AnEntity.setXML()', () => {
-        it('should import requirement entity with property', () => {
+        it('should import requirement entity with a targetLink (1)', () => {
             const xmlInput = `
                 <${DEF.pfxNsMeta}anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b" rdf:type="IREB:Requirement">
                     <${DEF.pfxNsDcmi}modified>2020-10-17T10:00:00+01:00</${DEF.pfxNsDcmi}modified>
@@ -409,9 +440,9 @@ describe('PIG Metaclasses XML Import', () => {
                     <${DEF.pfxNsDcmi}description>
                         <p>The data store MUST support a total volume up to 850 GB.</p>
                     </${DEF.pfxNsDcmi}description>
-                    <${DEF.pfxNsMeta}aProperty rdf:type="SpecIF:Priority">
-                        <value>SpecIF:priorityHigh</value>
-                    </${DEF.pfxNsMeta}aProperty>
+                    <${DEF.pfxNsMeta}aTargetLink rdf:type="SpecIF:Priority">
+                        <idRef>SpecIF:priorityHigh</idRef>
+                    </${DEF.pfxNsMeta}aTargetLink>
                 </${DEF.pfxNsMeta}anEntity>
             `;
 
@@ -421,6 +452,96 @@ describe('PIG Metaclasses XML Import', () => {
             if (!anEntity.status().ok)
                 console.error('status:', anEntity.status());
             expect(anEntity.status().ok).toBe(true);
+            expect(anEntity).toBeDefined();
+            expect(anEntity!.instanceOf).toBe('IREB:Requirement');  // Should be normalized
+            expect(anEntity!.hasTargetLink?.length).toBe(1);
+            expect(anEntity!.hasTargetLink![0]?.idRef).toBe(`SpecIF:priorityHigh`);
+            expect(anEntity!.hasTargetLink![0]?.instanceOf).toBe(`SpecIF:Priority`);  // Should be normalized
+        });
+
+        it('should import requirement entity with a targetLink (2)', () => {
+            const xmlInput = `
+                <${DEF.pfxNsMeta}anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b" cas:instanceOf="IREB:Requirement">
+                    <${DEF.pfxNsDcmi}modified>2020-10-17T10:00:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}title>Data Volume</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>
+                        <p>The data store MUST support a total volume up to 850 GB.</p>
+                    </${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}aTargetLink cas:instanceOf="SpecIF:Priority">
+                        <idRef>SpecIF:priorityHigh</idRef>
+                    </${DEF.pfxNsMeta}aTargetLink>
+                </${DEF.pfxNsMeta}anEntity>
+            `;
+
+            const anEntity = new AnEntity().setXML(xmlInput);
+
+            // check the attribute values upon creation:
+            if (!anEntity.status().ok)
+                console.error('status:', anEntity.status());
+            expect(anEntity.status().ok).toBe(true);
+            expect(anEntity).toBeDefined();
+            expect((anEntity as any)?.instanceOf).toBe('IREB:Requirement');  // Should be normalized
+            expect(anEntity!.hasTargetLink?.length).toBe(1);
+            expect(anEntity!.hasTargetLink![0]?.idRef).toBe(`SpecIF:priorityHigh`);
+            expect(anEntity!.hasTargetLink![0]?.instanceOf).toBe(`SpecIF:Priority`);  // Should be normalized
+        });
+
+        it('should import requirement entity with a targetLink (3)', () => {
+            const xmlInput = `
+                <${DEF.pfxNsMeta}anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b">
+                    <rdf:type>IREB:Requirement</rdf:type>
+                    <${DEF.pfxNsDcmi}modified>2020-10-17T10:00:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}title>Data Volume</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>
+                        <p>The data store MUST support a total volume up to 850 GB.</p>
+                    </${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}aTargetLink>
+                        <rdf:type>SpecIF:Priority</rdf:type>
+                        <idRef>SpecIF:priorityHigh</idRef>
+                    </${DEF.pfxNsMeta}aTargetLink>
+                </${DEF.pfxNsMeta}anEntity>
+            `;
+
+            const anEntity = new AnEntity().setXML(xmlInput);
+
+            // check the attribute values upon creation:
+            if (!anEntity.status().ok)
+                console.error('status:', anEntity.status());
+            expect(anEntity.status().ok).toBe(true);
+            expect(anEntity).toBeDefined();
+            expect((anEntity as any)?.instanceOf).toBe('IREB:Requirement');  // Should be normalized
+            expect(anEntity!.hasTargetLink?.length).toBe(1);
+            expect(anEntity!.hasTargetLink![0]?.idRef).toBe(`SpecIF:priorityHigh`);
+            expect(anEntity!.hasTargetLink![0]?.instanceOf).toBe(`SpecIF:Priority`);  // Should be normalized
+        });
+
+        it('should import requirement entity with a targetLink (4)', () => {
+            const xmlInput = `
+                <${DEF.pfxNsMeta}anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b">
+                    <cas:instanceOf>IREB:Requirement</cas:instanceOf>
+                    <${DEF.pfxNsDcmi}modified>2020-10-17T10:00:00+01:00</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}title>Data Volume</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsDcmi}description>
+                        <p>The data store MUST support a total volume up to 850 GB.</p>
+                    </${DEF.pfxNsDcmi}description>
+                    <${DEF.pfxNsMeta}aTargetLink>
+                        <cas:instanceOf>SpecIF:Priority</cas:instanceOf>
+                        <idRef>SpecIF:priorityHigh</idRef>
+                    </${DEF.pfxNsMeta}aTargetLink>
+                </${DEF.pfxNsMeta}anEntity>
+            `;
+
+            const anEntity = new AnEntity().setXML(xmlInput);
+
+            // check the attribute values upon creation:
+            if (!anEntity.status().ok)
+                console.error('status:', anEntity.status());
+            expect(anEntity.status().ok).toBe(true);
+            expect(anEntity).toBeDefined();
+            expect((anEntity as any)?.instanceOf).toBe('IREB:Requirement');  // Should be normalized
+            expect(anEntity!.hasTargetLink?.length).toBe(1);
+            expect(anEntity!.hasTargetLink![0]?.idRef).toBe(`SpecIF:priorityHigh`);
+            expect(anEntity!.hasTargetLink![0]?.instanceOf).toBe(`SpecIF:Priority`);  // Should be normalized
         });
 
         it('should import diagram entity with properties and links', () => {
