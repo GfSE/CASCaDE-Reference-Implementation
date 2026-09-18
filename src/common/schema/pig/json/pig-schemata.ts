@@ -124,6 +124,24 @@ class PigSchemaFactory {
                     type: 'string',
                     pattern: '^xsd?:[A-Za-z]+$'
                 },
+                icon: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string' }
+                    },
+                    description: 'Optional string or data URI for the Enumeration'
+                },
+                color: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string', pattern: '^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$' }
+                    },
+                    description: 'Optional string representing the color in HTML format'
+                },
                 enumeratedValue: {
                     type: 'array',
                     items: {
@@ -310,7 +328,16 @@ class PigSchemaFactory {
                     properties: {
                         value: { type: 'string' }
                     },
-                    description: 'string oder data URI für das Entity-Icon'
+                    description: 'Optional string or data URI for the Entity'
+                },
+                color: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string', pattern: '^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$' }
+                    },
+                    description: 'Optional string representing the color in HTML format'
                 },
                 revision: { type: 'string' },
                 priorRevision: {
@@ -372,7 +399,16 @@ class PigSchemaFactory {
                     properties: {
                         value: { type: 'string' }
                     },
-                    description: 'string oder data URI für das Relationship-Icon'
+                    description: 'Optional string or data URI for the Relationship'
+                },
+                color: {
+                    type: 'object',
+                    required: ['value'],
+                    additionalProperties: false,
+                    properties: {
+                        value: { type: 'string', pattern: '^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$' }
+                    },
+                    description: 'Optional string representing the color in HTML format'
                 },
                 revision: { type: 'string' },
                 priorRevision: {

@@ -399,9 +399,12 @@ class GetTTL {
         // Add basic metamodel properties
         ttl += this.xMetadataForClasses(itm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
-        // icon (optional)
+        // icon and color (optional)
         if (itm.icon?.value) {
             ttl += rdf.tab1('cas:icon', itm.icon.value, true); // is literal
+        }
+        if (itm.color?.value) {
+            ttl += rdf.tab1('cas:color', itm.color.value, true); // is literal
         }
 
         ttl += rdf.newLine();

@@ -658,9 +658,12 @@ class GetXML {
             xml += `${i2}<dcterms:modified>${itm.modified}</dcterms:modified>\n`;
         }
 
-        // icon (optional)
+        // icon and color (optional)
         if (itm.icon?.value) {
             xml += `${i2}<cas:icon>${this.escapeXmlText(itm.icon.value)}</cas:icon>\n`;
+        }
+        if (itm.color?.value) {
+            xml += `${i2}<cas:color>${this.escapeXmlText(itm.color.value)}</cas:color>\n`;
         }
 
         // enumeratedProperty (array of allowed Property class URIs)

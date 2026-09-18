@@ -373,9 +373,10 @@ class GetJSONLD {
             '@context', '@id', '@type', '@graph', '@value', '@language',
             `${DEF.pfxNsMeta}itemType`, `${DEF.pfxNsMeta}specializes`,
             `${DEF.pfxNsDcmi}title`, 'skos:definition', `${DEF.pfxNsDcmi}description`,
+            `${DEF.pfxNsMeta}icon`, `${DEF.pfxNsMeta}color`,
             `${DEF.pfxNsDcmi}modified`, `${DEF.pfxNsDcmi}creator`,
             `${DEF.pfxNsMeta}revision`, `${DEF.pfxNsMeta}priorRevision`,
-            `${DEF.pfxNsMeta}enumeratedProperty`, `${DEF.pfxNsMeta}enumeratedSourceLink`, `${DEF.pfxNsMeta}enumeratedTargetLink`, `${DEF.pfxNsMeta}enumeratedEndpoint`
+            `${DEF.pfxNsMeta}enumeratedProperty`, `${DEF.pfxNsMeta}enumeratedSourceLink`, `${DEF.pfxNsMeta}enumeratedTargetLink`, `${DEF.pfxNsMeta}enumeratedEndpoint`, `${DEF.pfxNsMeta}enumeratedValue`
         ];
 
         // Separate JSON-LD special keys from other keys

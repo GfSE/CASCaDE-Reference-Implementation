@@ -352,13 +352,13 @@ export class PigItem {
     }
     /**
      * Check if a property needs IText wrapper { value: "..." }
-     * Currently only 'icon' according to IElement interface
      */
     static needsIText(propertyName: string): boolean {
         const localName = RE.termWithNamespace.test(propertyName) ? propertyName.split(':')[1] : propertyName;
 
         return [
-            'icon'
+            'icon',
+            'color'
         ].includes(localName);
     }
     /**
@@ -772,10 +772,12 @@ abstract class ALink extends Item implements IALink {
 interface IElement extends IIdentifiable {
     enumeratedProperty?: TPigId[];
     icon?: IText;  // optional, default is undefined (no icon)
+    color?: IText;  // optional, default is undefined (no color)
 }
 abstract class Element extends Identifiable implements IElement {
     enumeratedProperty?: TPigId[];
     icon?: IText;
+    color?: IText;
     protected constructor(itm: TConstructItem) {
         super(itm); // actual itemType set in concrete class
     }
@@ -785,13 +787,15 @@ abstract class Element extends Identifiable implements IElement {
         super.set(itm);
         this.enumeratedProperty = itm.enumeratedProperty;
         this.icon = itm.icon;
+        this.color = itm.color;
         return this;
     }
     protected get() {
         return {
             ...super.get(),
             enumeratedProperty: this.enumeratedProperty, // undefined: all allowed, empty array: none allowed, array with items: only those allowed
-            icon: this.icon
+            icon: this.icon,
+            color: this.color
         } as IElement;
     }
 }
