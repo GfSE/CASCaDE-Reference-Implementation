@@ -370,7 +370,7 @@ export const PLI = {
     },
 
     /**
-     * Extracts the text content of the first entry within a ZIP archive whose
+     * Extracts the text content of all entries within a ZIP archive whose
      * name matches the given predicate (e.g. by extension or exact name).
      *
      * Used to unpack zipped input files (e.g. .reqifz, .fmu, .cas.jsonld.zip)
@@ -379,12 +379,10 @@ export const PLI = {
      * replaced in a single place if needed.
      *
      * @param bytes - raw bytes of the ZIP archive
-     * @param matches - predicate to select the desired entry by its name within the archive
+     * @param matches - predicate to select the desired entries by their name within the archive
      * @param filename - original filename, used for error messages (optional)
-     * @returns IRsp whose response is the decoded (UTF-8) text content of the first matching entry
-     *
-     * @todo
-     * - Accept multiple matches and return all of them in an array
+     * @returns IRsp whose response is an array of decoded (UTF-8) text contents,
+     *          one per matching entry, in the order they appear in the archive
      */
     extractFromZip(bytes: Uint8Array, matches: (entryName: string) => boolean, filename = ''): IRsp<unknown> {
         let entries: Record<string, Uint8Array>;
@@ -401,10 +399,11 @@ export const PLI = {
         }
 
         try {
-            return Rsp.create(0, strFromU8(entries[entryNames[0]]), 'text');
+            const contents = entryNames.map((entryName) => strFromU8(entries[entryName]));
+            return Rsp.create(0, contents, 'text');
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
-            return Msg.create(660, filename, `failed to decode ${entryNames[0]}: ${msg}`);
+            return Msg.create(660, filename, `failed to decode matching entries: ${msg}`);
         }
     },
 

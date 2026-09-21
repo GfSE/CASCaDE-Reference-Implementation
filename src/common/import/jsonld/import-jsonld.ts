@@ -140,11 +140,15 @@ export class JsonldImporter {
             return rspBytes;
         }
 
-        return PLI.extractFromZip(
+        const rsp = PLI.extractFromZip(
             rspBytes.response as Uint8Array,
             (name) => name.toLowerCase().endsWith('.jsonld'),
             filename
         );
+        if (!rsp.ok) {
+            return rsp;
+        }
+        return { ...rsp, response: (rsp.response as string[])[0] };
     }
 
     /**

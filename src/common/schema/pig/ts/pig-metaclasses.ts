@@ -300,10 +300,11 @@ export class PigItem {
      * These fields must always be arrays of ILanguageText objects according to pig-schemata.ts
      * 
      * Multi-language fields found in schemata:
-     * - Property: title, description, enumeratedValue.title
-     * - Link: title, description
-     * - Entity: title, description
-     * - Relationship: title, description
+     * - Enumeration: title, description, definition, enumeratedValue.title
+     * - Property: title, description, definition
+     * - Link: title, description, definition
+     * - Entity: title, description, definition
+     * - Relationship: title, description, definition
      * - AnEntity: title, description
      * - ARelationship: title, description
      *

@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' class='text-none export-button' @click='openDialog'>🡖 Neo4j API</v-btn>
+    <v-btn color='secondary' variant='elevated' class='text-none export-btn' @click='openDialog'>🡖 Neo4j API</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Export Packages to Neo4j</v-card-title>
@@ -71,9 +71,13 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color='grey' @click='dialog = false' :disabled='isExporting'>Cancel</v-btn>
+                <v-btn :color="isExporting ? undefined : 'grey'" variant='elevated' class='export-btn' @click='dialog = false' :disabled='isExporting'>
+                    Cancel
+                </v-btn>
                 <v-btn
-                    color='primary'
+                    :color="(packageCount === 0 || !isFormValid || isExporting) ? undefined : 'primary'"
+                    variant='elevated'
+                    class='export-btn'
                     @click='exportPackages'
                     :disabled='packageCount === 0 || !isFormValid || isExporting'
                     :loading='isExporting'
@@ -166,10 +170,3 @@ import { LOG } from '../../../common/lib/helpers';
 
 export default class Neo4jExportComponent extends Vue {}
 </script>
-
-<style scoped>
-.export-button {
-    font-weight: 400;
-    letter-spacing: 0.01em;
-}
-</style>

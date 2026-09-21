@@ -85,7 +85,7 @@ export class XmlImporter {
             if (!rspXml.ok) {
                 return rspXml;
             }
-            xmlString = rspXml.response as string;
+            xmlString = (rspXml.response as string[])[0];
         } else {
             const rsp = await PLI.readFileAsText(source);
             if (!rsp.ok) {

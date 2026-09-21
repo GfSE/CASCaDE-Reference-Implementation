@@ -29,7 +29,7 @@ describe('PLI.extractFromZip', () => {
         const rsp = PLI.extractFromZip(zipped, (name) => name.toLowerCase().endsWith('.xml'));
 
         expect(rsp.ok).toBe(true);
-        expect(rsp.response).toBe('<root/>');
+        expect(rsp.response).toEqual(['<root/>']);
     });
 
     it('returns an error response when no entry matches the predicate', () => {
@@ -50,7 +50,7 @@ describe('PLI.extractFromZip', () => {
         expect(rsp.statusText).toMatch(/failed to read zip-archive/i);
     });
 
-    it('picks the first matching entry when several are present', () => {
+    it('extracts all matching entries when several are present', () => {
         const zipped = zipSync({
             'a.xml': strToU8('<a/>'),
             'b.xml': strToU8('<b/>')
@@ -59,7 +59,7 @@ describe('PLI.extractFromZip', () => {
         const rsp = PLI.extractFromZip(zipped, (name) => name.toLowerCase().endsWith('.xml'));
 
         expect(rsp.ok).toBe(true);
-        expect(rsp.response).toBe('<a/>');
+        expect(rsp.response).toEqual(['<a/>', '<b/>']);
     });
 });
 

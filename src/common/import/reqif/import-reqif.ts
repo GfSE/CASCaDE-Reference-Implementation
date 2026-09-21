@@ -179,11 +179,15 @@ export class ReqifImporter {
             return rspBytes;
         }
 
-        return PLI.extractFromZip(
+        const rsp = PLI.extractFromZip(
             rspBytes.response as Uint8Array,
             (name) => name.toLowerCase().endsWith('.reqif'),
             filename
         );
+        if (!rsp.ok) {
+            return rsp;
+        }
+        return { ...rsp, response: (rsp.response as string[])[0] };
     }
 
     /**
