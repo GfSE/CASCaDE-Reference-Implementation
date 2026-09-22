@@ -66,7 +66,7 @@ describe('import JSONLD - Dynamic Test Files', () => {
         it(`should import ${relativePath}`, async () => {
 
             // Import JSON-LD
-            const rsp = await JsonldImporter.import(ldFile);
+            const rsp = (await JsonldImporter.import(ldFile))[0];
             if (!rsp.ok)
                 console.warn('import JSONLD', rsp.status, rsp.statusText);
         
@@ -119,25 +119,25 @@ describe('import JSONLD - Dynamic Test Files', () => {
 /*
 describe('import JSONLD - Error Handling', () => {
     it('should reject non-JSON-LD files', async () => {
-        const rsp = await JsonldImporter.import('{}');
+        const rsp = (await JsonldImporter.import('{}'))[0];
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('.jsonld');
     });
 
     it('should reject invalid JSON', async () => {
-        const rsp = await JsonldImporter.import('not valid json');
+        const rsp = (await JsonldImporter.import('not valid json'))[0];
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('parse');
     });
 
     it('should reject files without @context', async () => {
-        const rsp = await JsonldImporter.import('{"@graph": []}');
+        const rsp = (await JsonldImporter.import('{"@graph": []}'))[0];
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('@context');
     });
 
     it('should reject files without @graph', async () => {
-        const rsp = await JsonldImporter.import('{"@context": {}}');
+        const rsp = (await JsonldImporter.import('{"@context": {}}'))[0];
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('@graph');
     });
@@ -145,7 +145,7 @@ describe('import JSONLD - Error Handling', () => {
     it('should reject oversized files', async () => {
         const largeJson = '{"@context": {}, "@graph": [' + '{},'
             .repeat(1000000) + '{}]}';
-        const rsp = await JsonldImporter.import(largeJson);
+        const rsp = (await JsonldImporter.import(largeJson))[0];
         expect(rsp.ok).toBe(false);
         expect(rsp.statusText).toContain('too large');
     });

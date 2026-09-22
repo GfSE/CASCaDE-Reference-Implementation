@@ -59,7 +59,7 @@ describe('ReqIF Import', () => {
             const testFile = reqifFiles[0];
             console.debug(`Testing import ReqIF with ${testFile}`);
 
-            const rsp = await ReqifImporter.import(testFile);
+            const rsp = (await ReqifImporter.import(testFile))[0];
             if (!rsp.ok)
                 logResponse('import ReqIF', rsp);
 
@@ -74,7 +74,7 @@ describe('ReqIF Import', () => {
         });
 
         it('should validate file extension', async () => {
-            const result = await ReqifImporter.import('invalid.txt');
+            const result = (await ReqifImporter.import('invalid.txt'))[0];
 
             expect(result.ok).toBe(false);
         //    expect(result.status).not.toBe(0);
@@ -84,7 +84,7 @@ describe('ReqIF Import', () => {
     /*    it('should handle invalid XML gracefully', async () => {
             const invalidXml = '<invalid>xml without closing tag';
 
-            const result = await ReqifImporter.import(invalidXml, 'invalidXML.reqif');
+            const result = (await ReqifImporter.import(invalidXml, 'invalidXML.reqif'))[0];
             // if (!result.ok)
             //    logResponse('import ReqIF', result);
 
@@ -98,7 +98,7 @@ describe('ReqIF Import', () => {
                     <data>Not a ReqIF document</data>
                 </root>`;
 
-            const result = await ReqifImporter.import(notReqIF, 'notReqIF.reqif');
+            const result = (await ReqifImporter.import(notReqIF, 'notReqIF.reqif'))[0];
             // if (!result.ok)
             //    logResponse('import ReqIF', result);
 
@@ -107,7 +107,7 @@ describe('ReqIF Import', () => {
         });
 
         it('should handle empty content', async () => {
-            const result = await ReqifImporter.import('', 'test.reqif');
+            const result = (await ReqifImporter.import('', 'test.reqif'))[0];
 
             expect(result.status).not.toBe(0);
         });
@@ -115,7 +115,7 @@ describe('ReqIF Import', () => {
         it('should handle malformed XML', async () => {
             const malformedXml = '<?xml version="1.0"?><REQ-IF><SPEC-OBJECTS>';
 
-            const result = await ReqifImporter.import(malformedXml, 'test.reqif');
+            const result = (await ReqifImporter.import(malformedXml, 'test.reqif'))[0];
 
             expect(result.status).not.toBe(0);
         });
@@ -127,7 +127,7 @@ describe('ReqIF Import', () => {
         reqifFiles.forEach(testFile => {
             it(`should successfully import ${testFile}`, async () => {
 
-                const result = await ReqifImporter.import(testFile);
+                const result = (await ReqifImporter.import(testFile))[0];
                 if (!result.ok)
                     logResponse(`import ReqIF for ${testFile}`, result);
 
@@ -159,7 +159,7 @@ describe('ReqIF Import', () => {
                 return;
             }
 
-            const result = await ReqifImporter.import(testFile);
+            const result = (await ReqifImporter.import(testFile))[0];
             if (!result.ok)
                 logResponse(`import ReqIF for ${testFile}`, result);
 
@@ -186,7 +186,7 @@ describe('ReqIF Import', () => {
                 return;
             }   
 
-            const result = await ReqifImporter.import(testFile);
+            const result = (await ReqifImporter.import(testFile))[0];
             if (!result.ok)
                 logResponse(`import ReqIF for ${testFile}`, result);
 
@@ -209,7 +209,7 @@ describe('ReqIF Import', () => {
                 return;
             }   
 
-            const result = await ReqifImporter.import(testFile);
+            const result = (await ReqifImporter.import(testFile))[0];
             if (!result.ok)
                 logResponse(`import ReqIF for ${testFile}`, result);
 
@@ -233,7 +233,7 @@ describe('ReqIF Import', () => {
             }   
 
             const startTime = Date.now();
-            const result = await ReqifImporter.import(testFile);
+            const result = (await ReqifImporter.import(testFile))[0];
             const duration = Date.now() - startTime;
             if (!result.ok)
                 logResponse(`import ReqIF for ${testFile}`, result);
@@ -254,7 +254,7 @@ describe('ReqIF Import', () => {
 
                 for (const testFile of reqifFiles.slice(0, 3)) { // Test first 3 files
 
-                    const result = await ReqifImporter.import(testFile);
+                    const result = (await ReqifImporter.import(testFile))[0];
                     expect(result.status).toBe(0);
                 }
 
@@ -275,7 +275,7 @@ describe('ReqIF Import', () => {
             ];
 
             for (const testCase of testCases) {
-                const result = await ReqifImporter.import(testCase.xml, testCase.filename);
+                const result = (await ReqifImporter.import(testCase.xml, testCase.filename))[0];
 
                 expect(result.status).not.toBe(0);
                 expect(result.statusText?.toLowerCase()).toContain(testCase.expectedError.toLowerCase());

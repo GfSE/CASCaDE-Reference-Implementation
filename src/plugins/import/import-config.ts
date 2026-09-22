@@ -34,12 +34,15 @@ export interface ImportConfig {
     componentName: string;
 
     /**
-     * Imports a single file and resolves with an IRsp result.
+     * Imports a single picked file and resolves with an array of IRsp results:
+     * normally one (one package), but more than one when the file is a ZIP archive
+     * containing several matching entries (inner loop over ZIP entries happens
+     * inside the importer).
      * Implementations should not throw; unexpected errors are caught
      * by the caller and converted into a failed IRsp via Msg.create(600, ...).
      * `auxiliaryFile` is passed through when `auxiliaryFile` config below is set.
      */
-    importFn: (file: File, auxiliaryFile?: File | null) => Promise<IRsp<unknown>>;
+    importFn: (file: File, auxiliaryFile?: File | null) => Promise<IRsp<unknown>[]>;
 
     /**
      * Optional second, single-file input shown below the main file-input

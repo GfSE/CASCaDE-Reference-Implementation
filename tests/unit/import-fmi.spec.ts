@@ -64,7 +64,7 @@ describe('FMI Import', () => {
 
     describe('Extension validation', () => {
         it('should reject unsupported file extensions', async () => {
-            const result = await FmiImporter.import('invalid.txt');
+            const result = (await FmiImporter.import('invalid.txt'))[0];
             expect(result.ok).toBe(false);
             expect(result.statusText).toContain('expected .fmu archive or .xml model description');
         });
@@ -75,7 +75,7 @@ describe('FMI Import', () => {
 
         fmuFiles.forEach(testFile => {
             it(`should successfully import ${path.basename(testFile)}`, async () => {
-                const result = await FmiImporter.import(testFile);
+                const result = (await FmiImporter.import(testFile))[0];
                 logResponse(`import FMI for ${testFile}`, result);
 
                 expect(result.status).toBe(0);
@@ -102,7 +102,7 @@ describe('FMI Import', () => {
                 return;
             }
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             logResponse('import plant fmu', result);
 
             expect(result.status).toBe(0);
@@ -159,7 +159,7 @@ describe('FMI Import', () => {
         it('should preserve rich variable metadata (spot-check)', async () => {
             if (!plantFmu) return;
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
@@ -185,7 +185,7 @@ describe('FMI Import', () => {
         it('should resolve dependency relationships to source and target variables', async () => {
             if (!plantFmu) return;
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
@@ -207,7 +207,7 @@ describe('FMI Import', () => {
         it('should capture additional CoSimulation capability flags', async () => {
             if (!plantFmu) return;
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
@@ -231,7 +231,7 @@ describe('FMI Import', () => {
                 return;
             }
 
-            const result = await FmiImporter.import(edriveFmu);
+            const result = (await FmiImporter.import(edriveFmu))[0];
             logResponse('import edrive fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
@@ -294,7 +294,7 @@ describe('FMI Import', () => {
                 logResponse('locate pid fmu', { ok: false, status: 404, statusText: 'PID_Euler_0_01_sf.fmu not found' });
                 return;
             }
-            const result = await FmiImporter.import(pidFmu);
+            const result = (await FmiImporter.import(pidFmu))[0];
             logResponse('import pid fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
@@ -322,7 +322,7 @@ describe('FMI Import', () => {
                 logResponse('locate stimuli fmu', { ok: false, status: 404, statusText: 'stimuli_model.fmu not found' });
                 return;
             }
-            const result = await FmiImporter.import(stimuliFmu);
+            const result = (await FmiImporter.import(stimuliFmu))[0];
             logResponse('import stimuli fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
@@ -342,7 +342,7 @@ describe('FMI Import', () => {
                 logResponse('locate pid fmu', { ok: false, status: 404, statusText: 'PID_Euler_0_01_sf.fmu not found' });
                 return;
             }
-            const result = await FmiImporter.import(pidFmu);
+            const result = (await FmiImporter.import(pidFmu))[0];
             logResponse('import pid fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
@@ -356,7 +356,7 @@ describe('FMI Import', () => {
 
         it('should mark explicit dependency lists as scope "explicit" (plant)', async () => {
             if (!plantFmu) return;
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
@@ -375,7 +375,7 @@ describe('FMI Import', () => {
                 return;
             }
 
-            const result = await FmiImporter.import(plantXml);
+            const result = (await FmiImporter.import(plantXml))[0];
             logResponse(`import plant xml`, result);
 
             expect(result.status).toBe(0);

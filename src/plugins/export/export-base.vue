@@ -79,7 +79,7 @@
 <script lang='ts'>
 import { Options, Vue } from 'vue-class-component';
 import { toRaw } from 'vue';
-import { PackageCache } from '@/stores/package-cache';
+import { ItemCache } from '@/stores/item-cache';
 import { PLI } from '@/common/lib/platform-independence';
 import { LIB, LOG } from '@/common/lib/helpers';
 import { ExportConfig } from '@/plugins/export/export-config';
@@ -110,8 +110,8 @@ import { ExportConfig } from '@/plugins/export/export-config';
                 extension: (value: string) => {
                     if (!value) return true;
                     const config = this.config as ExportConfig;
-                    const hasExtension = config.validExtensions.some(ext => value.endsWith(ext));
-                    return hasExtension || `Filename should end with ${config.validExtensions.join(' or ')}`;
+                    const zipExtension = `${config.validExtensions[0]}.zip`;
+                    return value.endsWith(zipExtension) || `Filename should end with ${zipExtension}`;
                 }
             }
         };
@@ -120,7 +120,7 @@ import { ExportConfig } from '@/plugins/export/export-config';
         isFilenameValid(): boolean {
             const fn = this.filename as string;
             const config = this.config as ExportConfig;
-            return fn.length > 0 && config.validExtensions.some(ext => fn.endsWith(ext));
+            return fn.length > 0 && fn.endsWith(`${config.validExtensions[0]}.zip`);
         }
     },
     methods: {
@@ -142,14 +142,17 @@ import { ExportConfig } from '@/plugins/export/export-config';
             this.optionValues = initialOptions;
 
             // Get packages and update count (already loaded from storage at app startup)
-            const cache = PackageCache();
+            const cache = ItemCache();
             const pkgs = cache.packages;
 
             this.packageCount = pkgs.length;
 
-            const defaultExtension = config.validExtensions[0];
-
-            // Set default filename from first package title
+            // The export is always a ZIP archive (one entry per package). Its
+            // filename carries both the format-specific extension and '.zip'
+            // (e.g. '*.cas.jsonld.zip'), so a subsequent import recognizes and
+            // filters it correctly (see accept/validExtensions of the matching
+            // import dialog) - enabling a lossless export/import roundtrip.
+            const zipExtension = `${config.validExtensions[0]}.zip`;
             if (LIB.isArrayWithContent(pkgs)) {
                 // Use toRaw to unwrap Pinia's reactive proxy
                 const firstPackage = toRaw(pkgs[0]);
@@ -158,21 +161,35 @@ import { ExportConfig } from '@/plugins/export/export-config';
                 const sanitized = config.getDefaultFilename
                     ? config.getDefaultFilename(firstPackage)
                     : LIB.makeFilename(firstPackage);
-                this.filename = `${sanitized}${defaultExtension}`;
+                this.filename = `${sanitized}${zipExtension}`;
             } else {
-                this.filename = `export${defaultExtension}`;
+                this.filename = `export${zipExtension}`;
             }
         },
 
         /**
-         * Combine the transformed results of multiple packages into a single
-         * exportable value: string results are joined, object results are
-         * returned as an array (unless there is only one, then unwrapped).
+         * Convert a single package's transformed result (string or object)
+         * into the bytes to be stored as a ZIP entry.
          */
-        combineResults(results: (string | object)[]): string | object {
-            if (results.length === 1) return results[0];
-            if (results.every(r => typeof r === 'string')) return (results as string[]).join('\n\n');
-            return results;
+        toEntryBytes(data: string | object): string {
+            return typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        },
+
+        /**
+         * Build a unique, sanitized ZIP entry name for a package, avoiding
+         * collisions with entries already produced by other packages in the
+         * same export.
+         */
+        makeEntryName(pkg: any, extension: string, usedNames: Set<string>): string {
+            const config = this.config as ExportConfig;
+            const base = config.getDefaultFilename ? config.getDefaultFilename(pkg) : LIB.makeFilename(pkg);
+            let name = `${base}${extension}`;
+            if (usedNames.has(name)) {
+                // Disambiguate by id suffix on collision (e.g. same title used twice)
+                name = `${base}_${LIB.makeFilenameFromString(String(pkg.id))}${extension}`;
+            }
+            usedNames.add(name);
+            return name;
         },
 
         async exportPackages() {
@@ -184,17 +201,35 @@ import { ExportConfig } from '@/plugins/export/export-config';
             const config = this.config as ExportConfig;
 
             try {
-                const cache = PackageCache();
+                const cache = ItemCache();
                 const pkgs = cache.packages;
+                const extension = config.validExtensions[0];
 
-                // Transform all packages using the format-specific transformFn
-                // Use toRaw to unwrap Pinia's reactive proxies
-                const transformed = pkgs.map((pkg: any) => config.transformFn(toRaw(pkg), this.optionValues));
+                // Transform every top-level package with the format-specific
+                // transformFn and collect one ZIP entry per package. Contained
+                // (nested) packages are not exported as their own top-level entry
+                // here - the format-specific transformFn/serializer already emits
+                // them as a lightweight proxy within their containing package's
+                // own output (see makePackageProxy in pig-metaclasses.ts).
+                const usedNames = new Set<string>();
+                const entries: Record<string, string> = {};
+                for (const pkg of pkgs) {
+                    // Use toRaw to unwrap Pinia's reactive proxy
+                    const rawPkg = toRaw(pkg) as any;
+                    const transformed = config.transformFn(rawPkg, this.optionValues);
+                    const entryName = this.makeEntryName(rawPkg, extension, usedNames);
+                    entries[entryName] = this.toEntryBytes(transformed);
+                }
 
-                const exportData = this.combineResults(transformed);
+                const zipResult = PLI.createZip(entries);
+                if (!zipResult.ok) {
+                    this.errorMessage = `Export failed: ${zipResult.statusText}`;
+                    LOG.error(`[${config.componentName}] Zip creation failed:`, zipResult.statusText);
+                    return;
+                }
 
-                // Write to file (platform-independent)
-                const result = await PLI.writeFile(exportData, this.filename);
+                // Write the ZIP archive to file (platform-independent)
+                const result = await PLI.writeFile(zipResult.response as Blob, this.filename);
 
                 if (result.ok) {
                     this.successMessage = `Successfully exported ${pkgs.length} package(s) to ${this.filename}`;

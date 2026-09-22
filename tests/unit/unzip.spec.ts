@@ -81,7 +81,7 @@ describe('Importers unpack zipped input files', () => {
         );
         expect(fs.existsSync(reqifzPath)).toBe(true);
 
-        const rsp = await ReqifImporter.import(reqifzPath);
+        const rsp = (await ReqifImporter.import(reqifzPath))[0];
 
         expect(rsp.ok).toBe(true);
         expect(Array.isArray(rsp.response)).toBe(true);
@@ -92,7 +92,7 @@ describe('Importers unpack zipped input files', () => {
         const fmuPath = path.resolve(__dirname, '../data/FMI/plant_Euler_0_001.fmu');
         expect(fs.existsSync(fmuPath)).toBe(true);
 
-        const rsp = await FmiImporter.import(fmuPath);
+        const rsp = (await FmiImporter.import(fmuPath))[0];
 
         expect(rsp.ok).toBe(true);
         expect(Array.isArray(rsp.response)).toBe(true);
@@ -109,7 +109,7 @@ describe('Importers unpack zipped input files', () => {
         const zipPath = path.join(tmpDir, 'Alice_works_for_ACME.cas.jsonld.zip');
         fs.writeFileSync(zipPath, Buffer.from(zipped));
 
-        const rsp = await JsonldImporter.import(zipPath);
+        const rsp = (await JsonldImporter.import(zipPath))[0];
 
         expect(rsp.ok).toBe(true);
         expect(Array.isArray(rsp.response)).toBe(true);
@@ -126,11 +126,57 @@ describe('Importers unpack zipped input files', () => {
         const zipPath = path.join(tmpDir, 'Alice_works_for_ACME.cas.xml.zip');
         fs.writeFileSync(zipPath, Buffer.from(zipped));
 
-        const rsp = await XmlImporter.import(zipPath);
+        const rsp = (await XmlImporter.import(zipPath))[0];
 
         expect(rsp.status === 0 || rsp.status === 691).toBe(true);
         expect(Array.isArray(rsp.response)).toBe(true);
         expect((rsp.response as unknown[]).length).toBeGreaterThan(0);
+    });
+
+    it('XmlImporter unpacks all entries of a ZIP archive containing several .xml files', async () => {
+        const sourcePath = path.resolve(
+            __dirname,
+            '../data/XML/11/Alice_works_for_ACME.cas.xml'
+        );
+        const xmlContent = fs.readFileSync(sourcePath);
+        const zipped = zipSync({
+            'first/Alice_works_for_ACME.cas.xml': new Uint8Array(xmlContent),
+            'second/Alice_works_for_ACME.cas.xml': new Uint8Array(xmlContent)
+        });
+        const zipPath = path.join(tmpDir, 'multi-Alice_works_for_ACME.cas.xml.zip');
+        fs.writeFileSync(zipPath, Buffer.from(zipped));
+
+        const results = await XmlImporter.import(zipPath);
+
+        expect(results.length).toBe(2);
+        results.forEach((rsp) => {
+            expect(rsp.status === 0 || rsp.status === 691).toBe(true);
+            expect(Array.isArray(rsp.response)).toBe(true);
+            expect((rsp.response as unknown[]).length).toBeGreaterThan(0);
+        });
+    });
+
+    it('JsonldImporter unpacks all entries of a ZIP archive containing several .jsonld files', async () => {
+        const sourcePath = path.resolve(
+            __dirname,
+            '../data/JSON-LD/11/Alice_works_for_ACME.cas.jsonld'
+        );
+        const jsonldContent = fs.readFileSync(sourcePath);
+        const zipped = zipSync({
+            'first/Alice_works_for_ACME.cas.jsonld': new Uint8Array(jsonldContent),
+            'second/Alice_works_for_ACME.cas.jsonld': new Uint8Array(jsonldContent)
+        });
+        const zipPath = path.join(tmpDir, 'multi-Alice_works_for_ACME.cas.jsonld.zip');
+        fs.writeFileSync(zipPath, Buffer.from(zipped));
+
+        const results = await JsonldImporter.import(zipPath);
+
+        expect(results.length).toBe(2);
+        results.forEach((rsp) => {
+            expect(rsp.ok).toBe(true);
+            expect(Array.isArray(rsp.response)).toBe(true);
+            expect((rsp.response as unknown[]).length).toBeGreaterThan(0);
+        });
     });
 
     it('JsonldImporter reports an error for a ZIP archive without a .jsonld entry', async () => {
@@ -138,7 +184,7 @@ describe('Importers unpack zipped input files', () => {
         const zipPath = path.join(tmpDir, 'empty.cas.jsonld.zip');
         fs.writeFileSync(zipPath, Buffer.from(zipped));
 
-        const rsp = await JsonldImporter.import(zipPath);
+        const rsp = (await JsonldImporter.import(zipPath))[0];
 
         expect(rsp.ok).toBe(false);
     });
@@ -148,7 +194,7 @@ describe('Importers unpack zipped input files', () => {
         const zipPath = path.join(tmpDir, 'empty.cas.xml.zip');
         fs.writeFileSync(zipPath, Buffer.from(zipped));
 
-        const rsp = await XmlImporter.import(zipPath);
+        const rsp = (await XmlImporter.import(zipPath))[0];
 
         expect(rsp.ok).toBe(false);
     });

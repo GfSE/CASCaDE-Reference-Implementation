@@ -25,7 +25,7 @@
 
 import { IRsp, Rsp, Msg } from './messages';
 import { LOG } from './helpers';
-import { unzipSync, strFromU8 } from 'fflate';
+import { unzipSync, strFromU8, zipSync, strToU8 } from 'fflate';
 import SaxonJS from 'saxon-js';
 
 /**
@@ -404,6 +404,40 @@ export const PLI = {
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
             return Msg.create(660, filename, `failed to decode matching entries: ${msg}`);
+        }
+    },
+
+    /**
+     * Bundle a set of named text/binary entries into a single ZIP archive.
+     *
+     * Used by the export dialog to always package its output as a ZIP - one
+     * entry per exported package. Centralized here (rather than in export
+     * code) so the underlying ZIP library (currently fflate) can be replaced
+     * in a single place if needed, mirroring extractFromZip().
+     *
+     * @param entries - map of entry name (path within the archive) to its content,
+     *                  either a UTF-8 string or raw bytes
+     * @returns IRsp whose response is the ZIP archive as a Blob (application/zip)
+     */
+    createZip(entries: Record<string, string | Uint8Array>): IRsp<unknown> {
+        const entryNames = Object.keys(entries);
+        if (entryNames.length === 0) {
+            return Msg.create(660, '', 'no entries provided to create a zip-archive');
+        }
+
+        try {
+            const zipInput: Record<string, Uint8Array> = {};
+            for (const name of entryNames) {
+                const value = entries[name];
+                zipInput[name] = typeof value === 'string' ? strToU8(value) : value;
+            }
+
+            const zipped = zipSync(zipInput);
+            const blob = new Blob([zipped], { type: 'application/zip' });
+            return Rsp.create(0, blob, 'blob');
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            return Msg.create(660, '', `failed to create zip-archive: ${msg}`);
         }
     },
 

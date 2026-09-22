@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
 import { LOG } from './common/lib/helpers';
-import { PackageCache } from './stores/package-cache';
+import { ItemCache } from './stores/item-cache';
 // import { initModules } from './module-init-browser';
 
 import 'vuetify/styles'
@@ -77,9 +77,9 @@ app.provide('exportComponents', exportComponents);
 
 // initModules();
 
-// Ensure the package cache is loaded from persistent storage (IndexedDB)
+// Ensure the item cache is loaded from persistent storage (IndexedDB)
 // before the app renders, so all components can rely on synchronous access
-// to cache.packages right from the start.
-PackageCache(pinia).loadFromStorage().finally(() => {
+// to cache.items / cache.packages right from the start.
+ItemCache(pinia).loadFromStorage().finally(() => {
     app.mount('#app');
 });

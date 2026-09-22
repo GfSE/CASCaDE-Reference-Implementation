@@ -63,13 +63,32 @@
                 <v-btn :color="isLoading ? undefined : 'grey'" variant='elevated' class='import-btn' @click='onCancel' :disabled='isLoading'>
                     Cancel
                 </v-btn>
-                <v-btn :color="isSubmitDisabled ? undefined : 'primary'"
+                <template v-if='hasCachedData'>
+                    <v-btn :color="isSubmitDisabled ? undefined : 'primary'"
+                           variant='elevated'
+                           class='import-btn'
+                           @click='onSubmit("replace")'
+                           :disabled='isSubmitDisabled'
+                           :loading="isLoading && submitMode === 'replace'">
+                        Replace
+                    </v-btn>
+                    <v-btn :color="isSubmitDisabled ? undefined : 'primary'"
+                           variant='elevated'
+                           class='import-btn'
+                           @click='onSubmit("update")'
+                           :disabled='isSubmitDisabled'
+                           :loading="isLoading && submitMode === 'update'">
+                        Update
+                    </v-btn>
+                </template>
+                <v-btn v-else
+                       :color="isSubmitDisabled ? undefined : 'primary'"
                        variant='elevated'
                        class='import-btn'
-                       @click='onSubmit'
+                       @click='onSubmit("replace")'
                        :disabled='isSubmitDisabled'
                        :loading='isLoading'>
-                    {{ submitLabel }}
+                    Import
                 </v-btn>
             </v-card-actions>
         </v-card>
@@ -80,7 +99,7 @@
     import { DEF } from '@/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { PackageCache } from '@/stores/package-cache';
+    import { ItemCache } from '@/stores/item-cache';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
     import { ImportConfig } from '@/plugins/import/import-config';
@@ -103,17 +122,19 @@
                 selectedFiles: [] as File[],
                 selectedAuxiliaryFile: null as File | null,
                 isLoading: false,
+                submitMode: null as 'replace' | 'update' | null,
                 errorMessages: [] as string[],
                 successMessage: ''
             };
         },
         computed: {
             /**
-             * Label for the submit button: 'Replace' if the package cache already
-             * holds data (in memory or persisted), otherwise 'Import'
+             * Whether the item cache already holds data (in memory or persisted).
+             * Drives which submit button(s) are shown: 'Import' when empty,
+             * 'Replace' and 'Update' when the cache already holds data.
              */
-            submitLabel(): string {
-                return PackageCache().hasData ? 'Replace' : 'Import';
+            hasCachedData(): boolean {
+                return ItemCache().hasData;
             },
 
             /**
@@ -130,8 +151,12 @@
         methods: {
             /**
              * Handle submit button click
+             * @param mode 'replace' fully replaces the cache (used for the 'Import' and 'Replace'
+             *             buttons), 'update' merges the imported items into the existing cache,
+             *             preserving object identity of already-cached, unchanged items (see
+             *             ItemCache.update()).
              */
-            async onSubmit() {
+            async onSubmit(mode: 'replace' | 'update') {
                 const config = this.config as ImportConfig;
                 const errors: string[] = [];
                 if (!this.selectedFiles.length) {
@@ -146,36 +171,44 @@
                 }
 
                 this.isLoading = true;
+                this.submitMode = mode;
                 this.errorMessages = [];
                 this.successMessage = '';
 
                 try {
-                    // Import all files and collect results
+                    // Import all files (outer loop) and all ZIP entries within each file (inner loop,
+                    // handled inside the importer itself); results are one entry per imported package.
                     const results = await this.importAllFiles();
 
                     // Separate successful and failed imports
                     // @ToDo: results with 603 status (partial success) should be handled separately, but for now we treat them as failures:
                     const successful = results.filter((r: IRsp<unknown>) => r.ok);
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
+                    this.logFailedImports(failed);
 
-                    // Collect all packages from successful imports
-                    const allPackages = successful.flatMap((r: IRsp<unknown>) => {
-                        const allItems = r.response as TPigItem[];
-                        return allItems[0] as APackage;
-                    });
-
-                    if (allPackages.length > 0) {
-                        // Store in Pinia store with persistence (fully replaces any previous cache content)
-                        const cache = PackageCache();
-                        const persisted = await cache.replace(allPackages);
-
-                        // Show success message
-                        this.successMessage = `Successfully imported ${successful.length} of ${results.length} file(s)`;
-                        if (!persisted) {
-                            this.errorMessages = ['Warning: imported data could not be persisted to browser storage (IndexedDB). It may be lost after closing the browser tab.'];
+                    if (successful.length > 0) {
+                        // Store each package in the cache sequentially: the first package uses the
+                        // mode selected via the clicked button ('replace' or 'update'), every
+                        // following package is merged via 'update' so it doesn't wipe out packages
+                        // already written to the cache during this same import operation.
+                        const cache = ItemCache();
+                        let allPersisted = true;
+                        for (let i = 0; i < successful.length; i++) {
+                            const items = successful[i].response as TPigItem[];
+                            // LOG.debug('Imported items:', items);
+                            const packageMode = i === 0 ? mode : 'update';
+                            const persisted = packageMode === 'update'
+                                ? await cache.update(items)
+                                : await cache.replace(items);
+                            allPersisted = allPersisted && persisted;
                         }
 
-                        this.logFailedImports(failed);
+                        if (allPersisted) {
+                            const action = mode === 'update' ? 'updated' : 'imported';
+                            this.successMessage = `Successfully ${action} ${successful.length} of ${results.length} package(s)`;
+                        } else {
+                            this.errorMessages = ['Warning: imported data could not be persisted to browser storage (IndexedDB). It may be lost after closing the browser tab.'];
+                        }
 
                         // Navigate to the document viewing page after short delay
                         setTimeout(async () => {
@@ -183,8 +216,6 @@
                             this.dialog = false;
                             this.onCancel();
                         }, DEF.timeBetweenPages);
-                    } else {
-                        this.logFailedImports(failed);
                     }
 
                 } catch (error: any) {
@@ -192,20 +223,23 @@
                     LOG.error('Import error:', error);
                 } finally {
                     this.isLoading = false;
+                    this.submitMode = null;
                 }
             },
 
             /**
-             * Import all selected files
-             * Returns array of IRsp results (one per file)
+             * Import all selected files (outer loop). Each file may itself expand into
+             * several packages if it is a ZIP archive containing multiple matching entries
+             * (inner loop, handled inside the format-specific importer).
+             * Returns a flattened array of IRsp results, one per imported package.
              */
             async importAllFiles(): Promise<IRsp<unknown>[]> {
                 const results: IRsp<unknown>[] = [];
 
                 for (const file of this.selectedFiles) {
                     try {
-                        const rsp = await (this.config as ImportConfig).importFn(file, this.selectedAuxiliaryFile);
-                        results.push(rsp);
+                        const rspList = await (this.config as ImportConfig).importFn(file, this.selectedAuxiliaryFile);
+                        results.push(...rspList);
                     } catch (error: any) {
                         // Convert exception to IRsp format
                         results.push(Msg.create(600, `${file.name}: ${error?.message || String(error)}`));
@@ -231,6 +265,7 @@
                 this.dialog = false;
                 this.selectedFiles = [];
                 this.selectedAuxiliaryFile = null;
+                this.submitMode = null;
                 this.errorMessages = [];
                 this.successMessage = '';
             }
@@ -243,6 +278,7 @@
         selectedFiles!: File[];
         selectedAuxiliaryFile!: File | null;
         isLoading!: boolean;
+        submitMode!: 'replace' | 'update' | null;
         errorMessages!: string[];
         successMessage!: string;
     }

@@ -42,21 +42,23 @@ export class ReqifImporter {
     private static readonly maxSizeInput = DEF.maxSizeXML;
 
     /**
-     * Import ReqIF document and transform to PIG items
+     * Import ReqIF document(s) and transform to PIG items.
+     * If the source is a ZIP archive containing several .reqif files, each is
+     * transformed and instantiated separately (inner loop over ZIP entries).
      * 
      * @param source - File path (Node.js), URL, or File/Blob object (Browser)
-     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @returns array of IRsp, one per imported package (first item of each is APackage, rest are graph items)
      * 
      * @example
      * // Node.js
-     * const result = await ReqIFImporter.import('./test.reqif');
+     * const results = await ReqIFImporter.import('./test.reqif');
      * 
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await ReqifImporter.import(file);
+     * const results = await ReqifImporter.import(file);
      */
-    static async import(source: string | File): Promise<IRsp<unknown>> {
+    static async import(source: string | File): Promise<IRsp<unknown>[]> {
         // Extract filename for validation and logging
         const filename = typeof source === 'string' ? source : source.name;
 
@@ -70,25 +72,43 @@ export class ReqifImporter {
 
         // Validate file extension
         if (!isPlain && !isZipped) {
-            return Msg.create(660, filename, 'expected .reqif, .reqifz or .reqif.zip file extension');
+            return [Msg.create(660, filename, 'expected .reqif, .reqifz or .reqif.zip file extension')];
         }
 
-        // Read file content, unpacking the archive first if the file is zipped
-        let xmlToTransform: string;
+        // Read file content, unpacking the archive first if the file is zipped.
+        // A ZIP may contain several .reqif files; each is transformed and instantiated separately.
+        let xmlStringsToTransform: string[];
         if (isZipped) {
             const rspXml = await this.extractReqif(source, filename);
             if (!rspXml.ok) {
-                return rspXml;
+                return [rspXml];
             }
-            xmlToTransform = rspXml.response as string;
+            xmlStringsToTransform = rspXml.response as string[];
         } else {
             const rspRead = await PLI.readFileAsText(source);
             if (!rspRead.ok) {
-                return rspRead;
+                return [rspRead];
             }
-            xmlToTransform = rspRead.response as string;
+            xmlStringsToTransform = [rspRead.response as string];
         }
 
+        const results: IRsp<unknown>[] = [];
+        for (const xmlToTransform of xmlStringsToTransform) {
+            results.push(await this.parseOne(xmlToTransform, filename));
+        }
+        return results;
+    }
+
+    /**
+     * Transform, validate and instantiate a single ReqIF document (already extracted
+     * from a possible ZIP archive).
+     *
+     * @param xmlToTransform - .reqif XML text content
+     * @param filename - original filename, used for error messages
+     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @private
+     */
+    private static async parseOne(xmlToTransform: string, filename: string): Promise<IRsp<unknown>> {
         // Security: Size limit check
         if (xmlToTransform.length > this.maxSizeInput) {
             return Msg.create(
@@ -163,11 +183,11 @@ export class ReqifImporter {
     }
 
     /**
-     * Read a .reqifz / .reqif.zip archive and return the text content of the contained .reqif file.
+     * Read a .reqifz / .reqif.zip archive and return the text content of all contained .reqif files.
      *
      * @param source - File path (Node.js), URL, or File/Blob (Browser)
      * @param filename - original filename for error messages
-     * @returns IRsp whose response is the .reqif XML string
+     * @returns IRsp whose response is an array of .reqif XML strings (one per matching entry)
      * @private
      */
     private static async extractReqif(
@@ -187,7 +207,7 @@ export class ReqifImporter {
         if (!rsp.ok) {
             return rsp;
         }
-        return { ...rsp, response: (rsp.response as string[])[0] };
+        return rsp;
     }
 
     /**

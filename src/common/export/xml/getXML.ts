@@ -38,7 +38,8 @@ import {
     TPigItem, PigItemType, PigItemTypeValue,
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
-    AProperty, ATargetLink, ASourceLink
+    AProperty, ATargetLink, ASourceLink,
+    isContainedPackage, makePackageProxy
 } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsXML {
@@ -958,12 +959,35 @@ class GetXML {
             ? graph.filter(item => filterTypes.includes(item.itemType))
             : graph;
 
+        // Nested/contained packages (not yet produced by current importers, but
+        // exporters must be prepared for them) are exported only as a proxy -
+        // never with their full graph - to avoid duplicating/interleaving a
+        // nested package's contents with its own top-level export.
         for (const item of items) {
-            xml += getXML(item, options);
+            if (isContainedPackage(item)) {
+                xml += this.xPackageProxy(makePackageProxy(item), indent + '\t');
+            } else {
+                xml += getXML(item, options);
+            }
         }
 
         xml += `${indent}</graph>\n`;
         return xml;
+    }
+
+    /**
+     * Render a nested/contained package as a minimal proxy element, carrying
+     * only id, modified, revision and creator - never its full graph.
+     * @param proxy - proxy representation of the contained package
+     * @param indent - indentation string for the element
+     * @returns XML representation of the package proxy
+     */
+    private static xPackageProxy(proxy: { id: string; modified?: string; revision?: string; creator?: string }, indent: string): string {
+        let attrs = ` id="${this.escapeXmlAttr(proxy.id)}"`;
+        if (proxy.modified) attrs += ` modified="${this.escapeXmlAttr(proxy.modified)}"`;
+        if (proxy.revision) attrs += ` revision="${this.escapeXmlAttr(proxy.revision)}"`;
+        if (proxy.creator) attrs += ` creator="${this.escapeXmlAttr(proxy.creator)}"`;
+        return `${indent}<aPackage${attrs}/>\n`;
     }
 
     /**

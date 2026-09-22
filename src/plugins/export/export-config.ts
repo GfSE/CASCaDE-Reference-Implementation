@@ -25,17 +25,24 @@ export interface ExportConfig {
     componentName: string;
 
     /**
-     * Accepted filename extensions, in order of preference. The first
-     * entry is used to build the default filename; the filename field
-     * is considered valid if it ends with any of these extensions.
+     * Accepted filename extensions for the per-package entries written inside
+     * the export ZIP archive, in order of preference. The first entry is
+     * used both to build each package's default entry filename and as the
+     * extension appended when generating those entry names. The outer
+     * downloaded file is always a ZIP archive (`.zip`), regardless of this
+     * setting.
      */
     validExtensions: string[];
 
     /**
-     * Transforms a single (raw, non-reactive) package into its exported
-     * representation - either a string (e.g. XML, Cypher) or a plain
-     * object (e.g. JSON-LD). Results of multiple packages are combined
-     * generically by ExportBase (see combineResults in export-base.vue).
+     * Transforms a single (raw, non-reactive) top-level package into its
+     * exported representation - either a string (e.g. XML, Cypher) or a
+     * plain object (e.g. JSON-LD). ExportBase writes the result of each
+     * package into its own file within the ZIP archive (see exportPackages()
+     * in export-base.vue). If a package's graph contains another package
+     * (nested/contained package), the format-specific transform must emit
+     * only a proxy for it (id, modified, revision, creator) instead of its
+     * full graph - see makePackageProxy() in pig-metaclasses.ts.
      * `optionValues` reflects the current state of the checkboxes defined
      * in `options` below (keyed by their `key`), if any are configured.
      */
@@ -43,9 +50,11 @@ export interface ExportConfig {
 
     /**
      * Optional override to derive the default filename (without extension
-     * handling) from the first package. Defaults to LIB.makeFilename(pkg).
+     * handling) from a package. Defaults to LIB.makeFilename(pkg). Used both
+     * for the overall ZIP filename (based on the first package) and for each
+     * package's own entry filename within the ZIP.
      */
-    getDefaultFilename?: (firstPkg: IIdentifiable) => string;
+    getDefaultFilename?: (pkg: IIdentifiable) => string;
 
     /**
      * Optional list of checkboxes shown under an "Export Options" heading.

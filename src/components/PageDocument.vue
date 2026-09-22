@@ -46,7 +46,7 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import { toRaw } from 'vue'
-    import { PackageCache } from '@/stores/package-cache'
+    import { ItemCache } from '@/stores/item-cache'
     import { getHTML, stringHTML } from '@/common/export/html/getHTML'
     import { APackage, AnEntity, PigItemType } from '@/common/schema/pig/ts/pig-metaclasses'
     import OutlineTreeItem from './OutlineTreeItem.vue'
@@ -137,7 +137,7 @@
         },
         computed: {
             outlineTree(): OutlineNode[] {
-                const cache = PackageCache();
+                const cache = ItemCache();
                 const packages = cache.packages;
 
                 if (!packages || packages.length === 0) {

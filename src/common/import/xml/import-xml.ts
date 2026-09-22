@@ -41,27 +41,29 @@ export class XmlImporter {
     private static readonly maxSizeInput = DEF.maxSizeXML;
 
     /**
-     * Import XML document and instantiate PIG items
-     * 
+     * Import XML document(s) and instantiate PIG items.
+     * If the source is a ZIP archive containing several .xml files, each is
+     * transformed/parsed/instantiated separately (inner loop over ZIP entries).
+     *
      * @param source - File path (Node.js), URL, or File/Blob object (Browser)
      * @param options - Optional parameters
      *     - sef: SEF stylesheet for transformation (*.sef.json)
-     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @returns array of IRsp, one per imported package (first item of each is APackage, rest are graph items)
      * 
      * @example
      * // Node.js
-     * const result = await XmlImporter.import('./package.xml');
+     * const results = await XmlImporter.import('./package.xml');
      * 
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await XmlImporter.import(file);
+     * const results = await XmlImporter.import(file);
      * 
      * @example
      * // URL
-     * const result = await XmlImporter.import('https://example.org/data.xml');
+     * const results = await XmlImporter.import('https://example.org/data.xml');
      */
-    static async import(source: string | File | Blob, options?: any): Promise<IRsp> {
+    static async import(source: string | File | Blob, options?: any): Promise<IRsp[]> {
         // LOG.debug(`XmlImporter: Source: ${typeof source === 'string' ? source : JSON.stringify(source)}`);
         // LOG.debug(`XmlImporter: Options: ${JSON.stringify(options)}`);
 
@@ -71,11 +73,11 @@ export class XmlImporter {
         const isZipped = normalized.endsWith('.zip');
 
         // Read file content, unpacking the archive first if the file is zipped
-        let xmlString: string;
+        let xmlStrings: string[];
         if (isZipped) {
             const rspBytes = await PLI.readFileAsBytes(source);
             if (!rspBytes.ok) {
-                return rspBytes;
+                return [rspBytes];
             }
             const rspXml = PLI.extractFromZip(
                 rspBytes.response as Uint8Array,
@@ -83,17 +85,36 @@ export class XmlImporter {
                 filename
             );
             if (!rspXml.ok) {
-                return rspXml;
+                return [rspXml];
             }
-            xmlString = (rspXml.response as string[])[0];
+            xmlStrings = rspXml.response as string[];
         } else {
             const rsp = await PLI.readFileAsText(source);
             if (!rsp.ok) {
-                return rsp;
+                return [rsp];
             }
-            xmlString = rsp.response as string;
+            xmlStrings = [rsp.response as string];
         }
 
+        const results: IRsp[] = [];
+        for (const xmlString of xmlStrings) {
+            results.push(await this.parseOne(xmlString, source, options));
+        }
+        return results;
+    }
+
+    /**
+     * Parse a single XML document (already extracted from a possible ZIP archive),
+     * optionally transform it via XSLT, validate it and instantiate the contained PIG items.
+     *
+     * @param xmlString - XML text content
+     * @param source - original source, used for size-limit error messages
+     * @param options - Optional parameters
+     *     - sef: SEF stylesheet for transformation (*.sef.json)
+     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @private
+     */
+    private static async parseOne(xmlString: string, source: string | File | Blob, options?: any): Promise<IRsp> {
         // Security: Size limit check
         if (xmlString.length > this.maxSizeInput) {
             return Msg.create(

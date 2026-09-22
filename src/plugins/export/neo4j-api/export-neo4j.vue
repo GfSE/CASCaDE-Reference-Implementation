@@ -92,7 +92,7 @@
 <script lang='ts'>
 import { Options, Vue } from 'vue-class-component';
 import { toRaw } from 'vue';
-import { PackageCache } from '../../../stores/package-cache';
+import { ItemCache } from '../../../stores/item-cache';
 import { getCypher } from '../../../common/export/cypher/getCypher';
 import { exportToNeo4j } from './neo4j-export';
 import { LOG } from '../../../common/lib/helpers';
@@ -128,7 +128,7 @@ import { LOG } from '../../../common/lib/helpers';
         // Clear password reduces the risk of re-exposing credentials if the dialog is reopened or the screen is shared:
         this.password = '';
 
-        const cache = PackageCache();
+        const cache = ItemCache();
         this.packageCount = cache.packages.length;
     },
     async exportPackages() {
@@ -137,7 +137,7 @@ import { LOG } from '../../../common/lib/helpers';
         this.isExporting = true;
 
         try {
-            const cache = PackageCache();
+            const cache = ItemCache();
             const pkgs = cache.packages;
             const cypherText = pkgs
                 .map((pkg: any) => getCypher(toRaw(pkg), { includeConstraints: true }))

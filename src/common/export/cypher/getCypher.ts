@@ -1,5 +1,5 @@
 import { JsonValue } from '../../lib/helpers';
-import { APackage, TPigItem as TCascaraItem, PigItemTypeValue as TCascaraItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage, TPigItem as TCascaraItem, PigItemTypeValue as TCascaraItemTypeValue, isContainedPackage, makePackageProxy } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsCypher {
     includeConstraints?: boolean;
@@ -50,7 +50,15 @@ export function getCypher(item: TCascaraItem, options?: IOptionsCypher): string 
 
 function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string[] {
     const statements: string[] = [];
-    const graphItems = Array.isArray(pkg.graph) ? pkg.graph : [];
+    const rawGraphItems = Array.isArray(pkg.graph) ? pkg.graph : [];
+
+    // Nested/contained packages (not yet produced by current importers, but
+    // exporters must be prepared for them) are exported only as a proxy node -
+    // never with their full graph - to avoid duplicating/interleaving a nested
+    // package's contents with its own top-level export.
+    const graphItems: TCascaraItem[] = rawGraphItems.map(item =>
+        isContainedPackage(item) ? (makePackageProxy(item) as unknown as TCascaraItem) : item
+    );
 
     // Pass 1: create all real nodes first.
     statements.push(createMergeNode(itemLabels(pkg as unknown as TCascaraItem), pkg.id, itemProperties(pkg as unknown as TCascaraItem, options)));

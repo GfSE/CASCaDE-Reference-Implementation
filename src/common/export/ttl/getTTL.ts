@@ -49,7 +49,8 @@ import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
-    AProperty, ATargetLink, ASourceLink
+    AProperty, ATargetLink, ASourceLink,
+    isContainedPackage, makePackageProxy, IAPackageProxy
 } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsTTL {
@@ -596,6 +597,29 @@ class GetTTL {
     }
 
     /**
+     * Render a nested/contained package as a minimal proxy resource, carrying
+     * only id, modified, revision and creator - never its full graph.
+     * @param proxy - proxy representation of the contained package
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of the package proxy
+     */
+    private static xPackageProxy(proxy: IAPackageProxy, rdf: CToTtl): string {
+        let ttl = rdf.tab0(this.formatTurtleId(proxy.id));
+        ttl += rdf.tab1('a', 'cas:aPackage', false); // is reference
+        if (proxy.revision) {
+            ttl += rdf.tab1('cas:revision', proxy.revision, true); // is literal
+        }
+        if (proxy.modified) {
+            ttl += rdf.tab1('dcterms:modified', `"${proxy.modified}"^^xs:dateTime`, false); // is reference
+        }
+        if (proxy.creator) {
+            ttl += rdf.tab1('dcterms:creator', proxy.creator, true); // is literal
+        }
+        ttl += rdf.newLine();
+        return ttl;
+    }
+
+    /**
      * Wrapper for instances (APackage, AnEntity, ARelationship)
      * Adds instance-specific properties like instanceOf
      * @param itm - Instance item
@@ -695,9 +719,17 @@ class GetTTL {
             ? graph.filter(item => filterTypes.includes(item.itemType))
             : graph;
 
-        // Transform each graph item to Turtle
+        // Transform each graph item to Turtle. Nested/contained packages (not
+        // yet produced by current importers, but exporters must be prepared
+        // for them) are exported only as a proxy - never with their full
+        // graph - to avoid duplicating/interleaving a nested package's
+        // contents with its own top-level export.
         for (const item of items) {
-            ttl += getTTL(item, options);
+            if (isContainedPackage(item)) {
+                ttl += this.xPackageProxy(makePackageProxy(item), rdf);
+            } else {
+                ttl += getTTL(item, options);
+            }
         }
 
         // Add metamodel class shapes for Property, Link, Enumeration, Entity, and Relationship classes (once per package)

@@ -1584,6 +1584,47 @@ export interface IAPackage extends IAnElement {
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[];
 }
+
+/**
+ * Minimal stand-in for a package that is contained (nested) within another
+ * package's graph. Nested packages are not fully supported yet, but export
+ * code is prepared for them: instead of exporting a contained package's full
+ * graph (which would duplicate/interleave with its own top-level export),
+ * only this proxy is emitted - just enough to identify and reference it.
+ */
+export interface IAPackageProxy {
+    id: TPigId;
+    itemType: typeof PigItemType.aPackage;
+    modified?: TISODateString;
+    revision?: TRevision;
+    creator?: string;
+}
+
+/**
+ * Build a proxy representation of a package that is contained within another
+ * package's graph, carrying only id, modified, revision and creator - never
+ * its full graph. Used by all exporters (JSON-LD, XML, TTL, Cypher) when a
+ * graph item turns out to be an itemType aPackage (nested package).
+ */
+export function makePackageProxy(pkg: TPigItem): IAPackageProxy {
+    return LIB.stripUndefinedAndNull({
+        id: pkg.id,
+        itemType: PigItemType.aPackage,
+        modified: (pkg as any).modified,
+        revision: (pkg as any).revision,
+        creator: (pkg as any).creator
+    }) as IAPackageProxy;
+}
+
+/**
+ * Type guard: true if the given graph item is itself a package (nested/contained
+ * package), meaning it must be exported as a proxy only (see makePackageProxy),
+ * not with its full graph.
+ */
+export function isContainedPackage(item: TPigItem): boolean {
+    return item?.itemType === PigItemType.aPackage;
+}
+
 export class APackage extends AnElement implements IAPackage {
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[] = [];
@@ -1633,13 +1674,22 @@ export class APackage extends AnElement implements IAPackage {
         // id is normalized in the caller (setXML or setJSONLD) on multiple layers
         _pkg.modified = normalizeDateTime(_pkg.modified) || new Date().toISOString();
 
-        // Instantiate each graph item:
+        // Instantiate each graph item, reusing already-existing instances (by id) so that
+        // shared references to graph items are preserved instead of being replaced:
+        const existingItems = new Map<string, TPigItem>();
+        for (const existing of this.graph || []) {
+            const existingId = (existing as any)?.id;
+            if (existingId)
+                existingItems.set(existingId, existing);
+        }
+
         const instantiatedGraph: TPigItem[] = [];
         const errors: string[] = [];
 
         for (const item of _pkg.graph) {
             // LOG.debug(`APackage.set: instantiating item ${JSON.stringify(item, null, 2)}`);
-            const result = this.createItem(item, { defaultModified: _pkg.modified, source: 'any' });
+            const existingInstance = item?.id ? existingItems.get(item.id) : undefined;
+            const result = this.createItem(item, { defaultModified: _pkg.modified, source: 'any', existingInstance });
             if (result.response)
                 instantiatedGraph.push(result.response as TPigItem);
 
@@ -2103,7 +2153,12 @@ export class APackage extends AnElement implements IAPackage {
             return Msg.create(651, `Instantiation of ${id} from ${source}`, itype);
         }
 
-        const itm = PigItem.create(itype);
+        // Reuse an existing instance (same id, same itemType) instead of creating a new one,
+        // so that shared references to this item remain valid after the update:
+        const existingInstance = options?.existingInstance as TPigItem | undefined;
+        const itm = (existingInstance && (existingInstance as any).itemType === itype)
+            ? existingInstance
+            : PigItem.create(itype);
 
         if (!itm) {
         //    LOG.error(`APackage.createItem: unable to create instance for itemType '${itype}'`);

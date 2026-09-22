@@ -36,46 +36,61 @@ import { SCH_LD } from '../../schema/pig/jsonld/pig-schemata-jsonld';
  */
 export class JsonldImporter {
     /**
-     * Import JSON-LD document and instantiate PIG items
-     * 
+     * Import JSON-LD document(s) and instantiate PIG items.
+     * If the source is a ZIP archive containing several .jsonld files, each is
+     * parsed and instantiated separately; the inner loop over ZIP entries happens here.
+     *
      * @param source - File path (Node.js), URL, or File/Blob object (Browser)
-     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @returns array of IRsp, one per imported package (first item of each is APackage, rest are graph items)
      * 
      * @example
      * // Node.js
-     * const result = await JsonldImporter.import('./package.jsonld');
+     * const results = await JsonldImporter.import('./package.jsonld');
      * 
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await JsonldImporter.import(file);
+     * const results = await JsonldImporter.import(file);
      * 
      * @example
      * // URL
-     * const result = await JsonldImporter.import('https://example.org/data.jsonld');
+     * const results = await JsonldImporter.import('https://example.org/data.jsonld');
      */
-    static async import(source: string | File | Blob): Promise<IRsp> {
+    static async import(source: string | File | Blob): Promise<IRsp[]> {
         // Extract filename for zip detection (Blob without a name is treated as non-zipped)
         const filename = typeof source === 'string' ? source : (source as File).name ?? '';
         const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
         const isZipped = normalized.endsWith('.zip');
 
-        // Read file content, unpacking the archive first if the file is zipped
-        let jsonToParse: string;
+        // Read file content, unpacking the archive first if the file is zipped.
+        // A ZIP may contain several .jsonld files; each is parsed and instantiated separately.
+        let jsonTexts: string[];
         if (isZipped) {
             const rspJson = await this.extractJsonLd(source, filename);
             if (!rspJson.ok) {
-                return rspJson;
+                return [rspJson];
             }
-            jsonToParse = rspJson.response as string;
+            jsonTexts = rspJson.response as string[];
         } else {
             const rsp = await PLI.readFileAsText(source);
             if (!rsp.ok) {
-                return rsp;
+                return [rsp];
             }
-            jsonToParse = rsp.response as string;
+            jsonTexts = [rsp.response as string];
         }
 
+        return Promise.all(jsonTexts.map((jsonText) => this.parseOne(jsonText)));
+    }
+
+    /**
+     * Parse a single JSON-LD document (already extracted from a possible ZIP archive),
+     * validate it and instantiate the contained PIG items.
+     *
+     * @param jsonToParse - JSON-LD text content
+     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @private
+     */
+    private static async parseOne(jsonToParse: string): Promise<IRsp> {
         // Parse JSON document
         let doc: JsonObject;
         try {
@@ -124,11 +139,11 @@ export class JsonldImporter {
     }
 
     /**
-     * Read a .cas.jsonld.zip archive and return the text content of the contained .jsonld file.
+     * Read a .cas.jsonld.zip archive and return the text content of all contained .jsonld files.
      *
      * @param source - File path (Node.js), URL, or File/Blob (Browser)
      * @param filename - original filename for error messages
-     * @returns IRsp whose response is the JSON-LD text
+     * @returns IRsp whose response is an array of JSON-LD texts (one per matching entry)
      * @private
      */
     private static async extractJsonLd(
@@ -148,7 +163,7 @@ export class JsonldImporter {
         if (!rsp.ok) {
             return rsp;
         }
-        return { ...rsp, response: (rsp.response as string[])[0] };
+        return rsp;
     }
 
     /**

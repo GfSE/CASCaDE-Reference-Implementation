@@ -61,7 +61,7 @@ describe('Import XML (file system)', () => {
 
         it(`Import ${testName} and instantiates CASCaRA Metamodel classes`, async () => {
             // import and test
-            const rsp = await XmlImporter.import(testFile);
+            const rsp = (await XmlImporter.import(testFile))[0];
             if (!rsp.ok)
                 console.warn(`import XML ${testName}:`, rsp.status, rsp.statusText);
 
