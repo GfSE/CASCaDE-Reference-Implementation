@@ -82,6 +82,36 @@ export const LIB = {
     },
 
     /**
+     * Scan a string (typically an ILanguageText.value or an AProperty.value that may
+     * contain embedded HTML/XML) for references to external asset files via
+     * <img src="..."> and <object data="..."> tags.
+     *
+     * Used by export routines to discover which cached assets (images etc.) must be
+     * bundled into the export ZIP alongside the graph payload, so a subsequent import
+     * can resolve those references again.
+     *
+     * @param text - text potentially containing <img>/<object> tags
+     * @returns array of referenced filenames/paths (as found in the src/data attribute),
+     *          possibly empty; duplicates are not removed (caller may dedupe via a Set)
+     */
+    extractAssetReferences(text: string | undefined | null): string[] {
+        if (!text || typeof text !== 'string') return [];
+
+        const refs: string[] = [];
+        const imgRe = /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
+        const objectRe = /<object\b[^>]*\bdata\s*=\s*["']([^"']+)["']/gi;
+
+        let m: RegExpExecArray | null;
+        while ((m = imgRe.exec(text)) !== null) {
+            refs.push(m[1]);
+        }
+        while ((m = objectRe.exec(text)) !== null) {
+            refs.push(m[1]);
+        }
+        return refs;
+    },
+
+    /**
      * Recursively iterates a JSON value and calls `cb` for each primitive (value).
      * - objects: iterates keys
      * - arrays: iterates indices

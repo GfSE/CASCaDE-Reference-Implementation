@@ -23,7 +23,6 @@
  *
  * @todo
  * - extract multiple XML files from zip archive and call import() recursively for each XML file
- * - extract other file types from zip archive (e.g. images) and store them in an asset-cache for later use
  * - refuse to import if a filetype cannot be discovered (e.g. blob without name.ext and no type)
  */
 
@@ -88,6 +87,17 @@ export class XmlImporter {
                 return [rspXml];
             }
             xmlStrings = rspXml.response as string[];
+
+            // Extract any other (non-.xml) files bundled in the archive (e.g. images) and
+            // store them in the asset-cache for later use.
+            const rspOther = PLI.extractOtherFromZip(
+                rspBytes.response as Uint8Array,
+                (name) => name.toLowerCase().endsWith('.xml'),
+                filename
+            );
+            if (rspOther.ok) {
+                await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
+            }
         } else {
             const rsp = await PLI.readFileAsText(source);
             if (!rsp.ok) {

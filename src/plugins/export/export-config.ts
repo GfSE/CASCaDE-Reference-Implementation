@@ -42,7 +42,7 @@ export interface ExportConfig {
      * in export-base.vue). If a package's graph contains another package
      * (nested/contained package), the format-specific transform must emit
      * only a proxy for it (id, modified, revision, creator) instead of its
-     * full graph - see makePackageProxy() in pig-metaclasses.ts.
+     * full graph - see APackage.getProxy() in pig-metaclasses.ts.
      * `optionValues` reflects the current state of the checkboxes defined
      * in `options` below (keyed by their `key`), if any are configured.
      */

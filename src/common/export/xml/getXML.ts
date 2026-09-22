@@ -39,7 +39,7 @@ import {
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
     AProperty, ATargetLink, ASourceLink,
-    isContainedPackage, makePackageProxy
+    PigItem
 } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsXML {
@@ -964,8 +964,8 @@ class GetXML {
         // never with their full graph - to avoid duplicating/interleaving a
         // nested package's contents with its own top-level export.
         for (const item of items) {
-            if (isContainedPackage(item)) {
-                xml += this.xPackageProxy(makePackageProxy(item), indent + '\t');
+            if (PigItem.isAPackage(item)) {
+                xml += this.xPackageProxy((item as APackage).getProxy(), indent + '\t');
             } else {
                 xml += getXML(item, options);
             }

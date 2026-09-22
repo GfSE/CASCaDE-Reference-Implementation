@@ -27,6 +27,8 @@ import { IRsp, Rsp, Msg } from './messages';
 import { LOG } from './helpers';
 import { unzipSync, strFromU8, zipSync, strToU8 } from 'fflate';
 import SaxonJS from 'saxon-js';
+import { AssetCache, IAsset } from '../../stores/asset-cache';
+import { Blob as NodeBlob } from 'buffer';
 
 /**
  * Platform-independent DOM Node Type constants
@@ -408,6 +410,47 @@ export const PLI = {
     },
 
     /**
+     * Extracts the raw (binary) content of all entries within a ZIP archive
+     * whose name does *not* match the given predicate - the complement of
+     * extractFromZip(). Content is returned as raw bytes (not decoded as
+     * text), since non-matching entries are typically binary assets
+     * (images, etc.) rather than the text-based payload files handled by
+     * extractFromZip().
+     *
+     * Used e.g. to collect asset files (images, ...) bundled in an import
+     * ZIP alongside the primary payload file(s) (matched separately via
+     * extractFromZip() with the same predicate).
+     *
+     * @param bytes - raw bytes of the ZIP archive
+     * @param matches - predicate identifying the entries to EXCLUDE (e.g. the primary payload files)
+     * @param filename - original filename, used for error messages (optional)
+     * @returns IRsp whose response is an array of { name, data } pairs, one per
+     *          non-matching entry, in the order they appear in the archive;
+     *          'name' is the entry's path within the archive, 'data' its raw bytes
+     */
+    extractOtherFromZip(bytes: Uint8Array, matches: (entryName: string) => boolean, filename = ''): IRsp<unknown> {
+        let entries: Record<string, Uint8Array>;
+        try {
+            entries = unzipSync(bytes, { filter: (file) => !file.name.endsWith('/') && !matches(file.name) });
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            return Msg.create(660, filename, `failed to read zip-archive: ${msg}`);
+        }
+
+        const entryNames = Object.keys(entries);
+        if (entryNames.length === 0) {
+            return Msg.create(660, filename, 'zip-archive does not contain any non-matching file');
+        }
+
+        // fflate's unzipSync()/Unzip streaming API do not expose per-entry
+        // modification dates, so the ZIP's central directory is parsed
+        // separately to recover each entry's last-modified timestamp.
+        const modifiedByName = this.getZipEntryModifiedDates(bytes);
+        const contents = entryNames.map((name) => ({ name, data: entries[name], modified: modifiedByName.get(name) }));
+        return Rsp.create(0, contents, 'arraybuffer');
+    },
+
+    /**
      * Bundle a set of named text/binary entries into a single ZIP archive.
      *
      * Used by the export dialog to always package its output as a ZIP - one
@@ -439,6 +482,156 @@ export const PLI = {
             const msg = e instanceof Error ? e.message : String(e);
             return Msg.create(660, '', `failed to create zip-archive: ${msg}`);
         }
+    },
+
+    /**
+     * Persist a set of assets (e.g. extracted from an import ZIP archive) to the
+     * asset cache. Isolates callers (importers) from the underlying storage
+     * (currently Pinia/IndexedDB via AssetCache, browser-only); a server-side
+     * implementation can be added here later without touching importer code.
+     *
+     * @param assets - asset descriptors to add/update in the cache
+     * @returns true if the assets were successfully persisted
+     */
+    async setAssets(assets: IAsset[]): Promise<boolean> {
+        if (assets.length === 0) {
+            return true;
+        }
+        if (this.isBrowserEnv()) {
+            try {
+                return await AssetCache().update(assets);
+            } catch (e: unknown) {
+                LOG.error('PLI.setAssets: failed to persist assets', e);
+                return false;
+            }
+        }
+        // @todo: implement server-side (Node.js) asset persistence once needed
+        return true;
+    },
+
+    /**
+     * Retrieve all assets currently held in the asset cache. Isolates callers
+     * from the underlying storage, mirroring setAssets().
+     *
+     * @returns array of currently cached asset descriptors
+     */
+    async getAssets(): Promise<IAsset[]> {
+        if (this.isBrowserEnv()) {
+            try {
+                return await AssetCache().get();
+            } catch (e: unknown) {
+                LOG.error('PLI.getAssets: failed to read assets', e);
+                return [];
+            }
+        }
+        // @todo: implement server-side (Node.js) asset retrieval once needed
+        return [];
+    },
+
+    /**
+     * Convert the raw { name, data } entries returned by extractOtherFromZip()
+     * into asset descriptors ready to be persisted via setAssets().
+     *
+     * @param entries - raw non-matching ZIP entries as returned by extractOtherFromZip(),
+     *                   optionally carrying a 'modified' timestamp recovered from the
+     *                   ZIP's central directory
+     * @returns array of IAsset descriptors (filename, extension, mimeType, blob, modified)
+     */
+    toAssets(entries: { name: string; data: Uint8Array; modified?: string }[]): IAsset[] {
+        const BlobCtor: typeof Blob = typeof Blob !== 'undefined' ? Blob : (NodeBlob as unknown as typeof Blob);
+        return entries.map(({ name, data, modified }) => {
+            const mimeType = this.getMimeTypeFromFilename(name);
+            return {
+                filename: name,
+                extension: this.getExtension(name),
+                mimeType,
+                blob: new BlobCtor([new Uint8Array(data)], { type: mimeType }),
+                ...(modified ? { modified } : {})
+            } as IAsset;
+        });
+    },
+
+    /**
+     * Parses a ZIP archive's central directory to recover each entry's last-modified
+     * timestamp. This is necessary because fflate's unzipSync()/Unzip streaming API
+     * do not expose per-entry modification dates (only name, compression and sizes).
+     *
+     * ZIP entries store modification date/time as MS-DOS date/time fields (see
+     * PKZIP APPNOTE.txt, section 4.4.6). This is a lightweight, dependency-free
+     * parser that walks the central directory records only (not the raw file data).
+     *
+     * @param bytes - raw bytes of the ZIP archive
+     * @returns a Map from entry name to ISO date string (best-effort; entries whose
+     *          date could not be determined are omitted)
+     */
+    getZipEntryModifiedDates(bytes: Uint8Array): Map<string, string> {
+        const result = new Map<string, string>();
+        try {
+            const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+            const EOCD_SIG = 0x06054b50;
+            const CDH_SIG = 0x02014b50;
+
+            // Locate the End Of Central Directory record by scanning backwards
+            // (it may be followed by a variable-length comment field).
+            let eocdOffset = -1;
+            const maxCommentLen = 65535;
+            const minPos = Math.max(0, bytes.length - 22 - maxCommentLen);
+            for (let i = bytes.length - 22; i >= minPos; i--) {
+                if (view.getUint32(i, true) === EOCD_SIG) {
+                    eocdOffset = i;
+                    break;
+                }
+            }
+            if (eocdOffset < 0) {
+                return result;
+            }
+
+            let cdOffset = view.getUint32(eocdOffset + 16, true);
+            const cdEntryCount = view.getUint16(eocdOffset + 10, true);
+
+            for (let i = 0; i < cdEntryCount; i++) {
+                if (cdOffset + 46 > bytes.length || view.getUint32(cdOffset, true) !== CDH_SIG) {
+                    break;
+                }
+                const modTime = view.getUint16(cdOffset + 12, true);
+                const modDate = view.getUint16(cdOffset + 14, true);
+                const nameLen = view.getUint16(cdOffset + 28, true);
+                const extraLen = view.getUint16(cdOffset + 30, true);
+                const commentLen = view.getUint16(cdOffset + 32, true);
+                const nameBytes = bytes.subarray(cdOffset + 46, cdOffset + 46 + nameLen);
+                const name = strFromU8(nameBytes, true);
+
+                const date = this.dosDateTimeToDate(modDate, modTime);
+                if (date) {
+                    result.set(name, date.toISOString());
+                }
+
+                cdOffset += 46 + nameLen + extraLen + commentLen;
+            }
+        } catch (e: unknown) {
+            LOG.debug('PLI.getZipEntryModifiedDates: failed to parse ZIP central directory', e);
+        }
+        return result;
+    },
+
+    /**
+     * Converts MS-DOS date/time fields (as used in ZIP archives) to a JavaScript Date.
+     * @param dosDate - MS-DOS date word
+     * @param dosTime - MS-DOS time word
+     * @returns a Date, or null if the fields are invalid
+     */
+    dosDateTimeToDate(dosDate: number, dosTime: number): Date | null {
+        const day = dosDate & 0x1f;
+        const month = (dosDate >> 5) & 0x0f; // 1-12
+        const year = ((dosDate >> 9) & 0x7f) + 1980;
+        const second = (dosTime & 0x1f) * 2;
+        const minute = (dosTime >> 5) & 0x3f;
+        const hour = (dosTime >> 11) & 0x1f;
+
+        if (month < 1 || month > 12 || day < 1 || day > 31) {
+            return null;
+        }
+        return new Date(year, month - 1, day, hour, minute, second);
     },
 
     /**

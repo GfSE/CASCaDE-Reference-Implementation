@@ -83,6 +83,7 @@ import { ItemCache } from '@/stores/item-cache';
 import { PLI } from '@/common/lib/platform-independence';
 import { LIB, LOG } from '@/common/lib/helpers';
 import { ExportConfig } from '@/plugins/export/export-config';
+import { PigItemType } from '@/common/schema/pig/ts/pig-metaclasses';
 
 /**
  * Generic export dialog, driven by a format-specific ExportConfig (see export-config.ts).
@@ -192,6 +193,48 @@ import { ExportConfig } from '@/plugins/export/export-config';
             return name;
         },
 
+        /**
+         * Collect the filenames of all assets referenced by the given items (a package
+         * plus its graph items, as returned by APackage.getItems()). Scans:
+         * - title, description, definition (ILanguageText[]) for <img src="..."> and
+         *   <object data="..."> references, on all item kinds
+         * - hasProperty[].value (configured string properties) on anEntity/aRelationship
+         *   instances, which are likewise plain strings that may embed <img>/<object> tags
+         *
+         * @param items - items as returned by APackage.getItems()
+         * @returns Set of referenced asset filenames (deduplicated)
+         */
+        collectReferencedAssetFilenames(items: any[]): Set<string> {
+            const filenames = new Set<string>();
+
+            const scanLanguageTexts = (arr: any[] | undefined) => {
+                if (!Array.isArray(arr)) return;
+                for (const entry of arr) {
+                    for (const ref of LIB.extractAssetReferences(entry?.value)) {
+                        filenames.add(ref);
+                    }
+                }
+            };
+
+            for (const item of items) {
+                scanLanguageTexts(item.title);
+                scanLanguageTexts(item.description);
+                scanLanguageTexts(item.definition);
+
+                // Configured string properties (multiLanguage-like) only exist on
+                // instances (anEntity/aRelationship), not on classes:
+                if ((item.itemType === PigItemType.anEntity || item.itemType === PigItemType.aRelationship) && Array.isArray(item.hasProperty)) {
+                    for (const prop of item.hasProperty) {
+                        for (const ref of LIB.extractAssetReferences(prop?.value)) {
+                            filenames.add(ref);
+                        }
+                    }
+                }
+            }
+
+            return filenames;
+        },
+
         async exportPackages() {
             // Reset messages
             this.errorMessage = '';
@@ -210,15 +253,41 @@ import { ExportConfig } from '@/plugins/export/export-config';
                 // (nested) packages are not exported as their own top-level entry
                 // here - the format-specific transformFn/serializer already emits
                 // them as a lightweight proxy within their containing package's
-                // own output (see makePackageProxy in pig-metaclasses.ts).
+                // own output (see APackage.getProxy() in pig-metaclasses.ts).
                 const usedNames = new Set<string>();
-                const entries: Record<string, string> = {};
+                const entries: Record<string, string | Uint8Array> = {};
+                const referencedAssetFilenames = new Set<string>();
                 for (const pkg of pkgs) {
                     // Use toRaw to unwrap Pinia's reactive proxy
                     const rawPkg = toRaw(pkg) as any;
                     const transformed = config.transformFn(rawPkg, this.optionValues);
                     const entryName = this.makeEntryName(rawPkg, extension, usedNames);
                     entries[entryName] = this.toEntryBytes(transformed);
+
+                    // Scan the package's own items (title/description/definition and
+                    // configured string properties) for referenced asset files
+                    // (<img src="...">, <object data="...">), so they can be bundled
+                    // into the ZIP alongside the graph payload:
+                    const items = typeof rawPkg.getItems === 'function' ? rawPkg.getItems() : [rawPkg];
+                    for (const filename of this.collectReferencedAssetFilenames(items)) {
+                        referencedAssetFilenames.add(filename);
+                    }
+                }
+
+                // Add referenced assets (found in the asset cache) to the ZIP, at their
+                // original relative path/filename, so imports can resolve them again:
+                if (referencedAssetFilenames.size > 0) {
+                    const cachedAssets = await PLI.getAssets();
+                    for (const asset of cachedAssets) {
+                        if (!referencedAssetFilenames.has(asset.filename)) continue;
+                        if (entries[asset.filename] !== undefined) continue; // already present (e.g. duplicate reference)
+                        try {
+                            const buffer = await asset.blob.arrayBuffer();
+                            entries[asset.filename] = new Uint8Array(buffer);
+                        } catch (e: unknown) {
+                            LOG.warn(`[${config.componentName}] Failed to read referenced asset '${asset.filename}' for export:`, e);
+                        }
+                    }
                 }
 
                 const zipResult = PLI.createZip(entries);

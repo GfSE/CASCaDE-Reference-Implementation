@@ -228,6 +228,15 @@ export class PigItem {
     static isIdentifiable(iType: PigItemTypeValue): boolean {
         return this.isInstance(iType) || this.isClass(iType);
     }
+    /**
+     * Check if the given item is itself a package (itemType aPackage).
+     * Used to detect a package that is contained (nested) within another
+     * package's graph, meaning it must be exported as a proxy only (see
+     * APackage.getProxy()), not with its full graph.
+     */
+    static isAPackage(item: TPigItem): boolean {
+        return item?.itemType === PigItemType.aPackage;
+    }
 
     /**
      * Check if an itemType can be instantiated by the factory
@@ -1600,37 +1609,29 @@ export interface IAPackageProxy {
     creator?: string;
 }
 
-/**
- * Build a proxy representation of a package that is contained within another
- * package's graph, carrying only id, modified, revision and creator - never
- * its full graph. Used by all exporters (JSON-LD, XML, TTL, Cypher) when a
- * graph item turns out to be an itemType aPackage (nested package).
- */
-export function makePackageProxy(pkg: TPigItem): IAPackageProxy {
-    return LIB.stripUndefinedAndNull({
-        id: pkg.id,
-        itemType: PigItemType.aPackage,
-        modified: (pkg as any).modified,
-        revision: (pkg as any).revision,
-        creator: (pkg as any).creator
-    }) as IAPackageProxy;
-}
-
-/**
- * Type guard: true if the given graph item is itself a package (nested/contained
- * package), meaning it must be exported as a proxy only (see makePackageProxy),
- * not with its full graph.
- */
-export function isContainedPackage(item: TPigItem): boolean {
-    return item?.itemType === PigItemType.aPackage;
-}
-
 export class APackage extends AnElement implements IAPackage {
     context?: INamespace[] | string | Record<string, string>;
     graph: TPigItem[] = [];
 
     constructor() {
         super({ itemType: PigItemType.aPackage });
+    }
+
+    /**
+     * Build a proxy representation of this package, for use when it is
+     * contained (nested) within another package's graph, carrying only id,
+     * modified, revision and creator - never its full graph. Used by all
+     * exporters (JSON-LD, XML, TTL, Cypher) when a graph item turns out to
+     * be an itemType aPackage (nested package).
+     */
+    getProxy(): IAPackageProxy {
+        return LIB.stripUndefinedAndNull({
+            id: this.id,
+            itemType: PigItemType.aPackage,
+            modified: this.modified,
+            revision: this.revision,
+            creator: this.creator
+        }) as IAPackageProxy;
     }
 
     validate(pkg: IAPackage, options?: any ): IRsp {

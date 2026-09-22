@@ -50,7 +50,7 @@ import {
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
     AProperty, ATargetLink, ASourceLink,
-    isContainedPackage, makePackageProxy, IAPackageProxy
+    IAPackageProxy
 } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsTTL {
@@ -725,8 +725,8 @@ class GetTTL {
         // graph - to avoid duplicating/interleaving a nested package's
         // contents with its own top-level export.
         for (const item of items) {
-            if (isContainedPackage(item)) {
-                ttl += this.xPackageProxy(makePackageProxy(item), rdf);
+            if (PigItem.isAPackage(item)) {
+                ttl += this.xPackageProxy((item as APackage).getProxy(), rdf);
             } else {
                 ttl += getTTL(item, options);
             }

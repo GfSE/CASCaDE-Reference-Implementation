@@ -41,7 +41,7 @@ import {
     TPigId, TPigItem, PigItem, PigItemType, /*PigItemTypeValue, */
     AnEntity, APackage, ARelationship,
     Entity, Relationship,Property, Link, Enumeration,
-    isContainedPackage, makePackageProxy
+
 } from '../../schema/pig/ts/pig-metaclasses';
 
 /*
@@ -214,8 +214,8 @@ class GetJSONLD {
             // their full graph - to avoid duplicating/interleaving a nested
             // package's contents with its own top-level export.
             return graph.map(item => {
-                if (isContainedPackage(item))
-                    return makePackageProxy(item) as unknown as JsonObject;
+                if (PigItem.isAPackage(item))
+                    return (item as APackage).getProxy() as unknown as JsonObject;
                 // LOG.debug('Transforming graph items to JSON-LD', item, typeof (item), (item as any).constructor.name);
                 return getJSONLD(item) as JsonObject;
             });

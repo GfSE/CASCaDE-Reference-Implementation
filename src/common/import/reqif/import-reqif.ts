@@ -207,6 +207,18 @@ export class ReqifImporter {
         if (!rsp.ok) {
             return rsp;
         }
+
+        // Extract any other (non-.reqif) files bundled in the archive (e.g. images
+        // referenced by requirements) and store them in the asset-cache for later use.
+        const rspOther = PLI.extractOtherFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name.toLowerCase().endsWith('.reqif'),
+            filename
+        );
+        if (rspOther.ok) {
+            await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
+        }
+
         return rsp;
     }
 

@@ -1,5 +1,5 @@
 import { JsonValue } from '../../lib/helpers';
-import { APackage, TPigItem as TCascaraItem, PigItemTypeValue as TCascaraItemTypeValue, isContainedPackage, makePackageProxy } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage, TPigItem as TCascaraItem, PigItemTypeValue as TCascaraItemTypeValue, PigItem } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsCypher {
     includeConstraints?: boolean;
@@ -57,7 +57,7 @@ function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string
     // never with their full graph - to avoid duplicating/interleaving a nested
     // package's contents with its own top-level export.
     const graphItems: TCascaraItem[] = rawGraphItems.map(item =>
-        isContainedPackage(item) ? (makePackageProxy(item) as unknown as TCascaraItem) : item
+        PigItem.isAPackage(item) ? ((item as APackage).getProxy() as unknown as TCascaraItem) : item
     );
 
     // Pass 1: create all real nodes first.

@@ -163,6 +163,18 @@ export class JsonldImporter {
         if (!rsp.ok) {
             return rsp;
         }
+
+        // Extract any other (non-.jsonld) files bundled in the archive (e.g. images) and
+        // store them in the asset-cache for later use.
+        const rspOther = PLI.extractOtherFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name.toLowerCase().endsWith('.jsonld'),
+            filename
+        );
+        if (rspOther.ok) {
+            await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
+        }
+
         return rsp;
     }
 

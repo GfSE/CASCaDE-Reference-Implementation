@@ -10,7 +10,9 @@ import { LOG } from '../common/lib/helpers'
 const LEGACY_STORAGE_KEY = 'cascara-packages';
 
 const DB_NAME = 'cascara-db';
-const DB_VERSION = 2;
+// Shared with asset-cache.ts's database; bumped to add the 'assetCache' store.
+// Keep in sync with asset-cache.ts's DB_VERSION.
+const DB_VERSION = 3;
 const STORE_NAME = 'itemCache';
 const RECORD_KEY = 'packages';
 
@@ -20,6 +22,8 @@ const RECORD_KEY = 'packages';
 class idb {
     /**
      * Open (and if necessary create) the IndexedDB database used to persist the item cache.
+     * Also (defensively) ensures the 'assetCache' store used by asset-cache.ts exists,
+     * since both caches share the same underlying database.
      */
     static async open(): Promise<IDBDatabase> {
         return new Promise((resolve, reject) => {
@@ -28,6 +32,9 @@ class idb {
                 const db = request.result;
                 if (!db.objectStoreNames.contains(STORE_NAME)) {
                     db.createObjectStore(STORE_NAME);
+                }
+                if (!db.objectStoreNames.contains('assetCache')) {
+                    db.createObjectStore('assetCache');
                 }
             };
             request.onsuccess = () => resolve(request.result);

@@ -15,6 +15,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { zipSync, strToU8 } from 'fflate';
+import { setActivePinia, createPinia } from 'pinia';
 
 import { PLI } from '../../src/common/lib/platform-independence';
 import { ReqifImporter } from '../../src/common/import/reqif/import-reqif';
@@ -67,6 +68,7 @@ describe('Importers unpack zipped input files', () => {
     let tmpDir: string;
 
     beforeAll(() => {
+        setActivePinia(createPinia());
         tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'cascade-unzip-test-'));
     });
 
