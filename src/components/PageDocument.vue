@@ -34,7 +34,7 @@
                     <v-card-title tag="h2">Content</v-card-title>
                     <v-divider />
                     <v-card-text class="pane-scroll">
-                        <div v-if="selectedHtml" v-html="selectedHtml"></div>
+                        <div v-if="selectedHtml" ref="contentEl" v-html="selectedHtml"></div>
                         <div v-else>Select an item from the left</div>
                     </v-card-text>
                 </v-card>
@@ -47,7 +47,7 @@
     import { Vue, Options } from 'vue-class-component'
     import { toRaw } from 'vue'
     import { ItemCache } from '@/stores/item-cache'
-    import { getHTML, stringHTML } from '@/common/export/html/getHTML'
+    import { getHTML, resolveAssetImages, stringHTML } from '@/common/export/html/getHTML'
     import { APackage, AnEntity, PigItemType } from '@/common/schema/pig/ts/pig-metaclasses'
     import OutlineTreeItem from './OutlineTreeItem.vue'
     // OutlineNode is declared and exported from OutlineTreeItem.vue; since the '*.vue'
@@ -133,6 +133,16 @@
                 selectedId: null as string | null,
                 // Ids of outline nodes whose children are currently expanded (Vuetify v-list 'opened' model):
                 openedIds: [] as string[]
+            }
+        },
+        watch: {
+            // The content pane's HTML (containing image placeholders inserted by
+            // getHTML()) changes whenever the selected outline item changes;
+            // resolve the placeholders again once the new HTML has been rendered:
+            selectedHtml() {
+                this.$nextTick(() => {
+                    resolveAssetImages(this.$refs.contentEl as HTMLElement | undefined)
+                })
             }
         },
         computed: {
@@ -406,6 +416,9 @@
                 this.selectedId = this.flatOutline[0].id
                 this.focusItem(this.selectedId)
             }
+            this.$nextTick(() => {
+                resolveAssetImages(this.$refs.contentEl as HTMLElement | undefined)
+            })
         }
     })
 
@@ -440,5 +453,15 @@
         min-height: 24px !important;
         padding-top: 2px !important;
         padding-bottom: 2px !important;
+    }
+
+    /* Images/SVGs inserted via v-html (e.g. by getHTML()/resolveAssetImages())
+       are shown at their original size when smaller than the column/pane, and
+       scaled down proportionally (never cropped) when they are wider: */
+    .pane-scroll ::v-deep(img),
+    .pane-scroll ::v-deep(svg) {
+        max-width: 100%;
+        width: auto;
+        height: auto;
     }
 </style>

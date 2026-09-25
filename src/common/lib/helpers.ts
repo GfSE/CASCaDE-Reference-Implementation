@@ -17,7 +17,7 @@
  */
 
 import type { IIdentifiable } from '../schema/pig/ts/pig-metaclasses';
-import { DEF } from './definitions';
+import { DEF, RE } from './definitions';
 
 /**
  * JSON helper types
@@ -83,32 +83,57 @@ export const LIB = {
 
     /**
      * Scan a string (typically an ILanguageText.value or an AProperty.value that may
-     * contain embedded HTML/XML) for references to external asset files via
-     * <img src="..."> and <object data="..."> tags.
+     * contain embedded HTML/XML and/or Markdown) for references to external asset
+     * files via <img src="...">, <object data="..."> tags, and Markdown-style links
+     * / images ([label](link) or ![label](link)).
      *
      * Used by export routines to discover which cached assets (images etc.) must be
      * bundled into the export ZIP alongside the graph payload, so a subsequent import
-     * can resolve those references again.
+     * can resolve those references again. Only *relative* references are returned,
+     * since the asset cache only ever holds relative filenames (as extracted from an
+     * import ZIP); fully qualified external references (e.g. 'https://...', '//...',
+     * 'data:...') are not assets to be bundled and are skipped.
      *
-     * @param text - text potentially containing <img>/<object> tags
-     * @returns array of referenced filenames/paths (as found in the src/data attribute),
-     *          possibly empty; duplicates are not removed (caller may dedupe via a Set)
+     * @param text - text potentially containing <img>/<object> tags or Markdown links
+     * @returns array of referenced relative filenames/paths (as found in the src/data
+     *          attribute or the Markdown link target), possibly empty; duplicates are
+     *          not removed (caller may dedupe via a Set)
      */
     extractAssetReferences(text: string | undefined | null): string[] {
         if (!text || typeof text !== 'string') return [];
 
         const refs: string[] = [];
-        const imgRe = /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
-        const objectRe = /<object\b[^>]*\bdata\s*=\s*["']([^"']+)["']/gi;
+        // const imgRe = /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
+        // const objectRe = /<object\b[^>]*\bdata\s*=\s*["']([^"']+)["']/gi;
+        // Markdown link/image: [label](link) or ![label](link); link may optionally
+        // be followed by a quoted title, e.g. [label](link "title")
+        const markdownRe = /!?\[[^\]]*\]\(\s*([^\s)]+)(?:\s+"[^"]*")?\s*\)/g;
 
         let m: RegExpExecArray | null;
-        while ((m = imgRe.exec(text)) !== null) {
+        while ((m = RE.tagImg.exec(text)) !== null) {
+            refs.push(m[2]);
+        }
+        while ((m = RE.tagSingleObject.exec(text)) !== null) {
+            refs.push(m[2]);
+        }
+        while ((m = markdownRe.exec(text)) !== null) {
             refs.push(m[1]);
         }
-        while ((m = objectRe.exec(text)) !== null) {
-            refs.push(m[1]);
-        }
-        return refs;
+        return refs.filter(ref => LIB.isRelativeReference(ref));
+    },
+
+    /**
+     * Check whether a reference (e.g. from an <img src="..."> or <object data="...">
+     * attribute) is a relative path, as opposed to a fully qualified external
+     * reference (absolute URL with a scheme, protocol-relative URL, or a data URI).
+     *
+     * @param ref - the reference/path to check
+     * @returns true if the reference is relative
+     */
+    isRelativeReference(ref: string): boolean {
+        if (!ref) return false;
+        // Reject: 'scheme:...' (e.g. https:, mailto:, data:), '//...' (protocol-relative)
+        return !/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(ref) && !ref.startsWith('//');
     },
 
     /**
@@ -587,12 +612,18 @@ export const LIB = {
         if (typeof btoa === 'function') {
             return btoa(value);
         }
-
         if (typeof Buffer !== 'undefined') {
             return Buffer.from(value, 'utf-8').toString('base64');
         }
-
         throw new Error('Base64 encoding is not available in this environment.');
+    },
+    blobToDataURL(blob: Blob): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(blob);
+        });
     }
 };
 

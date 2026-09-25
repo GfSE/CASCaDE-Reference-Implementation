@@ -448,7 +448,7 @@
         <xsl:variable name="descriptionValue">
             <xsl:choose>
                 <xsl:when test="string-length(normalize-space($descriptionValueXhtml)) &gt; 0">
-                    <xsl:value-of select="$descriptionValueXhtml"/>
+                    <xsl:copy-of select="$descriptionValueXhtml"/>
                 </xsl:when>
                 <xsl:when test="string-length(normalize-space($descriptionValueString)) &gt; 0">
                     <xsl:value-of select="$descriptionValueString"/>
@@ -484,7 +484,7 @@
             <!-- Description: Output only if found -->
             <xsl:if test="$hasDescription">
                 <dcterms:description>
-                    <xsl:value-of select="$descriptionValue"/>
+                    <xsl:copy-of select="$descriptionValue"/>
                 </dcterms:description>
             </xsl:if>
             <dcterms:modified>
@@ -601,7 +601,7 @@
             <!-- Description: Output only if found -->
             <xsl:if test="$hasDescription">
                 <dcterms:description>
-                    <xsl:value-of select="$descriptionValue"/>
+                    <xsl:copy-of select="$descriptionValue"/>
                 </dcterms:description>
             </xsl:if>
             <dcterms:modified>
@@ -741,7 +741,7 @@
             <!-- Description: Output only if found -->
             <xsl:if test="$hasDescription">
                 <dcterms:description>
-                    <xsl:value-of select="$descriptionValue"/>
+                    <xsl:copy-of select="$descriptionValue"/>
                 </dcterms:description>
             </xsl:if>
             <dcterms:modified>

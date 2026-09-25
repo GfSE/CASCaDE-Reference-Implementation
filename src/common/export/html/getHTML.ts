@@ -32,11 +32,17 @@
  *   These have been calling the static methods in this module.
  *   However, to avoid a dependency of pig-metaclasses to this module, the getHTML methods have been removed.
  *   Now, for creating an HTML representation call getHTML(item,options) instead of item.getHTML(options).
+ * - The HTML output is designed to be inserted into a web page, e.g. via v-html in Vue.js.
+ * - The HTML output is sanitized to prevent XSS and other security issues.
+ * - getHTML is synchronous, while resolveAssetImages is asynchronous and
+ *   inserts the images into the DOM as soon as they are available.
  */
 
 
+import { RE } from '../../lib/definitions';
 import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement } from '../../schema/pig/ts/pig-metaclasses';
-import { tagIETF, LIB } from '../../lib/helpers';
+import { tagIETF, LIB, LOG } from '../../lib/helpers';
+import { PLI } from '../../lib/platform-independence';
 
 export type stringHTML = string;  // contains HTML code
 export interface IOptionsHTML {
@@ -86,12 +92,13 @@ class GetHTML {
 
         const titleText = passify(LIB.stripHTML(LIB.getLocalText(pkg.title, lang)));
         const descText = passify(LIB.getLocalText(pkg.description, lang));
-        const propertiesHTML = propertiesToHTML(pkg, lang);
+        const { propertiesHTML, diagramHTML } = propertiesToHTML(pkg, lang);
 
         const pkgHTML = `<div class="meta-aPackage">
                 <div class="col-main" style="flex: 0 0 ${widthMain};">
                     <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
                     ${descText ? `<div class="meta-description">${descText}</div>` : ''}
+                    ${diagramHTML}
                     ${errHTML}
                 </div>
                 <div class="col-right" ><dl class="dl-horizontal">
@@ -125,12 +132,13 @@ class GetHTML {
 
         const titleText = passify(LIB.stripHTML(LIB.getLocalText(entity.title, lang)));
         const descText = passify(LIB.getLocalText(entity.description, lang));
-        const propertiesHTML = propertiesToHTML(entity, lang);
+        const { propertiesHTML, diagramHTML } = propertiesToHTML(entity, lang);
 
         return `<div class="meta-anEntity">
                     <div class="col-main" style="flex: 0 0 ${widthMain};">
                         ${titleText ? `<h3 class="meta-title">${titleText}</h3>` : ''}
                         ${descText ? `<div class="meta-description">${descText}</div>` : ''}
+                        ${diagramHTML}
                     </div>
                     <div class="col-right" ><dl class="dl-horizontal">
                         ${propertiesHTML}
@@ -185,11 +193,10 @@ class GetHTML {
  * const safe = passify(unsafeDataUrl);
  * // Returns: '<img src="#">' (blocked)
  */
-
 function passify(html: string): string {
     if (!html || typeof html !== 'string') return '';
 
-    let passified = html;
+    let passified = insertAssetPlaceholders(html);
 
     // 1. Process <object> tags - keep only safe media types
     const safeMediaTypes = new Set([
@@ -331,19 +338,198 @@ function metadataToHTML(item: TPigAnElement, lang: tagIETF): string {
                 + (item.revision && item.revision.length > 0 ? `<dt>Revision</dt><dd>${passify(item.revision)}</dd>` : '')
                 + (item.priorRevision && item.priorRevision.length > 0 ? `<dt>Prior Revisions</dt><dd>${item.priorRevision.map((r: string) => passify(r)).join(', ')}</dd>` : '');
 }
-function propertiesToHTML(el: TPigAnElement, lang: tagIETF): string {
+
+function propertiesToHTML(el: TPigAnElement, lang: tagIETF): { propertiesHTML: string; diagramHTML: string } {
     let propertiesHTML = '';
+    let diagramHTML = '';
     if (el.hasProperty?.length > 0) {
         // the configured properties:
         for (const prop of el.hasProperty) {
             const propData = prop.get() as IAProperty;
             if (propData && propData.instanceOf) {
                 const propValue = passify((propData.value) as string);
+                if (propData.instanceOf === 'cas:Diagram') {
+                    // Diagrams belong in the main pane, alongside title/description,
+                    // rather than the metadata list on the right; omit the class/name:
+                    diagramHTML += `<div class="meta-diagram">${propValue}</div>`;
+                    continue;
+                }
                 const propClass = passify(propData.instanceOf);
                 propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
             }
         }
     }
     propertiesHTML += metadataToHTML(el, lang);
-    return propertiesHTML;
+    return { propertiesHTML, diagramHTML };
+}
+
+function showError(img: HTMLImageElement, message: string): void {
+    const errorEl = document.createElement('span');
+    errorEl.className = 'meta-error';
+    errorEl.style.color = 'red';
+    errorEl.textContent = message;
+    img.replaceWith(errorEl);
+}
+
+// Displayable raster/vector image extensions handled by resolveAssetImages():
+const DISPLAYABLE_IMAGE_EXT = /\.(png|jpe?g|gif|svg)(?:[?#].*)?$/i;
+// 1x1 transparent GIF used as a placeholder src until the real asset is resolved:
+const PLACEHOLDER_IMG_SRC = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+export const PENDING_ASSET_CLASS = 'asset-pending';
+
+function escapeAttr(value: string): string {
+    return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+/**
+ * Replace <img src="..."> and <object data="..." type="image/...">...</object>
+ * references to displayable image files (png, jpg, jpeg, svg) with a placeholder
+ * <img> element carrying the original reference in a 'data-asset-ref' attribute.
+ * The placeholder is later resolved asynchronously by resolveAssetImages(), which
+ * fetches the actual image (from the asset cache for relative references, or via
+ * HTTP for fully qualified references) and inserts it into the DOM - as a data URL
+ * for png/jpg/jpeg, or as inline <svg> markup for svg.
+ * This keeps getHTML()/passify() fully synchronous.
+ *
+ * @param html - HTML string potentially containing <img>/<object> image references
+ * @returns HTML string with displayable image references replaced by placeholders
+ */
+function insertAssetPlaceholders(html: string): string {
+    let result = html;
+
+    // <object data="ref" type="image/...">content</object> -> placeholder <img>
+    result = result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {
+        const attrs = `${before} ${after}`;
+        const typeMatch = attrs.match(/type\s*=\s*["']([^"']+)["']/i);
+        const mimeType = typeMatch ? typeMatch[1].toLowerCase() : '';
+        const isImageType = mimeType.startsWith('image/');
+        if (!isImageType && !DISPLAYABLE_IMAGE_EXT.test(ref)) {
+            return match; // leave for normal object handling
+        }
+        if (!DISPLAYABLE_IMAGE_EXT.test(ref) && !['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/svg+xml'].includes(mimeType)) {
+            return match; // not a displayable image type, leave for normal object handling
+        }
+        const alt = escapeAttr(String(content).trim().slice(0, 200) || ref);
+        return `<img class="${PENDING_ASSET_CLASS}" data-asset-ref="${escapeAttr(ref)}" alt="${alt}" src="${PLACEHOLDER_IMG_SRC}">`;
+    });
+
+    // <img src="ref" ...> -> placeholder <img> (skip refs already pointing to a data: URL)
+    result = result.replace(RE.tagImg, (match, before, ref, after) => {
+        if (/^data:/i.test(ref)) return match; // already inline, leave as-is
+        if (!DISPLAYABLE_IMAGE_EXT.test(ref)) return match; // not a recognized displayable image extension
+        const attrs = `${before} ${after}`;
+        const altMatch = attrs.match(/alt\s*=\s*["']([^"']*)["']/i);
+        const alt = escapeAttr(altMatch ? altMatch[1] : ref);
+        return `<img class="${PENDING_ASSET_CLASS}" data-asset-ref="${escapeAttr(ref)}" alt="${alt}" src="${PLACEHOLDER_IMG_SRC}">`;
+    });
+
+    return result;
+}
+/**
+ * Resolve all pending image placeholders (see insertAssetPlaceholders()) found
+ * within 'container' (or the whole document if omitted). Meant to be called once
+ * after HTML produced by getHTML()/GetHTML.* has been inserted into the DOM
+ * (e.g. via v-html), so that getHTML() itself can stay fully synchronous.
+ *
+ * For each placeholder <img class="pig-asset-pending" data-asset-ref="...">:
+ * - a fully qualified reference (http(s)://...) is fetched via the network,
+ * - a relative reference is looked up in the asset cache (PLI.getAssets()),
+ * - png/jpg/jpeg content is converted to a data: URL and set as the <img> src,
+ * - svg content is inserted directly, replacing the <img> with an inline <svg>,
+ * - if the asset cannot be obtained, the placeholder is replaced by a red
+ *   inline error message.
+ *
+ * @param container - DOM element to scan for pending placeholders; defaults to 'document'
+ */
+export async function resolveAssetImages(container?: ParentNode): Promise<void> {
+    if (!PLI.isBrowserEnv()) return;
+    const root: ParentNode = container ?? document;
+    const placeholders = Array.from(root.querySelectorAll(`img.${PENDING_ASSET_CLASS}[data-asset-ref]`)) as HTMLImageElement[];
+    if (placeholders.length === 0) return;
+
+    // Cache lookups/fetches by reference, since the same asset may be referenced
+    // by more than one placeholder within the same container:
+    const resolved = new Map<string, { ok: true; blob: Blob } | { ok: false; message: string }>();
+
+    async function resolveRef(ref: string): Promise<{ ok: true; blob: Blob } | { ok: false; message: string }> {
+        const cached = resolved.get(ref);
+        if (cached) return cached;
+
+        let result: { ok: true; blob: Blob } | { ok: false; message: string };
+        try {
+            if (LIB.isRelativeReference(ref)) {
+                const assets = await PLI.getAssets();
+                const asset = assets.find(a => a.filename === ref);
+                if (!asset) {
+                    result = { ok: false, message: `Image '${ref}' not found in asset cache.` };
+                } else {
+                    result = { ok: true, blob: asset.blob };
+                }
+            } else {
+                const response = await fetch(ref);
+                if (!response.ok) {
+                    result = { ok: false, message: `Failed to load image '${ref}' (HTTP ${response.status}).` };
+                } else {
+                    result = { ok: true, blob: await response.blob() };
+                }
+            }
+        } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            LOG.error(`resolveAssetImages: failed to obtain image '${ref}':`, e);
+            result = { ok: false, message: `Failed to load image '${ref}': ${msg}` };
+        }
+
+        resolved.set(ref, result);
+        return result;
+    }
+
+    await Promise.all(placeholders.map(async img => {
+        const ref = img.getAttribute('data-asset-ref');
+        if (!ref) return;
+
+        const outcome = await resolveRef(ref);
+        if (!outcome.ok) {
+            showError(img, outcome.message);
+            return;
+        }
+
+        try {
+            const isSvg = outcome.blob.type === 'image/svg+xml' || /\.svg(?:[?#].*)?$/i.test(ref);
+            if (isSvg) {
+                const svgText = await outcome.blob.text();
+                const parsed = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+                const svgEl = parsed.documentElement;
+                if (!svgEl || svgEl.nodeName.toLowerCase() !== 'svg' || parsed.querySelector('parsererror')) {
+                    showError(img, `Image '${ref}' is not a valid SVG.`);
+                    return;
+                }
+                const alt = img.getAttribute('alt');
+                if (alt) svgEl.setAttribute('aria-label', alt);
+                svgEl.classList.remove(PENDING_ASSET_CLASS);
+                // If the SVG already has a viewBox, keep its original width/height
+                // attributes: they define the intrinsic (original) size, and the
+                // CSS rule max-width: 100% will only shrink it when the column is
+                // narrower. If there is no viewBox, the width/height attributes
+                // (if any) are the only size reference, so derive a viewBox from
+                // them and drop the attributes - otherwise the SVG would have no
+                // intrinsic size and browsers may stretch it to fill the column:
+                if (!svgEl.getAttribute('viewBox')) {
+                    const w = parseFloat(svgEl.getAttribute('width') || '');
+                    const h = parseFloat(svgEl.getAttribute('height') || '');
+                    if (!isNaN(w) && !isNaN(h) && w > 0 && h > 0) {
+                        svgEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
+                    }
+                    svgEl.removeAttribute('width');
+                    svgEl.removeAttribute('height');
+                }
+                img.replaceWith(document.adoptNode(svgEl));
+            } else {
+                img.src = await LIB.blobToDataURL(outcome.blob);
+                img.classList.remove(PENDING_ASSET_CLASS);
+            }
+        } catch (e: unknown) {
+            LOG.error(`resolveAssetImages: failed to render image '${ref}':`, e);
+            showError(img, `Failed to render image '${ref}'.`);
+        }
+    }));
 }

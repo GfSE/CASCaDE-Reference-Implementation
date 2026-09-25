@@ -11,11 +11,11 @@
         "dcterms": "http://purl.org/dc/terms/",
         "FMC": "http://fmc-modeling.org#",
         "IREB": "https://cpre.ireb.org/en/downloads-and-resources/glossary#",
+        "ReqIF-WF": "https://www.prostep.org/fileadmin/downloads/Recommendation_ReqIF_V2_RZ3.pdf#",
         "oslc_rm": "http://open-services.net/ns/rm#",
         "oslc_cm": "http://open-services.net/ns/cm#",
         "cas": "https://product-information-graph.org/v0.2/metamodel#",
-        "SpecIF": "https://specif.de/v1.2/schema#",
-		"ReqIF-WF": "https://www.prostep.org/fileadmin/downloads/Recommendation_ReqIF_V2_RZ3.pdf#"
+        "SpecIF": "https://specif.de/v1.2/schema#"
     },
     "@id": "d:ACP-59c8a7730000bca80137509a49b1218b",
     "@type": "cas:Package",
@@ -33,7 +33,7 @@
         }
     ],
     "dcterms:creator": "od@enso-managers.de",
-    "dcterms:modified": "2026-05-14T08:43:31.525Z",
+    "dcterms:modified": "2026-09-25T10:35:36.394Z",
     "@graph": [
         {
             "@id": "cas:Organizer",
@@ -1494,7 +1494,7 @@
             "sh:maxCount": 1
         },
         {
-            "@id": "o:PC-Diagram-11217271637",
+            "@id": "o:PC-Diagram-7862215618",
             "@type": "owl:DatatypeProperty",
             "dcterms:title": [
                 {
@@ -1879,7 +1879,7 @@
                 }
             ],
             "cas:revision": "1.1",
-            "dcterms:modified": "2024-03-02T20:55:23.295Z",
+            "dcterms:modified": "2023-07-16T09:30:25.850Z",
             "cas:specializes": {
                 "@id": "cas:Entity"
             },
@@ -1898,7 +1898,7 @@
             ]
         },
         {
-            "@id": "o:RC-Paragraph-11217271637",
+            "@id": "o:RC-Paragraph-7862215618",
             "@type": "owl:Class",
             "dcterms:title": [
                 {
@@ -1925,7 +1925,7 @@
             },
             "cas:enumeratedProperty": [
                 {
-                    "@id": "o:PC-Diagram-11217271637"
+                    "@id": "o:PC-Diagram-7862215618"
                 },
                 {
                     "@id": "cas:Category"
@@ -5166,7 +5166,7 @@
             ],
             "cas:Diagram": [
                 {
-                    "@value": "<div> <p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/UP-Dose.png\" name=\"UP-Dose.png\" type=\"image/png\"/></p> </div>",
+                    "@value": "<div> <p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/UP-Dose.png\" name=\"UP-Dose.png\" type=\"image/png\"></object></p> </div>",
                     "cas:itemType": {
                         "@id": "cas:aProperty"
                     }
@@ -9568,7 +9568,7 @@
             "cas:itemType": {
                 "@id": "cas:anEntity"
             },
-            "dcterms:modified": "2026-05-14T08:43:32.023Z",
+            "dcterms:modified": "2026-09-25T10:35:36.795Z",
             "dcterms:title": [
                 {
                     "@value": "Hierarchy Root"
@@ -9581,43 +9581,43 @@
             ],
             "cas:lists": [
                 {
-                    "@id": "d:HR-Fld-59c8a7730000bca80137509a49b1218b-info",
+                    "@id": "d:Fld-59c8a7730000bca80137509a49b1218b-info",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
                 },
                 {
-                    "@id": "d:HR-Fld-5a5f54090000bca801375b04a668f1a7",
+                    "@id": "d:Fld-5a5f54090000bca801375b04a668f1a7",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
                 },
                 {
-                    "@id": "d:HR-Fld-5af3154d0000bca801379748537d7388",
+                    "@id": "d:Fld-5af3154d0000bca801379748537d7388",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
                 },
                 {
-                    "@id": "d:HR-Fld-5b8e98550000bca801371afb0c7b671b",
+                    "@id": "d:Fld-5b8e98550000bca801371afb0c7b671b",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
                 },
                 {
-                    "@id": "d:HR-Fld-59c8a7730000bca80137509a49b1218b",
+                    "@id": "d:Fld-59c8a7730000bca80137509a49b1218b",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
                 },
                 {
-                    "@id": "d:HR-k9qMB6fnxPTk942dvPKdyvnwnoQ",
+                    "@id": "d:Fld-ef47e6970000c3a80139dc747c5df319",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
                 },
                 {
-                    "@id": "d:HR-FolderGlossary-8001804519",
+                    "@id": "d:R-CXjFlaXJIjvCmcg9kGgLEGaTszT",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
@@ -9643,40 +9643,6 @@
             "cas:itemType": {
                 "@id": "cas:anEntity"
             }
-        },
-        {
-            "@id": "d:HR-Fld-59c8a7730000bca80137509a49b1218b-info",
-            "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:31.736Z",
-            "dcterms:title": [
-                {
-                    "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
-                }
-            ],
-            "cas:Category": [
-                {
-                    "@value": "ReqIF:HierarchyRoot",
-                    "cas:itemType": {
-                        "@id": "cas:aProperty"
-                    }
-                }
-            ],
-            "cas:itemType": {
-                "@id": "cas:anEntity"
-            },
-            "cas:lists": [
-                {
-                    "@id": "d:Fld-59c8a7730000bca80137509a49b1218b-info",
-                    "cas:itemType": {
-                        "@id": "cas:aTargetLink"
-                    }
-                }
-            ]
         },
         {
             "@id": "d:Fld-5a5f54090000bca801375b04a668f1a7",
@@ -9718,40 +9684,6 @@
                 },
                 {
                     "@id": "d:Pln-5a7f99af0000bca8013754f2ef12d3e5",
-                    "cas:itemType": {
-                        "@id": "cas:aTargetLink"
-                    }
-                }
-            ]
-        },
-        {
-            "@id": "d:HR-Fld-5a5f54090000bca801375b04a668f1a7",
-            "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:31.736Z",
-            "dcterms:title": [
-                {
-                    "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
-                }
-            ],
-            "cas:Category": [
-                {
-                    "@value": "ReqIF:HierarchyRoot",
-                    "cas:itemType": {
-                        "@id": "cas:aProperty"
-                    }
-                }
-            ],
-            "cas:itemType": {
-                "@id": "cas:anEntity"
-            },
-            "cas:lists": [
-                {
-                    "@id": "d:Fld-5a5f54090000bca801375b04a668f1a7",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
@@ -9822,40 +9754,6 @@
             ]
         },
         {
-            "@id": "d:HR-Fld-5af3154d0000bca801379748537d7388",
-            "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:31.736Z",
-            "dcterms:title": [
-                {
-                    "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
-                }
-            ],
-            "cas:Category": [
-                {
-                    "@value": "ReqIF:HierarchyRoot",
-                    "cas:itemType": {
-                        "@id": "cas:aProperty"
-                    }
-                }
-            ],
-            "cas:itemType": {
-                "@id": "cas:anEntity"
-            },
-            "cas:lists": [
-                {
-                    "@id": "d:Fld-5af3154d0000bca801379748537d7388",
-                    "cas:itemType": {
-                        "@id": "cas:aTargetLink"
-                    }
-                }
-            ]
-        },
-        {
             "@id": "d:Fld-d1b1698a0000c3a801505b1b5698b7a1",
             "@type": "cas:Outline",
             "cas:revision": "22",
@@ -9906,6 +9804,424 @@
                     }
                 }
             ]
+        },
+        {
+            "@id": "d:Req-5b944fc70000bca8013763f44fdc0e03",
+            "@type": "IREB:Requirement",
+            "cas:revision": "26",
+            "dcterms:modified": "2017-06-19T20:13:09+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_003",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Instant use"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>85% of an arbitrarily selected group of test users understands and can use the system without reading a manual.</p> </div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusApproved",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityMedium",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupUser",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineMechanics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "SpecIF:EngineeringDisciplineSoftware",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "ReqIF-WF:SupplierStatus": [
+                {
+                    "@id": "ReqIF-WF:SupplierStatus.Agreed",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-5ba140d60000bca801372b09f9888eca",
+            "@type": "IREB:Requirement",
+            "cas:revision": "252",
+            "dcterms:modified": "2018-03-08T11:59:42+01:00",
+            "dcterms:creator": "supplier",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_008",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Instantaneous reaction"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> The reaction time of the system to user input is 'instantaneous' (&lt; 0,5 sec).</p></div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusDone",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityHigh",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupUser",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineSoftware",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "ReqIF-WF:SupplierStatus": [
+                {
+                    "@id": "ReqIF-WF:SupplierStatus.Agreed",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "ReqIF-WF:SupplierComment": [
+                {
+                    "@value": "Mais bien sûr.",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "ReqIF-WF:CustomerStatus": [
+                {
+                    "@id": "ReqIF-WF:CustomerStatus.ToEvaluate",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "ReqIF-WF:CustomerComment": [
+                {
+                    "@value": "Das ist ganz wichtig für uns.",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-ee452cf20000c3a8014035290669304d",
+            "@type": "IREB:Requirement",
+            "cas:revision": "27",
+            "dcterms:modified": "2017-06-19T20:13:10+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_011",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Consistent system behavior"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The system's behavior must be consistent. For example, controlling a dimmer must correspond with controlling a shade.</p> </div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusApproved",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityMedium",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupUser",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineMechanics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "SpecIF:EngineeringDisciplineSoftware",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-ee43fc4c0000c3a8014063d42c77767f",
+            "@type": "IREB:Requirement",
+            "cas:revision": "28",
+            "dcterms:modified": "2017-06-19T20:13:11+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_010",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "No dead-locks"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Under no circumstances the system may get stuck in a dead-lock. I.e. every sequence of input stimulation must be supported, even arbitrary sequences. Input stimulation which is not supported in a given system state is either refused with an error message, if a feedback channel is available, or it is simply ignored, otherwise.</p> </div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusApproved",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityHigh",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupSystem",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineElectronics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "SpecIF:EngineeringDisciplineSoftware",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
+            "@type": "IREB:Requirement",
+            "cas:revision": "29",
+            "dcterms:modified": "2017-06-19T20:13:11+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_002",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Overload protection"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The dimmer unit is protected against resistive overload and against any capacitive or inductive loads.</p> </div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusSubmitted",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityMedium",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupUser",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineElectronics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
+            "@type": "IREB:Requirement",
+            "cas:revision": "29",
+            "dcterms:modified": "2017-06-19T20:13:11+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_007",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Auto shut-off"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>In case of over-temperature the device is shut-off automatically by an electronic circuit.</p> </div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusSubmitted",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityMedium",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupSystem",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineElectronics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
         },
         {
             "@id": "d:Fld-d1b1d6c60000c3a80150fe9ce40e6588",
@@ -9964,6 +10280,340 @@
                     }
                 }
             ]
+        },
+        {
+            "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
+            "@type": "IREB:Requirement",
+            "cas:revision": "31",
+            "dcterms:modified": "2017-06-19T20:13:12+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_012",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Compliance with industry standards"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The system must comply with industry standards. Besides legal and safety requirements, compatibility with existing electrical installations, tools and commercial components is desired.</p> </div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusApproved",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityMedium",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupUser",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineMechanics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "SpecIF:EngineeringDisciplineElectronics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "SpecIF:EngineeringDisciplineSafety",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-5b95fae40000bca801372becc933682d",
+            "@type": "IREB:Requirement",
+            "cas:revision": "32",
+            "dcterms:modified": "2017-06-19T20:13:12+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_004",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Industry-standard mounting"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> The product fits into an industry-standard [[housing]] for flush-mounted devices (diameter &#x2300;68 mm). It is fixed with two screw-activated claws.</p></div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusSubmitted",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityHigh",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupSystem",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineMechanics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
+            "@type": "IREB:Requirement",
+            "cas:revision": "244",
+            "dcterms:modified": "2018-02-16T10:29:48+01:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_005",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Fire protection"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> The product must withstand 650°C (VDE 0606-1).</p></div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusSubmitted",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityHigh",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupUser",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineMechanics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "SpecIF:EngineeringDisciplineElectronics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-728c69c80018b1a8014b974542c36edc",
+            "@type": "IREB:Requirement",
+            "cas:revision": "247",
+            "dcterms:modified": "2018-02-28T13:16:17+01:00",
+            "dcterms:creator": "supplier",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_013",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Galvanic Isolation"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The load circuit with power stage is galvanically isolated from the controller.</p> </div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusSubmitted",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityHigh",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupSystem",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineElectronics",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "ReqIF-WF:SupplierComment": [
+                {
+                    "@value": "This is standard for all our products: expensive, but effective.",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "ReqIF-WF:CustomerStatus": [
+                {
+                    "@id": "ReqIF-WF:CustomerStatus.ToEvaluate",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:Req-5b9c950e0000bca801374f16615247b9",
+            "@type": "IREB:Requirement",
+            "cas:revision": "233",
+            "dcterms:modified": "2017-10-27T11:44:20+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "REQ_006",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "Complete state-machine"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> The system is controlled by a complete state-machine and must not have any dead-lock state.</p></div>"
+                }
+            ],
+            "SpecIF:LifecycleStatus": [
+                {
+                    "@id": "SpecIF:LifecycleStatusApproved",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityMedium",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:StakeholderGroup": [
+                {
+                    "@id": "SpecIF:StakeholderGroupSystem",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:EngineeringDiscipline": [
+                {
+                    "@id": "SpecIF:EngineeringDisciplineSoftware",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
         },
         {
             "@id": "d:Fld-d1b314890000c3a80150b71a1473d374",
@@ -10053,25 +10703,394 @@
             ]
         },
         {
-            "@id": "d:HR-Fld-5b8e98550000bca801371afb0c7b671b",
-            "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:31.736Z",
+            "@id": "d:MEl-5bd6bd890000bca8013739588a3f43d6",
+            "@type": "FMC:Actor",
+            "cas:revision": "239",
+            "dcterms:modified": "2017-11-11T16:16:13+01:00",
+            "dcterms:creator": "od",
             "dcterms:title": [
                 {
-                    "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
+                    "@value": "Bulb"
                 }
             ],
             "dcterms:description": [
                 {
-                    "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
+                    "@value": "<div><p> Dimmable candescent light-bulb 230V.</p></div>"
                 }
             ],
-            "cas:Category": [
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5bcfb01d0000bca80137f303272a5557",
+            "@type": "FMC:Actor",
+            "cas:revision": "50",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
                 {
-                    "@value": "ReqIF:HierarchyRoot",
-                    "cas:itemType": {
-                        "@id": "cas:aProperty"
-                    }
+                    "@value": "Shading"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Window-shade with 2 degrees of freedom: It can be moved up/down and the elements can be set straight/tilted. Both movements can be made proportionally with an electric drive.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
+            "@type": "FMC:State",
+            "cas:revision": "59",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Actuator Rods"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Up to four actuator rods connecting the buttons to electrical contacts.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a76365c0000bca8013776e91afd1e8e",
+            "@type": "FMC:Actor",
+            "cas:revision": "39",
+            "dcterms:modified": "2017-06-19T20:13:16+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Assembly Frame"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> Mounting frame screwed to or into a wall.</p></div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
+            "@type": "FMC:State",
+            "cas:revision": "60",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Control Signals"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2f95ec0000bca8013709bfa81d701f",
+            "@type": "FMC:Event",
+            "cas:revision": "81",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Decreasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45450be80000c3a801414f280f146c71",
+            "@type": "FMC:Event",
+            "cas:revision": "84",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down-long!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
+            "@type": "FMC:Event",
+            "cas:revision": "85",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down-short!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b149eab0000bca80137aad99b6eea7b",
+            "@type": "FMC:Event",
+            "cas:revision": "85",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Increasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b08ed8d0000bca8013719f554353b0e",
+            "@type": "FMC:Event",
+            "cas:revision": "86",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Intermediate"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453dfb670000c3a8014191107df4565e",
+            "@type": "FMC:Event",
+            "cas:revision": "87",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "max-reached!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b094f8a0000bca801374c798a6587ad",
+            "@type": "FMC:Event",
+            "cas:revision": "87",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Maximum"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45428b930000c3a80141e28b7d4b5ae5",
+            "@type": "FMC:Event",
+            "cas:revision": "88",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "min-reached!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b078fa50000bca80137f36ed05c43cb",
+            "@type": "FMC:Event",
+            "cas:revision": "89",
+            "dcterms:modified": "2017-06-19T20:13:31+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Minimum"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
+            "@type": "FMC:Event",
+            "cas:revision": "89",
+            "dcterms:modified": "2017-06-19T20:13:31+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "released!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2d29070000bca801378a6c020cf8f5",
+            "@type": "FMC:Actor",
+            "cas:revision": "51",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Start-decreasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b1750f80000bca801373b2d143d7478",
+            "@type": "FMC:Actor",
+            "cas:revision": "51",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Start-increasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2ddad80000bca80137c44d62ba97d8",
+            "@type": "FMC:Actor",
+            "cas:revision": "52",
+            "dcterms:modified": "2017-06-19T20:13:20+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Stop-decreasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2449180000bca8013722c01c9d35a5",
+            "@type": "FMC:Actor",
+            "cas:revision": "52",
+            "dcterms:modified": "2017-06-19T20:13:20+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Stop-increasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b0839b90000bca801376dcca41ca7d0",
+            "@type": "FMC:Actor",
+            "cas:revision": "53",
+            "dcterms:modified": "2017-06-19T20:13:20+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-off"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Switch to programmed min-value.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b07e6aa0000bca8013797aad9be69ae",
+            "@type": "FMC:Actor",
+            "cas:revision": "54",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-on"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Switch to programmed max-value.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
+            "@type": "FMC:Event",
+            "cas:revision": "91",
+            "dcterms:modified": "2017-06-19T20:13:32+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up-long!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453d34af0000c3a80141918f84641161",
+            "@type": "FMC:Event",
+            "cas:revision": "92",
+            "dcterms:modified": "2017-06-19T20:13:33+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up-short!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+            "@type": "FMC:Actor",
+            "cas:revision": "242",
+            "dcterms:modified": "2017-12-09T10:38:29+01:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dimmer Controller Software"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> Input commands (events):</p><ul> <li> up-long → increase brightness </li> <li> down-long → decrease brightness </li> <li> release → stop dimming, keep brightness </li> <li> up-short → switch to maximum </li> <li> down-short → switch to minimum </li> <li> inappropriate commands are ignored (e.g. up-long when maximum is set). </li> <li> set parameters </li></ul><p> Four parameters influence the behavior of the particular device:</p><ul> <li> minimum value (default: 0%) </li> <li> maximum value (default: 100%) </li> <li> ramp-up speed (default: 10% per sec) </li> <li> ramp-down speed (default: 10% per sec) </li></ul></div>"
                 }
             ],
             "cas:itemType": {
@@ -10079,7 +11098,1391 @@
             },
             "cas:lists": [
                 {
-                    "@id": "d:Fld-5b8e98550000bca801371afb0c7b671b",
+                    "@id": "d:MEl-5b2f95ec0000bca8013709bfa81d701f",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-45450be80000c3a801414f280f146c71",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b149eab0000bca80137aad99b6eea7b",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b08ed8d0000bca8013719f554353b0e",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-453dfb670000c3a8014191107df4565e",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b094f8a0000bca801374c798a6587ad",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-45428b930000c3a80141e28b7d4b5ae5",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b078fa50000bca80137f36ed05c43cb",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b2d29070000bca801378a6c020cf8f5",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b1750f80000bca801373b2d143d7478",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b2ddad80000bca80137c44d62ba97d8",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b2449180000bca8013722c01c9d35a5",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b0839b90000bca801376dcca41ca7d0",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5b07e6aa0000bca8013797aad9be69ae",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-453d34af0000c3a80141918f84641161",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+            "@type": "FMC:Actor",
+            "cas:revision": "44",
+            "dcterms:modified": "2017-06-19T20:13:17+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dimmer Electronics"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The Dimmer Electronics is a printed circuit board with low-power micro-processor, memory, binary as well as analog I/O signals and a power stage supporting the specified electric load.</p></div>"
+                }
+            ],
+            "cas:Diagram": [
+                {
+                    "@value": "<div><p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/Schaltplan.gif\" name=\"Schaltplan.gif\" type=\"image/gif\"/></p> </div>",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
+            "@type": "FMC:State",
+            "cas:revision": "62",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Electro-Magnetic Resistance"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Electromagnetic characteristics, especially EM-shielding.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+            "@type": "FMC:Actor",
+            "cas:revision": "47",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Housing"
+                }
+            ],
+            "cas:Diagram": [
+                {
+                    "@value": "<div> <p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/UP-Dose.png\" name=\"UP-Dose.png\" type=\"image/png\"/></p> </div>",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a87083e0000bca801379bb412523737",
+            "@type": "FMC:State",
+            "cas:revision": "65",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "I/O Pins"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>per input and output signal:</p> <ul> <li>hardware-address</li> <li>number of significant bits</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+            "@type": "FMC:State",
+            "cas:revision": "70",
+            "dcterms:modified": "2017-06-19T20:13:25+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Physical Space"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Effective 3D interior space and mounting for electronics.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
+            "@type": "FMC:State",
+            "cas:revision": "71",
+            "dcterms:modified": "2017-06-19T20:13:25+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Processor RAM ROM"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>EPROM-Size</p> <p>RAM-Size</p> <p>Processor type with instruction set and speed (MIPS)</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
+            "@type": "FMC:State",
+            "cas:revision": "77",
+            "dcterms:modified": "2017-06-19T20:13:27+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Thermal Resistance"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> Thermal resistance and thermal capacity of the [[housing]].</p></div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+            "@type": "FMC:Actor",
+            "cas:revision": "45",
+            "dcterms:modified": "2017-06-19T20:13:17+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dimmer Module"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The actuator module with dimmer function for resistive loads.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a87083e0000bca801379bb412523737",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-45450be80000c3a801414f280f146c71",
+            "@type": "FMC:Event",
+            "cas:revision": "84",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down-long!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
+            "@type": "FMC:Event",
+            "cas:revision": "85",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down-short!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
+            "@type": "FMC:Event",
+            "cas:revision": "89",
+            "dcterms:modified": "2017-06-19T20:13:31+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "released!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
+            "@type": "FMC:Event",
+            "cas:revision": "91",
+            "dcterms:modified": "2017-06-19T20:13:32+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up-long!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453d34af0000c3a80141918f84641161",
+            "@type": "FMC:Event",
+            "cas:revision": "92",
+            "dcterms:modified": "2017-06-19T20:13:33+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up-short!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45a236e00000c3a801410f6503287e16",
+            "@type": "FMC:Actor",
+            "cas:revision": "56",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wait for Activation"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The kind of activation is determined:</p> <ul> <li>Up- or Down-Button</li> <li>Short or long activation: 'Short' is &lt; 0,4 sec.</li> <li>Do only wait until the distinction between 'short' or 'long' can be made!</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45a3b13c0000c3a801415e97f5bc29d1",
+            "@type": "FMC:Actor",
+            "cas:revision": "57",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wait for Deactivation"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+            "@type": "FMC:Actor",
+            "cas:revision": "47",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Double-Button Observer Software"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>This is an observer of the double-button sensor. It distinguishes short and long pressing in the 'up' and 'down' directions. A discriminator may send five events:</p> <ul> <li>up-short</li> <li>down-short</li> <li>up-long</li> <li>down-long and </li> <li>release.</li> </ul><p>The events are interpreted and actions are initiated accordingly by the target actuator unit. The double button sensor and the observer have no notion of the underlying function.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-45450be80000c3a801414f280f146c71",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-453d34af0000c3a80141918f84641161",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-45a236e00000c3a801410f6503287e16",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-45a3b13c0000c3a801415e97f5bc29d1",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
+            "@type": "FMC:Actor",
+            "cas:revision": "46",
+            "dcterms:modified": "2017-06-19T20:13:17+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Double Button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The Double Button (a sensor unit) is a versatile all-mechanical unit used for multiple purposes. The mechanical position is transferred with a rod per button to the next unit where it is converted to an electrical signal.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+            "@type": "FMC:State",
+            "cas:revision": "61",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive down the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a99c89c0000bca801375d44cf9a50ca",
+            "@type": "FMC:State",
+            "cas:revision": "64",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Ground Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
+            "@type": "FMC:State",
+            "cas:revision": "67",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Load Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
+            "@type": "FMC:State",
+            "cas:revision": "69",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Neutral Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+            "@type": "FMC:State",
+            "cas:revision": "74",
+            "dcterms:modified": "2017-06-19T20:13:26+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Spring Clips"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Spring clips for mechanical connection.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
+            "@type": "FMC:State",
+            "cas:revision": "76",
+            "dcterms:modified": "2017-06-19T20:13:27+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Supply Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+            "@type": "FMC:State",
+            "cas:revision": "79",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive up the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+            "@type": "FMC:Actor",
+            "cas:revision": "58",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wireless Module"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Receives control commands via radio signal or the mechanical position of a mounted sensor unit. Sends electrical control signals to the mounted actuator module.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
+            "@type": "FMC:State",
+            "cas:revision": "80",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wireless Network"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+            "@type": "FMC:State",
+            "cas:revision": "63",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Flush-mounted Dimmer"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<p>A dimmer for electric loads in an industry-standard mounting frame which is flush with the wall surface. In other words, the dimmer is sitting in the wall and just the buttons are visible.</p>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a76365c0000bca8013776e91afd1e8e",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a99c89c0000bca801375d44cf9a50ca",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+            "@type": "FMC:State",
+            "cas:revision": "61",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive down the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
+            "@type": "FMC:State",
+            "cas:revision": "75",
+            "dcterms:modified": "2017-06-19T20:13:27+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "straighten"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to straighten the shading elements.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
+            "@type": "FMC:State",
+            "cas:revision": "78",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "tilt"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to tilt the shading elements.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+            "@type": "FMC:State",
+            "cas:revision": "79",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive up the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+            "@type": "FMC:State",
+            "cas:revision": "63",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Flush-mounted Shading Control"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-5bcf35cf0000bca8013776d68023612a",
+            "@type": "FMC:State",
+            "cas:revision": "68",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "M"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Actuator Motor 230V.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+            "@type": "FMC:State",
+            "cas:revision": "66",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Intelligent Shading Drive"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>An intelligent shading actuator with 2 drives for up/down straight/tilt motion. The unit comprises the control unit and the motors.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-5bcf35cf0000bca8013776d68023612a",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+            "@type": "FMC:State",
+            "cas:revision": "61",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive down the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+            "@type": "FMC:State",
+            "cas:revision": "79",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive up the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
+            "@type": "FMC:State",
+            "cas:revision": "72",
+            "dcterms:modified": "2017-06-19T20:13:26+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Remote Control"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
+            "@type": "FMC:Actor",
+            "cas:revision": "51",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "SmartHome Controller"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The controller </p> <ul> <li>interconnects locally distributed sensors and actuators, </li> <li>coordinates different actuators where appropriate and </li> <li>performes automatic functions, such as switching external lamps dependend on ambient light.</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
+            "@type": "FMC:State",
+            "cas:revision": "73",
+            "dcterms:modified": "2017-06-19T20:13:26+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "SmartHome System"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The new system for controlling all major functions of the private home:</p> <ul> <li>light/illumination</li> <li>window shades</li> <li>heating</li> <li>consumption meters for electricity, heat, gas and water.</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ]
+        },
+        {
+            "@id": "d:MEl-608177820000bca801379179ebf3b6aa",
+            "@type": "FMC:Actor",
+            "cas:revision": "40",
+            "dcterms:modified": "2017-06-19T20:13:16+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Briefly press Down-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press down-button &lt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-611366530000bca80137a97f194e96a3",
+            "@type": "FMC:Actor",
+            "cas:revision": "41",
+            "dcterms:modified": "2017-06-19T20:13:16+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Briefly press Up-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press up-button &lt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
+            "@type": "FMC:Event",
+            "cas:revision": "82",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dim-down!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
+            "@type": "FMC:Event",
+            "cas:revision": "83",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dim-up!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
+            "@type": "FMC:Event",
+            "cas:revision": "83",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Done!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-608239830000bca801373690c7d2af0f",
+            "@type": "FMC:Actor",
+            "cas:revision": "48",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Press and hold Down-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press down-button &gt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-610b07100000bca80137c10f96c46247",
+            "@type": "FMC:Actor",
+            "cas:revision": "49",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Press and hold Up-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press up-button &gt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
+            "@type": "FMC:Actor",
+            "cas:revision": "49",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Release button"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
+            "@type": "FMC:Event",
+            "cas:revision": "90",
+            "dcterms:modified": "2017-06-19T20:13:31+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Stop dimming!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
+            "@type": "FMC:Event",
+            "cas:revision": "91",
+            "dcterms:modified": "2017-06-19T20:13:32+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-off!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
+            "@type": "FMC:Event",
+            "cas:revision": "91",
+            "dcterms:modified": "2017-06-19T20:13:32+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-on!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+            "@type": "FMC:Actor",
+            "cas:revision": "55",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "User"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            },
+            "cas:lists": [
+                {
+                    "@id": "d:MEl-608177820000bca801379179ebf3b6aa",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-611366530000bca80137a97f194e96a3",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-608239830000bca801373690c7d2af0f",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-610b07100000bca80137c10f96c46247",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                },
+                {
+                    "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }
@@ -10133,22 +12536,48 @@
             ]
         },
         {
-            "@id": "d:HR-Fld-59c8a7730000bca80137509a49b1218b",
-            "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:31.736Z",
+            "@id": "d:Iss-ee2abb630000c3a8013987a750219659",
+            "@type": "SpecIF:Issue",
+            "cas:revision": "35",
+            "dcterms:modified": "2017-06-19T20:13:15+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "OPM_001",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
             "dcterms:title": [
                 {
-                    "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
+                    "@value": "An open issue with respect to mechanics"
                 }
             ],
             "dcterms:description": [
                 {
-                    "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
+                    "@value": "<div><p>This is the description of the issue and potential solution.</p> </div>"
                 }
             ],
-            "cas:Category": [
+            "o:PC-IssueStatus": [
                 {
-                    "@value": "ReqIF:HierarchyRoot",
+                    "@id": "oslc_cm:Inprogress",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityLow",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:DueDate": [
+                {
+                    "@value": "2012-09-30T12:00:00+02:00",
                     "cas:itemType": {
                         "@id": "cas:aProperty"
                     }
@@ -10156,15 +12585,7 @@
             ],
             "cas:itemType": {
                 "@id": "cas:anEntity"
-            },
-            "cas:lists": [
-                {
-                    "@id": "d:Fld-59c8a7730000bca80137509a49b1218b",
-                    "cas:itemType": {
-                        "@id": "cas:aTargetLink"
-                    }
-                }
-            ]
+            }
         },
         {
             "@id": "d:Fld-ee29463e0000c3a80139627bbced50ae",
@@ -10188,6 +12609,66 @@
                     }
                 }
             ]
+        },
+        {
+            "@id": "d:Iss-eee2d4e00000c3a801394148dcc58a52",
+            "@type": "SpecIF:Issue",
+            "cas:revision": "37",
+            "dcterms:modified": "2017-06-19T20:13:15+02:00",
+            "dcterms:creator": "od",
+            "dcterms:identifier": [
+                {
+                    "@value": "OPS_001",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "dcterms:title": [
+                {
+                    "@value": "An open issue concerning software"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>A description.</p> </div>"
+                }
+            ],
+            "o:PC-IssueStatus": [
+                {
+                    "@id": "o:V-Iss-Status-6",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Priority": [
+                {
+                    "@id": "SpecIF:priorityMedium",
+                    "cas:itemType": {
+                        "@id": "cas:aTargetLink"
+                    }
+                }
+            ],
+            "SpecIF:Responsible": [
+                {
+                    "@value": "Vorname Nachname",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "SpecIF:DueDate": [
+                {
+                    "@value": "2012-09-30T12:00:00+02:00",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
         },
         {
             "@id": "d:Fld-ee2a15040000c3a80139d27de6704f15",
@@ -10242,22 +12723,204 @@
             ]
         },
         {
-            "@id": "d:HR-k9qMB6fnxPTk942dvPKdyvnwnoQ",
-            "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:31.736Z",
+            "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
+            "@type": "FMC:State",
+            "cas:revision": "59",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
             "dcterms:title": [
                 {
-                    "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
+                    "@value": "Actuator Rods"
                 }
             ],
             "dcterms:description": [
                 {
-                    "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
+                    "@value": "<div><p>Up to four actuator rods connecting the buttons to electrical contacts.</p> </div>"
                 }
             ],
-            "cas:Category": [
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a76365c0000bca8013776e91afd1e8e",
+            "@type": "FMC:Actor",
+            "cas:revision": "39",
+            "dcterms:modified": "2017-06-19T20:13:16+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
                 {
-                    "@value": "ReqIF:HierarchyRoot",
+                    "@value": "Assembly Frame"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> Mounting frame screwed to or into a wall.</p></div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-608177820000bca801379179ebf3b6aa",
+            "@type": "FMC:Actor",
+            "cas:revision": "40",
+            "dcterms:modified": "2017-06-19T20:13:16+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Briefly press Down-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press down-button &lt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-611366530000bca80137a97f194e96a3",
+            "@type": "FMC:Actor",
+            "cas:revision": "41",
+            "dcterms:modified": "2017-06-19T20:13:16+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Briefly press Up-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press up-button &lt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5bd6bd890000bca8013739588a3f43d6",
+            "@type": "FMC:Actor",
+            "cas:revision": "239",
+            "dcterms:modified": "2017-11-11T16:16:13+01:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Bulb"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> Dimmable candescent light-bulb 230V.</p></div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
+            "@type": "FMC:State",
+            "cas:revision": "60",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Control Signals"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2f95ec0000bca8013709bfa81d701f",
+            "@type": "FMC:Event",
+            "cas:revision": "81",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Decreasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
+            "@type": "FMC:Event",
+            "cas:revision": "82",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dim-down!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
+            "@type": "FMC:Event",
+            "cas:revision": "83",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dim-up!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+            "@type": "FMC:Actor",
+            "cas:revision": "242",
+            "dcterms:modified": "2017-12-09T10:38:29+01:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dimmer Controller Software"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> Input commands (events):</p><ul> <li> up-long → increase brightness </li> <li> down-long → decrease brightness </li> <li> release → stop dimming, keep brightness </li> <li> up-short → switch to maximum </li> <li> down-short → switch to minimum </li> <li> inappropriate commands are ignored (e.g. up-long when maximum is set). </li> <li> set parameters </li></ul><p> Four parameters influence the behavior of the particular device:</p><ul> <li> minimum value (default: 0%) </li> <li> maximum value (default: 100%) </li> <li> ramp-up speed (default: 10% per sec) </li> <li> ramp-down speed (default: 10% per sec) </li></ul></div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+            "@type": "FMC:Actor",
+            "cas:revision": "44",
+            "dcterms:modified": "2017-06-19T20:13:17+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dimmer Electronics"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The Dimmer Electronics is a printed circuit board with low-power micro-processor, memory, binary as well as analog I/O signals and a power stage supporting the specified electric load.</p></div>"
+                }
+            ],
+            "cas:Diagram": [
+                {
+                    "@value": "<div><p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/Schaltplan.gif\" name=\"Schaltplan.gif\" type=\"image/gif\"/></p> </div>",
                     "cas:itemType": {
                         "@id": "cas:aProperty"
                     }
@@ -10265,20 +12928,990 @@
             ],
             "cas:itemType": {
                 "@id": "cas:anEntity"
-            },
-            "cas:lists": [
-                {
-                    "@id": "d:Fld-ef47e6970000c3a80139dc747c5df319",
-                    "cas:itemType": {
-                        "@id": "cas:aTargetLink"
-                    }
-                }
-            ]
+            }
         },
         {
-            "@id": "d:FolderGlossary-8001804519",
+            "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+            "@type": "FMC:Actor",
+            "cas:revision": "45",
+            "dcterms:modified": "2017-06-19T20:13:17+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Dimmer Module"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The actuator module with dimmer function for resistive loads.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
+            "@type": "FMC:Event",
+            "cas:revision": "83",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Done!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
+            "@type": "FMC:Actor",
+            "cas:revision": "46",
+            "dcterms:modified": "2017-06-19T20:13:17+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Double Button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The Double Button (a sensor unit) is a versatile all-mechanical unit used for multiple purposes. The mechanical position is transferred with a rod per button to the next unit where it is converted to an electrical signal.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+            "@type": "FMC:Actor",
+            "cas:revision": "47",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Double-Button Observer Software"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>This is an observer of the double-button sensor. It distinguishes short and long pressing in the 'up' and 'down' directions. A discriminator may send five events:</p> <ul> <li>up-short</li> <li>down-short</li> <li>up-long</li> <li>down-long and </li> <li>release.</li> </ul><p>The events are interpreted and actions are initiated accordingly by the target actuator unit. The double button sensor and the observer have no notion of the underlying function.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+            "@type": "FMC:State",
+            "cas:revision": "61",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive down the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45450be80000c3a801414f280f146c71",
+            "@type": "FMC:Event",
+            "cas:revision": "84",
+            "dcterms:modified": "2017-06-19T20:13:29+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down-long!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
+            "@type": "FMC:Event",
+            "cas:revision": "85",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "down-short!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
+            "@type": "FMC:State",
+            "cas:revision": "62",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Electro-Magnetic Resistance"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Electromagnetic characteristics, especially EM-shielding.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+            "@type": "FMC:State",
+            "cas:revision": "63",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Flush-mounted Dimmer"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<p>A dimmer for electric loads in an industry-standard mounting frame which is flush with the wall surface. In other words, the dimmer is sitting in the wall and just the buttons are visible.</p>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+            "@type": "FMC:State",
+            "cas:revision": "63",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Flush-mounted Shading Control"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a99c89c0000bca801375d44cf9a50ca",
+            "@type": "FMC:State",
+            "cas:revision": "64",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Ground Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+            "@type": "FMC:Actor",
+            "cas:revision": "47",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Housing"
+                }
+            ],
+            "cas:Diagram": [
+                {
+                    "@value": "<div> <p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/UP-Dose.png\" name=\"UP-Dose.png\" type=\"image/png\"></object></p> </div>",
+                    "cas:itemType": {
+                        "@id": "cas:aProperty"
+                    }
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a87083e0000bca801379bb412523737",
+            "@type": "FMC:State",
+            "cas:revision": "65",
+            "dcterms:modified": "2017-06-19T20:13:23+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "I/O Pins"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>per input and output signal:</p> <ul> <li>hardware-address</li> <li>number of significant bits</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b149eab0000bca80137aad99b6eea7b",
+            "@type": "FMC:Event",
+            "cas:revision": "85",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Increasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+            "@type": "FMC:State",
+            "cas:revision": "66",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Intelligent Shading Drive"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>An intelligent shading actuator with 2 drives for up/down straight/tilt motion. The unit comprises the control unit and the motors.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b08ed8d0000bca8013719f554353b0e",
+            "@type": "FMC:Event",
+            "cas:revision": "86",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Intermediate"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
+            "@type": "FMC:State",
+            "cas:revision": "67",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Load Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5bcf35cf0000bca8013776d68023612a",
+            "@type": "FMC:State",
+            "cas:revision": "68",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "M"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Actuator Motor 230V.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453dfb670000c3a8014191107df4565e",
+            "@type": "FMC:Event",
+            "cas:revision": "87",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "max-reached!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b094f8a0000bca801374c798a6587ad",
+            "@type": "FMC:Event",
+            "cas:revision": "87",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Maximum"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45428b930000c3a80141e28b7d4b5ae5",
+            "@type": "FMC:Event",
+            "cas:revision": "88",
+            "dcterms:modified": "2017-06-19T20:13:30+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "min-reached!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b078fa50000bca80137f36ed05c43cb",
+            "@type": "FMC:Event",
+            "cas:revision": "89",
+            "dcterms:modified": "2017-06-19T20:13:31+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Minimum"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
+            "@type": "FMC:State",
+            "cas:revision": "69",
+            "dcterms:modified": "2017-06-19T20:13:24+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Neutral Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+            "@type": "FMC:State",
+            "cas:revision": "70",
+            "dcterms:modified": "2017-06-19T20:13:25+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Physical Space"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Effective 3D interior space and mounting for electronics.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-608239830000bca801373690c7d2af0f",
+            "@type": "FMC:Actor",
+            "cas:revision": "48",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Press and hold Down-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press down-button &gt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-610b07100000bca80137c10f96c46247",
+            "@type": "FMC:Actor",
+            "cas:revision": "49",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Press and hold Up-button"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Press up-button &gt;400 ms.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
+            "@type": "FMC:State",
+            "cas:revision": "71",
+            "dcterms:modified": "2017-06-19T20:13:25+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Processor RAM ROM"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>EPROM-Size</p> <p>RAM-Size</p> <p>Processor type with instruction set and speed (MIPS)</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
+            "@type": "FMC:Actor",
+            "cas:revision": "49",
+            "dcterms:modified": "2017-06-19T20:13:18+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Release button"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
+            "@type": "FMC:Event",
+            "cas:revision": "89",
+            "dcterms:modified": "2017-06-19T20:13:31+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "released!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
+            "@type": "FMC:State",
+            "cas:revision": "72",
+            "dcterms:modified": "2017-06-19T20:13:26+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Remote Control"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5bcfb01d0000bca80137f303272a5557",
+            "@type": "FMC:Actor",
+            "cas:revision": "50",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Shading"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Window-shade with 2 degrees of freedom: It can be moved up/down and the elements can be set straight/tilted. Both movements can be made proportionally with an electric drive.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
+            "@type": "FMC:Actor",
+            "cas:revision": "51",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "SmartHome Controller"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The controller </p> <ul> <li>interconnects locally distributed sensors and actuators, </li> <li>coordinates different actuators where appropriate and </li> <li>performes automatic functions, such as switching external lamps dependend on ambient light.</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
+            "@type": "FMC:State",
+            "cas:revision": "73",
+            "dcterms:modified": "2017-06-19T20:13:26+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "SmartHome System"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The new system for controlling all major functions of the private home:</p> <ul> <li>light/illumination</li> <li>window shades</li> <li>heating</li> <li>consumption meters for electricity, heat, gas and water.</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+            "@type": "FMC:State",
+            "cas:revision": "74",
+            "dcterms:modified": "2017-06-19T20:13:26+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Spring Clips"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Spring clips for mechanical connection.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2d29070000bca801378a6c020cf8f5",
+            "@type": "FMC:Actor",
+            "cas:revision": "51",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Start-decreasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b1750f80000bca801373b2d143d7478",
+            "@type": "FMC:Actor",
+            "cas:revision": "51",
+            "dcterms:modified": "2017-06-19T20:13:19+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Start-increasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
+            "@type": "FMC:Event",
+            "cas:revision": "90",
+            "dcterms:modified": "2017-06-19T20:13:31+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Stop dimming!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2ddad80000bca80137c44d62ba97d8",
+            "@type": "FMC:Actor",
+            "cas:revision": "52",
+            "dcterms:modified": "2017-06-19T20:13:20+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Stop-decreasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b2449180000bca8013722c01c9d35a5",
+            "@type": "FMC:Actor",
+            "cas:revision": "52",
+            "dcterms:modified": "2017-06-19T20:13:20+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Stop-increasing"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
+            "@type": "FMC:State",
+            "cas:revision": "75",
+            "dcterms:modified": "2017-06-19T20:13:27+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "straighten"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to straighten the shading elements.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
+            "@type": "FMC:State",
+            "cas:revision": "76",
+            "dcterms:modified": "2017-06-19T20:13:27+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Supply Cable"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><ul> <li>Cable-diameter</li> <li>Wire-diameter</li> <li>Max-current</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b0839b90000bca801376dcca41ca7d0",
+            "@type": "FMC:Actor",
+            "cas:revision": "53",
+            "dcterms:modified": "2017-06-19T20:13:20+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-off"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Switch to programmed min-value.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
+            "@type": "FMC:Event",
+            "cas:revision": "91",
+            "dcterms:modified": "2017-06-19T20:13:32+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-off!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5b07e6aa0000bca8013797aad9be69ae",
+            "@type": "FMC:Actor",
+            "cas:revision": "54",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-on"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Switch to programmed max-value.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
+            "@type": "FMC:Event",
+            "cas:revision": "91",
+            "dcterms:modified": "2017-06-19T20:13:32+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Switch-on!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
+            "@type": "FMC:State",
+            "cas:revision": "77",
+            "dcterms:modified": "2017-06-19T20:13:27+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Thermal Resistance"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p> Thermal resistance and thermal capacity of the [[housing]].</p></div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
+            "@type": "FMC:State",
+            "cas:revision": "78",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "tilt"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to tilt the shading elements.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+            "@type": "FMC:State",
+            "cas:revision": "79",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The button to drive up the dimmer, shading or similar devices.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
+            "@type": "FMC:Event",
+            "cas:revision": "91",
+            "dcterms:modified": "2017-06-19T20:13:32+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up-long!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-453d34af0000c3a80141918f84641161",
+            "@type": "FMC:Event",
+            "cas:revision": "92",
+            "dcterms:modified": "2017-06-19T20:13:33+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "up-short!"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+            "@type": "FMC:Actor",
+            "cas:revision": "55",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "User"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45a236e00000c3a801410f6503287e16",
+            "@type": "FMC:Actor",
+            "cas:revision": "56",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wait for Activation"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>The kind of activation is determined:</p> <ul> <li>Up- or Down-Button</li> <li>Short or long activation: 'Short' is &lt; 0,4 sec.</li> <li>Do only wait until the distinction between 'short' or 'long' can be made!</li></ul> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-45a3b13c0000c3a801415e97f5bc29d1",
+            "@type": "FMC:Actor",
+            "cas:revision": "57",
+            "dcterms:modified": "2017-06-19T20:13:21+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wait for Deactivation"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+            "@type": "FMC:Actor",
+            "cas:revision": "58",
+            "dcterms:modified": "2017-06-19T20:13:22+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wireless Module"
+                }
+            ],
+            "dcterms:description": [
+                {
+                    "@value": "<div><p>Receives control commands via radio signal or the mechanical position of a mounted sensor unit. Sends electrical control signals to the mounted actuator module.</p> </div>"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
+            "@type": "FMC:State",
+            "cas:revision": "80",
+            "dcterms:modified": "2017-06-19T20:13:28+02:00",
+            "dcterms:creator": "od",
+            "dcterms:title": [
+                {
+                    "@value": "Wireless Network"
+                }
+            ],
+            "cas:itemType": {
+                "@id": "cas:anEntity"
+            }
+        },
+        {
+            "@id": "d:R-CXjFlaXJIjvCmcg9kGgLEGaTszT",
             "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:25.620Z",
+            "dcterms:modified": "2026-09-25T10:35:28.006Z",
             "dcterms:title": [
                 {
                     "@value": "Model Elements (Glossary)"
@@ -10688,40 +14321,6 @@
                 },
                 {
                     "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
-                    "cas:itemType": {
-                        "@id": "cas:aTargetLink"
-                    }
-                }
-            ]
-        },
-        {
-            "@id": "d:HR-FolderGlossary-8001804519",
-            "@type": "cas:Outline",
-            "dcterms:modified": "2026-05-14T08:43:31.736Z",
-            "dcterms:title": [
-                {
-                    "@value": "Dimmer - Semantically Integrated Specification (2021-01-28)"
-                }
-            ],
-            "dcterms:description": [
-                {
-                    "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
-                }
-            ],
-            "cas:Category": [
-                {
-                    "@value": "ReqIF:HierarchyRoot",
-                    "cas:itemType": {
-                        "@id": "cas:aProperty"
-                    }
-                }
-            ],
-            "cas:itemType": {
-                "@id": "cas:anEntity"
-            },
-            "cas:lists": [
-                {
-                    "@id": "d:FolderGlossary-8001804519",
                     "cas:itemType": {
                         "@id": "cas:aTargetLink"
                     }

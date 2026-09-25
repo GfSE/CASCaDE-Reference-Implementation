@@ -149,11 +149,11 @@ describe('HTML Security - XSS Prevention', () => {
             expect(htmlOutput).not.toContain('malicious()');
             expect(htmlOutput).not.toContain('evil.com');
 
-            // Verify legitimate object tags for media are preserved
+            // Verify legitimate object tags for media are preserved; image objects are
+            // converted to placeholder <img> elements (resolved later by resolveAssetImages())
+            expect(htmlOutput).toContain('data-asset-ref="image.png"');
+            expect(htmlOutput).toContain('class="pig-asset-pending"');
             expect(htmlOutput).toContain('<object');
-            expect(htmlOutput).toContain('data="image.png"');
-            expect(htmlOutput).toContain('type="image/png"');
-            expect(htmlOutput).toContain('Valid image');
             expect(htmlOutput).toContain('data="video.mp4"');
             expect(htmlOutput).toContain('type="video/mp4"');
             expect(htmlOutput).toContain('Valid video');
@@ -220,10 +220,10 @@ describe('HTML Security - XSS Prevention', () => {
             expect(htmlOutput).not.toContain('application/pdf'); // Optional: PDF might be blocked
             expect(htmlOutput).not.toContain('exploit.pdf');
 
-            // Verify safe media types are preserved
-            expect(htmlOutput).toContain('safe-image.jpg');
-            expect(htmlOutput).toContain('image/jpeg');
-            expect(htmlOutput).toContain('Safe image');
+            // Verify safe media types are preserved; the image object is converted to a
+            // placeholder <img> element (resolved later by resolveAssetImages())
+            expect(htmlOutput).toContain('data-asset-ref="safe-image.jpg"');
+            expect(htmlOutput).toContain('class="pig-asset-pending"');
         });
     });
 });

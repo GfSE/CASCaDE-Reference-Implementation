@@ -217,7 +217,6 @@ import { PigItemType } from '@/common/schema/pig/ts/pig-metaclasses';
             };
 
             for (const item of items) {
-                scanLanguageTexts(item.title);
                 scanLanguageTexts(item.description);
                 scanLanguageTexts(item.definition);
 
@@ -275,17 +274,27 @@ import { PigItemType } from '@/common/schema/pig/ts/pig-metaclasses';
                 }
 
                 // Add referenced assets (found in the asset cache) to the ZIP, at their
-                // original relative path/filename, so imports can resolve them again:
+                // original relative path/filename, so imports can resolve them again.
+                // References that don't resolve to a cached asset are logged as a
+                // warning and skipped, without failing the export:
                 if (referencedAssetFilenames.size > 0) {
                     const cachedAssets = await PLI.getAssets();
-                    for (const asset of cachedAssets) {
-                        if (!referencedAssetFilenames.has(asset.filename)) continue;
-                        if (entries[asset.filename] !== undefined) continue; // already present (e.g. duplicate reference)
+                    const cachedByFilename = new Map(cachedAssets.map(asset => [asset.filename, asset]));
+
+                    for (const filename of referencedAssetFilenames) {
+                        if (entries[filename] !== undefined) continue; // already present (e.g. duplicate reference)
+
+                        const asset = cachedByFilename.get(filename);
+                        if (!asset) {
+                            LOG.warn(`[${config.componentName}] Referenced asset '${filename}' was not found in the asset cache and is not included in the export.`);
+                            continue;
+                        }
+
                         try {
                             const buffer = await asset.blob.arrayBuffer();
-                            entries[asset.filename] = new Uint8Array(buffer);
+                            entries[filename] = new Uint8Array(buffer);
                         } catch (e: unknown) {
-                            LOG.warn(`[${config.componentName}] Failed to read referenced asset '${asset.filename}' for export:`, e);
+                            LOG.warn(`[${config.componentName}] Failed to read referenced asset '${filename}' for export:`, e);
                         }
                     }
                 }
