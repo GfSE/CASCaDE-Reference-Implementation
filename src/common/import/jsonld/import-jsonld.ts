@@ -111,6 +111,10 @@ export class JsonldImporter {
         // Instantiate APackage and load the document
         const aPackage = new APackage().setJSONLD(doc);
 
+        return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
+
+    /*  Alternatively, if you want to return a more detailed IRsp with counts and messages, you can do the following:
+        ... however, an error message form setJSONLD() is not forwarded to the caller - needs some rework.
         // Get all items (package + graph items)
         const allItems = aPackage.getItems();
 
@@ -135,7 +139,7 @@ export class JsonldImporter {
             result = Rsp.create(603, allItems, 'json', 'Import JSON-LD', actualCount, expectedCount);
         }
 
-        return result as IRsp<TPigItem[]>;
+        return result as IRsp<TPigItem[]>;  */
     }
 
     /**

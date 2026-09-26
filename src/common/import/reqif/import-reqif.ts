@@ -52,7 +52,7 @@ export class ReqifImporter {
      * 
      * @example
      * // Node.js
-     * const results = await ReqIFImporter.import('./test.reqif');
+     * const results = await ReqifImporter.import('./test.reqif');
      * 
      * @example
      * // Browser
@@ -64,10 +64,8 @@ export class ReqifImporter {
         const filename = typeof source === 'string' ? source : source.name;
 
         // Normalize filename/URL for extension check:
-        // - Strip query/fragment (for URLs)
-        // - Make case-insensitive
+        // - Strip query/fragment (for URLs) and make case-insensitive
         const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
-
         const isZipped = normalized.endsWith('.reqifz') || normalized.endsWith('.reqif.zip');
         const isPlain = normalized.endsWith('.reqif');
 
@@ -78,23 +76,42 @@ export class ReqifImporter {
 
         // Read file content, unpacking the archive first if the file is zipped.
         // A ZIP may contain several .reqif files; each is transformed and instantiated separately.
-        let xmlStringsToTransform: string[];
+        let xmlStrings: string[];
         if (isZipped) {
-            const rspXml = await this.extractReqif(source, filename);
+            const rspBytes = await PLI.readFileAsBytes(source);
+            if (!rspBytes.ok) {
+                return [rspBytes];
+            }
+            const rspXml = PLI.extractFromZip(
+                rspBytes.response as Uint8Array,
+                (name) => name.toLowerCase().endsWith('.reqif'),
+                filename
+            );
             if (!rspXml.ok) {
                 return [rspXml];
             }
-            xmlStringsToTransform = rspXml.response as string[];
-        } else {
-            const rspRead = await PLI.readFileAsText(source);
-            if (!rspRead.ok) {
-                return [rspRead];
+            xmlStrings = rspXml.response as string[];
+
+            // Extract any other (non-.reqif) files bundled in the archive (e.g. images) and
+            // store them in the asset-cache for later use.
+            const rspOther = PLI.extractOtherFromZip(
+                rspBytes.response as Uint8Array,
+                (name) => name.toLowerCase().endsWith('.reqif'),
+                filename
+            );
+            if (rspOther.ok) {
+                await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
             }
-            xmlStringsToTransform = [rspRead.response as string];
+        } else {
+            const rsp = await PLI.readFileAsText(source);
+            if (!rsp.ok) {
+                return [rsp];
+            }
+            xmlStrings = [rsp.response as string];
         }
 
         const results: IRsp<unknown>[] = [];
-        for (const xmlToTransform of xmlStringsToTransform) {
+        for (const xmlToTransform of xmlStrings) {
             results.push(await this.parseOne(xmlToTransform, filename));
         }
         return results;
@@ -169,58 +186,9 @@ export class ReqifImporter {
         // await PLI.writeFile(JSON.stringify(xmlString,null,2), "from-ReqIF.xml");
 
         // Instantiate APackage from transformed XML
-        const aPackage = new APackage().setXML(xmlString /*, {
-            checkConstraints: [
-                ConstraintCheckType.UniqueIds,
-                // Input has only instances, so omit constraint checks on classes
-                ConstraintCheckType.aPropertyInstanceOf,
-                ConstraintCheckType.aLinkInstanceOf
-                //    ConstraintCheckType.anEntityInstanceOf,
-                //    ConstraintCheckType.aRelationshipInstanceOf,
-            ] as ConstraintCheckType[]
-        } */);
+        const aPackage = new APackage().setXML(xmlString);
 
         return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
-    }
-
-    /**
-     * Read a .reqifz / .reqif.zip archive and return the text content of all contained .reqif files.
-     *
-     * @param source - File path (Node.js), URL, or File/Blob (Browser)
-     * @param filename - original filename for error messages
-     * @returns IRsp whose response is an array of .reqif XML strings (one per matching entry)
-     * @private
-     */
-    private static async extractReqif(
-        source: string | File,
-        filename: string
-    ): Promise<IRsp<unknown>> {
-        const rspBytes = await PLI.readFileAsBytes(source);
-        if (!rspBytes.ok) {
-            return rspBytes;
-        }
-
-        const rsp = PLI.extractFromZip(
-            rspBytes.response as Uint8Array,
-            (name) => name.toLowerCase().endsWith('.reqif'),
-            filename
-        );
-        if (!rsp.ok) {
-            return rsp;
-        }
-
-        // Extract any other (non-.reqif) files bundled in the archive (e.g. images
-        // referenced by requirements) and store them in the asset-cache for later use.
-        const rspOther = PLI.extractOtherFromZip(
-            rspBytes.response as Uint8Array,
-            (name) => name.toLowerCase().endsWith('.reqif'),
-            filename
-        );
-        if (rspOther.ok) {
-            await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
-        }
-
-        return rsp;
     }
 
     /**

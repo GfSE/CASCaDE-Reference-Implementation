@@ -68,6 +68,9 @@ export class XmlImporter {
 
         // Extract filename for zip detection (Blob without a name is treated as non-zipped)
         const filename = typeof source === 'string' ? source : (source as File).name ?? '';
+
+        // Normalize filename/URL for extension check:
+        // - Strip query/fragment (for URLs) and make case-insensitive
         const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
         const isZipped = normalized.endsWith('.zip');
 
@@ -107,8 +110,8 @@ export class XmlImporter {
         }
 
         const results: IRsp[] = [];
-        for (const xmlString of xmlStrings) {
-            results.push(await this.parseOne(xmlString, source, options));
+        for (const xmlToTransform of xmlStrings) {
+            results.push(await this.parseOne(xmlToTransform, source, options));
         }
         return results;
     }

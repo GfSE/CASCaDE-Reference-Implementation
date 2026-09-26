@@ -196,8 +196,8 @@
                         for (let i = 0; i < successful.length; i++) {
                             const items = successful[i].response as TPigItem[];
                             // LOG.debug('Imported items:', items);
-                            const packageMode = i === 0 ? mode : 'update';
-                            const persisted = packageMode === 'update'
+                            const cacheMode = i === 0 ? mode : 'update';
+                            const persisted = cacheMode === 'update'
                                 ? await cache.update(items)
                                 : await cache.replace(items);
                             allPersisted = allPersisted && persisted;

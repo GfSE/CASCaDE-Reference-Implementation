@@ -1718,7 +1718,7 @@ export class APackage extends AnElement implements IAPackage {
 
         if (errors.length > 0) {
             this.lastStatus = Msg.create(603, 'Package Import', instantiatedGraph.length, _pkg.graph.length, errors.join(', '));
-            LOG.warn(this.lastStatus.statusText);
+            // LOG.warn(this.lastStatus.statusText);
         }
         else {
             this.lastStatus = pkgValidation;
@@ -2425,7 +2425,7 @@ function xmlToJson(xml: stringXML): IRsp<unknown> {
         const wrappedError = PLI.getXmlParseError(wrappedDoc);
         if (wrappedError) {
             const errorMessage = wrappedError.textContent || 'Unknown XML parsing error';
-            LOG.error('xmlToJson: XML parsing failed even with wrapper:', errorMessage);
+            // LOG.error('xmlToJson: XML parsing failed even with wrapper:', errorMessage);
             return Msg.create(690, 'XML', errorMessage);
         }
 
@@ -3020,7 +3020,7 @@ function xSimpleType(simpleTypeElement: ElementXML, result: JsonObject): void {
                 break; */
             default:
                 // Unknown constraint - log warning
-                LOG.warn(`xSimpleType: unknown constraint '${localName}' with value '${value}'`);
+                LOG.warn(`xSimpleType: unknown restriction '${localName}' of value '${value}'`);
         }
     }
 }
