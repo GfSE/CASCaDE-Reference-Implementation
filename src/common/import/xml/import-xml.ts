@@ -83,7 +83,7 @@ export class XmlImporter {
             }
             const rspXml = PLI.extractFromZip(
                 rspBytes.response as Uint8Array,
-                (name) => name.toLowerCase().endsWith('.xml'),
+                (name) => name.toLowerCase().endsWith('.cas.xml'),
                 filename
             );
             if (!rspXml.ok) {

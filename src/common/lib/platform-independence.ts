@@ -518,7 +518,9 @@ export const PLI = {
     async getAssets(): Promise<IAsset[]> {
         if (this.isBrowserEnv()) {
             try {
-                return await AssetCache().get();
+                const ac = await AssetCache().get();
+                // LOG.debug('PLI.getAssets: retrieved assets', ac);
+                return ac;
             } catch (e: unknown) {
                 LOG.error('PLI.getAssets: failed to read assets', e);
                 return [];
@@ -609,7 +611,7 @@ export const PLI = {
                 cdOffset += 46 + nameLen + extraLen + commentLen;
             }
         } catch (e: unknown) {
-            LOG.debug('PLI.getZipEntryModifiedDates: failed to parse ZIP central directory', e);
+            LOG.error('PLI.getZipEntryModifiedDates: failed to parse ZIP central directory', e);
         }
         return result;
     },

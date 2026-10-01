@@ -54,7 +54,7 @@ export class JsonldImporter {
      * 
      * @example
      * // URL
-     * const results = await JsonldImporter.import('https://example.org/data.jsonld');
+     * const results = await JsonldImporter.import('https://example.org/data.cas.jsonld');
      */
     static async import(source: string | File | Blob): Promise<IRsp[]> {
         // Extract filename for zip detection (Blob without a name is treated as non-zipped)
@@ -161,18 +161,18 @@ export class JsonldImporter {
 
         const rsp = PLI.extractFromZip(
             rspBytes.response as Uint8Array,
-            (name) => name.toLowerCase().endsWith('.jsonld'),
+            (name) => name.toLowerCase().endsWith('.cas.jsonld'),
             filename
         );
         if (!rsp.ok) {
             return rsp;
         }
 
-        // Extract any other (non-.jsonld) files bundled in the archive (e.g. images) and
+        // Extract any other (non-.cas.jsonld) files bundled in the archive (e.g. images) and
         // store them in the asset-cache for later use.
         const rspOther = PLI.extractOtherFromZip(
             rspBytes.response as Uint8Array,
-            (name) => name.toLowerCase().endsWith('.jsonld'),
+            (name) => name.toLowerCase().endsWith('.jsonld'), // not .cas.jsonld on purpose
             filename
         );
         if (rspOther.ok) {

@@ -15,7 +15,11 @@
  * - Initially the metamodel had been called "Product Information Graph" (PIG) with namespace prefix 'pig:'.
  * - Now it is called CASCaRA with namespace prefix 'cas:'.
  * - The codebase still uses the abbreviation PIG or pig in many places for historical reasons,
- * - but the namespace prefix for the metamodel and for the semantic infrastructure has been set to 'cas:', see definitions.ts. 
+ *   but the namespace prefix for the metamodel and for the semantic infrastructure has been set to 'cas:', see definitions.ts. 
+ * - The term 'class' is used for the specification in terms of UML and the implementation in Typescript, while 'type' is used to distinguish
+ *   CASCaRA items related with rdf:type or @type in JSON-LD. (There may be comments where this is not strictly followed ... and needs to be checked/corrected.)
+ *   The latter is called 'type' in the metamodel (for example between Entity and anEntity) and 'instanceOf' in this implementation.
+ * - All metamodel items (for example Entity and anEntity) are classes in the UML and Typescript sense.
  * 
  * Design Decisions:
  * - The CASCaRA (PIG) classes in this module contain *only* the elements in the metamodel; it could be generated from the metamodel.

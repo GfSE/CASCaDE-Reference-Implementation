@@ -34,7 +34,7 @@
                     <v-card-title tag="h2">Content</v-card-title>
                     <v-divider />
                     <v-card-text class="pane-scroll">
-                        <div v-if="selectedHtml" ref="contentEl" v-html="selectedHtml"></div>
+                        <div v-if="resolvedHtml" ref="contentEl" v-html="resolvedHtml"></div>
                         <div v-else>Select an item from the left</div>
                     </v-card-text>
                 </v-card>
@@ -47,7 +47,7 @@
     import { Vue, Options } from 'vue-class-component'
     import { toRaw } from 'vue'
     import { ItemCache } from '@/stores/item-cache'
-    import { getHTML, resolveAssetImages, stringHTML } from '@/common/export/html/getHTML'
+    import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@/common/export/html/getHTML'
     import { APackage, AnEntity, PigItemType } from '@/common/schema/pig/ts/pig-metaclasses'
     import OutlineTreeItem from './OutlineTreeItem.vue'
     // OutlineNode is declared and exported from OutlineTreeItem.vue; since the '*.vue'
@@ -86,7 +86,6 @@
         return { id: entity.id, title, html, children }
     }
 
-    const RECYCLE_BIN_ID = 'cas:RecycleBin'
     const RECYCLE_BIN_TITLE = 'Unreferenced Items (Recycle Bin)'
 
     // Desired Outline pane selection/navigation behavior:
@@ -132,17 +131,26 @@
             return {
                 selectedId: null as string | null,
                 // Ids of outline nodes whose children are currently expanded (Vuetify v-list 'opened' model):
-                openedIds: [] as string[]
+                openedIds: [] as string[],
+                // Fully resolved HTML (images inlined) of the currently selected outline
+                // node, ready to be inserted into the DOM via v-html; kept as a separate,
+                // explicitly-set data property (rather than a computed) since resolving
+                // image placeholders is asynchronous while Vue computed properties are not:
+                resolvedHtml: null as stringHTML | null
             }
         },
         watch: {
             // The content pane's HTML (containing image placeholders inserted by
-            // getHTML()) changes whenever the selected outline item changes;
-            // resolve the placeholders again once the new HTML has been rendered:
-            selectedHtml() {
-                this.$nextTick(() => {
-                    resolveAssetImages(this.$refs.contentEl as HTMLElement | undefined)
-                })
+            // getHTML()) changes whenever the selected outline item changes; resolve
+            // all image placeholders to inline images *before* writing the result to
+            // 'resolvedHtml' (and thus the DOM via v-html), so there is no dependency
+            // on DOM/ref timing as there would be when resolving placeholders found
+            // in the already-rendered DOM:
+            selectedHtml: {
+                immediate: true,
+                async handler(html: stringHTML | null) {
+                    this.resolvedHtml = html === null ? null : await resolveAssetImagesInHtml(html)
+                }
             }
         },
         computed: {
@@ -168,13 +176,24 @@
                     }
                 }
 
-                // The outline is rooted at anEntity instances of class 'cas:Root'.
-                // Their children -- referenced via aTargetLink of class 'cas:lists' -- form
-                // the first level of the outline tree; each child's own 'cas:lists' targets
-                // are collected recursively to build the full tree.
+                // One top-level outline node per package, showing the package's own
+                // metadata (native and configurable properties, like anEntity); the
+                // package's roots and unreferenced items are nested underneath it.
                 const result: OutlineNode[] = []
-                const referencedIds = new Set<string>()
                 for (const rawPkg of rawPackages) {
+                    // GetHTML.aPackage() (via getHTML()) returns [packageHTML, ...anEntity
+                    // HTML for each graph item]; only the first entry (the package's own
+                    // metadata) is needed here, the graph items are handled below via the
+                    // outline tree, so no graph item itemTypes are requested:
+                    const packageHtml = getHTML(rawPkg, { itemType: [] })[0]
+                    const packageTitle = extractTitle(packageHtml) ?? rawPkg.id ?? 'Untitled Package'
+
+                    // The outline is rooted at anEntity instances of class 'cas:Root'.
+                    // Their children -- referenced via aTargetLink of class 'cas:lists' -- form
+                    // the first level of the outline tree below the package node; each child's
+                    // own 'cas:lists' targets are collected recursively to build the full tree.
+                    const packageChildren: OutlineNode[] = []
+                    const referencedIds = new Set<string>()
                     for (const item of rawPkg.graph) {
                         if (item.itemType !== PigItemType.anEntity || (item as AnEntity).instanceOf !== 'cas:Root') {
                             continue
@@ -186,55 +205,73 @@
                             if (link.instanceOf !== 'cas:lists') continue
                             const child = entityById.get(link.idRef)
                             if (child) {
-                                result.push(buildOutlineNode(child, entityById, ancestors, referencedIds))
+                                packageChildren.push(buildOutlineNode(child, entityById, ancestors, referencedIds))
                             }
                         }
                     }
-                }
 
-                // Any anEntity instance not reachable from a root via 'cas:lists' is collected
-                // into a synthetic 'Unreferenced Items (Recycle Bin)' folder appended at the end.
-                // Each orphaned entity is built recursively together with its own 'cas:lists'
-                // children, so that whole orphaned sub-trees end up nested under the bin
-                // instead of being listed flatly; buildOutlineNode marks descendants as
-                // referenced as it goes, avoiding duplicate top-level entries for them.
-                //
-                // An unreferenced entity that is itself listed (via 'cas:lists') by another
-                // unreferenced entity is *not* shown as a separate top-level bin entry --
-                // it will already appear nested under that other orphan's sub-tree.
-                const childOfOrphan = new Set<string>()
-                for (const entity of entityById.values()) {
-                    if (!entity.id || referencedIds.has(entity.id)) continue
-                    for (const link of entity.hasTargetLink ?? []) {
-                        if (link.instanceOf !== 'cas:lists') continue
-                        const targetId = link.idRef
-                        if (targetId && entityById.has(targetId) && !referencedIds.has(targetId)) {
-                            childOfOrphan.add(targetId)
+                    // Any anEntity instance of this package not reachable from a root via
+                    // 'cas:lists' is collected into a synthetic 'Unreferenced Items (Recycle
+                    // Bin)' folder nested under the package node. Each orphaned entity is built
+                    // recursively together with its own 'cas:lists' children, so that whole
+                    // orphaned sub-trees end up nested under the bin instead of being listed
+                    // flatly; buildOutlineNode marks descendants as referenced as it goes,
+                    // avoiding duplicate entries for them.
+                    //
+                    // An unreferenced entity that is itself listed (via 'cas:lists') by another
+                    // unreferenced entity is *not* shown as a separate bin entry -- it will
+                    // already appear nested under that other orphan's sub-tree.
+                    const packageEntityIds = new Set<string>()
+                    for (const item of rawPkg.graph) {
+                        if (item.itemType === PigItemType.anEntity && item.id) {
+                            packageEntityIds.add(item.id)
                         }
                     }
-                }
 
-                const unreferenced: OutlineNode[] = []
-                for (const entity of entityById.values()) {
-                    if (entity.id && !referencedIds.has(entity.id) && !childOfOrphan.has(entity.id)) {
-                        const ancestors = new Set<string>([entity.id])
-                        unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds))
+                    const childOfOrphan = new Set<string>()
+                    for (const id of packageEntityIds) {
+                        const entity = entityById.get(id)
+                        if (!entity || !entity.id || referencedIds.has(entity.id)) continue
+                        for (const link of entity.hasTargetLink ?? []) {
+                            if (link.instanceOf !== 'cas:lists') continue
+                            const targetId = link.idRef
+                            if (targetId && packageEntityIds.has(targetId) && !referencedIds.has(targetId)) {
+                                childOfOrphan.add(targetId)
+                            }
+                        }
                     }
-                }
-                // Fallback for orphaned entities that only occur in a cycle among themselves
-                // (each one being "someone's child"), so no data is silently dropped:
-                for (const entity of entityById.values()) {
-                    if (entity.id && !referencedIds.has(entity.id)) {
-                        const ancestors = new Set<string>([entity.id])
-                        unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds))
+
+                    const unreferenced: OutlineNode[] = []
+                    for (const id of packageEntityIds) {
+                        const entity = entityById.get(id)
+                        if (entity && entity.id && !referencedIds.has(entity.id) && !childOfOrphan.has(entity.id)) {
+                            const ancestors = new Set<string>([entity.id])
+                            unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds))
+                        }
                     }
-                }
-                if (unreferenced.length > 0) {
+                    // Fallback for orphaned entities that only occur in a cycle among themselves
+                    // (each one being "someone's child"), so no data is silently dropped:
+                    for (const id of packageEntityIds) {
+                        const entity = entityById.get(id)
+                        if (entity && entity.id && !referencedIds.has(entity.id)) {
+                            const ancestors = new Set<string>([entity.id])
+                            unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds))
+                        }
+                    }
+                    if (unreferenced.length > 0) {
+                        packageChildren.push({
+                            id: `${rawPkg.id ?? 'package'}:cas:RecycleBin`,
+                            title: RECYCLE_BIN_TITLE,
+                            html: `<div class="meta-anEntity"><div class="col-main"><h3 class="meta-title">${RECYCLE_BIN_TITLE}</h3></div></div>`,
+                            children: unreferenced
+                        })
+                    }
+
                     result.push({
-                        id: RECYCLE_BIN_ID,
-                        title: RECYCLE_BIN_TITLE,
-                        html: `<div class="meta-anEntity"><div class="col-main"><h3 class="meta-title">${RECYCLE_BIN_TITLE}</h3></div></div>`,
-                        children: unreferenced
+                        id: rawPkg.id ?? `package:${result.length}`,
+                        title: packageTitle,
+                        html: packageHtml,
+                        children: packageChildren
                     })
                 }
 
@@ -285,6 +322,8 @@
                 return map
             },
 
+            // Raw HTML (still containing unresolved image placeholders) of the
+            // currently selected outline node; watched above to produce 'resolvedHtml':
             selectedHtml(): stringHTML | null {
                 if (this.selectedId === null) return null
                 return this.nodeById.get(this.selectedId)?.html ?? null
@@ -411,14 +450,12 @@
             extractTitle
         },
         mounted() {
-            // Select the first item when opening the view:
+            // Select the first item when opening the view; the 'selectedHtml' watcher
+            // above (immediate: true) takes care of resolving its image placeholders:
             if (this.flatOutline.length > 0) {
                 this.selectedId = this.flatOutline[0].id
                 this.focusItem(this.selectedId)
             }
-            this.$nextTick(() => {
-                resolveAssetImages(this.$refs.contentEl as HTMLElement | undefined)
-            })
         }
     })
 
@@ -455,7 +492,7 @@
         padding-bottom: 2px !important;
     }
 
-    /* Images/SVGs inserted via v-html (e.g. by getHTML()/resolveAssetImages())
+    /* Images/SVGs inserted via v-html (e.g. by getHTML()/resolveAssetImagesInHtml())
        are shown at their original size when smaller than the column/pane, and
        scaled down proportionally (never cropped) when they are wider: */
     .pane-scroll ::v-deep(img),

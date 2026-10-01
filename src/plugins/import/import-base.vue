@@ -100,6 +100,7 @@
     import { Options, Vue } from 'vue-class-component';
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { ItemCache } from '@/stores/item-cache';
+    import { AssetCache } from '@/stores/asset-cache';
     import { LOG } from '@/common/lib/helpers';
     import { Msg, IRsp } from '@/common/lib/messages';
     import { ImportConfig } from '@/plugins/import/import-config';
@@ -176,6 +177,19 @@
                 this.successMessage = '';
 
                 try {
+                    // 'Replace' fully replaces the item cache; the asset cache (images, etc.
+                    // extracted from a ZIP alongside the payload) must be cleared as well,
+                    // otherwise stale/orphaned assets from a previous import would linger.
+                    // This MUST happen before importAllFiles(), since the importers persist
+                    // newly extracted assets to AssetCache as part of the import itself -
+                    // clearing afterwards would wipe out the very assets just imported.
+                    // Only done for 'replace' (not 'update'), so updating with a new/changed
+                    // package does not wipe out images still referenced by previously
+                    // imported (and still cached) packages.
+                    if (mode === 'replace') {
+                        await AssetCache().clear();
+                    }
+
                     // Import all files (outer loop) and all ZIP entries within each file (inner loop,
                     // handled inside the importer itself); results are one entry per imported package.
                     const results = await this.importAllFiles();

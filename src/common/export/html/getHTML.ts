@@ -34,8 +34,10 @@
  *   Now, for creating an HTML representation call getHTML(item,options) instead of item.getHTML(options).
  * - The HTML output is designed to be inserted into a web page, e.g. via v-html in Vue.js.
  * - The HTML output is sanitized to prevent XSS and other security issues.
- * - getHTML is synchronous, while resolveAssetImages is asynchronous and
- *   inserts the images into the DOM as soon as they are available.
+ * - getHTML is synchronous and returns HTML containing lightweight image
+ *   placeholders; resolveAssetImagesInHtml() is asynchronous and resolves those
+ *   placeholders to inline images (data: URLs / inline <svg>) within the HTML
+ *   *string* itself, before the result is ever inserted into the DOM.
  */
 
 
@@ -363,18 +365,10 @@ function propertiesToHTML(el: TPigAnElement, lang: tagIETF): { propertiesHTML: s
     return { propertiesHTML, diagramHTML };
 }
 
-function showError(img: HTMLImageElement, message: string): void {
-    const errorEl = document.createElement('span');
-    errorEl.className = 'meta-error';
-    errorEl.style.color = 'red';
-    errorEl.textContent = message;
-    img.replaceWith(errorEl);
-}
-
-// Displayable raster/vector image extensions handled by resolveAssetImages():
+// Displayable raster/vector image extensions handled by resolveAssetImagesInHtml():
 const DISPLAYABLE_IMAGE_EXT = /\.(png|jpe?g|gif|svg)(?:[?#].*)?$/i;
-// 1x1 transparent GIF used as a placeholder src until the real asset is resolved:
-const PLACEHOLDER_IMG_SRC = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+// Marker class applied to <img> placeholders, so resolveAssetImagesInHtml() can find
+// and replace them again once getHTML()/passify() has produced the full HTML string:
 export const PENDING_ASSET_CLASS = 'asset-pending';
 
 function escapeAttr(value: string): string {
@@ -385,11 +379,9 @@ function escapeAttr(value: string): string {
  * Replace <img src="..."> and <object data="..." type="image/...">...</object>
  * references to displayable image files (png, jpg, jpeg, svg) with a placeholder
  * <img> element carrying the original reference in a 'data-asset-ref' attribute.
- * The placeholder is later resolved asynchronously by resolveAssetImages(), which
- * fetches the actual image (from the asset cache for relative references, or via
- * HTTP for fully qualified references) and inserts it into the DOM - as a data URL
- * for png/jpg/jpeg, or as inline <svg> markup for svg.
- * This keeps getHTML()/passify() fully synchronous.
+ * The placeholder is later resolved - still as a string, before anything is
+ * inserted into the DOM - by resolveAssetImagesInHtml(). This keeps
+ * getHTML()/passify() fully synchronous.
  *
  * @param html - HTML string potentially containing <img>/<object> image references
  * @returns HTML string with displayable image references replaced by placeholders
@@ -410,7 +402,7 @@ function insertAssetPlaceholders(html: string): string {
             return match; // not a displayable image type, leave for normal object handling
         }
         const alt = escapeAttr(String(content).trim().slice(0, 200) || ref);
-        return `<img class="${PENDING_ASSET_CLASS}" data-asset-ref="${escapeAttr(ref)}" alt="${alt}" src="${PLACEHOLDER_IMG_SRC}">`;
+        return `<img class="${PENDING_ASSET_CLASS}" data-asset-ref="${escapeAttr(ref)}" alt="${alt}">`;
     });
 
     // <img src="ref" ...> -> placeholder <img> (skip refs already pointing to a data: URL)
@@ -420,35 +412,42 @@ function insertAssetPlaceholders(html: string): string {
         const attrs = `${before} ${after}`;
         const altMatch = attrs.match(/alt\s*=\s*["']([^"']*)["']/i);
         const alt = escapeAttr(altMatch ? altMatch[1] : ref);
-        return `<img class="${PENDING_ASSET_CLASS}" data-asset-ref="${escapeAttr(ref)}" alt="${alt}" src="${PLACEHOLDER_IMG_SRC}">`;
+        return `<img class="${PENDING_ASSET_CLASS}" data-asset-ref="${escapeAttr(ref)}" alt="${alt}">`;
     });
 
     return result;
 }
+
 /**
- * Resolve all pending image placeholders (see insertAssetPlaceholders()) found
- * within 'container' (or the whole document if omitted). Meant to be called once
- * after HTML produced by getHTML()/GetHTML.* has been inserted into the DOM
- * (e.g. via v-html), so that getHTML() itself can stay fully synchronous.
+ * Resolve all pending image placeholders (see insertAssetPlaceholders()) found in
+ * an HTML *string* and return the resulting HTML string with images fully inlined.
+ * Meant to be called once on the HTML produced by getHTML()/GetHTML.*, BEFORE it
+ * is inserted into the DOM (e.g. via v-html) - as opposed to resolving placeholders
+ * after insertion, this avoids any dependency on DOM/ref timing.
  *
- * For each placeholder <img class="pig-asset-pending" data-asset-ref="...">:
+ * For each placeholder <img class="asset-pending" data-asset-ref="...">:
  * - a fully qualified reference (http(s)://...) is fetched via the network,
  * - a relative reference is looked up in the asset cache (PLI.getAssets()),
- * - png/jpg/jpeg content is converted to a data: URL and set as the <img> src,
- * - svg content is inserted directly, replacing the <img> with an inline <svg>,
+ * - png/jpg/jpeg/gif content is converted to a data: URL and set as the <img> src,
+ * - svg content replaces the placeholder with inline <svg> markup,
  * - if the asset cannot be obtained, the placeholder is replaced by a red
- *   inline error message.
+ *   inline error message (<span class="meta-error">).
  *
- * @param container - DOM element to scan for pending placeholders; defaults to 'document'
+ * @param html - HTML string possibly containing pending asset placeholders
+ * @returns HTML string with all placeholders resolved to inline images (or error messages)
  */
-export async function resolveAssetImages(container?: ParentNode): Promise<void> {
-    if (!PLI.isBrowserEnv()) return;
-    const root: ParentNode = container ?? document;
-    const placeholders = Array.from(root.querySelectorAll(`img.${PENDING_ASSET_CLASS}[data-asset-ref]`)) as HTMLImageElement[];
-    if (placeholders.length === 0) return;
+export async function resolveAssetImagesInHtml(html: string): Promise<string> {
+    if (!html) return html;
+
+    // Match placeholder <img class="asset-pending" data-asset-ref="..." alt="...">
+    // elements (attribute order as produced by insertAssetPlaceholders() above):
+    const placeholderRe = /<img class="asset-pending" data-asset-ref="([^"]*)" alt="([^"]*)">/g;
+    const matches = Array.from(html.matchAll(placeholderRe));
+    // LOG.debug('resolveAssetImagesInHtml: found placeholders', matches);
+    if (matches.length === 0) return html;
 
     // Cache lookups/fetches by reference, since the same asset may be referenced
-    // by more than one placeholder within the same container:
+    // by more than one placeholder within the same HTML string:
     const resolved = new Map<string, { ok: true; blob: Blob } | { ok: false; message: string }>();
 
     async function resolveRef(ref: string): Promise<{ ok: true; blob: Blob } | { ok: false; message: string }> {
@@ -457,79 +456,108 @@ export async function resolveAssetImages(container?: ParentNode): Promise<void> 
 
         let result: { ok: true; blob: Blob } | { ok: false; message: string };
         try {
+            // LOG.debug('resolveRef', ref);
             if (LIB.isRelativeReference(ref)) {
                 const assets = await PLI.getAssets();
+                // LOG.debug('resolveRef: assets', assets);
                 const asset = assets.find(a => a.filename === ref);
                 if (!asset) {
-                    result = { ok: false, message: `Image '${ref}' not found in asset cache.` };
+                    result = { ok: false, message: `<<Image '${ref}' not found.>>` };
                 } else {
                     result = { ok: true, blob: asset.blob };
                 }
-            } else {
+            } else if (PLI.isBrowserEnv()) {
                 const response = await fetch(ref);
                 if (!response.ok) {
-                    result = { ok: false, message: `Failed to load image '${ref}' (HTTP ${response.status}).` };
+                    result = { ok: false, message: `<<Failed to load image '${ref}' (HTTP ${response.status}).>>` };
                 } else {
                     result = { ok: true, blob: await response.blob() };
                 }
+            } else {
+                result = { ok: false, message: `<<Image '${ref}' cannot be fetched in this environment.>>` };
             }
         } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
-            LOG.error(`resolveAssetImages: failed to obtain image '${ref}':`, e);
-            result = { ok: false, message: `Failed to load image '${ref}': ${msg}` };
+            LOG.error(`resolveAssetImagesInHtml: failed to obtain image '${ref}':`, e);
+            result = { ok: false, message: `<<Failed to load image '${ref}': ${msg}>>` };
         }
 
         resolved.set(ref, result);
         return result;
     }
 
-    await Promise.all(placeholders.map(async img => {
-        const ref = img.getAttribute('data-asset-ref');
-        if (!ref) return;
-
+    // Resolve each distinct reference once, then substitute all placeholder occurrences:
+    const refs = Array.from(new Set(matches.map(m => m[1])));
+    const outcomes = new Map<string, { ok: true; replacement: string } | { ok: false; message: string }>();
+    await Promise.all(refs.map(async ref => {
         const outcome = await resolveRef(ref);
         if (!outcome.ok) {
-            showError(img, outcome.message);
+            outcomes.set(ref, { ok: false, message: outcome.message });
             return;
         }
-
         try {
             const isSvg = outcome.blob.type === 'image/svg+xml' || /\.svg(?:[?#].*)?$/i.test(ref);
             if (isSvg) {
                 const svgText = await outcome.blob.text();
-                const parsed = new DOMParser().parseFromString(svgText, 'image/svg+xml');
-                const svgEl = parsed.documentElement;
-                if (!svgEl || svgEl.nodeName.toLowerCase() !== 'svg' || parsed.querySelector('parsererror')) {
-                    showError(img, `Image '${ref}' is not a valid SVG.`);
-                    return;
-                }
-                const alt = img.getAttribute('alt');
-                if (alt) svgEl.setAttribute('aria-label', alt);
-                svgEl.classList.remove(PENDING_ASSET_CLASS);
-                // If the SVG already has a viewBox, keep its original width/height
-                // attributes: they define the intrinsic (original) size, and the
-                // CSS rule max-width: 100% will only shrink it when the column is
-                // narrower. If there is no viewBox, the width/height attributes
-                // (if any) are the only size reference, so derive a viewBox from
-                // them and drop the attributes - otherwise the SVG would have no
-                // intrinsic size and browsers may stretch it to fill the column:
-                if (!svgEl.getAttribute('viewBox')) {
-                    const w = parseFloat(svgEl.getAttribute('width') || '');
-                    const h = parseFloat(svgEl.getAttribute('height') || '');
-                    if (!isNaN(w) && !isNaN(h) && w > 0 && h > 0) {
-                        svgEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
-                    }
-                    svgEl.removeAttribute('width');
-                    svgEl.removeAttribute('height');
-                }
-                img.replaceWith(document.adoptNode(svgEl));
+                outcomes.set(ref, { ok: true, replacement: sanitizeInlineSvg(svgText, ref) });
             } else {
-                img.src = await LIB.blobToDataURL(outcome.blob);
-                img.classList.remove(PENDING_ASSET_CLASS);
+                const dataUrl = await LIB.blobToDataURL(outcome.blob);
+                outcomes.set(ref, { ok: true, replacement: `<img src="${escapeAttr(dataUrl)}">` }); // alt restored below
             }
         } catch (e: unknown) {
-            LOG.error(`resolveAssetImages: failed to render image '${ref}':`, e);
-            showError(img, `Failed to render image '${ref}'.`);
+            LOG.error(`resolveAssetImagesInHtml: failed to render image '${ref}':`, e);
+            outcomes.set(ref, { ok: false, message: `Failed to render image '${ref}'.` });
         }
     }));
+
+    return html.replace(placeholderRe, (match, ref: string, alt: string) => {
+        const outcome = outcomes.get(ref);
+        if (!outcome) return match;
+        if (!outcome.ok) {
+            return `<span class="meta-error" style="color:red;">${escapeAttr(outcome.message)}</span>`;
+        }
+        // Re-insert the original 'alt' text for raster images (inline SVGs carry it via aria-label):
+        return outcome.replacement.includes('<img ')
+            ? outcome.replacement.replace('<img ', `<img alt="${alt}" `)
+            : outcome.replacement;
+    });
+}
+
+/**
+ * Parse SVG markup obtained from the asset cache (or network) and return a
+ * sanitized, inline-ready <svg ...>...</svg> string (as plain text, since
+ * resolveAssetImagesInHtml() operates on HTML strings, not the DOM).
+ *
+ * @param svgText - raw SVG markup
+ * @param ref - original asset reference, used for error/alt text only
+ * @returns sanitized inline SVG markup, or a <span class="meta-error"> on failure
+ */
+function sanitizeInlineSvg(svgText: string, ref: string): string {
+    if (!PLI.isBrowserEnv()) {
+        // No DOMParser/XMLSerializer available outside the browser; pass the SVG through
+        // passify()'s own sanitization (dangerous tags/attributes are still stripped there).
+        return svgText;
+    }
+    const parsed = new DOMParser().parseFromString(svgText, 'image/svg+xml');
+    const svgEl = parsed.documentElement;
+    if (!svgEl || svgEl.nodeName.toLowerCase() !== 'svg' || parsed.querySelector('parsererror')) {
+        return `<span class="meta-error" style="color:red;">Image '${escapeAttr(ref)}' is not a valid SVG.</span>`;
+    }
+    svgEl.classList.remove(PENDING_ASSET_CLASS);
+    // If the SVG already has a viewBox, keep its original width/height attributes:
+    // they define the intrinsic (original) size, and the CSS rule max-width: 100%
+    // will only shrink it when the column is narrower. If there is no viewBox, the
+    // width/height attributes (if any) are the only size reference, so derive a
+    // viewBox from them and drop the attributes - otherwise the SVG would have no
+    // intrinsic size and browsers may stretch it to fill the column:
+    if (!svgEl.getAttribute('viewBox')) {
+        const w = parseFloat(svgEl.getAttribute('width') || '');
+        const h = parseFloat(svgEl.getAttribute('height') || '');
+        if (!isNaN(w) && !isNaN(h) && w > 0 && h > 0) {
+            svgEl.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        }
+        svgEl.removeAttribute('width');
+        svgEl.removeAttribute('height');
+    }
+    return new XMLSerializer().serializeToString(svgEl);
 }

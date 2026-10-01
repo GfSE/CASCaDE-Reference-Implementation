@@ -153,6 +153,15 @@ export const AssetCache = defineStore('assetCache', {
      * @returns true if the assets were successfully persisted
      */
     async update(assets: IAsset[]): Promise<boolean> {
+        // AssetCache is lazily loaded (unlike ItemCache, it is not loaded on app
+        // startup). If this is the first access in this session, this.assets is
+        // still empty even though previously imported assets are persisted in
+        // IndexedDB; without loading them first, merging below would discard them
+        // and saveToStorage() would overwrite storage with only the new assets.
+        if (!this.initialized) {
+            await this.loadFromStorage()
+        }
+
         const byFilename = new Map<string, IAsset>();
         for (const asset of this.assets) byFilename.set(asset.filename, asset);
 
@@ -221,7 +230,7 @@ export const AssetCache = defineStore('assetCache', {
             // reactive Proxy objects, so unwrap each asset (and its Blob) to its
             // raw form before persisting.
             const rawAssets = this.assets.map((asset) => ({ ...toRaw(asset), blob: toRaw(asset.blob) }));
-            LOG.debug('[AssetCache] Saving assets to storage:', rawAssets);
+            // LOG.debug('[AssetCache] Saving assets to storage:', rawAssets);
             await idb.set(rawAssets)
 
             // Verify the write actually persisted the expected number of assets

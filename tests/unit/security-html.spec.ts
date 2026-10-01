@@ -152,7 +152,7 @@ describe('HTML Security - XSS Prevention', () => {
             // Verify legitimate object tags for media are preserved; image objects are
             // converted to placeholder <img> elements (resolved later by resolveAssetImages())
             expect(htmlOutput).toContain('data-asset-ref="image.png"');
-            expect(htmlOutput).toContain('class="pig-asset-pending"');
+            expect(htmlOutput).toContain('class="asset-pending"');
             expect(htmlOutput).toContain('<object');
             expect(htmlOutput).toContain('data="video.mp4"');
             expect(htmlOutput).toContain('type="video/mp4"');
@@ -223,7 +223,7 @@ describe('HTML Security - XSS Prevention', () => {
             // Verify safe media types are preserved; the image object is converted to a
             // placeholder <img> element (resolved later by resolveAssetImages())
             expect(htmlOutput).toContain('data-asset-ref="safe-image.jpg"');
-            expect(htmlOutput).toContain('class="pig-asset-pending"');
+            expect(htmlOutput).toContain('class="asset-pending"');
         });
     });
 });
