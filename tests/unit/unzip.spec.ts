@@ -197,6 +197,10 @@ describe('Importers unpack zipped input files', () => {
      * that assets actually survive a save-to/load-from IndexedDB round-trip.
      * Whether the underlying IndexedDB persistence works correctly is
      * considered secondary here and is out of scope for this test case.
+     *
+     * Notice: Running this test in a npm/jest enviromnent causes twice a
+     * console.error() message from AssetCache.saveToStorage() because IndexedDB 
+     * is not available. This is expected and does not indicate a test failure.
      */
     it('JsonldImporter extracts a package with an entity description containing img/object tags and persists its images to AssetCache', async () => {
         // Reuse the Pinia instance created in beforeAll(); just ensure the

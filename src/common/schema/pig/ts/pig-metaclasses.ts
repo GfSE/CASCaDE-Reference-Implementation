@@ -598,7 +598,7 @@ type TConstructItem = Pick<IItem, 'itemType'>;
 
 abstract class Item implements IItem {
     readonly itemType!: PigItemTypeValue;
-    instanceOf!: TPigId;  // required for ALL itemTypes according to JSON schema
+    instanceOf!: TPigId;  // required for ALL itemTypes according to JSON schema, is called 'type' in the metamodel
     protected lastStatus!: IRsp;
     protected constructor(itm: TConstructItem) {
         this.itemType = itm.itemType;
