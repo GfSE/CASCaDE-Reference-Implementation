@@ -4,13 +4,16 @@ info:
   description: >
     REST API providing CRUD (Create, Read, Update, Delete) operations for every
     concrete metamodel item type of the CASCaRA Graph, namespace prefix `cas:`.
-    Concrete metamodel classes (schema-level, itemType ends without a leading
-    lower-case article): Enumeration, Property, Link, Entity, Relationship.
-    Concrete metamodel instances (individuals, itemType starts with a
-    lower-case article): anEntity, aRelationship, aPackage.
+    Concrete CASCaRA types - Enumeration, Property, Link, Entity, Relationship.
+    Concrete CASCaRA instances - anEntity, aRelationship, aPackage.
     `aProperty`, `aSourceLink` and `aTargetLink` are not exposed as standalone
     resources because they have no identifier of their own and only exist as
     embedded parts of anEntity, aRelationship or aPackage.
+    For all read (GET) operations, the desired representation format
+    (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`, or
+    `cas.ttl` / `text/turtle`) can be requested either via the `format` query
+    parameter or via the standard HTTP `Accept` header; if both are given,
+    `format` takes precedence.
   version: 1.0.0
   license:
     name: Apache 2.0
@@ -55,15 +58,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of Enumeration items
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Enumeration'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Enumeration'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of Enumeration items.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -92,13 +105,21 @@ paths:
       operationId: getEnumeration
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested Enumeration
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/Enumeration'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Enumeration'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the Enumeration item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -143,15 +164,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of Property items
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Property'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Property'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of Property items.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -184,13 +215,21 @@ paths:
       operationId: getProperty
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested Property
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/Property'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Property'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the Property item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -239,15 +278,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of Link items
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Link'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of Link items.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -280,13 +329,21 @@ paths:
       operationId: getLink
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested Link
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/Link'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Link'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the Link item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -335,15 +392,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of Entity items
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of Entity items.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -376,13 +443,21 @@ paths:
       operationId: getEntity
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested Entity
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/Entity'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Entity'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the Entity item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -431,15 +506,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of Relationship items
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Relationship'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Relationship'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of Relationship items.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -472,13 +557,21 @@ paths:
       operationId: getRelationship
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested Relationship
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/Relationship'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Relationship'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the Relationship item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -527,15 +620,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/instanceOf'
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of anEntity instances
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/AnEntity'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AnEntity'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of anEntity instances.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -568,13 +671,21 @@ paths:
       operationId: getAnEntity
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested anEntity instance
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/AnEntity'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/AnEntity'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the anEntity instance.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -623,15 +734,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/instanceOf'
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of aRelationship instances
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/ARelationship'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ARelationship'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of aRelationship instances.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -664,13 +785,21 @@ paths:
       operationId: getARelationship
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested aRelationship instance
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/ARelationship'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/ARelationship'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the aRelationship instance.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -719,15 +848,25 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/format'
         - $ref: '#/components/parameters/instanceOf'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: Array of aPackage instances (proxies, graph omitted for brevity)
           content:
-            application/json:
+            application/ld+json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/APackageProxy'
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/APackageProxy'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of aPackage proxies.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -760,13 +899,21 @@ paths:
       operationId: getPackage
       parameters:
         - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
       responses:
         '200':
           description: The requested aPackage instance
           content:
-            application/json:
+            application/ld+json:
               schema:
                 $ref: '#/components/schemas/APackage'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/APackage'
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the aPackage instance, including its graph.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -863,10 +1010,31 @@ components:
         throughout this API and in the request bodies of write operations.
         `cas.xml` returns the equivalent CASCaRA XML representation.
         `cas.ttl` returns the equivalent representation as RDF Turtle.
+        This query parameter is a convenience override for simple browser-based
+        testing; the standards-based alternative is HTTP content negotiation
+        via the `Accept` header (see the `Accept` parameter below). If both are
+        given, the `format` query parameter takes precedence over `Accept`.
       schema:
         type: string
         enum: [cas.jsonld, cas.xml, cas.ttl]
         default: cas.jsonld
+    Accept:
+      name: Accept
+      in: header
+      required: false
+      description: >
+        Standard HTTP content negotiation header, used to request the desired
+        serialization format of the returned representation(s) as an
+        alternative to the `format` query parameter.
+        `application/ld+json` (default) requests CASCaRA JSON-LD.
+        `application/xml` requests the equivalent CASCaRA XML representation.
+        `text/turtle` requests the equivalent representation as RDF Turtle.
+        If the `format` query parameter is also present, it takes precedence
+        over this header.
+      schema:
+        type: string
+        enum: [application/ld+json, application/xml, text/turtle]
+        default: application/ld+json
 
   responses:
     BadRequest:
