@@ -94,8 +94,9 @@
     }
 
     /**
-     * Watches the current route for an 'update' or 'replace' query parameter carrying
-     * a file URL (fully qualified or relative), e.g.:
+     * Watches the current route for query parameters that trigger commands, e.g.
+     * an 'update' or 'replace' command carrying a file URL (fully qualified or
+     * relative), e.g.:
      * path/document?update="https://product-information-graph.org/examples/ex.cas.jsonld"
      *
      * Supported file types: *.cas.jsonld, *.cas.jsonld.zip, *.cas.xml, *.cas.xml.zip,
@@ -104,6 +105,8 @@
      * Once detected, the referenced file is downloaded and processed like the import
      * dialogs (see import-base.vue): 'update' merges into the existing cache, 'replace'
      * fully replaces it. Progress and success/error messages are shown in this modal dialog.
+     *
+     * More URL-triggered commands are expected to follow and should be added here.
      */
     @Options({
         data() {
@@ -217,7 +220,7 @@
             }
         }
     })
-    export default class UrlImportDialog extends Vue {
+    export default class UrlQueries extends Vue {
         dialog!: boolean;
         isLoading!: boolean;
         sourceUrl!: string;
