@@ -33,14 +33,21 @@
                 <router-view />
             </v-container>
         </v-main>
+
+        <!-- Handles ?update="<url>" / ?replace="<url>" query parameters on any route -->
+        <url-import-dialog />
     </v-app>
 </template>
 
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component';
     import { DEF } from '@/common/lib/definitions';
+    import UrlImportDialog from '@/components/UrlImportDialog.vue';
 
     @Options({
+        components: {
+            UrlImportDialog
+        },
         data() {
             return {
                 drawer: false

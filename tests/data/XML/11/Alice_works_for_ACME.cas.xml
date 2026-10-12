@@ -3,6 +3,7 @@
     xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
     xmlns:skos="https://www.w3.org/TR/skos-reference/"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:dcterms="http://purl.org/dc/terms/"
     xmlns:schema="http://schema.org/"
     xmlns:xs="http://www.w3.org/2001/XMLSchema#"
