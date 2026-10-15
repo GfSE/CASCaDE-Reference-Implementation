@@ -27,122 +27,211 @@ servers:
     description: CASCaRA API base path
 
 tags:
-  - name: Enumeration
-    description: CRUD for cas:Enumeration (metamodel class)
-  - name: Property
-    description: CRUD for cas:Property (metamodel class)
-  - name: Link
-    description: CRUD for cas:Link (metamodel class)
-  - name: Entity
-    description: CRUD for cas:Entity (metamodel class)
-  - name: Relationship
-    description: CRUD for cas:Relationship (metamodel class)
-  - name: anEntity
-    description: CRUD for cas:anEntity (instance)
-  - name: aRelationship
-    description: CRUD for cas:aRelationship (instance)
+  - name: Repository
+    description: Manage repositories (aPackage instances used as repository roots)
+  - name: Item
+    description: CRUD for any CASCaRA item type, dispatched via the itemType attribute
   - name: aPackage
     description: CRUD for cas:aPackage (instance / container)
 
 paths:
+
   #############################
-  # Enumeration
+  # Repository
   #############################
-  /enumerations:
+  /repositories/:
     get:
-      tags: [Enumeration]
-      summary: List Enumerations
-      operationId: listEnumerations
+      tags: [Repository]
+      summary: List repositories
+      description: >
+        Returns a list of RepositoryProxy objects, one per repository. Each
+        proxy carries all attributes of APackage except 'context' and
+        'graph', so the (potentially large) embedded graph is never
+        transferred when merely listing repositories.
+      operationId: listRepositories
       parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: Array of repository proxies
+          content:
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of repository proxies.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      tags: [Repository]
+      summary: Create a new repository
+      description: >
+        Creates a new repository from a single aPackage item (not an array).
+      operationId: createRepository
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Repository created
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  #############################
+  # Item (any metamodel item type)
+  #############################
+  /repositories/{repositoryId}/items:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+    get:
+      tags: [Item]
+      summary: List items of a given itemType
+      description: >
+        Returns a list of items of the concrete CASCaRA item type given by
+        the required itemType query parameter. This is a common entry point
+        for all metamodel classes and instances, as an alternative to the
+        type-specific list endpoints.
+      operationId: listItems
+      parameters:
+        - $ref: '#/components/parameters/itemType'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
+        - $ref: '#/components/parameters/type'
         - $ref: '#/components/parameters/format'
         - $ref: '#/components/parameters/Accept'
       responses:
         '200':
-          description: Array of Enumeration items
+          description: Array of items of the requested itemType
           content:
             application/ld+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Enumeration'
+                  type: object
             application/xml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Enumeration'
+                  type: object
             text/turtle:
               schema:
                 type: string
-                description: RDF Turtle serialization of the array of Enumeration items.
+                description: RDF Turtle serialization of the array of items.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
-      tags: [Enumeration]
-      summary: Create a new Enumeration
-      operationId: createEnumeration
+      tags: [Item]
+      summary: Create one or more new items of any CASCaRA item type
+      description: >
+        Creates a batch of new items from the submitted array, even if it
+        contains only a single item. Each item's own itemType attribute
+        determines the concrete schema used to instantiate it, so the array
+        can mix items of different types (e.g. Entities, Relationships,
+        aPackages).
+      operationId: createItem
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Enumeration'
+              type: array
+              items:
+                type: object
       responses:
         '201':
-          $ref: '#/components/responses/EnumerationCreated'
+          description: Array of created items, in the same order as the request body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
-  /enumerations/{id}:
+  /repositories/{repositoryId}/items/{itemId}:
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
     get:
-      tags: [Enumeration]
-      summary: Get an Enumeration by id
-      operationId: getEnumeration
+      tags: [Item]
+      summary: Get an item of any CASCaRA item type by id
+      description: >
+        Returns the item with the given id. The itemType attribute of the
+        returned representation determines its concrete schema.
+      operationId: getItem
       parameters:
         - $ref: '#/components/parameters/format'
         - $ref: '#/components/parameters/Accept'
       responses:
         '200':
-          description: The requested Enumeration
+          description: The requested item
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/Enumeration'
+                type: object
             application/xml:
               schema:
-                $ref: '#/components/schemas/Enumeration'
+                type: object
             text/turtle:
               schema:
                 type: string
-                description: RDF Turtle serialization of the Enumeration item.
+                description: RDF Turtle serialization of the item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
-      tags: [Enumeration]
-      summary: Replace/update an Enumeration
-      operationId: updateEnumeration
+      tags: [Item]
+      summary: Update an item of any CASCaRA item type
+      description: >
+        Replaces the item with the given id. The itemType attribute of the
+        request body determines the concrete schema used to instantiate it.
+      operationId: updateItem
+      parameters:
+        - $ref: '#/components/parameters/mode'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Enumeration'
+              type: object
       responses:
         '200':
-          $ref: '#/components/responses/EnumerationCreated'
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                type: object
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      tags: [Enumeration]
-      summary: Delete an Enumeration
-      operationId: deleteEnumeration
+      tags: [Item]
+      summary: Delete an item of any CASCaRA item type
+      operationId: deleteItem
       responses:
         '204':
           description: Deleted
@@ -150,719 +239,75 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
-
-  #############################
-  # Property
-  #############################
-  /properties:
-    get:
-      tags: [Property]
-      summary: List Properties
-      operationId: listProperties
-      parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/specializes'
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: Array of Property items
-          content:
-            application/ld+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Property'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Property'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the array of Property items.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-    post:
-      tags: [Property]
-      summary: Create a new Property
-      operationId: createProperty
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Property'
-      responses:
-        '201':
-          description: Property created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Property'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /properties/{id}:
+  /repositories/{repositoryId}/items/{itemId}/revisions:
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
     get:
-      tags: [Property]
-      summary: Get a Property by id
-      operationId: getProperty
+      tags: [Item]
+      summary: Get the revision history of an item
+      description: >
+        Returns the historical trace of revisions of the item with the
+        given id, ordered from the newest to the oldest revision. If the
+        item's itemType is 'cas:aPackage', only an APackageProxy is
+        returned for each revision (i.e. without the embedded graph), to
+        avoid the cost of materializing the full graph for every historical
+        revision.
+      operationId: getItemRevisions
       parameters:
         - $ref: '#/components/parameters/format'
         - $ref: '#/components/parameters/Accept'
       responses:
         '200':
-          description: The requested Property
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Property'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Property'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the Property item.
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags: [Property]
-      summary: Replace/update a Property
-      operationId: updateProperty
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Property'
-      responses:
-        '200':
-          description: Property updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Property'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      tags: [Property]
-      summary: Delete a Property
-      operationId: deleteProperty
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-
-  #############################
-  # Link
-  #############################
-  /links:
-    get:
-      tags: [Link]
-      summary: List Links
-      operationId: listLinks
-      parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/specializes'
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: Array of Link items
+          description: Array of historical revisions of the item, newest first.
           content:
             application/ld+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Link'
+                  type: object
             application/xml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Link'
+                  type: object
             text/turtle:
               schema:
                 type: string
-                description: RDF Turtle serialization of the array of Link items.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-    post:
-      tags: [Link]
-      summary: Create a new Link
-      operationId: createLink
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Link'
-      responses:
-        '201':
-          description: Link created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Link'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /links/{id}:
-    parameters:
-      - $ref: '#/components/parameters/id'
-    get:
-      tags: [Link]
-      summary: Get a Link by id
-      operationId: getLink
-      parameters:
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: The requested Link
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Link'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Link'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the Link item.
+                description: RDF Turtle serialization of the array of revisions.
         '404':
           $ref: '#/components/responses/NotFound'
-    put:
-      tags: [Link]
-      summary: Replace/update a Link
-      operationId: updateLink
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Link'
-      responses:
-        '200':
-          description: Link updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Link'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      tags: [Link]
-      summary: Delete a Link
-      operationId: deleteLink
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-
-  #############################
-  # Entity
-  #############################
-  /entities:
-    get:
-      tags: [Entity]
-      summary: List Entities
-      operationId: listEntities
-      parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/specializes'
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: Array of Entity items
-          content:
-            application/ld+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Entity'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Entity'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the array of Entity items.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-    post:
-      tags: [Entity]
-      summary: Create a new Entity
-      operationId: createEntity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Entity'
-      responses:
-        '201':
-          description: Entity created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Entity'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /entities/{id}:
-    parameters:
-      - $ref: '#/components/parameters/id'
-    get:
-      tags: [Entity]
-      summary: Get an Entity by id
-      operationId: getEntity
-      parameters:
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: The requested Entity
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Entity'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Entity'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the Entity item.
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags: [Entity]
-      summary: Replace/update an Entity
-      operationId: updateEntity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Entity'
-      responses:
-        '200':
-          description: Entity updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Entity'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      tags: [Entity]
-      summary: Delete an Entity
-      operationId: deleteEntity
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-
-  #############################
-  # Relationship
-  #############################
-  /relationships:
-    get:
-      tags: [Relationship]
-      summary: List Relationships
-      operationId: listRelationships
-      parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/specializes'
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: Array of Relationship items
-          content:
-            application/ld+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Relationship'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Relationship'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the array of Relationship items.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-    post:
-      tags: [Relationship]
-      summary: Create a new Relationship
-      operationId: createRelationship
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Relationship'
-      responses:
-        '201':
-          description: Relationship created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Relationship'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /relationships/{id}:
-    parameters:
-      - $ref: '#/components/parameters/id'
-    get:
-      tags: [Relationship]
-      summary: Get a Relationship by id
-      operationId: getRelationship
-      parameters:
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: The requested Relationship
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/Relationship'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Relationship'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the Relationship item.
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags: [Relationship]
-      summary: Replace/update a Relationship
-      operationId: updateRelationship
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Relationship'
-      responses:
-        '200':
-          description: Relationship updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Relationship'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      tags: [Relationship]
-      summary: Delete a Relationship
-      operationId: deleteRelationship
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-
-  #############################
-  # anEntity (instance)
-  #############################
-  /an-entities:
-    get:
-      tags: [anEntity]
-      summary: List anEntity instances
-      operationId: listAnEntities
-      parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/instanceOf'
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: Array of anEntity instances
-          content:
-            application/ld+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AnEntity'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/AnEntity'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the array of anEntity instances.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-    post:
-      tags: [anEntity]
-      summary: Create a new anEntity instance
-      operationId: createAnEntity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AnEntity'
-      responses:
-        '201':
-          description: anEntity created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AnEntity'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /an-entities/{id}:
-    parameters:
-      - $ref: '#/components/parameters/id'
-    get:
-      tags: [anEntity]
-      summary: Get an anEntity instance by id
-      operationId: getAnEntity
-      parameters:
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: The requested anEntity instance
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/AnEntity'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/AnEntity'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the anEntity instance.
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags: [anEntity]
-      summary: Replace/update an anEntity instance
-      operationId: updateAnEntity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AnEntity'
-      responses:
-        '200':
-          description: anEntity updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AnEntity'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      tags: [anEntity]
-      summary: Delete an anEntity instance
-      operationId: deleteAnEntity
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-
-  #############################
-  # aRelationship (instance)
-  #############################
-  /a-relationships:
-    get:
-      tags: [aRelationship]
-      summary: List aRelationship instances
-      operationId: listARelationships
-      parameters:
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/instanceOf'
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: Array of aRelationship instances
-          content:
-            application/ld+json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ARelationship'
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ARelationship'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the array of aRelationship instances.
-        '400':
-          $ref: '#/components/responses/BadRequest'
-    post:
-      tags: [aRelationship]
-      summary: Create a new aRelationship instance
-      operationId: createARelationship
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ARelationship'
-      responses:
-        '201':
-          description: aRelationship created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ARelationship'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /a-relationships/{id}:
-    parameters:
-      - $ref: '#/components/parameters/id'
-    get:
-      tags: [aRelationship]
-      summary: Get an aRelationship instance by id
-      operationId: getARelationship
-      parameters:
-        - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/Accept'
-      responses:
-        '200':
-          description: The requested aRelationship instance
-          content:
-            application/ld+json:
-              schema:
-                $ref: '#/components/schemas/ARelationship'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/ARelationship'
-            text/turtle:
-              schema:
-                type: string
-                description: RDF Turtle serialization of the aRelationship instance.
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      tags: [aRelationship]
-      summary: Replace/update an aRelationship instance
-      operationId: updateARelationship
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ARelationship'
-      responses:
-        '200':
-          description: aRelationship updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ARelationship'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    delete:
-      tags: [aRelationship]
-      summary: Delete an aRelationship instance
-      operationId: deleteARelationship
-      responses:
-        '204':
-          description: Deleted
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
 
   #############################
   # aPackage (instance / container)
   #############################
-  /packages:
+  /repositories/{repositoryId}/apackages:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
     get:
       tags: [aPackage]
       summary: List aPackage instances
-      operationId: listPackages
+      operationId: listAPackages
       parameters:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/format'
-        - $ref: '#/components/parameters/instanceOf'
+        - $ref: '#/components/parameters/type'
         - $ref: '#/components/parameters/Accept'
       responses:
         '200':
-          description: Array of aPackage instances (proxies, graph omitted for brevity)
+          description: Array of aPackage instances (proxies, graph omitted for brevity).
           content:
             application/ld+json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/APackageProxy'
+                  type: object
             application/xml:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/APackageProxy'
+                  type: object
             text/turtle:
               schema:
                 type: string
@@ -871,28 +316,33 @@ paths:
           $ref: '#/components/responses/BadRequest'
     post:
       tags: [aPackage]
-      summary: Create (import) a new aPackage, including its embedded graph
-      operationId: createPackage
+      summary: >
+        Create (import) a new aPackage, including its embedded graph.
+        Use the provided id; otherwise the server will generate a new id.
+      operationId: createAPackage
+      parameters:
+        - $ref: '#/components/parameters/mode'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/APackage'
+              type: object
       responses:
         '201':
           description: aPackage created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APackage'
+                type: object
         '400':
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
-  /packages/{id}:
+  /repositories/{repositoryId}/apackages/{itemId}:
     parameters:
-      - $ref: '#/components/parameters/id'
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
     get:
       tags: [aPackage]
       summary: Get an aPackage instance by id, including its graph
@@ -906,10 +356,10 @@ paths:
           content:
             application/ld+json:
               schema:
-                $ref: '#/components/schemas/APackage'
+                type: object
             application/xml:
               schema:
-                $ref: '#/components/schemas/APackage'
+                type: object
             text/turtle:
               schema:
                 type: string
@@ -918,21 +368,23 @@ paths:
           $ref: '#/components/responses/NotFound'
     put:
       tags: [aPackage]
-      summary: Replace/update an aPackage instance, including its graph
+      summary: Update an aPackage instance, including its graph
       operationId: updatePackage
+      parameters:
+        - $ref: '#/components/parameters/mode'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/APackage'
+              type: object
       responses:
         '200':
           description: aPackage updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/APackage'
+                type: object
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -948,16 +400,128 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+  /repositories/{repositoryId}/apackages/{itemId}/revisions:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
+    get:
+      tags: [aPackage]
+      summary: Get the revision history of an aPackage
+      description: >
+        Returns the historical trace of revisions of the aPackage with the
+        given id, ordered from the newest to the oldest revision. Only an
+        APackageProxy is returned for each revision (i.e. without the
+        embedded graph), to avoid the cost of materializing the full graph
+        for every historical revision.
+      operationId: getPackageRevisions
+      parameters:
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: Array of historical revisions of the aPackage, newest first.
+          content:
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of revisions.
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /repositories/{repositoryId}/apackages/{itemId}/items:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
+    post:
+      tags: [aPackage]
+      summary: Add items to an aPackage's graph
+      description: >
+        Adds the items identified by the given array of PigId references
+        (anEntity, aRelationship, or nested aPackage instances) to the
+        aPackage's embedded graph. Items that are already part of the
+        aPackage are left unchanged.
+        Referenced items which are not known by the repository are ignored.
+      operationId: addItems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: The updated aPackage instance
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [aPackage]
+      summary: Remove items from an aPackage's graph
+      description: >
+        Removes the items identified by the given array of PigId references
+        from the aPackage's embedded graph. Items that are not part of the
+        aPackage are ignored. Those items are not deleted from the repository.
+        Referenced items which are not part of the package are ignored.
+      operationId: removeItems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: The updated aPackage instance
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
 components:
   parameters:
+    repositoryId:
+      name: repositoryId
+      in: path
+      required: true
+      description: URI (TPigId) of the repository that hosts the items addressed by this path.
+      schema:
+        type: string
     id:
       name: id
       in: path
       required: true
       description: URI (TPigId) of the item, e.g. `ns:123e4567-e89b-12d3-a456-426614174000` or a URL.
       schema:
-        $ref: '#/components/schemas/TPigId'
+        type: string
+    itemId:
+      name: itemId
+      in: path
+      required: true
+      description: URI (TPigId) of the item, e.g. `ns:123e4567-e89b-12d3-a456-426614174000` or a URL.
+      schema:
+        type: string
     limit:
       name: limit
       in: query
@@ -992,14 +556,49 @@ components:
         Relationship), which may form a `rdfs:subClassOf` hierarchy via
         `specializes`.
       schema:
-        $ref: '#/components/schemas/TPigId'
-    instanceOf:
-      name: instanceOf
+        type: string
+    type:
+      name: type
       in: query
       required: false
       description: Filter instances of the given class URI.
       schema:
-        $ref: '#/components/schemas/TPigId'
+        type: string
+    itemType:
+      name: itemType
+      in: query
+      required: true
+      description: >
+        The CASCaRA item type URI of the items to list, e.g. 'cas:Entity' or
+        'cas:aPackage'. Used to select which concrete schema the returned
+        items are instantiated as.
+      schema:
+        type: string
+        enum:
+          - 'cas:Enumeration'
+          - 'cas:Property'
+          - 'cas:Link'
+          - 'cas:Entity'
+          - 'cas:Relationship'
+          - 'cas:anEntity'
+          - 'cas:aRelationship'
+          - 'cas:aPackage'
+    mode:
+      name: mode
+      in: query
+      required: false
+      description: >
+        Write strategy for POST (create) and PUT (update) operations.
+        'replace' (default) always overwrites the stored item with the request body,
+        regardless of its age. 'update' only overwrites the stored item if the 
+        request body is younger than the currently stored item, as determined by
+        comparing their 'modified' attribute; otherwise the stored item is
+        left unchanged.
+        The prevailing item is returned in all cases.
+      schema:
+        type: string
+        enum: [replace, update]
+        default: replace
     format:
       name: format
       in: query
@@ -1042,378 +641,16 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            type: object
     NotFound:
       description: No item with the given id was found.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            type: object
     Conflict:
       description: The operation conflicts with the current state (e.g. duplicate id, or item still referenced).
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
-    EnumerationCreated:
-      description: Enumeration created or updated
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Enumeration'
-
-  schemas:
-    TPigId:
-      type: string
-      description: >
-        An URI, typically a UUID with namespace (e.g. 'ns:123e4567-e89b-12d3-a456-426614174000') or a URL.
-      example: 'ns:123e4567-e89b-12d3-a456-426614174000'
-
-    TRevision:
-      type: string
-      description: Revision identifier of an item.
-
-    TISODateString:
-      type: string
-      format: date-time
-      description: ISO 8601 date-time string.
-
-    LanguageText:
-      type: object
-      description: Multi-language text value.
-      required: [text]
-      properties:
-        text:
-          type: string
-        lang:
-          type: string
-          description: BCP-47 language tag, optional when only a single language value is given.
-
-    Text:
-      type: object
-      description: Single-language text value, e.g. used for icon/color.
-      properties:
-        text:
-          type: string
-        lang:
-          type: string
-
-    Error:
-      type: object
-      properties:
-        status:
-          type: integer
-        statusText:
-          type: string
-        details:
-          type: string
-
-    # --- Base/abstract building blocks (not exposed standalone) ---
-    Item:
-      type: object
-      required: [itemType, instanceOf]
-      properties:
-        itemType:
-          type: string
-          description: The CASCaRA item type URI, e.g. 'cas:Entity'.
-        instanceOf:
-          $ref: '#/components/schemas/TPigId'
-
-    Identifiable:
-      allOf:
-        - $ref: '#/components/schemas/Item'
-        - type: object
-          required: [id]
-          properties:
-            id:
-              $ref: '#/components/schemas/TPigId'
-            specializes:
-              $ref: '#/components/schemas/TPigId'
-            title:
-              type: array
-              items:
-                $ref: '#/components/schemas/LanguageText'
-            description:
-              type: array
-              items:
-                $ref: '#/components/schemas/LanguageText'
-            definition:
-              type: array
-              items:
-                $ref: '#/components/schemas/LanguageText'
-            revision:
-              $ref: '#/components/schemas/TRevision'
-            priorRevision:
-              type: array
-              items:
-                $ref: '#/components/schemas/TRevision'
-            modified:
-              $ref: '#/components/schemas/TISODateString'
-            creator:
-              type: string
-
-    Element:
-      allOf:
-        - $ref: '#/components/schemas/Identifiable'
-        - type: object
-          properties:
-            enumeratedProperty:
-              type: array
-              items:
-                $ref: '#/components/schemas/TPigId'
-              description: Allowed Property class URIs; undefined=all allowed, empty=none allowed.
-            icon:
-              $ref: '#/components/schemas/Text'
-            color:
-              $ref: '#/components/schemas/Text'
-
-    AProperty:
-      type: object
-      description: Embedded property value, part of anEntity/aRelationship/aPackage; has no own id.
-      allOf:
-        - $ref: '#/components/schemas/Item'
-        - type: object
-          properties:
-            value:
-              type: string
-            composes:
-              type: array
-              items:
-                $ref: '#/components/schemas/TPigId'
-
-    ALink:
-      type: object
-      description: Embedded link value, part of anEntity/aRelationship/aPackage; has no own id.
-      allOf:
-        - $ref: '#/components/schemas/Item'
-        - type: object
-          required: [idRef]
-          properties:
-            idRef:
-              $ref: '#/components/schemas/TPigId'
-
-    AnElement:
-      allOf:
-        - $ref: '#/components/schemas/Identifiable'
-        - type: object
-          properties:
-            hasProperty:
-              type: array
-              items:
-                $ref: '#/components/schemas/AProperty'
-            hasTargetLink:
-              type: array
-              items:
-                $ref: '#/components/schemas/ALink'
-              maxItems: 1
-
-    # --- Concrete metamodel classes ---
-    EnumeratedValue:
-      type: object
-      required: [id]
-      properties:
-        id:
-          $ref: '#/components/schemas/TPigId'
-        title:
-          type: array
-          items:
-            $ref: '#/components/schemas/LanguageText'
-        value:
-          type: string
-
-    Enumeration:
-      description: cas:Enumeration - a metamodel class defining a list of allowed values.
-      allOf:
-        - $ref: '#/components/schemas/Element'
-        - type: object
-          required: [datatype, enumeratedValue]
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:Enumeration']
-            datatype:
-              type: string
-              description: Must be one of XsDataType, e.g. 'xs:string'.
-            enumeratedValue:
-              type: array
-              items:
-                $ref: '#/components/schemas/EnumeratedValue'
-
-    Property:
-      description: cas:Property - a metamodel class defining a data property.
-      allOf:
-        - $ref: '#/components/schemas/Identifiable'
-        - type: object
-          required: [datatype]
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:Property']
-            datatype:
-              type: string
-              description: Must be one of XsDataType, e.g. 'xs:string'.
-            readOnly:
-              type: boolean
-              default: false
-            minCount:
-              type: integer
-            maxCount:
-              type: integer
-            maxLength:
-              type: integer
-              description: Only used for string datatype.
-            pattern:
-              type: string
-              description: RegExp pattern, only used for string datatype.
-            minInclusive:
-              type: number
-            maxInclusive:
-              type: number
-            defaultValue:
-              type: string
-            composes:
-              type: array
-              items:
-                $ref: '#/components/schemas/TPigId'
-
-    Link:
-      description: cas:Link - a metamodel class defining a relationship endpoint type.
-      allOf:
-        - $ref: '#/components/schemas/Identifiable'
-        - type: object
-          required: [enumeratedEndpoint]
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:Link']
-            enumeratedEndpoint:
-              type: array
-              items:
-                $ref: '#/components/schemas/TPigId'
-              description: URIs of allowed Entity or Relationship classes.
-            readOnly:
-              type: boolean
-              default: false
-            revisionAware:
-              type: boolean
-              default: false
-            minCount:
-              type: integer
-            maxCount:
-              type: integer
-            defaultValue:
-              $ref: '#/components/schemas/TPigId'
-
-    Entity:
-      description: cas:Entity - a metamodel class.
-      allOf:
-        - $ref: '#/components/schemas/Element'
-        - type: object
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:Entity']
-            enumeratedTargetLink:
-              type: array
-              items:
-                $ref: '#/components/schemas/TPigId'
-              description: Allowed Link class URIs; undefined=all allowed, empty=none allowed.
-
-    Relationship:
-      description: cas:Relationship - a metamodel class.
-      allOf:
-        - $ref: '#/components/schemas/Element'
-        - type: object
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:Relationship']
-            enumeratedSourceLink:
-              type: array
-              items:
-                $ref: '#/components/schemas/TPigId'
-              description: Allowed source Link class URI (exactly one).
-            enumeratedTargetLink:
-              type: array
-              items:
-                $ref: '#/components/schemas/TPigId'
-              description: Allowed target Link class URI (exactly one).
-
-    # --- Concrete metamodel instances ---
-    AnEntity:
-      description: cas:anEntity - an instance of an Entity class.
-      allOf:
-        - $ref: '#/components/schemas/AnElement'
-        - type: object
-          required: [instanceOf]
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:anEntity']
-
-    ARelationship:
-      description: cas:aRelationship - an instance of a Relationship class.
-      allOf:
-        - $ref: '#/components/schemas/AnElement'
-        - type: object
-          required: [instanceOf, hasSourceLink]
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:aRelationship']
-            hasSourceLink:
-              type: array
-              items:
-                $ref: '#/components/schemas/ALink'
-              minItems: 1
-              maxItems: 1
-
-    Namespace:
-      type: object
-      properties:
-        prefix:
-          type: string
-        uri:
-          type: string
-
-    APackage:
-      description: cas:aPackage - a container instance holding an embedded graph of items.
-      allOf:
-        - $ref: '#/components/schemas/AnElement'
-        - type: object
-          required: [instanceOf, graph]
-          properties:
-            itemType:
-              type: string
-              enum: ['cas:aPackage']
-            context:
-              oneOf:
-                - type: array
-                  items:
-                    $ref: '#/components/schemas/Namespace'
-                - type: string
-                - type: object
-                  additionalProperties:
-                    type: string
-            graph:
-              type: array
-              description: Embedded graph of CASCaRA items (any concrete metamodel class or instance).
-              items:
-                type: object
-
-    APackageProxy:
-      description: Minimal stand-in representation of an aPackage, without its graph.
-      type: object
-      required: [id, itemType]
-      properties:
-        id:
-          $ref: '#/components/schemas/TPigId'
-        itemType:
-          type: string
-          enum: ['cas:aPackage']
-        modified:
-          $ref: '#/components/schemas/TISODateString'
-        revision:
-          $ref: '#/components/schemas/TRevision'
-        creator:
-          type: string
+            type: object

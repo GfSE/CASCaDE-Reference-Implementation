@@ -18,9 +18,11 @@
 import { DEF } from '../../src/common/lib/definitions';
 import { XsDataType, PigItemType,
     IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,
-    Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, /* ASourceLink,*/ ATargetLink
+    Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, /* ASourceLink,*/ ATargetLink,
+    APackage
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
 import { getJSONLD } from '../../src/common/export/jsonld/getJSONLD';
+import { LOG } from '../../src/common/lib/helpers';
 
 describe("PIG Metaclasses", () => {
     let Property_input: IProperty;
@@ -478,4 +480,85 @@ describe("PIG Metaclasses", () => {
     });
 
     /* ToDo: ... more tests to come */
+
+    describe('APackage.addItem() / removeItem()', () => {
+        let actor: AnEntity;
+        let state: AnEntity;
+
+        beforeEach(() => {
+            actor = new AnEntity().set(anEntity_actor_input);
+            expect(actor.status().ok).toBe(true);
+            state = new AnEntity().set(anEntity_state_input);
+            expect(state.status().ok).toBe(true);
+        });
+
+        test('addItem() adds already-instantiated items to the graph', () => {
+            const pkg = new APackage();
+            pkg.graph = [];
+
+            pkg.addItem([actor, state]);
+
+            expect(pkg.graph).toHaveLength(2);
+            expect(pkg.graph).toContain(actor);
+            expect(pkg.graph).toContain(state);
+        });
+
+        test('addItem() skips items that are already part of the graph (no duplicates)', () => {
+            const pkg = new APackage();
+            pkg.graph = [actor];
+
+            pkg.addItem([actor, state]);
+
+            expect(pkg.graph).toHaveLength(2);
+            expect(pkg.graph.filter(itm => itm.id === actor.id)).toHaveLength(1);
+        });
+
+        test('addItem() logs a warning for an item without an id', () => {
+            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const pkg = new APackage();
+            pkg.graph = [];
+
+            pkg.addItem([{ /* no id */ } as any]);
+
+            expect(pkg.graph).toHaveLength(0);
+            expect(warnSpy).toHaveBeenCalled();
+            warnSpy.mockRestore();
+        });
+
+        test('removeItem() removes items from the graph by id, without deleting the instances', () => {
+            const pkg = new APackage();
+            pkg.graph = [actor, state];
+
+            pkg.removeItem([actor.id]);
+
+            expect(pkg.graph).toHaveLength(1);
+            expect(pkg.graph).not.toContain(actor);
+            expect(pkg.graph).toContain(state);
+            // the removed instance itself is left untouched (not deleted/cleared):
+            expect(actor.status().ok).toBe(true);
+        });
+
+        test('removeItem() logs a warning for an id that is not part of the graph', () => {
+            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const pkg = new APackage();
+            pkg.graph = [actor];
+
+            pkg.removeItem(['d:does-not-exist']);
+
+            expect(pkg.graph).toHaveLength(1);
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('d:does-not-exist'));
+            warnSpy.mockRestore();
+        });
+
+        test('removeItem() logs a warning when the package has no valid graph array', () => {
+            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const pkg = new APackage();
+            (pkg as any).graph = undefined;
+
+            pkg.removeItem(['d:anything']);
+
+            expect(warnSpy).toHaveBeenCalled();
+            warnSpy.mockRestore();
+        });
+    });
 });

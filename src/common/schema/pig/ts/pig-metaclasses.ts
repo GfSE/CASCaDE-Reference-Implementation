@@ -1990,6 +1990,54 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     /**
+     * Add already-instantiated items to this package's graph, without affecting the cache.
+     * Items already present (matched by id) are skipped, so this is safe to call repeatedly.
+     * @param items - Already-instantiated items to add to this.graph
+     */
+    addItem(items: TPigItem[]): void {
+        if (!Array.isArray(this.graph))
+            this.graph = [];
+
+        const existingIds = new Set(this.graph.map(itm => (itm as any)?.id));
+
+        for (const item of items) {
+            const itemId = (item as any)?.id;
+            if (!itemId) {
+                LOG.warn(`APackage '${this.id || 'unknown'}'.addItem: encountered an item without id, skipping`);
+                continue;
+            }
+            if (existingIds.has(itemId)) {
+                // LOG.debug(`APackage '${this.id || 'unknown'}'.addItem: item '${itemId}' is already part of the package, skipping`);
+                continue;
+            }
+            this.graph.push(item);
+            existingIds.add(itemId);
+        }
+    }
+
+    /**
+     * Remove items from this package's graph by id, without deleting them from the cache.
+     * Logs a warning for any id that is not currently part of this package's graph.
+     * @param itemIds - Ids of the graph items to remove from this.graph
+     */
+    removeItem(itemIds: TPigId[]): void {
+        if (!Array.isArray(this.graph)) {
+            LOG.warn(`APackage '${this.id || 'unknown'}'.removeItem: has no valid graph array`);
+            return;
+        }
+
+        const presentIds = new Set(this.graph.map(itm => (itm as any)?.id));
+
+        for (const itemId of itemIds) {
+            if (!presentIds.has(itemId)) {
+                LOG.warn(`APackage '${this.id || 'unknown'}'.removeItem: item '${itemId}' is not part of the package`);
+            }
+        }
+
+        this.graph = this.graph.filter(itm => !itemIds.includes((itm as any)?.id));
+    }
+
+    /**
      * Transform an item in JSON-LD item to plain JSON format
      * Uses the same partial transformations as fromJSONLD()
      * 
