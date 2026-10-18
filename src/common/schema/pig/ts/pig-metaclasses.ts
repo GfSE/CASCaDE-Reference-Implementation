@@ -323,7 +323,7 @@ export class PigItem {
      * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
      * @ToDo:consolidate with validate MultiLanguageText() to avoid duplication of logic
      */
-    static isMultiLanguageText(value: unknown): boolean {
+    static isMultiLanguageText(value: unknown): value is ILanguageText[] {
 
         // Structure-based: Array of ILanguageText
         // If length > 1, lang is mandatory for all items; if length = 1, lang is optional
@@ -1418,11 +1418,12 @@ export class Relationship extends Element implements IRelationship {
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
-    value?: string;       // Literal value (string, number, boolean, date - all as string)
+    value?: string | ILanguageText[];  // Literal value (string, number, boolean, date - all as string);
+                                        // always ILanguageText[] when the referenced Property's datatype is 'string'
     composes?: TPigId[];  // for composed properties: nests other properties, as properties have no id
 }
 export class AProperty extends Item implements IAProperty {
-    value?: string;
+    value?: string | ILanguageText[];
     composes?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.aProperty });
@@ -1792,7 +1793,7 @@ export class APackage extends AnElement implements IAPackage {
         // so fall back to the resolver for items not found in this package's own graph:
         const pkgValidation = this.validate(
             { ..._pkg, graph: resolvedGraph.map(itm => (itm as any).get()) },
-            { resolveExternalItemType: (id: TPigId) => (resolveItem(id) as any)?.itemType }
+            { resolveExternalItem: (id: TPigId) => (resolveItem(id) as any)?.itemType }
         );
 
         super.set(_pkg);

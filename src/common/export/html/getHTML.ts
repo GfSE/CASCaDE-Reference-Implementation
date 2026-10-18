@@ -42,9 +42,34 @@
 
 
 import { RE } from '../../lib/definitions';
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement, TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship } from '../../schema/pig/ts/pig-metaclasses';
-import { tagIETF, LIB, LOG } from '../../lib/helpers';
+import { PigItemType, PigItemTypeValue, PigItem, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement, TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship } from '../../schema/pig/ts/pig-metaclasses';
+import { tagIETF, ILanguageText, LIB, LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
+
+/**
+ * Render a multi-language text as repeated <dt>/<dd> pairs, one per language.
+ * The language tag is appended in brackets to the label when present,
+ * e.g. "title (de)".
+ */
+function multiLangDtDd(label: string, texts: ILanguageText[], stripHtmlFlag = false): string {
+    return texts.map(t => {
+        const text = stripHtmlFlag ? LIB.stripHTML(t.value) : t.value;
+        const lbl = t.lang ? `${label} (${t.lang})` : label;
+        return `<dt>${passify(lbl)}</dt><dd>${passify(text)}</dd>`;
+    }).join('');
+}
+
+/**
+ * Render a multi-language text as repeated heading/block elements (e.g. <h3>/<div>),
+ * one per language, with the language tag shown as a small badge when present.
+ */
+function multiLangBlock(tag: string, cssClass: string, texts: ILanguageText[], stripHtmlFlag = false): string {
+    return texts.map(t => {
+        const text = stripHtmlFlag ? LIB.stripHTML(t.value) : t.value;
+        const langBadge = t.lang ? ` <span class="meta-lang">(${t.lang})</span>` : '';
+        return `<${tag} class="${cssClass}">${passify(text)}${langBadge}</${tag}>`;
+    }).join('');
+}
 
 export type stringHTML = string;  // contains HTML code
 export interface IOptionsHTML {
@@ -98,14 +123,18 @@ class GetHTML {
                     Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
                 </div>`;
 
-        const titleText = passify(LIB.stripHTML(LIB.getLocalText(pkg.title, lang)));
-        const descText = passify(LIB.getLocalText(pkg.description, lang));
+        const titleHTML = pkg.title?.length
+            ? multiLangBlock('h3', 'meta-title', pkg.title, true)
+            : '<h3 class="meta-title">Untitled Package</h3>';
+        const descHTML = pkg.description?.length
+            ? multiLangBlock('div', 'meta-description', pkg.description)
+            : '';
         const { propertiesHTML, diagramHTML } = propertiesToHTML(pkg, lang);
 
         const pkgHTML = `<div class="meta-aPackage">
                 <div class="col-main" style="flex: 0 0 ${widthMain};">
-                    <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
-                    ${descText ? `<div class="meta-description">${descText}</div>` : ''}
+                    ${titleHTML}
+                    ${descHTML}
                     ${diagramHTML}
                     ${errHTML}
                 </div>
@@ -140,6 +169,10 @@ class GetHTML {
 
         const titleText = passify(LIB.stripHTML(LIB.getLocalText(entity.title, lang)));
         const descText = passify(LIB.getLocalText(entity.description, lang));
+    /*
+        const titleHTML = entity.title?.length ? multiLangBlock('h3', 'meta-title', entity.title, true) : '';
+        const descHTML = entity.description?.length ? multiLangBlock('div', 'meta-description', entity.description) : '';
+    */
         const { propertiesHTML, diagramHTML } = propertiesToHTML(entity, lang);
 
         return `<div class="meta-anEntity">
@@ -152,6 +185,18 @@ class GetHTML {
                         ${propertiesHTML}
                     </dl></div>
                 </div>`;
+    /*
+        return `<div class="meta-anEntity">
+                    <div class="col-main" style="flex: 0 0 ${widthMain};">
+                        ${titleHTML}
+                        ${descHTML}
+                        ${ diagramHTML }
+                    </div>
+                    <div class="col-right" ><dl class="dl-horizontal">
+                        ${ propertiesHTML }
+                    </dl></div>
+                </div>`;
+    */
     }
 
     static aRelationship(rel: ARelationship, options?: IOptionsHTML): stringHTML {
@@ -183,18 +228,15 @@ class GetHTML {
         }
         const lang = options?.lang || 'en-US';
 
-        const titleText = passify(LIB.stripHTML(LIB.getLocalText(cls.title, lang)));
-        const descText = passify(LIB.getLocalText(cls.description, lang));
-        const defText = passify(LIB.getLocalText(cls.definition, lang));
         const EMPTY = '—';
         const idList = (ids?: string[]): string => (ids && ids.length > 0) ? ids.map(e => passify(e)).join(', ') : EMPTY;
 
         let propertiesHTML = '';
         propertiesHTML += `<dt>Item Type</dt><dd>${cls.itemType}</dd>`;
         propertiesHTML += `<dt>ID</dt><dd>${passify(cls.id)}</dd>`;
-        propertiesHTML += `<dt>Title</dt><dd>${titleText || EMPTY}</dd>`;
-        propertiesHTML += `<dt>Description</dt><dd>${descText || EMPTY}</dd>`;
-        propertiesHTML += `<dt>Definition</dt><dd>${defText || EMPTY}</dd>`;
+        propertiesHTML += cls.title?.length ? multiLangDtDd('Title', cls.title, true) : `<dt>Title</dt><dd>${EMPTY}</dd>`;
+        propertiesHTML += cls.description?.length ? multiLangDtDd('Description', cls.description) : `<dt>Description</dt><dd>${EMPTY}</dd>`;
+        propertiesHTML += cls.definition?.length ? multiLangDtDd('Definition', cls.definition) : `<dt>Definition</dt><dd>${EMPTY}</dd>`;
         propertiesHTML += `<dt>Specializes</dt><dd>${cls.specializes ? passify(cls.specializes) : EMPTY}</dd>`;
         // Enumerated Property, Icon and Color are only defined on classes derived from Element (Enumeration, Entity, Relationship):
         if ('enumeratedProperty' in cls) {
@@ -450,15 +492,24 @@ function propertiesToHTML(el: TPigAnElement, lang: tagIETF): { propertiesHTML: s
         for (const prop of el.hasProperty) {
             const propData = prop.get() as IAProperty;
             if (propData && propData.instanceOf) {
-                const propValue = passify((propData.value) as string);
-                if (propData.instanceOf === 'cas:Diagram') {
-                    // Diagrams belong in the main pane, alongside title/description,
-                    // rather than the metadata list on the right; omit the class/name:
-                    diagramHTML += `<div class="meta-diagram">${propValue}</div>`;
-                    continue;
-                }
                 const propClass = passify(propData.instanceOf);
-                propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
+                if (PigItem.isMultiLanguageText(propData.value)) {
+                    // Configurable property with datatype 'string': render every language
+                    if (propData.instanceOf === 'cas:Diagram') {
+                        diagramHTML += propData.value.map(t => `<div class="meta-diagram">${passify(t.value)}</div>`).join('');
+                        continue;
+                    }
+                    propertiesHTML += multiLangDtDd(propClass, propData.value);
+                } else {
+                    const propValue = passify((propData.value) as unknown as string);
+                    if (propData.instanceOf === 'cas:Diagram') {
+                        // Diagrams belong in the main pane, alongside title/description,
+                        // rather than the metadata list on the right; omit the class/name:
+                        diagramHTML += `<div class="meta-diagram">${propValue}</div>`;
+                        continue;
+                    }
+                    propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
+                }
             }
         }
     }

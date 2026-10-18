@@ -824,8 +824,11 @@ class GetTTL {
      * @param prop - AProperty instance
      * @returns Formatted value string together with whether it is an RDF literal (quoted) or a raw reference/list expression (unquoted)
      */
-    private static formatPropertyValue(prop: AProperty): { value: string, literal: boolean } {
-        // If it has a value, it's a plain DatatypeProperty literal
+    private static formatPropertyValue(prop: AProperty): { value: string | ILanguageText[], literal: boolean } {
+        // If it has a value, it's a plain DatatypeProperty literal.
+        // A configurable property with datatype 'string' always carries a
+        // multi-language text (ILanguageText[]), which tab1()/tab2() render
+        // directly as one language-tagged literal per entry.
         if (prop.value !== undefined) {
             return { value: prop.value, literal: true };
         }
