@@ -16,6 +16,7 @@ declare module 'vue' {
     PageDocument: typeof import('./src/components/PageDocument.vue')['default']
     PageHome: typeof import('./src/components/PageHome.vue')['default']
     PageInterfaces: typeof import('./src/components/PageInterfaces.vue')['default']
+    PageOntology: typeof import('./src/components/PageOntology.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     UrlQueries: typeof import('./src/components/UrlQueries.vue')['default']

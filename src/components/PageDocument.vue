@@ -468,24 +468,6 @@
         padding: 0;
     }
 
-    .fill-height {
-        height: 100%;
-        min-height: 0;
-    }
-
-    .pane-card {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        min-height: 0;
-    }
-
-    .pane-scroll {
-        flex: 1 1 0;
-        overflow-y: auto;
-        min-height: 0;
-    }
-
     .pane-scroll ::v-deep(.v-list-item) {
         min-height: 24px !important;
         padding-top: 2px !important;

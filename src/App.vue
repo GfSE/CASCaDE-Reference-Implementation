@@ -21,6 +21,9 @@
                 <v-list-item border="md" to="/document">
                     <h3>Document</h3>
                 </v-list-item>
+                <v-list-item border="md" to="/ontology">
+                    <h3>Ontology</h3>
+                </v-list-item>
                 <v-list-item border="md" @click="openGithubIssue">
                     <h3><v-icon start>mdi-github</v-icon>Report an Issue</h3>
                 </v-list-item>

@@ -42,7 +42,7 @@
 
 
 import { RE } from '../../lib/definitions';
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement } from '../../schema/pig/ts/pig-metaclasses';
+import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement, TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship } from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, LIB, LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 
@@ -63,7 +63,7 @@ export interface IOptionsHTML {
  * import { getHTML } from './getHTML';
  * const html = getHTML(item, options);
  */
-export function getHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[] {
+export function getHTML(item: TPigItem, options?: IOptionsHTML): stringHTML[] {
     switch (item.itemType) {
         case PigItemType.aPackage:
             return GetHTML.aPackage(item as APackage, options);
@@ -71,6 +71,12 @@ export function getHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML
             return [GetHTML.anEntity(item as AnEntity, options)];
         case PigItemType.aRelationship:
             return [GetHTML.aRelationship(item as ARelationship, options)];
+        case PigItemType.Enumeration:
+        case PigItemType.Property:
+        case PigItemType.Link:
+        case PigItemType.Entity:
+        case PigItemType.Relationship:
+            return [GetHTML.cascaraType(item as TPigClass, options)];
         default:
             return [`<div class="meta-error">
                     ${item.id}: No HTML representation for itemType: ${item.itemType}
@@ -159,6 +165,101 @@ class GetHTML {
         }
         // @ToDo: Implementiere eine HTML-Repräsentation für ARelationship
         return '<div class="meta-not-implemented">HTML export for Relationship not implemented</div>';
+    }
+
+    /**
+     * HTML representation of a CASCaRA Type (metaclass): Enumeration, Property,
+     * Link, Entity or Relationship. Shown as a single two-column property list
+     * (dt/dd), with all generic fields (id, title, description, definition,
+     * modified, creator, ...) plus the type-specific fields, for use in e.g.
+     * PageOntology.
+     */
+    static cascaraType(cls: TPigClass, options?: IOptionsHTML): stringHTML {
+        const clsSt = cls.status();
+        if (!clsSt.ok) {
+            return `<div class="meta-error">
+                    Invalid ${cls.itemType} with id ${cls.id} - status: (${clsSt.status}) ${clsSt.statusText ?? ''}
+                </div>`;
+        }
+        const lang = options?.lang || 'en-US';
+
+        const titleText = passify(LIB.stripHTML(LIB.getLocalText(cls.title, lang)));
+        const descText = passify(LIB.getLocalText(cls.description, lang));
+        const defText = passify(LIB.getLocalText(cls.definition, lang));
+        const EMPTY = '—';
+        const idList = (ids?: string[]): string => (ids && ids.length > 0) ? ids.map(e => passify(e)).join(', ') : EMPTY;
+
+        let propertiesHTML = '';
+        propertiesHTML += `<dt>Item Type</dt><dd>${cls.itemType}</dd>`;
+        propertiesHTML += `<dt>ID</dt><dd>${passify(cls.id)}</dd>`;
+        propertiesHTML += `<dt>Title</dt><dd>${titleText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Description</dt><dd>${descText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Definition</dt><dd>${defText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Specializes</dt><dd>${cls.specializes ? passify(cls.specializes) : EMPTY}</dd>`;
+        // Enumerated Property, Icon and Color are only defined on classes derived from Element (Enumeration, Entity, Relationship):
+        if ('enumeratedProperty' in cls) {
+            const element = cls as unknown as { enumeratedProperty?: string[], icon?: { value: string }, color?: { value: string } };
+            propertiesHTML += `<dt>Enumerated Property</dt><dd>${idList(element.enumeratedProperty)}</dd>`;
+            propertiesHTML += `<dt>Icon</dt><dd>${element.icon ? passify(element.icon.value) : EMPTY}</dd>`;
+            propertiesHTML += `<dt>Color</dt><dd>${element.color ? passify(element.color.value) : EMPTY}</dd>`;
+        }
+
+        switch (cls.itemType) {
+            case PigItemType.Enumeration: {
+                const enumeration = cls as Enumeration;
+                propertiesHTML += `<dt>Datatype</dt><dd>${passify(enumeration.datatype ?? EMPTY)}</dd>`;
+                const values = (enumeration.enumeratedValue ?? [])
+                    .map(v => passify(LIB.getLocalText(v.title, lang) || v.value || ''))
+                    .join(', ');
+                propertiesHTML += `<dt>Enumerated Values</dt><dd>${values || EMPTY}</dd>`;
+                break;
+            }
+            case PigItemType.Property: {
+                const property = cls as Property;
+                propertiesHTML += `<dt>Datatype</dt><dd>${passify(property.datatype ?? EMPTY)}</dd>`;
+                propertiesHTML += `<dt>Read Only</dt><dd>${!!property.readOnly}</dd>`;
+                propertiesHTML += `<dt>Min Count</dt><dd>${property.minCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Count</dt><dd>${property.maxCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Length</dt><dd>${property.maxLength ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Pattern</dt><dd>${property.pattern ? passify(property.pattern) : EMPTY}</dd>`;
+                propertiesHTML += `<dt>Min Inclusive</dt><dd>${property.minInclusive ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Inclusive</dt><dd>${property.maxInclusive ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Default Value</dt><dd>${property.defaultValue !== undefined ? passify(property.defaultValue) : EMPTY}</dd>`;
+                break;
+            }
+            case PigItemType.Link: {
+                const link = cls as Link;
+                propertiesHTML += `<dt>Enumerated Endpoints</dt><dd>${idList(link.enumeratedEndpoint)}</dd>`;
+                propertiesHTML += `<dt>Read Only</dt><dd>${!!link.readOnly}</dd>`;
+                propertiesHTML += `<dt>Revision Aware</dt><dd>${!!link.revisionAware}</dd>`;
+                propertiesHTML += `<dt>Min Count</dt><dd>${link.minCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Count</dt><dd>${link.maxCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Default Value</dt><dd>${link.defaultValue !== undefined ? passify(link.defaultValue) : EMPTY}</dd>`;
+                break;
+            }
+            case PigItemType.Entity: {
+                const entity = cls as Entity;
+                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idList(entity.enumeratedTargetLink)}</dd>`;
+                break;
+            }
+            case PigItemType.Relationship: {
+                const rel = cls as Relationship;
+                propertiesHTML += `<dt>Enumerated Source Links</dt><dd>${idList(rel.enumeratedSourceLink)}</dd>`;
+                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idList(rel.enumeratedTargetLink)}</dd>`;
+                break;
+            }
+        }
+
+        propertiesHTML += `<dt>Modified</dt><dd>${cls.modified ? LIB.getLocalDate(cls.modified, lang) : EMPTY}</dd>`;
+        propertiesHTML += `<dt>Creator</dt><dd>${cls.creator ? passify(cls.creator) : EMPTY}</dd>`;
+        propertiesHTML += `<dt>Revision</dt><dd>${cls.revision ? passify(cls.revision) : EMPTY}</dd>`;
+        propertiesHTML += `<dt>Prior Revision</dt><dd>${idList(cls.priorRevision as unknown as string[])}</dd>`;
+
+        return `<div class="meta-cascara-type">
+                    <dl class="dl-cascara-type">
+                        ${propertiesHTML}
+                    </dl>
+                </div>`;
     }
 }
 
