@@ -14,6 +14,9 @@ info:
     `cas.ttl` / `text/turtle`) can be requested either via the `format` query
     parameter or via the standard HTTP `Accept` header; if both are given,
     `format` takes precedence.
+    Note
+    - the API definition omits schemata, because they are implemented in the
+      CASCaRA core software and shall not be duplicated here.
   version: 1.0.0
   license:
     name: Apache 2.0
@@ -28,11 +31,11 @@ servers:
 
 tags:
   - name: Repository
-    description: Manage repositories (aPackage instances used as repository roots)
+    description: CRUD for repositories
+  - name: aPackage
+    description: CRUD for cas:aPackage
   - name: Item
     description: CRUD for any CASCaRA item type, dispatched via the itemType attribute
-  - name: aPackage
-    description: CRUD for cas:aPackage (instance / container)
 
 paths:
 
@@ -45,9 +48,8 @@ paths:
       summary: List repositories
       description: >
         Returns a list of RepositoryProxy objects, one per repository. Each
-        proxy carries all attributes of APackage except 'context' and
-        'graph', so the (potentially large) embedded graph is never
-        transferred when merely listing repositories.
+        proxy carries the metadata, but not the content, so the (potentially large)
+        embedded graph is never transferred when merely listing repositories.
       operationId: listRepositories
       parameters:
         - $ref: '#/components/parameters/limit'
@@ -79,6 +81,8 @@ paths:
       summary: Create a new repository
       description: >
         Creates a new repository from a single aPackage item (not an array).
+        The content may be empty, but the request body must still provide the metadata;
+        see RepositoryProxy.
       operationId: createRepository
       requestBody:
         required: true
@@ -95,6 +99,66 @@ paths:
                 type: object
         '400':
           $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /repositories/{repositoryId}/:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+    get:
+      tags: [Repository]
+      summary: Get a repository by id, including its content
+      operationId: getRepository
+      parameters:
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: The requested repository
+          content:
+            application/ld+json:
+              schema:
+                type: object
+            application/xml:
+              schema:
+                type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the repository, including its graph.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Repository]
+      summary: Update a repository, including its content
+      operationId: updateRepository
+      parameters:
+        - $ref: '#/components/parameters/mode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Repository updated
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Repository]
+      summary: Delete a repository, including its content
+      operationId: deleteRepository
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
 
