@@ -1744,6 +1744,66 @@ export class APackage extends AnElement implements IAPackage {
     }
 
     /**
+     * Build a package representation for persistence that avoids duplicating graph
+     * items shared by several packages: the package itself is serialized as usual,
+     * but its 'graph' array only holds lightweight proxies ({ id, itemType }) instead
+     * of the full item data. The actual item data is persisted separately, once per id
+     * (see ItemCache), and re-linked to these proxies when loading from storage.
+     */
+    getWithProxies() {
+        const pkg = {
+            ...super.get(),
+            context: this.context,
+            graph: this.graph?.map(item => ({ id: item.id, itemType: item.itemType }))
+        } as IAPackage;
+        return LIB.stripUndefinedAndNull(pkg);
+    }
+
+    /**
+     * Counterpart of getWithProxies(): reconstruct this package from a representation
+     * whose 'graph' array holds lightweight proxies ({ id, itemType }) instead of full
+     * item data (as produced by getWithProxies()). Unlike set(), this does not
+     * instantiate graph items itself - it resolves each proxy to its already
+     * instantiated, canonical instance via the supplied resolver (e.g. a cache keyed by id).
+     * Proxies that cannot be resolved (e.g. a referenced item failed to load) are skipped.
+     * @param pkg - Package data with a proxy-only 'graph' array
+     * @param resolveItem - Returns the already-instantiated item for a given id, if any
+     */
+    setWithProxies(pkg: IAPackage, resolveItem: (id: TPigId) => TPigItem | undefined): this {
+        const _pkg = LIB.stripUndefinedAndNull(pkg) as IAPackage;
+        _pkg.modified = normalizeDateTime(_pkg.modified) || new Date().toISOString();
+
+        const resolvedGraph: TPigItem[] = [];
+        for (const proxy of _pkg.graph || []) {
+            const resolved = (proxy as any)?.id ? resolveItem((proxy as any).id) : undefined;
+            if (resolved)
+                resolvedGraph.push(resolved);
+            else
+                LOG.warn(`APackage.setWithProxies: could not resolve graph item '${(proxy as any)?.id}' of package '${_pkg.id}'`);
+        }
+
+        const _context = this.ensureDefaultNamespaces(_pkg.context);
+        _pkg.context = _context;
+
+        // Validate against the fully resolved graph items (not the proxy-only data in
+        // _pkg.graph, which lacks instanceOf and other fields required by validation).
+        // A specializes/instanceOf reference may point to an item that is cached but
+        // belongs to another package (e.g. a shared CASCaRA base type like 'cas:Tree'),
+        // so fall back to the resolver for items not found in this package's own graph:
+        const pkgValidation = this.validate(
+            { ..._pkg, graph: resolvedGraph.map(itm => (itm as any).get()) },
+            { resolveExternalItemType: (id: TPigId) => (resolveItem(id) as any)?.itemType }
+        );
+
+        super.set(_pkg);
+        this.context = _context;
+        this.graph = resolvedGraph;
+        this.lastStatus = pkgValidation;
+
+        return this;
+    }
+
+    /**
      * Ensure default namespace prefixes 'o:' and 'd:' exist in the package context
      * if they have been assigned by normalizeId() during import.
      * 

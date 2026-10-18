@@ -133,9 +133,20 @@ const allConstraintChecks: ConstraintCheckType[] = [
  */
 export function checkConstraintsForPackage(
     pkg: IAPackage,
-    options?: { checkConstraints: ConstraintCheckType[] }
+    options?: {
+        checkConstraints?: ConstraintCheckType[];
+        /**
+         * Fallback lookup for the itemType of a referenced id that is not part of
+         * this package's own graph (e.g. a shared/global item, such as a CASCaRA
+         * base type like 'cas:Tree', that is cached but belongs to another package).
+         * Used by specializes/instanceOf reference checks so that cross-package
+         * references to already-known items are not flagged as missing.
+         */
+        resolveExternalItemType?: (id: TPigId) => PigItemTypeValue | undefined;
+    }
 ): IRsp {
     const checksSet = new Set(options?.checkConstraints ?? allConstraintChecks);
+    const resolveExternalItemType = options?.resolveExternalItemType;
 
     // 1. Check that all primary IDs are unique
     if (checksSet.has(ConstraintCheckType.UniqueIds)) {
@@ -160,37 +171,37 @@ export function checkConstraintsForPackage(
 
     // 4a. Check anEntity.instanceOf references
     if (checksSet.has(ConstraintCheckType.anEntityInstanceOf)) {
-        const rsp = checkReferences(pkg, PigItemType.anEntity, itemTypeById, 'instanceOf');
+        const rsp = checkReferences(pkg, PigItemType.anEntity, itemTypeById, 'instanceOf', resolveExternalItemType);
         if (!rsp.ok) return rsp;
     }
 
     // 4b. Check aRelationship.instanceOf references
     if (checksSet.has(ConstraintCheckType.aRelationshipInstanceOf)) {
-        const rsp = checkReferences(pkg, PigItemType.aRelationship, itemTypeById, 'instanceOf');
+        const rsp = checkReferences(pkg, PigItemType.aRelationship, itemTypeById, 'instanceOf', resolveExternalItemType);
         if (!rsp.ok) return rsp;
     }
 
     // 5a. Check Entity.specializes references
     if (checksSet.has(ConstraintCheckType.EntitySpecializes)) {
-        const rsp = checkReferences(pkg, PigItemType.Entity, itemTypeById, 'specializes');
+        const rsp = checkReferences(pkg, PigItemType.Entity, itemTypeById, 'specializes', resolveExternalItemType);
         if (!rsp.ok) return rsp;
     }
 
     // 5b. Check Relationship.specializes references
     if (checksSet.has(ConstraintCheckType.RelationshipSpecializes)) {
-        const rsp = checkReferences(pkg, PigItemType.Relationship, itemTypeById, 'specializes');
+        const rsp = checkReferences(pkg, PigItemType.Relationship, itemTypeById, 'specializes', resolveExternalItemType);
         if (!rsp.ok) return rsp;
     }
 
     // 5c. Check Property.specializes
     if (checksSet.has(ConstraintCheckType.PropertySpecializes)) {
-        const rsp = checkPropertyOrLinkReferences(pkg, PigItemType.Property, itemTypeById, 'specializes');
+        const rsp = checkPropertyOrLinkReferences(pkg, PigItemType.Property, itemTypeById, 'specializes', resolveExternalItemType);
         if (!rsp.ok) return rsp;
     }
 
     // 5d. Check Link.specializes
     if (checksSet.has(ConstraintCheckType.LinkSpecializes)) {
-        const rsp = checkPropertyOrLinkReferences(pkg, PigItemType.Link, itemTypeById, 'specializes');
+        const rsp = checkPropertyOrLinkReferences(pkg, PigItemType.Link, itemTypeById, 'specializes', resolveExternalItemType);
         if (!rsp.ok) return rsp;
     }
 
@@ -1136,7 +1147,8 @@ function checkReferences(
     pkg: IAPackage,
     itemType: PigItemTypeValue, // PigItemType.anEntity | PigItemType.aRelationship,
     itemTypeMap: Map<TPigId, PigItemTypeValue>,
-    refType: 'instanceOf' | 'specializes'
+    refType: 'instanceOf' | 'specializes',
+    resolveExternalItemType?: (id: TPigId) => PigItemTypeValue | undefined
 ): IRsp {
     const chkInstanceOf = refType === 'instanceOf';
 
@@ -1166,7 +1178,7 @@ function checkReferences(
                 // - instanceOf: anEntity -> Entity, aRelationship -> Relationship
                 // - specializes: Entity -> Entity, Relationship -> Relationship
                 const expectedType = (itemType == PigItemType.Entity || itemType == PigItemType.anEntity) ? PigItemType.Entity : PigItemType.Relationship;
-                const targetType = itemTypeMap.get(refValue);
+                const targetType = itemTypeMap.get(refValue) ?? resolveExternalItemType?.(refValue);
                 if (!targetType)
                     return Msg.create(675, iId, i, refType, refValue, 'not found in package');
                 if (targetType !== expectedType)
@@ -1192,7 +1204,8 @@ function checkPropertyOrLinkReferences(
     pkg: IAPackage,
     itemType: PigItemTypeValue,
     itemTypeMap: Map<TPigId, PigItemTypeValue>,
-    refType: 'specializes'
+    refType: 'specializes',
+    resolveExternalItemType?: (id: TPigId) => PigItemTypeValue | undefined
 ): IRsp {
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
@@ -1215,7 +1228,7 @@ function checkPropertyOrLinkReferences(
             // - Property.specializes -> Property
             // - Link.specializes -> Link
             const expectedType = (itemType == PigItemType.Property) ? PigItemType.Property : PigItemType.Link;
-            const targetType = itemTypeMap.get(refValue);
+            const targetType = itemTypeMap.get(refValue) ?? resolveExternalItemType?.(refValue);
             if (!targetType)
                 return Msg.create(675, iId, i, refType, refValue, 'not found in package');
             if (targetType !== expectedType)
