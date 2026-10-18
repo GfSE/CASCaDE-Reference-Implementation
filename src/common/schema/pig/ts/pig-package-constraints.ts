@@ -141,6 +141,9 @@ export function checkConstraintsForPackage(
          * base type like 'cas:Tree', that is cached but belongs to another package).
          * Used by specializes/instanceOf reference checks so that cross-package
          * references to already-known items are not flagged as missing.
+         * 
+         * resolveExternalItemType is not needed when a package is self-contained
+         * and all referenced items are present in its own graph.
          */
         resolveExternalItemType?: (id: TPigId) => PigItemTypeValue | undefined;
     }
