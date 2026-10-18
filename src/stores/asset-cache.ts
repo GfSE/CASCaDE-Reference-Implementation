@@ -1,3 +1,20 @@
+/*!
+ * Pinia store caching binary assets (e.g. images referenced by a package), persisted to IndexedDB.
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
+/**
+ * AssetCache - in-memory cache of binary assets (images, etc.) extracted alongside imported
+ * packages, persisted to IndexedDB (sharing its database with ItemCache).
+ *
+ * Unlike ItemCache, AssetCache is loaded lazily: loadFromStorage() must be called before any
+ * update() operation if the cache has not been initialized yet.
+ *
+ * ToDo:
+ * - Consider adding a size limit and eviction policy (e.g. LRU) to avoid unbounded growth of the cache.
+ * - Consider adding a method to remove a specific asset by filename, if needed.
+ * - Consider adding schema validation for IAsset objects before persisting, to ensure data integrity.
+ */
 import { defineStore } from 'pinia'
 import { toRaw } from 'vue'
 import { LOG, TISODateString } from '../common/lib/helpers'

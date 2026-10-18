@@ -128,9 +128,12 @@
             },
             outlineTree(): OutlineNode[] {
                 const cache = ItemCache()
-                const packages = cache.packages
+                // Use the flat, deduplicated top-level 'items' list (not each package's
+                // 'graph' array) so that an item shared by several packages is listed
+                // only once in the Ontology outline, instead of once per package:
+                const items = cache.items
 
-                if (!packages || packages.length === 0) {
+                if (!items || items.length === 0) {
                     return []
                 }
 
@@ -138,14 +141,12 @@
                 // across all loaded packages, in the fixed order given by CASCARA_TYPES:
                 return CASCARA_TYPES.map(({ itemType, title }) => {
                     const children: OutlineNode[] = []
-                    for (const pkg of packages) {
-                        for (const item of pkg.graph) {
-                            if (item.itemType !== itemType) continue
-                            const typedItem = item as TPigClass
-                            const itemTitle = LIB.getLocalText(typedItem.title) || typedItem.id || '(untitled)'
-                            const itemHtml = getHTML(typedItem, {})[0]
-                            children.push({ id: typedItem.id ?? itemTitle, title: itemTitle, html: itemHtml, children: [] })
-                        }
+                    for (const item of items) {
+                        if (item.itemType !== itemType) continue
+                        const typedItem = item as TPigClass
+                        const itemTitle = LIB.getLocalText(typedItem.title) || typedItem.id || '(untitled)'
+                        const itemHtml = getHTML(typedItem, {})[0]
+                        children.push({ id: typedItem.id ?? itemTitle, title: itemTitle, html: itemHtml, children: [] })
                     }
                     // Prefix the folder id to avoid collisions with item ids: an item with
                     // the same id as its own itemType (e.g. the base 'Link' metaclass itself,

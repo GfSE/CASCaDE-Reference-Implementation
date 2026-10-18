@@ -1,3 +1,23 @@
+/*!
+ * Pinia store caching PIG/CASCaRA packages and their items in memory, persisted to IndexedDB.
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
+/**
+ * ItemCache - in-memory cache of all loaded packages (aPackage) and their graph items
+ * (anEntity, aRelationship, ...), persisted to IndexedDB for durability across sessions.
+ *
+ * Unlike AssetCache, ItemCache is loaded eagerly at app start. It supports both a full
+ * replace() of the cache and an incremental update() that merges incoming items with the
+ * ones already cached, preserving canonical object identity and package graph references.
+ *
+ * ToDo:
+ * - CASCaRA types often have no change information; a revision can be added to the path.
+ *   There is a case where a package is updated with newer types, but the graph items are not changed.
+ *   The app should be able to handle this case.
+ *   Perhaps we must store the items with resolved ids, that is replacing the namespace tags
+ *   with the fully qualified URL path. This will make the items unique and allow to update them correctly.
+ */
 import { defineStore } from 'pinia'
 import { APackage, TPigItem, PigItemType } from '../common/schema/pig/ts/pig-metaclasses'
 import { LOG } from '../common/lib/helpers'
@@ -180,6 +200,7 @@ export const ItemCache = defineStore('itemCache', {
 
         for (const incoming of items) {
             const existing = byId.get(incoming.id);
+            // LOG.debug(`[ItemCache] Processing incoming item '${incoming.id}' (${incoming.itemType}) - existing: ${existing?.id} from ${existing ? (existing as any).modified : 'N/A'}`);
             if (!existing) {
                 // Brand-new item: add as-is and register it as the new canonical instance
                 this.items.push(incoming);
@@ -187,10 +208,20 @@ export const ItemCache = defineStore('itemCache', {
                 continue;
             }
 
-            // Treat a missing 'modified' as the oldest possible date, so an
-            // incoming item with a defined 'modified' always wins.
+            // LOG.debug(`[ItemCache] Testing existing item with incoming data '${incoming.id}' (${incoming.itemType}) from ${incoming.modified}`);
+            // LOG.debug(`[ItemCache] Existing item '${existing.id}' and incoming data '${incoming.id}': ${existing.id===incoming.id}`);
+
+            // An incoming item without a 'modified' date cannot be shown to be
+            // newer than the cached one, so skip the update and keep the
+            // existing item as-is (it is not stored twice).
+            const incomingModified = (incoming as any).modified;
+            if (!incomingModified) {
+                // LOG.debug(`[ItemCache] Incoming item '${incoming.id}' has no 'modified' date, skipping update`);
+                continue;
+            }
+            // LOG.debug(`[ItemCache] Updating existing item with incoming data '${incoming.id}' (${incoming.itemType})`);
+
             const existingModified = (existing as any).modified ?? '';
-            const incomingModified = (incoming as any).modified ?? '';
             if (existingModified >= incomingModified) {
                 continue; // cached item is the same age or newer, keep it as-is
             }

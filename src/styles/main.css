@@ -148,17 +148,22 @@ table td {
 }
 /* Ensure bullets/numbers are indented (not aligned with surrounding text) and
    the list item's own text is indented relative to its marker, matching the
-   indentation of the rest of the text (e.g. <p>): */
+   indentation of the rest of the text (e.g. <p>). Applies to any HTML rendered
+   via v-html by getHTML(), not just .col-main/.col-right (e.g. also
+   .dl-cascara-type dd, used by GetHTML.cascaraType() for PageOntology): */
 .col-main ul,
 .col-main ol,
 .col-right ul,
-.col-right ol {
+.col-right ol,
+.dl-cascara-type dd ul,
+.dl-cascara-type dd ol {
     margin: 0;
     padding-left: 1.5em;
     list-style-position: outside;
 }
 .col-main li,
-.col-right li {
+.col-right li,
+.dl-cascara-type dd li {
     padding-left: 0.25em;
 }
 .meta-aPackage,

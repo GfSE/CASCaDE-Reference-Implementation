@@ -375,3 +375,63 @@ describe('Import XML - variant type attributes', () => {
         expect((entityClass2 as any)?.instanceOf).toBe('owl:Class');  // Should be normalized to 'owl:Class'
     });
 });
+
+describe('Import XML - modified date defaulting', () => {
+    it('Should leave modified undefined for CASCaRA types without it, and default it to now for instances', () => {
+        const xmlInput = `<?xml version="1.0" encoding="UTF-8"?>
+            <${DEF.pfxNsMeta}aPackage xmlns:cas="${DEF.pigPath}${DEF.pigVersion}/metamodel#"
+                          xmlns:dcterms="http://purl.org/dc/terms/"
+                          xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+                          xmlns:owl="http://www.w3.org/2002/07/owl#"
+                          xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+                          xmlns:o="https://example.org/ontology#"
+                          xmlns:d="https://example.org/data#"
+                          id="TestPackage">
+                <${DEF.pfxNsMeta}instanceOf>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}instanceOf>
+                <dcterms:modified>2026-01-01T12:00:00Z</dcterms:modified>
+                <dcterms:title xml:lang="en">Test Package for modified-date defaulting</dcterms:title>
+                <graph>
+                    <!-- CASCaRA type without modified: must remain undefined -->
+                    <${DEF.pfxNsMeta}Entity id="Requirement">
+                        <${DEF.pfxNsMeta}instanceOf>owl:Class</${DEF.pfxNsMeta}instanceOf>
+                        <dcterms:title xml:lang="en">Requirement</dcterms:title>
+                    </${DEF.pfxNsMeta}Entity>
+
+                    <!-- CASCaRA Link type, also without modified -->
+                    <${DEF.pfxNsMeta}Link id="hasPriority">
+                        <${DEF.pfxNsMeta}instanceOf>owl:ObjectProperty</${DEF.pfxNsMeta}instanceOf>
+                        <dcterms:title xml:lang="en">has Priority</dcterms:title>
+                        <${DEF.pfxNsMeta}enumeratedEndpoint>Requirement</${DEF.pfxNsMeta}enumeratedEndpoint>
+                    </${DEF.pfxNsMeta}Link>
+
+                    <!-- anEntity instance without modified: must be defaulted to 'now' -->
+                    <${DEF.pfxNsMeta}anEntity id="Req-001">
+                        <${DEF.pfxNsMeta}instanceOf>Requirement</${DEF.pfxNsMeta}instanceOf>
+                        <dcterms:title xml:lang="en">System shall authenticate users</dcterms:title>
+                    </${DEF.pfxNsMeta}anEntity>
+                </graph>
+            </${DEF.pfxNsMeta}aPackage>`;
+
+        const pkg = new APackage().setXML(xmlInput);
+        const status = pkg.status();
+        if (!status.ok) {
+            console.error('Import failed:', status.statusText);
+        }
+        expect(status.ok).toBe(true);
+
+        const items = pkg.getItems();
+
+        const entityClass = items.find((item: any) => item.itemType === PigItemType.Entity && item.id === 'o:Requirement');
+        const linkClass = items.find((item: any) => item.itemType === PigItemType.Link && item.id === 'o:hasPriority');
+        const anEntityInstance = items.find((item: any) => item.itemType === PigItemType.anEntity);
+
+        expect(entityClass).toBeDefined();
+        expect((entityClass as any)?.get().modified).toBeUndefined();
+
+        expect(linkClass).toBeDefined();
+        expect((linkClass as any)?.get().modified).toBeUndefined();
+
+        expect(anEntityInstance).toBeDefined();
+        expect((anEntityInstance as any)?.get().modified).toBeDefined();
+    });
+});
