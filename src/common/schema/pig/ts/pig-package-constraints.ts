@@ -134,6 +134,9 @@ const allConstraintChecks: ConstraintCheckType[] = [
 export function checkConstraintsForPackage(
     pkg: IAPackage,
     options?: {
+        /**
+         * List constraints to check; if not provided, all constraints are checked.
+         */
         checkConstraints?: ConstraintCheckType[];
         /**
          * Fallback lookup for the itemType of a referenced id that is not part of
@@ -142,8 +145,8 @@ export function checkConstraintsForPackage(
          * Used by specializes/instanceOf reference checks so that cross-package
          * references to already-known items are not flagged as missing.
          * 
-         * resolveExternalItemType is not needed when a package is self-contained
-         * and all referenced items are present in its own graph.
+         * resolveExternalItemType is not needed when a package is self-contained,
+         * that is, all referenced items are present in its own graph.
          */
         resolveExternalItemType?: (id: TPigId) => PigItemTypeValue | undefined;
     }
