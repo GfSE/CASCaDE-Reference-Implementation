@@ -233,10 +233,9 @@ export class PigItem {
         return this.isInstance(iType) || this.isClass(iType);
     }
     /**
-     * Check if the given item is itself a package (itemType aPackage).
-     * Used to detect a package that is contained (nested) within another
-     * package's graph, meaning it must be exported as a proxy only (see
-     * APackage.getProxy()), not with its full graph.
+     * Check if the given item is a package (itemType aPackage).
+     * May be used to detect a package that is contained (nested) within
+     * another package's graph.
      */
     static isAPackage(item: TPigItem): boolean {
         return item?.itemType === PigItemType.aPackage;
@@ -1624,9 +1623,9 @@ export class APackage extends AnElement implements IAPackage {
     /**
      * Build a proxy representation of this package, for use when it is
      * contained (nested) within another package's graph, carrying only id,
-     * modified, revision and creator - never its full graph. Used by all
-     * exporters (JSON-LD, XML, TTL, Cypher) when a graph item turns out to
-     * be an itemType aPackage (nested package).
+     * modified, revision and creator - never its full graph.
+     * Used by all exporters when a graph item turns out to be an
+     * itemType aPackage (nested package).
      */
     getProxy(): IAPackageProxy {
         return LIB.stripUndefinedAndNull({

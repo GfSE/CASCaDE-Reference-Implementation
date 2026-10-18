@@ -359,6 +359,42 @@ import {
 
             try {
 
+                /*
+                 * The item cache is lazily loaded, so it must be loaded from
+                 * storage first if not yet initialized.
+                 */
+                const cache =
+                    ItemCache();
+
+
+                if (
+                    !cache.initialized
+                ) {
+
+                    await cache.loadFromStorage();
+                }
+
+
+                /*
+                 * 'Replace' fully replaces the item cache; the asset cache (images,
+                 * etc. extracted alongside the payload) must be cleared as well,
+                 * otherwise stale/orphaned assets from a previous import would
+                 * linger. This MUST happen before the import itself, since the
+                 * importer persists newly extracted assets to AssetCache as part
+                 * of the import - clearing afterwards would wipe out the very
+                 * assets just imported. Only done for 'replace' (not 'update'),
+                 * so updating with a new/changed package does not wipe out images
+                 * still referenced by previously imported (and still cached)
+                 * packages.
+                 */
+                if (
+                    mode === 'replace'
+                ) {
+
+                    await AssetCache().clear();
+                }
+
+
                 const results =
                     await Neo4jImporter.import(
                         this.getConnection()
@@ -421,8 +457,92 @@ import {
 
 
                 if (
-                    packages.length === 0
+                    packages.length > 0
                 ) {
+
+                    /*
+                     * Store only the successfully imported packages in the item
+                     * cache, same as the other import plugins.
+                     */
+                    const items:
+                        TPigItem[] =
+                        packages.flatMap(
+                            pkg =>
+                                pkg.getItems()
+                        );
+
+
+                    const persisted =
+                        mode === 'update'
+                            ? await cache.update(
+                                items
+                            )
+                            : await cache.replace(
+                                items
+                            );
+
+
+                    const action =
+                        mode === 'update'
+                            ? 'updated'
+                            : 'imported';
+
+                    this.successMessage =
+                        `Successfully ${action} ${packages.length} ` +
+                        `CASCaRA package(s) from Neo4j.`;
+
+
+                    if (
+                        !persisted
+                    ) {
+
+                        this.errorMessages.push(
+                            'Warning: imported data could not be persisted ' +
+                            'to browser storage (IndexedDB).'
+                        );
+                    }
+
+
+                    if (
+                        failed.length > 0
+                    ) {
+
+                        this.errorMessages.push(
+                            ...failed.map(
+                                (
+                                    result:
+                                        IRsp<TPigItem[]>
+                                ) =>
+                                    result.statusText ||
+                                    `Neo4j import error (${result.status})`
+                            )
+                        );
+                    }
+
+
+                    /*
+                     * Same post-import navigation used by the existing
+                     * importer plugins.
+                     */
+                    setTimeout(
+                        async () => {
+
+                            await this.$router.push({
+                                name:
+                                    'Document'
+                            });
+
+
+                            this.dialog =
+                                false;
+
+
+                            this.onCancel();
+                        },
+                        DEF.timeBetweenPages
+                    );
+
+                } else {
 
                     if (
                         failed.length > 0
@@ -446,115 +566,18 @@ import {
                     }
 
 
-                    return;
+                    /*
+                     * If all imports failed and the cache was meant to be fully
+                     * replaced, clear it (and the asset cache, already cleared
+                     * above) to avoid leaving stale data behind.
+                     */
+                    if (
+                        mode === 'replace'
+                    ) {
+
+                        await cache.clear();
+                    }
                 }
-
-
-                /*
-                 * Store the imported packages in the item cache, same as the other
-                 * import plugins. The item cache is lazily loaded, so it must be
-                 * loaded from storage first if not yet initialized. A 'replace'
-                 * also clears the asset cache beforehand, since it fully replaces
-                 * the cache contents; this MUST happen before persisting, otherwise
-                 * stale/orphaned assets from a previous import would linger.
-                 */
-                const cache =
-                    ItemCache();
-
-
-                if (
-                    !cache.initialized
-                ) {
-
-                    await cache.loadFromStorage();
-                }
-
-
-                if (
-                    mode === 'replace'
-                ) {
-
-                    await AssetCache().clear();
-                }
-
-
-                const items:
-                    TPigItem[] =
-                    packages.flatMap(
-                        pkg =>
-                            pkg.getItems()
-                    );
-
-
-                const persisted =
-                    mode === 'update'
-                        ? await cache.update(
-                            items
-                        )
-                        : await cache.replace(
-                            items
-                        );
-
-
-                const action =
-                    mode === 'update'
-                        ? 'updated'
-                        : 'imported';
-
-                this.successMessage =
-                    `Successfully ${action} ${packages.length} ` +
-                    `CASCaRA package(s) from Neo4j.`;
-
-
-                if (
-                    !persisted
-                ) {
-
-                    this.errorMessages.push(
-                        'Warning: imported data could not be persisted ' +
-                        'to browser storage (IndexedDB).'
-                    );
-                }
-
-
-                if (
-                    failed.length > 0
-                ) {
-
-                    this.errorMessages.push(
-                        ...failed.map(
-                            (
-                                result:
-                                    IRsp<TPigItem[]>
-                            ) =>
-                                result.statusText ||
-                                `Neo4j import error (${result.status})`
-                        )
-                    );
-                }
-
-
-                /*
-                 * Same post-import navigation used by the existing
-                 * importer plugins.
-                 */
-                setTimeout(
-                    async () => {
-
-                        await this.$router.push({
-                            name:
-                                'Document'
-                        });
-
-
-                        this.dialog =
-                            false;
-
-
-                        this.onCancel();
-                    },
-                    DEF.timeBetweenPages
-                );
 
             } catch (error: any) {
 

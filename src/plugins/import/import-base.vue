@@ -9,7 +9,7 @@
                               :accept='config.accept'
                               :label='config.inputLabel'
                               prepend-icon='mdi-folder-open'
-                             *       multiple
+                              multiple
                               :loading='isLoading'
                               :disabled='isLoading'
                               :hint='config.hint'
@@ -200,12 +200,12 @@
                     const failed = results.filter((r: IRsp<unknown>) => !r.ok);
                     this.logFailedImports(failed);
 
+                    const cache = ItemCache();
                     if (successful.length > 0) {
                         // Store each package in the cache sequentially: the first package uses the
                         // mode selected via the clicked button ('replace' or 'update'), every
                         // following package is merged via 'update' so it doesn't wipe out packages
                         // already written to the cache during this same import operation.
-                        const cache = ItemCache();
                         let allPersisted = true;
                         for (let i = 0; i < successful.length; i++) {
                             const items = successful[i].response as TPigItem[];
@@ -230,6 +230,10 @@
                             this.dialog = false;
                             this.onCancel();
                         }, DEF.timeBetweenPages);
+                    }
+                    else if (mode === 'replace' /* && failed.length > 0 */) {
+                        // If all imports failed, clear the cache to avoid leaving stale data behind
+                        await cache.clear();
                     }
 
                 } catch (error: any) {

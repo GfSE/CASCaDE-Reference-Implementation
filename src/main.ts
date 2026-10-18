@@ -79,7 +79,8 @@ app.provide('exportComponents', exportComponents);
 
 // Ensure the item cache is loaded from persistent storage (IndexedDB)
 // before the app renders, so all components can rely on synchronous access
-// to cache.items / cache.packages right from the start.
+// to cache.items right from the start.
+// assetCache is loaded lazily on demand, so it does not need to be loaded here.
 ItemCache(pinia).loadFromStorage().finally(() => {
     app.mount('#app');
 });

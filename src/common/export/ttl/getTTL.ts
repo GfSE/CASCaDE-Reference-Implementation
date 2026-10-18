@@ -605,7 +605,7 @@ class GetTTL {
      */
     private static xPackageProxy(proxy: IAPackageProxy, rdf: CToTtl): string {
         let ttl = rdf.tab0(this.formatTurtleId(proxy.id));
-        ttl += rdf.tab1('a', 'cas:aPackage', false); // is reference
+        ttl += rdf.tab1('a', 'cas:Package', false); // is reference
         if (proxy.revision) {
             ttl += rdf.tab1('cas:revision', proxy.revision, true); // is literal
         }

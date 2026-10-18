@@ -188,8 +188,8 @@
                         LOG.error('URL import errors:', failed);
                     }
 
+                    const cache = ItemCache();
                     if (successful.length > 0) {
-                        const cache = ItemCache();
                         let allPersisted = true;
                         for (let i = 0; i < successful.length; i++) {
                             const items = successful[i].response as TPigItem[];
@@ -211,6 +211,11 @@
                             await this.$router.push({ name: 'Document' });
                         }, DEF.timeBetweenPages);
                     }
+                    else if (mode === 'replace' /* && failed.length > 0 */) {
+                        // If all imports failed, clear the cache to avoid leaving stale data behind
+                        await cache.clear();
+                    }
+
                 } catch (error: any) {
                     this.errorMessages = [`Import failed: ${error?.message || String(error)}`];
                     LOG.error('URL import error:', error);

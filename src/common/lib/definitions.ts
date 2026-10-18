@@ -173,7 +173,8 @@ export const RE = {
     contentInSquareBrackets: /^\[([\S\s]+?)\]$/i,  // empty spaces allowed
     // HTML detection: paired tags <tag>...</tag> or self-closing tags <tag />
     hasHTML: /<[a-zA-Z][^>]*>.*?<\/[a-zA-Z][^>]*>|<[a-zA-Z][^>]*\/>/s,
-    tagSingleObject: /<object\s(?:([^>]*?)\s?data="(.+?)"([^>]*?))(?:\/>|>(.*?)<\/object>)/gi,  // use: result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {}
+    // tagSingleObject: /<object\s(?:([^>]*?)\s?data="(.+?)"([^>]*?))(?:\/>|>(.*?)<\/object>)/gi,  // use: result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {}
+    tagSingleObject: /<object\b([^>]*?)\bdata\s*=\s*["']([^"']+)["']([^>]*?)(?:\/>|>([\s\S]*?)<\/object>)/gi,  // use: result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {}
     tagImg: /<img\b([^>]*)\bsrc\s*=\s*["']([^"']+)["']([^>]*?)\/?>/gi  // use as above
 
 }

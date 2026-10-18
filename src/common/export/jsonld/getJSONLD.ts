@@ -214,8 +214,12 @@ class GetJSONLD {
             // their full graph - to avoid duplicating/interleaving a nested
             // package's contents with its own top-level export.
             return graph.map(item => {
-                if (PigItem.isAPackage(item))
-                    return (item as APackage).getProxy() as unknown as JsonObject;
+                if (PigItem.isAPackage(item)) {
+                    const proxy = (item as APackage).getProxy();
+                    return GetJSONLD.makeIdObjects(
+                        MVF.renameJsonTags(proxy as unknown as JsonObject, MVF.toJSONLD)
+                    ) as JsonObject;
+                }
                 // LOG.debug('Transforming graph items to JSON-LD', item, typeof (item), (item as any).constructor.name);
                 return getJSONLD(item) as JsonObject;
             });

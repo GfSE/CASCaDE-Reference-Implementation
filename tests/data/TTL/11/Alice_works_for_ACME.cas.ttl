@@ -228,17 +228,17 @@ cas:taxID_shape
 	sh:minCount 0 ;
 	sh:maxCount 1 .
 
-cas:WorksFor
+cas:worksFor
 	a owl:Class ;
 	rdfs:subClassOf schema:WorksFor ;
 	rdfs:label "works for"@en ;
 	skos:definition "Organizations that the person works for."@en .
 
-cas:WorksFor_shape
+cas:worksFor_shape
 	a sh:NodeShape ;
-	sh:targetClass cas:WorksFor ;
-	sh:property o:Employee_shape ;
-	sh:property o:Employer_shape .
+	sh:targetClass cas:worksFor ;
+	sh:property o:employee_shape ;
+	sh:property o:employer_shape .
 
 o:employee
 	rdfs:subPropertyOf cas:linksSource ;
@@ -248,7 +248,7 @@ o:employee
 
 o:employee_shape
 	a sh:PropertyShape ;
-	sh:path o:Employee ;
+	sh:path o:employee ;
 	sh:class cas:Person .
 
 o:employer
@@ -259,7 +259,7 @@ o:employer
 
 o:employer_shape
 	a sh:PropertyShape ;
-	sh:path o:Employer ;
+	sh:path o:employer ;
 	sh:class cas:Organization .
 
 d:ACME
@@ -277,7 +277,7 @@ d:Alice
 	cas:givenName "Alice" .
 
 d:Alice_worksFor_ACME
-	a cas:WorksFor ;
+	a cas:worksFor ;
 	dcterms:modified "2026-01-20T09:38:26.464Z"^^xs:dateTime ;
 	o:employee d:Alice ;
 	o:employer d:ACME .
@@ -402,7 +402,10 @@ cas:Enumeration_shape_shape
 cas:Entity_class_shape
 	a sh:NodeShape ;
 ### here we need to check all subClasses of cas:Entity:
-    sh:target [ sh:select "SELECT ? this WHERE {?this rdfs:subClassOf cas:Entity}" ]	
+    sh:target [
+         a sh:SPARQLTarget ;
+         sh:select "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX cas: <https://product-information-graph.org/ontology/2026-05-08/metamodel#> SELECT ?this WHERE { ?this rdfs:subClassOf cas:Entity }"
+    ] ;
 ### omit:
 #	sh:targetSubjectsOf rdfs:subClassOf ;
 #	sh:targetClass cas:Entity ;

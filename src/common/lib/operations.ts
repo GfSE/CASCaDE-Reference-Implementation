@@ -35,6 +35,10 @@ export class Operations {
                 LOG.warn(`Operations.addItemToAPackage: no instantiated item found in cache with id '${itemId}'`);
                 continue;
             }
+            if (item.id === packageId) {
+                LOG.warn(`Operations.addItemToAPackage: package '${packageId}' cannot contain itself`);
+                continue;
+            }
             itemsToAdd.push(item as TPigItem);
         }
 

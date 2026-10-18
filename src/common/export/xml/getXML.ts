@@ -983,11 +983,11 @@ class GetXML {
      * @returns XML representation of the package proxy
      */
     private static xPackageProxy(proxy: { id: string; modified?: string; revision?: string; creator?: string }, indent: string): string {
-        let attrs = ` id="${this.escapeXmlAttr(proxy.id)}"`;
-        if (proxy.modified) attrs += ` modified="${this.escapeXmlAttr(proxy.modified)}"`;
-        if (proxy.revision) attrs += ` revision="${this.escapeXmlAttr(proxy.revision)}"`;
-        if (proxy.creator) attrs += ` creator="${this.escapeXmlAttr(proxy.creator)}"`;
-        return `${indent}<aPackage${attrs}/>\n`;
+        let xml = `${indent}<cas:aPackage id="${proxy.id}" rdf:type="cas:Package">\n`;
+        xml += `${indent}\t<dcterms:modified>${proxy.modified}</dcterms:modified>\n`;
+        if (proxy.revision) xml += `${indent}\t<cas:revision>${proxy.revision}</cas:revision>\n`;
+        if (proxy.creator) xml += `${indent}\t<dcterms:creator>${this.escapeXmlText(proxy.creator)}</dcterms:creator>\n`;
+        return `${xml}${indent}</cas:aPackage>\n`;
     }
 
     /**
