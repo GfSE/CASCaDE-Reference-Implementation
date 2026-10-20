@@ -10,12 +10,9 @@ import neo4j, { Driver } from 'neo4j-driver';
 import {
     IRsp,
     Rsp,
-    Msg
-} from '../../lib/messages';
-
-import {
+    Msg,
     LOG
-} from '../../lib/helpers';
+} from '../../lib/messages';
 
 import {
     APackage,

@@ -101,8 +101,7 @@
     import { TPigItem, APackage } from '@/common/schema/pig/ts/pig-metaclasses';
     import { ItemCache } from '@/stores/item-cache';
     import { AssetCache } from '@/stores/asset-cache';
-    import { LOG } from '@/common/lib/helpers';
-    import { Msg, IRsp } from '@/common/lib/messages';
+    import { Msg, IRsp, LOG } from '@/common/lib/messages';
     import { ImportConfig } from '@/plugins/import/import-config';
 
     /**

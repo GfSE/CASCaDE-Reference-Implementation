@@ -33,7 +33,8 @@
  */
 
 // import { DEF } from '../../lib/definitions';
-import { LIB, LOG, ILanguageText, INamespace } from '../../lib/helpers';
+import { LIB, ILanguageText, INamespace } from '../../lib/helpers';
+import { LOG } from '../../lib/messages';
 import {
     TPigItem, PigItemType, PigItemTypeValue,
     AnEntity, APackage, ARelationship,

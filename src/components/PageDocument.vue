@@ -43,6 +43,7 @@
     import { ItemCache } from '@/stores/item-cache'
     import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@/common/export/html/getHTML'
     import { APackage, AnEntity, PigItemType } from '@/common/schema/pig/ts/pig-metaclasses'
+    import { PLI } from '@/common/lib/platform-independence'
     import NavOutline from './NavOutline.vue'
     import NavOutlineItem from './NavOutlineItem.vue'
     // OutlineNode is declared and exported from NavOutlineItem.vue; since the '*.vue'
@@ -61,8 +62,8 @@
     // 'ancestors' guards against cycles within the current branch.
     // 'referencedIds' collects the ids of all entities reachable from a root,
     // so that entities not reachable from any root can be detected afterwards.
-    function buildOutlineNode(entity: AnEntity, entityById: Map<string, AnEntity>, ancestors: Set<string>, referencedIds: Set<string>): OutlineNode {
-        const html = getHTML(entity, { itemType: [PigItemType.anEntity] })[0]
+    function buildOutlineNode(entity: AnEntity, entityById: Map<string, AnEntity>, ancestors: Set<string>, referencedIds: Set<string>, lang: string): OutlineNode {
+        const html = getHTML(entity, { itemType: [PigItemType.anEntity], lang })[0]
         const title = extractTitle(html) ?? entity.id
 
         if (entity.id) referencedIds.add(entity.id)
@@ -75,7 +76,7 @@
             if (link.instanceOf !== 'cas:lists') continue
             const child = entityById.get(link.idRef)
             if (child && child.id && !ancestors.has(child.id)) {
-                children.push(buildOutlineNode(child, entityById, newAncestors, referencedIds))
+                children.push(buildOutlineNode(child, entityById, newAncestors, referencedIds, lang))
             }
         }
         return { id: entity.id, title, html, children }
@@ -125,6 +126,7 @@
 
                 // Use toRaw to unwrap Pinia's reactive proxy for all loaded packages
                 const rawPackages = packages.map(pkg => toRaw(pkg) as APackage)
+                const lang = PLI.getBrowserLanguage()
 
                 // Build a global lookup of anEntity instances by id, so that
                 // aTargetLink.idRef references can be resolved across all loaded packages:
@@ -146,7 +148,7 @@
                     // HTML for each graph item]; only the first entry (the package's own
                     // metadata) is needed here, the graph items are handled below via the
                     // outline tree, so no graph item itemTypes are requested:
-                    const packageHtml = getHTML(rawPkg, { itemType: [] })[0]
+                    const packageHtml = getHTML(rawPkg, { itemType: [], lang })[0]
                     const packageTitle = extractTitle(packageHtml) ?? rawPkg.id ?? 'Untitled Package'
 
                     // The outline is rooted at anEntity instances of class 'cas:Root'.
@@ -166,7 +168,7 @@
                             if (link.instanceOf !== 'cas:lists') continue
                             const child = entityById.get(link.idRef)
                             if (child) {
-                                packageChildren.push(buildOutlineNode(child, entityById, ancestors, referencedIds))
+                                packageChildren.push(buildOutlineNode(child, entityById, ancestors, referencedIds, lang))
                             }
                         }
                     }
@@ -207,7 +209,7 @@
                         const entity = entityById.get(id)
                         if (entity && entity.id && !referencedIds.has(entity.id) && !childOfOrphan.has(entity.id)) {
                             const ancestors = new Set<string>([entity.id])
-                            unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds))
+                            unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds, lang))
                         }
                     }
                     // Fallback for orphaned entities that only occur in a cycle among themselves
@@ -216,7 +218,7 @@
                         const entity = entityById.get(id)
                         if (entity && entity.id && !referencedIds.has(entity.id)) {
                             const ancestors = new Set<string>([entity.id])
-                            unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds))
+                            unreferenced.push(buildOutlineNode(entity, entityById, ancestors, referencedIds, lang))
                         }
                     }
                     if (unreferenced.length > 0) {

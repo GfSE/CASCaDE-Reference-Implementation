@@ -18,12 +18,14 @@
 
     Titles that are too long to fit the pane are truncated with an ellipsis
     (see .text-body-2 CSS below); a v-tooltip shows the full, untruncated title
-    while the mouse hovers over the item.
+    while the mouse hovers over the item - regardless of whether that item is
+    currently selected. The tooltip is never shown merely because an item has
+    (keyboard) focus/selection - only actual mouse hover triggers it.
 -->
 <template>
     <v-list-group v-if="node.children && node.children.length > 0" :value="node.id">
         <template v-slot:activator="{ props: activatorProps }">
-            <v-tooltip :text="node.title" location="end" open-delay="500">
+            <v-tooltip :text="node.title" location="end" open-delay="500" :open-on-focus="false">
                 <template v-slot:activator="{ props: tooltipProps }">
                     <v-list-item v-bind="{ ...activatorProps, ...tooltipProps }"
                                  :id="`outline-item-${node.id}`"
@@ -41,7 +43,7 @@
                             :selected-id="selectedId"
                             @select="onChildSelect" />
     </v-list-group>
-    <v-tooltip v-else :text="node.title" location="end" open-delay="500">
+    <v-tooltip v-else :text="node.title" location="end" open-delay="500" :open-on-focus="false">
         <template v-slot:activator="{ props: tooltipProps }">
             <v-list-item v-bind="tooltipProps"
                          :id="`outline-item-${node.id}`"

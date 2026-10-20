@@ -44,7 +44,8 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { LIB, LOG, ILanguageText } from '../../lib/helpers';
+import { LIB, ILanguageText, MultiLanguageText } from '../../lib/helpers';
+import { LOG } from '../../lib/messages';
 import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
     AnEntity, APackage, ARelationship,
@@ -1720,7 +1721,7 @@ export class CToTtl {
             return "";
         }
 
-        if (PigItem.isMultiLanguageText(object)) {
+        if (MultiLanguageText.isValid(object)) {
             return this.formatMultiLanguageText(pred, object);
         }
         return this.formatScalarArray(pred, object, literal);

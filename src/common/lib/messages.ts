@@ -20,8 +20,6 @@
  *  - Multi-language support: en, de, fr, es
  */
 
-import { LOG } from "./helpers";
-
 /** IRsp interface
  * An xhr-like object to return the result of the import;
  * use it as follows (according to GitHub Copilot):
@@ -48,6 +46,46 @@ export const rspOK: IRsp = { status: 0, statusText: 'ok', ok: true };
 
 // Supported languages
 export type LanguageCode = 'en' | 'de' | 'fr' | 'es';
+
+type LogLevel = 'info' | 'warn' | 'error' | 'debug';
+export const LOG = {
+    // Configure which log levels are enabled (default: all)
+    enabledLevels: new Set<LogLevel>(['info', 'warn', 'error', 'debug']),
+
+    /**
+     * Enable or disable specific log levels
+     * @param levels - Array of log levels to enable. Omit to enable all.
+     */
+    setLogLevels(levels?: LogLevel[]): void {
+        if (!levels || levels.length === 0) {
+            this.enabledLevels = new Set(['info', 'warn', 'error', 'debug']);
+        } else {
+            this.enabledLevels = new Set(levels);
+        }
+    },
+
+    /**
+     * Check if a log level is enabled
+     */
+    isEnabled(level: LogLevel): boolean {
+        return this.enabledLevels.has(level);
+    },
+
+    /* eslint-disable no-console */
+    info: (...args: unknown[]) => {
+        if (LOG.isEnabled('info')) console.info(...args);
+    },
+    warn: (...args: unknown[]) => {
+        if (LOG.isEnabled('warn')) console.warn(...args);
+    },
+    error: (...args: unknown[]) => {
+        if (LOG.isEnabled('error')) console.error(...args);
+    },
+    debug: (...args: unknown[]) => {
+        if (LOG.isEnabled('debug')) console.debug(...args);
+    }
+    /* eslint-enable no-console */
+};
 
 /**
  * Language manager for error messages

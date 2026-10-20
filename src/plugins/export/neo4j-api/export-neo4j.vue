@@ -95,7 +95,7 @@ import { toRaw } from 'vue';
 import { ItemCache } from '../../../stores/item-cache';
 import { getCypher } from '../../../common/export/cypher/getCypher';
 import { exportToNeo4j } from './neo4j-export';
-import { LOG } from '../../../common/lib/helpers';
+import { LOG } from '../../../common/lib/messages';
 
 @Options({
   data() {

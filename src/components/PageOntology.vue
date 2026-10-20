@@ -36,7 +36,8 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import { ItemCache } from '@/stores/item-cache'
-    import { LIB } from '@/common/lib/helpers'
+    import { MultiLanguageText } from '@/common/lib/helpers'
+    import { PLI } from '@/common/lib/platform-independence'
     import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@/common/export/html/getHTML'
     import { PigItemType, TPigClass } from '@/common/schema/pig/ts/pig-metaclasses'
     import NavOutline from './NavOutline.vue'
@@ -93,13 +94,14 @@
 
                 // One top-level folder per CASCaRA Type, listing the matching items found
                 // across all loaded packages, in the fixed order given by CASCARA_TYPES:
+                const lang = PLI.getBrowserLanguage()
                 return CASCARA_TYPES.map(({ itemType, title }) => {
                     const children: OutlineNode[] = []
                     for (const item of items) {
                         if (item.itemType !== itemType) continue
                         const typedItem = item as TPigClass
-                        const itemTitle = LIB.getLocalText(typedItem.title) || typedItem.id || '(untitled)'
-                        const itemHtml = getHTML(typedItem, {})[0]
+                        const itemTitle = new MultiLanguageText(typedItem.title).get(lang) || typedItem.id || '(untitled)'
+                        const itemHtml = getHTML(typedItem, { lang })[0]
                         children.push({ id: typedItem.id ?? itemTitle, title: itemTitle, html: itemHtml, children: [] })
                     }
                     // Prefix the folder id to avoid collisions with item ids: an item with

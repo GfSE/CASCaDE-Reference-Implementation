@@ -23,9 +23,9 @@ describe('ItemCache store - update()', () => {
     beforeEach(() => {
         setActivePinia(createPinia());
         // Silence expected error logs from the mocked-out IndexedDB persistence failure
-        jest.spyOn(require('../../src/common/lib/helpers').LOG, 'error').mockImplementation(() => {});
-        jest.spyOn(require('../../src/common/lib/helpers').LOG, 'warn').mockImplementation(() => {});
-        jest.spyOn(require('../../src/common/lib/helpers').LOG, 'info').mockImplementation(() => {});
+        jest.spyOn(console, 'error').mockImplementation(() => {});
+        jest.spyOn(console, 'warn').mockImplementation(() => {});
+        jest.spyOn(console, 'info').mockImplementation(() => {});
     });
 
     afterEach(() => {

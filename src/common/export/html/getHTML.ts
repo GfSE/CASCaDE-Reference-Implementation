@@ -43,15 +43,19 @@
 
 import { RE } from '../../lib/definitions';
 import { PigItemType, PigItemTypeValue, PigItem, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement, TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship } from '../../schema/pig/ts/pig-metaclasses';
-import { tagIETF, ILanguageText, LIB, LOG } from '../../lib/helpers';
+import { tagIETF, ILanguageText, LIB, MultiLanguageText } from '../../lib/helpers';
+import { LOG } from '../../lib/messages';
 import { PLI } from '../../lib/platform-independence';
 
 /**
  * Render a multi-language text as repeated <dt>/<dd> pairs, one per language.
  * The language tag is appended in brackets to the label when present,
  * e.g. "title (de)".
+ *
+ * Not currently used by the single-language rendering below, but kept for
+ * later use (e.g. a future "show all languages" mode in PageOntology).
  */
-function multiLangDtDd(label: string, texts: ILanguageText[], stripHtmlFlag = false): string {
+export function multiLangDtDd(label: string, texts: ILanguageText[], stripHtmlFlag = false): string {
     return texts.map(t => {
         const text = stripHtmlFlag ? LIB.stripHTML(t.value) : t.value;
         const lbl = t.lang ? `${label} (${t.lang})` : label;
@@ -62,8 +66,11 @@ function multiLangDtDd(label: string, texts: ILanguageText[], stripHtmlFlag = fa
 /**
  * Render a multi-language text as repeated heading/block elements (e.g. <h3>/<div>),
  * one per language, with the language tag shown as a small badge when present.
+ *
+ * Not currently used by the single-language rendering below, but kept for
+ * later use (e.g. a future "show all languages" mode in PageOntology).
  */
-function multiLangBlock(tag: string, cssClass: string, texts: ILanguageText[], stripHtmlFlag = false): string {
+export function multiLangBlock(tag: string, cssClass: string, texts: ILanguageText[], stripHtmlFlag = false): string {
     return texts.map(t => {
         const text = stripHtmlFlag ? LIB.stripHTML(t.value) : t.value;
         const langBadge = t.lang ? ` <span class="meta-lang">(${t.lang})</span>` : '';
@@ -123,11 +130,13 @@ class GetHTML {
                     Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
                 </div>`;
 
-        const titleHTML = pkg.title?.length
-            ? multiLangBlock('h3', 'meta-title', pkg.title, true)
+        const pkgTitleText = passify(LIB.stripHTML(new MultiLanguageText(pkg.title).get(lang)));
+        const pkgDescText = passify(new MultiLanguageText(pkg.description).get(lang));
+        const titleHTML = pkgTitleText
+            ? `<h3 class="meta-title">${pkgTitleText}</h3>`
             : '<h3 class="meta-title">Untitled Package</h3>';
-        const descHTML = pkg.description?.length
-            ? multiLangBlock('div', 'meta-description', pkg.description)
+        const descHTML = pkgDescText
+            ? `<div class="meta-description">${pkgDescText}</div>`
             : '';
         const { propertiesHTML, diagramHTML } = propertiesToHTML(pkg, lang);
 
@@ -167,8 +176,8 @@ class GetHTML {
         const lang = options?.lang || 'en-US';
         const widthMain = options?.widthMain || '67%';
 
-        const titleText = passify(LIB.stripHTML(LIB.getLocalText(entity.title, lang)));
-        const descText = passify(LIB.getLocalText(entity.description, lang));
+        const titleText = passify(LIB.stripHTML(new MultiLanguageText(entity.title).get(lang)));
+        const descText = passify(new MultiLanguageText(entity.description).get(lang));
     /*
         const titleHTML = entity.title?.length ? multiLangBlock('h3', 'meta-title', entity.title, true) : '';
         const descHTML = entity.description?.length ? multiLangBlock('div', 'meta-description', entity.description) : '';
@@ -234,9 +243,12 @@ class GetHTML {
         let propertiesHTML = '';
         propertiesHTML += `<dt>Item Type</dt><dd>${cls.itemType}</dd>`;
         propertiesHTML += `<dt>ID</dt><dd>${passify(cls.id)}</dd>`;
-        propertiesHTML += cls.title?.length ? multiLangDtDd('Title', cls.title, true) : `<dt>Title</dt><dd>${EMPTY}</dd>`;
-        propertiesHTML += cls.description?.length ? multiLangDtDd('Description', cls.description) : `<dt>Description</dt><dd>${EMPTY}</dd>`;
-        propertiesHTML += cls.definition?.length ? multiLangDtDd('Definition', cls.definition) : `<dt>Definition</dt><dd>${EMPTY}</dd>`;
+        const clsTitleText = passify(LIB.stripHTML(new MultiLanguageText(cls.title).get(lang)));
+        const clsDescText = passify(new MultiLanguageText(cls.description).get(lang));
+        const clsDefText = passify(new MultiLanguageText(cls.definition).get(lang));
+        propertiesHTML += `<dt>Title</dt><dd>${clsTitleText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Description</dt><dd>${clsDescText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Definition</dt><dd>${clsDefText || EMPTY}</dd>`;
         propertiesHTML += `<dt>Specializes</dt><dd>${cls.specializes ? passify(cls.specializes) : EMPTY}</dd>`;
         // Enumerated Property, Icon and Color are only defined on classes derived from Element (Enumeration, Entity, Relationship):
         if ('enumeratedProperty' in cls) {
@@ -251,7 +263,7 @@ class GetHTML {
                 const enumeration = cls as Enumeration;
                 propertiesHTML += `<dt>Datatype</dt><dd>${passify(enumeration.datatype ?? EMPTY)}</dd>`;
                 const values = (enumeration.enumeratedValue ?? [])
-                    .map(v => passify(LIB.getLocalText(v.title, lang) || v.value || ''))
+                    .map(v => passify(new MultiLanguageText(v.title).get(lang) || v.value || ''))
                     .join(', ');
                 propertiesHTML += `<dt>Enumerated Values</dt><dd>${values || EMPTY}</dd>`;
                 break;
@@ -493,13 +505,16 @@ function propertiesToHTML(el: TPigAnElement, lang: tagIETF): { propertiesHTML: s
             const propData = prop.get() as IAProperty;
             if (propData && propData.instanceOf) {
                 const propClass = passify(propData.instanceOf);
-                if (PigItem.isMultiLanguageText(propData.value)) {
-                    // Configurable property with datatype 'string': render every language
+                if (MultiLanguageText.isValid(propData.value)) {
+                    // Configurable property with datatype 'string': render a single
+                    // language, following the built-in fall-back logic (same as all
+                    // other MultiLanguageText fields):
+                    const propText = passify(new MultiLanguageText(propData.value).get(lang));
                     if (propData.instanceOf === 'cas:Diagram') {
-                        diagramHTML += propData.value.map(t => `<div class="meta-diagram">${passify(t.value)}</div>`).join('');
+                        diagramHTML += `<div class="meta-diagram">${propText}</div>`;
                         continue;
                     }
-                    propertiesHTML += multiLangDtDd(propClass, propData.value);
+                    propertiesHTML += `<dt>${propClass}</dt><dd>${propText}</dd>`;
                 } else {
                     const propValue = passify((propData.value) as unknown as string);
                     if (propData.instanceOf === 'cas:Diagram') {

@@ -18,6 +18,7 @@
 
 import type { IIdentifiable } from '../schema/pig/ts/pig-metaclasses';
 import { DEF, RE } from './definitions';
+import { LOG, IRsp, rspOK, Msg } from './messages';
 
 /**
  * JSON helper types
@@ -34,16 +35,234 @@ export interface INamespace {
     tag: string; // e.g. a namespace tag, e.g. "cas:"
     uri: string; // e.g. a namespace value, e.g. "https://product-information-graph.org/"
 }
-export interface ILanguageText {
-    value: string;
-    lang?: tagIETF;
-}
 export interface IText {
     value: string;
 }
+export interface ILanguageText extends IText {
+    lang?: tagIETF;
+}
 
 /**
- * Standard XML Namespaces used in PIG XML documents
+ * Wraps an array of ILanguageText (a multi-language text, as found e.g. on
+ * title/description/definition of CASCaRA metaclasses) and provides
+ * language-aware getters/setters with a well-defined fallback behavior.
+ *
+ * Fallback behavior of get() when the requested language is not available:
+ * 1. an exact match of the requested language tag (e.g. 'de-DE')
+ * 2. a dialect of the requested language's primary subtag (e.g. 'de-AT' for 'de')
+ * 3. a dialect of 'en' (e.g. 'en-US', 'en-GB', or just 'en')
+ * 4. the first entry in the array, regardless of its language
+ */
+export class MultiLanguageText {
+    private texts: ILanguageText[];
+
+    constructor(texts?: ILanguageText[]) {
+        this.texts = texts ? [...texts] : [];
+    }
+
+    /**
+     * All language texts, e.g. to iterate over every available language.
+     * @example
+     * const mlt = new MultiLanguageText(entity.title)
+     * for (const t of mlt.all) { console.log(t.lang, t.value) }
+     */
+    get all(): ILanguageText[] {
+        return this.texts;
+    }
+
+    /**
+     * The number of language texts available.
+     * @example
+     * const mlt = new MultiLanguageText(entity.title)
+     * if (mlt.length === 0) return ''
+     */
+    get length(): number {
+        return this.texts.length;
+    }
+
+    /** The primary language subtag of an IETF language tag, e.g. 'en' for 'en-US'. */
+    private static primarySubtag(lang: tagIETF): string {
+        return lang.split('-')[0].toLowerCase();
+    }
+
+    private findByPrimarySubtag(primarySubtag: string): ILanguageText | undefined {
+        return this.texts.find(t => t.lang && MultiLanguageText.primarySubtag(t.lang) === primarySubtag);
+    }
+
+    /**
+     * Returns the text value for the given preferred language, following the
+     * fallback behavior described above; returns '' if no text is available at all.
+     */
+    get(preferredLang?: tagIETF): string {
+        if (this.texts.length === 0) return '';
+
+        if (preferredLang) {
+            // 1. exact match:
+            const exact = this.texts.find(t => t.lang === preferredLang);
+            if (exact) return exact.value;
+
+            // 2. same primary subtag (e.g. 'de' matches 'de-AT'):
+            const primarySubtag = MultiLanguageText.primarySubtag(preferredLang);
+            const dialectMatch = this.findByPrimarySubtag(primarySubtag);
+            if (dialectMatch) return dialectMatch.value;
+        }
+
+        // 3. fall back to any English dialect:
+        const english = this.findByPrimarySubtag('en');
+        if (english) return english.value;
+
+        // 4. fall back to the first available text, regardless of language:
+        return this.texts[0].value;
+    }
+
+    /** Sets (or adds, if not yet present) the text value for the given language. */
+    set(lang: tagIETF, value: string): void {
+        const existing = this.texts.find(t => t.lang === lang);
+        if (existing) {
+            existing.value = value;
+        } else {
+            this.texts.push({ lang, value });
+        }
+    }
+
+    /**
+     * Type guard: checks whether a value is a usable multi-language text,
+     * i.e. a non-empty array of ILanguageText, validated by validate().
+     *
+     * Multi-language fields found in schemata:
+     * - Enumeration: title, description, definition, enumeratedValue.title
+     * - Property: title, description, definition
+     * - Link: title, description, definition
+     * - Entity: title, description, definition
+     * - Relationship: title, description, definition
+     * - AnEntity: title, description
+     * - ARelationship: title, description
+     *
+     * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
+     */
+    static isValid(value: unknown): value is ILanguageText[] {
+        return MultiLanguageText.validate(value).ok === true;
+    }
+
+    /* Validate that a value is an array of ILanguageText with the rule:
+       - if array length < 1 -> OK
+       - if array length === 1 -> 'lang' may be missing
+       - if array length > 1 -> each entry must have a string 'lang' and string 'value'
+       Returns IRsp (rspOK on success, error IRsp on failure)
+    */
+    static validate(arr: any, fieldName?: string): IRsp {
+        //    LOG.debug('MultiLanguageText.validate',arr,fieldName);
+        fieldName = fieldName ?? '';
+        if (!Array.isArray(arr)) {
+            return Msg.create(640, fieldName);
+        }
+        if (arr.length < 1)
+            return rspOK;
+        if (arr.length === 1) {
+            const e = arr[0];
+            if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
+                return Msg.create(641, fieldName);
+            }
+            // single entry: lang optional
+            if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
+                return Msg.create(642, fieldName);
+            }
+            return rspOK;
+        }
+        // length > 1: every entry must have value:string and lang:string
+        for (let i = 0; i < arr.length; i++) {
+            const e = arr[i];
+            if (!e || typeof e !== 'object') {
+                return Msg.create(643, fieldName, i);
+            }
+            if (typeof (e as any).value !== 'string') {
+                return Msg.create(644, fieldName, i);
+            }
+            if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
+                return Msg.create(645, fieldName, i);
+            }
+        }
+        return rspOK;
+    }
+
+    /**
+     * Normalize a single language text entry, e.g. from import data of unknown shape
+     * (a string, an ILanguageText-like object, or anything else convertible to string),
+     * optionally stripping control characters around/within HTML and/or stripping HTML tags.
+     */
+    private static normalizeSingle(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText {
+        //    LOG.debug('MultiLanguageText.normalizeSingle', src);
+        if (!src)
+            return { value: '' };
+
+        let value: string;
+        let lang: tagIETF | undefined;
+
+        if (typeof src === 'object') {
+            // Extract value from ILanguageText object
+            value = (src.value ?? '') as string;
+            lang = src.lang as tagIETF | undefined;
+        } else if (typeof src === 'string') {
+            // Use string directly as value
+            value = src;
+        } else {
+            // Convert other types to string
+            value = String(src);
+        }
+
+        // Strip control characters from HTML-formatted content if requested
+        // This must happen BEFORE stripHTML
+        if (options?.stripCtrlFromHTML && value) {
+            // Check if value contains HTML: either paired tags <tag>...</tag> or self-closing tags <tag />
+            if (RE.hasHTML.test(value)) {
+                // Process control characters based on context:
+                // - REMOVE if at beginning/end or between tags (e.g., \n<div>, </p>\n<div>, </p>\n)
+                // - REPLACE with space if within text or between text and tag
+
+                // Step 1: Remove control chars at the beginning before first tag
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/^[\x00-\x20\x7F]+(?=<)/, '');
+
+                // Step 2: Remove control chars at the end after last tag
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/(?<=>)[\x00-\x20\x7F]+$/, '');
+
+                // Step 3: Remove control chars between tags (only whitespace between tags)
+                // Pattern: > followed by only whitespace/control chars followed by <
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/>[\x00-\x20\x7F]+</g, '><');
+
+                // Step 4: Replace remaining control chars with space
+                // These are within text content or between text and tags
+                // eslint-disable-next-line no-control-regex
+                value = value.replace(/[\x00-\x1F\x7F]/g, ' ');
+
+                // Step 5: Normalize multiple consecutive spaces to single space
+                value = value.replace(/ {2,}/g, ' ');
+            }
+        }
+
+        // Strip HTML from the value if requested (applies to both strings and ILanguageText.value)
+        if (options?.stripHTML && value) {
+            value = LIB.stripHTML(value);
+        }
+
+        return {
+            value: value,
+            lang: lang
+        };
+    }
+
+    /** Normalize a multi-language text (single entry or array of entries), see normalizeSingle(). */
+    static normalize(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText[] | undefined {
+        if (!src) return undefined;
+        if (Array.isArray(src)) return src.map(item => MultiLanguageText.normalizeSingle(item, options));
+        return [MultiLanguageText.normalizeSingle(src, options)];
+    }
+}
+
+/**
+ * Standard XML Namespaces used in CASCaRA XML documents
  * Collected from tests/data/XML files
  * /
 const NAMESPACE_MAP: Record<string, string> = {
@@ -499,23 +718,12 @@ export const LIB = {
             return dateStr;
         }
     },
-    // Helper function to get localized text from multi-language array
+    /**
+     * Helper function to get localized text from multi-language array
+     * @deprecated Use `new MultiLanguageText(texts).get(lang)` instead.
+     */
     getLocalText(texts ?: ILanguageText[], lang ?: tagIETF): string {
-        if (!texts || texts.length === 0) return '';
-
-        lang = lang ?? 'en-US';
-
-        // Try to find exact language match
-        const exact = texts.find(t => t.lang === lang);
-        if (exact) return exact.value;
-
-        // Try to find language prefix match (e.g., 'en' for 'en-US')
-        const langPrefix = lang.split('-')[0];
-        const prefixMatch = texts.find(t => t.lang?.startsWith(langPrefix));
-        if (prefixMatch) return prefixMatch.value;
-
-        // Fallback to first available text
-        return texts[0].value;
+        return new MultiLanguageText(texts).get(lang);
     },
     /**
      * Check if a tag is a context ontology
@@ -627,42 +835,4 @@ export const LIB = {
     }
 };
 
-type LogLevel = 'info' | 'warn' | 'error' | 'debug';
-export const LOG = {
-    // Configure which log levels are enabled (default: all)
-    enabledLevels: new Set<LogLevel>(['info', 'warn', 'error', 'debug']),
 
-    /**
-     * Enable or disable specific log levels
-     * @param levels - Array of log levels to enable. Omit to enable all.
-     */
-    setLogLevels(levels?: LogLevel[]): void {
-        if (!levels || levels.length === 0) {
-            this.enabledLevels = new Set(['info', 'warn', 'error', 'debug']);
-        } else {
-            this.enabledLevels = new Set(levels);
-        }
-    },
-
-    /**
-     * Check if a log level is enabled
-     */
-    isEnabled(level: LogLevel): boolean {
-        return this.enabledLevels.has(level);
-    },
-
-    /* eslint-disable no-console */
-    info: (...args: unknown[]) => {
-        if (LOG.isEnabled('info')) console.info(...args);
-    },
-    warn: (...args: unknown[]) => {
-        if (LOG.isEnabled('warn')) console.warn(...args);
-    },
-    error: (...args: unknown[]) => {
-        if (LOG.isEnabled('error')) console.error(...args);
-    },
-    debug: (...args: unknown[]) => {
-        if (LOG.isEnabled('debug')) console.debug(...args);
-    }
-    /* eslint-enable no-console */
-};

@@ -35,7 +35,8 @@
  */
 
 import { DEF } from '../../lib/definitions';
-import { JsonObject, JsonValue, JsonArray, LOG } from '../../lib/helpers';
+import { JsonObject, JsonValue, JsonArray } from '../../lib/helpers';
+import { LOG } from '../../lib/messages';
 import { MVF } from '../../lib/mvf';
 import {
     TPigId, TPigItem, PigItem, PigItemType, /*PigItemTypeValue, */

@@ -17,7 +17,7 @@ import type { XmlImportPluginOptions } from './mount-import-xml';
 import ImportBase from '../import-base.vue';
 import type { ImportConfig } from '../import-config';
 import { XmlImporter } from '@/common/import/xml/import-xml';
-import { LOG } from '@/common/lib/helpers';
+import { LOG } from '@/common/lib/messages';
 
 /**
  * Format-specific configuration for the generic ImportBase component.

@@ -23,8 +23,8 @@
  * License: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
 
-import { IRsp, Rsp, Msg } from './messages';
-import { LOG } from './helpers';
+import { IRsp, Rsp, Msg, LOG } from './messages';
+import { tagIETF } from './helpers';
 import { unzipSync, strFromU8, zipSync, strToU8 } from 'fflate';
 import SaxonJS from 'saxon-js';
 import { AssetCache, IAsset } from '../../stores/asset-cache';
@@ -77,6 +77,17 @@ let cachedDOMParser: typeof DOMParser | null = null;
 let cachedXMLSerializer: typeof XMLSerializer | null = null;
 
 export const PLI = {
+    /**
+     * The browser's preferred UI language as an IETF language tag (e.g. 'de-DE'),
+     * for use as the 'lang' option passed into getHTML() so that MultiLanguageText
+     * fields (title, description, definition, ...) fall back to the user's own
+     * language instead of a hardcoded default.
+     * Falls back to 'en-US' when running outside a browser (e.g. in Jest/Node).
+     */
+    getBrowserLanguage(): tagIETF {
+        return (typeof navigator !== 'undefined' && navigator.language) || 'en-US';
+    },
+
     /**
      * Transform XML using XSLT with Saxon-JS
      * Works in both Node.js and browser environments

@@ -15,7 +15,8 @@
  */
 
 import { DEF } from './definitions';
-import { LIB, JsonPrimitive, JsonValue, JsonObject, LOG } from './helpers';
+import { LIB, JsonPrimitive, JsonValue, JsonObject } from './helpers';
+import { LOG } from './messages';
 
 // Map PIG metamodel attributes to/from JSON-LD keys;
 // all other keys are derived from the ontology and handled dynamically:
