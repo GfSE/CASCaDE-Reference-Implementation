@@ -321,7 +321,7 @@ export class PigItem {
      * - ARelationship: title, description
      *
      * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
-     * @ToDo:consolidate with validate MultiLanguageText() to avoid duplication of logic
+     * @ToDo:consolidate with validateMultiLanguageText() to avoid duplication of logic
      */
     static isMultiLanguageText(value: unknown): value is ILanguageText[] {
 
@@ -494,7 +494,8 @@ export class PigItem {
         if (!Array.isArray(arr)) {
             return Msg.create(640, fieldName);
         }
-        if (arr.length < 1) return rspOK;
+        if (arr.length < 1)
+            return rspOK;
         if (arr.length === 1) {
             const e = arr[0];
             if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
