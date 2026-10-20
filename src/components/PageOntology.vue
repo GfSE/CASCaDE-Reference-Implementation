@@ -13,7 +13,7 @@
                     <v-card-title tag="h2">Outline</v-card-title>
                     <v-divider />
                     <div class="pane-scroll pa-0">
-                        <outline-tree ref="outlineTreeRef" :nodes="outlineTree" @select="onOutlineSelect" />
+                        <nav-outline ref="outlineRef" :nodes="outlineTree" @select="onOutlineSelect" />
                     </div>
                 </v-card>
             </v-col>
@@ -39,12 +39,12 @@
     import { LIB } from '@/common/lib/helpers'
     import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@/common/export/html/getHTML'
     import { PigItemType, TPigClass } from '@/common/schema/pig/ts/pig-metaclasses'
-    import OutlineTree from './OutlineTree.vue'
-    import OutlineTreeItem from './OutlineTreeItem.vue'
-    // OutlineNode is declared and exported from OutlineTreeItem.vue; since the '*.vue'
+    import NavOutline from './NavOutline.vue'
+    import NavOutlineItem from './NavOutlineItem.vue'
+    // OutlineNode is declared and exported from NavOutlineItem.vue; since the '*.vue'
     // module shim only exposes a default export to TypeScript, derive the type from the
     // component's own 'node' prop instead of importing it as a named type:
-    type OutlineNode = InstanceType<typeof OutlineTreeItem>['node']
+    type OutlineNode = InstanceType<typeof NavOutlineItem>['node']
 
     // The CASCaRA Types, in the order they shall appear as top-level folders:
     const CASCARA_TYPES: { itemType: string, title: string }[] = [
@@ -58,7 +58,7 @@
     @Options({
         name: 'PageOntology',
         components: {
-            OutlineTree
+            NavOutline
         },
         data() {
             return {
@@ -111,10 +111,10 @@
             }
         },
         methods: {
-            // Callback from OutlineTree whenever the selection changes (mouse click,
+            // Callback from NavOutline whenever the selection changes (mouse click,
             // keyboard navigation, or programmatic selectNode()); drives the content
             // pane entirely through this one callback, with no other dependency on
-            // OutlineTree's internal selection/expansion state:
+            // NavOutline's internal selection/expansion state:
             onOutlineSelect(node: OutlineNode | null) {
                 this.selectedHtml = node?.html ?? null
             }

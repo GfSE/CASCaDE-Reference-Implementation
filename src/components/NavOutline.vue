@@ -1,5 +1,5 @@
 <!--
-    OutlineTree is a self-contained, reusable tree-navigation component for the
+    NavOutline is a self-contained, reusable tree-navigation component for the
     "Outline" pane used by PageDocument.vue and PageOntology.vue (and any future
     page with the same left-pane tree). It owns the full selection/expansion
     state and keyboard/mouse navigation behavior; it has no dependency on, and no
@@ -29,7 +29,7 @@
       stepped back into.
     - Native DOM focus is the single source of truth for "selected": there is
       exactly one visual selection state, driven purely by :focus/:focus-visible
-      styling (see OutlineTreeItem.vue), and selectedId always mirrors it,
+      styling (see NavOutlineItem.vue), and selectedId always mirrors it,
       regardless of whether the focus change was caused by a mouse click, the
       arrow keys above, or e.g. Tab-key browser navigation.
     - On mount, the first top-level node is selected and all folders are closed;
@@ -37,7 +37,7 @@
 -->
 <template>
     <v-list density="compact" v-model:opened="openedIds" @keydown.capture="handleArrowKeys" @focusin="handleFocusIn">
-        <outline-tree-item v-for="node in nodes"
+        <nav-outline-item v-for="node in nodes"
                             :key="node.id"
                             :node="node"
                             :selected-id="selectedId"
@@ -48,16 +48,16 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import type { PropType } from 'vue'
-    import OutlineTreeItem from './OutlineTreeItem.vue'
-    // OutlineNode is declared and exported from OutlineTreeItem.vue; since the '*.vue'
+    import NavOutlineItem from './NavOutlineItem.vue'
+    // OutlineNode is declared and exported from NavOutlineItem.vue; since the '*.vue'
     // module shim only exposes a default export to TypeScript, derive the type from the
     // component's own 'node' prop instead of importing it as a named type:
-    type OutlineNode = InstanceType<typeof OutlineTreeItem>['node']
+    type OutlineNode = InstanceType<typeof NavOutlineItem>['node']
 
     @Options({
-        name: 'OutlineTree',
+        name: 'NavOutline',
         components: {
-            OutlineTreeItem
+            NavOutlineItem
         },
         props: {
             nodes: { type: Array as PropType<OutlineNode[]>, required: true }
@@ -275,7 +275,7 @@
             }
         }
     })
-    export default class OutlineTree extends Vue {
+    export default class NavOutline extends Vue {
         nodes!: OutlineNode[]
     }
 </script>
