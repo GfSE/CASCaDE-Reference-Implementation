@@ -61,6 +61,11 @@
                 return DEF;
             }
         },
+        created() {
+            // Show the navigation drawer by default on wide screens only,
+            // keep it hidden on mobile/portable devices for better accessibility.
+            this.drawer = this.$vuetify.display.mdAndUp;
+        },
         methods: {
             openGithubIssue() {
                 window.open('https://github.com/GfSE/CASCaDE-Reference-Implementation/issues/new', '_blank');
