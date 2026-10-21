@@ -194,18 +194,6 @@ class GetHTML {
                         ${propertiesHTML}
                     </dl></div>
                 </div>`;
-    /*
-        return `<div class="meta-anEntity">
-                    <div class="col-main" style="flex: 0 0 ${widthMain};">
-                        ${titleHTML}
-                        ${descHTML}
-                        ${ diagramHTML }
-                    </div>
-                    <div class="col-right" ><dl class="dl-horizontal">
-                        ${ propertiesHTML }
-                    </dl></div>
-                </div>`;
-    */
     }
 
     static aRelationship(rel: ARelationship, options?: IOptionsHTML): stringHTML {
