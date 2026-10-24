@@ -324,9 +324,6 @@ export const LIB = {
         const refs: string[] = [];
         // const imgRe = /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi;
         // const objectRe = /<object\b[^>]*\bdata\s*=\s*["']([^"']+)["']/gi;
-        // Markdown link/image: [label](link) or ![label](link); link may optionally
-        // be followed by a quoted title, e.g. [label](link "title")
-        const markdownRe = /!?\[[^\]]*\]\(\s*([^\s)]+)(?:\s+"[^"]*")?\s*\)/g;
 
         let m: RegExpExecArray | null;
         while ((m = RE.tagImg.exec(text)) !== null) {
@@ -335,7 +332,9 @@ export const LIB = {
         while ((m = RE.tagSingleObject.exec(text)) !== null) {
             refs.push(m[2]);
         }
-        while ((m = markdownRe.exec(text)) !== null) {
+        // Markdown link/image: [label](link) or ![label](link); link may optionally
+        // be followed by a quoted title, e.g. [label](link "title")
+        while ((m = RE.markdownLink.exec(text)) !== null) {
             refs.push(m[1]);
         }
         return refs.filter(ref => LIB.isRelativeReference(ref));

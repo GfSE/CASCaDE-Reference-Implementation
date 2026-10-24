@@ -41,6 +41,7 @@
  */
 
 
+import DOMPurify from 'dompurify';
 import { RE } from '../../lib/definitions';
 import { PigItemType, PigItemTypeValue, PigItem, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement, TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship } from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, ILanguageText, LIB, MultiLanguageText } from '../../lib/helpers';
@@ -306,13 +307,16 @@ class GetHTML {
 }
 
 /**
- * Sanitize HTML by removing dangerous elements and attributes that could execute code
+ * Sanitize HTML by removing dangerous elements and attributes that could execute code.
+ * Uses DOMPurify (allowlist-based, real DOM parsing) as the actual sanitization engine,
+ * so it cannot be bypassed by e.g. unquoted attribute values such as
+ * <img src=x onerror=alert(1)>, which a regex-only approach would miss.
  * Preserves safe XHTML formatting (p, div, span, strong, em, etc.)
  * Preserves <object> tags ONLY for safe media types (image/*, video/*, audio/*)
  * Allows data: URLs ONLY for safe image types in <img> tags
  * Removes: <script>, <style>, <embed>, <iframe>, <link>, <meta>, <form>
  * Removes: <object> with dangerous MIME types (application/x-shockwave-flash, etc.)
- * Removes: All event handler attributes (onclick, onerror, onload, etc.)
+ * Removes: All event handler attributes (onclick, onerror, onload, etc.), quoted or not
  * Removes: javascript: protocols and unsafe data: URLs
  * 
  * @param html - HTML string to sanitize
@@ -338,130 +342,69 @@ class GetHTML {
  * const safe = passify(unsafeDataUrl);
  * // Returns: '<img src="#">' (blocked)
  */
+// MIME types considered safe for <object> tags and data: URLs (images only, plus
+// audio/video for <object>). SVG is excluded from the data: URL allowlist because
+// it may embed scripts; it is still allowed as a static <img>/<object> src/data URL
+// reference (not data:) since DOMPurify sanitizes embedded SVG content itself.
+const SAFE_OBJECT_MIME_TYPES = [
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'image/gif',
+    // 'image/svg+xml', ... not considered safe due to potential script content
+    'image/webp',
+    'video/mp4',
+    'video/webm',
+    'video/ogg',
+    'audio/mpeg',
+    'audio/mp3',
+    'audio/ogg',
+    'audio/wav',
+    'audio/webm'
+];
+
+const SAFE_DATA_URL_MIME_TYPES = [
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml'  // Safe in <img> tags only
+];
+
 function passify(html: string): string {
     if (!html || typeof html !== 'string') return '';
 
-    let passified = insertAssetPlaceholders(html);
+    const withPlaceholders = insertAssetPlaceholders(html);
 
-    // 1. Process <object> tags - keep only safe media types
-    const safeMediaTypes = new Set([
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/gif',
-        // 'image/svg+xml', ... not considered safe due to potential script content
-        'image/webp',
-        'video/mp4',
-        'video/webm',
-        'video/ogg',
-        'audio/mpeg',
-        'audio/mp3',
-        'audio/ogg',
-        'audio/wav',
-        'audio/webm'
-    ]);
-
-    // Match all <object> tags with their attributes and content
-    // const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;  ... did not work with es2020 even though it should, so we use [\s\S]*? instead of .*?
+    // Remove <object> tags with unsafe (or missing) MIME types before handing off
+    // to DOMPurify, since DOMPurify has no built-in concept of "safe media type".
     const objectRegex = /<object([^>]*)>([\s\S]*?)<\/object>/gi;
-    passified = passified.replace(objectRegex, (match, attributes, content) => {
-        // Extract type attribute
+    const withSafeObjects = withPlaceholders.replace(objectRegex, (match, attributes) => {
         const typeMatch = attributes.match(/type\s*=\s*["']([^"']+)["']/i);
         const mimeType = typeMatch ? typeMatch[1].toLowerCase() : '';
-
-        // Check if MIME type is safe
-        if (safeMediaTypes.has(mimeType)) {
-            // Keep the object tag, but sanitize attributes
-            let sanitizedAttrs = attributes;
-
-            // Remove event handlers from attributes
-            sanitizedAttrs = sanitizedAttrs.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-
-            // Remove dangerous protocols from data attribute
-            sanitizedAttrs = sanitizedAttrs.replace(/\s+data\s*=\s*["']\s*(javascript|data):[^"']*["']/gi, ' data="#"');
-
-            return `<object${sanitizedAttrs}>${content}</object>`;
-        }
-
-        // Remove unsafe object tag
-        return '';
+        return SAFE_OBJECT_MIME_TYPES.includes(mimeType) ? match : '';
     });
 
-    // 2. Remove dangerous tags including their content
-    const dangerousTags = [
-        'script',
-        'style',
-        'embed',
-        'iframe',
-        'link',
-        'meta',
-        'base',
-        'form'
-    ];
-
-    dangerousTags.forEach(tag => {
-        // Remove tags with any attributes (case-insensitive, multiline, greedy)
-        const regex = new RegExp(`<${tag}[^>]*>.*?<\\/${tag}>`, 'gis');
-        passified = passified.replace(regex, '');
-        // Remove self-closing tags
-        const selfClosing = new RegExp(`<${tag}[^>]*\\/?>`, 'gi');
-        passified = passified.replace(selfClosing, '');
+    // Robust, allowlist-based sanitization using DOMPurify (real DOM parsing instead
+    // of regex matching, so it cannot be bypassed by e.g. unquoted attribute values
+    // such as <img src=x onerror=alert(1)>).
+    const sanitized = DOMPurify.sanitize(withSafeObjects, {
+        ADD_TAGS: ['object'],
+        ADD_ATTR: ['data', 'type', 'data-asset-ref'],
+        ALLOW_DATA_ATTR: true,
+        FORBID_TAGS: ['script', 'style', 'embed', 'iframe', 'link', 'meta', 'base', 'form'],
+        FORBID_ATTR: ['formaction', 'action', 'dynsrc', 'lowsrc'],
     });
 
-    // 3. Remove event handler attributes (onXYZ="...")
-    // Matches on followed by word characters, capturing until the closing quote
-    passified = passified.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-
-    // 4. Handle data: URLs and other dangerous protocols
-    // Safe data: URL types for images only
-    const safeDataUrlTypes = new Set([
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/gif',
-        'image/webp',
-        'image/svg+xml'  // Safe in <img> tags only
-    ]);
-
-    // Process src and href attributes
-    passified = passified.replace(/\s+(href|src)\s*=\s*["']([^"']*)["']/gi, (match, attr, url) => {
-        const trimmedUrl = url.trim();
-
-        // Block javascript: protocol
-        if (trimmedUrl.toLowerCase().startsWith('javascript:')) {
-            return ` ${attr}="#"`;
-        }
-
-        // Handle data: URLs
-        if (trimmedUrl.toLowerCase().startsWith('data:')) {
-            // Extract MIME type from data URL
-            const dataUrlMatch = trimmedUrl.match(/^data:([^;,]+)/i);
-            const mimeType = dataUrlMatch ? dataUrlMatch[1].toLowerCase() : '';
-
-            // Allow only safe image data URLs in src attributes
-            if (attr.toLowerCase() === 'src' && safeDataUrlTypes.has(mimeType)) {
-                return match; // Keep safe data URL
-            }
-
-            // Block all other data URLs (including SVG which can contain scripts)
-            return ` ${attr}="#"`;
-        }
-
-        // Keep safe URLs (http, https, relative paths, anchors)
-        return match;
-    });
-
-    // 5. Remove dangerous attributes
-    const dangerousAttrs = [
-        'formaction',
-        'action',
-        'dynsrc',
-        'lowsrc'
-    ];
-
-    dangerousAttrs.forEach(attr => {
-        const regex = new RegExp(`\\s+${attr}\\s*=\\s*["'][^"']*["']`, 'gi');
-        passified = passified.replace(regex, '');
+    // DOMPurify already strips javascript:/vbscript: URLs and unknown protocols from
+    // href/src. On top of that, restrict data: URLs to a safe set of image MIME types,
+    // since DOMPurify's default data: URI allowlist is broader (e.g. permits svg+xml
+    // unconditionally and does not distinguish by attribute/tag).
+    const passified = sanitized.replace(/\s+(href|src|data)\s*=\s*["'](data:[^"']*)["']/gi, (match, attr, url) => {
+        const dataUrlMatch = url.match(/^data:([^;,]+)/i);
+        const mimeType = dataUrlMatch ? dataUrlMatch[1].toLowerCase() : '';
+        return SAFE_DATA_URL_MIME_TYPES.includes(mimeType) ? match : ` ${attr}="#"`;
     });
 
     return passified;

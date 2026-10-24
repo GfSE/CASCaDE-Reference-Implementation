@@ -35,6 +35,13 @@ import { LOG } from '../common/lib/messages'
 // quotas (typically hundreds of MB or more).
 const LEGACY_STORAGE_KEY = 'cascara-packages';
 
+// Pre-existing installations of this (unchanged) DB_VERSION 3 object store may still hold
+// a single legacy record under this key: the entire package array, JSON-encoded as it was
+// written by an older version of this cache (before items were persisted one-per-id). That
+// shape is incompatible with the current per-item record format and is not migrated - it is
+// simply discarded, and the cache behaves as if freshly installed (see loadFromStorage()).
+const LEGACY_PACKAGES_KEY = 'packages';
+
 const DB_NAME = 'cascara-db';
 // Shared with asset-cache.ts's database; bumped to add the 'assetCache' store.
 // Keep in sync with asset-cache.ts's DB_VERSION.
@@ -78,6 +85,7 @@ class idb {
             await new Promise<void>((resolve, reject) => {
                 const tx = db.transaction(STORE_NAME, 'readwrite');
                 const store = tx.objectStore(STORE_NAME);
+                store.clear();
                 for (const [id, data] of entries) store.put(data, id);
                 tx.oncomplete = () => resolve();
                 tx.onerror = () => reject(tx.error);
@@ -117,6 +125,25 @@ class idb {
                 const req = tx.objectStore(STORE_NAME).count();
                 req.onsuccess = () => resolve(req.result);
                 req.onerror = () => reject(req.error);
+            });
+        } finally {
+            db.close();
+        }
+    }
+
+    /**
+     * Remove a single record by key, if present. Used to purge legacy/incompatible
+     * records (e.g. the pre-granular 'packages' blob) without touching other records.
+     */
+    static async deleteKey(key: string): Promise<void> {
+        const db = await idb.open();
+        try {
+            await new Promise<void>((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                tx.objectStore(STORE_NAME).delete(key);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+                tx.onabort = () => reject(tx.error);
             });
         } finally {
             db.close();
@@ -166,6 +193,17 @@ function instantiateItemRecord(data: any): TPigItem | undefined {
 }
 
 /**
+ * Check whether a value read from storage looks like a valid item record (as written
+ * by toStorageRecord()), as opposed to legacy/incompatible data such as the pre-granular
+ * 'packages' blob (a JSON-encoded array stored as a single record - not an object with
+ * 'id'/'itemType' fields).
+ */
+function isValidItemRecord(data: any): boolean {
+    return !!data && typeof data === 'object' && !Array.isArray(data)
+        && typeof data.id === 'string' && typeof data.itemType === 'string';
+}
+
+/**
  * Instantiate all persisted records in an order that guarantees every graph proxy
  * can be resolved to an already-instantiated instance when a package's graph is built:
  * 1. All non-package items first (they never reference other items by id).
@@ -184,6 +222,7 @@ function instantiateRecords(records: any[]): TPigItem[] {
     // 1. Non-package items first
     const packageRecords: any[] = [];
     for (const data of records) {
+        if (!isValidItemRecord(data)) continue;
         if (data.itemType === PigItemType.aPackage) {
             packageRecords.push(data);
             continue;
@@ -420,9 +459,23 @@ export const ItemCache = defineStore('itemCache', {
             localStorage.removeItem(LEGACY_STORAGE_KEY)
         } catch { /* ignore */ }
 
+        // Purge the legacy pre-granular 'packages' record (a single JSON-encoded array),
+        // if present. It is incompatible with the current per-item record format and is
+        // intentionally discarded rather than migrated - affected installations simply
+        // start with an empty cache, as on a fresh install.
+        try {
+            await idb.deleteKey(LEGACY_PACKAGES_KEY)
+        } catch (error) {
+            LOG.error('[ItemCache] Failed to purge legacy packages record:', error)
+        }
+
         const records = await idb.getAll()
-        if (records.length > 0) {
-            const items = instantiateRecords(records);
+        const validRecords = records.filter(isValidItemRecord)
+        if (validRecords.length !== records.length) {
+            LOG.warn(`[ItemCache] Discarded ${records.length - validRecords.length} incompatible legacy record(s) found in storage`)
+        }
+        if (validRecords.length > 0) {
+            const items = instantiateRecords(validRecords);
             this.items = items;
             LOG.info(`[ItemCache] Loaded ${items.length} item(s) from storage`);
         }

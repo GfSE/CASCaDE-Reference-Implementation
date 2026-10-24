@@ -65,8 +65,8 @@
  * - Make sure that an empty list of enumeratedEndpoint, enumeratedProperty, enumeratedSourceLink and enumeratedTargetLink means "none allowed";
  *   it should be an empty array in the native JSON ... and not undefined. If undefined, it means "all allowed".
  * ✅ implement 'revisionAware' for Link.
- * - implement 'globalTitle' for all classes and 'globalReversed' for Relationship
- * - include revision as part of a pointer in aSourceLink and aTargetLink, if the link class specifies revisionAware=true, both schema and code.
+ * - implement 'globalTitle' for all CASCaRA types and 'globalReversed' for Relationship
+ * - delete aLink upon an update of an endpoint, if  the link is revisionAware
  * - Assign defaultValue, when a aProperty is instantiated as part of anEntity or aRelationship.
  * - Prohibit aProperty or aLink to be updated or deleted, if readOnly=true in its class.
  * - Consequently aSourceLink and aTargetLink must specify the endpoints by identifier and revision, if their class specifies revisionAware=true.
@@ -86,6 +86,7 @@
  * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
  * - set lastStatus also on JSON-LD import
  * - consider the use of 'has' und 'is' in property names: has = 'besteht aus', is = Vererbung.
+ * - Implement multilanguage text for configurable properties. Already available in IAProperty, but not yet in the schemata and transformation code.
  */
 
 import { IRsp, rspOK, Msg, Rsp, LOG } from "../../../lib/messages";
@@ -1290,7 +1291,7 @@ export class Relationship extends Element implements IRelationship {
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
-    value?: string | ILanguageText[];  // Literal value (string, number, boolean, date - all as string);
+    value?: string | ILanguageText[];  // Literal value (number, boolean, date - all as string);
                                         // always ILanguageText[] when the referenced Property's datatype is 'string'
     composes?: TPigId[];  // for composed properties: nests other properties, as properties have no id
 }

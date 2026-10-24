@@ -1,6 +1,6 @@
 {
   "name": "CASCaRA-Validation-Tool",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "scripts": {
     "prebuild": "node scripts/generate-build-info.js",
@@ -21,6 +21,7 @@
     "@xmldom/xmldom": "^0.8.11",
     "ajv-keywords": "^5.1.0",
     "core-js": "^3.8.3",
+    "dompurify": "^3.4.17",
     "fflate": "^0.8.3",
     "neo4j-driver": "^5.28.3",
     "pinia": "^3.0.4",
