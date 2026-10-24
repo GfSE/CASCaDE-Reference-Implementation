@@ -33,7 +33,8 @@
  */
 
 // import { DEF } from '../../lib/definitions';
-import { LIB, LOG, ILanguageText, INamespace } from '../../lib/helpers';
+import { LIB, ILanguageText, INamespace } from '../../lib/helpers';
+import { LOG } from '../../lib/messages';
 import {
     TPigItem, PigItemType, PigItemTypeValue,
     AnEntity, APackage, ARelationship,
@@ -41,6 +42,12 @@ import {
     AProperty, ATargetLink, ASourceLink,
     PigItem
 } from '../../schema/pig/ts/pig-metaclasses';
+
+/** Namespaces that must always be declared in the generated XML, even if not listed in the package context */
+const MANDATORY_NAMESPACES_XML: INamespace[] = [
+    { tag: 'xs:', uri: 'http://www.w3.org/2001/XMLSchema' },
+    { tag: 'rdf:', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' }
+];
 
 export interface IOptionsXML {
     /** Indentation string (default: '\t' for tab) */
@@ -836,11 +843,25 @@ class GetXML {
             return xml;
         }
 
-        for (const ns of ctx as INamespace[]) {
+        // Check for mandatory namespaces and add them if missing:
+        const existingTags = new Set(
+            (ctx as INamespace[])
+                .filter((ns) => ns && typeof ns === 'object' && typeof ns.tag === 'string')
+                .map((ns) => (ns.tag.endsWith(':') ? ns.tag.slice(0, -1) : ns.tag))
+        );
+        const missingMandatory = MANDATORY_NAMESPACES_XML.filter(
+            (ns) => !existingTags.has(ns.tag.endsWith(':') ? ns.tag.slice(0, -1) : ns.tag)
+        );
+        const fullCtx = [...(ctx as INamespace[]), ...missingMandatory];
+
+        // Now build the XML namespace declarations, one per line:
+        for (const ns of fullCtx) {
             if (!ns || typeof ns !== 'object' || Array.isArray(ns)) {
+                LOG.error(`APackage ${pkg.id} has invalid context entry: ${JSON.stringify(ns)}`);
                 continue;
             }
             if (!('tag' in ns) || !('uri' in ns)) {
+                LOG.error(`APackage ${pkg.id} has context entry missing 'tag' or 'uri': ${JSON.stringify(ns)}`);
                 continue;
             }
 
@@ -850,8 +871,10 @@ class GetXML {
             if (typeof tag === 'string' && typeof uri === 'string') {
                 xml += `${indent}xmlns:${tag}="${this.escapeXmlAttr(uri)}"\n`;
             }
+            else {
+                LOG.error(`APackage ${pkg.id} has context entry with non-string 'tag' or 'uri': ${JSON.stringify(ns)}`);
+            }
         }
-
         return xml;
     }
 

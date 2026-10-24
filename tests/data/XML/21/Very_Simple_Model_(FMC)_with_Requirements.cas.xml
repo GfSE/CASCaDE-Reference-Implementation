@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cas:aPackage
-	xmlns:o="https://product-information-graph.org/v0.2/ontology#"
-	xmlns:d="https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:skos="https://www.w3.org/TR/skos-reference/"
-	xmlns:sh="http://www.w3.org/ns/shacl#"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema#"
-	xmlns:dcterms="http://purl.org/dc/terms/"
 	xmlns:FMC="http://fmc-modeling.org#"
 	xmlns:IREB="https://cpre.ireb.org/en/downloads-and-resources/glossary#"
-	xmlns:oslc_rm="http://open-services.net/ns/rm#"
-	xmlns:cas="https://product-information-graph.org/v0.2/metamodel#"
 	xmlns:SpecIF="https://specif.de/v1.2/schema#"
+	xmlns:cas="https://product-information-graph.org/v0.2/metamodel#"
+	xmlns:d="https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#"
+	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:o="https://product-information-graph.org/v0.2/ontology#"
+	xmlns:oslc_rm="http://open-services.net/ns/rm#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:sh="http://www.w3.org/ns/shacl#"
+	xmlns:skos="https://www.w3.org/TR/skos-reference/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema#"
 	id="d:ACP-Very-Simple-Model-FMC-with-Requirements"
 	rdf:type="cas:Package">
 
@@ -65,9 +65,7 @@
 		<dcterms:title>Diagram</dcterms:title>
 		<skos:definition>A diagram illustrating the resource or a link to a diagram.</skos:definition>
 		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:minOccurs>0</xs:minOccurs>
-			</xs:restriction>
+			<xs:restriction base="xs:string"/>
 		</xs:simpleType>
 	</cas:Property>
 	<cas:Property id="cas:Category" rdf:type="owl:DatatypeProperty">
@@ -175,15 +173,6 @@
 			<idRef>SpecIF:Priority-Enumeration</idRef>
 		</cas:enumeratedEndpoint>
 	</cas:Link>
-	<cas:Property id="o:PC-Diagram-9792185554" rdf:type="owl:DatatypeProperty">
-		<cas:specializes>cas:Property</cas:specializes>
-		<dcterms:title>cas:Diagram</dcterms:title>
-		<skos:definition>A diagram illustrating the resource or a link to a diagram.</skos:definition>
-		<dcterms:modified>2026-02-12T22:05:14.551Z</dcterms:modified>
-		<xs:simpleType>
-			<xs:restriction base="xs:string"/>
-		</xs:simpleType>
-	</cas:Property>
 	<cas:Entity id="SpecIF:Paragraph" rdf:type="owl:Class">
 		<cas:specializes>cas:Entity</cas:specializes>
 		<dcterms:title xml:lang="en">Paragraph</dcterms:title>
@@ -278,19 +267,6 @@
 			<idRef>SpecIF:Priority</idRef>
 		</cas:enumeratedTargetLink>
 	</cas:Entity>
-	<cas:Entity id="o:RC-Paragraph-9792185554" rdf:type="owl:Class">
-		<cas:specializes>cas:Entity</cas:specializes>
-		<dcterms:title>SpecIF:Paragraph</dcterms:title>
-		<skos:definition xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</skos:definition>
-		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</skos:definition>
-		<dcterms:modified>2024-03-02T20:55:23.295Z</dcterms:modified>
-		<cas:enumeratedProperty>
-			<idRef>o:PC-Diagram-9792185554</idRef>
-			<idRef>cas:Category</idRef>
-		</cas:enumeratedProperty>
-		<cas:enumeratedTargetLink>
-		</cas:enumeratedTargetLink>
-	</cas:Entity>
 	<cas:Relationship id="SpecIF:writes" rdf:type="owl:Class">
 		<dcterms:title xml:lang="en">writes</dcterms:title>
 		<dcterms:title xml:lang="de">schreibt</dcterms:title>
@@ -309,7 +285,7 @@
 	</cas:Relationship>
 	<cas:Link id="SpecIF:writes-toSource" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksSource</cas:specializes>
-		<dcterms:title>SpecIF:writes to source</dcterms:title>
+		<dcterms:title>writes to source</dcterms:title>
 		<dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:Actor</idRef>
@@ -317,7 +293,7 @@
 	</cas:Link>
 	<cas:Link id="SpecIF:writes-toTarget" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksTarget</cas:specializes>
-		<dcterms:title>SpecIF:writes to target</dcterms:title>
+		<dcterms:title>writes to target</dcterms:title>
 		<dcterms:description>Connects the target of SpecIF:writes</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:State</idRef>
@@ -341,7 +317,7 @@
 	</cas:Relationship>
 	<cas:Link id="SpecIF:reads-toSource" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksSource</cas:specializes>
-		<dcterms:title>SpecIF:reads to source</dcterms:title>
+		<dcterms:title>reads to source</dcterms:title>
 		<dcterms:description>Connects the source of SpecIF:reads</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:Actor</idRef>
@@ -349,7 +325,7 @@
 	</cas:Link>
 	<cas:Link id="SpecIF:reads-toTarget" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksTarget</cas:specializes>
-		<dcterms:title>SpecIF:reads to target</dcterms:title>
+		<dcterms:title>reads to target</dcterms:title>
 		<dcterms:description>Connects the target of SpecIF:reads</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:State</idRef>
@@ -373,7 +349,7 @@
 	</cas:Relationship>
 	<cas:Link id="oslc_rm:satisfies-toSource" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksSource</cas:specializes>
-		<dcterms:title>oslc_rm:satisfies to source</dcterms:title>
+		<dcterms:title>satisfies to source</dcterms:title>
 		<dcterms:description>Connects the source of oslc_rm:satisfies</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:Actor</idRef>
@@ -382,7 +358,7 @@
 	</cas:Link>
 	<cas:Link id="oslc_rm:satisfies-toTarget" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksTarget</cas:specializes>
-		<dcterms:title>oslc_rm:satisfies to target</dcterms:title>
+		<dcterms:title>satisfies to target</dcterms:title>
 		<dcterms:description>Connects the target of oslc_rm:satisfies</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>IREB:Requirement</idRef>
@@ -415,11 +391,11 @@
 	<cas:anEntity id="d:Diagram-aec0df7900010000017001eaf53e8876" rdf:type="cas:View">
 		<dcterms:title>IT-Integration: FiCo-Application and FiCo-Data</dcterms:title>
 		<dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
-		<cas:aProperty rdf:type="cas:Diagram">
-			<value><p class="inline-label">Model Diagram:</p><p><object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object></p></value>
-		</cas:aProperty>
 		<cas:aProperty rdf:type="cas:Category">
 			<value>FMC Block Diagram</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><p class="inline-label">Model Diagram:</p><p><object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object></p></value>
 		</cas:aProperty>
 		<cas:aTargetLink rdf:type="cas:shows">
 			<idRef>d:MEl-50fbfe8f0029b1a8016ea86245a9d83a</idRef>

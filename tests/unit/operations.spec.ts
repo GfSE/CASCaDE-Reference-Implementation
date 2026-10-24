@@ -6,7 +6,6 @@
 
 import { setActivePinia, createPinia } from 'pinia';
 import { APackage, IAPackage, PigItemType } from '../../src/common/schema/pig/ts/pig-metaclasses';
-import { LOG } from '../../src/common/lib/helpers';
 
 // The ItemCache store persists to IndexedDB (via saveToStorage()/loadFromStorage()),
 // which is not available in the Node test environment. Since this suite is only
@@ -26,9 +25,9 @@ describe('Operations - addItemToAPackage() / removeItemFromAPackage()', () => {
     beforeEach(() => {
         setActivePinia(createPinia());
         // Silence expected log output from the mocked-out IndexedDB persistence failure
-        jest.spyOn(LOG, 'error').mockImplementation(() => undefined);
-        jest.spyOn(LOG, 'warn').mockImplementation(() => undefined);
-        jest.spyOn(LOG, 'info').mockImplementation(() => undefined);
+        jest.spyOn(console, 'error').mockImplementation(() => undefined);
+        jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+        jest.spyOn(console, 'info').mockImplementation(() => undefined);
     });
 
     afterEach(() => {
@@ -127,7 +126,7 @@ describe('Operations - addItemToAPackage() / removeItemFromAPackage()', () => {
         // flaw of ItemCache - loadFromStorage() always sets 'initialized' in production.
         cache.initialized = true;
 
-        const warnSpy = LOG.warn;
+        const warnSpy = console.warn;
 
         await Operations.addItemToAPackage('d:does-not-exist', ['d:item-1']);
 
@@ -148,7 +147,7 @@ describe('Operations - addItemToAPackage() / removeItemFromAPackage()', () => {
         // flaw of ItemCache - loadFromStorage() always sets 'initialized' in production.
         cache.initialized = true;
 
-        const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
         await Operations.addItemToAPackage('d:pkg-1', ['d:does-not-exist']);
 
@@ -194,7 +193,7 @@ describe('Operations - addItemToAPackage() / removeItemFromAPackage()', () => {
         // flaw of ItemCache - loadFromStorage() always sets 'initialized' in production.
         cache.initialized = true;
 
-        const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
         await Operations.removeItemFromAPackage('d:does-not-exist', ['d:item-1']);
 

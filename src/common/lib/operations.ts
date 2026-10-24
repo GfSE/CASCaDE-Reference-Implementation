@@ -1,6 +1,6 @@
 import { ItemCache } from '../../stores/item-cache';
 import { TPigItem, TPigId, APackage } from '../schema/pig/ts/pig-metaclasses';
-import { LOG } from './helpers';
+import { LOG } from './messages';
 
 /**
  * Operations working on APackage instances held in the ItemCache.

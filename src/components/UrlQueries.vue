@@ -51,8 +51,7 @@
     import { TPigItem } from '@/common/schema/pig/ts/pig-metaclasses';
     import { ItemCache } from '@/stores/item-cache';
     import { AssetCache } from '@/stores/asset-cache';
-    import { LOG } from '@/common/lib/helpers';
-    import { IRsp } from '@/common/lib/messages';
+    import { IRsp, LOG } from '@/common/lib/messages';
     import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
     import { XmlImporter } from '@/common/import/xml/import-xml';
     import { ReqifImporter } from '@/common/import/reqif/import-reqif';

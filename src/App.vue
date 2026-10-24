@@ -21,6 +21,9 @@
                 <v-list-item border="md" to="/document">
                     <h3>Document</h3>
                 </v-list-item>
+                <v-list-item border="md" to="/ontology">
+                    <h3>Ontology</h3>
+                </v-list-item>
                 <v-list-item border="md" @click="openGithubIssue">
                     <h3><v-icon start>mdi-github</v-icon>Report an Issue</h3>
                 </v-list-item>
@@ -57,6 +60,11 @@
             DEF() {
                 return DEF;
             }
+        },
+        created() {
+            // Show the navigation drawer by default on wide screens only,
+            // keep it hidden on mobile/portable devices for better accessibility.
+            this.drawer = this.$vuetify.display.mdAndUp;
         },
         methods: {
             openGithubIssue() {

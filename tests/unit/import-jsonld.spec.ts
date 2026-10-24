@@ -10,7 +10,7 @@
  */
 
 import { JsonldImporter } from '../../src/common/import/jsonld/import-jsonld';
-import { TPigItem } from '../../src/common/schema/pig/ts/pig-metaclasses';
+import { APackage, TPigItem, PigItemType } from '../../src/common/schema/pig/ts/pig-metaclasses';
 import * as path from 'path';
 import * as fs from 'fs';
 
@@ -114,6 +114,67 @@ describe('import JSONLD - Dynamic Test Files', () => {
             });
             // console.log(`\n📦 ${filename}:\n   - Package ID: ${pkg.id}\n   - Graph items: ${graphItems.length}${entries}`);
         });
+    });
+});
+
+describe('Import JSON-LD - modified date defaulting', () => {
+    it('Should leave modified undefined for CASCaRA types without it, and default it to now for instances', () => {
+        const doc = {
+            '@context': {
+                owl: 'http://www.w3.org/2002/07/owl#',
+                cas: 'https://example.org/metamodel/',
+                o: 'https://example.org/ontology/',
+                d: 'https://example.org/data/'
+            },
+            '@id': 'd:test-package',
+            '@type': 'cas:Package',
+            'cas:itemType': { '@id': 'cas:aPackage' },
+            'dcterms:modified': '2026-01-01T12:00:00Z',
+            'dcterms:title': [{ '@value': 'Test Package for modified-date defaulting' }],
+            '@graph': [
+                {
+                    '@id': 'o:Requirement',
+                    '@type': 'owl:Class',
+                    'cas:itemType': { '@id': 'cas:Entity' },
+                    'dcterms:title': [{ '@value': 'Requirement' }]
+                },
+                {
+                    '@id': 'o:hasPriority',
+                    '@type': 'owl:ObjectProperty',
+                    'cas:itemType': { '@id': 'cas:Link' },
+                    'dcterms:title': [{ '@value': 'has Priority' }],
+                    'cas:enumeratedEndpoint': [{ '@id': 'o:Requirement' }]
+                },
+                {
+                    '@id': 'd:Req-001',
+                    '@type': 'o:Requirement',
+                    'cas:itemType': { '@id': 'cas:anEntity' },
+                    'dcterms:title': [{ '@value': 'System shall authenticate users' }]
+                }
+            ]
+        };
+
+        const pkg = new APackage().setJSONLD(doc);
+        const status = pkg.status();
+        if (!status.ok) {
+            console.error('Import failed:', status.statusText);
+        }
+        expect(status.ok).toBe(true);
+
+        const items = pkg.getItems();
+
+        const entityClass = items.find((item: any) => item.itemType === PigItemType.Entity && item.id === 'o:Requirement');
+        const linkClass = items.find((item: any) => item.itemType === PigItemType.Link && item.id === 'o:hasPriority');
+        const anEntityInstance = items.find((item: any) => item.itemType === PigItemType.anEntity);
+
+        expect(entityClass).toBeDefined();
+        expect((entityClass as any)?.get().modified).toBeUndefined();
+
+        expect(linkClass).toBeDefined();
+        expect((linkClass as any)?.get().modified).toBeUndefined();
+
+        expect(anEntityInstance).toBeDefined();
+        expect((anEntityInstance as any)?.get().modified).toBeDefined();
     });
 });
 /*

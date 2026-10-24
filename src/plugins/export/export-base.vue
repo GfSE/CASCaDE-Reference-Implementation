@@ -81,7 +81,8 @@ import { Options, Vue } from 'vue-class-component';
 import { toRaw } from 'vue';
 import { ItemCache } from '@/stores/item-cache';
 import { PLI } from '@/common/lib/platform-independence';
-import { LIB, LOG } from '@/common/lib/helpers';
+import { LIB } from '@/common/lib/helpers';
+import { LOG } from '@/common/lib/messages';
 import { ExportConfig } from '@/plugins/export/export-config';
 import { PigItemType } from '@/common/schema/pig/ts/pig-metaclasses';
 

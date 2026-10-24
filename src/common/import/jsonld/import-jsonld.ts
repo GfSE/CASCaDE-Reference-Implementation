@@ -24,8 +24,8 @@
  * - Browser: await JsonldImporter.import(fileInput.files[0])
  */
 
-import { IRsp, rspOK, Rsp, Msg } from '../../lib/messages';
-import { LOG, JsonObject, JsonArray } from '../../lib/helpers';
+import { IRsp, rspOK, Rsp, Msg, LOG } from '../../lib/messages';
+import { JsonObject, JsonArray } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
 import { SCH_LD } from '../../schema/pig/jsonld/pig-schemata-jsonld';

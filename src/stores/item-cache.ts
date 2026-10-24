@@ -1,6 +1,32 @@
+/*!
+ * Pinia store caching PIG/CASCaRA packages and their items in memory, persisted to IndexedDB.
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
+/**
+ * ItemCache - in-memory cache of all loaded packages (aPackage) and their graph items
+ * (anEntity, aRelationship, ...), persisted to IndexedDB for durability across sessions.
+ *
+ * Unlike AssetCache, ItemCache is loaded eagerly at app start. It supports both a full
+ * replace() of the cache and an incremental update() that merges incoming items with the
+ * ones already cached, preserving canonical object identity and package graph references.
+ *
+ * Persistence stores each item (package or graph item) as its own JSON document, keyed by id.
+ * A package's 'graph' is persisted as lightweight proxies ({ id, itemType }) rather than
+ * full item data (see APackage.getWithProxies()), so an item shared by several packages is
+ * never duplicated in storage. When loading, every item is instantiated once, and each
+ * package's proxies are resolved back to these canonical instances (APackage.setWithProxies()).
+ *
+ * ToDo:
+ * - CASCaRA types often have no change information; a revision can be added to the path.
+ *   There is a case where a package is updated with newer types, but the graph items are not changed.
+ *   The app should be able to handle this case.
+ *   Perhaps we must store the items with resolved ids, that is replacing the namespace tags
+ *   with the fully qualified URL path. This will make the items unique and allow to update them correctly.
+ */
 import { defineStore } from 'pinia'
-import { APackage, TPigItem, PigItemType } from '../common/schema/pig/ts/pig-metaclasses'
-import { LOG } from '../common/lib/helpers'
+import { APackage, TPigItem, PigItem, PigItemType } from '../common/schema/pig/ts/pig-metaclasses'
+import { LOG } from '../common/lib/messages'
 
 // Legacy localStorage key, no longer used for persistence (kept only to remove
 // any leftover data from previous versions). localStorage is limited to ~5-10 MB
@@ -9,15 +35,22 @@ import { LOG } from '../common/lib/helpers'
 // quotas (typically hundreds of MB or more).
 const LEGACY_STORAGE_KEY = 'cascara-packages';
 
+// Pre-existing installations of this (unchanged) DB_VERSION 3 object store may still hold
+// a single legacy record under this key: the entire package array, JSON-encoded as it was
+// written by an older version of this cache (before items were persisted one-per-id). That
+// shape is incompatible with the current per-item record format and is not migrated - it is
+// simply discarded, and the cache behaves as if freshly installed (see loadFromStorage()).
+const LEGACY_PACKAGES_KEY = 'packages';
+
 const DB_NAME = 'cascara-db';
 // Shared with asset-cache.ts's database; bumped to add the 'assetCache' store.
 // Keep in sync with asset-cache.ts's DB_VERSION.
 const DB_VERSION = 3;
 const STORE_NAME = 'itemCache';
-const RECORD_KEY = 'packages';
 
 /**
- * A simple class for IndexedDB to persist the item cache.
+ * A simple class for IndexedDB to persist the item cache: each item (package or
+ * graph item) is stored as its own record, keyed by its id.
  */
 class idb {
     /**
@@ -43,14 +76,17 @@ class idb {
     }
 
     /**
-     * Persist a JSON string in IndexedDB under the fixed record key.
+     * Persist several items at once, each under its own id, in a single transaction.
+     * Each entry is [id, plainData].
      */
-    static async set(json: string): Promise<void> {
+    static async setItems(entries: [string, any][]): Promise<void> {
         const db = await idb.open();
         try {
             await new Promise<void>((resolve, reject) => {
                 const tx = db.transaction(STORE_NAME, 'readwrite');
-                tx.objectStore(STORE_NAME).put(json, RECORD_KEY);
+                const store = tx.objectStore(STORE_NAME);
+                store.clear();
+                for (const [id, data] of entries) store.put(data, id);
                 tx.oncomplete = () => resolve();
                 tx.onerror = () => reject(tx.error);
                 tx.onabort = () => reject(tx.error);
@@ -61,15 +97,16 @@ class idb {
     }
 
     /**
-     * Read the persisted JSON string from IndexedDB, or undefined if nothing is stored.
+     * Read all persisted items' plain JSON data (ids are not needed, each item
+     * carries its own 'id' field), or an empty array if nothing is stored.
      */
-    static async get(): Promise<string | undefined> {
+    static async getAll(): Promise<any[]> {
         const db = await idb.open();
         try {
-            return await new Promise<string | undefined>((resolve, reject) => {
+            return await new Promise<any[]>((resolve, reject) => {
                 const tx = db.transaction(STORE_NAME, 'readonly');
-                const req = tx.objectStore(STORE_NAME).get(RECORD_KEY);
-                req.onsuccess = () => resolve(req.result as string | undefined);
+                const req = tx.objectStore(STORE_NAME).getAll();
+                req.onsuccess = () => resolve(req.result ?? []);
                 req.onerror = () => reject(req.error);
             });
         } finally {
@@ -78,14 +115,50 @@ class idb {
     }
 
     /**
-     * Remove the persisted record from IndexedDB.
+     * Count the persisted items, without reading their data.
+     */
+    static async count(): Promise<number> {
+        const db = await idb.open();
+        try {
+            return await new Promise<number>((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const req = tx.objectStore(STORE_NAME).count();
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        } finally {
+            db.close();
+        }
+    }
+
+    /**
+     * Remove a single record by key, if present. Used to purge legacy/incompatible
+     * records (e.g. the pre-granular 'packages' blob) without touching other records.
+     */
+    static async deleteKey(key: string): Promise<void> {
+        const db = await idb.open();
+        try {
+            await new Promise<void>((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                tx.objectStore(STORE_NAME).delete(key);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+                tx.onabort = () => reject(tx.error);
+            });
+        } finally {
+            db.close();
+        }
+    }
+
+    /**
+     * Remove all persisted items from IndexedDB.
      */
     static async clear(): Promise<void> {
         const db = await idb.open();
         try {
             await new Promise<void>((resolve, reject) => {
                 const tx = db.transaction(STORE_NAME, 'readwrite');
-                tx.objectStore(STORE_NAME).delete(RECORD_KEY);
+                tx.objectStore(STORE_NAME).clear();
                 tx.oncomplete = () => resolve();
                 tx.onerror = () => reject(tx.error);
                 tx.onabort = () => reject(tx.error);
@@ -97,13 +170,104 @@ class idb {
 }
 
 /**
- * Flatten a set of packages into the flat item list held by the store: for
- * each package, APackage.getItems() returns [package, ...graph items], with
- * the graph items being the very same instances referenced by package.graph.
- * Used only internally, to rebuild 'items' after loading packages from storage.
+ * Serialize one cached item to its plain JSON persistence shape: packages are
+ * serialized via getWithProxies() (graph as lightweight { id, itemType } proxies,
+ * to avoid duplicating items shared by several packages), all other items via get().
  */
-function flattenPackages(packages: APackage[]): TPigItem[] {
-    return packages.flatMap(pkg => pkg.getItems());
+function toStorageRecord(itm: TPigItem): any {
+    return itm.itemType === PigItemType.aPackage
+        ? (itm as APackage).getWithProxies()
+        : (itm as any).get();
+}
+/**
+ * Instantiate one persisted, non-package item record via its regular set().
+ */
+function instantiateItemRecord(data: any): TPigItem | undefined {
+    const itm = PigItem.create(data.itemType);
+    if (!itm) {
+        LOG.error(`[ItemCache] Unable to instantiate item '${data.id}' of type '${data.itemType}'`);
+        return undefined;
+    }
+    (itm as any).set(data);
+    return itm as TPigItem;
+}
+
+/**
+ * Check whether a value read from storage looks like a valid item record (as written
+ * by toStorageRecord()), as opposed to legacy/incompatible data such as the pre-granular
+ * 'packages' blob (a JSON-encoded array stored as a single record - not an object with
+ * 'id'/'itemType' fields).
+ */
+function isValidItemRecord(data: any): boolean {
+    return !!data && typeof data === 'object' && !Array.isArray(data)
+        && typeof data.id === 'string' && typeof data.itemType === 'string';
+}
+
+/**
+ * Instantiate all persisted records in an order that guarantees every graph proxy
+ * can be resolved to an already-instantiated instance when a package's graph is built:
+ * 1. All non-package items first (they never reference other items by id).
+ * 2. Packages whose graph contains no nested package proxies.
+ * 3. Remaining packages, in dependency order (a package is only instantiated once
+ *    every nested package it references has been instantiated), innermost first,
+ *    working up the hierarchy.
+ * Packages are only instantiated here, their 'graph' is resolved from proxies to
+ * canonical instances in the very same step, since by then every item/package they
+ * can reference is already instantiated.
+ */
+function instantiateRecords(records: any[]): TPigItem[] {
+    const byId = new Map<string, TPigItem>();
+    const items: TPigItem[] = [];
+
+    // 1. Non-package items first
+    const packageRecords: any[] = [];
+    for (const data of records) {
+        if (!isValidItemRecord(data)) continue;
+        if (data.itemType === PigItemType.aPackage) {
+            packageRecords.push(data);
+            continue;
+        }
+        const itm = instantiateItemRecord(data);
+        if (itm) {
+            byId.set(itm.id, itm);
+            items.push(itm);
+        }
+    }
+
+    // 2./3. Packages, innermost (no nested package dependencies) first, then up the hierarchy
+    const pendingPackages = new Map<string, any>();
+    for (const data of packageRecords) pendingPackages.set(data.id, data);
+
+    while (pendingPackages.size > 0) {
+        // A package is ready once every nested package it references (graph proxies
+        // of itemType aPackage) has already been instantiated:
+        const ready = Array.from(pendingPackages.values()).filter(data =>
+            (data.graph || []).every((proxy: any) =>
+                proxy?.itemType !== PigItemType.aPackage || byId.has(proxy.id))
+        );
+
+        if (ready.length === 0) {
+            // Circular or otherwise unresolvable package references: instantiate the
+            // rest as-is to avoid an infinite loop; unresolved proxies are logged
+            // as warnings by setWithProxies().
+            LOG.warn(`[ItemCache] Detected circular or unresolvable nested package references among: ${Array.from(pendingPackages.keys()).join(', ')}`);
+            ready.push(...pendingPackages.values());
+        }
+
+        for (const data of ready) {
+            const pkg = PigItem.create(PigItemType.aPackage) as APackage | null;
+            pendingPackages.delete(data.id);
+            if (!pkg) {
+                LOG.error(`[ItemCache] Unable to instantiate package '${data.id}'`);
+                continue;
+            }
+            pkg.setWithProxies(data, (id) => byId.get(id));
+            byId.set(pkg.id, pkg);
+            items.push(pkg);
+        }
+    }
+
+    return items;
 }
 
 export const ItemCache = defineStore('itemCache', {
@@ -180,6 +344,7 @@ export const ItemCache = defineStore('itemCache', {
 
         for (const incoming of items) {
             const existing = byId.get(incoming.id);
+            // LOG.debug(`[ItemCache] Processing incoming item '${incoming.id}' (${incoming.itemType}) - existing: ${existing?.id} from ${existing ? (existing as any).modified : 'N/A'}`);
             if (!existing) {
                 // Brand-new item: add as-is and register it as the new canonical instance
                 this.items.push(incoming);
@@ -187,10 +352,20 @@ export const ItemCache = defineStore('itemCache', {
                 continue;
             }
 
-            // Treat a missing 'modified' as the oldest possible date, so an
-            // incoming item with a defined 'modified' always wins.
+            // LOG.debug(`[ItemCache] Testing existing item with incoming data '${incoming.id}' (${incoming.itemType}) from ${incoming.modified}`);
+            // LOG.debug(`[ItemCache] Existing item '${existing.id}' and incoming data '${incoming.id}': ${existing.id===incoming.id}`);
+
+            // An incoming item without a 'modified' date cannot be shown to be
+            // newer than the cached one, so skip the update and keep the
+            // existing item as-is (it is not stored twice).
+            const incomingModified = (incoming as any).modified;
+            if (!incomingModified) {
+                // LOG.debug(`[ItemCache] Incoming item '${incoming.id}' has no 'modified' date, skipping update`);
+                continue;
+            }
+            // LOG.debug(`[ItemCache] Updating existing item with incoming data '${incoming.id}' (${incoming.itemType})`);
+
             const existingModified = (existing as any).modified ?? '';
-            const incomingModified = (incoming as any).modified ?? '';
             if (existingModified >= incomingModified) {
                 continue; // cached item is the same age or newer, keep it as-is
             }
@@ -247,27 +422,24 @@ export const ItemCache = defineStore('itemCache', {
     },
 
     /**
-    * Save packages to IndexedDB (graph items are embedded in each package, as before,
-    * so storage stays backward-compatible; the flat in-memory 'items' list is
-    * reconstructed from the packages again on load).
-    * @returns true if the packages were successfully written to and verified in storage
+    * Save all items (packages and graph items alike) to IndexedDB, one record per id.
+    * Packages are persisted with their 'graph' as lightweight proxies (see
+    * toStorageRecord()), so an item shared by several packages is stored only once.
+    * @returns true if the items were successfully written to and verified in storage
     */
     async saveToStorage(): Promise<boolean> {
         try {
-            // Get plain JSON for storage
-            const data = this.packages.map(pkg => pkg.get());
-            const json = JSON.stringify(data)
-            await idb.set(json)
+            const entries: [string, any][] = this.items.map(itm => [itm.id, toStorageRecord(itm as TPigItem)]);
+            await idb.setItems(entries)
 
-            // Verify the write actually persisted the expected number of packages
-            const verify = await idb.get()
-            const verifyCount = verify ? (JSON.parse(verify)?.length ?? 0) : 0
-            if (verifyCount !== data.length) {
-                LOG.error(`[ItemCache] Verification failed after saving to storage: expected ${data.length} package(s), found ${verifyCount}`)
+            // Verify the write actually persisted the expected number of items
+            const verifyCount = await idb.count()
+            if (verifyCount !== entries.length) {
+                LOG.error(`[ItemCache] Verification failed after saving to storage: expected ${entries.length} item(s), found ${verifyCount}`)
                 return false
             }
 
-            LOG.info(`[ItemCache] Saved ${data.length} package(s) (${this.items.length} item(s) total) to storage`)
+            LOG.info(`[ItemCache] Saved ${entries.length} item(s) to storage`)
             return true
         } catch (error) {
             LOG.error('[ItemCache] Failed to save to storage:', error)
@@ -276,7 +448,8 @@ export const ItemCache = defineStore('itemCache', {
     },
 
     /**
-     * Load packages from IndexedDB and rebuild the flat item list from them.
+     * Load all items from IndexedDB, instantiate them, and resolve each package's
+     * proxy-only 'graph' back to the canonical, already-instantiated item instances.
      */
     async loadFromStorage(): Promise<void> {
       try {
@@ -286,15 +459,25 @@ export const ItemCache = defineStore('itemCache', {
             localStorage.removeItem(LEGACY_STORAGE_KEY)
         } catch { /* ignore */ }
 
-        const stored = await idb.get()
-        if (stored) {
-            const data = JSON.parse(stored);
-            // Reinstantiate IAPackage objects from plain JSON, then flatten into 'items'
-            //LOG.debug(`[ItemCache] Loaded raw data from storage:`, data);
+        // Purge the legacy pre-granular 'packages' record (a single JSON-encoded array),
+        // if present. It is incompatible with the current per-item record format and is
+        // intentionally discarded rather than migrated - affected installations simply
+        // start with an empty cache, as on a fresh install.
+        try {
+            await idb.deleteKey(LEGACY_PACKAGES_KEY)
+        } catch (error) {
+            LOG.error('[ItemCache] Failed to purge legacy packages record:', error)
+        }
 
-            const packages = data.map((pkg: any) => new APackage().set(pkg));
-            this.items = flattenPackages(packages);
-            LOG.info(`[ItemCache] Loaded ${packages.length} package(s) (${this.items.length} item(s) total) from storage`);
+        const records = await idb.getAll()
+        const validRecords = records.filter(isValidItemRecord)
+        if (validRecords.length !== records.length) {
+            LOG.warn(`[ItemCache] Discarded ${records.length - validRecords.length} incompatible legacy record(s) found in storage`)
+        }
+        if (validRecords.length > 0) {
+            const items = instantiateRecords(validRecords);
+            this.items = items;
+            LOG.info(`[ItemCache] Loaded ${items.length} item(s) from storage`);
         }
       } catch (error) {
         LOG.error('[ItemCache] Failed to load from storage:', error)

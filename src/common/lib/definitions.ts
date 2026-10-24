@@ -175,6 +175,7 @@ export const RE = {
     hasHTML: /<[a-zA-Z][^>]*>.*?<\/[a-zA-Z][^>]*>|<[a-zA-Z][^>]*\/>/s,
     // tagSingleObject: /<object\s(?:([^>]*?)\s?data="(.+?)"([^>]*?))(?:\/>|>(.*?)<\/object>)/gi,  // use: result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {}
     tagSingleObject: /<object\b([^>]*?)\bdata\s*=\s*["']([^"']+)["']([^>]*?)(?:\/>|>([\s\S]*?)<\/object>)/gi,  // use: result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {}
-    tagImg: /<img\b([^>]*)\bsrc\s*=\s*["']([^"']+)["']([^>]*?)\/?>/gi  // use as above
-
+    tagImg: /<img\b([^>]*)\bsrc\s*=\s*["']([^"']+)["']([^>]*?)\/?>/gi,  // use as above
+    // Markdown link/image: [label](link) or ![label](link); link may optionally be followed by a quoted title, e.g. [label](link "title")
+    markdownLink: /!?\[[^\]]*\]\(\s*([^\s)]+)(?:\s+"[^"]*")?\s*\)/g
 }

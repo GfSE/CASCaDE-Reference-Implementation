@@ -1,8 +1,8 @@
 <template>
-    <v-btn color='secondary' variant='elevated' class='text-none import-btn' @click='dialog = true'>Neo4j 🡕</v-btn>
+    <v-btn color='secondary' variant='elevated' class='text-none import-btn' @click='dialog = true'>Neo4j API 🡕</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-            <v-card-title>Import CASCaRA from Neo4j</v-card-title>
+            <v-card-title>Import from Neo4j</v-card-title>
 
             <v-card-text>
                 <v-text-field v-model='uri'
@@ -129,11 +129,8 @@ import {
 } from '@/common/lib/definitions';
 
 import {
+    IRsp,
     LOG
-} from '@/common/lib/helpers';
-
-import {
-    IRsp
 } from '@/common/lib/messages';
 
 import {

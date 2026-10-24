@@ -22,7 +22,6 @@ import { XsDataType, PigItemType,
     APackage
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
 import { getJSONLD } from '../../src/common/export/jsonld/getJSONLD';
-import { LOG } from '../../src/common/lib/helpers';
 
 describe("PIG Metaclasses", () => {
     let Property_input: IProperty;
@@ -514,7 +513,7 @@ describe("PIG Metaclasses", () => {
         });
 
         test('addItem() logs a warning for an item without an id', () => {
-            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             const pkg = new APackage();
             pkg.graph = [];
 
@@ -539,7 +538,7 @@ describe("PIG Metaclasses", () => {
         });
 
         test('removeItem() logs a warning for an id that is not part of the graph', () => {
-            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             const pkg = new APackage();
             pkg.graph = [actor];
 
@@ -551,7 +550,7 @@ describe("PIG Metaclasses", () => {
         });
 
         test('removeItem() logs a warning when the package has no valid graph array', () => {
-            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
             const pkg = new APackage();
             (pkg as any).graph = undefined;
 

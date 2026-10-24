@@ -1,6 +1,6 @@
 <!--
     Renders a single node of the document Outline pane, recursively rendering its
-    children as nested outline-tree-item instances. A node with children is shown
+    children as nested nav-outline-item instances. A node with children is shown
     as a collapsible Vuetify v-list-group (folder); a node without children is a
     plain, non-collapsible v-list-item (leaf).
 
@@ -15,11 +15,37 @@
 
     Clicking an item both selects it (@select, handled by the parent) and, for a
     folder, toggles it open/closed via Vuetify's own v-list-group behavior.
+
+    Titles that are too long to fit the pane are truncated with an ellipsis
+    (see .text-body-2 CSS below); a v-tooltip shows the full, untruncated title
+    while the mouse hovers over the item - regardless of whether that item is
+    currently selected. The tooltip is never shown merely because an item has
+    (keyboard) focus/selection - only actual mouse hover triggers it.
 -->
 <template>
     <v-list-group v-if="node.children && node.children.length > 0" :value="node.id">
         <template v-slot:activator="{ props: activatorProps }">
-            <v-list-item v-bind="activatorProps"
+            <v-tooltip :text="node.title" location="end" open-delay="500" :open-on-focus="false">
+                <template v-slot:activator="{ props: tooltipProps }">
+                    <v-list-item v-bind="{ ...activatorProps, ...tooltipProps }"
+                                 :id="`outline-item-${node.id}`"
+                                 :data-outline-id="node.id"
+                                 density="compact"
+                                 @click="onSelect">
+                        <v-list-item-title class="text-body-2">{{ node.title }}</v-list-item-title>
+                    </v-list-item>
+                </template>
+            </v-tooltip>
+        </template>
+        <nav-outline-item v-for="child in node.children"
+                            :key="child.id"
+                            :node="child"
+                            :selected-id="selectedId"
+                            @select="onChildSelect" />
+    </v-list-group>
+    <v-tooltip v-else :text="node.title" location="end" open-delay="500" :open-on-focus="false">
+        <template v-slot:activator="{ props: tooltipProps }">
+            <v-list-item v-bind="tooltipProps"
                          :id="`outline-item-${node.id}`"
                          :data-outline-id="node.id"
                          density="compact"
@@ -27,19 +53,7 @@
                 <v-list-item-title class="text-body-2">{{ node.title }}</v-list-item-title>
             </v-list-item>
         </template>
-        <outline-tree-item v-for="child in node.children"
-                            :key="child.id"
-                            :node="child"
-                            :selected-id="selectedId"
-                            @select="onChildSelect" />
-    </v-list-group>
-    <v-list-item v-else
-                 :id="`outline-item-${node.id}`"
-                 :data-outline-id="node.id"
-                 density="compact"
-                 @click="onSelect">
-        <v-list-item-title class="text-body-2">{{ node.title }}</v-list-item-title>
-    </v-list-item>
+    </v-tooltip>
 </template>
 
 <script lang="ts">
@@ -57,7 +71,7 @@
     }
 
     @Options({
-        name: 'OutlineTreeItem',
+        name: 'NavOutlineItem',
         props: {
             node: { type: Object as PropType<OutlineNode>, required: true },
             selectedId: { type: String as PropType<string | null>, default: null }
@@ -72,13 +86,21 @@
             }
         }
     })
-    export default class OutlineTreeItem extends Vue {
+    export default class NavOutlineItem extends Vue {
         node!: OutlineNode
         selectedId!: string | null
     }
 </script>
 
 <style scoped>
+    /* Truncate titles that don't fit the pane's width with an ellipsis instead
+       of wrapping or overflowing; the v-tooltip above shows the full title: */
+    .text-body-2 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     /* Native DOM focus is the single source of truth for the 'selected' item
        (see PageDocument.vue); style it grey instead of the browser/Vuetify
        default outline or highlight color: */

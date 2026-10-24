@@ -174,8 +174,7 @@
       ],
       "sh:datatype": {
         "@id": "xs:string"
-      },
-      "sh:minCount": 0
+      }
     },
     {
       "@id": "cas:Category",
@@ -492,31 +491,6 @@
       ]
     },
     {
-      "@id": "o:PC-Diagram-9792185554",
-      "@type": "owl:DatatypeProperty",
-      "cas:itemType": {
-        "@id": "cas:Property"
-      },
-      "cas:specializes": {
-        "@id": "cas:Property"
-      },
-      "dcterms:title": [
-        {
-          "@value": "cas:Diagram"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A diagram illustrating the resource or a link to a diagram."
-        }
-      ],
-      "dcterms:modified": "2026-02-12T22:05:14.551Z",
-      "cas:revision": "1.1",
-      "sh:datatype": {
-        "@id": "xs:string"
-      }
-    },
-    {
       "@id": "SpecIF:Paragraph",
       "@type": "owl:Class",
       "cas:itemType": {
@@ -550,7 +524,6 @@
         }
       ],
       "dcterms:modified": "2023-07-16T09:30:25.850Z",
-      "cas:revision": "1.1",
       "cas:enumeratedProperty": [
         {
           "@id": "cas:Diagram"
@@ -794,42 +767,6 @@
       ]
     },
     {
-      "@id": "o:RC-Paragraph-9792185554",
-      "@type": "owl:Class",
-      "cas:itemType": {
-        "@id": "cas:Entity"
-      },
-      "cas:specializes": {
-        "@id": "cas:Entity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "SpecIF:Paragraph"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
-          "@language": "en"
-        },
-        {
-          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
-          "@language": "de"
-        }
-      ],
-      "dcterms:modified": "2024-03-02T20:55:23.295Z",
-      "cas:revision": "1.1",
-      "cas:enumeratedProperty": [
-        {
-          "@id": "o:PC-Diagram-9792185554"
-        },
-        {
-          "@id": "cas:Category"
-        }
-      ],
-      "cas:enumeratedTargetLink": []
-    },
-    {
       "@id": "SpecIF:writes",
       "@type": "owl:Class",
       "cas:itemType": {
@@ -882,7 +819,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:writes to source"
+          "@value": "writes to source"
         }
       ],
       "dcterms:description": [
@@ -907,7 +844,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:writes to target"
+          "@value": "writes to target"
         }
       ],
       "dcterms:description": [
@@ -974,7 +911,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:reads to source"
+          "@value": "reads to source"
         }
       ],
       "dcterms:description": [
@@ -999,7 +936,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:reads to target"
+          "@value": "reads to target"
         }
       ],
       "dcterms:description": [
@@ -1066,7 +1003,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "oslc_rm:satisfies to source"
+          "@value": "satisfies to source"
         }
       ],
       "dcterms:description": [
@@ -1094,7 +1031,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "oslc_rm:satisfies to target"
+          "@value": "satisfies to target"
         }
       ],
       "dcterms:description": [

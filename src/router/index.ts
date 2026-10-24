@@ -3,6 +3,7 @@ import PageHome from '@/components/PageHome.vue';
 import PageDashboards from '@/components/PageDashboards.vue';
 import PageInterfaces from '@/components/PageInterfaces.vue';
 import PageDocument from '@/components/PageDocument.vue';
+import PageOntology from '@/components/PageOntology.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,6 +25,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/document',
     name: 'Document',
     component: PageDocument,
+  },
+  {
+    path: '/ontology',
+    name: 'Ontology',
+    component: PageOntology,
   }
 ];
 

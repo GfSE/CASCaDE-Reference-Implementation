@@ -41,10 +41,46 @@
  */
 
 
+import DOMPurify from 'dompurify';
 import { RE } from '../../lib/definitions';
-import { PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement } from '../../schema/pig/ts/pig-metaclasses';
-import { tagIETF, LIB, LOG } from '../../lib/helpers';
+import {
+    PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement,
+    TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship
+} from '../../schema/pig/ts/pig-metaclasses';
+import { tagIETF, ILanguageText, LIB, MultiLanguageText } from '../../lib/helpers';
+import { LOG } from '../../lib/messages';
 import { PLI } from '../../lib/platform-independence';
+
+/**
+ * Render a multi-language text as repeated <dt>/<dd> pairs, one per language.
+ * The language tag is appended in brackets to the label when present,
+ * e.g. "title (de)".
+ *
+ * Not currently used by the single-language rendering below, but kept for
+ * later use (e.g. a future "show all languages" mode in PageOntology).
+ */
+export function multiLangDtDd(label: string, texts: ILanguageText[], stripHtmlFlag = false): string {
+    return texts.map(t => {
+        const text = stripHtmlFlag ? LIB.stripHTML(t.value) : t.value;
+        const lbl = t.lang ? `${label} (${t.lang})` : label;
+        return `<dt>${passify(lbl)}</dt><dd>${passify(text)}</dd>`;
+    }).join('');
+}
+
+/**
+ * Render a multi-language text as repeated heading/block elements (e.g. <h3>/<div>),
+ * one per language, with the language tag shown as a small badge when present.
+ *
+ * Not currently used by the single-language rendering below, but kept for
+ * later use (e.g. a future "show all languages" mode in PageOntology).
+ */
+export function multiLangBlock(tag: string, cssClass: string, texts: ILanguageText[], stripHtmlFlag = false): string {
+    return texts.map(t => {
+        const text = stripHtmlFlag ? LIB.stripHTML(t.value) : t.value;
+        const langBadge = t.lang ? ` <span class="meta-lang">(${t.lang})</span>` : '';
+        return `<${tag} class="${cssClass}">${passify(text)}${langBadge}</${tag}>`;
+    }).join('');
+}
 
 export type stringHTML = string;  // contains HTML code
 export interface IOptionsHTML {
@@ -63,7 +99,7 @@ export interface IOptionsHTML {
  * import { getHTML } from './getHTML';
  * const html = getHTML(item, options);
  */
-export function getHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML[] {
+export function getHTML(item: TPigItem, options?: IOptionsHTML): stringHTML[] {
     switch (item.itemType) {
         case PigItemType.aPackage:
             return GetHTML.aPackage(item as APackage, options);
@@ -71,6 +107,12 @@ export function getHTML(item: TPigAnElement, options?: IOptionsHTML): stringHTML
             return [GetHTML.anEntity(item as AnEntity, options)];
         case PigItemType.aRelationship:
             return [GetHTML.aRelationship(item as ARelationship, options)];
+        case PigItemType.Enumeration:
+        case PigItemType.Property:
+        case PigItemType.Link:
+        case PigItemType.Entity:
+        case PigItemType.Relationship:
+            return [GetHTML.cascaraType(item as TPigClass, options)];
         default:
             return [`<div class="meta-error">
                     ${item.id}: No HTML representation for itemType: ${item.itemType}
@@ -92,14 +134,20 @@ class GetHTML {
                     Invalid aPackage - status: (${pkgSt.status}) ${pkgSt.statusText ?? ''}
                 </div>`;
 
-        const titleText = passify(LIB.stripHTML(LIB.getLocalText(pkg.title, lang)));
-        const descText = passify(LIB.getLocalText(pkg.description, lang));
+        const pkgTitleText = passify(LIB.stripHTML(new MultiLanguageText(pkg.title).get(lang)));
+        const pkgDescText = passify(new MultiLanguageText(pkg.description).get(lang));
+        const titleHTML = pkgTitleText
+            ? `<h3 class="meta-title">${pkgTitleText}</h3>`
+            : '<h3 class="meta-title">Untitled Package</h3>';
+        const descHTML = pkgDescText
+            ? `<div class="meta-description">${pkgDescText}</div>`
+            : '';
         const { propertiesHTML, diagramHTML } = propertiesToHTML(pkg, lang);
 
         const pkgHTML = `<div class="meta-aPackage">
                 <div class="col-main" style="flex: 0 0 ${widthMain};">
-                    <h3 class="meta-title">${titleText || 'Untitled Package'}</h3>
-                    ${descText ? `<div class="meta-description">${descText}</div>` : ''}
+                    ${titleHTML}
+                    ${descHTML}
                     ${diagramHTML}
                     ${errHTML}
                 </div>
@@ -132,8 +180,12 @@ class GetHTML {
         const lang = options?.lang || 'en-US';
         const widthMain = options?.widthMain || '67%';
 
-        const titleText = passify(LIB.stripHTML(LIB.getLocalText(entity.title, lang)));
-        const descText = passify(LIB.getLocalText(entity.description, lang));
+        const titleText = passify(LIB.stripHTML(new MultiLanguageText(entity.title).get(lang)));
+        const descText = passify(new MultiLanguageText(entity.description).get(lang));
+    /*
+        const titleHTML = entity.title?.length ? multiLangBlock('h3', 'meta-title', entity.title, true) : '';
+        const descHTML = entity.description?.length ? multiLangBlock('div', 'meta-description', entity.description) : '';
+    */
         const { propertiesHTML, diagramHTML } = propertiesToHTML(entity, lang);
 
         return `<div class="meta-anEntity">
@@ -160,16 +212,114 @@ class GetHTML {
         // @ToDo: Implementiere eine HTML-Repräsentation für ARelationship
         return '<div class="meta-not-implemented">HTML export for Relationship not implemented</div>';
     }
+
+    /**
+     * HTML representation of a CASCaRA Type (metaclass): Enumeration, Property,
+     * Link, Entity or Relationship. Shown as a single two-column property list
+     * (dt/dd), with all generic fields (id, title, description, definition,
+     * modified, creator, ...) plus the type-specific fields, for use in e.g.
+     * PageOntology.
+     */
+    static cascaraType(cls: TPigClass, options?: IOptionsHTML): stringHTML {
+        const clsSt = cls.status();
+        if (!clsSt.ok) {
+            return `<div class="meta-error">
+                    Invalid ${cls.itemType} with id ${cls.id} - status: (${clsSt.status}) ${clsSt.statusText ?? ''}
+                </div>`;
+        }
+        const lang = options?.lang || 'en-US';
+
+        const EMPTY = '—';
+        const idList = (ids?: string[]): string => (ids && ids.length > 0) ? ids.map(e => passify(e)).join(', ') : EMPTY;
+
+        let propertiesHTML = '';
+        propertiesHTML += `<dt>Item Type</dt><dd>${cls.itemType}</dd>`;
+        propertiesHTML += `<dt>ID</dt><dd>${passify(cls.id)}</dd>`;
+        const clsTitleText = passify(LIB.stripHTML(new MultiLanguageText(cls.title).get(lang)));
+        const clsDescText = passify(new MultiLanguageText(cls.description).get(lang));
+        const clsDefText = passify(new MultiLanguageText(cls.definition).get(lang));
+        propertiesHTML += `<dt>Title</dt><dd>${clsTitleText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Description</dt><dd>${clsDescText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Definition</dt><dd>${clsDefText || EMPTY}</dd>`;
+        propertiesHTML += `<dt>Specializes</dt><dd>${cls.specializes ? passify(cls.specializes) : EMPTY}</dd>`;
+        // Enumerated Property, Icon and Color are only defined on classes derived from Element (Enumeration, Entity, Relationship):
+        if ('enumeratedProperty' in cls) {
+            const element = cls as unknown as { enumeratedProperty?: string[], icon?: { value: string }, color?: { value: string } };
+            propertiesHTML += `<dt>Enumerated Property</dt><dd>${idList(element.enumeratedProperty)}</dd>`;
+            propertiesHTML += `<dt>Icon</dt><dd>${element.icon ? passify(element.icon.value) : EMPTY}</dd>`;
+            propertiesHTML += `<dt>Color</dt><dd>${element.color ? passify(element.color.value) : EMPTY}</dd>`;
+        }
+
+        switch (cls.itemType) {
+            case PigItemType.Enumeration: {
+                const enumeration = cls as Enumeration;
+                propertiesHTML += `<dt>Datatype</dt><dd>${passify(enumeration.datatype ?? EMPTY)}</dd>`;
+                const values = (enumeration.enumeratedValue ?? [])
+                    .map(v => passify(new MultiLanguageText(v.title).get(lang) || v.value || ''))
+                    .join(', ');
+                propertiesHTML += `<dt>Enumerated Values</dt><dd>${values || EMPTY}</dd>`;
+                break;
+            }
+            case PigItemType.Property: {
+                const property = cls as Property;
+                propertiesHTML += `<dt>Datatype</dt><dd>${passify(property.datatype ?? EMPTY)}</dd>`;
+                propertiesHTML += `<dt>Read Only</dt><dd>${!!property.readOnly}</dd>`;
+                propertiesHTML += `<dt>Min Count</dt><dd>${property.minCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Count</dt><dd>${property.maxCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Length</dt><dd>${property.maxLength ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Pattern</dt><dd>${property.pattern ? passify(property.pattern) : EMPTY}</dd>`;
+                propertiesHTML += `<dt>Min Inclusive</dt><dd>${property.minInclusive ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Inclusive</dt><dd>${property.maxInclusive ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Default Value</dt><dd>${property.defaultValue !== undefined ? passify(property.defaultValue) : EMPTY}</dd>`;
+                break;
+            }
+            case PigItemType.Link: {
+                const link = cls as Link;
+                propertiesHTML += `<dt>Enumerated Endpoints</dt><dd>${idList(link.enumeratedEndpoint)}</dd>`;
+                propertiesHTML += `<dt>Read Only</dt><dd>${!!link.readOnly}</dd>`;
+                propertiesHTML += `<dt>Revision Aware</dt><dd>${!!link.revisionAware}</dd>`;
+                propertiesHTML += `<dt>Min Count</dt><dd>${link.minCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Max Count</dt><dd>${link.maxCount ?? EMPTY}</dd>`;
+                propertiesHTML += `<dt>Default Value</dt><dd>${link.defaultValue !== undefined ? passify(link.defaultValue) : EMPTY}</dd>`;
+                break;
+            }
+            case PigItemType.Entity: {
+                const entity = cls as Entity;
+                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idList(entity.enumeratedTargetLink)}</dd>`;
+                break;
+            }
+            case PigItemType.Relationship: {
+                const rel = cls as Relationship;
+                propertiesHTML += `<dt>Enumerated Source Links</dt><dd>${idList(rel.enumeratedSourceLink)}</dd>`;
+                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idList(rel.enumeratedTargetLink)}</dd>`;
+                break;
+            }
+        }
+
+        propertiesHTML += `<dt>Modified</dt><dd>${cls.modified ? LIB.getLocalDate(cls.modified, lang) : EMPTY}</dd>`;
+        propertiesHTML += `<dt>Creator</dt><dd>${cls.creator ? passify(cls.creator) : EMPTY}</dd>`;
+        propertiesHTML += `<dt>Revision</dt><dd>${cls.revision ? passify(cls.revision) : EMPTY}</dd>`;
+        propertiesHTML += `<dt>Prior Revision</dt><dd>${idList(cls.priorRevision as unknown as string[])}</dd>`;
+
+        return `<div class="meta-cascara-type">
+                    <dl class="dl-cascara-type">
+                        ${propertiesHTML}
+                    </dl>
+                </div>`;
+    }
 }
 
 /**
- * Sanitize HTML by removing dangerous elements and attributes that could execute code
+ * Sanitize HTML by removing dangerous elements and attributes that could execute code.
+ * Uses DOMPurify (allowlist-based, real DOM parsing) as the actual sanitization engine,
+ * so it cannot be bypassed by e.g. unquoted attribute values such as
+ * <img src=x onerror=alert(1)>, which a regex-only approach would miss.
  * Preserves safe XHTML formatting (p, div, span, strong, em, etc.)
  * Preserves <object> tags ONLY for safe media types (image/*, video/*, audio/*)
  * Allows data: URLs ONLY for safe image types in <img> tags
  * Removes: <script>, <style>, <embed>, <iframe>, <link>, <meta>, <form>
  * Removes: <object> with dangerous MIME types (application/x-shockwave-flash, etc.)
- * Removes: All event handler attributes (onclick, onerror, onload, etc.)
+ * Removes: All event handler attributes (onclick, onerror, onload, etc.), quoted or not
  * Removes: javascript: protocols and unsafe data: URLs
  * 
  * @param html - HTML string to sanitize
@@ -195,130 +345,69 @@ class GetHTML {
  * const safe = passify(unsafeDataUrl);
  * // Returns: '<img src="#">' (blocked)
  */
+// MIME types considered safe for <object> tags and data: URLs (images only, plus
+// audio/video for <object>). SVG is excluded from the data: URL allowlist because
+// it may embed scripts; it is still allowed as a static <img>/<object> src/data URL
+// reference (not data:) since DOMPurify sanitizes embedded SVG content itself.
+const SAFE_OBJECT_MIME_TYPES = [
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'image/gif',
+    // 'image/svg+xml', ... not considered safe due to potential script content
+    'image/webp',
+    'video/mp4',
+    'video/webm',
+    'video/ogg',
+    'audio/mpeg',
+    'audio/mp3',
+    'audio/ogg',
+    'audio/wav',
+    'audio/webm'
+];
+
+const SAFE_DATA_URL_MIME_TYPES = [
+    'image/png',
+    'image/jpeg',
+    'image/jpg',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml'  // Safe in <img> tags only
+];
+
 function passify(html: string): string {
     if (!html || typeof html !== 'string') return '';
 
-    let passified = insertAssetPlaceholders(html);
+    const withPlaceholders = insertAssetPlaceholders(html);
 
-    // 1. Process <object> tags - keep only safe media types
-    const safeMediaTypes = new Set([
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/gif',
-        // 'image/svg+xml', ... not considered safe due to potential script content
-        'image/webp',
-        'video/mp4',
-        'video/webm',
-        'video/ogg',
-        'audio/mpeg',
-        'audio/mp3',
-        'audio/ogg',
-        'audio/wav',
-        'audio/webm'
-    ]);
-
-    // Match all <object> tags with their attributes and content
-    // const objectRegex = /<object([^>]*)>(.*?)<\/object>/gis;  ... did not work with es2020 even though it should, so we use [\s\S]*? instead of .*?
+    // Remove <object> tags with unsafe (or missing) MIME types before handing off
+    // to DOMPurify, since DOMPurify has no built-in concept of "safe media type".
     const objectRegex = /<object([^>]*)>([\s\S]*?)<\/object>/gi;
-    passified = passified.replace(objectRegex, (match, attributes, content) => {
-        // Extract type attribute
+    const withSafeObjects = withPlaceholders.replace(objectRegex, (match, attributes) => {
         const typeMatch = attributes.match(/type\s*=\s*["']([^"']+)["']/i);
         const mimeType = typeMatch ? typeMatch[1].toLowerCase() : '';
-
-        // Check if MIME type is safe
-        if (safeMediaTypes.has(mimeType)) {
-            // Keep the object tag, but sanitize attributes
-            let sanitizedAttrs = attributes;
-
-            // Remove event handlers from attributes
-            sanitizedAttrs = sanitizedAttrs.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-
-            // Remove dangerous protocols from data attribute
-            sanitizedAttrs = sanitizedAttrs.replace(/\s+data\s*=\s*["']\s*(javascript|data):[^"']*["']/gi, ' data="#"');
-
-            return `<object${sanitizedAttrs}>${content}</object>`;
-        }
-
-        // Remove unsafe object tag
-        return '';
+        return SAFE_OBJECT_MIME_TYPES.includes(mimeType) ? match : '';
     });
 
-    // 2. Remove dangerous tags including their content
-    const dangerousTags = [
-        'script',
-        'style',
-        'embed',
-        'iframe',
-        'link',
-        'meta',
-        'base',
-        'form'
-    ];
-
-    dangerousTags.forEach(tag => {
-        // Remove tags with any attributes (case-insensitive, multiline, greedy)
-        const regex = new RegExp(`<${tag}[^>]*>.*?<\\/${tag}>`, 'gis');
-        passified = passified.replace(regex, '');
-        // Remove self-closing tags
-        const selfClosing = new RegExp(`<${tag}[^>]*\\/?>`, 'gi');
-        passified = passified.replace(selfClosing, '');
+    // Robust, allowlist-based sanitization using DOMPurify (real DOM parsing instead
+    // of regex matching, so it cannot be bypassed by e.g. unquoted attribute values
+    // such as <img src=x onerror=alert(1)>).
+    const sanitized = DOMPurify.sanitize(withSafeObjects, {
+        ADD_TAGS: ['object'],
+        ADD_ATTR: ['data', 'type', 'data-asset-ref'],
+        ALLOW_DATA_ATTR: true,
+        FORBID_TAGS: ['script', 'style', 'embed', 'iframe', 'link', 'meta', 'base', 'form'],
+        FORBID_ATTR: ['formaction', 'action', 'dynsrc', 'lowsrc'],
     });
 
-    // 3. Remove event handler attributes (onXYZ="...")
-    // Matches on followed by word characters, capturing until the closing quote
-    passified = passified.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
-
-    // 4. Handle data: URLs and other dangerous protocols
-    // Safe data: URL types for images only
-    const safeDataUrlTypes = new Set([
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/gif',
-        'image/webp',
-        'image/svg+xml'  // Safe in <img> tags only
-    ]);
-
-    // Process src and href attributes
-    passified = passified.replace(/\s+(href|src)\s*=\s*["']([^"']*)["']/gi, (match, attr, url) => {
-        const trimmedUrl = url.trim();
-
-        // Block javascript: protocol
-        if (trimmedUrl.toLowerCase().startsWith('javascript:')) {
-            return ` ${attr}="#"`;
-        }
-
-        // Handle data: URLs
-        if (trimmedUrl.toLowerCase().startsWith('data:')) {
-            // Extract MIME type from data URL
-            const dataUrlMatch = trimmedUrl.match(/^data:([^;,]+)/i);
-            const mimeType = dataUrlMatch ? dataUrlMatch[1].toLowerCase() : '';
-
-            // Allow only safe image data URLs in src attributes
-            if (attr.toLowerCase() === 'src' && safeDataUrlTypes.has(mimeType)) {
-                return match; // Keep safe data URL
-            }
-
-            // Block all other data URLs (including SVG which can contain scripts)
-            return ` ${attr}="#"`;
-        }
-
-        // Keep safe URLs (http, https, relative paths, anchors)
-        return match;
-    });
-
-    // 5. Remove dangerous attributes
-    const dangerousAttrs = [
-        'formaction',
-        'action',
-        'dynsrc',
-        'lowsrc'
-    ];
-
-    dangerousAttrs.forEach(attr => {
-        const regex = new RegExp(`\\s+${attr}\\s*=\\s*["'][^"']*["']`, 'gi');
-        passified = passified.replace(regex, '');
+    // DOMPurify already strips javascript:/vbscript: URLs and unknown protocols from
+    // href/src. On top of that, restrict data: URLs to a safe set of image MIME types,
+    // since DOMPurify's default data: URI allowlist is broader (e.g. permits svg+xml
+    // unconditionally and does not distinguish by attribute/tag).
+    const passified = sanitized.replace(/\s+(href|src|data)\s*=\s*["'](data:[^"']*)["']/gi, (match, attr, url) => {
+        const dataUrlMatch = url.match(/^data:([^;,]+)/i);
+        const mimeType = dataUrlMatch ? dataUrlMatch[1].toLowerCase() : '';
+        return SAFE_DATA_URL_MIME_TYPES.includes(mimeType) ? match : ` ${attr}="#"`;
     });
 
     return passified;
@@ -349,15 +438,27 @@ function propertiesToHTML(el: TPigAnElement, lang: tagIETF): { propertiesHTML: s
         for (const prop of el.hasProperty) {
             const propData = prop.get() as IAProperty;
             if (propData && propData.instanceOf) {
-                const propValue = passify((propData.value) as string);
-                if (propData.instanceOf === 'cas:Diagram') {
-                    // Diagrams belong in the main pane, alongside title/description,
-                    // rather than the metadata list on the right; omit the class/name:
-                    diagramHTML += `<div class="meta-diagram">${propValue}</div>`;
-                    continue;
-                }
                 const propClass = passify(propData.instanceOf);
-                propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
+                if (MultiLanguageText.isValid(propData.value)) {
+                    // Configurable property with datatype 'string': render a single
+                    // language, following the built-in fall-back logic (same as all
+                    // other MultiLanguageText fields):
+                    const propText = passify(new MultiLanguageText(propData.value).get(lang));
+                    if (propData.instanceOf === 'cas:Diagram') {
+                        diagramHTML += `<div class="meta-diagram">${propText}</div>`;
+                        continue;
+                    }
+                    propertiesHTML += `<dt>${propClass}</dt><dd>${propText}</dd>`;
+                } else {
+                    const propValue = passify((propData.value) as unknown as string);
+                    if (propData.instanceOf === 'cas:Diagram') {
+                        // Diagrams belong in the main pane, alongside title/description,
+                        // rather than the metadata list on the right; omit the class/name:
+                        diagramHTML += `<div class="meta-diagram">${propValue}</div>`;
+                        continue;
+                    }
+                    propertiesHTML += `<dt>${propClass}</dt><dd>${propValue}</dd>`;
+                }
             }
         }
     }

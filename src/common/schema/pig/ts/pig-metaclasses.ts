@@ -65,8 +65,8 @@
  * - Make sure that an empty list of enumeratedEndpoint, enumeratedProperty, enumeratedSourceLink and enumeratedTargetLink means "none allowed";
  *   it should be an empty array in the native JSON ... and not undefined. If undefined, it means "all allowed".
  * ✅ implement 'revisionAware' for Link.
- * - implement 'globalTitle' for all classes and 'globalReversed' for Relationship
- * - include revision as part of a pointer in aSourceLink and aTargetLink, if the link class specifies revisionAware=true, both schema and code.
+ * - implement 'globalTitle' for all CASCaRA types and 'globalReversed' for Relationship
+ * - delete aLink upon an update of an endpoint, if  the link is revisionAware
  * - Assign defaultValue, when a aProperty is instantiated as part of anEntity or aRelationship.
  * - Prohibit aProperty or aLink to be updated or deleted, if readOnly=true in its class.
  * - Consequently aSourceLink and aTargetLink must specify the endpoints by identifier and revision, if their class specifies revisionAware=true.
@@ -86,14 +86,15 @@
  * - Consolidate redundant transformations from JSON-LD to internal format for individual items and a whole package.
  * - set lastStatus also on JSON-LD import
  * - consider the use of 'has' und 'is' in property names: has = 'besteht aus', is = Vererbung.
+ * - Implement multilanguage text for configurable properties. Already available in IAProperty, but not yet in the schemata and transformation code.
  */
 
-import { IRsp, rspOK, Msg, Rsp } from "../../../lib/messages";
+import { IRsp, rspOK, Msg, Rsp, LOG } from "../../../lib/messages";
 import { DEF, RE } from "../../../lib/definitions";
-import { LIB, LOG, INamespace, ILanguageText, IText } from "../../../lib/helpers";
+import { LIB, INamespace, ILanguageText, IText, MultiLanguageText } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
 import { PLI, NodeType } from "../../../lib/platform-independence";
-import { JsonPrimitive, JsonValue, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
+import { JsonPrimitive, JsonValue, JsonObject, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage } from './pig-package-constraints';
 
@@ -321,30 +322,7 @@ export class PigItem {
      * - ARelationship: title, description
      *
      * @ToDo: multiLanguageText also occurs in instances aProperty of configurable Property with datatype = 'string'
-     * @ToDo:consolidate with validate MultiLanguageText() to avoid duplication of logic
      */
-    static isMultiLanguageText(value: unknown): boolean {
-
-        // Structure-based: Array of ILanguageText
-        // If length > 1, lang is mandatory for all items; if length = 1, lang is optional
-        if (Array.isArray(value) && value.length > 0) {
-            const requireLang = value.length > 1;
-
-            return value.every(
-                v =>
-                    typeof v === 'object' &&
-                    v !== null &&
-                    typeof (v as any).value === 'string' &&
-                    (
-                        requireLang
-                            ? typeof (v as any).lang === 'string'  // lang required when length > 1
-                            : ((v as any).lang === undefined || typeof (v as any).lang === 'string')  // lang optional when length = 1
-                    )
-            );
-        }
-
-        return false;
-    }
     /**
      * Check if a property requires multi-language text format (ILanguageText[])
      * @param propertyName - Property name to check (with or without namespace prefix)
@@ -416,111 +394,6 @@ export class PigItem {
     }
 
     // Normalize language tags/values ---
-    static normalizeLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText {
-        //    LOG.debug('normalizeLanguageText', src);
-        if (!src)
-            return { value: '' };
-
-        let value: string;
-        let lang: tagIETF | undefined;
-
-        if (typeof src === 'object') {
-            // Extract value from ILanguageText object
-            value = (src.value ?? '') as string;
-            lang = src.lang as tagIETF | undefined;
-        } else if (typeof src === 'string') {
-            // Use string directly as value
-            value = src;
-        } else {
-            // Convert other types to string
-            value = String(src);
-        }
-
-        // Strip control characters from HTML-formatted content if requested
-        // This must happen BEFORE stripHTML
-        if (options?.stripCtrlFromHTML && value) {
-            // Check if value contains HTML: either paired tags <tag>...</tag> or self-closing tags <tag />
-            if (RE.hasHTML.test(value)) {
-                // Process control characters based on context:
-                // - REMOVE if at beginning/end or between tags (e.g., \n<div>, </p>\n<div>, </p>\n)
-                // - REPLACE with space if within text or between text and tag
-
-                // Step 1: Remove control chars at the beginning before first tag
-                // eslint-disable-next-line no-control-regex
-                value = value.replace(/^[\x00-\x20\x7F]+(?=<)/, '');
-
-                // Step 2: Remove control chars at the end after last tag
-                // eslint-disable-next-line no-control-regex
-                value = value.replace(/(?<=>)[\x00-\x20\x7F]+$/, '');
-
-                // Step 3: Remove control chars between tags (only whitespace between tags)
-                // Pattern: > followed by only whitespace/control chars followed by <
-                // eslint-disable-next-line no-control-regex
-                value = value.replace(/>[\x00-\x20\x7F]+</g, '><');
-
-                // Step 4: Replace remaining control chars with space
-                // These are within text content or between text and tags
-                // eslint-disable-next-line no-control-regex
-                value = value.replace(/[\x00-\x1F\x7F]/g, ' ');
-
-                // Step 5: Normalize multiple consecutive spaces to single space
-                value = value.replace(/ {2,}/g, ' ');
-            }
-        }
-
-        // Strip HTML from the value if requested (applies to both strings and ILanguageText.value)
-        if (options?.stripHTML && value) {
-            value = LIB.stripHTML(value);
-        }
-
-        return {
-            value: value,
-            lang: lang
-        };
-    }
-    static normalizeMultiLanguageText(src: any, options?: { stripHTML?: boolean; stripCtrlFromHTML?: boolean }): ILanguageText[] | undefined {
-        if (!src) return undefined;
-        if (Array.isArray(src)) return src.map(item => PigItem.normalizeLanguageText(item, options));
-        return [PigItem.normalizeLanguageText(src, options)];
-    }
-    /* Validate that a value is an array of ILanguageText with the rule:
-       - if array length < 1 -> OK
-       - if array length === 1 -> 'lang' may be missing
-       - if array length > 1 -> each entry must have a string 'lang' and string 'value'
-       Returns IRsp (rspOK on success, error IRsp on failure)
-    */
-    static validateMultiLanguageText(arr: any, fieldName: string): IRsp {
-        //    LOG.debug('PigItem.validateMultiLanguageText',arr,fieldName);
-        if (!Array.isArray(arr)) {
-            return Msg.create(640, fieldName);
-        }
-        if (arr.length < 1) return rspOK;
-        if (arr.length === 1) {
-            const e = arr[0];
-            if (!e || typeof e !== 'object' || typeof (e as any).value !== 'string') {
-                return Msg.create(641, fieldName);
-            }
-            // single entry: lang optional
-            if ((e as any).lang !== undefined && typeof (e as any).lang !== 'string') {
-                return Msg.create(642, fieldName);
-            }
-            return rspOK;
-        }
-        // length > 1: every entry must have value:string and lang:string
-        for (let i = 0; i < arr.length; i++) {
-            const e = arr[i];
-            if (!e || typeof e !== 'object') {
-                return Msg.create(643, fieldName, i);
-            }
-            if (typeof (e as any).value !== 'string') {
-                return Msg.create(644, fieldName, i);
-            }
-            if (typeof (e as any).lang !== 'string' || (e as any).lang.trim() === '') {
-                return Msg.create(645, fieldName, i);
-            }
-        }
-        return rspOK;
-    }
     /**
      * Normalize ID by adding namespace prefix if missing
      * 
@@ -661,20 +534,20 @@ abstract class Identifiable extends Item implements IIdentifiable {
         // as the presence of 'lang' is required when there are multiple values
         // Normalize and validate title (optional for anEntity), strip HTML from title:
         if (itm.title) {
-            itm.title = PigItem.normalizeMultiLanguageText(itm.title, { stripCtrlFromHTML: true, stripHTML: true });
-            const tRes = PigItem.validateMultiLanguageText(itm.title, 'title');
+            itm.title = MultiLanguageText.normalize(itm.title, { stripCtrlFromHTML: true, stripHTML: true });
+            const tRes = MultiLanguageText.validate(itm.title, 'title');
             if (!tRes.ok) return tRes;
         }
         // Normalize and validate description (optional, but when present must be an array of ILanguageText):
         if (itm.description) {
-            itm.description = PigItem.normalizeMultiLanguageText(itm.description, { stripCtrlFromHTML: true });
-            const dRes = PigItem.validateMultiLanguageText(itm.description, 'description');
+            itm.description = MultiLanguageText.normalize(itm.description, { stripCtrlFromHTML: true });
+            const dRes = MultiLanguageText.validate(itm.description, 'description');
             if (!dRes.ok) return dRes;
         }
         // Normalize and validate definition (mandatory for classes):
         if (itm.definition) {
-            itm.definition = PigItem.normalizeMultiLanguageText(itm.definition, { stripCtrlFromHTML: true });
-            const dRes = PigItem.validateMultiLanguageText(itm.definition, 'definition');
+            itm.definition = MultiLanguageText.normalize(itm.definition, { stripCtrlFromHTML: true });
+            const dRes = MultiLanguageText.validate(itm.definition, 'definition');
             if (!dRes.ok) return dRes;
         }
 
@@ -1418,11 +1291,12 @@ export class Relationship extends Element implements IRelationship {
 
 // For the instances/individuals, the 'payload':
 export interface IAProperty extends IItem {
-    value?: string;       // Literal value (string, number, boolean, date - all as string)
+    value?: string | ILanguageText[];  // Literal value (number, boolean, date - all as string);
+                                        // always ILanguageText[] when the referenced Property's datatype is 'string'
     composes?: TPigId[];  // for composed properties: nests other properties, as properties have no id
 }
 export class AProperty extends Item implements IAProperty {
-    value?: string;
+    value?: string | ILanguageText[];
     composes?: TPigId[];
     constructor() {
         super({ itemType: PigItemType.aProperty });
@@ -1741,6 +1615,66 @@ export class APackage extends AnElement implements IAPackage {
             })
         } as IAPackage;
         return LIB.stripUndefinedAndNull(pkg);
+    }
+
+    /**
+     * Build a package representation for persistence that avoids duplicating graph
+     * items shared by several packages: the package itself is serialized as usual,
+     * but its 'graph' array only holds lightweight proxies ({ id, itemType }) instead
+     * of the full item data. The actual item data is persisted separately, once per id
+     * (see ItemCache), and re-linked to these proxies when loading from storage.
+     */
+    getWithProxies() {
+        const pkg = {
+            ...super.get(),
+            context: this.context,
+            graph: this.graph?.map(item => ({ id: item.id, itemType: item.itemType }))
+        } as IAPackage;
+        return LIB.stripUndefinedAndNull(pkg);
+    }
+
+    /**
+     * Counterpart of getWithProxies(): reconstruct this package from a representation
+     * whose 'graph' array holds lightweight proxies ({ id, itemType }) instead of full
+     * item data (as produced by getWithProxies()). Unlike set(), this does not
+     * instantiate graph items itself - it resolves each proxy to its already
+     * instantiated, canonical instance via the supplied resolver (e.g. a cache keyed by id).
+     * Proxies that cannot be resolved (e.g. a referenced item failed to load) are skipped.
+     * @param pkg - Package data with a proxy-only 'graph' array
+     * @param resolveItem - Returns the already-instantiated item for a given id, if any
+     */
+    setWithProxies(pkg: IAPackage, resolveItem: (id: TPigId) => TPigItem | undefined): this {
+        const _pkg = LIB.stripUndefinedAndNull(pkg) as IAPackage;
+        _pkg.modified = normalizeDateTime(_pkg.modified) || new Date().toISOString();
+
+        const resolvedGraph: TPigItem[] = [];
+        for (const proxy of _pkg.graph || []) {
+            const resolved = (proxy as any)?.id ? resolveItem((proxy as any).id) : undefined;
+            if (resolved)
+                resolvedGraph.push(resolved);
+            else
+                LOG.warn(`APackage.setWithProxies: could not resolve graph item '${(proxy as any)?.id}' of package '${_pkg.id}'`);
+        }
+
+        const _context = this.ensureDefaultNamespaces(_pkg.context);
+        _pkg.context = _context;
+
+        // Validate against the fully resolved graph items (not the proxy-only data in
+        // _pkg.graph, which lacks instanceOf and other fields required by validation).
+        // A specializes/instanceOf reference may point to an item that is cached but
+        // belongs to another package (e.g. a shared CASCaRA base type like 'cas:Tree'),
+        // so fall back to the resolver for items not found in this package's own graph:
+        const pkgValidation = this.validate(
+            { ..._pkg, graph: resolvedGraph.map(itm => (itm as any).get()) },
+            { resolveExternalItem: (id: TPigId) => (resolveItem(id) as any)?.itemType }
+        );
+
+        super.set(_pkg);
+        this.context = _context;
+        this.graph = resolvedGraph;
+        this.lastStatus = pkgValidation;
+
+        return this;
     }
 
     /**

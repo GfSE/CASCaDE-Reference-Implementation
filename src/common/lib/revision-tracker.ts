@@ -1,5 +1,6 @@
 import { IIdentifiable } from '../schema/pig/ts/pig-metaclasses';
-import { TISODateString, LOG } from './helpers';
+import { TISODateString } from './helpers';
+import { LOG } from './messages';
 import { PLI } from './platform-independence';
 
 export type ImportMode = 'replace' | 'update';
