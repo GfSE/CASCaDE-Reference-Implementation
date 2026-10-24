@@ -1,6 +1,6 @@
 {
   "name": "@cascara/vue",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "scripts": {
     "prebuild": "node ../../scripts/generate-build-info.js",
