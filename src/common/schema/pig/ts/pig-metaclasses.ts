@@ -94,7 +94,7 @@ import { DEF, RE } from "../../../lib/definitions";
 import { LIB, INamespace, ILanguageText, IText, MultiLanguageText } from "../../../lib/helpers";
 import { MVF } from "../../../lib/mvf";
 import { PLI, NodeType } from "../../../lib/platform-independence";
-import { JsonPrimitive, JsonValue, JsonObject, tagIETF, TISODateString } from "../../../lib/helpers";
+import { JsonPrimitive, JsonValue, JsonObject, TISODateString } from "../../../lib/helpers";
 import { SCH } from '../json/pig-schemata';
 import { checkConstraintsForPackage } from './pig-package-constraints';
 

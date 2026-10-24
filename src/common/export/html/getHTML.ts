@@ -43,7 +43,10 @@
 
 import DOMPurify from 'dompurify';
 import { RE } from '../../lib/definitions';
-import { PigItemType, PigItemTypeValue, PigItem, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement, TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship } from '../../schema/pig/ts/pig-metaclasses';
+import {
+    PigItemType, PigItemTypeValue, AnEntity, APackage, ARelationship, IAProperty, TPigAnElement,
+    TPigItem, TPigClass, Enumeration, Property, Link, Entity, Relationship
+} from '../../schema/pig/ts/pig-metaclasses';
 import { tagIETF, ILanguageText, LIB, MultiLanguageText } from '../../lib/helpers';
 import { LOG } from '../../lib/messages';
 import { PLI } from '../../lib/platform-independence';

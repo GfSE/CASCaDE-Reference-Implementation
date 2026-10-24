@@ -1,7 +1,13 @@
+/**
+ * @jest-environment jsdom
+ */
 /*!
  * JEST Test Suite for HTML Security - XSS Prevention
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ *
+ * Runs under the jsdom test environment because getHTML()'s passify() uses DOMPurify,
+ * which requires a DOM (window) to initialize.
  */
 
 import { DEF } from '../../src/common/lib/definitions';
