@@ -35,7 +35,7 @@ function titleOf(item: any): string {
 function propValue(item: any, classId: string): string | undefined {
     const props = item?.hasProperty;
     if (!Array.isArray(props)) return undefined;
-    const p = props.find((x: any) => x?.hasClass === classId);
+    const p = props.find((x: any) => x?.instanceOf === classId);
     return p?.value;
 }
 
@@ -64,7 +64,7 @@ describe('FMI Import', () => {
 
     describe('Extension validation', () => {
         it('should reject unsupported file extensions', async () => {
-            const result = await FmiImporter.import('invalid.txt');
+            const result = (await FmiImporter.import('invalid.txt'))[0];
             expect(result.ok).toBe(false);
             expect(result.statusText).toContain('expected .fmu archive or .xml model description');
         });
@@ -75,7 +75,7 @@ describe('FMI Import', () => {
 
         fmuFiles.forEach(testFile => {
             it(`should successfully import ${path.basename(testFile)}`, async () => {
-                const result = await FmiImporter.import(testFile);
+                const result = (await FmiImporter.import(testFile))[0];
                 logResponse(`import FMI for ${testFile}`, result);
 
                 expect(result.status).toBe(0);
@@ -102,14 +102,14 @@ describe('FMI Import', () => {
                 return;
             }
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             logResponse('import plant fmu', result);
 
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const instances = (clazz: string) => items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === clazz
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === clazz
             );
 
             // One FMU entity, 63 variables, one CoSimulation interface,
@@ -159,12 +159,12 @@ describe('FMI Import', () => {
         it('should preserve rich variable metadata (spot-check)', async () => {
             if (!plantFmu) return;
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const variables = items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === 'fmi:Variable'
             );
 
             // var-1 in the model is 'transferFunction1.x_scaled[1]'
@@ -185,7 +185,7 @@ describe('FMI Import', () => {
         it('should resolve dependency relationships to source and target variables', async () => {
             if (!plantFmu) return;
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
@@ -193,7 +193,7 @@ describe('FMI Import', () => {
             expect(relationships.length).toBeGreaterThan(0);
 
             for (const rel of relationships) {
-                expect(rel.hasClass).toBe('fmi:dependsOn');
+                expect(rel.instanceOf).toBe('fmi:dependsOn');
                 expect(Array.isArray(rel.hasSourceLink)).toBe(true);
                 expect(Array.isArray(rel.hasTargetLink)).toBe(true);
                 expect(rel.hasSourceLink.length).toBe(1);
@@ -207,12 +207,12 @@ describe('FMI Import', () => {
         it('should capture additional CoSimulation capability flags', async () => {
             if (!plantFmu) return;
 
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const iface = items.find(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Interface'
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === 'fmi:Interface'
             );
             expect(iface).toBeTruthy();
             expect(propValue(iface, 'fmi:canInterpolateInputs')).toBe('false');
@@ -231,17 +231,17 @@ describe('FMI Import', () => {
                 return;
             }
 
-            const result = await FmiImporter.import(edriveFmu);
+            const result = (await FmiImporter.import(edriveFmu))[0];
             logResponse('import edrive fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const instances = (clazz: string) => items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === clazz
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === clazz
             );
             const targetRefs = (item: any, classId: string): string[] =>
                 Array.isArray(item?.hasTargetLink)
-                    ? item.hasTargetLink.filter((l: any) => l?.hasClass === classId).map((l: any) => l.idRef)
+                    ? item.hasTargetLink.filter((l: any) => l?.instanceOf === classId).map((l: any) => l.idRef)
                     : [];
 
             // 7 <Unit> elements (one without a BaseUnit) and a single <DisplayUnit> ("deg").
@@ -294,13 +294,13 @@ describe('FMI Import', () => {
                 logResponse('locate pid fmu', { ok: false, status: 404, statusText: 'PID_Euler_0_01_sf.fmu not found' });
                 return;
             }
-            const result = await FmiImporter.import(pidFmu);
+            const result = (await FmiImporter.import(pidFmu))[0];
             logResponse('import pid fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const variables = items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === 'fmi:Variable'
             );
             const reinitVar = variables.find((v: any) => propValue(v, 'fmi:reinit') === 'true');
             expect(reinitVar).toBeTruthy();
@@ -314,7 +314,7 @@ describe('FMI Import', () => {
         const allPropValues = (item: any, classId: string): string[] => {
             const props = item?.hasProperty;
             if (!Array.isArray(props)) return [];
-            return props.filter((x: any) => x?.hasClass === classId).map((x: any) => x?.value);
+            return props.filter((x: any) => x?.instanceOf === classId).map((x: any) => x?.value);
         };
 
         it('should mark dependencies="" as scope "none" (stimuli_model)', async () => {
@@ -322,13 +322,13 @@ describe('FMI Import', () => {
                 logResponse('locate stimuli fmu', { ok: false, status: 404, statusText: 'stimuli_model.fmu not found' });
                 return;
             }
-            const result = await FmiImporter.import(stimuliFmu);
+            const result = (await FmiImporter.import(stimuliFmu))[0];
             logResponse('import stimuli fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const variables = items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === 'fmi:Variable'
             );
             // Variables 5 and 6 are Outputs with dependencies="" (none). The "none"
             // declaration wins over their explicit InitialUnknowns list (precedence
@@ -342,13 +342,13 @@ describe('FMI Import', () => {
                 logResponse('locate pid fmu', { ok: false, status: 404, statusText: 'PID_Euler_0_01_sf.fmu not found' });
                 return;
             }
-            const result = await FmiImporter.import(pidFmu);
+            const result = (await FmiImporter.import(pidFmu))[0];
             logResponse('import pid fmu', result);
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const variables = items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === 'fmi:Variable'
             );
             const allKnownsVar = variables.find((v: any) => allPropValues(v, 'fmi:dependencyScope').includes('allKnowns'));
             expect(allKnownsVar).toBeTruthy();
@@ -356,12 +356,12 @@ describe('FMI Import', () => {
 
         it('should mark explicit dependency lists as scope "explicit" (plant)', async () => {
             if (!plantFmu) return;
-            const result = await FmiImporter.import(plantFmu);
+            const result = (await FmiImporter.import(plantFmu))[0];
             expect(result.status).toBe(0);
             const items = result.response as any[];
 
             const variables = items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === 'fmi:Variable'
             );
             const explicitVar = variables.find((v: any) => propValue(v, 'fmi:dependencyScope') === 'explicit');
             expect(explicitVar).toBeTruthy();
@@ -375,7 +375,7 @@ describe('FMI Import', () => {
                 return;
             }
 
-            const result = await FmiImporter.import(plantXml);
+            const result = (await FmiImporter.import(plantXml))[0];
             logResponse(`import plant xml`, result);
 
             expect(result.status).toBe(0);
@@ -383,7 +383,7 @@ describe('FMI Import', () => {
 
             const items = result.response as any[];
             const variables = items.filter(
-                (i: any) => i?.itemType === PigItemType.anEntity && i?.hasClass === 'fmi:Variable'
+                (i: any) => i?.itemType === PigItemType.anEntity && i?.instanceOf === 'fmi:Variable'
             );
             expect(variables.length).toBe(63);
         }, 30000);

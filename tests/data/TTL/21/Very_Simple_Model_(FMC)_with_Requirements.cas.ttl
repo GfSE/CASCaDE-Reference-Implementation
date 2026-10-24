@@ -1,61 +1,60 @@
 
-@prefix cas: <https://product-information-graph.org/ontology/2026-05-08/metamodel#> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix skos: <https://www.w3.org/TR/skos-reference/> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix o: <https://product-information-graph.org/ontology/custom#> .
+@prefix o: <https://product-information-graph.org/v0.2/ontology#> .
 @prefix d: <https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <https://www.w3.org/TR/skos-reference/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix FMC: <http://fmc-modeling.org#> .
 @prefix IREB: <https://cpre.ireb.org/en/downloads-and-resources/glossary#> .
-@prefix ReqIF: <https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#> .
 @prefix oslc_rm: <http://open-services.net/ns/rm#> .
+@prefix cas: <https://product-information-graph.org/v0.2/metamodel#> .
 @prefix SpecIF: <https://specif.de/v1.2/schema#> .
-@prefix sh: <http://www.w3.org/ns/shacl#> .
 @prefix dash: <http://datashapes.org/dash#> .
 
 d:ACP-Very-Simple-Model-FMC-with-Requirements_ontology
 	a owl:Ontology ;
-	dcterms:contributor "mailto:oskar.dungern@gfse.org" ;
-	dcterms:license "https://creativecommons.org/licenses/by-sa/4.0/" ;
 	owl:versionInfo "2026-07-20" .
 
 d:ACP-Very-Simple-Model-FMC-with-Requirements
 	a cas:Package ;
 	rdfs:label "Very Simple Model (FMC) with Requirements" ;
-	dcterms:modified "2026-01-17T22:38:19.595Z"^^xs:dateTime .
+	dcterms:modified "2026-09-30T10:23:15.010Z"^^xs:dateTime .
 
 #################################################################
 # Graph Items
 #################################################################
 
-cas:Package
+cas:Organizer
+	a owl:Class ;
 	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Organizer" ;
+	skos:definition "A CASCaRA meta-model item for organizing model-elements. An example is a list of requirements or a diagram using a certain notation." .
+
+cas:Organizer_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Organizer ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+cas:Package
+	a owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
 	rdfs:label "Package" ;
-	skos:definition "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances." .
+	skos:definition "A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions." .
 
 cas:Package_shape
 	a sh:NodeShape ;
 	sh:targetClass cas:Package ;
 	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
 
-cas:Organizer
-	rdfs:subClassOf cas:Entity ;
-	rdfs:label "Organizer" ;
-	skos:definition "An element organizing model elements. An example is a list of requirements or a diagram using a certain notation." .
-
-cas:Organizer_shape
-	a sh:NodeShape ;
-	sh:targetClass cas:Organizer ;
-	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
-	sh:property cas:Category_shape .
-
 cas:Root
+	a owl:Class ;
 	rdfs:subClassOf cas:Organizer ;
-	rdfs:label "Hierarchy Root" ;
-	skos:definition "A subclass of CASCaRA organizer serving as a root for hierarchically organized graph elements." .
+	rdfs:label "Root" ;
+	skos:definition "A subclass of cas:Organizer serving as a root for trees and tables." .
 
 cas:Root_shape
 	a sh:NodeShape ;
@@ -63,33 +62,55 @@ cas:Root_shape
 	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
 	sh:property cas:lists_shape .
 
-cas:Outline
+cas:Tree
+	a owl:Class ;
 	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Tree" ;
+	skos:definition "A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships." .
+
+cas:Tree_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Tree ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:lists_shape .
+
+cas:Outline
+	a owl:Class ;
+	rdfs:subClassOf cas:Tree ;
 	rdfs:label "Outline" ;
-	skos:definition "A subclass of CASCaRA organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized." .
+	skos:definition "A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized." .
 
 cas:Outline_shape
 	a sh:NodeShape ;
 	sh:targetClass cas:Outline ;
-	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
-	sh:property cas:Category_shape ;
-	sh:property cas:lists_shape .
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
 
-cas:View
+cas:Table
+	a owl:Class ;
 	rdfs:subClassOf cas:Organizer ;
-	rdfs:label "View" ;
-	skos:definition "A subclass of CASCaRA organizer representing a model view (diagram) using a certain notation showing selected model elements." .
+	rdfs:label "Table" ;
+	skos:definition "A subclass of cas:Organizer representing a table showing selected model elements." .
 
-cas:View_shape
+cas:Table_shape
 	a sh:NodeShape ;
-	sh:targetClass cas:View ;
+	sh:targetClass cas:Table ;
 	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
-	sh:property cas:Category_shape ;
-	sh:property cas:Diagram_shape ;
-	sh:property cas:shows_shape ;
-	sh:property cas:depicts_shape .
+	sh:property cas:shows_shape .
+
+cas:Diagram
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Diagram" ;
+	skos:definition "A diagram illustrating the resource or a link to a diagram." .
+
+cas:Diagram_shape
+	a sh:PropertyShape ;
+	sh:path cas:Diagram ;
+	sh:datatype xs:string ;
+	sh:minCount "0" .
 
 cas:Category
+	a owl:DatatypeProperty ;
 	rdfs:subPropertyOf cas:Property ;
 	rdfs:label "has category" ;
 	skos:definition "Specifies a category for an element (entity, relationship or organizer)." .
@@ -98,11 +119,25 @@ cas:Category_shape
 	a sh:PropertyShape ;
 	sh:path cas:Category ;
 	sh:datatype xs:string ;
-	sh:minCount 0 ;
-	sh:maxCount 1 ;
-	sh:maxLength 32 .
+	sh:minCount "0" ;
+	sh:maxCount "1" ;
+	sh:maxLength "32" .
+
+cas:Notation
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Category ;
+	rdfs:label "Notation" ;
+	skos:definition "A reference to a notation defining the syntax and semantics of a diagram." .
+
+cas:Notation_shape
+	a sh:PropertyShape ;
+	sh:path cas:Notation ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
 
 cas:linksSource
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:Link ;
 	rdfs:label "to source" ;
 	skos:definition "Connects the source of a reified relationship." ;
@@ -114,6 +149,7 @@ cas:linksSource_shape
 	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
 
 cas:linksTarget
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:Link ;
 	rdfs:label "to target" ;
 	skos:definition "Connects the target of a reified relationship or an organizer." ;
@@ -125,6 +161,7 @@ cas:linksTarget_shape
 	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
 
 cas:lists
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "lists" ;
 	skos:definition "Lists an entity, a relationship or a subordinated organizer." ;
@@ -136,6 +173,7 @@ cas:lists_shape
 	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] [ sh:class cas:Organizer ] ) .
 
 cas:shows
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "shows" ;
 	skos:definition "Shows an entity or a relationship." ;
@@ -147,6 +185,7 @@ cas:shows_shape
 	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
 
 cas:depicts
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "depicts" ;
 	skos:definition "Depicts an entity; inverse of uml:ownedDiagram." ;
@@ -157,52 +196,74 @@ cas:depicts_shape
 	sh:path cas:depicts ;
 	sh:class cas:Entity .
 
-dcterms:title
-	a owl:DatatypeProperty ;
-	rdfs:label "Title"@en ,
-		"Titel"@de ,
-		"Titre"@fr ;
-	rdfs:comment "<p> A name given to the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/title\">DCMI</a></i>) </small></p><p> Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>"@en .
-
-dcterms:title_shape
-	a sh:PropertyShape ;
-	sh:path dcterms:title ;
+SpecIF:Priority-Enumeration
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
 	sh:datatype xs:string ;
-	sh:maxCount 1 ;
-	sh:maxLength 256 .
+	owl:anyOf (
+		SpecIF:priorityHigh
+		SpecIF:priorityMedium
+		SpecIF:priorityLow
+	) .
+SpecIF:priorityHigh
+	a SpecIF:Priority-Enumeration ;
+	rdfs:label "high"@en ,
+		"hoch"@de ,
+		"haut"@fr .
+SpecIF:priorityMedium
+	a SpecIF:Priority-Enumeration ;
+	rdfs:label "medium"@en ,
+		"mittel"@de ,
+		"moyen"@fr .
+SpecIF:priorityLow
+	a SpecIF:Priority-Enumeration ;
+	rdfs:label "low"@en ,
+		"niedrig"@de ,
+		"bas"@fr .
 
-dcterms:description
-	a owl:DatatypeProperty ;
-	rdfs:label "Description"@en ,
-		"Beschreibung"@de ,
-		"Description"@fr ;
-	rdfs:comment "<p> An account of the resource. <small> (<i> source: <a href=\"http://purl.org/dc/elements/1.1/description\">DCMI</a></i>) </small></p><p> Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p>"@en .
+SpecIF:Priority
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
+	rdfs:range SpecIF:Priority-Enumeration .
 
-dcterms:description_shape
+SpecIF:Priority_shape
 	a sh:PropertyShape ;
-	sh:path dcterms:description ;
-	sh:datatype xs:string ;
-	sh:maxCount 1 .
+	sh:path SpecIF:Priority ;
+	sh:class SpecIF:Priority-Enumeration .
 
-cas:Diagram
+o:PC-Diagram-9792185554
 	a owl:DatatypeProperty ;
-	rdfs:label "Diagram"@en ,
-		"Diagramm"@de ,
-		"Diagramme"@fr ;
-	skos:definition "A diagram illustrating the resource or a link to a diagram."@en .
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "cas:Diagram" ;
+	skos:definition "A diagram illustrating the resource or a link to a diagram." ;
+	cas:revision "1.1" ;
+	dcterms:modified "2026-02-12T22:05:14.551Z"^^xs:dateTime .
 
-cas:Diagram_shape
+o:PC-Diagram-9792185554_shape
 	a sh:PropertyShape ;
-	sh:path cas:Diagram ;
+	sh:path o:PC-Diagram-9792185554 ;
 	sh:datatype xs:string .
 
 SpecIF:Paragraph
+	a owl:Class ;
 	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Paragraph"@en ,
 		"Textabsatz"@de ,
 		"Paragraphe"@fr ;
-	rdfs:comment "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
-		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de .
+	skos:definition "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
+		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de ;
+	cas:revision "1.1" ;
+	dcterms:modified "2023-07-16T09:30:25.850Z"^^xs:dateTime .
 
 SpecIF:Paragraph_shape
 	a sh:NodeShape ;
@@ -211,15 +272,34 @@ SpecIF:Paragraph_shape
 	sh:property cas:Diagram_shape ;
 	sh:property cas:Category_shape .
 
+cas:View
+	a owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "View" ;
+	skos:definition "A PIG organizer class representing a diagram with certain model-elements for a given communication purpose." ;
+	dcterms:modified "2018-05-10T11:54:00+01:00"^^xs:dateTime ;
+	cas:icon "▣" .
+
+cas:View_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:View ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Diagram_shape ;
+	sh:property cas:Category_shape ;
+	sh:property cas:shows_shape ;
+	sh:property cas:depicts_shape .
+
 FMC:Actor
+	a owl:Class ;
 	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Actor"@en ,
 		"Akteur"@de ,
 		"Acteur"@fr ;
-	rdfs:comment "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>"@en ,
+	skos:definition "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>"@en ,
 		"<p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>"@de ,
 		"<p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>"@fr ;
-	cas:icon "□" .
+	dcterms:modified "2018-05-10T11:54:00+01:00"^^xs:dateTime ;
+	cas:icon "&#x25A1;" .
 
 FMC:Actor_shape
 	a sh:NodeShape ;
@@ -228,14 +308,16 @@ FMC:Actor_shape
 	sh:property cas:Category_shape .
 
 FMC:State
+	a owl:Class ;
 	rdfs:subClassOf cas:Entity ;
 	rdfs:label "State"@en ,
 		"Zustand"@de ,
 		"État"@fr ;
-	rdfs:comment "<p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].</p>"@en ,
+	skos:definition "<p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].</p>"@en ,
 		"<p>Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].</p>"@de ,
 		"<p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p>"@fr ;
-	cas:icon "○" .
+	dcterms:modified "2018-05-10T11:54:00+01:00"^^xs:dateTime ;
+	cas:icon "&#x25CB;" .
 
 FMC:State_shape
 	a sh:NodeShape ;
@@ -244,14 +326,16 @@ FMC:State_shape
 	sh:property cas:Category_shape .
 
 FMC:Event
+	a owl:Class ;
 	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Event"@en ,
 		"Ereignis"@de ,
 		"Évenement"@fr ;
-	rdfs:comment "<p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>"@en ,
+	skos:definition "<p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>"@en ,
 		"<p>Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].</p>"@de ,
 		"<p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p>"@fr ;
-	cas:icon "♢" .
+	dcterms:modified "2018-05-10T11:54:00+01:00"^^xs:dateTime ;
+	cas:icon "&#x2662;" .
 
 FMC:Event_shape
 	a sh:NodeShape ;
@@ -260,14 +344,16 @@ FMC:Event_shape
 	sh:property cas:Category_shape .
 
 IREB:Requirement
+	a owl:Class ;
 	rdfs:subClassOf cas:Entity ;
 	rdfs:label "Requirement"@en ,
 		"Anforderung"@de ,
 		"Exigence"@fr ;
-	rdfs:comment "<p> A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
-		"<p> Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
-		"<p> Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small> (<i> source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>) </small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
-	cas:icon "↯" .
+	skos:definition "<p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
+		"<p>Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
+		"<p>Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
+	dcterms:modified "2021-02-22T08:59:00+02:00"^^xs:dateTime ;
+	cas:icon "&#8623;" .
 
 IREB:Requirement_shape
 	a sh:NodeShape ;
@@ -275,12 +361,30 @@ IREB:Requirement_shape
 	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
 	sh:property SpecIF:Priority_shape .
 
+o:RC-Paragraph-9792185554
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "SpecIF:Paragraph" ;
+	skos:definition "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
+		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de ;
+	cas:revision "1.1" ;
+	dcterms:modified "2024-03-02T20:55:23.295Z"^^xs:dateTime .
+
+o:RC-Paragraph-9792185554_shape
+	a sh:NodeShape ;
+	sh:targetClass o:RC-Paragraph-9792185554 ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property o:PC-Diagram-9792185554_shape ;
+	sh:property cas:Category_shape .
+
 SpecIF:writes
+	a owl:Class ;
 	rdfs:subClassOf cas:Relationship ;
 	rdfs:label "writes"@en ,
 		"schreibt"@de ,
 		"écrit"@fr ;
-	rdfs:comment "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]]."@en .
+	skos:definition "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]]."@en ;
+	dcterms:modified "2018-05-10T11:54:00+01:00"^^xs:dateTime .
 
 SpecIF:writes_shape
 	a sh:NodeShape ;
@@ -289,9 +393,10 @@ SpecIF:writes_shape
 	sh:property SpecIF:writes-toTarget_shape .
 
 SpecIF:writes-toSource
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksSource ;
 	rdfs:label "SpecIF:writes to source" ;
-	skos:definition "Connects the source of SpecIF:writes" ;
+	rdfs:comment "Connects the source of SpecIF:writes" ;
 	rdfs:range FMC:Actor .
 
 SpecIF:writes-toSource_shape
@@ -300,9 +405,10 @@ SpecIF:writes-toSource_shape
 	sh:class FMC:Actor .
 
 SpecIF:writes-toTarget
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "SpecIF:writes to target" ;
-	skos:definition "Connects the target of SpecIF:writes" ;
+	rdfs:comment "Connects the target of SpecIF:writes" ;
 	rdfs:range FMC:State .
 
 SpecIF:writes-toTarget_shape
@@ -311,11 +417,13 @@ SpecIF:writes-toTarget_shape
 	sh:class FMC:State .
 
 SpecIF:reads
+	a owl:Class ;
 	rdfs:subClassOf cas:Relationship ;
 	rdfs:label "reads"@en ,
 		"liest"@de ,
 		"lit"@fr ;
-	rdfs:comment "A [[FMC:Actor]] 'reads' a [[FMC:State]]."@en .
+	skos:definition "A [[FMC:Actor]] 'reads' a [[FMC:State]]."@en ;
+	dcterms:modified "2018-05-10T11:54:00+01:00"^^xs:dateTime .
 
 SpecIF:reads_shape
 	a sh:NodeShape ;
@@ -324,9 +432,10 @@ SpecIF:reads_shape
 	sh:property SpecIF:reads-toTarget_shape .
 
 SpecIF:reads-toSource
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksSource ;
 	rdfs:label "SpecIF:reads to source" ;
-	skos:definition "Connects the source of SpecIF:reads" ;
+	rdfs:comment "Connects the source of SpecIF:reads" ;
 	rdfs:range FMC:Actor .
 
 SpecIF:reads-toSource_shape
@@ -335,9 +444,10 @@ SpecIF:reads-toSource_shape
 	sh:class FMC:Actor .
 
 SpecIF:reads-toTarget
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "SpecIF:reads to target" ;
-	skos:definition "Connects the target of SpecIF:reads" ;
+	rdfs:comment "Connects the target of SpecIF:reads" ;
 	rdfs:range FMC:State .
 
 SpecIF:reads-toTarget_shape
@@ -346,11 +456,13 @@ SpecIF:reads-toTarget_shape
 	sh:class FMC:State .
 
 oslc_rm:satisfies
+	a owl:Class ;
 	rdfs:subClassOf cas:Relationship ;
 	rdfs:label "satisfies"@en ,
 		"erfüllt"@de ,
 		"satisfait"@fr ;
-	rdfs:comment "<p> The object is satisfied by the subject. <small> (<i> source: <a href=\"http://open-services.net/\">OSLC</a></i>) </small></p><p> SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'. </p>"@en .
+	skos:definition "<p>The object is satisfied by the subject. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p><p>SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.</p>"@en ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
 
 oslc_rm:satisfies_shape
 	a sh:NodeShape ;
@@ -359,9 +471,10 @@ oslc_rm:satisfies_shape
 	sh:property oslc_rm:satisfies-toTarget_shape .
 
 oslc_rm:satisfies-toSource
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksSource ;
 	rdfs:label "oslc_rm:satisfies to source" ;
-	skos:definition "Connects the source of oslc_rm:satisfies" ;
+	rdfs:comment "Connects the source of oslc_rm:satisfies" ;
 	rdfs:range [ owl:unionOf ( FMC:Actor FMC:State ) ] .
 
 oslc_rm:satisfies-toSource_shape
@@ -370,70 +483,16 @@ oslc_rm:satisfies-toSource_shape
 	sh:or ( [ sh:class FMC:Actor ] [ sh:class FMC:State ] ) .
 
 oslc_rm:satisfies-toTarget
+	a owl:ObjectProperty ;
 	rdfs:subPropertyOf cas:linksTarget ;
 	rdfs:label "oslc_rm:satisfies to target" ;
-	skos:definition "Connects the target of oslc_rm:satisfies" ;
+	rdfs:comment "Connects the target of oslc_rm:satisfies" ;
 	rdfs:range IREB:Requirement .
 
 oslc_rm:satisfies-toTarget_shape
 	a sh:PropertyShape ;
 	sh:path oslc_rm:satisfies-toTarget ;
 	sh:class IREB:Requirement .
-
-SpecIF:Priority-Value
-	rdfs:subClassOf cas:Enumeration ;
-	rdfs:label "Priority"@en ,
-		"Priorität"@de ,
-		"Priorité"@fr ;
-	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
-	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
-	sh:datatype xs:string ;
-	owl:anyOf (
-		SpecIF:priorityHigh
-		SpecIF:priorityRatherHigh
-		SpecIF:priorityMedium
-		SpecIF:priorityRatherLow
-		SpecIF:priorityLow
-	) .
-SpecIF:priorityHigh
-	a SpecIF:Priority-Value ;
-	rdfs:label "high"@en ,
-		"hoch"@de ,
-		"haut"@fr .
-SpecIF:priorityRatherHigh
-	a SpecIF:Priority-Value ;
-	rdfs:label "rather high"@en ,
-		"eher hoch"@de ,
-		"plutôt haut"@fr .
-SpecIF:priorityMedium
-	a SpecIF:Priority-Value ;
-	rdfs:label "medium"@en ,
-		"mittel"@de ,
-		"moyen"@fr .
-SpecIF:priorityRatherLow
-	a SpecIF:Priority-Value ;
-	rdfs:label "rather low"@en ,
-		"eher niedrig"@de ,
-		"plutôt bas"@fr .
-SpecIF:priorityLow
-	a SpecIF:Priority-Value ;
-	rdfs:label "low"@en ,
-		"niedrig"@de ,
-		"bas"@fr .
-
-SpecIF:Priority
-	rdfs:subPropertyOf cas:linksTarget ;
-	rdfs:label "Priority"@en ,
-		"Priorität"@de ,
-		"Priorité"@fr ;
-	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
-	dcterms:modified "2020-03-26T22:59:00+02:00"^^xs:dateTime ;
-	rdfs:range SpecIF:Priority-Value .
-
-SpecIF:Priority_shape
-	a sh:PropertyShape ;
-	sh:path SpecIF:Priority ;
-	sh:class SpecIF:Priority-Value .
 
 d:Req-1a8016e2872e78ecadc50feddc00029b
 	a IREB:Requirement ;
@@ -460,7 +519,7 @@ d:Diagram-aec0df7900010000017001eaf53e8876
 	a cas:View ;
 	rdfs:label "IT-Integration: FiCo-Application and FiCo-Data" ;
 	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
-	cas:Diagram "\n                    <p class=\"inline-label\">Model Diagram:</p>\n                    <p>\n                        <object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object>\n                    </p>\n                " ;
+	cas:Diagram "<p class=\"inline-label\">Model Diagram:</p><p><object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object></p>" ;
 	cas:Category "FMC Block Diagram" ;
 	cas:shows d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ,
 		d:MEl-50feddc00029b1a8016e2872e78ecadc ,
@@ -518,23 +577,11 @@ d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements
 	a cas:Root ;
 	rdfs:label "Hierarchy Root" ;
 	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
-	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
-	cas:lists d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements .
-
-d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements
-	a cas:Outline ;
-	rdfs:label "Very Simple Model (FMC) with Requirements" ;
-	dcterms:modified "2026-01-17T22:38:20.041Z"^^xs:dateTime ;
+	dcterms:modified "2026-09-30T10:23:15.171Z"^^xs:dateTime ;
 	cas:lists d:Folder-Introduction ,
 		d:Folder-Requirements ,
 		d:Folder-SystemModel ,
-		d:FolderGlossary-10875487071 .
-
-d:Folder-Introduction
-	a cas:Outline ;
-	rdfs:label "Introduction" ;
-	rdfs:comment "<p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. </p>" ;
-	dcterms:modified "2025-02-07T08:32:00+01:00"^^xs:dateTime .
+		d:R-ZYXT9aJOdrgkl2T06otPj9A1bR2 .
 
 d:Folder-Requirements
 	a cas:Outline ;
@@ -550,11 +597,11 @@ d:Folder-SystemModel
 	dcterms:modified "2020-03-06T08:32:00+01:00"^^xs:dateTime ;
 	cas:lists d:Diagram-aec0df7900010000017001eaf53e8876 .
 
-d:FolderGlossary-10875487071
+d:R-ZYXT9aJOdrgkl2T06otPj9A1bR2
 	a cas:Outline ;
 	rdfs:label "Model Elements (Glossary)" ;
-	dcterms:modified "2026-01-17T22:38:13.953Z"^^xs:dateTime ;
-	cas:Category SpecIF:Glossary ;
+	dcterms:modified "2026-09-30T10:20:33.440Z"^^xs:dateTime ;
+	cas:Category "SpecIF:Glossary" ;
 	cas:lists d:MEl-50fbfe8f0029b1a8016ea86245a9d83a ,
 		d:MEl-50feddc00029b1a8016e2872e78ecadc .
 

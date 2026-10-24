@@ -13,8 +13,8 @@
  * 
  * This module validates cross-item constraints that cannot be checked at the level of individual items:
  * - Uniqueness of primary IDs across all items in a package
- * - Validity of hasClass references in aProperty instances
- * - Validity of hasClass references in aLink instances (aSourceLink, aTargetLink)
+ * - Validity of instanceOf references in aProperty instances
+ * - Validity of instanceOf references in aLink instances (aSourceLink, aTargetLink)
  * - Property occurrence validation (minCount, maxCount)
  * - enumerated properties and links validation
  * - enumeratedEndpoint consistency (Link classes)
@@ -27,8 +27,8 @@
  * List of constraint checks:
  * Phase 1 (critical):
  * ✅ Unique IDs
- * ✅ aProperty.hasClass → Property
- * ✅ aLink.hasClass → Link
+ * ✅ aProperty.instanceOf → Property
+ * ✅ aLink.instanceOf → Link
  * ✅ anEntity and aRelationship class references
  * ✅ Entity and Relationship specializes references                                               
  * ✅ Instances are consistent with their classes:
@@ -40,8 +40,8 @@
  * ✅ - enumeratedTargetLink and enumeratedSourceLink → Link
  * Phase 2 (important):
  * ✅ namespace prefixes are defined in the context
- * ✅ check all classes wrt hasClass (owl:Class, owl:DatatypeProperty, owl:ObjectProperty) --> done via schema validation
- *    check aPackage.hasClass references and consistency with classes (similarly to anEntity)
+ * ✅ check all classes wrt instanceOf (owl:Class, owl:DatatypeProperty, owl:ObjectProperty) --> done via schema validation
+ *    check aPackage.instanceOf references and consistency with classes (similarly to anEntity)
  *    No cyclic specialization
  *    subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
  *    - the range of a subProperty must be included in the range of its superProperty
@@ -73,6 +73,7 @@
  * - New thinking --> 'Permissive Computing': Report all issues but return the package with a valid subgraph;
  *   sometimes there may be 2 or more choices of valid subgraphs when constraints fail.
  *   Partial data is better than no data.
+ * - Consider using JSON-Rules-Engine, JSONata or REGO for rules checking ..
  */
 
 import { DEF, RE } from '../../../lib/definitions';
@@ -85,10 +86,10 @@ import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigI
  */
 export enum ConstraintCheckType {
     UniqueIds = 'uniqueIds',
-    aPropertyHasClass = 'aPropertyHasClass',
-    aLinkHasClass = 'aLinkHasClass',
-    anEntityHasClass = 'anEntityHasClass',
-    aRelationshipHasClass = 'aRelationshipHasClass',
+    aPropertyInstanceOf = 'aPropertyInstanceOf',
+    aLinkInstanceOf = 'aLinkInstanceOf',
+    anEntityInstanceOf = 'anEntityInstanceOf',
+    aRelationshipInstanceOf = 'aRelationshipInstanceOf',
     EntitySpecializes = 'entitySpecializes',
     RelationshipSpecializes = 'relationshipSpecializes',
     PropertySpecializes = 'propertySpecializes',
@@ -107,10 +108,10 @@ export enum ConstraintCheckType {
  */
 const allConstraintChecks: ConstraintCheckType[] = [
     ConstraintCheckType.UniqueIds,
-    ConstraintCheckType.aPropertyHasClass,
-    ConstraintCheckType.aLinkHasClass,
-    ConstraintCheckType.anEntityHasClass,
-    ConstraintCheckType.aRelationshipHasClass,
+    ConstraintCheckType.aPropertyInstanceOf,
+    ConstraintCheckType.aLinkInstanceOf,
+    ConstraintCheckType.anEntityInstanceOf,
+    ConstraintCheckType.aRelationshipInstanceOf,
     ConstraintCheckType.EntitySpecializes,
     ConstraintCheckType.RelationshipSpecializes,
     ConstraintCheckType.PropertySpecializes,
@@ -145,27 +146,27 @@ export function checkConstraintsForPackage(
     // Build a map of itemTypes by ID for quick lookup
     const itemTypeById = buildItemTypeMap(pkg);
 
-    // 2. Check aProperty.hasClass references and minCount/maxCount
-    if (checksSet.has(ConstraintCheckType.aPropertyHasClass)) {
+    // 2. Check aProperty.instanceOf references and minCount/maxCount
+    if (checksSet.has(ConstraintCheckType.aPropertyInstanceOf)) {
         const rsp = checkPropertyReferences(pkg, itemTypeById);
         if (!rsp.ok) return rsp;
     }
 
-    // 3. Check aLink.hasClass references (aSourceLink and aTargetLink)
-    if (checksSet.has(ConstraintCheckType.aLinkHasClass)) {
+    // 3. Check aLink.instanceOf references (aSourceLink and aTargetLink)
+    if (checksSet.has(ConstraintCheckType.aLinkInstanceOf)) {
         const rsp = checkLinkReferences(pkg, itemTypeById);
         if (!rsp.ok) return rsp;
     }
 
-    // 4a. Check anEntity.hasClass references
-    if (checksSet.has(ConstraintCheckType.anEntityHasClass)) {
-        const rsp = checkReferences(pkg, PigItemType.anEntity, itemTypeById, 'hasClass');
+    // 4a. Check anEntity.instanceOf references
+    if (checksSet.has(ConstraintCheckType.anEntityInstanceOf)) {
+        const rsp = checkReferences(pkg, PigItemType.anEntity, itemTypeById, 'instanceOf');
         if (!rsp.ok) return rsp;
     }
 
-    // 4b. Check aRelationship.hasClass references
-    if (checksSet.has(ConstraintCheckType.aRelationshipHasClass)) {
-        const rsp = checkReferences(pkg, PigItemType.aRelationship, itemTypeById, 'hasClass');
+    // 4b. Check aRelationship.instanceOf references
+    if (checksSet.has(ConstraintCheckType.aRelationshipInstanceOf)) {
+        const rsp = checkReferences(pkg, PigItemType.aRelationship, itemTypeById, 'instanceOf');
         if (!rsp.ok) return rsp;
     }
 
@@ -567,7 +568,7 @@ function listEnumeratedSourceLinks(
 function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
     // Check properties for a single instance
     function checkInstanceProperties(instance: any): IRsp {
-        const classId = instance.hasClass; // existence of hasClass has been checked by the schema
+        const classId = instance.instanceOf; // existence of instanceOf has been checked by the schema
 
         if (LIB.isArrayWithContent(instance.hasProperty)) {
             // List enumerated properties for this class
@@ -578,7 +579,7 @@ function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): 
             // Check each property against enumerated properties
             for (let j = 0; j < instance.hasProperty.length; j++) {
                 const prop = instance.hasProperty[j];
-                const propClassId = prop.hasClass; // existence of hasClass has been checked by the schema
+                const propClassId = prop.instanceOf; // existence of instanceOf has been checked by the schema
 
                 if (enumeratedProperties.includes('*')) // all properties are allowed
                     continue;
@@ -623,8 +624,8 @@ function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): 
 function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
     // Check source or target links for a single instance
     function checkLinks(instance: any, hasThisLink: 'hasTargetLink' | 'hasSourceLink'): IRsp {
-        // const classId = instance.hasClass; // existence of hasClass has been checked by the schema
-        const enumeratedLinks = hasThisLink === 'hasTargetLink' ? listEnumeratedTargetLinks(instance.hasClass, classMap) : listEnumeratedSourceLinks(instance.hasClass, classMap);
+        // const classId = instance.instanceOf; // existence of instanceOf has been checked by the schema
+        const enumeratedLinks = hasThisLink === 'hasTargetLink' ? listEnumeratedTargetLinks(instance.instanceOf, classMap) : listEnumeratedSourceLinks(instance.instanceOf, classMap);
         const hasLinkArray = instance[hasThisLink];
 
         if (LIB.isArrayWithContent(hasLinkArray)) {
@@ -632,13 +633,13 @@ function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp 
             // LOG.debug(`Enumerated ${hasThisLink === 'hasTargetLink' ? 'targetLinks' : 'sourceLinks'} of instance ${instance.id}: ${JSON.stringify(hasLinkArray)}`);
             for (let j = 0; j < hasLinkArray.length; j++) {
                 const link = hasLinkArray[j] as ASourceLink | ATargetLink;
-                const linkClassId = link.hasClass as string;
+                const linkClassId = link.instanceOf as string;
 
                 if (enumeratedLinks.includes('*'))  // all links allowed
                     continue;
 
                 if (!enumeratedLinks.includes(linkClassId)) {
-                    return Msg.create(676, instance.id, instance.itemType, hasThisLink, j, linkClassId, instance.hasClass);
+                    return Msg.create(676, instance.id, instance.itemType, hasThisLink, j, linkClassId, instance.instanceOf);
                 }
             }
         }
@@ -647,7 +648,7 @@ function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp 
     }
 
     // Check the package itself (hasTargetLink only)
-    if (pkg.hasClass) {
+    if (pkg.instanceOf) {
         const result = checkLinks(pkg, 'hasTargetLink');
         if (!result.ok) {
             return result;
@@ -810,7 +811,7 @@ function checkEnumeratedLinkClassReferences(
 }
 
 /**
- * Check that all aProperty.hasClass references point to pig:Property items
+ * Check that all aProperty.instanceOf references point to pig:Property items
  * AND validate minCount/maxCount constraints
  * @param pkg - Package to validate
  * @param itemTypeMap - Map from ID to itemType for reference lookup
@@ -834,10 +835,10 @@ function checkPropertyReferences(
         if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itemType)) {
             // LOG.debug(`Checking properties for AnEntity `, item);
             if (Array.isArray((item as TPigAnElement).hasProperty)) {
-                // 1. Check hasClass references
+                // 1. Check instanceOf references
                 for (let j = 0; j < (item as TPigAnElement).hasProperty.length; j++) {
                     const prop = (item as TPigAnElement).hasProperty[j];
-                    const checkResult = checkPropertyHasClass(prop, itemId, j, itemTypeMap);
+                    const checkResult = checkPropertyInstanceOf(prop, itemId, j, itemTypeMap);
                     if (!checkResult.ok) {
                         return checkResult;
                     }
@@ -888,7 +889,7 @@ function checkPropertyOccurrence(
 
     // Group properties by class and count occurrences
     for (const prop of properties) {
-        const propClassId = prop.hasClass;
+        const propClassId = prop.instanceOf;
         if (!propClassId) {
             continue; // validated elsewhere
         }
@@ -1002,34 +1003,34 @@ function checkPropertyOccurrence(
 }
 
 /**
- * Validate a single aProperty's hasClass reference
+ * Validate a single aProperty's instanceOf reference
  * @param prop - Property to validate
  * @param parentId - ID of parent item (for error messages)
  * @param propIndex - Index of property in parent's hasProperty array
  * @param itemTypeMap - Map for reference lookup
  * @returns IRsp (rspOK on success, error on invalid reference)
  */
-function checkPropertyHasClass(
+function checkPropertyInstanceOf(
     prop: any,
     parentId: string,
     propIndex: number,
     itemTypeMap: Map<TPigId, PigItemTypeValue>
 ): IRsp {
-    if (!prop.hasClass) {
-        return Msg.create(672, parentId, propIndex, 'missing hasClass');
+    if (!prop.instanceOf) {
+        return Msg.create(672, parentId, propIndex, 'missing instanceOf');
     }
 
 /*    // Skip validation for known ontology references (e.g., cas:, dcterms:)
-    if (referencesKnownOntology(prop.hasClass)) {
+    if (referencesKnownOntology(prop.instanceOf)) {
         return rspOK;
     } */
 
-    // LOG.debug(`checkPropertyHasClass: checking hasClass ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
-    // LOG.debug(`checkPropertyHasClass: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
+    // LOG.debug(`checkPropertyInstanceOf: checking instanceOf ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
+    // LOG.debug(`checkPropertyInstanceOf: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
 
-    const targetType = itemTypeMap.get(prop.hasClass);
+    const targetType = itemTypeMap.get(prop.instanceOf);
     if (!targetType) {
-        return Msg.create(673, parentId, `hasProperty[${propIndex}]`, prop.hasClass, 'not found in package');
+        return Msg.create(673, parentId, `hasProperty[${propIndex}]`, prop.instanceOf, 'not found in package');
     }
 
     if (targetType !== PigItemType.Property) {
@@ -1040,7 +1041,7 @@ function checkPropertyHasClass(
 }
 
 /**
- * Check that all aLink.hasClass references point to pig:Link items
+ * Check that all aLink.instanceOf references point to pig:Link items
  * @param pkg - Package to validate
  * @param itemTypeMap - Map from ID to itemType for reference lookup
  * @returns IRsp (rspOK on success, error on invalid reference)
@@ -1059,7 +1060,7 @@ function checkLinkReferences(
             if (Array.isArray((item as TPigAnElement).hasTargetLink)) {
                 for (let j = 0; j < (item as TPigAnElement).hasTargetLink.length; j++) {
                     const link = (item as TPigAnElement).hasTargetLink[j];
-                    const checkResult = checkLinkHasClass(link, itemId, j, 'hasTargetLink', itemTypeMap);
+                    const checkResult = checkLinkInstanceOf(link, itemId, j, 'hasTargetLink', itemTypeMap);
                     if (!checkResult.ok) {
                         return checkResult;
                     }
@@ -1075,7 +1076,7 @@ function checkLinkReferences(
             if (Array.isArray(rel.hasSourceLink)) {
                 for (let j = 0; j < rel.hasSourceLink.length; j++) {
                     const link = rel.hasSourceLink[j];
-                    const checkResult = checkLinkHasClass(link, itemId, j, 'hasSourceLink', itemTypeMap);
+                    const checkResult = checkLinkInstanceOf(link, itemId, j, 'hasSourceLink', itemTypeMap);
                     if (!checkResult.ok) {
                         return checkResult;
                     }
@@ -1088,7 +1089,7 @@ function checkLinkReferences(
 }
 
 /**
- * Validate a single aLink's hasClass reference
+ * Validate a single aLink's instanceOf reference
  * @param link - Link to validate
  * @param parentId - ID of parent item (for error messages)
  * @param linkIndex - Index of link in parent's link array
@@ -1096,48 +1097,48 @@ function checkLinkReferences(
  * @param itemTypeMap - Map for reference lookup
  * @returns IRsp (rspOK on success, error on invalid reference)
  */
-function checkLinkHasClass(
+function checkLinkInstanceOf(
     link: any, // PigItemType.aSourceLink | PigItemType.aTargetLink,
     parentId: string,
     linkIndex: number,
     linkArrayName: string,
     itemTypeMap: Map<TPigId, PigItemTypeValue>
 ): IRsp {
-    if (!link.hasClass) {
-        return Msg.create(674, parentId, linkIndex, linkArrayName, 'missing hasClass');
+    if (!link.instanceOf) {
+        return Msg.create(674, parentId, linkIndex, linkArrayName, 'missing instanceOf');
     }
 
 /*    // Skip validation for known ontology references (e.g., cas:, dcterms:)
-    if (referencesKnownOntology(link.hasClass)) {
+    if (referencesKnownOntology(link.instanceOf)) {
         return rspOK;
     } */
 
-    const targetType = itemTypeMap.get(link.hasClass);
+    const targetType = itemTypeMap.get(link.instanceOf);
     if (!targetType) {
-        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.hasClass, 'not found in package');
+        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.instanceOf, 'not found in package');
     }
 
     if (targetType !== PigItemType.Link) {
-        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.hasClass, `expected ${DEF.pfxNsMeta}Link, found ${targetType}`);
+        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.instanceOf, `expected ${DEF.pfxNsMeta}Link, found ${targetType}`);
     }
 
     return rspOK;
 }
 
 /**
- * Check that Entity/Relationship references (hasClass for instances or specializes for classes) point to valid items
+ * Check that Entity/Relationship references (instanceOf for instances or specializes for classes) point to valid items
  * @param pkg - Package to validate
  * @param itemTypeMap - Map from ID to itemType for reference lookup
- * @param refType - Type of reference to check: 'hasClass' or 'specializes'
+ * @param refType - Type of reference to check: 'instanceOf' or 'specializes'
  * @returns IRsp (rspOK on success, error on invalid reference)
  */
 function checkReferences(
     pkg: IAPackage,
     itemType: PigItemTypeValue, // PigItemType.anEntity | PigItemType.aRelationship,
     itemTypeMap: Map<TPigId, PigItemTypeValue>,
-    refType: 'hasClass' | 'specializes'
+    refType: 'instanceOf' | 'specializes'
 ): IRsp {
-    const chkHasClass = refType === 'hasClass';
+    const chkInstanceOf = refType === 'instanceOf';
 
     for (let i = 0; i < pkg.graph.length; i++) {
         const item = pkg.graph[i];
@@ -1145,14 +1146,14 @@ function checkReferences(
         const iId = item.id;
 
         if (iType == itemType) {
-            if ((chkHasClass && PigItem.isInstance(iType)) || (!chkHasClass && PigItem.isClass(iType))) {
+            if ((chkInstanceOf && PigItem.isInstance(iType)) || (!chkInstanceOf && PigItem.isClass(iType))) {
                 // In case of a class, check that specializes points to a valid class of the same type (Entity or Relationship),
-                // in case of an instance, check that hasClass points to a valid class (Entity or Relationship)
+                // in case of an instance, check that instanceOf points to a valid class (Entity or Relationship)
                 const refValue = item[refType];
 
                 if (!refValue) {
                     // specializes is optional (can inherit from pig:Entity directly)
-                    if (!chkHasClass)
+                    if (!chkInstanceOf)
                         continue;
                     return Msg.create(674, iId, i, refType, `missing ${refType}`);
                 }
@@ -1161,8 +1162,8 @@ function checkReferences(
                 if (Object.values(PigItemType).includes(refValue as PigItemTypeValue) || LIB.isHostedOntologyId(refValue) || LIB.isContextId(refValue))
                     continue;
 
-                // Expected type depends on whether we're checking hasClass or specializes:
-                // - hasClass: anEntity -> Entity, aRelationship -> Relationship
+                // Expected type depends on whether we're checking instanceOf or specializes:
+                // - instanceOf: anEntity -> Entity, aRelationship -> Relationship
                 // - specializes: Entity -> Entity, Relationship -> Relationship
                 const expectedType = (itemType == PigItemType.Entity || itemType == PigItemType.anEntity) ? PigItemType.Entity : PigItemType.Relationship;
                 const targetType = itemTypeMap.get(refValue);
@@ -1259,7 +1260,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
             // Check each property value
             for (let j = 0; j < instance.hasProperty.length; j++) {
                 const prop = instance.hasProperty[j];
-                const propClassId = prop.hasClass;
+                const propClassId = prop.instanceOf;
 
                 // LOG.debug(`checkValueRanges - prop[${j}]:`, JSON.stringify(prop, null, 2));
 
@@ -1397,7 +1398,7 @@ function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
  * - Validates that when a Link class points to an Enumeration,
  *   all instances using that Link class reference valid enumeration values
  * - Enumerations are Entity classes with a datatype property
- * - targetLinks must reference anEntity instances whose hasClass matches the enumeration
+ * - targetLinks must reference anEntity instances whose instanceOf matches the enumeration
  * 
  * @param pkg - Package to validate
  * @param enumerationMap - Map of enumeration Entity class definitions (Entity classes with datatype)
@@ -1419,7 +1420,7 @@ function checkEnumeratedValues(
         if (Array.isArray(hasTargetLink)) {
             for (let j = 0; j < hasTargetLink.length; j++) {
                 const link = hasTargetLink[j];
-                const linkClassId = link.hasClass as TPigId;
+                const linkClassId = link.instanceOf as TPigId;
                 const targetId = link.idRef as TPigId;
 
                 if (!linkClassId || !targetId) {
@@ -1534,8 +1535,8 @@ function checkNamespacePrefixes(pkg: IAPackage): IRsp {
         const primaryId = item['@id'] ?? item.id;
         if (primaryId) ids.push(primaryId);
 
-        // hasClass reference
-        if (item.hasClass) ids.push(item.hasClass);
+        // instanceOf reference
+        if (item.instanceOf) ids.push(item.instanceOf);
 
         // specializes reference(s)
         if (item.specializes) {
@@ -1549,14 +1550,14 @@ function checkNamespacePrefixes(pkg: IAPackage): IRsp {
         // hasProperty references
         if (Array.isArray(item.hasProperty)) {
             for (const prop of item.hasProperty) {
-                if (prop.hasClass) ids.push(prop.hasClass);
+                if (prop.instanceOf) ids.push(prop.instanceOf);
             }
         }
 
         // hasTargetLink references
         if (Array.isArray(item.hasTargetLink)) {
             for (const link of item.hasTargetLink) {
-                if (link.hasClass) ids.push(link.hasClass);
+                if (link.instanceOf) ids.push(link.instanceOf);
                 if (link.idRef) ids.push(link.idRef);
             }
         }
@@ -1564,7 +1565,7 @@ function checkNamespacePrefixes(pkg: IAPackage): IRsp {
         // hasSourceLink references
         if (Array.isArray(item.hasSourceLink)) {
             for (const link of item.hasSourceLink) {
-                if (link.hasClass) ids.push(link.hasClass);
+                if (link.instanceOf) ids.push(link.instanceOf);
                 if (link.idRef) ids.push(link.idRef);
             }
         }

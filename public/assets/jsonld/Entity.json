@@ -85,13 +85,26 @@
     },
     "cas:icon": {
       "type": "object",
-      "description": "Optional icon representation for this Entity type",
+      "description": "Optional string representing the icon for this Entity",
       "properties": {
         "@value": {
           "type": "string",
           "description": "Icon identifier or path"
         }
       },
+      "required": [ "@value" ],
+      "additionalProperties": false
+    },
+    "cas:color": {
+      "type": "object",
+      "description": "Optional string representing the color in HTML format",
+      "properties": {
+        "@value": {
+          "type": "string",
+          "pattern": "^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$"
+        }
+      },
+      "required": [ "@value" ],
       "additionalProperties": false
     }
   },

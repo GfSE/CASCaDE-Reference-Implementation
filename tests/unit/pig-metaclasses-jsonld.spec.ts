@@ -681,7 +681,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             expect(anEntity.status().ok).toBe(true);
 
             expect(anEntity.hasProperty?.length).toBe(2);
-            expect(anEntity.hasProperty[1].hasClass).toBe(`${DEF.pfxNsMeta}Category`);
+            expect(anEntity.hasProperty[1].instanceOf).toBe(`${DEF.pfxNsMeta}Category`);
 
             // Get the property data as JSON-LD
             const outData = getJSONLD(anEntity) as any;

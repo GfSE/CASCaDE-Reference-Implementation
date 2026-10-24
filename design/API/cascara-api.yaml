@@ -1,0 +1,720 @@
+openapi: 3.0.3
+info:
+  title: CASCaRA API
+  description: >
+    REST API providing CRUD (Create, Read, Update, Delete) operations for every
+    concrete metamodel item type of the CASCaRA Graph, namespace prefix `cas:`.
+    Concrete CASCaRA types - Enumeration, Property, Link, Entity, Relationship.
+    Concrete CASCaRA instances - anEntity, aRelationship, aPackage.
+    `aProperty`, `aSourceLink` and `aTargetLink` are not exposed as standalone
+    resources because they have no identifier of their own and only exist as
+    embedded parts of anEntity, aRelationship or aPackage.
+    For all read (GET) operations, the desired representation format
+    (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`, or
+    `cas.ttl` / `text/turtle`) can be requested either via the `format` query
+    parameter or via the standard HTTP `Accept` header; if both are given,
+    `format` takes precedence.
+    Note
+    - the API definition omits schemata, because they are implemented in the
+      CASCaRA core software and shall not be duplicated here.
+  version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  contact:
+    name: GfSE
+    url: https://gfse.org
+
+servers:
+  - url: /api/v1
+    description: CASCaRA API base path
+
+tags:
+  - name: Repository
+    description: CRUD for repositories
+  - name: aPackage
+    description: CRUD for cas:aPackage
+  - name: Item
+    description: CRUD for any CASCaRA item type, dispatched via the itemType attribute
+
+paths:
+
+  #############################
+  # Repository
+  #############################
+  /repositories/:
+    get:
+      tags: [Repository]
+      summary: List repositories
+      description: >
+        Returns a list of RepositoryProxy objects, one per repository. Each
+        proxy carries the metadata, but not the content, so the (potentially large)
+        embedded graph is never transferred when merely listing repositories.
+      operationId: listRepositories
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: Array of repository proxies
+          content:
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of repository proxies.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      tags: [Repository]
+      summary: Create a new repository
+      description: >
+        Creates a new repository from a single aPackage item (not an array).
+        The content may be empty, but the request body must still provide the metadata;
+        see RepositoryProxy.
+      operationId: createRepository
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Repository created
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /repositories/{repositoryId}/:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+    get:
+      tags: [Repository]
+      summary: Get a repository by id, including its content
+      operationId: getRepository
+      parameters:
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: The requested repository
+          content:
+            application/ld+json:
+              schema:
+                type: object
+            application/xml:
+              schema:
+                type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the repository, including its graph.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Repository]
+      summary: Update a repository, including its content
+      operationId: updateRepository
+      parameters:
+        - $ref: '#/components/parameters/mode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Repository updated
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Repository]
+      summary: Delete a repository, including its content
+      operationId: deleteRepository
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  #############################
+  # Item (any metamodel item type)
+  #############################
+  /repositories/{repositoryId}/items:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+    get:
+      tags: [Item]
+      summary: List items of a given itemType
+      description: >
+        Returns a list of items of the concrete CASCaRA item type given by
+        the required itemType query parameter. This is a common entry point
+        for all metamodel classes and instances, as an alternative to the
+        type-specific list endpoints.
+      operationId: listItems
+      parameters:
+        - $ref: '#/components/parameters/itemType'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/specializes'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: Array of items of the requested itemType
+          content:
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of items.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      tags: [Item]
+      summary: Create one or more new items of any CASCaRA item type
+      description: >
+        Creates a batch of new items from the submitted array, even if it
+        contains only a single item. Each item's own itemType attribute
+        determines the concrete schema used to instantiate it, so the array
+        can mix items of different types (e.g. Entities, Relationships,
+        aPackages).
+      operationId: createItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+      responses:
+        '201':
+          description: Array of created items, in the same order as the request body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /repositories/{repositoryId}/items/{itemId}:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
+    get:
+      tags: [Item]
+      summary: Get an item of any CASCaRA item type by id
+      description: >
+        Returns the item with the given id. The itemType attribute of the
+        returned representation determines its concrete schema.
+      operationId: getItem
+      parameters:
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: The requested item
+          content:
+            application/ld+json:
+              schema:
+                type: object
+            application/xml:
+              schema:
+                type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the item.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Item]
+      summary: Update an item of any CASCaRA item type
+      description: >
+        Replaces the item with the given id. The itemType attribute of the
+        request body determines the concrete schema used to instantiate it.
+      operationId: updateItem
+      parameters:
+        - $ref: '#/components/parameters/mode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [Item]
+      summary: Delete an item of any CASCaRA item type
+      operationId: deleteItem
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /repositories/{repositoryId}/items/{itemId}/revisions:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
+    get:
+      tags: [Item]
+      summary: Get the revision history of an item
+      description: >
+        Returns the historical trace of revisions of the item with the
+        given id, ordered from the newest to the oldest revision. If the
+        item's itemType is 'cas:aPackage', only an APackageProxy is
+        returned for each revision (i.e. without the embedded graph), to
+        avoid the cost of materializing the full graph for every historical
+        revision.
+      operationId: getItemRevisions
+      parameters:
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: Array of historical revisions of the item, newest first.
+          content:
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of revisions.
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  #############################
+  # aPackage (instance / container)
+  #############################
+  /repositories/{repositoryId}/apackages:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+    get:
+      tags: [aPackage]
+      summary: List aPackage instances
+      operationId: listAPackages
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: Array of aPackage instances (proxies, graph omitted for brevity).
+          content:
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of aPackage proxies.
+        '400':
+          $ref: '#/components/responses/BadRequest'
+    post:
+      tags: [aPackage]
+      summary: >
+        Create (import) a new aPackage, including its embedded graph.
+        Use the provided id; otherwise the server will generate a new id.
+      operationId: createAPackage
+      parameters:
+        - $ref: '#/components/parameters/mode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: aPackage created
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /repositories/{repositoryId}/apackages/{itemId}:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
+    get:
+      tags: [aPackage]
+      summary: Get an aPackage instance by id, including its graph
+      operationId: getPackage
+      parameters:
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: The requested aPackage instance
+          content:
+            application/ld+json:
+              schema:
+                type: object
+            application/xml:
+              schema:
+                type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the aPackage instance, including its graph.
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [aPackage]
+      summary: Update an aPackage instance, including its graph
+      operationId: updatePackage
+      parameters:
+        - $ref: '#/components/parameters/mode'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: aPackage updated
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [aPackage]
+      summary: Delete an aPackage instance, including its graph
+      operationId: deletePackage
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /repositories/{repositoryId}/apackages/{itemId}/revisions:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
+    get:
+      tags: [aPackage]
+      summary: Get the revision history of an aPackage
+      description: >
+        Returns the historical trace of revisions of the aPackage with the
+        given id, ordered from the newest to the oldest revision. Only an
+        APackageProxy is returned for each revision (i.e. without the
+        embedded graph), to avoid the cost of materializing the full graph
+        for every historical revision.
+      operationId: getPackageRevisions
+      parameters:
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/Accept'
+      responses:
+        '200':
+          description: Array of historical revisions of the aPackage, newest first.
+          content:
+            application/ld+json:
+              schema:
+                type: array
+                items:
+                  type: object
+            application/xml:
+              schema:
+                type: array
+                items:
+                  type: object
+            text/turtle:
+              schema:
+                type: string
+                description: RDF Turtle serialization of the array of revisions.
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /repositories/{repositoryId}/apackages/{itemId}/items:
+    parameters:
+      - $ref: '#/components/parameters/repositoryId'
+      - $ref: '#/components/parameters/itemId'
+    post:
+      tags: [aPackage]
+      summary: Add items to an aPackage's graph
+      description: >
+        Adds the items identified by the given array of PigId references
+        (anEntity, aRelationship, or nested aPackage instances) to the
+        aPackage's embedded graph. Items that are already part of the
+        aPackage are left unchanged.
+        Referenced items which are not known by the repository are ignored.
+      operationId: addItems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: The updated aPackage instance
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags: [aPackage]
+      summary: Remove items from an aPackage's graph
+      description: >
+        Removes the items identified by the given array of PigId references
+        from the aPackage's embedded graph. Items that are not part of the
+        aPackage are ignored. Those items are not deleted from the repository.
+        Referenced items which are not part of the package are ignored.
+      operationId: removeItems
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: The updated aPackage instance
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  parameters:
+    repositoryId:
+      name: repositoryId
+      in: path
+      required: true
+      description: URI (TPigId) of the repository that hosts the items addressed by this path.
+      schema:
+        type: string
+    id:
+      name: id
+      in: path
+      required: true
+      description: URI (TPigId) of the item, e.g. `ns:123e4567-e89b-12d3-a456-426614174000` or a URL.
+      schema:
+        type: string
+    itemId:
+      name: itemId
+      in: path
+      required: true
+      description: URI (TPigId) of the item, e.g. `ns:123e4567-e89b-12d3-a456-426614174000` or a URL.
+      schema:
+        type: string
+    limit:
+      name: limit
+      in: query
+      required: false
+      description: >
+        Maximum number of items to return in a single page of results.
+        Used together with `offset` for pagination; defaults to 100 if omitted.
+      schema:
+        type: integer
+        minimum: 1
+        default: 100
+    offset:
+      name: offset
+      in: query
+      required: false
+      description: >
+        Number of items to skip from the beginning of the (filtered) result set
+        before starting to return results. Used together with `limit` for
+        pagination; defaults to 0 (start at the first item) if omitted.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    specializes:
+      name: specializes
+      in: query
+      required: false
+      description: >
+        Filter items that specialize (are subclasses of) the given class URI,
+        i.e. whose own `specializes` attribute equals this value. Only
+        applicable to metamodel classes (Enumeration, Property, Link, Entity,
+        Relationship), which may form a `rdfs:subClassOf` hierarchy via
+        `specializes`.
+      schema:
+        type: string
+    type:
+      name: type
+      in: query
+      required: false
+      description: Filter instances of the given class URI.
+      schema:
+        type: string
+    itemType:
+      name: itemType
+      in: query
+      required: true
+      description: >
+        The CASCaRA item type URI of the items to list, e.g. 'cas:Entity' or
+        'cas:aPackage'. Used to select which concrete schema the returned
+        items are instantiated as.
+      schema:
+        type: string
+        enum:
+          - 'cas:Enumeration'
+          - 'cas:Property'
+          - 'cas:Link'
+          - 'cas:Entity'
+          - 'cas:Relationship'
+          - 'cas:anEntity'
+          - 'cas:aRelationship'
+          - 'cas:aPackage'
+    mode:
+      name: mode
+      in: query
+      required: false
+      description: >
+        Write strategy for POST (create) and PUT (update) operations.
+        'replace' (default) always overwrites the stored item with the request body,
+        regardless of its age. 'update' only overwrites the stored item if the 
+        request body is younger than the currently stored item, as determined by
+        comparing their 'modified' attribute; otherwise the stored item is
+        left unchanged.
+        The prevailing item is returned in all cases.
+      schema:
+        type: string
+        enum: [replace, update]
+        default: replace
+    format:
+      name: format
+      in: query
+      required: false
+      description: >
+        Desired serialization format of the returned representation(s).
+        `cas.jsonld` (default) returns CASCaRA JSON-LD, the native format used
+        throughout this API and in the request bodies of write operations.
+        `cas.xml` returns the equivalent CASCaRA XML representation.
+        `cas.ttl` returns the equivalent representation as RDF Turtle.
+        This query parameter is a convenience override for simple browser-based
+        testing; the standards-based alternative is HTTP content negotiation
+        via the `Accept` header (see the `Accept` parameter below). If both are
+        given, the `format` query parameter takes precedence over `Accept`.
+      schema:
+        type: string
+        enum: [cas.jsonld, cas.xml, cas.ttl]
+        default: cas.jsonld
+    Accept:
+      name: Accept
+      in: header
+      required: false
+      description: >
+        Standard HTTP content negotiation header, used to request the desired
+        serialization format of the returned representation(s) as an
+        alternative to the `format` query parameter.
+        `application/ld+json` (default) requests CASCaRA JSON-LD.
+        `application/xml` requests the equivalent CASCaRA XML representation.
+        `text/turtle` requests the equivalent representation as RDF Turtle.
+        If the `format` query parameter is also present, it takes precedence
+        over this header.
+      schema:
+        type: string
+        enum: [application/ld+json, application/xml, text/turtle]
+        default: application/ld+json
+
+  responses:
+    BadRequest:
+      description: The request payload failed schema or constraint validation.
+      content:
+        application/json:
+          schema:
+            type: object
+    NotFound:
+      description: No item with the given id was found.
+      content:
+        application/json:
+          schema:
+            type: object
+    Conflict:
+      description: The operation conflicts with the current state (e.g. duplicate id, or item still referenced).
+      content:
+        application/json:
+          schema:
+            type: object

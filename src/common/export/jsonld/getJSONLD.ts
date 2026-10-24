@@ -40,7 +40,8 @@ import { MVF } from '../../lib/mvf';
 import {
     TPigId, TPigItem, PigItem, PigItemType, /*PigItemTypeValue, */
     AnEntity, APackage, ARelationship,
-    Entity, Relationship,Property, Link, Enumeration
+    Entity, Relationship,Property, Link, Enumeration,
+
 } from '../../schema/pig/ts/pig-metaclasses';
 
 /*
@@ -207,9 +208,18 @@ class GetJSONLD {
             if (!graph || !Array.isArray(graph) || graph.length === 0)
                 return [];
 
-            // Transform each graph item to JSON-LD
-            // The graph items are already in native format (from get()), need to convert to JSON-LD
+            // Transform each graph item to JSON-LD. Nested/contained packages
+            // (not yet produced by current importers, but exporters must be
+            // prepared for them) are exported only as a proxy - never with
+            // their full graph - to avoid duplicating/interleaving a nested
+            // package's contents with its own top-level export.
             return graph.map(item => {
+                if (PigItem.isAPackage(item)) {
+                    const proxy = (item as APackage).getProxy();
+                    return GetJSONLD.makeIdObjects(
+                        MVF.renameJsonTags(proxy as unknown as JsonObject, MVF.toJSONLD)
+                    ) as JsonObject;
+                }
                 // LOG.debug('Transforming graph items to JSON-LD', item, typeof (item), (item as any).constructor.name);
                 return getJSONLD(item) as JsonObject;
             });
@@ -331,7 +341,7 @@ class GetJSONLD {
                 propValue['@id'] = cfg.idRef;
             }
 
-            const key = cfg.hasClass as TPigId;
+            const key = cfg.instanceOf as TPigId;
             if (!grouped.has(key)) {
                 grouped.set(key, []);
             }
@@ -373,9 +383,10 @@ class GetJSONLD {
             '@context', '@id', '@type', '@graph', '@value', '@language',
             `${DEF.pfxNsMeta}itemType`, `${DEF.pfxNsMeta}specializes`,
             `${DEF.pfxNsDcmi}title`, 'skos:definition', `${DEF.pfxNsDcmi}description`,
+            `${DEF.pfxNsMeta}icon`, `${DEF.pfxNsMeta}color`,
             `${DEF.pfxNsDcmi}modified`, `${DEF.pfxNsDcmi}creator`,
             `${DEF.pfxNsMeta}revision`, `${DEF.pfxNsMeta}priorRevision`,
-            `${DEF.pfxNsMeta}enumeratedProperty`, `${DEF.pfxNsMeta}enumeratedSourceLink`, `${DEF.pfxNsMeta}enumeratedTargetLink`, `${DEF.pfxNsMeta}enumeratedEndpoint`
+            `${DEF.pfxNsMeta}enumeratedProperty`, `${DEF.pfxNsMeta}enumeratedSourceLink`, `${DEF.pfxNsMeta}enumeratedTargetLink`, `${DEF.pfxNsMeta}enumeratedEndpoint`, `${DEF.pfxNsMeta}enumeratedValue`
         ];
 
         // Separate JSON-LD special keys from other keys

@@ -38,7 +38,8 @@ import {
     TPigItem, PigItemType, PigItemTypeValue,
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
-    AProperty, ATargetLink, ASourceLink
+    AProperty, ATargetLink, ASourceLink,
+    PigItem
 } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsXML {
@@ -98,7 +99,7 @@ export function getXML(item: TPigItem, options?: IOptionsXML): string {
     return result;
 }
 
-const attrNameType = "rdf:type";  // or cas:hasClass
+const attrNameType = "rdf:type";  // or cas:instanceOf
 /**
  * Static class containing CASCaRA XML export methods for all PIG types
  */
@@ -203,7 +204,7 @@ class GetXML {
         const i2 = indent.repeat(2);
 
         const tag = "cas:anEntity";
-        const cl = itm.hasClass;
+        const cl = itm.instanceOf;
         let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="${cl}">\n`;
 
         // title (multi-language)
@@ -263,7 +264,7 @@ class GetXML {
         const i2 = indent.repeat(2);
 
         const tag = "cas:aRelationship";
-        const cl = itm.hasClass;
+        const cl = itm.instanceOf;
         let xml = `${i1}<${tag} id="${itm.id}" ${attrNameType}="${cl}">\n`;
 
         // title (multi-language)
@@ -658,9 +659,12 @@ class GetXML {
             xml += `${i2}<dcterms:modified>${itm.modified}</dcterms:modified>\n`;
         }
 
-        // icon (optional)
+        // icon and color (optional)
         if (itm.icon?.value) {
             xml += `${i2}<cas:icon>${this.escapeXmlText(itm.icon.value)}</cas:icon>\n`;
+        }
+        if (itm.color?.value) {
+            xml += `${i2}<cas:color>${this.escapeXmlText(itm.color.value)}</cas:color>\n`;
         }
 
         // enumeratedProperty (array of allowed Property class URIs)
@@ -870,7 +874,7 @@ class GetXML {
         // group properties by class, preserving first-seen order
         const groups = new Map<string, AProperty[]>();
         for (const p of props) {
-            const cl = p.hasClass;
+            const cl = p.instanceOf;
             const group = groups.get(cl);
             if (group)
                 group.push(p);
@@ -912,7 +916,7 @@ class GetXML {
         // group links by class, preserving first-seen order
         const groups = new Map<string, (ASourceLink | ATargetLink)[]>();
         for (const l of links) {
-            const cl = l.hasClass;
+            const cl = l.instanceOf;
             const group = groups.get(cl);
             if (group)
                 group.push(l);
@@ -955,12 +959,35 @@ class GetXML {
             ? graph.filter(item => filterTypes.includes(item.itemType))
             : graph;
 
+        // Nested/contained packages (not yet produced by current importers, but
+        // exporters must be prepared for them) are exported only as a proxy -
+        // never with their full graph - to avoid duplicating/interleaving a
+        // nested package's contents with its own top-level export.
         for (const item of items) {
-            xml += getXML(item, options);
+            if (PigItem.isAPackage(item)) {
+                xml += this.xPackageProxy((item as APackage).getProxy(), indent + '\t');
+            } else {
+                xml += getXML(item, options);
+            }
         }
 
         xml += `${indent}</graph>\n`;
         return xml;
+    }
+
+    /**
+     * Render a nested/contained package as a minimal proxy element, carrying
+     * only id, modified, revision and creator - never its full graph.
+     * @param proxy - proxy representation of the contained package
+     * @param indent - indentation string for the element
+     * @returns XML representation of the package proxy
+     */
+    private static xPackageProxy(proxy: { id: string; modified?: string; revision?: string; creator?: string }, indent: string): string {
+        let xml = `${indent}<cas:aPackage id="${proxy.id}" rdf:type="cas:Package">\n`;
+        xml += `${indent}\t<dcterms:modified>${proxy.modified}</dcterms:modified>\n`;
+        if (proxy.revision) xml += `${indent}\t<cas:revision>${proxy.revision}</cas:revision>\n`;
+        if (proxy.creator) xml += `${indent}\t<dcterms:creator>${this.escapeXmlText(proxy.creator)}</dcterms:creator>\n`;
+        return `${xml}${indent}</cas:aPackage>\n`;
     }
 
     /**

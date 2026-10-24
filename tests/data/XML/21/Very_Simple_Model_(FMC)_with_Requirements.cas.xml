@@ -1,81 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cas:aPackage
-	xmlns:cas="https://product-information-graph.org/ontology/2026-05-08/metamodel#"
-	xmlns:dcterms="http://purl.org/dc/terms/"
-	xmlns:skos="https://www.w3.org/TR/skos-reference/"
-	xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:o="https://product-information-graph.org/ontology/custom#"
+	xmlns:o="https://product-information-graph.org/v0.2/ontology#"
 	xmlns:d="https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:skos="https://www.w3.org/TR/skos-reference/"
+	xmlns:sh="http://www.w3.org/ns/shacl#"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+	xmlns:dcterms="http://purl.org/dc/terms/"
 	xmlns:FMC="http://fmc-modeling.org#"
 	xmlns:IREB="https://cpre.ireb.org/en/downloads-and-resources/glossary#"
-	xmlns:ReqIF="https://www.prostep.org/fileadmin/downloads/PSI_ImplementationGuide_ReqIF_V1-7.pdf#"
 	xmlns:oslc_rm="http://open-services.net/ns/rm#"
+	xmlns:cas="https://product-information-graph.org/v0.2/metamodel#"
 	xmlns:SpecIF="https://specif.de/v1.2/schema#"
 	id="d:ACP-Very-Simple-Model-FMC-with-Requirements"
 	rdf:type="cas:Package">
 
 	<dcterms:title>Very Simple Model (FMC) with Requirements</dcterms:title>
-	<dcterms:modified>2026-01-17T22:38:19.595Z</dcterms:modified>
-	<cas:aProperty rdf:type="dcterms:contributor">
-		<value>mailto:oskar.dungern@gfse.org</value>
-	</cas:aProperty>
-	<cas:aProperty rdf:type="dcterms:license">
-		<value>https://creativecommons.org/licenses/by-sa/4.0/</value>
-	</cas:aProperty>
+	<dcterms:modified>2026-09-30T10:23:15.010Z</dcterms:modified>
 
 	<graph>
-	<cas:Entity id="cas:Package" rdf:type="owl:Class">
-		<cas:specializes>cas:Entity</cas:specializes>
-		<dcterms:title>Package</dcterms:title>
-		<skos:definition>A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances.</skos:definition>
-		<cas:enumeratedProperty>
-			<idRef>dcterms:contributor</idRef>
-			<idRef>dcterms:license</idRef>
-		</cas:enumeratedProperty>
-	</cas:Entity>
 	<cas:Entity id="cas:Organizer" rdf:type="owl:Class">
 		<cas:specializes>cas:Entity</cas:specializes>
 		<dcterms:title>Organizer</dcterms:title>
-		<skos:definition>An element organizing model elements. An example is a list of requirements or a diagram using a certain notation.</skos:definition>
-		<cas:enumeratedProperty>
-			<idRef>cas:Category</idRef>
-		</cas:enumeratedProperty>
+		<skos:definition>A CASCaRA meta-model item for organizing model-elements. An example is a list of requirements or a diagram using a certain notation.</skos:definition>
+	</cas:Entity>
+	<cas:Entity id="cas:Package" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>Package</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions.</skos:definition>
 	</cas:Entity>
 	<cas:Entity id="cas:Root" rdf:type="owl:Class">
 		<cas:specializes>cas:Organizer</cas:specializes>
-		<dcterms:title>Hierarchy Root</dcterms:title>
-		<skos:definition>A subclass of CASCaRA organizer serving as a root for hierarchically organized graph elements.</skos:definition>
+		<dcterms:title>Root</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer serving as a root for trees and tables.</skos:definition>
+		<cas:enumeratedTargetLink>
+			<idRef>cas:lists</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="cas:Tree" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>Tree</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships.</skos:definition>
 		<cas:enumeratedTargetLink>
 			<idRef>cas:lists</idRef>
 		</cas:enumeratedTargetLink>
 	</cas:Entity>
 	<cas:Entity id="cas:Outline" rdf:type="owl:Class">
-		<cas:specializes>cas:Organizer</cas:specializes>
+		<cas:specializes>cas:Tree</cas:specializes>
 		<dcterms:title>Outline</dcterms:title>
-		<skos:definition>A subclass of CASCaRA organizer comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</skos:definition>
-		<cas:enumeratedProperty>
-			<idRef>cas:Category</idRef>
-		</cas:enumeratedProperty>
-		<cas:enumeratedTargetLink>
-			<idRef>cas:lists</idRef>
-		</cas:enumeratedTargetLink>
+		<skos:definition>A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</skos:definition>
 	</cas:Entity>
-	<cas:Entity id="cas:View" rdf:type="owl:Class">
+	<cas:Entity id="cas:Table" rdf:type="owl:Class">
 		<cas:specializes>cas:Organizer</cas:specializes>
-		<dcterms:title>View</dcterms:title>
-		<skos:definition>A subclass of CASCaRA organizer representing a model view (diagram) using a certain notation showing selected model elements.</skos:definition>
-		<cas:enumeratedProperty>
-			<idRef>cas:Category</idRef>
-			<idRef>cas:Diagram</idRef>
-		</cas:enumeratedProperty>
+		<dcterms:title>Table</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer representing a table showing selected model elements.</skos:definition>
 		<cas:enumeratedTargetLink>
 			<idRef>cas:shows</idRef>
-			<idRef>cas:depicts</idRef>
 		</cas:enumeratedTargetLink>
 	</cas:Entity>
+	<cas:Property id="cas:Diagram" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title>Diagram</dcterms:title>
+		<skos:definition>A diagram illustrating the resource or a link to a diagram.</skos:definition>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minOccurs>0</xs:minOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
 	<cas:Property id="cas:Category" rdf:type="owl:DatatypeProperty">
 		<cas:specializes>cas:Property</cas:specializes>
 		<dcterms:title>has category</dcterms:title>
@@ -83,6 +77,17 @@
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
 				<xs:maxLength value="32"/>
+				<xs:minOccurs>0</xs:minOccurs>
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Property id="cas:Notation" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Category</cas:specializes>
+		<dcterms:title>Notation</dcterms:title>
+		<skos:definition>A reference to a notation defining the syntax and semantics of a diagram.</skos:definition>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
 				<xs:minOccurs>0</xs:minOccurs>
 				<xs:maxOccurs>1</xs:maxOccurs>
 			</xs:restriction>
@@ -133,34 +138,48 @@
 			<idRef>cas:Entity</idRef>
 		</cas:enumeratedEndpoint>
 	</cas:Link>
-	<cas:Property id="dcterms:title" rdf:type="owl:DatatypeProperty">
-		<dcterms:title xml:lang="en">Title</dcterms:title>
-		<dcterms:title xml:lang="de">Titel</dcterms:title>
-		<dcterms:title xml:lang="fr">Titre</dcterms:title>
-		<dcterms:description xml:lang="en"><p> A name given to the resource. <small> (<i> source: <a href="http://purl.org/dc/elements/1.1/title">DCMI</a></i>) </small></p><p> Title (reference: Dublin Core) of the resource represented as rich text in XHTML content. SHOULD include only content that is valid inside an XHTML 'span' element. <small> (<i> source: <a href="http://open-services.net/">OSLC</a></i>) </small></p></dcterms:description>
+	<cas:Enumeration id="SpecIF:Priority-Enumeration" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">Priority</dcterms:title>
+		<dcterms:title xml:lang="de">Priorität</dcterms:title>
+		<dcterms:title xml:lang="fr">Priorité</dcterms:title>
+		<skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
 		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxLength value="256"/>
-				<xs:maxOccurs>1</xs:maxOccurs>
-			</xs:restriction>
+			<xs:restriction base="xs:string"/>
 		</xs:simpleType>
-	</cas:Property>
-	<cas:Property id="dcterms:description" rdf:type="owl:DatatypeProperty">
-		<dcterms:title xml:lang="en">Description</dcterms:title>
-		<dcterms:title xml:lang="de">Beschreibung</dcterms:title>
-		<dcterms:title xml:lang="fr">Description</dcterms:title>
-		<dcterms:description xml:lang="en"><p> An account of the resource. <small> (<i> source: <a href="http://purl.org/dc/elements/1.1/description">DCMI</a></i>) </small></p><p> Descriptive text (reference: Dublin Core) about resource represented as rich text in XHTML content. SHOULD include only content that is valid and suitable inside an XHTML 'div' element. <small> (<i> source: <a href="http://open-services.net/">OSLC</a></i>) </small></p></dcterms:description>
-		<xs:simpleType>
-			<xs:restriction base="xs:string">
-				<xs:maxOccurs>1</xs:maxOccurs>
-			</xs:restriction>
-		</xs:simpleType>
-	</cas:Property>
-	<cas:Property id="cas:Diagram" rdf:type="owl:DatatypeProperty">
-		<dcterms:title xml:lang="en">Diagram</dcterms:title>
-		<dcterms:title xml:lang="de">Diagramm</dcterms:title>
-		<dcterms:title xml:lang="fr">Diagramme</dcterms:title>
-		<skos:definition xml:lang="en">A diagram illustrating the resource or a link to a diagram.</skos:definition>
+		<cas:enumeratedValue id="SpecIF:priorityHigh">
+			<dcterms:title xml:lang="en">high</dcterms:title>
+			<dcterms:title xml:lang="de">hoch</dcterms:title>
+			<dcterms:title xml:lang="fr">haut</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:priorityMedium">
+			<dcterms:title xml:lang="en">medium</dcterms:title>
+			<dcterms:title xml:lang="de">mittel</dcterms:title>
+			<dcterms:title xml:lang="fr">moyen</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:priorityLow">
+			<dcterms:title xml:lang="en">low</dcterms:title>
+			<dcterms:title xml:lang="de">niedrig</dcterms:title>
+			<dcterms:title xml:lang="fr">bas</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Link id="SpecIF:Priority" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title xml:lang="en">Priority</dcterms:title>
+		<dcterms:title xml:lang="de">Priorität</dcterms:title>
+		<dcterms:title xml:lang="fr">Priorité</dcterms:title>
+		<skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
+		<dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>SpecIF:Priority-Enumeration</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Property id="o:PC-Diagram-9792185554" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title>cas:Diagram</dcterms:title>
+		<skos:definition>A diagram illustrating the resource or a link to a diagram.</skos:definition>
+		<dcterms:modified>2026-02-12T22:05:14.551Z</dcterms:modified>
 		<xs:simpleType>
 			<xs:restriction base="xs:string"/>
 		</xs:simpleType>
@@ -170,71 +189,117 @@
 		<dcterms:title xml:lang="en">Paragraph</dcterms:title>
 		<dcterms:title xml:lang="de">Textabsatz</dcterms:title>
 		<dcterms:title xml:lang="fr">Paragraphe</dcterms:title>
-		<dcterms:description xml:lang="en"><p>A 'Paragraph' is an unspecified information in a document at any level.</p></dcterms:description>
-		<dcterms:description xml:lang="de"><p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p></dcterms:description>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2023-07-16T09:30:25.850Z</dcterms:modified>
 		<cas:enumeratedProperty>
 			<idRef>cas:Diagram</idRef>
 			<idRef>cas:Category</idRef>
 		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="cas:View" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>View</dcterms:title>
+		<skos:definition>A PIG organizer class representing a diagram with certain model-elements for a given communication purpose.</skos:definition>
+		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
+		<cas:icon>▣</cas:icon>
+		<cas:enumeratedProperty>
+			<idRef>cas:Diagram</idRef>
+			<idRef>cas:Category</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+			<idRef>cas:shows</idRef>
+			<idRef>cas:depicts</idRef>
+		</cas:enumeratedTargetLink>
 	</cas:Entity>
 	<cas:Entity id="FMC:Actor" rdf:type="owl:Class">
 		<cas:specializes>cas:Entity</cas:specializes>
 		<dcterms:title xml:lang="en">Actor</dcterms:title>
 		<dcterms:title xml:lang="de">Akteur</dcterms:title>
 		<dcterms:title xml:lang="fr">Acteur</dcterms:title>
-		<dcterms:description xml:lang="en"><p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p></dcterms:description>
-		<dcterms:description xml:lang="de"><p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p></dcterms:description>
-		<dcterms:description xml:lang="fr"><p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p></dcterms:description>
-		<cas:icon>□</cas:icon>
+		<skos:definition xml:lang="en">&lt;p&gt;An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.&lt;/p&gt;&lt;p&gt;The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
+		<cas:icon>&amp;#x25A1;</cas:icon>
 		<cas:enumeratedProperty>
 			<idRef>cas:Category</idRef>
 		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
 	</cas:Entity>
 	<cas:Entity id="FMC:State" rdf:type="owl:Class">
 		<cas:specializes>cas:Entity</cas:specializes>
 		<dcterms:title xml:lang="en">State</dcterms:title>
 		<dcterms:title xml:lang="de">Zustand</dcterms:title>
 		<dcterms:title xml:lang="fr">État</dcterms:title>
-		<dcterms:description xml:lang="en"><p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].</p></dcterms:description>
-		<dcterms:description xml:lang="de"><p>Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].</p></dcterms:description>
-		<dcterms:description xml:lang="fr"><p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p></dcterms:description>
-		<cas:icon>○</cas:icon>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
+		<cas:icon>&amp;#x25CB;</cas:icon>
 		<cas:enumeratedProperty>
 			<idRef>cas:Category</idRef>
 		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
 	</cas:Entity>
 	<cas:Entity id="FMC:Event" rdf:type="owl:Class">
 		<cas:specializes>cas:Entity</cas:specializes>
 		<dcterms:title xml:lang="en">Event</dcterms:title>
 		<dcterms:title xml:lang="de">Ereignis</dcterms:title>
 		<dcterms:title xml:lang="fr">Évenement</dcterms:title>
-		<dcterms:description xml:lang="en"><p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p></dcterms:description>
-		<dcterms:description xml:lang="de"><p>Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].</p></dcterms:description>
-		<dcterms:description xml:lang="fr"><p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p></dcterms:description>
-		<cas:icon>♢</cas:icon>
+		<skos:definition xml:lang="en">&lt;p&gt;An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
+		<cas:icon>&amp;#x2662;</cas:icon>
 		<cas:enumeratedProperty>
 			<idRef>cas:Category</idRef>
 		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
 	</cas:Entity>
 	<cas:Entity id="IREB:Requirement" rdf:type="owl:Class">
 		<cas:specializes>cas:Entity</cas:specializes>
 		<dcterms:title xml:lang="en">Requirement</dcterms:title>
 		<dcterms:title xml:lang="de">Anforderung</dcterms:title>
 		<dcterms:title xml:lang="fr">Exigence</dcterms:title>
-		<dcterms:description xml:lang="en"><p> A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small> (<i> source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol></dcterms:description>
-		<dcterms:description xml:lang="de"><p> Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small> (<i> source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a></i>) </small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol></dcterms:description>
-		<dcterms:description xml:lang="fr"><p> Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small> (<i> source: <a href="https://en.wikipedia.org/wiki/Requirement">Wikipedia</a></i>) </small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol></dcterms:description>
-		<cas:icon>↯</cas:icon>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A condition or capability needed by a user to solve a problem or achieve an objective.&lt;/li&gt;&lt;li&gt;A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.&lt;/li&gt;&lt;li&gt;A documented representation of a condition or capability as in (1) or (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A need perceived by a stakeholder.&lt;/li&gt;&lt;li&gt;A capability or property that a system shall have.&lt;/li&gt;&lt;li&gt;A documented representation of a need, capability or property.&lt;/li&gt;&lt;/ol&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.&lt;/li&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Ein von einem Stakeholder wahrgenommener Bedarf.&lt;/li&gt;&lt;li&gt;Eine Fähigkeit oder Eigenschaft, die ein System haben soll.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.&lt;/li&gt;&lt;/ol&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Définition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.&lt;/li&gt;&lt;li&gt;Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Un besoin perçu par une partie prenante;&lt;/li&gt;&lt;li&gt;Une capacité ou une propriété qu'un système doit avoir.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.&lt;/li&gt;&lt;/ol&gt;</skos:definition>
+		<dcterms:modified>2021-02-22T08:59:00+02:00</dcterms:modified>
+		<cas:icon>&amp;#8623;</cas:icon>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
 		<cas:enumeratedTargetLink>
 			<idRef>SpecIF:Priority</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="o:RC-Paragraph-9792185554" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title>SpecIF:Paragraph</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2024-03-02T20:55:23.295Z</dcterms:modified>
+		<cas:enumeratedProperty>
+			<idRef>o:PC-Diagram-9792185554</idRef>
+			<idRef>cas:Category</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
 		</cas:enumeratedTargetLink>
 	</cas:Entity>
 	<cas:Relationship id="SpecIF:writes" rdf:type="owl:Class">
 		<dcterms:title xml:lang="en">writes</dcterms:title>
 		<dcterms:title xml:lang="de">schreibt</dcterms:title>
 		<dcterms:title xml:lang="fr">écrit</dcterms:title>
-		<dcterms:description xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</dcterms:description>
+		<skos:definition xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</skos:definition>
 		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
 		<cas:enumeratedSourceLink>
 			<idRef>SpecIF:writes-toSource</idRef>
 		</cas:enumeratedSourceLink>
@@ -245,7 +310,7 @@
 	<cas:Link id="SpecIF:writes-toSource" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksSource</cas:specializes>
 		<dcterms:title>SpecIF:writes to source</dcterms:title>
-		<skos:definition>Connects the source of SpecIF:writes</skos:definition>
+		<dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:Actor</idRef>
 		</cas:enumeratedEndpoint>
@@ -253,7 +318,7 @@
 	<cas:Link id="SpecIF:writes-toTarget" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksTarget</cas:specializes>
 		<dcterms:title>SpecIF:writes to target</dcterms:title>
-		<skos:definition>Connects the target of SpecIF:writes</skos:definition>
+		<dcterms:description>Connects the target of SpecIF:writes</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:State</idRef>
 		</cas:enumeratedEndpoint>
@@ -262,8 +327,11 @@
 		<dcterms:title xml:lang="en">reads</dcterms:title>
 		<dcterms:title xml:lang="de">liest</dcterms:title>
 		<dcterms:title xml:lang="fr">lit</dcterms:title>
-		<dcterms:description xml:lang="en">A [[FMC:Actor]] 'reads' a [[FMC:State]].</dcterms:description>
+		<skos:definition xml:lang="en">A [[FMC:Actor]] 'reads' a [[FMC:State]].</skos:definition>
 		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
 		<cas:enumeratedSourceLink>
 			<idRef>SpecIF:reads-toSource</idRef>
 		</cas:enumeratedSourceLink>
@@ -274,7 +342,7 @@
 	<cas:Link id="SpecIF:reads-toSource" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksSource</cas:specializes>
 		<dcterms:title>SpecIF:reads to source</dcterms:title>
-		<skos:definition>Connects the source of SpecIF:reads</skos:definition>
+		<dcterms:description>Connects the source of SpecIF:reads</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:Actor</idRef>
 		</cas:enumeratedEndpoint>
@@ -282,7 +350,7 @@
 	<cas:Link id="SpecIF:reads-toTarget" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksTarget</cas:specializes>
 		<dcterms:title>SpecIF:reads to target</dcterms:title>
-		<skos:definition>Connects the target of SpecIF:reads</skos:definition>
+		<dcterms:description>Connects the target of SpecIF:reads</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:State</idRef>
 		</cas:enumeratedEndpoint>
@@ -291,8 +359,11 @@
 		<dcterms:title xml:lang="en">satisfies</dcterms:title>
 		<dcterms:title xml:lang="de">erfüllt</dcterms:title>
 		<dcterms:title xml:lang="fr">satisfait</dcterms:title>
-		<dcterms:description xml:lang="en"><p> The object is satisfied by the subject. <small> (<i> source: <a href="http://open-services.net/">OSLC</a></i>) </small></p><p> SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'. </p></dcterms:description>
+		<skos:definition xml:lang="en">&lt;p&gt;The object is satisfied by the subject. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X &lt;em&gt;satisfies&lt;/em&gt; 'Requirement-4711'.&lt;/p&gt;</skos:definition>
 		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
 		<cas:enumeratedSourceLink>
 			<idRef>oslc_rm:satisfies-toSource</idRef>
 		</cas:enumeratedSourceLink>
@@ -303,7 +374,7 @@
 	<cas:Link id="oslc_rm:satisfies-toSource" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksSource</cas:specializes>
 		<dcterms:title>oslc_rm:satisfies to source</dcterms:title>
-		<skos:definition>Connects the source of oslc_rm:satisfies</skos:definition>
+		<dcterms:description>Connects the source of oslc_rm:satisfies</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>FMC:Actor</idRef>
 			<idRef>FMC:State</idRef>
@@ -312,56 +383,9 @@
 	<cas:Link id="oslc_rm:satisfies-toTarget" rdf:type="owl:ObjectProperty">
 		<cas:specializes>cas:linksTarget</cas:specializes>
 		<dcterms:title>oslc_rm:satisfies to target</dcterms:title>
-		<skos:definition>Connects the target of oslc_rm:satisfies</skos:definition>
+		<dcterms:description>Connects the target of oslc_rm:satisfies</dcterms:description>
 		<cas:enumeratedEndpoint>
 			<idRef>IREB:Requirement</idRef>
-		</cas:enumeratedEndpoint>
-	</cas:Link>
-	<cas:Enumeration id="SpecIF:Priority-Value" rdf:type="owl:Class">
-		<dcterms:title xml:lang="en">Priority</dcterms:title>
-		<dcterms:title xml:lang="de">Priorität</dcterms:title>
-		<dcterms:title xml:lang="fr">Priorité</dcterms:title>
-		<skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
-		<dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
-		<cas:specializes>cas:Enumeration</cas:specializes>
-		<xs:simpleType>
-			<xs:restriction base="xs:string"/>
-		</xs:simpleType>
-		<cas:enumeratedValue id="SpecIF:priorityHigh">
-			<dcterms:title xml:lang="en">high</dcterms:title>
-			<dcterms:title xml:lang="de">hoch</dcterms:title>
-			<dcterms:title xml:lang="fr">haut</dcterms:title>
-		</cas:enumeratedValue>
-		<cas:enumeratedValue id="SpecIF:priorityRatherHigh">
-			<dcterms:title xml:lang="en">rather high</dcterms:title>
-			<dcterms:title xml:lang="de">eher hoch</dcterms:title>
-			<dcterms:title xml:lang="fr">plutôt haut</dcterms:title>
-		</cas:enumeratedValue>
-		<cas:enumeratedValue id="SpecIF:priorityMedium">
-			<dcterms:title xml:lang="en">medium</dcterms:title>
-			<dcterms:title xml:lang="de">mittel</dcterms:title>
-			<dcterms:title xml:lang="fr">moyen</dcterms:title>
-		</cas:enumeratedValue>
-		<cas:enumeratedValue id="SpecIF:priorityRatherLow">
-			<dcterms:title xml:lang="en">rather low</dcterms:title>
-			<dcterms:title xml:lang="de">eher niedrig</dcterms:title>
-			<dcterms:title xml:lang="fr">plutôt bas</dcterms:title>
-		</cas:enumeratedValue>
-		<cas:enumeratedValue id="SpecIF:priorityLow">
-			<dcterms:title xml:lang="en">low</dcterms:title>
-			<dcterms:title xml:lang="de">niedrig</dcterms:title>
-			<dcterms:title xml:lang="fr">bas</dcterms:title>
-		</cas:enumeratedValue>
-	</cas:Enumeration>
-	<cas:Link id="SpecIF:Priority" rdf:type="owl:ObjectProperty">
-		<cas:specializes>cas:linksTarget</cas:specializes>
-		<dcterms:title xml:lang="en">Priority</dcterms:title>
-		<dcterms:title xml:lang="de">Priorität</dcterms:title>
-		<dcterms:title xml:lang="fr">Priorité</dcterms:title>
-		<skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
-		<dcterms:modified>2020-03-26T22:59:00+02:00</dcterms:modified>
-		<cas:enumeratedEndpoint>
-			<idRef>SpecIF:Priority-Value</idRef>
 		</cas:enumeratedEndpoint>
 	</cas:Link>
 	<cas:anEntity id="d:Req-1a8016e2872e78ecadc50feddc00029b" rdf:type="IREB:Requirement">
@@ -392,12 +416,7 @@
 		<dcterms:title>IT-Integration: FiCo-Application and FiCo-Data</dcterms:title>
 		<dcterms:modified>2020-03-06T08:32:00+01:00</dcterms:modified>
 		<cas:aProperty rdf:type="cas:Diagram">
-			<value>
-                    <p class="inline-label">Model Diagram:</p>
-                    <p>
-                        <object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object>
-                    </p>
-                </value>
+			<value><p class="inline-label">Model Diagram:</p><p><object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object></p></value>
 		</cas:aProperty>
 		<cas:aProperty rdf:type="cas:Category">
 			<value>FMC Block Diagram</value>
@@ -472,25 +491,13 @@
 	<cas:anEntity id="d:HierarchyRoot-ACP-Very-Simple-Model-FMC-with-Requirements" rdf:type="cas:Root">
 		<dcterms:title>Hierarchy Root</dcterms:title>
 		<dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
-		<dcterms:modified>2026-01-17T22:38:20.041Z</dcterms:modified>
-		<cas:aTargetLink rdf:type="cas:lists">
-			<idRef>d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements</idRef>
-		</cas:aTargetLink>
-	</cas:anEntity>
-	<cas:anEntity id="d:Folder-ACP-Very-Simple-Model-FMC-with-Requirements" rdf:type="cas:Outline">
-		<dcterms:title>Very Simple Model (FMC) with Requirements</dcterms:title>
-		<dcterms:modified>2026-01-17T22:38:20.041Z</dcterms:modified>
+		<dcterms:modified>2026-09-30T10:23:15.171Z</dcterms:modified>
 		<cas:aTargetLink rdf:type="cas:lists">
 			<idRef>d:Folder-Introduction</idRef>
 			<idRef>d:Folder-Requirements</idRef>
 			<idRef>d:Folder-SystemModel</idRef>
-			<idRef>d:FolderGlossary-10875487071</idRef>
+			<idRef>d:R-ZYXT9aJOdrgkl2T06otPj9A1bR2</idRef>
 		</cas:aTargetLink>
-	</cas:anEntity>
-	<cas:anEntity id="d:Folder-Introduction" rdf:type="cas:Outline">
-		<dcterms:title>Introduction</dcterms:title>
-		<dcterms:description><p> This is a minimal showcase for a model with model-elements and related requirements. It covers pretty much all characteristics neeeded in such cases (including 'statements on statements'), so that transformations and expressive power of other data formats can be evaluated. </p></dcterms:description>
-		<dcterms:modified>2025-02-07T08:32:00+01:00</dcterms:modified>
 	</cas:anEntity>
 	<cas:anEntity id="d:Folder-Requirements" rdf:type="cas:Outline">
 		<dcterms:title>Requirements</dcterms:title>
@@ -508,9 +515,9 @@
 			<idRef>d:Diagram-aec0df7900010000017001eaf53e8876</idRef>
 		</cas:aTargetLink>
 	</cas:anEntity>
-	<cas:anEntity id="d:FolderGlossary-10875487071" rdf:type="cas:Outline">
+	<cas:anEntity id="d:R-ZYXT9aJOdrgkl2T06otPj9A1bR2" rdf:type="cas:Outline">
 		<dcterms:title>Model Elements (Glossary)</dcterms:title>
-		<dcterms:modified>2026-01-17T22:38:13.953Z</dcterms:modified>
+		<dcterms:modified>2026-09-30T10:20:33.440Z</dcterms:modified>
 		<cas:aProperty rdf:type="cas:Category">
 			<value>SpecIF:Glossary</value>
 		</cas:aProperty>

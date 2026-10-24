@@ -118,13 +118,13 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
 
     612: {
         en: (itemType) => 
-            `'${itemType}' must have a hasClass reference`,
+            `'${itemType}' must have a instanceOf reference`,
         de: (itemType) => 
-            `'${itemType}' muss eine hasClass Referenz haben`,
+            `'${itemType}' muss eine instanceOf Referenz haben`,
         fr: (itemType) => 
-            `'${itemType}' doit avoir une référence hasClass`,
+            `'${itemType}' doit avoir une référence instanceOf`,
         es: (itemType) => 
-            `'${itemType}' debe tener una referencia hasClass`
+            `'${itemType}' debe tener una referencia instanceOf`
     },
     613: {
         en: (fromType, toType) =>
@@ -394,13 +394,13 @@ const messages: Record<number, Record<LanguageCode, MessageFunction>> = {
     },
     673: {
         en: (parentId, prp, className, msg) =>
-            `Package validation failed: item '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+            `Package validation failed: item '${parentId}' ${prp}.instanceOf='${className}' - ${msg}`,
         de: (parentId, prp, className, msg) =>
-            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+            `Paket-Validierung fehlgeschlagen: Element '${parentId}' ${prp}.instanceOf='${className}' - ${msg}`,
         fr: (parentId, prp, className, msg) =>
-            `Échec de la validation du package: élément '${parentId}' ${prp}.hasClass='${className}' - ${msg}`,
+            `Échec de la validation du package: élément '${parentId}' ${prp}.instanceOf='${className}' - ${msg}`,
         es: (parentId, prp, className, msg) =>
-            `Error en la validación del paquete: elemento '${parentId}' ${prp}.hasClass='${className}' - ${msg}`
+            `Error en la validación del paquete: elemento '${parentId}' ${prp}.instanceOf='${className}' - ${msg}`
     },
     674: {
         en: (parentId, index, prpName, msg) =>

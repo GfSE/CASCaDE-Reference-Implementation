@@ -18,10 +18,7 @@
  * Authors: rakshit.mittal@uantwerpen.be
  */
 
-import { unzipSync, strFromU8 } from 'fflate';
-
 import { DEF } from '../../lib/definitions';
-// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
 import { IRsp, Msg, Rsp } from '../../lib/messages';
 import { APackage } from '../../schema/pig/ts/pig-metaclasses';
@@ -36,21 +33,23 @@ export class FmiImporter {
     private static readonly modelDescriptionName = 'modelDescription.xml';
 
     /**
-     * Import an FMI model and transform it to CAS items.
+     * Import FMI model(s) and transform them to CAS items.
+     * If the source is a ZIP (.fmu) containing several modelDescription.xml-like
+     * entries, each is transformed and instantiated separately (inner loop).
      *
      * @param source - File path (Node.js), URL, or File/Blob object (Browser)
-     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @returns array of IRsp, one per imported package (first item of each is APackage, rest are graph items)
      *
      * @example
      * // Node.js
-     * const result = await FmiImporter.import('./model.fmu');
+     * const results = await FmiImporter.import('./model.fmu');
      *
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await FmiImporter.import(file);
+     * const results = await FmiImporter.import(file);
      */
-    static async import(source: string | File): Promise<IRsp<unknown>> {
+    static async import(source: string | File): Promise<IRsp<unknown>[]> {
         // Extract filename for validation and logging
         const filename = typeof source === 'string' ? source : source.name;
 
@@ -60,25 +59,42 @@ export class FmiImporter {
         const isXml = normalized.endsWith('.xml');
 
         if (!isFmu && !isXml) {
-            return Msg.create(660, filename, 'expected .fmu archive or .xml model description');
+            return [Msg.create(660, filename, 'expected .fmu archive or .xml model description')];
         }
 
-        // Obtain the modelDescription.xml content (unzip .fmu, or read .xml directly)
-        let xmlToTransform: string;
+        // Obtain the modelDescription.xml content(s) (unzip .fmu, or read .xml directly)
+        let xmlStringsToTransform: string[];
         if (isFmu) {
             const rspXml = await this.extractModelDescription(source, filename);
             if (!rspXml.ok) {
-                return rspXml;
+                return [rspXml];
             }
-            xmlToTransform = rspXml.response as string;
+            xmlStringsToTransform = rspXml.response as string[];
         } else {
             const rspRead = await PLI.readFileAsText(source);
             if (!rspRead.ok) {
-                return rspRead;
+                return [rspRead];
             }
-            xmlToTransform = rspRead.response as string;
+            xmlStringsToTransform = [rspRead.response as string];
         }
 
+        const results: IRsp<unknown>[] = [];
+        for (const xmlToTransform of xmlStringsToTransform) {
+            results.push(await this.parseOne(xmlToTransform, filename));
+        }
+        return results;
+    }
+
+    /**
+     * Transform, validate and instantiate a single FMI model description (already
+     * extracted from a possible ZIP archive).
+     *
+     * @param xmlToTransform - modelDescription.xml text content
+     * @param filename - original filename, used for error messages
+     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @private
+     */
+    private static async parseOne(xmlToTransform: string, filename: string): Promise<IRsp<unknown>> {
         // Security: size limit check
         if (xmlToTransform.length > this.maxSizeInput) {
             return Msg.create(
@@ -135,11 +151,11 @@ export class FmiImporter {
     }
 
     /**
-     * Read a .fmu (ZIP) archive and return the text content of modelDescription.xml.
+     * Read a .fmu (ZIP) archive and return the text content of all modelDescription.xml entries.
      *
      * @param source - File path (Node.js), URL, or File/Blob (Browser)
      * @param filename - original filename for error messages
-     * @returns IRsp whose response is the modelDescription.xml string
+     * @returns IRsp whose response is an array of modelDescription.xml strings (one per matching entry)
      * @private
      */
     private static async extractModelDescription(
@@ -151,34 +167,28 @@ export class FmiImporter {
             return rspBytes;
         }
 
-        const bytes = rspBytes.response as Uint8Array;
-
-        let entries: Record<string, Uint8Array>;
-        try {
-            // Only the modelDescription.xml is needed from the archive.
-            entries = unzipSync(bytes, {
-                filter: (file) => file.name === this.modelDescriptionName
-            });
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : String(e);
-            return Msg.create(660, filename, `failed to read FMU archive: ${msg}`);
+        // Only the modelDescription.xml is needed from the archive.
+        const rsp = PLI.extractFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name === this.modelDescriptionName,
+            filename
+        );
+        if (!rsp.ok) {
+            return rsp;
         }
 
-        const entry = entries[this.modelDescriptionName];
-        if (!entry) {
-            return Msg.create(
-                660,
-                filename,
-                `archive does not contain ${this.modelDescriptionName}`
-            );
+        // Extract all other files bundled in the FMU (resources, binaries, etc.) and
+        // store them in the asset-cache for later use.
+        const rspOther = PLI.extractOtherFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name === this.modelDescriptionName,
+            filename
+        );
+        if (rspOther.ok) {
+            await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
         }
 
-        try {
-            return Rsp.create(0, strFromU8(entry), 'text');
-        } catch (e: unknown) {
-            const msg = e instanceof Error ? e.message : String(e);
-            return Msg.create(660, filename, `failed to decode ${this.modelDescriptionName}: ${msg}`);
-        }
+        return rsp;
     }
 
     /**
@@ -202,7 +212,7 @@ export class FmiImporter {
      * @param allItems - All items including the package
      * @returns Formatted error report string
      * @private
-     */
+     * /
     private static buildErrorReport(allItems: any[]): string {
         let errorReport = '\nErroneous items:';
 
@@ -214,7 +224,7 @@ export class FmiImporter {
         }
 
         return errorReport;
-    }
+    } */
 
     /**
      * Validate that the XML document is an FMI model description.

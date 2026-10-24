@@ -46,7 +46,7 @@ export const DEF = {
     ...BUILD_INFO,
     minLengthId: 2,
     maxSizeXML: 6 * 1024 * 1024, // 6MB
-    timeBetweenPages: 800,
+    timeBetweenPages: 400,
     pfxNsMeta: CAS_NS,
     pfxNsSemi: CAS_NS,
     pfxNsDcmi: DCMI_NS,
@@ -172,5 +172,9 @@ export const RE = {
     contentInRoundBrackets: /^\(([\S\s]+?)\)$/i,  // empty spaces allowed
     contentInSquareBrackets: /^\[([\S\s]+?)\]$/i,  // empty spaces allowed
     // HTML detection: paired tags <tag>...</tag> or self-closing tags <tag />
-    hasHTML: /<[a-zA-Z][^>]*>.*?<\/[a-zA-Z][^>]*>|<[a-zA-Z][^>]*\/>/s
+    hasHTML: /<[a-zA-Z][^>]*>.*?<\/[a-zA-Z][^>]*>|<[a-zA-Z][^>]*\/>/s,
+    // tagSingleObject: /<object\s(?:([^>]*?)\s?data="(.+?)"([^>]*?))(?:\/>|>(.*?)<\/object>)/gi,  // use: result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {}
+    tagSingleObject: /<object\b([^>]*?)\bdata\s*=\s*["']([^"']+)["']([^>]*?)(?:\/>|>([\s\S]*?)<\/object>)/gi,  // use: result.replace(RE.tagSingleObject, (match, before, ref, after, content) => {}
+    tagImg: /<img\b([^>]*)\bsrc\s*=\s*["']([^"']+)["']([^>]*?)\/?>/gi  // use as above
+
 }

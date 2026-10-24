@@ -1,5 +1,5 @@
 import { JsonValue } from '../../lib/helpers';
-import { APackage, TPigItem as TCascaraItem, PigItemTypeValue as TCascaraItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage, TPigItem as TCascaraItem, PigItemTypeValue as TCascaraItemTypeValue, PigItem } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsCypher {
     includeConstraints?: boolean;
@@ -48,40 +48,128 @@ export function getCypher(item: TCascaraItem, options?: IOptionsCypher): string 
     return statements.filter(s => s.trim().length > 0).join('\n\n');
 }
 
-function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string[] {
+
+function exportPackage(
+    pkg: APackage,
+    options: Required<IOptionsCypher>
+): string[] {
     const statements: string[] = [];
-    const graphItems = Array.isArray(pkg.graph) ? pkg.graph : [];
 
-    // Pass 1: create all real nodes first.
-    statements.push(createMergeNode(itemLabels(pkg as unknown as TCascaraItem), pkg.id, itemProperties(pkg as unknown as TCascaraItem, options)));
+    const graphItems: TCascaraItem[] =
+        Array.isArray(pkg.graph) ? pkg.graph : [];
 
-    for (const graphItem of graphItems) {
-        statements.push(createMergeNode(itemLabels(graphItem), graphItem.id, itemProperties(graphItem, options)));
+    // Nested packages are references here, not owned graph items.
+    // Their own export maintains their properties and outgoing edges.
+    if (
+        graphItems.some(
+            item =>
+                PigItem.isAPackage(item) &&
+                item.id === pkg.id
+        )
+    ) {
+        throw new Error(
+            `Package ${pkg.id} cannot contain itself`
+        );
     }
 
-    // Pass 2: create embedded enum-value nodes before relationships reference them.
-    for (const graphItem of graphItems) {
-        statements.push(...createEnumerationValueNodes(graphItem));
-    }
+    // Pass 1: Create or match the parent and graph-item nodes.
+    statements.push(
+        createMergeNode(
+            itemLabels(pkg as unknown as TCascaraItem),
+            pkg.id,
+            itemProperties(
+                pkg as unknown as TCascaraItem,
+                options
+            )
+        )
+    );
 
-    // Pass 3: clear relationships previously managed by this exporter. This makes
-    // repeated exports reflect removed or reordered embedded links/properties.
-    statements.push(clearManagedRelations(pkg.id));
     for (const graphItem of graphItems) {
-        statements.push(clearManagedRelations(graphItem.id));
-    }
-
-    // Pass 4: create relationships.
-    statements.push(...graphItemRelations(pkg as unknown as TCascaraItem));
-    for (let graphIndex = 0; graphIndex < graphItems.length; graphIndex++) {
-        const graphItem = graphItems[graphIndex];
-        if (options.includePackageContains) {
-            statements.push(createRelation(pkg.id, graphItem.id, 'CONTAINS', {}, relationKey('contains', graphIndex)));
+        if (PigItem.isAPackage(graphItem)) {
+            // Only reference the nested package.
+            // Do not overwrite its properties.
+            statements.push(
+                createMergePackageReferenceNode(graphItem.id)
+            );
+        } else {
+            statements.push(
+                createMergeNode(
+                    itemLabels(graphItem),
+                    graphItem.id,
+                    itemProperties(graphItem, options)
+                )
+            );
         }
-        statements.push(...graphItemRelations(graphItem));
+    }
+
+    // Pass 2: Create embedded enumeration values.
+    // Skip nested packages because their data belongs
+    // to their own exports.
+    for (const graphItem of graphItems) {
+        if (!PigItem.isAPackage(graphItem)) {
+            statements.push(
+                ...createEnumerationValueNodes(graphItem)
+            );
+        }
+    }
+
+    // Pass 3: Clear only relationships belonging
+    // to the parent or complete graph items.
+    statements.push(clearManagedRelations(pkg.id));
+
+    for (const graphItem of graphItems) {
+        if (!PigItem.isAPackage(graphItem)) {
+            statements.push(
+                clearManagedRelations(graphItem.id)
+            );
+        }
+    }
+
+    // Pass 4: Create parent containment and
+    // full-item relationships.
+    statements.push(
+        ...graphItemRelations(
+            pkg as unknown as TCascaraItem
+        )
+    );
+
+    for (
+        let graphIndex = 0;
+        graphIndex < graphItems.length;
+        graphIndex++
+    ) {
+        const graphItem = graphItems[graphIndex];
+
+        if (options.includePackageContains) {
+            statements.push(
+                createRelation(
+                    pkg.id,
+                    graphItem.id,
+                    'CONTAINS',
+                    {},
+                    relationKey('contains', graphIndex)
+                )
+            );
+        }
+
+        // Nested packages manage their own outgoing edges.
+        if (!PigItem.isAPackage(graphItem)) {
+            statements.push(
+                ...graphItemRelations(graphItem)
+            );
+        }
     }
 
     return statements;
+}
+function createMergePackageReferenceNode(
+    id: string
+): string {
+    return [
+        `MERGE (n:CascaraItem {id: ${toCypherValue(id)}})`,
+        `ON CREATE SET n.referenceOnly = true, n.title = ${toCypherValue(id)}, n.itemType = 'cas:aPackage'`,
+        'SET n:Package:aPackage;'
+    ].join('\n');
 }
 
 function exportSingleItem(item: TCascaraItem, options: Required<IOptionsCypher>): string[] {
@@ -283,12 +371,12 @@ function createLinkRelations(item: TCascaraItem, field: 'hasSourceLink' | 'hasTa
         if (!cfg || typeof cfg !== 'object') continue;
 
         const targetId = cfg.idRef;
-        const relType = cfg.hasClass ? String(cfg.hasClass) : field;
+        const relType = cfg.instanceOf ? String(cfg.instanceOf) : field;
 
         if (typeof targetId === 'string' && targetId.length > 0) {
             const relProps: Record<string, JsonValue> = {
                 linkDirection: field,
-                linkClass: typeof cfg.hasClass === 'string' ? cfg.hasClass : field
+                linkClass: typeof cfg.instanceOf === 'string' ? cfg.instanceOf : field
             };
             if (typeof cfg.itemType === 'string') {
                 relProps.linkItemType = cfg.itemType;
@@ -354,10 +442,10 @@ function createPropertyRelations(item: TCascaraItem): string[] {
 
     for (let index = 0; index < props.length; index++) {
         const prop = props[index];
-        if (!prop || typeof prop !== 'object' || typeof prop.hasClass !== 'string') continue;
+        if (!prop || typeof prop !== 'object' || typeof prop.instanceOf !== 'string') continue;
 
         const relProps: Record<string, JsonValue> = {
-            propertyClass: prop.hasClass
+            propertyClass: prop.instanceOf
         };
         if (prop.value !== undefined && prop.value !== null) {
             relProps.value = typeof prop.value === 'object' ? JSON.stringify(prop.value) : prop.value;
@@ -369,7 +457,7 @@ function createPropertyRelations(item: TCascaraItem): string[] {
             relProps.composesJson = JSON.stringify(prop.composes);
         }
 
-        statements.push(createRelation(item.id, prop.hasClass, 'HAS_PROPERTY', relProps, relationKey('hasProperty', index)));
+        statements.push(createRelation(item.id, prop.instanceOf, 'HAS_PROPERTY', relProps, relationKey('hasProperty', index)));
     }
 
     return statements;

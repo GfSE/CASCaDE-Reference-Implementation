@@ -1,5 +1,5 @@
 <template>
-    <v-btn color='secondary' class='text-none export-button' @click='openDialog'>🡖 Neo4j API</v-btn>
+    <v-btn color='secondary' variant='elevated' class='text-none export-btn' @click='openDialog'>🡖 Neo4j API</v-btn>
     <v-dialog v-model='dialog' max-width='600'>
         <v-card>
             <v-card-title>Export Packages to Neo4j</v-card-title>
@@ -71,9 +71,13 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color='grey' @click='dialog = false' :disabled='isExporting'>Cancel</v-btn>
+                <v-btn :color="isExporting ? undefined : 'grey'" variant='elevated' class='export-btn' @click='dialog = false' :disabled='isExporting'>
+                    Cancel
+                </v-btn>
                 <v-btn
-                    color='primary'
+                    :color="(packageCount === 0 || !isFormValid || isExporting) ? undefined : 'primary'"
+                    variant='elevated'
+                    class='export-btn'
                     @click='exportPackages'
                     :disabled='packageCount === 0 || !isFormValid || isExporting'
                     :loading='isExporting'
@@ -88,7 +92,7 @@
 <script lang='ts'>
 import { Options, Vue } from 'vue-class-component';
 import { toRaw } from 'vue';
-import { PackageCache } from '../../../stores/package-cache';
+import { ItemCache } from '../../../stores/item-cache';
 import { getCypher } from '../../../common/export/cypher/getCypher';
 import { exportToNeo4j } from './neo4j-export';
 import { LOG } from '../../../common/lib/helpers';
@@ -124,7 +128,7 @@ import { LOG } from '../../../common/lib/helpers';
         // Clear password reduces the risk of re-exposing credentials if the dialog is reopened or the screen is shared:
         this.password = '';
 
-        const cache = PackageCache();
+        const cache = ItemCache();
         this.packageCount = cache.packages.length;
     },
     async exportPackages() {
@@ -133,7 +137,7 @@ import { LOG } from '../../../common/lib/helpers';
         this.isExporting = true;
 
         try {
-            const cache = PackageCache();
+            const cache = ItemCache();
             const pkgs = cache.packages;
             const cypherText = pkgs
                 .map((pkg: any) => getCypher(toRaw(pkg), { includeConstraints: true }))
@@ -166,18 +170,3 @@ import { LOG } from '../../../common/lib/helpers';
 
 export default class Neo4jExportComponent extends Vue {}
 </script>
-
-<style scoped>
-.mb-4 {
-    margin-bottom: 16px;
-}
-
-.mt-4 {
-    margin-top: 16px;
-}
-
-.export-button {
-    font-weight: 400;
-    letter-spacing: 0.01em;
-}
-</style>

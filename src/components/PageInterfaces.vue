@@ -7,7 +7,7 @@
                          color="surface-light"
                          height="400"
                          rounded="lg">
-                    <h2 class="column-title">Import from file</h2>
+                    <h2 class="column-title">Import</h2>
                     <ul>
                         <li v-for="(component, name) in importComponents" :key="name">
                             <component :is="component" />
@@ -33,7 +33,7 @@
                          color="surface-light"
                          height="400"
                          rounded="lg">
-                    <h2 class="column-title">Export to file</h2>
+                    <h2 class="column-title">Export</h2>
                     <ul>
                         <li v-for="(component, name) in exportComponents" :key="name">
                             <component :is="component" />

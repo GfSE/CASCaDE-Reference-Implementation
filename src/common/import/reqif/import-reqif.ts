@@ -28,9 +28,9 @@
  */
 
 import { DEF } from '../../lib/definitions';
-// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
-import { IRsp, Msg/*, Rsp, rspOK*/ } from '../../lib/messages';
+import { IRsp, Msg, Rsp } from '../../lib/messages';
+// import { LOG } from '../../lib/helpers';
 import { APackage } from '../../schema/pig/ts/pig-metaclasses';
 import { XmlImporter } from '../xml/import-xml';
 // import { ConstraintCheckType } from '../../schema/pig/ts/pig-package-constraints';
@@ -43,42 +43,90 @@ export class ReqifImporter {
     private static readonly maxSizeInput = DEF.maxSizeXML;
 
     /**
-     * Import ReqIF document and transform to PIG items
+     * Import ReqIF document(s) and transform to PIG items.
+     * If the source is a ZIP archive containing several .reqif files, each is
+     * transformed and instantiated separately (inner loop over ZIP entries).
      * 
      * @param source - File path (Node.js), URL, or File/Blob object (Browser)
-     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @returns array of IRsp, one per imported package (first item of each is APackage, rest are graph items)
      * 
      * @example
      * // Node.js
-     * const result = await ReqIFImporter.import('./test.reqif');
+     * const results = await ReqifImporter.import('./test.reqif');
      * 
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await ReqifImporter.import(file);
+     * const results = await ReqifImporter.import(file);
      */
-    static async import(source: string | File): Promise<IRsp<unknown>> {
+    static async import(source: string | File): Promise<IRsp<unknown>[]> {
         // Extract filename for validation and logging
         const filename = typeof source === 'string' ? source : source.name;
 
         // Normalize filename/URL for extension check:
-        // - Strip query/fragment (for URLs)
-        // - Make case-insensitive
+        // - Strip query/fragment (for URLs) and make case-insensitive
         const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
+        const isZipped = normalized.endsWith('.reqifz') || normalized.endsWith('.reqif.zip');
+        const isPlain = normalized.endsWith('.reqif');
 
         // Validate file extension
-        if (!normalized.endsWith('.reqif')) {
-            return Msg.create(660, filename, 'expected .reqif file extension');
+        if (!isPlain && !isZipped) {
+            return [Msg.create(660, filename, 'expected .reqif, .reqifz or .reqif.zip file extension')];
         }
 
-        // Read file content
-        const rspRead = await PLI.readFileAsText(source);
-        if (!rspRead.ok) {
-            return rspRead;
+        // Read file content, unpacking the archive first if the file is zipped.
+        // A ZIP may contain several .reqif files; each is transformed and instantiated separately.
+        let xmlStrings: string[];
+        if (isZipped) {
+            const rspBytes = await PLI.readFileAsBytes(source);
+            if (!rspBytes.ok) {
+                return [rspBytes];
+            }
+            const rspXml = PLI.extractFromZip(
+                rspBytes.response as Uint8Array,
+                (name) => name.toLowerCase().endsWith('.reqif'),
+                filename
+            );
+            if (!rspXml.ok) {
+                return [rspXml];
+            }
+            xmlStrings = rspXml.response as string[];
+
+            // Extract any other (non-.reqif) files bundled in the archive (e.g. images) and
+            // store them in the asset-cache for later use.
+            const rspOther = PLI.extractOtherFromZip(
+                rspBytes.response as Uint8Array,
+                (name) => name.toLowerCase().endsWith('.reqif'),
+                filename
+            );
+            if (rspOther.ok) {
+                await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
+            }
+        } else {
+            const rsp = await PLI.readFileAsText(source);
+            if (!rsp.ok) {
+                return [rsp];
+            }
+            xmlStrings = [rsp.response as string];
         }
 
-        const xmlToTransform = rspRead.response as string;
+        const results: IRsp<unknown>[] = [];
+        for (const xmlToTransform of xmlStrings) {
+            results.push(await this.parseOne(xmlToTransform, filename));
+        }
+        return results;
+    }
 
+    /**
+     * Transform, validate and instantiate a single ReqIF document (already extracted
+     * from a possible ZIP archive).
+     *
+     * @param xmlToTransform - .reqif XML text content
+     * @param filename - original filename, used for error messages
+     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @private
+     */
+    private static async parseOne(xmlToTransform: string, filename: string): Promise<IRsp<unknown>> {
         // Security: Size limit check
         if (xmlToTransform.length > this.maxSizeInput) {
             return Msg.create(
@@ -138,16 +186,7 @@ export class ReqifImporter {
         // await PLI.writeFile(JSON.stringify(xmlString,null,2), "from-ReqIF.xml");
 
         // Instantiate APackage from transformed XML
-        const aPackage = new APackage().setXML(xmlString /*, {
-            checkConstraints: [
-                ConstraintCheckType.UniqueIds,
-                // Input has only instances, so omit constraint checks on classes
-                ConstraintCheckType.aPropertyHasClass,
-                ConstraintCheckType.aLinkHasClass
-                //    ConstraintCheckType.anEntityHasClass,
-                //    ConstraintCheckType.aRelationshipHasClass,
-            ] as ConstraintCheckType[]
-        } */);
+        const aPackage = new APackage().setXML(xmlString);
 
         return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
     }

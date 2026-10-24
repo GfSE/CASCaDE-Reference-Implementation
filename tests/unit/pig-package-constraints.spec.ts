@@ -416,7 +416,7 @@ describe('PIG Package Constraint Validation', () => {
             expect(status.ok).toBe(false);
             expect(status.status).toBe(603); // Incomplete item instantiation
 
-            // statusText should indicate that the hasClass reference is invalid (673)
+            // statusText should indicate that the instanceOf reference is invalid (673)
             expect(status.statusText).toContain('671'); // Duplicate ID error code
             expect(status.statusText).toContain('o:Entity_duplicateId_nok');
         /*    const rsp = pkg.get() as IAPackage;
@@ -531,14 +531,14 @@ describe('PIG Package Constraint Validation', () => {
             expect(status.ok).toBe(false);
             expect(status.status).toBe(603); // Incomplete item instantiation
 
-            // statusText should indicate that the hasClass reference is invalid (673)
-            expect(status.statusText).toContain('673'); // Invalid hasClass reference
+            // statusText should indicate that the instanceOf reference is invalid (673)
+            expect(status.statusText).toContain('673'); // Invalid instanceOf reference
             expect(status.statusText).toContain('o:Property_NonExistent');
             
         /*    const rsp = pkg.get() as IAPackage;
             expect(rsp.ok).toBe(false);
-            expect(rsp.status).toBe(673); // Invalid hasClass reference
-            expect(rsp.statusText).toContain('hasProperty[0].hasClass');
+            expect(rsp.status).toBe(673); // Invalid instanceOf reference
+            expect(rsp.statusText).toContain('hasProperty[0].instanceOf');
             expect(rsp.statusText).toContain('o:Property_NonExistent');
             expect(rsp.statusText).toContain('not found in package'); */
         });
@@ -610,8 +610,8 @@ describe('PIG Package Constraint Validation', () => {
             expect(status.ok).toBe(false);
             expect(status.status).toBe(603); // Incomplete item instantiation
 
-            // statusText should indicate that the hasClass reference is invalid (673)
-            expect(status.statusText).toContain('673'); // Invalid hasClass reference
+            // statusText should indicate that the instanceOf reference is invalid (673)
+            expect(status.statusText).toContain('673'); // Invalid instanceOf reference
             expect(status.statusText).toContain('expected cas:Property, found cas:Link');
             // @ToDo: Change error message to show the name of the property instead of its index ... and then:
             // expect(status.statusText).toContain('o:Link_RefersTo');
@@ -619,7 +619,7 @@ describe('PIG Package Constraint Validation', () => {
         /*    const rsp = pkg.get() as IAPackage;
             expect(rsp.ok).toBe(false);
             expect(rsp.status).toBe(673);
-            expect(rsp.statusText).toContain('hasProperty[0].hasClass');
+            expect(rsp.statusText).toContain('hasProperty[0].instanceOf');
             expect(rsp.statusText).toContain('o:Link_RefersTo');
             expect(rsp.statusText).toContain('expected pig:Property, found pig:Link'); */
         });
@@ -707,15 +707,15 @@ describe('PIG Package Constraint Validation', () => {
             expect(status.ok).toBe(false);
             expect(status.status).toBe(603); // Incomplete item instantiation
 
-            // statusText should indicate that the hasClass reference is invalid (673)
+            // statusText should indicate that the instanceOf reference is invalid (673)
             expect(status.statusText).toContain('673');
             expect(status.statusText).toContain('o:Link_NonExistent');
             
         /*    const rsp = pkg.get() as IAPackage;
             
             expect(rsp.ok).toBe(false);
-            expect(rsp.status).toBe(673); // Invalid link hasClass reference
-            expect(rsp.statusText).toContain('hasTargetLink[0].hasClass');
+            expect(rsp.status).toBe(673); // Invalid link instanceOf reference
+            expect(rsp.statusText).toContain('hasTargetLink[0].instanceOf');
             expect(rsp.statusText).toContain('o:Link_NonExistent');
             expect(rsp.statusText).toContain('not found in package'); */
         });
@@ -842,7 +842,7 @@ describe('PIG Package Constraint Validation', () => {
             expect(status.ok).toBe(false);
             expect(status.status).toBe(603); // Incomplete item instantiation
 
-            // statusText should indicate that the hasClass reference is invalid (673)
+            // statusText should indicate that the instanceOf reference is invalid (673)
             expect(status.statusText).toContain('673');
             expect(status.statusText).toContain('o:Property_Rationale');
 
@@ -850,13 +850,13 @@ describe('PIG Package Constraint Validation', () => {
             
             expect(rsp.ok).toBe(false);
             expect(rsp.status).toBe(675);
-            expect(rsp.statusText).toContain('hasSourceLink[0].hasClass');
+            expect(rsp.statusText).toContain('hasSourceLink[0].instanceOf');
             expect(rsp.statusText).toContain('o:Property_Status');
             expect(rsp.statusText).toContain('expected pig:Link, found pig:Property'); */
         });
     });
-    describe('Negative Tests - Invalid Entity and Relationship hasClass References', () => {
-        test('should reject anEntity with missing hasClass reference', () => {
+    describe('Negative Tests - Invalid Entity and Relationship instanceOf References', () => {
+        test('should reject anEntity with missing instanceOf reference', () => {
             const packageWithMissingEntityClass = {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
@@ -883,7 +883,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'd:REQ-invalid-class-nok',
-                        // ❌ Missing @type (which maps to hasClass)
+                        // ❌ Missing @type (which maps to instanceOf)
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
                         [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
@@ -901,7 +901,7 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
         });
 
-        test('should reject anEntity with hasClass pointing to non-existent Entity', () => {
+        test('should reject anEntity with instanceOf pointing to non-existent Entity', () => {
             const packageWithInvalidEntityClass = {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
@@ -946,12 +946,12 @@ describe('PIG Package Constraint Validation', () => {
             expect(status.ok).toBe(false);
             expect(status.status).toBe(603); // Incomplete item instantiation
 
-            // statusText should indicate that the hasClass reference is invalid (675)
-            expect(status.statusText).toContain('675'); // Invalid hasClass reference (not found)
+            // statusText should indicate that the instanceOf reference is invalid (675)
+            expect(status.statusText).toContain('675'); // Invalid instanceOf reference (not found)
             expect(status.statusText).toContain('d:REQ-nonexistent-class-nok');
         });
 
-        test('should reject anEntity with hasClass pointing to wrong type (Property instead of Entity)', () => {
+        test('should reject anEntity with instanceOf pointing to wrong type (Property instead of Entity)', () => {
             const packageWithWrongEntityClassType = {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
@@ -997,12 +997,12 @@ describe('PIG Package Constraint Validation', () => {
             expect(status.ok).toBe(false);
             expect(status.status).toBe(603); // Incomplete item instantiation
 
-            // statusText should indicate that the hasClass reference is invalid (673)
+            // statusText should indicate that the instanceOf reference is invalid (673)
             expect(status.statusText).toContain('675');
             expect(status.statusText).toContain('d:REQ-wrong-class-type-nok');
         });
 
-        test('should reject aRelationship with missing hasClass reference', () => {
+        test('should reject aRelationship with missing instanceOf reference', () => {
             const packageWithMissingRelClass = {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',
@@ -1066,7 +1066,7 @@ describe('PIG Package Constraint Validation', () => {
                     },
                     {
                         '@id': 'd:REL-missing-class-nok',
-                        // ❌ Missing @type (which maps to hasClass)
+                        // ❌ Missing @type (which maps to instanceOf)
                         [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                         [`${DEF.pfxNsMeta}revision`]: '1.0',
                         [`${DEF.pfxNsDcmi}modified`]: '2025-01-16T10:00:00Z',
@@ -1090,7 +1090,7 @@ describe('PIG Package Constraint Validation', () => {
             expect(pkg.status().status).toBe(603); // Not all item instantiations succeeded
         });
 
-        test('should reject aRelationship with hasClass pointing to wrong type (Link instead of Relationship)', () => {
+        test('should reject aRelationship with instanceOf pointing to wrong type (Link instead of Relationship)', () => {
             const packageWithWrongRelClassType = {
                 '@context': {
                     [DEF.pfxNsMeta.slice(0, -1)]: 'https://product-information-graph.gfse.org/',

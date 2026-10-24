@@ -33,14 +33,21 @@
                 <router-view />
             </v-container>
         </v-main>
+
+        <!-- Handles ?update="<url>" / ?replace="<url>" and other command query parameters on any route -->
+        <url-queries />
     </v-app>
 </template>
 
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component';
     import { DEF } from '@/common/lib/definitions';
+    import UrlQueries from '@/components/UrlQueries.vue';
 
     @Options({
+        components: {
+            UrlQueries
+        },
         data() {
             return {
                 drawer: false

@@ -16,7 +16,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
     // Helper to create a minimal valid package
     const createPackage = (properties: any[], propertyDefs: any[] = []): IAPackage => {
         return {
-            hasClass: PigItemType.Package,
+            instanceOf: PigItemType.Package,
             itemType: PigItemType.aPackage,
             id: 'd:test-package',
             title: [{ value: 'Test Package', lang: 'en' }],
@@ -34,7 +34,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 {
                     itemType: PigItemType.anEntity,
                     id: 'd:entity-1',
-                    hasClass: 'o:TestEntity',
+                    instanceOf: 'o:TestEntity',
                     title: [{ value: 'Entity 1', lang: 'en' }],
                     revision: '1',
                     modified: '2025-01-01T00:00:00Z',
@@ -51,14 +51,14 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Name',
+                            instanceOf: 'o:Name',
                             value: { value: 'Engine', lang: 'en' }
                         }
                     ],
                     [
                         {
                             itemType: PigItemType.Property,
-                            hasClass: 'owl:DatatypeProperty',
+                            instanceOf: 'owl:DatatypeProperty',
                             id: 'o:Name',
                             title: [{ value: 'Name', lang: 'en' }],
                             datatype: 'xs:string',
@@ -68,7 +68,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, {checkConstraints: [ConstraintCheckType.aPropertyHasClass]});
+                const result = checkConstraintsForPackage(pkg, {checkConstraints: [ConstraintCheckType.aPropertyInstanceOf]});
                 expect(result.ok).toBe(true);
             });
 
@@ -77,19 +77,19 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Name',
+                            instanceOf: 'o:Name',
                             value: { value: 'Engine', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Name',
+                            instanceOf: 'o:Name',
                             value: { value: 'Motor', lang: 'de' }
                         }
                     ],
                     [
                         {
                             itemType: PigItemType.Property,
-                            hasClass: 'owl:DatatypeProperty',
+                            instanceOf: 'owl:DatatypeProperty',
                             id: 'o:Name',
                             title: [{ value: 'Name', lang: 'en' }],
                             datatype: 'xs:string',
@@ -99,7 +99,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
 
@@ -108,19 +108,19 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Description',
+                            instanceOf: 'o:Description',
                             value: { value: 'Fast', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Description',
+                            instanceOf: 'o:Description',
                             value: { value: 'Reliable', lang: 'en' }
                         }
                     ],
                     [
                         {
                             itemType: PigItemType.Property,
-                            hasClass: 'owl:DatatypeProperty',
+                            instanceOf: 'owl:DatatypeProperty',
                             id: 'o:Description',
                             title: [{ value: 'Description', lang: 'en' }],
                             datatype: 'xs:string',
@@ -130,7 +130,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass]});
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf]});
                 expect(result.ok).toBe(true);
             });
 
@@ -139,29 +139,29 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'fast', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'powerful', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'schnell', lang: 'de' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'leistungsstark', lang: 'de' }
                         }
                     ],
                     [
                         {
                             itemType: PigItemType.Property,
-                            hasClass: 'owl:DatatypeProperty',
+                            instanceOf: 'owl:DatatypeProperty',
                             id: 'o:Keyword',
                             title: [{ value: 'Keyword', lang: 'en' }],
                             datatype: 'xs:string',
@@ -171,7 +171,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
 
@@ -181,7 +181,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.Property,
-                            hasClass: 'owl:DatatypeProperty',
+                            instanceOf: 'owl:DatatypeProperty',
                             id: 'o:Name',
                             title: [{ value: 'Name', lang: 'en' }],
                             datatype: 'xs:string',
@@ -190,7 +190,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('no values present');
@@ -201,24 +201,24 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'fast', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'schnell', lang: 'de' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'leistungsstark', lang: 'de' }
                         }
                     ],
                     [
                         {
                             itemType: PigItemType.Property,
-                            hasClass: 'owl:DatatypeProperty',
+                            instanceOf: 'owl:DatatypeProperty',
                             id: 'o:Keyword',
                             title: [{ value: 'Keyword', lang: 'en' }],
                             datatype: 'xs:string',
@@ -227,7 +227,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too few values for language');
@@ -241,22 +241,22 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'fast', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'powerful', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'schnell', lang: 'de' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'leistungsstark', lang: 'de' }
                         }
                     ],
@@ -271,7 +271,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
 
@@ -280,12 +280,12 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Name',
+                            instanceOf: 'o:Name',
                             value: { value: 'Engine', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Name',
+                            instanceOf: 'o:Name',
                             value: { value: 'Motor', lang: 'en' }
                         }
                     ],
@@ -300,7 +300,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too many values for language');
@@ -312,17 +312,17 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'fast', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'powerful', lang: 'en' }
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Keyword',
+                            instanceOf: 'o:Keyword',
                             value: { value: 'reliable', lang: 'en' }
                         }
                     ],
@@ -337,7 +337,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too many values for language');
@@ -350,7 +350,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Name',
+                            instanceOf: 'o:Name',
                             value: 'Engine' // no lang attribute
                         }
                     ],
@@ -366,7 +366,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -379,12 +379,12 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Weight',
+                            instanceOf: 'o:Weight',
                             value: '100.5'
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Weight',
+                            instanceOf: 'o:Weight',
                             value: '105.2'
                         }
                     ],
@@ -400,7 +400,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
 
@@ -419,7 +419,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too few occurrences');
@@ -430,22 +430,22 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Weight',
+                            instanceOf: 'o:Weight',
                             value: '100.5'
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Weight',
+                            instanceOf: 'o:Weight',
                             value: '105.2'
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Weight',
+                            instanceOf: 'o:Weight',
                             value: '98.7'
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Weight',
+                            instanceOf: 'o:Weight',
                             value: '102.1'
                         }
                     ],
@@ -460,7 +460,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(false);
                 expect(result.status).toBe(678);
                 expect(result.statusText).toContain('too many occurrences');
@@ -473,7 +473,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Count',
+                            instanceOf: 'o:Count',
                             value: '42'
                         }
                     ],
@@ -489,7 +489,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
 
@@ -498,17 +498,17 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Count',
+                            instanceOf: 'o:Count',
                             value: '1'
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Count',
+                            instanceOf: 'o:Count',
                             value: '2'
                         },
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:Count',
+                            instanceOf: 'o:Count',
                             value: '3'
                         }
                     ],
@@ -524,7 +524,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -535,7 +535,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:IsActive',
+                            instanceOf: 'o:IsActive',
                             value: 'true'
                         }
                     ],
@@ -551,7 +551,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -562,7 +562,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     [
                         {
                             itemType: PigItemType.aProperty,
-                            hasClass: 'o:CreatedDate',
+                            instanceOf: 'o:CreatedDate',
                             value: '2025-01-01'
                         }
                     ],
@@ -578,7 +578,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     ]
                 );
 
-                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+                const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
                 expect(result.ok).toBe(true);
             });
         });
@@ -590,7 +590,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 [
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:OptionalProp',
+                        instanceOf: 'o:OptionalProp',
                         value: 'value'
                     }
                 ],
@@ -605,7 +605,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(true);
         });
 
@@ -614,12 +614,12 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 [
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Count',
+                        instanceOf: 'o:Count',
                         value: '1'
                     },
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Count',
+                        instanceOf: 'o:Count',
                         value: '2'
                     }
                 ],
@@ -634,7 +634,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(false);
             expect(result.status).toBe(678);
         });
@@ -647,24 +647,24 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                     // String property with multiple languages
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Name',
+                        instanceOf: 'o:Name',
                         value: { value: 'Engine', lang: 'en' }
                     },
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Name',
+                        instanceOf: 'o:Name',
                         value: { value: 'Motor', lang: 'de' }
                     },
                     // Numeric property
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Weight',
+                        instanceOf: 'o:Weight',
                         value: '100.5'
                     },
                     // Integer property
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Count',
+                        instanceOf: 'o:Count',
                         value: '42'
                     }
                 ],
@@ -696,7 +696,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(true);
         });
     });
@@ -717,7 +717,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(true);
         });
 
@@ -754,7 +754,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 [
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Name',
+                        instanceOf: 'o:Name',
                         value: { value: 'Engine', lang: 'en' }
                     }
                 ],
@@ -770,7 +770,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(true);
         });
     });
@@ -790,7 +790,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(true);
         });
 
@@ -799,7 +799,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 [
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:ForbiddenProp',
+                        instanceOf: 'o:ForbiddenProp',
                         value: 'should fail'
                     }
                 ],
@@ -825,7 +825,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 [
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Name',
+                        instanceOf: 'o:Name',
                         value: { value: 'Engine', lang: 'en' }
                     }
                 ],
@@ -841,7 +841,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(true);
         });
     });
@@ -862,7 +862,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(false);
             expect(result.statusText).toMatch(/d:entity-1/);
             expect(result.statusText).toMatch(/o:Name/);
@@ -874,12 +874,12 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 [
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Weight',
+                        instanceOf: 'o:Weight',
                         value: '100'
                     },
                     {
                         itemType: PigItemType.aProperty,
-                        hasClass: 'o:Weight',
+                        instanceOf: 'o:Weight',
                         value: '200'
                     }
                 ],
@@ -894,7 +894,7 @@ describe('PIG Package Constraints - Property Occurrence Validation (minCount/max
                 ]
             );
 
-            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyHasClass] });
+            const result = checkConstraintsForPackage(pkg, { checkConstraints: [ConstraintCheckType.aPropertyInstanceOf] });
             expect(result.ok).toBe(false);
             expect(result.statusText).toMatch(/d:entity-1/);
             expect(result.statusText).toMatch(/o:Weight/);

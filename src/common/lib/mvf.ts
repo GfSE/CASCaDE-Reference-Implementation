@@ -23,7 +23,7 @@ const FROM_JSONLD = new Map<string, string>([
     ['@context', 'context'],
     ['@graph', 'graph'],
     ['@id', 'id'],
-    ['@type', 'hasClass'],
+    ['@type', 'instanceOf'],
     ['@value', 'value'],
     ['@language', 'lang'],
     ['rdfs:subClassOf', 'specializes'],
@@ -75,8 +75,8 @@ const FROM_XML = new Map<string, string>([
     //    ['@language', 'lang'],
     [`${DEF.pfxNsMeta}revision`, 'revision'],
     [`${DEF.pfxNsMeta}priorRevision`, 'priorRevision'],
-    ['rdf:type', 'hasClass'],
-    [`${DEF.pfxNsMeta}hasClass`, 'hasClass'],
+    ['rdf:type', 'instanceOf'],
+    [`${DEF.pfxNsMeta}instanceOf`, 'instanceOf'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     [`${DEF.pfxNsMeta}specializes`, 'specializes'],
@@ -120,8 +120,8 @@ const TO_XML = new Map<string, string>(
 
 // Map entries for RDF/Turtle import/export:
 const FROM_RDF = new Map<string, string>([
-    ['a', 'hasClass'],
-    ['rdf:type', 'hasClass'],
+    ['a', 'instanceOf'],
+    ['rdf:type', 'instanceOf'],
     ['rdfs:subClassOf', 'specializes'],
     ['rdfs:subPropertyOf', 'specializes'],
     [`${DEF.pfxNsDcmi}title`, 'title'],
@@ -158,14 +158,14 @@ const FROM_RDF = new Map<string, string>([
 const TO_RDF = new Map<string, string>(
     Array.from(FROM_RDF.entries()).map(([a, b]) => [b, a])
 );
-
+/*
 // Map entries with the same keys: The second prevails.
 const FROM_REQIF = new Map<string, string>([
 ]);
 const TO_REQIF = new Map<string, string>(
     Array.from(FROM_REQIF.entries()).map(([a, b]) => [b, a])
 );
-
+*/
 /**
  * Multi-Vocabulary Facility object
  * Provides mapping between different vocabularies
@@ -192,8 +192,8 @@ export const MVF = {
     /**
      * Mapping between internal format and ReqIF
      */
-    toReqIF: TO_REQIF,
-    fromReqIF: FROM_REQIF,
+    // toReqIF: TO_REQIF,
+    // fromReqIF: FROM_REQIF,
 
     /**
      * Rename JSON object keys (tags) according to a mapping.

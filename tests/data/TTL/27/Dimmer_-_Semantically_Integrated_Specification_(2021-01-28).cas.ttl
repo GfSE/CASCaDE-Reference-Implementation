@@ -1,0 +1,3585 @@
+
+@prefix o: <https://product-information-graph.org/v0.2/ontology#> .
+@prefix d: <https://product-information-graph.org/examples/Dimmer.specifz#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix skos: <https://www.w3.org/TR/skos-reference/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xs: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix FMC: <http://fmc-modeling.org#> .
+@prefix IREB: <https://cpre.ireb.org/en/downloads-and-resources/glossary#> .
+@prefix ReqIF-WF: <https://www.prostep.org/fileadmin/downloads/Recommendation_ReqIF_V2_RZ3.pdf#> .
+@prefix oslc_rm: <http://open-services.net/ns/rm#> .
+@prefix oslc_cm: <http://open-services.net/ns/cm#> .
+@prefix cas: <https://product-information-graph.org/v0.2/metamodel#> .
+@prefix SpecIF: <https://specif.de/v1.2/schema#> .
+@prefix dash: <http://datashapes.org/dash#> .
+
+d:ACP-59c8a7730000bca80137509a49b1218b_ontology
+	a owl:Ontology ;
+	owl:versionInfo "2026-07-20" .
+
+d:ACP-59c8a7730000bca80137509a49b1218b
+	a cas:Package ;
+	rdfs:label "Dimmer - Semantically Integrated Specification (2021-01-28)" ;
+	rdfs:comment "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'." ;
+	dcterms:modified "2026-09-30T09:18:13.144Z"^^xs:dateTime ;
+	dcterms:creator "od@enso-managers.de" .
+
+#################################################################
+# Graph Items
+#################################################################
+
+cas:Organizer
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Organizer" ;
+	skos:definition "A CASCaRA meta-model item for organizing model-elements. An example is a list of requirements or a diagram using a certain notation." .
+
+cas:Organizer_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Organizer ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+cas:Package
+	a owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Package" ;
+	skos:definition "A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions." .
+
+cas:Package_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Package ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+cas:Root
+	a owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Root" ;
+	skos:definition "A subclass of cas:Organizer serving as a root for trees and tables." .
+
+cas:Root_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Root ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:lists_shape .
+
+cas:Tree
+	a owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Tree" ;
+	skos:definition "A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships." .
+
+cas:Tree_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Tree ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:lists_shape .
+
+cas:Outline
+	a owl:Class ;
+	rdfs:subClassOf cas:Tree ;
+	rdfs:label "Outline" ;
+	skos:definition "A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized." .
+
+cas:Outline_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Outline ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+cas:Table
+	a owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "Table" ;
+	skos:definition "A subclass of cas:Organizer representing a table showing selected model elements." .
+
+cas:Table_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:Table ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:shows_shape .
+
+cas:Diagram
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Diagram" ;
+	skos:definition "A diagram illustrating the resource or a link to a diagram." .
+
+cas:Diagram_shape
+	a sh:PropertyShape ;
+	sh:path cas:Diagram ;
+	sh:datatype xs:string ;
+	sh:minCount "0" .
+
+cas:Category
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "has category" ;
+	skos:definition "Specifies a category for an element (entity, relationship or organizer)." .
+
+cas:Category_shape
+	a sh:PropertyShape ;
+	sh:path cas:Category ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" ;
+	sh:maxLength "32" .
+
+cas:Notation
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Category ;
+	rdfs:label "Notation" ;
+	skos:definition "A reference to a notation defining the syntax and semantics of a diagram." .
+
+cas:Notation_shape
+	a sh:PropertyShape ;
+	sh:path cas:Notation ;
+	sh:datatype xs:string ;
+	sh:minCount "0" ;
+	sh:maxCount "1" .
+
+cas:linksSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "to source" ;
+	skos:definition "Connects the source of a reified relationship." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship ) ] .
+
+cas:linksSource_shape
+	a sh:PropertyShape ;
+	sh:path cas:linksSource ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
+
+cas:linksTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "to target" ;
+	skos:definition "Connects the target of a reified relationship or an organizer." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship ) ] .
+
+cas:linksTarget_shape
+	a sh:PropertyShape ;
+	sh:path cas:linksTarget ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
+
+cas:lists
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "lists" ;
+	skos:definition "Lists an entity, a relationship or a subordinated organizer." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship cas:Organizer ) ] .
+
+cas:lists_shape
+	a sh:PropertyShape ;
+	sh:path cas:lists ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] [ sh:class cas:Organizer ] ) .
+
+cas:shows
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "shows" ;
+	skos:definition "Shows an entity or a relationship." ;
+	rdfs:range [ owl:unionOf ( cas:Entity cas:Relationship ) ] .
+
+cas:shows_shape
+	a sh:PropertyShape ;
+	sh:path cas:shows ;
+	sh:or ( [ sh:class cas:Entity ] [ sh:class cas:Relationship ] ) .
+
+cas:depicts
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "depicts" ;
+	skos:definition "Depicts an entity; inverse of uml:ownedDiagram." ;
+	rdfs:range cas:Entity .
+
+cas:depicts_shape
+	a sh:PropertyShape ;
+	sh:path cas:depicts ;
+	sh:class cas:Entity .
+
+SpecIF:LifecycleStatus-Enumeration
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Lifecycle"@en ,
+		"Lebenszyklus"@de ,
+		"Cycle de vie"@fr ;
+	skos:definition "The 'Lifecycle Status' of the resource."@en ,
+		"Der 'Lebenszyklusstatus' der Ressource."@de ,
+		"L'état du cycle de vie de la ressource."@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	sh:datatype xs:string ;
+	owl:anyOf (
+		SpecIF:LifecycleStatusDeprecated
+		SpecIF:LifecycleStatusRejected
+		SpecIF:LifecycleStatusInitial
+		SpecIF:LifecycleStatusDrafted
+		SpecIF:LifecycleStatusSubmitted
+		SpecIF:LifecycleStatusApproved
+		SpecIF:LifecycleStatusDone
+		SpecIF:LifecycleStatusReleased
+	) .
+SpecIF:LifecycleStatusDeprecated
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "deprecated"@en ,
+		"veraltet"@de ,
+		"dépassé"@fr .
+SpecIF:LifecycleStatusRejected
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "rejected"@en ,
+		"abgelehnt"@de ,
+		"rejeté"@fr .
+SpecIF:LifecycleStatusInitial
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "initial"@en .
+SpecIF:LifecycleStatusDrafted
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "drafted"@en ,
+		"entworfen"@de ,
+		"rédigé"@fr .
+SpecIF:LifecycleStatusSubmitted
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "submitted"@en ,
+		"vorgelegt"@de ,
+		"soumis"@fr .
+SpecIF:LifecycleStatusApproved
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "approved"@en ,
+		"genehmigt"@de ,
+		"approuvé"@fr .
+SpecIF:LifecycleStatusDone
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "done"@en ,
+		"erledigt ('done')"@de .
+SpecIF:LifecycleStatusReleased
+	a SpecIF:LifecycleStatus-Enumeration ;
+	rdfs:label "released"@en ,
+		"freigegeben"@de ,
+		"publié"@fr .
+
+SpecIF:Priority-Enumeration
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	sh:datatype xs:string ;
+	owl:anyOf (
+		SpecIF:priorityHigh
+		SpecIF:priorityMedium
+		SpecIF:priorityLow
+	) .
+SpecIF:priorityHigh
+	a SpecIF:Priority-Enumeration ;
+	rdfs:label "high"@en ,
+		"hoch"@de ,
+		"haut"@fr .
+SpecIF:priorityMedium
+	a SpecIF:Priority-Enumeration ;
+	rdfs:label "medium"@en ,
+		"mittel"@de ,
+		"moyen"@fr .
+SpecIF:priorityLow
+	a SpecIF:Priority-Enumeration ;
+	rdfs:label "low"@en ,
+		"niedrig"@de ,
+		"bas"@fr .
+
+SpecIF:StakeholderGroup-Enumeration
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Stakeholder Group"@en ;
+	skos:definition "Enumerated values for the 'Stakehoder Group' addressed by the term."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	sh:datatype xs:string ;
+	owl:anyOf (
+		SpecIF:StakeholderGroupBusiness
+		SpecIF:StakeholderGroupUser
+		SpecIF:StakeholderGroupSystem
+	) .
+SpecIF:StakeholderGroupBusiness
+	a SpecIF:StakeholderGroup-Enumeration ;
+	rdfs:label "Business"@en .
+SpecIF:StakeholderGroupUser
+	a SpecIF:StakeholderGroup-Enumeration ;
+	rdfs:label "User"@en .
+SpecIF:StakeholderGroupSystem
+	a SpecIF:StakeholderGroup-Enumeration ;
+	rdfs:label "System"@en .
+
+SpecIF:EngineeringDiscipline-Enumeration
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Engineering Discipline"@en ,
+		"Ingenieurdisziplin"@de ,
+		"Discipline d'ingénierie"@fr ;
+	skos:definition "The engineering discipline involved by a development artefact."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	sh:datatype xs:string ;
+	owl:anyOf (
+		SpecIF:EngineeringDisciplineMechanics
+		SpecIF:EngineeringDisciplineElectronics
+		SpecIF:EngineeringDisciplineSoftware
+		SpecIF:EngineeringDisciplineSafety
+	) .
+SpecIF:EngineeringDisciplineMechanics
+	a SpecIF:EngineeringDiscipline-Enumeration ;
+	rdfs:label "Mechanics"@en ,
+		"Mechanik"@de ,
+		"Mecanique"@fr .
+SpecIF:EngineeringDisciplineElectronics
+	a SpecIF:EngineeringDiscipline-Enumeration ;
+	rdfs:label "Electronics"@en ,
+		"Elektronik"@de ,
+		"Électronique"@fr .
+SpecIF:EngineeringDisciplineSoftware
+	a SpecIF:EngineeringDiscipline-Enumeration ;
+	rdfs:label "Software"@en ,
+		"Logiciel"@fr .
+SpecIF:EngineeringDisciplineSafety
+	a SpecIF:EngineeringDiscipline-Enumeration ;
+	rdfs:label "Safety"@en ,
+		"Sicherheit"@de ,
+		"Sécurité"@fr .
+
+ReqIF-WF:SupplierStatus-Enumeration
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Supplier Status"@en ,
+		"Zustand Lieferant"@de ,
+		"Statut coté Fournisseur"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	sh:datatype xs:string ;
+	owl:anyOf (
+		SpecIF:NotApplicable
+		ReqIF-WF:CustomerStatus.ToBeClarified
+		ReqIF-WF:SupplierStatus.Agreed
+		ReqIF-WF:SupplierStatus.AgreedWithComment
+		ReqIF-WF:SupplierStatus.NotAgreed
+	) .
+SpecIF:NotApplicable
+	a ReqIF-WF:SupplierStatus-Enumeration ;
+	rdfs:label "not applicable"@en ,
+		"nicht anwendbar"@de ,
+		"sans objet"@fr .
+ReqIF-WF:CustomerStatus.ToBeClarified
+	a ReqIF-WF:SupplierStatus-Enumeration ;
+	rdfs:label "to be clarified"@en ,
+		"zu klären"@de ,
+		"à préciser"@fr .
+ReqIF-WF:SupplierStatus.Agreed
+	a ReqIF-WF:SupplierStatus-Enumeration ;
+	rdfs:label "agreed"@en ,
+		"zugestimmt"@de ,
+		"approuvé"@fr .
+ReqIF-WF:SupplierStatus.AgreedWithComment
+	a ReqIF-WF:SupplierStatus-Enumeration ;
+	rdfs:label "agreed with comment"@en ,
+		"zugestimmt mit Kommentar"@de ,
+		"approuvé avec commentaire"@fr .
+ReqIF-WF:SupplierStatus.NotAgreed
+	a ReqIF-WF:SupplierStatus-Enumeration ;
+	rdfs:label "not agreed"@en ,
+		"nicht zugestimmt"@de ,
+		"non approuvé"@fr .
+
+ReqIF-WF:CustomerStatus-Enumeration
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "Customer Status"@en ,
+		"Zustand Kunde"@de ,
+		"Statut coté Client"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	sh:datatype xs:string ;
+	owl:anyOf (
+		ReqIF-WF:CustomerStatus.NotToEvaluate
+		ReqIF-WF:CustomerStatus.ToEvaluate
+		ReqIF-WF:CustomerStatus.Accepted
+		ReqIF-WF:CustomerStatus.NotAccepted
+	) .
+ReqIF-WF:CustomerStatus.NotToEvaluate
+	a ReqIF-WF:CustomerStatus-Enumeration ;
+	rdfs:label "not to evaluate"@en ,
+		"nicht zu evaluieren"@de ,
+		"ne pas évaluer"@fr .
+ReqIF-WF:CustomerStatus.ToEvaluate
+	a ReqIF-WF:CustomerStatus-Enumeration ;
+	rdfs:label "to evaluate"@en ,
+		"zu evaluieren"@de ,
+		"pour évaluer"@fr .
+ReqIF-WF:CustomerStatus.Accepted
+	a ReqIF-WF:CustomerStatus-Enumeration ;
+	rdfs:label "accepted"@en ,
+		"akzeptiert"@de ,
+		"accepté"@fr .
+ReqIF-WF:CustomerStatus.NotAccepted
+	a ReqIF-WF:CustomerStatus-Enumeration ;
+	rdfs:label "not accepted"@en ,
+		"nicht akzeptiert"@de ,
+		"non accepté"@fr .
+
+o:DT-IssueStatus
+	a owl:Class ;
+	rdfs:subClassOf cas:Enumeration ;
+	rdfs:label "SpecIF:LifecycleStatusIssue" ;
+	skos:definition "Enumerated values for issue status" ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	sh:datatype xs:string ;
+	owl:anyOf (
+		o:V-Iss-Status-1
+		o:V-Iss-Status-2
+		oslc_cm:Inprogress
+		oslc_cm:Closed
+		o:V-Iss-Status-5
+		o:V-Iss-Status-6
+	) .
+o:V-Iss-Status-1
+	a o:DT-IssueStatus ;
+	rdfs:label "open" .
+o:V-Iss-Status-2
+	a o:DT-IssueStatus ;
+	rdfs:label "assigned" .
+oslc_cm:Inprogress
+	a o:DT-IssueStatus ;
+	rdfs:label "in progress"@en .
+oslc_cm:Closed
+	a o:DT-IssueStatus ;
+	rdfs:label "closed"@en .
+o:V-Iss-Status-5
+	a o:DT-IssueStatus ;
+	rdfs:label "reopened" .
+o:V-Iss-Status-6
+	a o:DT-IssueStatus ;
+	rdfs:label "SpecIF:LifecycleStatusRejected" .
+
+SpecIF:Priority
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Priority"@en ,
+		"Priorität"@de ,
+		"Priorité"@fr ;
+	skos:definition "Enumerated values for the 'Priority' of the resource."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	rdfs:range SpecIF:Priority-Enumeration .
+
+SpecIF:Priority_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:Priority ;
+	sh:class SpecIF:Priority-Enumeration .
+
+SpecIF:LifecycleStatus
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Lifecycle"@en ,
+		"Lebenszyklus"@de ,
+		"Cycle de vie"@fr ;
+	skos:definition "The 'Lifecycle Status' of the resource."@en ,
+		"Der 'Lebenszyklusstatus' der Ressource."@de ,
+		"L'état du cycle de vie de la ressource."@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	rdfs:range SpecIF:LifecycleStatus-Enumeration .
+
+SpecIF:LifecycleStatus_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:LifecycleStatus ;
+	sh:class SpecIF:LifecycleStatus-Enumeration .
+
+ReqIF-WF:SupplierStatus
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Supplier Status"@en ,
+		"Zustand Lieferant"@de ,
+		"Statut coté Fournisseur"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	rdfs:range ReqIF-WF:SupplierStatus-Enumeration .
+
+ReqIF-WF:SupplierStatus_shape
+	a sh:PropertyShape ;
+	sh:path ReqIF-WF:SupplierStatus ;
+	sh:class ReqIF-WF:SupplierStatus-Enumeration .
+
+ReqIF-WF:SupplierComment
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Supplier Comment"@en ,
+		"Kommentar Lieferant"@de ,
+		"Commentaire du Client"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+ReqIF-WF:SupplierComment_shape
+	a sh:PropertyShape ;
+	sh:path ReqIF-WF:SupplierComment ;
+	sh:datatype xs:string ;
+	sh:maxCount "1" .
+
+ReqIF-WF:CustomerStatus
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Customer Status"@en ,
+		"Zustand Kunde"@de ,
+		"Statut coté Client"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	rdfs:range ReqIF-WF:CustomerStatus-Enumeration .
+
+ReqIF-WF:CustomerStatus_shape
+	a sh:PropertyShape ;
+	sh:path ReqIF-WF:CustomerStatus ;
+	sh:class ReqIF-WF:CustomerStatus-Enumeration .
+
+ReqIF-WF:CustomerComment
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Customer Comment"@en ,
+		"Kommentar Kunde"@de ,
+		"Commentaire du Client"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+ReqIF-WF:CustomerComment_shape
+	a sh:PropertyShape ;
+	sh:path ReqIF-WF:CustomerComment ;
+	sh:datatype xs:string ;
+	sh:maxCount "1" .
+
+dcterms:identifier
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Identifier"@en ,
+		"Bezeichner"@de ,
+		"Identifiant"@fr ;
+	skos:definition "<p>A unique reference to the resource within a given context. <small>(<i>source: <a href=\"http://purl.org/dc/elements/1.1/identifier\">DCMI</a></i>)</small></p><p>An identifier for a resource. This identifier may be unique with a scope that is defined by the RM provider. Assigned by the service provider when a resource is created. Not intended for end-user display. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p>"@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+dcterms:identifier_shape
+	a sh:PropertyShape ;
+	sh:path dcterms:identifier ;
+	sh:datatype xs:string ;
+	sh:maxCount "1" ;
+	sh:maxLength "256" .
+
+SpecIF:StakeholderGroup
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Stakeholder Group"@en ;
+	skos:definition "Enumerated values for the 'Stakehoder Group' addressed by the term."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	rdfs:range SpecIF:StakeholderGroup-Enumeration .
+
+SpecIF:StakeholderGroup_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:StakeholderGroup ;
+	sh:class SpecIF:StakeholderGroup-Enumeration .
+
+SpecIF:EngineeringDiscipline
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "Engineering Discipline"@en ,
+		"Ingenieurdisziplin"@de ,
+		"Discipline d'ingénierie"@fr ;
+	skos:definition "The engineering discipline involved by a development artefact."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	rdfs:range SpecIF:EngineeringDiscipline-Enumeration .
+
+SpecIF:EngineeringDiscipline_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:EngineeringDiscipline ;
+	sh:class SpecIF:EngineeringDiscipline-Enumeration .
+
+o:PC-IssueStatus
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:Link ;
+	rdfs:label "SpecIF:LifecycleStatusIssue" ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	rdfs:range o:DT-IssueStatus .
+
+o:PC-IssueStatus_shape
+	a sh:PropertyShape ;
+	sh:path o:PC-IssueStatus ;
+	sh:class o:DT-IssueStatus .
+
+SpecIF:Responsible
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Responsible"@en ,
+		"Verantwortliche(r)"@de ,
+		"Responsable"@fr ;
+	skos:definition "The 'Person' being responsible for the resource."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:Responsible_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:Responsible ;
+	sh:datatype xs:string ;
+	sh:maxCount "1" ;
+	sh:maxLength "256" .
+
+SpecIF:DueDate
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "Due Date"@en ,
+		"Termin"@de ,
+		"Date limite"@fr ;
+	skos:definition "A 'Due Date' for the resource."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:DueDate_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:DueDate ;
+	sh:datatype xs:dateTime ;
+	sh:maxCount "1" .
+
+o:PC-Diagram-8240447448
+	a owl:DatatypeProperty ;
+	rdfs:subPropertyOf cas:Property ;
+	rdfs:label "cas:Diagram" ;
+	skos:definition "A diagram illustrating the resource or a link to a diagram." ;
+	cas:revision "1.1" ;
+	dcterms:modified "2026-02-12T22:05:14.551Z"^^xs:dateTime .
+
+o:PC-Diagram-8240447448_shape
+	a sh:PropertyShape ;
+	sh:path o:PC-Diagram-8240447448 ;
+	sh:datatype xs:string .
+
+cas:View
+	a owl:Class ;
+	rdfs:subClassOf cas:Organizer ;
+	rdfs:label "View" ;
+	skos:definition "A PIG organizer class representing a diagram with certain model-elements for a given communication purpose." ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	cas:icon "▣" .
+
+cas:View_shape
+	a sh:NodeShape ;
+	sh:targetClass cas:View ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Diagram_shape ;
+	sh:property cas:Notation_shape ;
+	sh:property ReqIF-WF:SupplierComment_shape ;
+	sh:property ReqIF-WF:CustomerComment_shape ;
+	sh:property cas:shows_shape ;
+	sh:property cas:depicts_shape ;
+	sh:property SpecIF:LifecycleStatus_shape ;
+	sh:property ReqIF-WF:SupplierStatus_shape ;
+	sh:property ReqIF-WF:CustomerStatus_shape .
+
+FMC:Actor
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Actor"@en ,
+		"Akteur"@de ,
+		"Acteur"@fr ;
+	skos:definition "<p>An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.</p><p>The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].</p>"@en ,
+		"<p>Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].</p>"@de ,
+		"<p>Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].</p>"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	cas:icon "&#x25A1;" .
+
+FMC:Actor_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:Actor ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Diagram_shape .
+
+FMC:State
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "State"@en ,
+		"Zustand"@de ,
+		"État"@fr ;
+	skos:definition "<p>A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].</p>"@en ,
+		"<p>Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].</p>"@de ,
+		"<p>Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].</p>"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	cas:icon "&#x25CB;" .
+
+FMC:State_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:State ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+FMC:Event
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Event"@en ,
+		"Ereignis"@de ,
+		"Évenement"@fr ;
+	skos:definition "<p>An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.</p><p>The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].</p>"@en ,
+		"<p>Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.</p><p>Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].</p>"@de ,
+		"<p>Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.</p><p>L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].</p>"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	cas:icon "&#x2662;" .
+
+FMC:Event_shape
+	a sh:NodeShape ;
+	sh:targetClass FMC:Event ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) .
+
+IREB:Requirement
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Requirement"@en ,
+		"Anforderung"@de ,
+		"Exigence"@fr ;
+	skos:definition "<p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>A condition or capability needed by a user to solve a problem or achieve an objective.</li><li>A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.</li><li>A documented representation of a condition or capability as in (1) or (2).</li></ol><p>Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:</p><ol><li>A need perceived by a stakeholder.</li><li>A capability or property that a system shall have.</li><li>A documented representation of a need, capability or property.</li></ol>"@en ,
+		"<p>Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Definition:</p><ol><li>Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.</li><li>Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.</li><li>Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).</li></ol><p>Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:</p><ol><li>Ein von einem Stakeholder wahrgenommener Bedarf.</li><li>Eine Fähigkeit oder Eigenschaft, die ein System haben soll.</li><li>Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.</li></ol>"@de ,
+		"<p>Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p><p>Définition:</p><ol><li>Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.</li><li>Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.</li><li>Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).</li></ol><p>Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:</p><ol><li>Un besoin perçu par une partie prenante;</li><li>Une capacité ou une propriété qu'un système doit avoir.</li><li>Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.</li></ol>"@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime ;
+	cas:icon "&#8623;" .
+
+IREB:Requirement_shape
+	a sh:NodeShape ;
+	sh:targetClass IREB:Requirement ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path dcterms:identifier ] ;
+	sh:property ReqIF-WF:SupplierComment_shape ;
+	sh:property ReqIF-WF:CustomerComment_shape ;
+	sh:property SpecIF:LifecycleStatus_shape ;
+	sh:property SpecIF:Priority_shape ;
+	sh:property SpecIF:StakeholderGroup_shape ;
+	sh:property SpecIF:EngineeringDiscipline_shape ;
+	sh:property ReqIF-WF:SupplierStatus_shape ;
+	sh:property ReqIF-WF:CustomerStatus_shape .
+
+SpecIF:Issue
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Open Issue"@en ,
+		"Offener Punkt"@de ,
+		"Problème"@fr ;
+	skos:definition "An 'Issue' is a question to answer or decision to take which is worth tracking."@en ,
+		"Ein 'Offener Punkt ist eine zu beantwortende Frage oder eine zu treffende Entscheidung."@de ,
+		"Un 'problème' est une question à laquelle il faut répondre ou une décision à prendre qui mérite d'être suivie."@fr ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:Issue_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:Issue ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path dcterms:identifier ] ;
+	sh:property SpecIF:Responsible_shape ;
+	sh:property SpecIF:DueDate_shape ;
+	sh:property o:PC-IssueStatus_shape ;
+	sh:property SpecIF:Priority_shape .
+
+SpecIF:Paragraph
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "Paragraph"@en ,
+		"Textabsatz"@de ,
+		"Paragraphe"@fr ;
+	skos:definition "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
+		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de ;
+	cas:revision "1.1" ;
+	dcterms:modified "2023-07-16T09:30:25.850Z"^^xs:dateTime .
+
+SpecIF:Paragraph_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:Paragraph ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property cas:Diagram_shape ;
+	sh:property cas:Category_shape .
+
+o:RC-Paragraph-8240447479
+	a owl:Class ;
+	rdfs:subClassOf cas:Entity ;
+	rdfs:label "SpecIF:Paragraph" ;
+	skos:definition "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>"@en ,
+		"<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>"@de ;
+	cas:revision "1.1" ;
+	dcterms:modified "2024-03-02T20:55:23.295Z"^^xs:dateTime .
+
+o:RC-Paragraph-8240447479_shape
+	a sh:NodeShape ;
+	sh:targetClass o:RC-Paragraph-8240447479 ;
+	sh:or ( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] ) ;
+	sh:property o:PC-Diagram-8240447448_shape ;
+	sh:property cas:Category_shape .
+
+SpecIF:contains
+	a owl:Class ;
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "contains"@en ,
+		"enthält"@de ,
+		"contient"@fr ;
+	skos:definition "General containment, such as:\n- Package-A *contains* Diagram-B\n- Collection-1 *contains* DataObject-1.1\n\nNot to confound with *[[dcterms:hasPart]]*."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:contains_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:contains ;
+	sh:property SpecIF:contains-toSource_shape ;
+	sh:property SpecIF:contains-toTarget_shape .
+
+SpecIF:contains-toSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SpecIF:contains to source" ;
+	rdfs:comment "Connects the source of SpecIF:contains" ;
+	rdfs:range [ owl:unionOf ( FMC:Actor FMC:State FMC:Event ) ] .
+
+SpecIF:contains-toSource_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:contains-toSource ;
+	sh:or ( [ sh:class FMC:Actor ] [ sh:class FMC:State ] [ sh:class FMC:Event ] ) .
+
+SpecIF:contains-toTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SpecIF:contains to target" ;
+	rdfs:comment "Connects the target of SpecIF:contains" ;
+	rdfs:range [ owl:unionOf ( FMC:Actor FMC:State FMC:Event ) ] .
+
+SpecIF:contains-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:contains-toTarget ;
+	sh:or ( [ sh:class FMC:Actor ] [ sh:class FMC:State ] [ sh:class FMC:Event ] ) .
+
+o:SC-stores
+	a owl:Class ;
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "SpecIF:modifies" ;
+	skos:definition "Relation: Actor (Role, Function) writes and reads State (Information)" ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+o:SC-stores_shape
+	a sh:NodeShape ;
+	sh:targetClass o:SC-stores ;
+	sh:property o:SC-stores-toSource_shape ;
+	sh:property o:SC-stores-toTarget_shape .
+
+o:SC-stores-toSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SC-stores to source" ;
+	rdfs:comment "Connects the source of SC-stores" ;
+	rdfs:range FMC:Actor .
+
+o:SC-stores-toSource_shape
+	a sh:PropertyShape ;
+	sh:path o:SC-stores-toSource ;
+	sh:class FMC:Actor .
+
+o:SC-stores-toTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SC-stores to target" ;
+	rdfs:comment "Connects the target of SC-stores" ;
+	rdfs:range FMC:State .
+
+o:SC-stores-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path o:SC-stores-toTarget ;
+	sh:class FMC:State .
+
+SpecIF:writes
+	a owl:Class ;
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "writes"@en ,
+		"schreibt"@de ,
+		"écrit"@fr ;
+	skos:definition "A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]]."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:writes_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:writes ;
+	sh:property SpecIF:writes-toSource_shape ;
+	sh:property SpecIF:writes-toTarget_shape .
+
+SpecIF:writes-toSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SpecIF:writes to source" ;
+	rdfs:comment "Connects the source of SpecIF:writes" ;
+	rdfs:range FMC:Actor .
+
+SpecIF:writes-toSource_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:writes-toSource ;
+	sh:class FMC:Actor .
+
+SpecIF:writes-toTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SpecIF:writes to target" ;
+	rdfs:comment "Connects the target of SpecIF:writes" ;
+	rdfs:range FMC:State .
+
+SpecIF:writes-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:writes-toTarget ;
+	sh:class FMC:State .
+
+SpecIF:reads
+	a owl:Class ;
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "reads"@en ,
+		"liest"@de ,
+		"lit"@fr ;
+	skos:definition "A [[FMC:Actor]] 'reads' a [[FMC:State]]."@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:reads_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:reads ;
+	sh:property SpecIF:reads-toSource_shape ;
+	sh:property SpecIF:reads-toTarget_shape .
+
+SpecIF:reads-toSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SpecIF:reads to source" ;
+	rdfs:comment "Connects the source of SpecIF:reads" ;
+	rdfs:range FMC:Actor .
+
+SpecIF:reads-toSource_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:reads-toSource ;
+	sh:class FMC:Actor .
+
+SpecIF:reads-toTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SpecIF:reads to target" ;
+	rdfs:comment "Connects the target of SpecIF:reads" ;
+	rdfs:range FMC:State .
+
+SpecIF:reads-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:reads-toTarget ;
+	sh:class FMC:State .
+
+SpecIF:dependsOn
+	a owl:Class ;
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "depends on"@en ,
+		"hängt ab von"@de ,
+		"depend de"@fr ;
+	skos:definition "<p>A [[IREB:Requirement]] 'depends on' another [[IREB:Requirement]].</p>"@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:dependsOn_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:dependsOn ;
+	sh:property SpecIF:dependsOn-toSource_shape ;
+	sh:property SpecIF:dependsOn-toTarget_shape .
+
+SpecIF:dependsOn-toSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SpecIF:dependsOn to source" ;
+	rdfs:comment "Connects the source of SpecIF:dependsOn" ;
+	rdfs:range IREB:Requirement .
+
+SpecIF:dependsOn-toSource_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:dependsOn-toSource ;
+	sh:class IREB:Requirement .
+
+SpecIF:dependsOn-toTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SpecIF:dependsOn to target" ;
+	rdfs:comment "Connects the target of SpecIF:dependsOn" ;
+	rdfs:range IREB:Requirement .
+
+SpecIF:dependsOn-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:dependsOn-toTarget ;
+	sh:class IREB:Requirement .
+
+oslc_rm:satisfies
+	a owl:Class ;
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "satisfies"@en ,
+		"erfüllt"@de ,
+		"satisfait"@fr ;
+	skos:definition "<p>The object is satisfied by the subject. <small>(<i>source: <a href=\"http://open-services.net/\">OSLC</a></i>)</small></p><p>SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X <em>satisfies</em> 'Requirement-4711'.</p>"@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+oslc_rm:satisfies_shape
+	a sh:NodeShape ;
+	sh:targetClass oslc_rm:satisfies ;
+	sh:property oslc_rm:satisfies-toSource_shape ;
+	sh:property oslc_rm:satisfies-toTarget_shape .
+
+oslc_rm:satisfies-toSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "oslc_rm:satisfies to source" ;
+	rdfs:comment "Connects the source of oslc_rm:satisfies" ;
+	rdfs:range [ owl:unionOf ( FMC:Actor FMC:State FMC:Event ) ] .
+
+oslc_rm:satisfies-toSource_shape
+	a sh:PropertyShape ;
+	sh:path oslc_rm:satisfies-toSource ;
+	sh:or ( [ sh:class FMC:Actor ] [ sh:class FMC:State ] [ sh:class FMC:Event ] ) .
+
+oslc_rm:satisfies-toTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "oslc_rm:satisfies to target" ;
+	rdfs:comment "Connects the target of oslc_rm:satisfies" ;
+	rdfs:range IREB:Requirement .
+
+oslc_rm:satisfies-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path oslc_rm:satisfies-toTarget ;
+	sh:class IREB:Requirement .
+
+SpecIF:refersTo
+	a owl:Class ;
+	rdfs:subClassOf cas:Relationship ;
+	rdfs:label "refers to"@en ,
+		"bezieht sich auf"@de ,
+		"concerne"@fr ;
+	skos:definition "<p>A resource 'refers to' any other resource.</p>"@en ;
+	cas:revision "1" ;
+	dcterms:modified "2016-05-26T08:59:00+02:00"^^xs:dateTime .
+
+SpecIF:refersTo_shape
+	a sh:NodeShape ;
+	sh:targetClass SpecIF:refersTo ;
+	sh:property SpecIF:refersTo-toSource_shape ;
+	sh:property SpecIF:refersTo-toTarget_shape .
+
+SpecIF:refersTo-toSource
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksSource ;
+	rdfs:label "SpecIF:refersTo to source" ;
+	rdfs:comment "Connects the source of SpecIF:refersTo" ;
+	rdfs:range SpecIF:Issue .
+
+SpecIF:refersTo-toSource_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:refersTo-toSource ;
+	sh:class SpecIF:Issue .
+
+SpecIF:refersTo-toTarget
+	a owl:ObjectProperty ;
+	rdfs:subPropertyOf cas:linksTarget ;
+	rdfs:label "SpecIF:refersTo to target" ;
+	rdfs:comment "Connects the target of SpecIF:refersTo" ;
+	rdfs:range [ owl:unionOf ( cas:View FMC:Actor FMC:State FMC:Event IREB:Requirement ) ] .
+
+SpecIF:refersTo-toTarget_shape
+	a sh:PropertyShape ;
+	sh:path SpecIF:refersTo-toTarget ;
+	sh:or ( [ sh:class cas:View ] [ sh:class FMC:Actor ] [ sh:class FMC:State ] [ sh:class FMC:Event ] [ sh:class IREB:Requirement ] ) .
+
+d:Pln-27420ffc0000c3a8013ab527ca1b71f5
+	a cas:View ;
+	rdfs:label "Color coding" ;
+	cas:revision "18" ;
+	dcterms:modified "2017-06-19T20:13:03+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div style=\"max-width: 480px;\" ><object data=\"files_and_images/27420ffc0000c3a8013ab527ca1b71f5.svg\" type=\"image/svg+xml\" >Color Coding</object></div>" ;
+	cas:Notation "FMC Block Diagram" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	ReqIF-WF:SupplierStatus SpecIF:NotApplicable ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.NotToEvaluate .
+
+d:Pln-5a4755dd0000bca801375293a62c90a8
+	a cas:View ;
+	rdfs:label "SmartHome System" ;
+	rdfs:comment "<div><p>The Smart-Home-System consists of sensors on the left side, the controller in the middle and the actuators on the right side. </p></div>" ;
+	cas:revision "19" ;
+	dcterms:modified "2017-06-19T20:13:03+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a4755dd0000bca801375293a62c90a8.svg\" type=\"image/svg+xml\" >files_and_images\\5a4755dd0000bca801375293a62c90a8.svg</object></div>" ;
+	cas:Notation "FMC Block Diagram" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusInitial ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:CustomerStatus.ToBeClarified ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.ToEvaluate ;
+	cas:shows d:MEl-5bd6bd890000bca8013739588a3f43d6 ,
+		d:MEl-5a4dd77b0000bca8013736c6912ad291 ,
+		d:MEl-5a489c300000bca80137ee1373c16844 ,
+		d:MEl-5a4c80c20000bca8013753b6999a4da8 ,
+		d:MEl-5bcf35cf0000bca8013776d68023612a ,
+		d:MEl-5a52b50c0000bca801377e3d15255f98 ,
+		d:MEl-5a51dd920000bca8013770a4395c83fc ,
+		d:MEl-5a50d5b60000bca8013781532547ce93 ,
+		d:MEl-5bcfb01d0000bca80137f303272a5557 ,
+		d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ,
+		d:MEl-5a4cfa830000bca801370d837f761f3e ,
+		d:MEl-5a4d2bd00000bca80137a3f233cdffeb ,
+		d:MEl-5a4d6dee0000bca80137c1caf2f42349 ,
+		d:MEl-5a47935a0000bca801377c17f8cb25b0 .
+
+d:Pln-5a6cdea50000bca80137d6b2d6e8a3a0
+	a cas:View ;
+	rdfs:label "Flush-mounted Dimmer" ;
+	rdfs:comment "<div><p> .. showing the components of the device with their interfaces. </p></div>" ;
+	cas:revision "19" ;
+	dcterms:modified "2017-06-19T20:13:03+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a6cdea50000bca80137d6b2d6e8a3a0.svg\" type=\"image/svg+xml\" >files_and_images\\5a6cdea50000bca80137d6b2d6e8a3a0.svg</object></div>" ;
+	cas:Notation "FMC Block Diagram" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusInitial ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.NotAgreed ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.NotAccepted ;
+	cas:shows d:MEl-5a7776c50000bca8013765ae93af9209 ,
+		d:MEl-5a76365c0000bca8013776e91afd1e8e ,
+		d:MEl-5a9ce0310000bca801378176dc4744e8 ,
+		d:MEl-5a752ccc0000bca80137479a2e8bab30 ,
+		d:MEl-5a71c4800000bca80137f2aaa7b63000 ,
+		d:MEl-5a4dd77b0000bca8013736c6912ad291 ,
+		d:MEl-5a489c300000bca80137ee1373c16844 ,
+		d:MEl-5a99c89c0000bca801375d44cf9a50ca ,
+		d:MEl-5a9929510000bca80137d23c81f1ca54 ,
+		d:MEl-5c29fb8e0000bca80137eb9734c99bfd ,
+		d:MEl-5a77385f0000bca80137e1c7dc0b1721 ,
+		d:MEl-5a9888810000bca801375410ce1cc142 ,
+		d:MEl-5a4d6dee0000bca80137c1caf2f42349 ,
+		d:MEl-5a9b7a9b0000bca80137d768644696b7 ,
+		d:MEl-463289cd0000c3a80141be3fc417034a .
+
+d:Pln-5a7f99af0000bca8013754f2ef12d3e5
+	a cas:View ;
+	rdfs:label "Dimmer Module" ;
+	cas:revision "20" ;
+	dcterms:modified "2017-06-19T20:13:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a7f99af0000bca8013754f2ef12d3e5.svg\" type=\"image/svg+xml\" >files_and_images\\5a7f99af0000bca8013754f2ef12d3e5.svg</object></div>" ;
+	cas:Notation "FMC Block Diagram" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusInitial ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.AgreedWithComment ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.ToEvaluate ;
+	cas:shows d:MEl-5a9ce0310000bca801378176dc4744e8 ,
+		d:MEl-5a85347c0000bca80137ad485c7cd330 ,
+		d:MEl-5a808e2a0000bca80137bfd74268a84a ,
+		d:MEl-5a752ccc0000bca80137479a2e8bab30 ,
+		d:MEl-5a844d820000bca8013750b9a0410b6b ,
+		d:MEl-5a99c89c0000bca801375d44cf9a50ca ,
+		d:MEl-5a8009a00000bca80137ef95bc3f643f ,
+		d:MEl-5a87083e0000bca801379bb412523737 ,
+		d:MEl-5a9929510000bca80137d23c81f1ca54 ,
+		d:MEl-5c29fb8e0000bca80137eb9734c99bfd ,
+		d:MEl-5a82ec6f0000bca801372ef053a71bdf ,
+		d:MEl-5a86b8980000bca80137ca6fde1a125e ,
+		d:MEl-5a77385f0000bca80137e1c7dc0b1721 ,
+		d:MEl-5a9888810000bca801375410ce1cc142 ,
+		d:MEl-5a820a3c0000bca801378c9093fb7d80 .
+
+d:Pln-606e76c70000bca801376ec3133a1181
+	a cas:View ;
+	rdfs:label "User Activity" ;
+	rdfs:comment "<div><p>This shows the defined sequences of manual operation to activate the device. </p></div>" ;
+	cas:revision "20" ;
+	dcterms:modified "2017-06-19T20:13:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div style=\"max-width: 600px;\"><object data=\"files_and_images/606e76c70000bca801376ec3133a1181.svg\" type=\"image/svg+xml\" >files_and_images\\606e76c70000bca801376ec3133a1181.svg</object></div>" ;
+	cas:Notation "BPMN Process Model" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusDrafted ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.Agreed ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.Accepted ;
+	cas:shows d:MEl-608177820000bca801379179ebf3b6aa ,
+		d:MEl-611366530000bca80137a97f194e96a3 ,
+		d:MEl-453862540000c3a801419d91bef48cfd ,
+		d:MEl-45387c0b0000c3a801410aa03f6b9be4 ,
+		d:MEl-4538920b0000c3a801415c67e334b8a1 ,
+		d:MEl-608239830000bca801373690c7d2af0f ,
+		d:MEl-610b07100000bca80137c10f96c46247 ,
+		d:MEl-610e0b010000bca80137ac40800bb1b8 ,
+		d:MEl-459b92580000c3a80141cb4acb521ab1 ,
+		d:MEl-45384cd10000c3a80141c1f85d7c26e6 ,
+		d:MEl-607f13b50000bca80137ba95f11856ab ,
+		d:MEl-5a47935a0000bca801377c17f8cb25b0 .
+
+d:Pln-45a1c8930000c3a801414cd1eaa70b5a
+	a cas:View ;
+	rdfs:label "Double-Button Observer Software" ;
+	rdfs:comment "<div><p>This software module discriminates the user's activity (operation sequence) and submits corresponding events/commands to the actuator. This software is generic with respect to the actuator, it can be used for [[dimmer]]s, [[shading]] devices and others. </p></div>" ;
+	cas:revision "253" ;
+	dcterms:modified "2018-03-15T15:36:31+01:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div style=\"max-width: 600px;\"><object type=\"image/svg+xml\" data=\"files_and_images/45a1c8930000c3a801414cd1eaa70b5a.svg\">files_and_images\\45a1c8930000c3a801414cd1eaa70b5a.svg</object></div>" ;
+	cas:Notation "BPMN Process Model" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusDrafted ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.Agreed ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.Accepted ;
+	cas:shows d:MEl-606f16ac0000bca801373587fda932b3 ,
+		d:MEl-45450be80000c3a801414f280f146c71 ,
+		d:MEl-4536b0350000c3a801415986f8ea806a ,
+		d:MEl-453facbb0000c3a80141c43d2fb4f5e2 ,
+		d:MEl-4543fe900000c3a80141f5253ff13c35 ,
+		d:MEl-453d34af0000c3a80141918f84641161 ,
+		d:MEl-45a236e00000c3a801410f6503287e16 ,
+		d:MEl-45a3b13c0000c3a801415e97f5bc29d1 .
+
+d:Pln-5af364560000bca80137b84017f4e832
+	a cas:View ;
+	rdfs:label "Dimmer Controller Software" ;
+	rdfs:comment "<div><p>This software decodes the commands and controls the timely behavior of the actuator. </p></div>" ;
+	cas:revision "22" ;
+	dcterms:modified "2017-06-19T20:13:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div style=\"max-width: 720px;\"><object data=\"files_and_images/5af364560000bca80137b84017f4e832.svg\" type=\"image/svg+xml\" >files_and_images\\5af364560000bca80137b84017f4e832.svg</object></div>" ;
+	cas:Notation "Petri Net" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusDrafted ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.Agreed ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.Accepted ;
+	cas:shows d:MEl-5b2f95ec0000bca8013709bfa81d701f ,
+		d:MEl-5a85347c0000bca80137ad485c7cd330 ,
+		d:MEl-45450be80000c3a801414f280f146c71 ,
+		d:MEl-4536b0350000c3a801415986f8ea806a ,
+		d:MEl-5b149eab0000bca80137aad99b6eea7b ,
+		d:MEl-5b08ed8d0000bca8013719f554353b0e ,
+		d:MEl-453dfb670000c3a8014191107df4565e ,
+		d:MEl-5b094f8a0000bca801374c798a6587ad ,
+		d:MEl-45428b930000c3a80141e28b7d4b5ae5 ,
+		d:MEl-5b078fa50000bca80137f36ed05c43cb ,
+		d:MEl-453facbb0000c3a80141c43d2fb4f5e2 ,
+		d:MEl-5b2d29070000bca801378a6c020cf8f5 ,
+		d:MEl-5b1750f80000bca801373b2d143d7478 ,
+		d:MEl-5b2ddad80000bca80137c44d62ba97d8 ,
+		d:MEl-5b2449180000bca8013722c01c9d35a5 ,
+		d:MEl-5b0839b90000bca801376dcca41ca7d0 ,
+		d:MEl-5b07e6aa0000bca8013797aad9be69ae ,
+		d:MEl-4543fe900000c3a80141f5253ff13c35 ,
+		d:MEl-453d34af0000c3a80141918f84641161 .
+
+d:Req-d1c895230000c3a80150f8afd049f738
+	a IREB:Requirement ;
+	rdfs:label "Dim an electric load" ;
+	rdfs:comment "<div><p> The user can set the intensity level of an electric load such as a light [[bulb]]. Pressing a button 'up' or 'down', the intensity is increased or decreased following a quasi-stepless ramp. <br /></p></div>" ;
+	cas:revision "23" ;
+	dcterms:modified "2017-06-19T20:13:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_014" ;
+	ReqIF-WF:SupplierComment "Our solution does this perfectly." ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineMechanics ,
+		SpecIF:EngineeringDisciplineElectronics ,
+		SpecIF:EngineeringDisciplineSoftware ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.Agreed .
+
+d:Req-d1d42a6a0000c3a8015091ec8d149b93
+	a IREB:Requirement ;
+	rdfs:label "Switch an electric load" ;
+	rdfs:comment "<div><p> The user can immediately switch 'on' or 'off' the electric load. The intensity set to the maximum resp. minimum level, as defined by installation parameters.</p></div>" ;
+	cas:revision "243" ;
+	dcterms:modified "2018-02-13T12:22:44+01:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_016" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineElectronics ,
+		SpecIF:EngineeringDisciplineSoftware .
+
+d:Req-d1cd7f370000c3a8015095e6ee21aab7
+	a IREB:Requirement ;
+	rdfs:label "Set dimming parameters" ;
+	rdfs:comment "<div><p> During system setup, the installer can modify the following parameters: </p><ul><li> maximum intensity </li><li> minimum intensity </li><li> dimming speed (intensity ramp when dimming) </li></ul></div>" ;
+	cas:revision "24" ;
+	dcterms:modified "2017-06-19T20:13:07+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_015" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusSubmitted ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineSoftware .
+
+d:Req-5ba3512b0000bca801371cc0617eb4c1
+	a IREB:Requirement ;
+	rdfs:label "Minimum button size" ;
+	rdfs:comment "<div><p>The button size must not be less than 2 cm in diameter.</p></div>" ;
+	cas:revision "25" ;
+	dcterms:modified "2017-06-19T20:13:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_009" ;
+	ReqIF-WF:SupplierComment "We did not find the actual minimum dimensions of the buttons." ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityHigh ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineMechanics ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:CustomerStatus.ToBeClarified .
+
+d:Req-5b8fbb300000bca80137c73e3ce4c737
+	a IREB:Requirement ;
+	rdfs:label "Electric load is 120 W" ;
+	rdfs:comment "<div><p>The power stage must allow an electric load of 120 W.</p></div>" ;
+	cas:revision "25" ;
+	dcterms:modified "2017-06-19T20:13:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_001" ;
+	ReqIF-WF:SupplierComment "For which time period?  Permanent load?" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusSubmitted ;
+	SpecIF:Priority SpecIF:priorityHigh ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineElectronics ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:CustomerStatus.ToBeClarified .
+
+d:Req-5b944fc70000bca8013763f44fdc0e03
+	a IREB:Requirement ;
+	rdfs:label "Instant use" ;
+	rdfs:comment "<div><p>85% of an arbitrarily selected group of test users understands and can use the system without reading a manual.</p></div>" ;
+	cas:revision "26" ;
+	dcterms:modified "2017-06-19T20:13:09+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_003" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineMechanics ,
+		SpecIF:EngineeringDisciplineSoftware ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.Agreed .
+
+d:Req-5ba140d60000bca801372b09f9888eca
+	a IREB:Requirement ;
+	rdfs:label "Instantaneous reaction" ;
+	rdfs:comment "<div><p> The reaction time of the system to user input is 'instantaneous' (&lt; 0,5 sec).</p></div>" ;
+	cas:revision "252" ;
+	dcterms:modified "2018-03-08T11:59:42+01:00"^^xs:dateTime ;
+	dcterms:creator "supplier" ;
+	dcterms:identifier "REQ_008" ;
+	ReqIF-WF:SupplierComment "Mais bien sûr." ;
+	ReqIF-WF:CustomerComment "Das ist ganz wichtig für uns." ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusDone ;
+	SpecIF:Priority SpecIF:priorityHigh ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineSoftware ;
+	ReqIF-WF:SupplierStatus ReqIF-WF:SupplierStatus.Agreed ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.ToEvaluate .
+
+d:Req-ee452cf20000c3a8014035290669304d
+	a IREB:Requirement ;
+	rdfs:label "Consistent system behavior" ;
+	rdfs:comment "<div><p>The system's behavior must be consistent. For example, controlling a dimmer must correspond with controlling a shade.</p></div>" ;
+	cas:revision "27" ;
+	dcterms:modified "2017-06-19T20:13:10+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_011" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineMechanics ,
+		SpecIF:EngineeringDisciplineSoftware .
+
+d:Req-ee43fc4c0000c3a8014063d42c77767f
+	a IREB:Requirement ;
+	rdfs:label "No dead-locks" ;
+	rdfs:comment "<div><p>Under no circumstances the system may get stuck in a dead-lock. I.e. every sequence of input stimulation must be supported, even arbitrary sequences. Input stimulation which is not supported in a given system state is either refused with an error message, if a feedback channel is available, or it is simply ignored, otherwise.</p></div>" ;
+	cas:revision "28" ;
+	dcterms:modified "2017-06-19T20:13:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_010" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityHigh ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupSystem ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineElectronics ,
+		SpecIF:EngineeringDisciplineSoftware .
+
+d:Req-5b9124bc0000bca80137fa2ce86f5eca
+	a IREB:Requirement ;
+	rdfs:label "Overload protection" ;
+	rdfs:comment "<div><p>The dimmer unit is protected against resistive overload and against any capacitive or inductive loads.</p></div>" ;
+	cas:revision "29" ;
+	dcterms:modified "2017-06-19T20:13:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_002" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusSubmitted ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineElectronics .
+
+d:Req-5b9e68530000bca801371362c49d2d08
+	a IREB:Requirement ;
+	rdfs:label "Auto shut-off" ;
+	rdfs:comment "<div><p>In case of over-temperature the device is shut-off automatically by an electronic circuit.</p></div>" ;
+	cas:revision "29" ;
+	dcterms:modified "2017-06-19T20:13:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_007" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusSubmitted ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupSystem ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineElectronics .
+
+d:Req-eea1cd500000c3a80140fe00109eb7f4
+	a IREB:Requirement ;
+	rdfs:label "Compliance with industry standards" ;
+	rdfs:comment "<div><p>The system must comply with industry standards. Besides legal and safety requirements, compatibility with existing electrical installations, tools and commercial components is desired.</p></div>" ;
+	cas:revision "31" ;
+	dcterms:modified "2017-06-19T20:13:12+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_012" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineMechanics ,
+		SpecIF:EngineeringDisciplineElectronics ,
+		SpecIF:EngineeringDisciplineSafety .
+
+d:Req-5b95fae40000bca801372becc933682d
+	a IREB:Requirement ;
+	rdfs:label "Industry-standard mounting" ;
+	rdfs:comment "<div><p> The product fits into an industry-standard [[housing]] for flush-mounted devices (diameter &#x2300;68 mm). It is fixed with two screw-activated claws.</p></div>" ;
+	cas:revision "32" ;
+	dcterms:modified "2017-06-19T20:13:12+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_004" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusSubmitted ;
+	SpecIF:Priority SpecIF:priorityHigh ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupSystem ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineMechanics .
+
+d:Req-5b9ab8a50000bca801377ad0be3bbc89
+	a IREB:Requirement ;
+	rdfs:label "Fire protection" ;
+	rdfs:comment "<div><p> The product must withstand 650°C (VDE 0606-1).</p></div>" ;
+	cas:revision "244" ;
+	dcterms:modified "2018-02-16T10:29:48+01:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_005" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusSubmitted ;
+	SpecIF:Priority SpecIF:priorityHigh ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupUser ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineMechanics ,
+		SpecIF:EngineeringDisciplineElectronics .
+
+d:Req-728c69c80018b1a8014b974542c36edc
+	a IREB:Requirement ;
+	rdfs:label "Galvanic Isolation" ;
+	rdfs:comment "<div><p>The load circuit with power stage is galvanically isolated from the controller.</p></div>" ;
+	cas:revision "247" ;
+	dcterms:modified "2018-02-28T13:16:17+01:00"^^xs:dateTime ;
+	dcterms:creator "supplier" ;
+	dcterms:identifier "REQ_013" ;
+	ReqIF-WF:SupplierComment "This is standard for all our products: expensive, but effective." ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusSubmitted ;
+	SpecIF:Priority SpecIF:priorityHigh ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupSystem ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineElectronics ;
+	ReqIF-WF:CustomerStatus ReqIF-WF:CustomerStatus.ToEvaluate .
+
+d:Req-5b9c950e0000bca801374f16615247b9
+	a IREB:Requirement ;
+	rdfs:label "Complete state-machine" ;
+	rdfs:comment "<div><p> The system is controlled by a complete state-machine and must not have any dead-lock state.</p></div>" ;
+	cas:revision "233" ;
+	dcterms:modified "2017-10-27T11:44:20+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "REQ_006" ;
+	SpecIF:LifecycleStatus SpecIF:LifecycleStatusApproved ;
+	SpecIF:Priority SpecIF:priorityMedium ;
+	SpecIF:StakeholderGroup SpecIF:StakeholderGroupSystem ;
+	SpecIF:EngineeringDiscipline SpecIF:EngineeringDisciplineSoftware .
+
+d:Iss-ee2abb630000c3a8013987a750219659
+	a SpecIF:Issue ;
+	rdfs:label "An open issue with respect to mechanics" ;
+	rdfs:comment "<div><p>This is the description of the issue and potential solution.</p></div>" ;
+	cas:revision "35" ;
+	dcterms:modified "2017-06-19T20:13:15+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "OPM_001" ;
+	SpecIF:DueDate "2012-09-30T12:00:00+02:00" ;
+	o:PC-IssueStatus oslc_cm:Inprogress ;
+	SpecIF:Priority SpecIF:priorityLow .
+
+d:Iss-eee2d4e00000c3a801394148dcc58a52
+	a SpecIF:Issue ;
+	rdfs:label "An open issue concerning software" ;
+	rdfs:comment "<div><p>A description.</p></div>" ;
+	cas:revision "37" ;
+	dcterms:modified "2017-06-19T20:13:15+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	dcterms:identifier "OPS_001" ;
+	SpecIF:Responsible "Vorname Nachname" ;
+	SpecIF:DueDate "2012-09-30T12:00:00+02:00" ;
+	o:PC-IssueStatus o:V-Iss-Status-6 ;
+	SpecIF:Priority SpecIF:priorityMedium .
+
+d:MEl-5a7776c50000bca8013765ae93af9209
+	a FMC:State ;
+	rdfs:label "Actuator Rods" ;
+	rdfs:comment "<div><p>Up to four actuator rods connecting the buttons to electrical contacts.</p></div>" ;
+	cas:revision "59" ;
+	dcterms:modified "2017-06-19T20:13:22+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a76365c0000bca8013776e91afd1e8e
+	a FMC:Actor ;
+	rdfs:label "Assembly Frame" ;
+	rdfs:comment "<div><p> Mounting frame screwed to or into a wall.</p></div>" ;
+	cas:revision "39" ;
+	dcterms:modified "2017-06-19T20:13:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-608177820000bca801379179ebf3b6aa
+	a FMC:Actor ;
+	rdfs:label "Briefly press Down-button" ;
+	rdfs:comment "<div><p>Press down-button &lt;400 ms.</p></div>" ;
+	cas:revision "40" ;
+	dcterms:modified "2017-06-19T20:13:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-611366530000bca80137a97f194e96a3
+	a FMC:Actor ;
+	rdfs:label "Briefly press Up-button" ;
+	rdfs:comment "<div><p>Press up-button &lt;400 ms.</p></div>" ;
+	cas:revision "41" ;
+	dcterms:modified "2017-06-19T20:13:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5bd6bd890000bca8013739588a3f43d6
+	a FMC:Actor ;
+	rdfs:label "Bulb" ;
+	rdfs:comment "<div><p> Dimmable candescent light-bulb 230V.</p></div>" ;
+	cas:revision "239" ;
+	dcterms:modified "2017-11-11T16:16:13+01:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a9ce0310000bca801378176dc4744e8
+	a FMC:State ;
+	rdfs:label "Control Signals" ;
+	cas:revision "60" ;
+	dcterms:modified "2017-06-19T20:13:22+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b2f95ec0000bca8013709bfa81d701f
+	a FMC:Event ;
+	rdfs:label "Decreasing" ;
+	cas:revision "81" ;
+	dcterms:modified "2017-06-19T20:13:28+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-453862540000c3a801419d91bef48cfd
+	a FMC:Event ;
+	rdfs:label "Dim-down!" ;
+	cas:revision "82" ;
+	dcterms:modified "2017-06-19T20:13:29+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-45387c0b0000c3a801410aa03f6b9be4
+	a FMC:Event ;
+	rdfs:label "Dim-up!" ;
+	cas:revision "83" ;
+	dcterms:modified "2017-06-19T20:13:29+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a85347c0000bca80137ad485c7cd330
+	a FMC:Actor ;
+	rdfs:label "Dimmer Controller Software" ;
+	rdfs:comment "<div><p> Input commands (events):</p><ul><li> up-long → increase brightness </li><li> down-long → decrease brightness </li><li> release → stop dimming, keep brightness </li><li> up-short → switch to maximum </li><li> down-short → switch to minimum </li><li> inappropriate commands are ignored (e.g. up-long when maximum is set). </li><li> set parameters </li></ul><p> Four parameters influence the behavior of the particular device:</p><ul><li> minimum value (default: 0%) </li><li> maximum value (default: 100%) </li><li> ramp-up speed (default: 10% per sec) </li><li> ramp-down speed (default: 10% per sec) </li></ul></div>" ;
+	cas:revision "242" ;
+	dcterms:modified "2017-12-09T10:38:29+01:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a808e2a0000bca80137bfd74268a84a
+	a FMC:Actor ;
+	rdfs:label "Dimmer Electronics" ;
+	rdfs:comment "<div><p>The Dimmer Electronics is a printed circuit board with low-power micro-processor, memory, binary as well as analog I/O signals and a power stage supporting the specified electric load.</p></div>" ;
+	cas:revision "44" ;
+	dcterms:modified "2017-06-19T20:13:17+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div><p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/Schaltplan.gif\" name=\"Schaltplan.gif\" type=\"image/gif\"/></p> </div>" .
+
+d:MEl-5a752ccc0000bca80137479a2e8bab30
+	a FMC:Actor ;
+	rdfs:label "Dimmer Module" ;
+	rdfs:comment "<div><p>The actuator module with dimmer function for resistive loads.</p></div>" ;
+	cas:revision "45" ;
+	dcterms:modified "2017-06-19T20:13:17+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-4538920b0000c3a801415c67e334b8a1
+	a FMC:Event ;
+	rdfs:label "Done!" ;
+	cas:revision "83" ;
+	dcterms:modified "2017-06-19T20:13:29+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a71c4800000bca80137f2aaa7b63000
+	a FMC:Actor ;
+	rdfs:label "Double Button" ;
+	rdfs:comment "<div><p>The Double Button (a sensor unit) is a versatile all-mechanical unit used for multiple purposes. The mechanical position is transferred with a rod per button to the next unit where it is converted to an electrical signal.</p></div>" ;
+	cas:revision "46" ;
+	dcterms:modified "2017-06-19T20:13:17+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-606f16ac0000bca801373587fda932b3
+	a FMC:Actor ;
+	rdfs:label "Double-Button Observer Software" ;
+	rdfs:comment "<div><p>This is an observer of the double-button sensor. It distinguishes short and long pressing in the 'up' and 'down' directions. A discriminator may send five events:</p><ul><li>up-short</li><li>down-short</li><li>up-long</li><li>down-long and </li><li>release.</li></ul><p>The events are interpreted and actions are initiated accordingly by the target actuator unit. The double button sensor and the observer have no notion of the underlying function.</p></div>" ;
+	cas:revision "47" ;
+	dcterms:modified "2017-06-19T20:13:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a4dd77b0000bca8013736c6912ad291
+	a FMC:State ;
+	rdfs:label "down" ;
+	rdfs:comment "<div><p>The button to drive down the dimmer, shading or similar devices.</p></div>" ;
+	cas:revision "61" ;
+	dcterms:modified "2017-06-19T20:13:22+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-45450be80000c3a801414f280f146c71
+	a FMC:Event ;
+	rdfs:label "down-long!" ;
+	cas:revision "84" ;
+	dcterms:modified "2017-06-19T20:13:29+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-4536b0350000c3a801415986f8ea806a
+	a FMC:Event ;
+	rdfs:label "down-short!" ;
+	cas:revision "85" ;
+	dcterms:modified "2017-06-19T20:13:30+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a844d820000bca8013750b9a0410b6b
+	a FMC:State ;
+	rdfs:label "Electro-Magnetic Resistance" ;
+	rdfs:comment "<div><p>Electromagnetic characteristics, especially EM-shielding.</p></div>" ;
+	cas:revision "62" ;
+	dcterms:modified "2017-06-19T20:13:23+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a489c300000bca80137ee1373c16844
+	a FMC:State ;
+	rdfs:label "Flush-mounted Dimmer" ;
+	rdfs:comment "<p>A dimmer for electric loads in an industry-standard mounting frame which is flush with the wall surface. In other words, the dimmer is sitting in the wall and just the buttons are visible.</p>" ;
+	cas:revision "63" ;
+	dcterms:modified "2017-06-19T20:13:23+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a4c80c20000bca8013753b6999a4da8
+	a FMC:State ;
+	rdfs:label "Flush-mounted Shading Control" ;
+	cas:revision "63" ;
+	dcterms:modified "2017-06-19T20:13:23+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a99c89c0000bca801375d44cf9a50ca
+	a FMC:State ;
+	rdfs:label "Ground Cable" ;
+	rdfs:comment "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>" ;
+	cas:revision "64" ;
+	dcterms:modified "2017-06-19T20:13:23+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a8009a00000bca80137ef95bc3f643f
+	a FMC:Actor ;
+	rdfs:label "Housing" ;
+	cas:revision "47" ;
+	dcterms:modified "2017-06-19T20:13:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:Diagram "<div> <p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/UP-Dose.png\" name=\"UP-Dose.png\" type=\"image/png\"/></p> </div>" .
+
+d:MEl-5a87083e0000bca801379bb412523737
+	a FMC:State ;
+	rdfs:label "I/O Pins" ;
+	rdfs:comment "<div><p>per input and output signal:</p><ul><li>hardware-address</li><li>number of significant bits</li></ul></div>" ;
+	cas:revision "65" ;
+	dcterms:modified "2017-06-19T20:13:23+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b149eab0000bca80137aad99b6eea7b
+	a FMC:Event ;
+	rdfs:label "Increasing" ;
+	cas:revision "85" ;
+	dcterms:modified "2017-06-19T20:13:30+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a52b50c0000bca801377e3d15255f98
+	a FMC:State ;
+	rdfs:label "Intelligent Shading Drive" ;
+	rdfs:comment "<div><p>An intelligent shading actuator with 2 drives for up/down straight/tilt motion. The unit comprises the control unit and the motors.</p></div>" ;
+	cas:revision "66" ;
+	dcterms:modified "2017-06-19T20:13:24+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b08ed8d0000bca8013719f554353b0e
+	a FMC:Event ;
+	rdfs:label "Intermediate" ;
+	cas:revision "86" ;
+	dcterms:modified "2017-06-19T20:13:30+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a9929510000bca80137d23c81f1ca54
+	a FMC:State ;
+	rdfs:label "Load Cable" ;
+	rdfs:comment "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>" ;
+	cas:revision "67" ;
+	dcterms:modified "2017-06-19T20:13:24+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5bcf35cf0000bca8013776d68023612a
+	a FMC:State ;
+	rdfs:label "M" ;
+	rdfs:comment "<div><p>Actuator Motor 230V.</p></div>" ;
+	cas:revision "68" ;
+	dcterms:modified "2017-06-19T20:13:24+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-453dfb670000c3a8014191107df4565e
+	a FMC:Event ;
+	rdfs:label "max-reached!" ;
+	cas:revision "87" ;
+	dcterms:modified "2017-06-19T20:13:30+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b094f8a0000bca801374c798a6587ad
+	a FMC:Event ;
+	rdfs:label "Maximum" ;
+	cas:revision "87" ;
+	dcterms:modified "2017-06-19T20:13:30+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-45428b930000c3a80141e28b7d4b5ae5
+	a FMC:Event ;
+	rdfs:label "min-reached!" ;
+	cas:revision "88" ;
+	dcterms:modified "2017-06-19T20:13:30+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b078fa50000bca80137f36ed05c43cb
+	a FMC:Event ;
+	rdfs:label "Minimum" ;
+	cas:revision "89" ;
+	dcterms:modified "2017-06-19T20:13:31+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5c29fb8e0000bca80137eb9734c99bfd
+	a FMC:State ;
+	rdfs:label "Neutral Cable" ;
+	rdfs:comment "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>" ;
+	cas:revision "69" ;
+	dcterms:modified "2017-06-19T20:13:24+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a82ec6f0000bca801372ef053a71bdf
+	a FMC:State ;
+	rdfs:label "Physical Space" ;
+	rdfs:comment "<div><p>Effective 3D interior space and mounting for electronics.</p></div>" ;
+	cas:revision "70" ;
+	dcterms:modified "2017-06-19T20:13:25+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-608239830000bca801373690c7d2af0f
+	a FMC:Actor ;
+	rdfs:label "Press and hold Down-button" ;
+	rdfs:comment "<div><p>Press down-button &gt;400 ms.</p></div>" ;
+	cas:revision "48" ;
+	dcterms:modified "2017-06-19T20:13:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-610b07100000bca80137c10f96c46247
+	a FMC:Actor ;
+	rdfs:label "Press and hold Up-button" ;
+	rdfs:comment "<div><p>Press up-button &gt;400 ms.</p></div>" ;
+	cas:revision "49" ;
+	dcterms:modified "2017-06-19T20:13:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a86b8980000bca80137ca6fde1a125e
+	a FMC:State ;
+	rdfs:label "Processor RAM ROM" ;
+	rdfs:comment "<div><p>EPROM-Size</p><p>RAM-Size</p><p>Processor type with instruction set and speed (MIPS)</p></div>" ;
+	cas:revision "71" ;
+	dcterms:modified "2017-06-19T20:13:25+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-610e0b010000bca80137ac40800bb1b8
+	a FMC:Actor ;
+	rdfs:label "Release button" ;
+	cas:revision "49" ;
+	dcterms:modified "2017-06-19T20:13:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-453facbb0000c3a80141c43d2fb4f5e2
+	a FMC:Event ;
+	rdfs:label "released!" ;
+	cas:revision "89" ;
+	dcterms:modified "2017-06-19T20:13:31+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a51dd920000bca8013770a4395c83fc
+	a FMC:State ;
+	rdfs:label "Remote Control" ;
+	cas:revision "72" ;
+	dcterms:modified "2017-06-19T20:13:26+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5bcfb01d0000bca80137f303272a5557
+	a FMC:Actor ;
+	rdfs:label "Shading" ;
+	rdfs:comment "<div><p>Window-shade with 2 degrees of freedom: It can be moved up/down and the elements can be set straight/tilted. Both movements can be made proportionally with an electric drive.</p></div>" ;
+	cas:revision "50" ;
+	dcterms:modified "2017-06-19T20:13:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a50d5b60000bca8013781532547ce93
+	a FMC:Actor ;
+	rdfs:label "SmartHome Controller" ;
+	rdfs:comment "<div><p>The controller </p><ul><li>interconnects locally distributed sensors and actuators, </li><li>coordinates different actuators where appropriate and </li><li>performes automatic functions, such as switching external lamps dependend on ambient light.</li></ul></div>" ;
+	cas:revision "51" ;
+	dcterms:modified "2017-06-19T20:13:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-803fd3750000c3a8013cf1fdb3b26d33
+	a FMC:State ;
+	rdfs:label "SmartHome System" ;
+	rdfs:comment "<div><p>The new system for controlling all major functions of the private home:</p><ul><li>light/illumination</li><li>window shades</li><li>heating</li><li>consumption meters for electricity, heat, gas and water.</li></ul></div>" ;
+	cas:revision "73" ;
+	dcterms:modified "2017-06-19T20:13:26+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a77385f0000bca80137e1c7dc0b1721
+	a FMC:State ;
+	rdfs:label "Spring Clips" ;
+	rdfs:comment "<div><p>Spring clips for mechanical connection.</p></div>" ;
+	cas:revision "74" ;
+	dcterms:modified "2017-06-19T20:13:26+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b2d29070000bca801378a6c020cf8f5
+	a FMC:Actor ;
+	rdfs:label "Start-decreasing" ;
+	cas:revision "51" ;
+	dcterms:modified "2017-06-19T20:13:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b1750f80000bca801373b2d143d7478
+	a FMC:Actor ;
+	rdfs:label "Start-increasing" ;
+	cas:revision "51" ;
+	dcterms:modified "2017-06-19T20:13:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-459b92580000c3a80141cb4acb521ab1
+	a FMC:Event ;
+	rdfs:label "Stop dimming!" ;
+	cas:revision "90" ;
+	dcterms:modified "2017-06-19T20:13:31+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b2ddad80000bca80137c44d62ba97d8
+	a FMC:Actor ;
+	rdfs:label "Stop-decreasing" ;
+	cas:revision "52" ;
+	dcterms:modified "2017-06-19T20:13:20+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b2449180000bca8013722c01c9d35a5
+	a FMC:Actor ;
+	rdfs:label "Stop-increasing" ;
+	cas:revision "52" ;
+	dcterms:modified "2017-06-19T20:13:20+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a4cfa830000bca801370d837f761f3e
+	a FMC:State ;
+	rdfs:label "straighten" ;
+	rdfs:comment "<div><p>The button to straighten the shading elements.</p></div>" ;
+	cas:revision "75" ;
+	dcterms:modified "2017-06-19T20:13:27+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a9888810000bca801375410ce1cc142
+	a FMC:State ;
+	rdfs:label "Supply Cable" ;
+	rdfs:comment "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>" ;
+	cas:revision "76" ;
+	dcterms:modified "2017-06-19T20:13:27+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b0839b90000bca801376dcca41ca7d0
+	a FMC:Actor ;
+	rdfs:label "Switch-off" ;
+	rdfs:comment "<div><p>Switch to programmed min-value.</p></div>" ;
+	cas:revision "53" ;
+	dcterms:modified "2017-06-19T20:13:20+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-45384cd10000c3a80141c1f85d7c26e6
+	a FMC:Event ;
+	rdfs:label "Switch-off!" ;
+	cas:revision "91" ;
+	dcterms:modified "2017-06-19T20:13:32+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5b07e6aa0000bca8013797aad9be69ae
+	a FMC:Actor ;
+	rdfs:label "Switch-on" ;
+	rdfs:comment "<div><p>Switch to programmed max-value.</p></div>" ;
+	cas:revision "54" ;
+	dcterms:modified "2017-06-19T20:13:21+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-607f13b50000bca80137ba95f11856ab
+	a FMC:Event ;
+	rdfs:label "Switch-on!" ;
+	cas:revision "91" ;
+	dcterms:modified "2017-06-19T20:13:32+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a820a3c0000bca801378c9093fb7d80
+	a FMC:State ;
+	rdfs:label "Thermal Resistance" ;
+	rdfs:comment "<div><p> Thermal resistance and thermal capacity of the [[housing]].</p></div>" ;
+	cas:revision "77" ;
+	dcterms:modified "2017-06-19T20:13:27+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a4d2bd00000bca80137a3f233cdffeb
+	a FMC:State ;
+	rdfs:label "tilt" ;
+	rdfs:comment "<div><p>The button to tilt the shading elements.</p></div>" ;
+	cas:revision "78" ;
+	dcterms:modified "2017-06-19T20:13:28+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a4d6dee0000bca80137c1caf2f42349
+	a FMC:State ;
+	rdfs:label "up" ;
+	rdfs:comment "<div><p>The button to drive up the dimmer, shading or similar devices.</p></div>" ;
+	cas:revision "79" ;
+	dcterms:modified "2017-06-19T20:13:28+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-4543fe900000c3a80141f5253ff13c35
+	a FMC:Event ;
+	rdfs:label "up-long!" ;
+	cas:revision "91" ;
+	dcterms:modified "2017-06-19T20:13:32+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-453d34af0000c3a80141918f84641161
+	a FMC:Event ;
+	rdfs:label "up-short!" ;
+	cas:revision "92" ;
+	dcterms:modified "2017-06-19T20:13:33+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a47935a0000bca801377c17f8cb25b0
+	a FMC:Actor ;
+	rdfs:label "User" ;
+	cas:revision "55" ;
+	dcterms:modified "2017-06-19T20:13:21+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-45a236e00000c3a801410f6503287e16
+	a FMC:Actor ;
+	rdfs:label "Wait for Activation" ;
+	rdfs:comment "<div><p>The kind of activation is determined:</p><ul><li>Up- or Down-Button</li><li>Short or long activation: 'Short' is &lt; 0,4 sec.</li><li>Do only wait until the distinction between 'short' or 'long' can be made!</li></ul></div>" ;
+	cas:revision "56" ;
+	dcterms:modified "2017-06-19T20:13:21+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-45a3b13c0000c3a801415e97f5bc29d1
+	a FMC:Actor ;
+	rdfs:label "Wait for Deactivation" ;
+	cas:revision "57" ;
+	dcterms:modified "2017-06-19T20:13:21+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-5a9b7a9b0000bca80137d768644696b7
+	a FMC:Actor ;
+	rdfs:label "Wireless Module" ;
+	rdfs:comment "<div><p>Receives control commands via radio signal or the mechanical position of a mounted sensor unit. Sends electrical control signals to the mounted actuator module.</p></div>" ;
+	cas:revision "58" ;
+	dcterms:modified "2017-06-19T20:13:22+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:MEl-463289cd0000c3a80141be3fc417034a
+	a FMC:State ;
+	rdfs:label "Wireless Network" ;
+	cas:revision "80" ;
+	dcterms:modified "2017-06-19T20:13:28+02:00"^^xs:dateTime ;
+	dcterms:creator "od" .
+
+d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1c895230000c3a80150f8afd049f738
+	a oslc_rm:satisfies ;
+	cas:revision "150" ;
+	dcterms:modified "2017-06-19T20:13:49+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	oslc_rm:satisfies-toTarget d:Req-d1c895230000c3a80150f8afd049f738 .
+
+d:R-RpgwxaijQtHjsE71uYHiTJyJW79
+	a SpecIF:dependsOn ;
+	cas:revision "150" ;
+	dcterms:modified "2017-06-19T20:13:49+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:dependsOn-toSource d:Req-d1c895230000c3a80150f8afd049f738 ;
+	SpecIF:dependsOn-toTarget d:Req-d1cd7f370000c3a8015095e6ee21aab7 .
+
+d:R-tA5fx5sgbN3nJReiqqzE6PvBhbt
+	a oslc_rm:satisfies ;
+	cas:revision "151" ;
+	dcterms:modified "2017-06-19T20:13:50+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	oslc_rm:satisfies-toTarget d:Req-d1c895230000c3a80150f8afd049f738 .
+
+d:R-2hkTtbuV2BjIYernvDaRZXDFV1Q
+	a oslc_rm:satisfies ;
+	cas:revision "151" ;
+	dcterms:modified "2017-06-19T20:13:50+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	oslc_rm:satisfies-toTarget d:Req-d1c895230000c3a80150f8afd049f738 .
+
+d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1d42a6a0000c3a8015091ec8d149b93
+	a oslc_rm:satisfies ;
+	cas:revision "151" ;
+	dcterms:modified "2017-06-19T20:13:50+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	oslc_rm:satisfies-toTarget d:Req-d1d42a6a0000c3a8015091ec8d149b93 .
+
+d:R-Ch6fs9eKiVNhSacQ72yIBhF0Q3W
+	a SpecIF:refersTo ;
+	cas:revision "260" ;
+	dcterms:modified "2018-11-15T15:46:00+01:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:refersTo-toSource d:Iss-ee2abb630000c3a8013987a750219659 ;
+	SpecIF:refersTo-toTarget d:Req-d1d42a6a0000c3a8015091ec8d149b93 .
+
+d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1cd7f370000c3a8015095e6ee21aab7
+	a oslc_rm:satisfies ;
+	cas:revision "152" ;
+	dcterms:modified "2017-06-19T20:13:51+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	oslc_rm:satisfies-toTarget d:Req-d1cd7f370000c3a8015095e6ee21aab7 .
+
+d:RSat-MEl-5a71c4800000bca80137f2aaa7b63000-Req-5ba3512b0000bca801371cc0617eb4c1
+	a oslc_rm:satisfies ;
+	cas:revision "152" ;
+	dcterms:modified "2017-06-19T20:13:51+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a71c4800000bca80137f2aaa7b63000 ;
+	oslc_rm:satisfies-toTarget d:Req-5ba3512b0000bca801371cc0617eb4c1 .
+
+d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b8fbb300000bca80137c73e3ce4c737
+	a oslc_rm:satisfies ;
+	cas:revision "153" ;
+	dcterms:modified "2017-06-19T20:13:51+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	oslc_rm:satisfies-toTarget d:Req-5b8fbb300000bca80137c73e3ce4c737 .
+
+d:RSat-MEl-5a47935a0000bca801377c17f8cb25b0-Req-5b944fc70000bca8013763f44fdc0e03
+	a oslc_rm:satisfies ;
+	cas:revision "154" ;
+	dcterms:modified "2017-06-19T20:13:51+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	oslc_rm:satisfies-toTarget d:Req-5b944fc70000bca8013763f44fdc0e03 .
+
+d:RCnc-Iss-ee2abb630000c3a8013987a750219659-Req-5b944fc70000bca8013763f44fdc0e03
+	a SpecIF:refersTo ;
+	cas:revision "155" ;
+	dcterms:modified "2017-06-19T20:13:51+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:refersTo-toSource d:Iss-ee2abb630000c3a8013987a750219659 ;
+	SpecIF:refersTo-toTarget d:Req-5b944fc70000bca8013763f44fdc0e03 .
+
+d:RSat-MEl-5a752ccc0000bca80137479a2e8bab30-Req-5ba140d60000bca801372b09f9888eca
+	a oslc_rm:satisfies ;
+	cas:revision "155" ;
+	dcterms:modified "2017-06-19T20:13:51+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	oslc_rm:satisfies-toTarget d:Req-5ba140d60000bca801372b09f9888eca .
+
+d:RSat-MEl-5a9b7a9b0000bca80137d768644696b7-Req-5ba140d60000bca801372b09f9888eca
+	a oslc_rm:satisfies ;
+	cas:revision "156" ;
+	dcterms:modified "2017-06-19T20:13:52+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a9b7a9b0000bca80137d768644696b7 ;
+	oslc_rm:satisfies-toTarget d:Req-5ba140d60000bca801372b09f9888eca .
+
+d:RSat-MEl-803fd3750000c3a8013cf1fdb3b26d33-Req-ee452cf20000c3a8014035290669304d
+	a oslc_rm:satisfies ;
+	cas:revision "157" ;
+	dcterms:modified "2017-06-19T20:13:52+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ;
+	oslc_rm:satisfies-toTarget d:Req-ee452cf20000c3a8014035290669304d .
+
+d:R-UZD4SQ8jYghL2Tsb4tZjoXDSYoM
+	a oslc_rm:satisfies ;
+	cas:revision "158" ;
+	dcterms:modified "2017-06-19T20:13:52+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	oslc_rm:satisfies-toTarget d:Req-ee452cf20000c3a8014035290669304d .
+
+d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-ee43fc4c0000c3a8014063d42c77767f
+	a oslc_rm:satisfies ;
+	cas:revision "158" ;
+	dcterms:modified "2017-06-19T20:13:52+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	oslc_rm:satisfies-toTarget d:Req-ee43fc4c0000c3a8014063d42c77767f .
+
+d:RSat-MEl-5a4c80c20000bca8013753b6999a4da8-Req-ee43fc4c0000c3a8014063d42c77767f
+	a oslc_rm:satisfies ;
+	cas:revision "159" ;
+	dcterms:modified "2017-06-19T20:13:52+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a4c80c20000bca8013753b6999a4da8 ;
+	oslc_rm:satisfies-toTarget d:Req-ee43fc4c0000c3a8014063d42c77767f .
+
+d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-ee43fc4c0000c3a8014063d42c77767f
+	a oslc_rm:satisfies ;
+	cas:revision "160" ;
+	dcterms:modified "2017-06-19T20:13:53+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a52b50c0000bca801377e3d15255f98 ;
+	oslc_rm:satisfies-toTarget d:Req-ee43fc4c0000c3a8014063d42c77767f .
+
+d:RSat-MEl-5a50d5b60000bca8013781532547ce93-Req-ee43fc4c0000c3a8014063d42c77767f
+	a oslc_rm:satisfies ;
+	cas:revision "160" ;
+	dcterms:modified "2017-06-19T20:13:53+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a50d5b60000bca8013781532547ce93 ;
+	oslc_rm:satisfies-toTarget d:Req-ee43fc4c0000c3a8014063d42c77767f .
+
+d:RDep-Req-ee43fc4c0000c3a8014063d42c77767f-Req-5b9c950e0000bca801374f16615247b9
+	a SpecIF:dependsOn ;
+	cas:revision "161" ;
+	dcterms:modified "2017-06-19T20:13:53+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:dependsOn-toSource d:Req-ee43fc4c0000c3a8014063d42c77767f ;
+	SpecIF:dependsOn-toTarget d:Req-5b9c950e0000bca801374f16615247b9 .
+
+d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9124bc0000bca80137fa2ce86f5eca
+	a oslc_rm:satisfies ;
+	cas:revision "162" ;
+	dcterms:modified "2017-06-19T20:13:53+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	oslc_rm:satisfies-toTarget d:Req-5b9124bc0000bca80137fa2ce86f5eca .
+
+d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9124bc0000bca80137fa2ce86f5eca
+	a oslc_rm:satisfies ;
+	cas:revision "163" ;
+	dcterms:modified "2017-06-19T20:13:54+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a52b50c0000bca801377e3d15255f98 ;
+	oslc_rm:satisfies-toTarget d:Req-5b9124bc0000bca80137fa2ce86f5eca .
+
+d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9e68530000bca801371362c49d2d08
+	a oslc_rm:satisfies ;
+	cas:revision "163" ;
+	dcterms:modified "2017-06-19T20:13:54+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	oslc_rm:satisfies-toTarget d:Req-5b9e68530000bca801371362c49d2d08 .
+
+d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9e68530000bca801371362c49d2d08
+	a oslc_rm:satisfies ;
+	cas:revision "164" ;
+	dcterms:modified "2017-06-19T20:13:54+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a52b50c0000bca801377e3d15255f98 ;
+	oslc_rm:satisfies-toTarget d:Req-5b9e68530000bca801371362c49d2d08 .
+
+d:RSat-MEl-803fd3750000c3a8013cf1fdb3b26d33-Req-eea1cd500000c3a80140fe00109eb7f4
+	a oslc_rm:satisfies ;
+	cas:revision "165" ;
+	dcterms:modified "2017-06-19T20:13:54+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ;
+	oslc_rm:satisfies-toTarget d:Req-eea1cd500000c3a80140fe00109eb7f4 .
+
+d:R-lELLVnNbbagfomwYyTBgGfXSalj
+	a oslc_rm:satisfies ;
+	cas:revision "165" ;
+	dcterms:modified "2017-06-19T20:13:54+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	oslc_rm:satisfies-toTarget d:Req-eea1cd500000c3a80140fe00109eb7f4 .
+
+d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b95fae40000bca801372becc933682d
+	a oslc_rm:satisfies ;
+	cas:revision "166" ;
+	dcterms:modified "2017-06-19T20:13:54+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	oslc_rm:satisfies-toTarget d:Req-5b95fae40000bca801372becc933682d .
+
+d:RSat-MEl-5a4c80c20000bca8013753b6999a4da8-Req-5b95fae40000bca801372becc933682d
+	a oslc_rm:satisfies ;
+	cas:revision "167" ;
+	dcterms:modified "2017-06-19T20:13:55+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a4c80c20000bca8013753b6999a4da8 ;
+	oslc_rm:satisfies-toTarget d:Req-5b95fae40000bca801372becc933682d .
+
+d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b9ab8a50000bca801377ad0be3bbc89
+	a oslc_rm:satisfies ;
+	cas:revision "167" ;
+	dcterms:modified "2017-06-19T20:13:55+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	oslc_rm:satisfies-toTarget d:Req-5b9ab8a50000bca801377ad0be3bbc89 .
+
+d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9ab8a50000bca801377ad0be3bbc89
+	a oslc_rm:satisfies ;
+	cas:revision "168" ;
+	dcterms:modified "2017-06-19T20:13:55+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a52b50c0000bca801377e3d15255f98 ;
+	oslc_rm:satisfies-toTarget d:Req-5b9ab8a50000bca801377ad0be3bbc89 .
+
+d:R-NJ2iOLwt4CEpcf8IidN1z0P4d0m
+	a oslc_rm:satisfies ;
+	cas:revision "169" ;
+	dcterms:modified "2017-06-19T20:13:55+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	oslc_rm:satisfies-toTarget d:Req-5b9ab8a50000bca801377ad0be3bbc89 .
+
+d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-728c69c80018b1a8014b974542c36edc
+	a oslc_rm:satisfies ;
+	cas:revision "169" ;
+	dcterms:modified "2017-06-19T20:13:55+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	oslc_rm:satisfies-toTarget d:Req-728c69c80018b1a8014b974542c36edc .
+
+d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-5b9c950e0000bca801374f16615247b9
+	a oslc_rm:satisfies ;
+	cas:revision "169" ;
+	dcterms:modified "2017-06-19T20:13:55+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	oslc_rm:satisfies-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	oslc_rm:satisfies-toTarget d:Req-5b9c950e0000bca801374f16615247b9 .
+
+d:RWri-MEl-5a76365c0000bca8013776e91afd1e8e-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:writes ;
+	cas:revision "171" ;
+	dcterms:modified "2017-06-19T20:13:56+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a76365c0000bca8013776e91afd1e8e ;
+	SpecIF:writes-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RRea-MEl-5a76365c0000bca8013776e91afd1e8e-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:reads ;
+	cas:revision "172" ;
+	dcterms:modified "2017-06-19T20:13:57+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a76365c0000bca8013776e91afd1e8e ;
+	SpecIF:reads-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a76365c0000bca8013776e91afd1e8e
+	a SpecIF:contains ;
+	cas:revision "172" ;
+	dcterms:modified "2017-06-19T20:13:57+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a76365c0000bca8013776e91afd1e8e .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-608177820000bca801379179ebf3b6aa
+	a SpecIF:contains ;
+	cas:revision "173" ;
+	dcterms:modified "2017-06-19T20:13:57+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-608177820000bca801379179ebf3b6aa .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-611366530000bca80137a97f194e96a3
+	a SpecIF:contains ;
+	cas:revision "174" ;
+	dcterms:modified "2017-06-19T20:13:57+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-611366530000bca80137a97f194e96a3 .
+
+d:RRea-MEl-5bd6bd890000bca8013739588a3f43d6-MEl-5a489c300000bca80137ee1373c16844
+	a SpecIF:reads ;
+	cas:revision "175" ;
+	dcterms:modified "2017-06-19T20:13:57+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5bd6bd890000bca8013739588a3f43d6 ;
+	SpecIF:reads-toTarget d:MEl-5a489c300000bca80137ee1373c16844 .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-45450be80000c3a801414f280f146c71
+	a SpecIF:contains ;
+	cas:revision "175" ;
+	dcterms:modified "2017-06-19T20:13:57+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-45450be80000c3a801414f280f146c71 .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4536b0350000c3a801415986f8ea806a
+	a SpecIF:contains ;
+	cas:revision "176" ;
+	dcterms:modified "2017-06-19T20:13:57+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-4536b0350000c3a801415986f8ea806a .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b08ed8d0000bca8013719f554353b0e
+	a SpecIF:contains ;
+	cas:revision "177" ;
+	dcterms:modified "2017-06-19T20:13:58+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-5b08ed8d0000bca8013719f554353b0e .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453dfb670000c3a8014191107df4565e
+	a SpecIF:contains ;
+	cas:revision "177" ;
+	dcterms:modified "2017-06-19T20:13:58+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-453dfb670000c3a8014191107df4565e .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b094f8a0000bca801374c798a6587ad
+	a SpecIF:contains ;
+	cas:revision "178" ;
+	dcterms:modified "2017-06-19T20:13:58+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-5b094f8a0000bca801374c798a6587ad .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-45428b930000c3a80141e28b7d4b5ae5
+	a SpecIF:contains ;
+	cas:revision "179" ;
+	dcterms:modified "2017-06-19T20:13:58+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-45428b930000c3a80141e28b7d4b5ae5 .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b078fa50000bca80137f36ed05c43cb
+	a SpecIF:contains ;
+	cas:revision "179" ;
+	dcterms:modified "2017-06-19T20:13:58+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-5b078fa50000bca80137f36ed05c43cb .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453facbb0000c3a80141c43d2fb4f5e2
+	a SpecIF:contains ;
+	cas:revision "180" ;
+	dcterms:modified "2017-06-19T20:13:58+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-453facbb0000c3a80141c43d2fb4f5e2 .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b0839b90000bca801376dcca41ca7d0
+	a SpecIF:contains ;
+	cas:revision "181" ;
+	dcterms:modified "2017-06-19T20:13:59+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-5b0839b90000bca801376dcca41ca7d0 .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b07e6aa0000bca8013797aad9be69ae
+	a SpecIF:contains ;
+	cas:revision "181" ;
+	dcterms:modified "2017-06-19T20:13:59+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-5b07e6aa0000bca8013797aad9be69ae .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4543fe900000c3a80141f5253ff13c35
+	a SpecIF:contains ;
+	cas:revision "182" ;
+	dcterms:modified "2017-06-19T20:13:59+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-4543fe900000c3a80141f5253ff13c35 .
+
+d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453d34af0000c3a80141918f84641161
+	a SpecIF:contains ;
+	cas:revision "183" ;
+	dcterms:modified "2017-06-19T20:13:59+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:contains-toTarget d:MEl-453d34af0000c3a80141918f84641161 .
+
+d:RRea-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5a87083e0000bca801379bb412523737
+	a SpecIF:reads ;
+	cas:revision "184" ;
+	dcterms:modified "2017-06-19T20:14:00+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:reads-toTarget d:MEl-5a87083e0000bca801379bb412523737 .
+
+d:RRea-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5a86b8980000bca80137ca6fde1a125e
+	a SpecIF:reads ;
+	cas:revision "184" ;
+	dcterms:modified "2017-06-19T20:14:00+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a85347c0000bca80137ad485c7cd330 ;
+	SpecIF:reads-toTarget d:MEl-5a86b8980000bca80137ca6fde1a125e .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a85347c0000bca80137ad485c7cd330
+	a SpecIF:contains ;
+	cas:revision "185" ;
+	dcterms:modified "2017-06-19T20:14:00+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a85347c0000bca80137ad485c7cd330 .
+
+d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a99c89c0000bca801375d44cf9a50ca
+	a SpecIF:writes ;
+	cas:revision "186" ;
+	dcterms:modified "2017-06-19T20:14:00+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:writes-toTarget d:MEl-5a99c89c0000bca801375d44cf9a50ca .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a99c89c0000bca801375d44cf9a50ca
+	a SpecIF:reads ;
+	cas:revision "187" ;
+	dcterms:modified "2017-06-19T20:14:00+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5a99c89c0000bca801375d44cf9a50ca .
+
+d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54
+	a SpecIF:writes ;
+	cas:revision "188" ;
+	dcterms:modified "2017-06-19T20:14:01+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:writes-toTarget d:MEl-5a9929510000bca80137d23c81f1ca54 .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54
+	a SpecIF:reads ;
+	cas:revision "188" ;
+	dcterms:modified "2017-06-19T20:14:01+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5a9929510000bca80137d23c81f1ca54 .
+
+d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd
+	a SpecIF:writes ;
+	cas:revision "189" ;
+	dcterms:modified "2017-06-19T20:14:01+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:writes-toTarget d:MEl-5c29fb8e0000bca80137eb9734c99bfd .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd
+	a SpecIF:reads ;
+	cas:revision "190" ;
+	dcterms:modified "2017-06-19T20:14:01+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5c29fb8e0000bca80137eb9734c99bfd .
+
+d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142
+	a SpecIF:writes ;
+	cas:revision "190" ;
+	dcterms:modified "2017-06-19T20:14:01+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:writes-toTarget d:MEl-5a9888810000bca801375410ce1cc142 .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142
+	a SpecIF:reads ;
+	cas:revision "191" ;
+	dcterms:modified "2017-06-19T20:14:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5a9888810000bca801375410ce1cc142 .
+
+d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a86b8980000bca80137ca6fde1a125e
+	a SpecIF:writes ;
+	cas:revision "192" ;
+	dcterms:modified "2017-06-19T20:14:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:writes-toTarget d:MEl-5a86b8980000bca80137ca6fde1a125e .
+
+d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a87083e0000bca801379bb412523737
+	a SpecIF:writes ;
+	cas:revision "192" ;
+	dcterms:modified "2017-06-19T20:14:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:writes-toTarget d:MEl-5a87083e0000bca801379bb412523737 .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9ce0310000bca801378176dc4744e8
+	a SpecIF:reads ;
+	cas:revision "193" ;
+	dcterms:modified "2017-06-19T20:14:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5a9ce0310000bca801378176dc4744e8 .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a820a3c0000bca801378c9093fb7d80
+	a SpecIF:reads ;
+	cas:revision "194" ;
+	dcterms:modified "2017-06-19T20:14:03+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5a820a3c0000bca801378c9093fb7d80 .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a844d820000bca8013750b9a0410b6b
+	a SpecIF:reads ;
+	cas:revision "194" ;
+	dcterms:modified "2017-06-19T20:14:03+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5a844d820000bca8013750b9a0410b6b .
+
+d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a82ec6f0000bca801372ef053a71bdf
+	a SpecIF:reads ;
+	cas:revision "194" ;
+	dcterms:modified "2017-06-19T20:14:03+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a808e2a0000bca80137bfd74268a84a ;
+	SpecIF:reads-toTarget d:MEl-5a82ec6f0000bca801372ef053a71bdf .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a808e2a0000bca80137bfd74268a84a
+	a SpecIF:contains ;
+	cas:revision "195" ;
+	dcterms:modified "2017-06-19T20:14:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a808e2a0000bca80137bfd74268a84a .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a8009a00000bca80137ef95bc3f643f
+	a SpecIF:contains ;
+	cas:revision "195" ;
+	dcterms:modified "2017-06-19T20:14:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a8009a00000bca80137ef95bc3f643f .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a844d820000bca8013750b9a0410b6b
+	a SpecIF:contains ;
+	cas:revision "195" ;
+	dcterms:modified "2017-06-19T20:14:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a844d820000bca8013750b9a0410b6b .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a86b8980000bca80137ca6fde1a125e
+	a SpecIF:contains ;
+	cas:revision "196" ;
+	dcterms:modified "2017-06-19T20:14:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a86b8980000bca80137ca6fde1a125e .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a87083e0000bca801379bb412523737
+	a SpecIF:contains ;
+	cas:revision "196" ;
+	dcterms:modified "2017-06-19T20:14:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a87083e0000bca801379bb412523737 .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a82ec6f0000bca801372ef053a71bdf
+	a SpecIF:contains ;
+	cas:revision "196" ;
+	dcterms:modified "2017-06-19T20:14:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a82ec6f0000bca801372ef053a71bdf .
+
+d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a820a3c0000bca801378c9093fb7d80
+	a SpecIF:contains ;
+	cas:revision "197" ;
+	dcterms:modified "2017-06-19T20:14:05+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:contains-toTarget d:MEl-5a820a3c0000bca801378c9093fb7d80 .
+
+d:RRea-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a9ce0310000bca801378176dc4744e8
+	a SpecIF:reads ;
+	cas:revision "197" ;
+	dcterms:modified "2017-06-19T20:14:05+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a752ccc0000bca80137479a2e8bab30 ;
+	SpecIF:reads-toTarget d:MEl-5a9ce0310000bca801378176dc4744e8 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a752ccc0000bca80137479a2e8bab30
+	a SpecIF:contains ;
+	cas:revision "198" ;
+	dcterms:modified "2017-06-19T20:14:05+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a752ccc0000bca80137479a2e8bab30 .
+
+d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:writes ;
+	cas:revision "199" ;
+	dcterms:modified "2017-06-19T20:14:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a71c4800000bca80137f2aaa7b63000 ;
+	SpecIF:writes-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:reads ;
+	cas:revision "200" ;
+	dcterms:modified "2017-06-19T20:14:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a71c4800000bca80137f2aaa7b63000 ;
+	SpecIF:reads-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a7776c50000bca8013765ae93af9209
+	a SpecIF:writes ;
+	cas:revision "200" ;
+	dcterms:modified "2017-06-19T20:14:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a71c4800000bca80137f2aaa7b63000 ;
+	SpecIF:writes-toTarget d:MEl-5a7776c50000bca8013765ae93af9209 .
+
+d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4dd77b0000bca8013736c6912ad291
+	a SpecIF:reads ;
+	cas:revision "201" ;
+	dcterms:modified "2017-06-19T20:14:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a71c4800000bca80137f2aaa7b63000 ;
+	SpecIF:reads-toTarget d:MEl-5a4dd77b0000bca8013736c6912ad291 .
+
+d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4d6dee0000bca80137c1caf2f42349
+	a SpecIF:reads ;
+	cas:revision "202" ;
+	dcterms:modified "2017-06-19T20:14:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a71c4800000bca80137f2aaa7b63000 ;
+	SpecIF:reads-toTarget d:MEl-5a4d6dee0000bca80137c1caf2f42349 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a71c4800000bca80137f2aaa7b63000
+	a SpecIF:contains ;
+	cas:revision "202" ;
+	dcterms:modified "2017-06-19T20:14:07+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a71c4800000bca80137f2aaa7b63000 .
+
+d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45450be80000c3a801414f280f146c71
+	a SpecIF:contains ;
+	cas:revision "203" ;
+	dcterms:modified "2017-06-19T20:14:07+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-606f16ac0000bca801373587fda932b3 ;
+	SpecIF:contains-toTarget d:MEl-45450be80000c3a801414f280f146c71 .
+
+d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4536b0350000c3a801415986f8ea806a
+	a SpecIF:contains ;
+	cas:revision "204" ;
+	dcterms:modified "2017-06-19T20:14:07+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-606f16ac0000bca801373587fda932b3 ;
+	SpecIF:contains-toTarget d:MEl-4536b0350000c3a801415986f8ea806a .
+
+d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453facbb0000c3a80141c43d2fb4f5e2
+	a SpecIF:contains ;
+	cas:revision "204" ;
+	dcterms:modified "2017-06-19T20:14:07+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-606f16ac0000bca801373587fda932b3 ;
+	SpecIF:contains-toTarget d:MEl-453facbb0000c3a80141c43d2fb4f5e2 .
+
+d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4543fe900000c3a80141f5253ff13c35
+	a SpecIF:contains ;
+	cas:revision "205" ;
+	dcterms:modified "2017-06-19T20:14:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-606f16ac0000bca801373587fda932b3 ;
+	SpecIF:contains-toTarget d:MEl-4543fe900000c3a80141f5253ff13c35 .
+
+d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453d34af0000c3a80141918f84641161
+	a SpecIF:contains ;
+	cas:revision "206" ;
+	dcterms:modified "2017-06-19T20:14:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-606f16ac0000bca801373587fda932b3 ;
+	SpecIF:contains-toTarget d:MEl-453d34af0000c3a80141918f84641161 .
+
+d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a236e00000c3a801410f6503287e16
+	a SpecIF:contains ;
+	cas:revision "206" ;
+	dcterms:modified "2017-06-19T20:14:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-606f16ac0000bca801373587fda932b3 ;
+	SpecIF:contains-toTarget d:MEl-45a236e00000c3a801410f6503287e16 .
+
+d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a3b13c0000c3a801415e97f5bc29d1
+	a SpecIF:contains ;
+	cas:revision "207" ;
+	dcterms:modified "2017-06-19T20:14:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-606f16ac0000bca801373587fda932b3 ;
+	SpecIF:contains-toTarget d:MEl-45a3b13c0000c3a801415e97f5bc29d1 .
+
+d:RCnc-Iss-ee2abb630000c3a8013987a750219659-MEl-5a8009a00000bca80137ef95bc3f643f
+	a SpecIF:refersTo ;
+	cas:revision "170" ;
+	dcterms:modified "2017-06-19T20:13:56+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:refersTo-toSource d:Iss-ee2abb630000c3a8013987a750219659 ;
+	SpecIF:refersTo-toTarget d:MEl-5a8009a00000bca80137ef95bc3f643f .
+
+d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:writes ;
+	cas:revision "208" ;
+	dcterms:modified "2017-06-19T20:14:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a8009a00000bca80137ef95bc3f643f ;
+	SpecIF:writes-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RRea-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:reads ;
+	cas:revision "208" ;
+	dcterms:modified "2017-06-19T20:14:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a8009a00000bca80137ef95bc3f643f ;
+	SpecIF:reads-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a844d820000bca8013750b9a0410b6b
+	a SpecIF:writes ;
+	cas:revision "209" ;
+	dcterms:modified "2017-06-19T20:14:09+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a8009a00000bca80137ef95bc3f643f ;
+	SpecIF:writes-toTarget d:MEl-5a844d820000bca8013750b9a0410b6b .
+
+d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a82ec6f0000bca801372ef053a71bdf
+	a SpecIF:writes ;
+	cas:revision "210" ;
+	dcterms:modified "2017-06-19T20:14:09+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a8009a00000bca80137ef95bc3f643f ;
+	SpecIF:writes-toTarget d:MEl-5a82ec6f0000bca801372ef053a71bdf .
+
+d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a820a3c0000bca801378c9093fb7d80
+	a SpecIF:writes ;
+	cas:revision "210" ;
+	dcterms:modified "2017-06-19T20:14:09+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a8009a00000bca80137ef95bc3f643f ;
+	SpecIF:writes-toTarget d:MEl-5a820a3c0000bca801378c9093fb7d80 .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-608239830000bca801373690c7d2af0f
+	a SpecIF:contains ;
+	cas:revision "211" ;
+	dcterms:modified "2017-06-19T20:14:10+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-608239830000bca801373690c7d2af0f .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610b07100000bca80137c10f96c46247
+	a SpecIF:contains ;
+	cas:revision "212" ;
+	dcterms:modified "2017-06-19T20:14:10+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-610b07100000bca80137c10f96c46247 .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610e0b010000bca80137ac40800bb1b8
+	a SpecIF:contains ;
+	cas:revision "212" ;
+	dcterms:modified "2017-06-19T20:14:10+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-610e0b010000bca80137ac40800bb1b8 .
+
+d:RRea-MEl-5bcfb01d0000bca80137f303272a5557-MEl-5a52b50c0000bca801377e3d15255f98
+	a SpecIF:reads ;
+	cas:revision "213" ;
+	dcterms:modified "2017-06-19T20:14:10+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5bcfb01d0000bca80137f303272a5557 ;
+	SpecIF:reads-toTarget d:MEl-5a52b50c0000bca801377e3d15255f98 .
+
+d:RWri-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a489c300000bca80137ee1373c16844
+	a SpecIF:writes ;
+	cas:revision "214" ;
+	dcterms:modified "2017-06-19T20:14:10+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a50d5b60000bca8013781532547ce93 ;
+	SpecIF:writes-toTarget d:MEl-5a489c300000bca80137ee1373c16844 .
+
+d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a489c300000bca80137ee1373c16844
+	a SpecIF:reads ;
+	cas:revision "214" ;
+	dcterms:modified "2017-06-19T20:14:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a50d5b60000bca8013781532547ce93 ;
+	SpecIF:reads-toTarget d:MEl-5a489c300000bca80137ee1373c16844 .
+
+d:RWri-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a52b50c0000bca801377e3d15255f98
+	a SpecIF:writes ;
+	cas:revision "215" ;
+	dcterms:modified "2017-06-19T20:14:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a50d5b60000bca8013781532547ce93 ;
+	SpecIF:writes-toTarget d:MEl-5a52b50c0000bca801377e3d15255f98 .
+
+d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a4c80c20000bca8013753b6999a4da8
+	a SpecIF:reads ;
+	cas:revision "216" ;
+	dcterms:modified "2017-06-19T20:14:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a50d5b60000bca8013781532547ce93 ;
+	SpecIF:reads-toTarget d:MEl-5a4c80c20000bca8013753b6999a4da8 .
+
+d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a51dd920000bca8013770a4395c83fc
+	a SpecIF:reads ;
+	cas:revision "216" ;
+	dcterms:modified "2017-06-19T20:14:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a50d5b60000bca8013781532547ce93 ;
+	SpecIF:reads-toTarget d:MEl-5a51dd920000bca8013770a4395c83fc .
+
+d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a50d5b60000bca8013781532547ce93
+	a SpecIF:contains ;
+	cas:revision "216" ;
+	dcterms:modified "2017-06-19T20:14:11+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ;
+	SpecIF:contains-toTarget d:MEl-5a50d5b60000bca8013781532547ce93 .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-453862540000c3a801419d91bef48cfd
+	a SpecIF:contains ;
+	cas:revision "217" ;
+	dcterms:modified "2017-06-19T20:14:12+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-453862540000c3a801419d91bef48cfd .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45387c0b0000c3a801410aa03f6b9be4
+	a SpecIF:contains ;
+	cas:revision "217" ;
+	dcterms:modified "2017-06-19T20:14:12+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-45387c0b0000c3a801410aa03f6b9be4 .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-4538920b0000c3a801415c67e334b8a1
+	a SpecIF:contains ;
+	cas:revision "217" ;
+	dcterms:modified "2017-06-19T20:14:12+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-4538920b0000c3a801415c67e334b8a1 .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-459b92580000c3a80141cb4acb521ab1
+	a SpecIF:contains ;
+	cas:revision "218" ;
+	dcterms:modified "2017-06-19T20:14:13+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-459b92580000c3a80141cb4acb521ab1 .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-607f13b50000bca80137ba95f11856ab
+	a SpecIF:contains ;
+	cas:revision "218" ;
+	dcterms:modified "2017-06-19T20:14:13+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-607f13b50000bca80137ba95f11856ab .
+
+d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45384cd10000c3a80141c1f85d7c26e6
+	a SpecIF:contains ;
+	cas:revision "218" ;
+	dcterms:modified "2017-06-19T20:14:13+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:contains-toTarget d:MEl-45384cd10000c3a80141c1f85d7c26e6 .
+
+d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a51dd920000bca8013770a4395c83fc
+	a SpecIF:writes ;
+	cas:revision "219" ;
+	dcterms:modified "2017-06-19T20:14:14+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:writes-toTarget d:MEl-5a51dd920000bca8013770a4395c83fc .
+
+d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a4c80c20000bca8013753b6999a4da8
+	a SpecIF:writes ;
+	cas:revision "219" ;
+	dcterms:modified "2017-06-19T20:14:14+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:writes-toTarget d:MEl-5a4c80c20000bca8013753b6999a4da8 .
+
+d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a489c300000bca80137ee1373c16844
+	a SpecIF:writes ;
+	cas:revision "219" ;
+	dcterms:modified "2017-06-19T20:14:14+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a47935a0000bca801377c17f8cb25b0 ;
+	SpecIF:writes-toTarget d:MEl-5a489c300000bca80137ee1373c16844 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9b7a9b0000bca80137d768644696b7
+	a SpecIF:contains ;
+	cas:revision "220" ;
+	dcterms:modified "2017-06-19T20:14:14+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a9b7a9b0000bca80137d768644696b7 .
+
+d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:writes ;
+	cas:revision "220" ;
+	dcterms:modified "2017-06-19T20:14:14+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a9b7a9b0000bca80137d768644696b7 ;
+	SpecIF:writes-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:reads ;
+	cas:revision "221" ;
+	dcterms:modified "2017-06-19T20:14:15+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a9b7a9b0000bca80137d768644696b7 ;
+	SpecIF:reads-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a
+	a SpecIF:writes ;
+	cas:revision "222" ;
+	dcterms:modified "2017-06-19T20:14:15+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a9b7a9b0000bca80137d768644696b7 ;
+	SpecIF:writes-toTarget d:MEl-463289cd0000c3a80141be3fc417034a .
+
+d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a
+	a SpecIF:reads ;
+	cas:revision "222" ;
+	dcterms:modified "2017-06-19T20:14:15+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a9b7a9b0000bca80137d768644696b7 ;
+	SpecIF:reads-toTarget d:MEl-463289cd0000c3a80141be3fc417034a .
+
+d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a9ce0310000bca801378176dc4744e8
+	a SpecIF:writes ;
+	cas:revision "223" ;
+	dcterms:modified "2017-06-19T20:14:15+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:writes-toSource d:MEl-5a9b7a9b0000bca80137d768644696b7 ;
+	SpecIF:writes-toTarget d:MEl-5a9ce0310000bca801378176dc4744e8 .
+
+d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a7776c50000bca8013765ae93af9209
+	a SpecIF:reads ;
+	cas:revision "224" ;
+	dcterms:modified "2017-06-19T20:14:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:reads-toSource d:MEl-5a9b7a9b0000bca80137d768644696b7 ;
+	SpecIF:reads-toTarget d:MEl-5a7776c50000bca8013765ae93af9209 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a7776c50000bca8013765ae93af9209
+	a SpecIF:contains ;
+	cas:revision "225" ;
+	dcterms:modified "2017-06-19T20:14:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a7776c50000bca8013765ae93af9209 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9ce0310000bca801378176dc4744e8
+	a SpecIF:contains ;
+	cas:revision "224" ;
+	dcterms:modified "2017-06-19T20:14:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a9ce0310000bca801378176dc4744e8 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4dd77b0000bca8013736c6912ad291
+	a SpecIF:contains ;
+	cas:revision "226" ;
+	dcterms:modified "2017-06-19T20:14:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a4dd77b0000bca8013736c6912ad291 .
+
+d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4dd77b0000bca8013736c6912ad291
+	a SpecIF:contains ;
+	cas:revision "226" ;
+	dcterms:modified "2017-06-19T20:14:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a4c80c20000bca8013753b6999a4da8 ;
+	SpecIF:contains-toTarget d:MEl-5a4dd77b0000bca8013736c6912ad291 .
+
+d:RCtn-MEl-5a51dd920000bca8013770a4395c83fc-MEl-5a4dd77b0000bca8013736c6912ad291
+	a SpecIF:contains ;
+	cas:revision "226" ;
+	dcterms:modified "2017-06-19T20:14:16+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a51dd920000bca8013770a4395c83fc ;
+	SpecIF:contains-toTarget d:MEl-5a4dd77b0000bca8013736c6912ad291 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4d6dee0000bca80137c1caf2f42349
+	a SpecIF:contains ;
+	cas:revision "227" ;
+	dcterms:modified "2017-06-19T20:14:17+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a4d6dee0000bca80137c1caf2f42349 .
+
+d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a77385f0000bca80137e1c7dc0b1721
+	a SpecIF:contains ;
+	cas:revision "227" ;
+	dcterms:modified "2017-06-19T20:14:17+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a489c300000bca80137ee1373c16844 ;
+	SpecIF:contains-toTarget d:MEl-5a77385f0000bca80137e1c7dc0b1721 .
+
+d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a489c300000bca80137ee1373c16844
+	a SpecIF:contains ;
+	cas:revision "227" ;
+	dcterms:modified "2017-06-19T20:14:17+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ;
+	SpecIF:contains-toTarget d:MEl-5a489c300000bca80137ee1373c16844 .
+
+d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d6dee0000bca80137c1caf2f42349
+	a SpecIF:contains ;
+	cas:revision "228" ;
+	dcterms:modified "2017-06-19T20:14:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a4c80c20000bca8013753b6999a4da8 ;
+	SpecIF:contains-toTarget d:MEl-5a4d6dee0000bca80137c1caf2f42349 .
+
+d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4cfa830000bca801370d837f761f3e
+	a SpecIF:contains ;
+	cas:revision "228" ;
+	dcterms:modified "2017-06-19T20:14:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a4c80c20000bca8013753b6999a4da8 ;
+	SpecIF:contains-toTarget d:MEl-5a4cfa830000bca801370d837f761f3e .
+
+d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d2bd00000bca80137a3f233cdffeb
+	a SpecIF:contains ;
+	cas:revision "228" ;
+	dcterms:modified "2017-06-19T20:14:18+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a4c80c20000bca8013753b6999a4da8 ;
+	SpecIF:contains-toTarget d:MEl-5a4d2bd00000bca80137a3f233cdffeb .
+
+d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a4c80c20000bca8013753b6999a4da8
+	a SpecIF:contains ;
+	cas:revision "229" ;
+	dcterms:modified "2017-06-19T20:14:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ;
+	SpecIF:contains-toTarget d:MEl-5a4c80c20000bca8013753b6999a4da8 .
+
+d:RCtn-MEl-5a52b50c0000bca801377e3d15255f98-MEl-5bcf35cf0000bca8013776d68023612a
+	a SpecIF:contains ;
+	cas:revision "229" ;
+	dcterms:modified "2017-06-19T20:14:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a52b50c0000bca801377e3d15255f98 ;
+	SpecIF:contains-toTarget d:MEl-5bcf35cf0000bca8013776d68023612a .
+
+d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a52b50c0000bca801377e3d15255f98
+	a SpecIF:contains ;
+	cas:revision "230" ;
+	dcterms:modified "2017-06-19T20:14:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ;
+	SpecIF:contains-toTarget d:MEl-5a52b50c0000bca801377e3d15255f98 .
+
+d:R-vxkoenpgAX6s6PxskSWlYPN8e4y
+	a SpecIF:refersTo ;
+	cas:revision "170" ;
+	dcterms:modified "2017-06-19T20:13:56+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:refersTo-toSource d:Iss-eee2d4e00000c3a801394148dcc58a52 ;
+	SpecIF:refersTo-toTarget d:MEl-5a51dd920000bca8013770a4395c83fc .
+
+d:RCtn-MEl-5a51dd920000bca8013770a4395c83fc-MEl-5a4d6dee0000bca80137c1caf2f42349
+	a SpecIF:contains ;
+	cas:revision "231" ;
+	dcterms:modified "2017-06-19T20:14:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-5a51dd920000bca8013770a4395c83fc ;
+	SpecIF:contains-toTarget d:MEl-5a4d6dee0000bca80137c1caf2f42349 .
+
+d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a51dd920000bca8013770a4395c83fc
+	a SpecIF:contains ;
+	cas:revision "231" ;
+	dcterms:modified "2017-06-19T20:14:19+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	SpecIF:contains-toSource d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ;
+	SpecIF:contains-toTarget d:MEl-5a51dd920000bca8013770a4395c83fc .
+
+d:HierarchyRoot-ACP-59c8a7730000bca80137509a49b1218b
+	a cas:Root ;
+	rdfs:label "Hierarchy Root" ;
+	rdfs:comment "... anchoring all hierarchies of this graph (package)" ;
+	dcterms:modified "2026-09-30T09:18:13.533Z"^^xs:dateTime ;
+	cas:lists d:Fld-59c8a7730000bca80137509a49b1218b-info ,
+		d:Fld-5a5f54090000bca801375b04a668f1a7 ,
+		d:Fld-5af3154d0000bca801379748537d7388 ,
+		d:Fld-5b8e98550000bca801371afb0c7b671b ,
+		d:Fld-ef47e6970000c3a80139dc747c5df319 ,
+		d:R-TrPQLASiCLwOlMOVEGEd1g8r68W .
+
+d:Fld-5a5f54090000bca801375b04a668f1a7
+	a cas:Outline ;
+	rdfs:label "System Composition" ;
+	rdfs:comment "<div><p>.. showing the system and its composition of modules (at a higher level) and components (at a lower level). The relevant interfaces between the disciplines mechanical, electrical and software engineering are shown.</p></div>" ;
+	cas:revision "13" ;
+	dcterms:modified "2017-06-19T20:13:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Pln-27420ffc0000c3a8013ab527ca1b71f5 ,
+		d:Pln-5a4755dd0000bca801375293a62c90a8 ,
+		d:Pln-5a6cdea50000bca80137d6b2d6e8a3a0 ,
+		d:Pln-5a7f99af0000bca8013754f2ef12d3e5 .
+
+d:Fld-5b6a99f10000bca80137b78cda65fc07
+	a cas:Outline ;
+	rdfs:label "Dimming" ;
+	cas:revision "20" ;
+	dcterms:modified "2017-06-19T20:13:04+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Pln-606e76c70000bca801376ec3133a1181 ,
+		d:Pln-45a1c8930000c3a801414cd1eaa70b5a ,
+		d:Pln-5af364560000bca80137b84017f4e832 .
+
+d:Fld-5af3154d0000bca801379748537d7388
+	a cas:Outline ;
+	rdfs:label "Scenarios" ;
+	rdfs:comment "<div><p>.. showing the behavioral aspects of system design, both from external user perspective ('black box') and from internal perspective ('white box').</p></div>" ;
+	cas:revision "13" ;
+	dcterms:modified "2017-06-19T20:13:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Fld-5b6a99f10000bca80137b78cda65fc07 .
+
+d:Fld-d1b1698a0000c3a801505b1b5698b7a1
+	a cas:Outline ;
+	rdfs:label "Function" ;
+	rdfs:comment "<div><p>The requirements related to the product function.</p></div>" ;
+	cas:revision "22" ;
+	dcterms:modified "2017-06-19T20:13:06+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Req-d1c895230000c3a80150f8afd049f738 ,
+		d:Req-d1d42a6a0000c3a8015091ec8d149b93 ,
+		d:Req-d1cd7f370000c3a8015095e6ee21aab7 ,
+		d:Req-5ba3512b0000bca801371cc0617eb4c1 ,
+		d:Req-5b8fbb300000bca80137c73e3ce4c737 .
+
+d:Fld-d1b1d6c60000c3a80150fe9ce40e6588
+	a cas:Outline ;
+	rdfs:label "Quality" ;
+	rdfs:comment "<div><p>The requirements related to quality characteristics of the product.</p></div>" ;
+	cas:revision "25" ;
+	dcterms:modified "2017-06-19T20:13:08+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Req-5b944fc70000bca8013763f44fdc0e03 ,
+		d:Req-5ba140d60000bca801372b09f9888eca ,
+		d:Req-ee452cf20000c3a8014035290669304d ,
+		d:Req-ee43fc4c0000c3a8014063d42c77767f ,
+		d:Req-5b9124bc0000bca80137fa2ce86f5eca ,
+		d:Req-5b9e68530000bca801371362c49d2d08 .
+
+d:Fld-d1b314890000c3a80150b71a1473d374
+	a cas:Outline ;
+	rdfs:label "Constraints" ;
+	rdfs:comment "<div><p>The requirements related to constraints for product conception, such as regulations or technical choices made upfront.</p></div>" ;
+	cas:revision "30" ;
+	dcterms:modified "2017-06-19T20:13:12+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Req-eea1cd500000c3a80140fe00109eb7f4 ,
+		d:Req-5b95fae40000bca801372becc933682d ,
+		d:Req-5b9ab8a50000bca801377ad0be3bbc89 ,
+		d:Req-728c69c80018b1a8014b974542c36edc ,
+		d:Req-5b9c950e0000bca801374f16615247b9 .
+
+d:Fld-5b8e98550000bca801371afb0c7b671b
+	a cas:Outline ;
+	rdfs:label "Requirements" ;
+	cas:revision "14" ;
+	dcterms:modified "2017-06-19T20:13:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Fld-d1b1698a0000c3a801505b1b5698b7a1 ,
+		d:Fld-d1b1d6c60000c3a80150fe9ce40e6588 ,
+		d:Fld-d1b314890000c3a80150b71a1473d374 .
+
+d:Fld-ee29463e0000c3a80139627bbced50ae
+	a cas:Outline ;
+	rdfs:label "Mechanical" ;
+	cas:revision "34" ;
+	dcterms:modified "2017-06-19T20:13:14+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Iss-ee2abb630000c3a8013987a750219659 .
+
+d:Fld-ee2a15040000c3a80139d27de6704f15
+	a cas:Outline ;
+	rdfs:label "Software" ;
+	cas:revision "36" ;
+	dcterms:modified "2017-06-19T20:13:15+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Iss-eee2d4e00000c3a801394148dcc58a52 .
+
+d:Fld-ef47e6970000c3a80139dc747c5df319
+	a cas:Outline ;
+	rdfs:label "Open Issues" ;
+	cas:revision "15" ;
+	dcterms:modified "2017-06-19T20:13:02+02:00"^^xs:dateTime ;
+	dcterms:creator "od" ;
+	cas:lists d:Fld-ee29463e0000c3a80139627bbced50ae ,
+		d:Fld-ee2a15040000c3a80139d27de6704f15 .
+
+d:R-TrPQLASiCLwOlMOVEGEd1g8r68W
+	a cas:Outline ;
+	rdfs:label "Model Elements (Glossary)" ;
+	dcterms:modified "2026-09-30T09:17:53.622Z"^^xs:dateTime ;
+	cas:Category "SpecIF:Glossary" ;
+	cas:lists d:MEl-5a7776c50000bca8013765ae93af9209 ,
+		d:MEl-5a76365c0000bca8013776e91afd1e8e ,
+		d:MEl-608177820000bca801379179ebf3b6aa ,
+		d:MEl-611366530000bca80137a97f194e96a3 ,
+		d:MEl-5bd6bd890000bca8013739588a3f43d6 ,
+		d:MEl-5a9ce0310000bca801378176dc4744e8 ,
+		d:MEl-5b2f95ec0000bca8013709bfa81d701f ,
+		d:MEl-453862540000c3a801419d91bef48cfd ,
+		d:MEl-45387c0b0000c3a801410aa03f6b9be4 ,
+		d:MEl-5a85347c0000bca80137ad485c7cd330 ,
+		d:MEl-5a808e2a0000bca80137bfd74268a84a ,
+		d:MEl-5a752ccc0000bca80137479a2e8bab30 ,
+		d:MEl-4538920b0000c3a801415c67e334b8a1 ,
+		d:MEl-5a71c4800000bca80137f2aaa7b63000 ,
+		d:MEl-606f16ac0000bca801373587fda932b3 ,
+		d:MEl-5a4dd77b0000bca8013736c6912ad291 ,
+		d:MEl-45450be80000c3a801414f280f146c71 ,
+		d:MEl-4536b0350000c3a801415986f8ea806a ,
+		d:MEl-5a844d820000bca8013750b9a0410b6b ,
+		d:MEl-5a489c300000bca80137ee1373c16844 ,
+		d:MEl-5a4c80c20000bca8013753b6999a4da8 ,
+		d:MEl-5a99c89c0000bca801375d44cf9a50ca ,
+		d:MEl-5a8009a00000bca80137ef95bc3f643f ,
+		d:MEl-5a87083e0000bca801379bb412523737 ,
+		d:MEl-5b149eab0000bca80137aad99b6eea7b ,
+		d:MEl-5a52b50c0000bca801377e3d15255f98 ,
+		d:MEl-5b08ed8d0000bca8013719f554353b0e ,
+		d:MEl-5a9929510000bca80137d23c81f1ca54 ,
+		d:MEl-5bcf35cf0000bca8013776d68023612a ,
+		d:MEl-453dfb670000c3a8014191107df4565e ,
+		d:MEl-5b094f8a0000bca801374c798a6587ad ,
+		d:MEl-45428b930000c3a80141e28b7d4b5ae5 ,
+		d:MEl-5b078fa50000bca80137f36ed05c43cb ,
+		d:MEl-5c29fb8e0000bca80137eb9734c99bfd ,
+		d:MEl-5a82ec6f0000bca801372ef053a71bdf ,
+		d:MEl-608239830000bca801373690c7d2af0f ,
+		d:MEl-610b07100000bca80137c10f96c46247 ,
+		d:MEl-5a86b8980000bca80137ca6fde1a125e ,
+		d:MEl-610e0b010000bca80137ac40800bb1b8 ,
+		d:MEl-453facbb0000c3a80141c43d2fb4f5e2 ,
+		d:MEl-5a51dd920000bca8013770a4395c83fc ,
+		d:MEl-5bcfb01d0000bca80137f303272a5557 ,
+		d:MEl-5a50d5b60000bca8013781532547ce93 ,
+		d:MEl-803fd3750000c3a8013cf1fdb3b26d33 ,
+		d:MEl-5a77385f0000bca80137e1c7dc0b1721 ,
+		d:MEl-5b2d29070000bca801378a6c020cf8f5 ,
+		d:MEl-5b1750f80000bca801373b2d143d7478 ,
+		d:MEl-459b92580000c3a80141cb4acb521ab1 ,
+		d:MEl-5b2ddad80000bca80137c44d62ba97d8 ,
+		d:MEl-5b2449180000bca8013722c01c9d35a5 ,
+		d:MEl-5a4cfa830000bca801370d837f761f3e ,
+		d:MEl-5a9888810000bca801375410ce1cc142 ,
+		d:MEl-5b0839b90000bca801376dcca41ca7d0 ,
+		d:MEl-45384cd10000c3a80141c1f85d7c26e6 ,
+		d:MEl-5b07e6aa0000bca8013797aad9be69ae ,
+		d:MEl-607f13b50000bca80137ba95f11856ab ,
+		d:MEl-5a820a3c0000bca801378c9093fb7d80 ,
+		d:MEl-5a4d2bd00000bca80137a3f233cdffeb ,
+		d:MEl-5a4d6dee0000bca80137c1caf2f42349 ,
+		d:MEl-4543fe900000c3a80141f5253ff13c35 ,
+		d:MEl-453d34af0000c3a80141918f84641161 ,
+		d:MEl-5a47935a0000bca801377c17f8cb25b0 ,
+		d:MEl-45a236e00000c3a801410f6503287e16 ,
+		d:MEl-45a3b13c0000c3a801415e97f5bc29d1 ,
+		d:MEl-5a9b7a9b0000bca80137d768644696b7 ,
+		d:MEl-463289cd0000c3a80141be3fc417034a .
+
+
+#################################################################
+# Metamodel Class Shapes
+#################################################################
+
+cas:Property_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:DatatypeProperty ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:DatatypeProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path sh:defaultValue ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:composes ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Property_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:DatatypeProperty ;
+	sh:sparql [
+		sh:message "Property class must have a corresponding PropertyShape with at least sh:datatype defined" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:PropertyShape ;
+						sh:path $this ;
+						sh:datatype ?dt .
+				}
+			}
+		"""
+	] .
+
+cas:Link_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:ObjectProperty ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:ObjectProperty ] [ sh:path rdfs:subPropertyOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:range ; sh:minCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Link_shape_requirement_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subPropertyOf ;
+	sh:targetClass owl:ObjectProperty ;
+	sh:sparql [
+		sh:message "Link class must have a corresponding PropertyShape with at least sh:class or sh:or constraint defined" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:PropertyShape ;
+						sh:path $this .
+					FILTER ( EXISTS { ?shape sh:class ?c } || EXISTS { ?shape sh:or ?o } )
+				}
+			}
+		"""
+	] .
+
+cas:Enumeration_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass owl:Class ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:enumeratedValue ; sh:minCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Enumeration_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass owl:Class ;
+	sh:sparql [
+		sh:message "Enumeration class must have at least one valid enumeratedValue" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					$this cas:enumeratedValue ?value .
+				}
+			}
+		"""
+	] .
+
+cas:Entity_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Entity ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:icon ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Entity_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Entity ;
+	sh:sparql [
+		sh:message "Entity class should have a corresponding NodeShape with sh:targetClass constraint" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Entity shape should have sh:property for each enumeratedProperty defined in the class" ;
+		sh:select """
+			SELECT $this ?prop
+			WHERE {
+				$this cas:enumeratedProperty ?prop .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?propShape .
+					?propShape sh:path ?prop .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Entity shape should have sh:property for each enumeratedTargetLink defined in the class" ;
+		sh:select """
+			SELECT $this ?link
+			WHERE {
+				$this cas:enumeratedTargetLink ?link .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?linkShape .
+					?linkShape sh:path ?link .
+				}
+			}
+		"""
+	] .
+
+cas:Relationship_class_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Relationship ;
+	sh:closed "true" ;
+	sh:ignoredProperties ( rdf:type ) ;
+	sh:or ( [ sh:path rdf:type ; sh:hasValue owl:Class ] [ sh:path rdfs:subClassOf ; sh:minCount 1 ] ) ;
+	sh:property [ sh:path rdfs:label ; sh:minCount 1 ; sh:maxCount 1 ] ;
+	sh:property [ sh:path rdfs:comment ; sh:maxCount 1 ] ;
+	sh:property [ sh:path skos:definition ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:revision ; sh:maxCount 1 ; sh:datatype xs:string ] ;
+	sh:property [ sh:path cas:priorRevision ] ;
+	sh:property [ sh:path dcterms:modified ; sh:maxCount 1 ; sh:datatype xs:dateTime ] ;
+	sh:property [ sh:path dcterms:creator ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:icon ; sh:maxCount 1 ] ;
+	sh:property [ sh:path cas:itemType ; sh:maxCount 1 ] .
+
+cas:Relationship_shape_shape
+	a sh:NodeShape ;
+	sh:targetSubjectsOf rdfs:subClassOf ;
+	sh:targetClass cas:Relationship ;
+	sh:sparql [
+		sh:message "Relationship class should have a corresponding NodeShape with sh:targetClass constraint" ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Relationship shape should have sh:property for each enumeratedProperty defined in the class" ;
+		sh:select """
+			SELECT $this ?prop
+			WHERE {
+				$this cas:enumeratedProperty ?prop .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?propShape .
+					?propShape sh:path ?prop .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Relationship shape should have sh:property for each enumeratedSourceLink defined in the class" ;
+		sh:select """
+			SELECT $this ?link
+			WHERE {
+				$this cas:enumeratedSourceLink ?link .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?linkShape .
+					?linkShape sh:path ?link .
+				}
+			}
+		"""
+	] ;
+	sh:sparql [
+		sh:message "Relationship shape should have sh:property for each enumeratedTargetLink defined in the class" ;
+		sh:select """
+			SELECT $this ?link
+			WHERE {
+				$this cas:enumeratedTargetLink ?link .
+				FILTER NOT EXISTS {
+					?shape a sh:NodeShape ;
+						sh:targetClass $this ;
+						sh:property ?linkShape .
+					?linkShape sh:path ?link .
+				}
+			}
+		"""
+	] .
+

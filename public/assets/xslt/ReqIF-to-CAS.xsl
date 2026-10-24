@@ -50,25 +50,25 @@
             </dcterms:modified>
             <graph>
                 <!-- Define semantic infrastructure -->
-                <cas:Entity id="cas:Organizer" cas:hasClass="owl:Class">
+                <cas:Entity id="cas:Organizer" rdf:type="owl:Class">
                     <cas:specializes>cas:Entity</cas:specializes>
                     <dcterms:title>Organizer</dcterms:title>
                     <skos:definition>A class for organizing model-elements. An example is a list of requirements or a diagram using a certain notation.</skos:definition>
                 </cas:Entity>
-                <cas:Entity id="cas:Root" cas:hasClass="owl:Class">
+                <cas:Entity id="cas:Root" rdf:type="owl:Class">
                     <cas:specializes>cas:Organizer</cas:specializes>
                     <dcterms:title>Root</dcterms:title>
                     <skos:definition>A subclass of cas:Organizer serving as a root for trees and tables.</skos:definition>
                     <cas:enumeratedTargetLink>cas:lists</cas:enumeratedTargetLink>
                 </cas:Entity>
-                <cas:Link id="cas:linksTarget" cas:hasClass="owl:ObjectProperty">
+                <cas:Link id="cas:linksTarget" rdf:type="owl:ObjectProperty">
                     <cas:specializes>cas:Link</cas:specializes>
                     <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
                     <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
                     <dcterms:title>to target</dcterms:title>
                     <skos:definition>Connects the target of a reified relationship or an organizer.</skos:definition>
                 </cas:Link>
-                <cas:Link id="cas:lists" cas:hasClass="owl:ObjectProperty">
+                <cas:Link id="cas:lists" rdf:type="owl:ObjectProperty">
                     <cas:specializes>cas:linksTarget</cas:specializes>
                     <cas:enumeratedEndpoint>cas:Entity</cas:enumeratedEndpoint>
                     <cas:enumeratedEndpoint>cas:Relationship</cas:enumeratedEndpoint>
@@ -448,7 +448,7 @@
         <xsl:variable name="descriptionValue">
             <xsl:choose>
                 <xsl:when test="string-length(normalize-space($descriptionValueXhtml)) &gt; 0">
-                    <xsl:value-of select="$descriptionValueXhtml"/>
+                    <xsl:copy-of select="$descriptionValueXhtml"/>
                 </xsl:when>
                 <xsl:when test="string-length(normalize-space($descriptionValueString)) &gt; 0">
                     <xsl:value-of select="$descriptionValueString"/>
@@ -484,7 +484,7 @@
             <!-- Description: Output only if found -->
             <xsl:if test="$hasDescription">
                 <dcterms:description>
-                    <xsl:value-of select="$descriptionValue"/>
+                    <xsl:copy-of select="$descriptionValue"/>
                 </dcterms:description>
             </xsl:if>
             <dcterms:modified>
@@ -601,7 +601,7 @@
             <!-- Description: Output only if found -->
             <xsl:if test="$hasDescription">
                 <dcterms:description>
-                    <xsl:value-of select="$descriptionValue"/>
+                    <xsl:copy-of select="$descriptionValue"/>
                 </dcterms:description>
             </xsl:if>
             <dcterms:modified>
@@ -729,9 +729,9 @@
             <xsl:attribute name="id">
                 <xsl:value-of select="$relationId"/>
             </xsl:attribute>
-            <cas:hasClass>
+            <rdf:type>
                 <xsl:value-of select="$typeRef"/>
-            </cas:hasClass>
+            </rdf:type>
             <!-- Title: Output only if found -->
             <xsl:if test="$hasTitle">
                 <dcterms:title>
@@ -741,7 +741,7 @@
             <!-- Description: Output only if found -->
             <xsl:if test="$hasDescription">
                 <dcterms:description>
-                    <xsl:value-of select="$descriptionValue"/>
+                    <xsl:copy-of select="$descriptionValue"/>
                 </dcterms:description>
             </xsl:if>
             <dcterms:modified>
@@ -752,9 +752,9 @@
             <!-- Source Link -->
             <xsl:if test="$sourceRef and string-length($sourceRef) &gt; 0">
                 <cas:aSourceLink>
-                    <cas:hasClass>
+                    <rdf:type>
                         <xsl:value-of select="concat($typeRef, '-toSource')"/>
-                    </cas:hasClass>
+                    </rdf:type>
                     <idRef>
                         <xsl:value-of select="$sourceRef"/>
                     </idRef>
@@ -763,9 +763,9 @@
             <!-- Target Link -->
             <xsl:if test="$targetRef and string-length($targetRef) &gt; 0">
                 <cas:aTargetLink>
-                    <cas:hasClass>
+                    <rdf:type>
                         <xsl:value-of select="concat($typeRef, '-toTarget')"/>
-                    </cas:hasClass>
+                    </rdf:type>
                     <idRef>
                         <xsl:value-of select="$targetRef"/>
                     </idRef>

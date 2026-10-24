@@ -1,0 +1,3274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cas:aPackage
+	xmlns:o="https://product-information-graph.org/v0.2/ontology#"
+	xmlns:d="https://product-information-graph.org/examples/Dimmer.specifz#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:skos="https://www.w3.org/TR/skos-reference/"
+	xmlns:sh="http://www.w3.org/ns/shacl#"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema#"
+	xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:FMC="http://fmc-modeling.org#"
+	xmlns:IREB="https://cpre.ireb.org/en/downloads-and-resources/glossary#"
+	xmlns:ReqIF-WF="https://www.prostep.org/fileadmin/downloads/Recommendation_ReqIF_V2_RZ3.pdf#"
+	xmlns:oslc_rm="http://open-services.net/ns/rm#"
+	xmlns:oslc_cm="http://open-services.net/ns/cm#"
+	xmlns:cas="https://product-information-graph.org/v0.2/metamodel#"
+	xmlns:SpecIF="https://specif.de/v1.2/schema#"
+	id="d:ACP-59c8a7730000bca80137509a49b1218b"
+	rdf:type="cas:Package">
+
+	<dcterms:title>Dimmer - Semantically Integrated Specification (2021-01-28)</dcterms:title>
+	<dcterms:description>This specification method integrates and represents:
+- processes, system composition and requirements (dynamic, static and detail views)
+- mechanic, electric and software components with their interfaces.
+
+It is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.
+
+The model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  
+
+Also, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):
+- All plans
+- A glossary with descriptions of all model elements appearing on one or more plans
+- A hierarchically ordered list of requirements
+- A list of open issues.
+Please note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.
+
+Further information is given in Appendix 'Method'.</dcterms:description>
+	<dcterms:modified>2026-09-30T09:18:13.144Z</dcterms:modified>
+
+	<graph>
+	<cas:Entity id="cas:Organizer" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title>Organizer</dcterms:title>
+		<skos:definition>A CASCaRA meta-model item for organizing model-elements. An example is a list of requirements or a diagram using a certain notation.</skos:definition>
+	</cas:Entity>
+	<cas:Entity id="cas:Package" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>Package</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer used for a partial graph selected for exchange or access permissions.</skos:definition>
+	</cas:Entity>
+	<cas:Entity id="cas:Root" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>Root</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer serving as a root for trees and tables.</skos:definition>
+		<cas:enumeratedTargetLink>
+			<idRef>cas:lists</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="cas:Tree" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>Tree</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer for strictly hierarchical data structures referencing entities and relationships.</skos:definition>
+		<cas:enumeratedTargetLink>
+			<idRef>cas:lists</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="cas:Outline" rdf:type="owl:Class">
+		<cas:specializes>cas:Tree</cas:specializes>
+		<dcterms:title>Outline</dcterms:title>
+		<skos:definition>A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</skos:definition>
+	</cas:Entity>
+	<cas:Entity id="cas:Table" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>Table</dcterms:title>
+		<skos:definition>A subclass of cas:Organizer representing a table showing selected model elements.</skos:definition>
+		<cas:enumeratedTargetLink>
+			<idRef>cas:shows</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Property id="cas:Diagram" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title>Diagram</dcterms:title>
+		<skos:definition>A diagram illustrating the resource or a link to a diagram.</skos:definition>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minOccurs>0</xs:minOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Property id="cas:Category" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title>has category</dcterms:title>
+		<skos:definition>Specifies a category for an element (entity, relationship or organizer).</skos:definition>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="32"/>
+				<xs:minOccurs>0</xs:minOccurs>
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Property id="cas:Notation" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Category</cas:specializes>
+		<dcterms:title>Notation</dcterms:title>
+		<skos:definition>A reference to a notation defining the syntax and semantics of a diagram.</skos:definition>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:minOccurs>0</xs:minOccurs>
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Link id="cas:linksSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title>to source</dcterms:title>
+		<skos:definition>Connects the source of a reified relationship.</skos:definition>
+		<cas:enumeratedEndpoint>
+			<idRef>cas:Entity</idRef>
+			<idRef>cas:Relationship</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="cas:linksTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title>to target</dcterms:title>
+		<skos:definition>Connects the target of a reified relationship or an organizer.</skos:definition>
+		<cas:enumeratedEndpoint>
+			<idRef>cas:Entity</idRef>
+			<idRef>cas:Relationship</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="cas:lists" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>lists</dcterms:title>
+		<skos:definition>Lists an entity, a relationship or a subordinated organizer.</skos:definition>
+		<cas:enumeratedEndpoint>
+			<idRef>cas:Entity</idRef>
+			<idRef>cas:Relationship</idRef>
+			<idRef>cas:Organizer</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="cas:shows" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>shows</dcterms:title>
+		<skos:definition>Shows an entity or a relationship.</skos:definition>
+		<cas:enumeratedEndpoint>
+			<idRef>cas:Entity</idRef>
+			<idRef>cas:Relationship</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="cas:depicts" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>depicts</dcterms:title>
+		<skos:definition>Depicts an entity; inverse of uml:ownedDiagram.</skos:definition>
+		<cas:enumeratedEndpoint>
+			<idRef>cas:Entity</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Enumeration id="SpecIF:LifecycleStatus-Enumeration" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">Lifecycle</dcterms:title>
+		<dcterms:title xml:lang="de">Lebenszyklus</dcterms:title>
+		<dcterms:title xml:lang="fr">Cycle de vie</dcterms:title>
+		<skos:definition xml:lang="en">The 'Lifecycle Status' of the resource.</skos:definition>
+		<skos:definition xml:lang="de">Der 'Lebenszyklusstatus' der Ressource.</skos:definition>
+		<skos:definition xml:lang="fr">L'état du cycle de vie de la ressource.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusDeprecated">
+			<dcterms:title xml:lang="en">deprecated</dcterms:title>
+			<dcterms:title xml:lang="de">veraltet</dcterms:title>
+			<dcterms:title xml:lang="fr">dépassé</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusRejected">
+			<dcterms:title xml:lang="en">rejected</dcterms:title>
+			<dcterms:title xml:lang="de">abgelehnt</dcterms:title>
+			<dcterms:title xml:lang="fr">rejeté</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusInitial">
+			<dcterms:title xml:lang="en">initial</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusDrafted">
+			<dcterms:title xml:lang="en">drafted</dcterms:title>
+			<dcterms:title xml:lang="de">entworfen</dcterms:title>
+			<dcterms:title xml:lang="fr">rédigé</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusSubmitted">
+			<dcterms:title xml:lang="en">submitted</dcterms:title>
+			<dcterms:title xml:lang="de">vorgelegt</dcterms:title>
+			<dcterms:title xml:lang="fr">soumis</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusApproved">
+			<dcterms:title xml:lang="en">approved</dcterms:title>
+			<dcterms:title xml:lang="de">genehmigt</dcterms:title>
+			<dcterms:title xml:lang="fr">approuvé</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusDone">
+			<dcterms:title xml:lang="en">done</dcterms:title>
+			<dcterms:title xml:lang="de">erledigt ('done')</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:LifecycleStatusReleased">
+			<dcterms:title xml:lang="en">released</dcterms:title>
+			<dcterms:title xml:lang="de">freigegeben</dcterms:title>
+			<dcterms:title xml:lang="fr">publié</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Enumeration id="SpecIF:Priority-Enumeration" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">Priority</dcterms:title>
+		<dcterms:title xml:lang="de">Priorität</dcterms:title>
+		<dcterms:title xml:lang="fr">Priorité</dcterms:title>
+		<skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+		<cas:enumeratedValue id="SpecIF:priorityHigh">
+			<dcterms:title xml:lang="en">high</dcterms:title>
+			<dcterms:title xml:lang="de">hoch</dcterms:title>
+			<dcterms:title xml:lang="fr">haut</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:priorityMedium">
+			<dcterms:title xml:lang="en">medium</dcterms:title>
+			<dcterms:title xml:lang="de">mittel</dcterms:title>
+			<dcterms:title xml:lang="fr">moyen</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:priorityLow">
+			<dcterms:title xml:lang="en">low</dcterms:title>
+			<dcterms:title xml:lang="de">niedrig</dcterms:title>
+			<dcterms:title xml:lang="fr">bas</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Enumeration id="SpecIF:StakeholderGroup-Enumeration" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">Stakeholder Group</dcterms:title>
+		<skos:definition xml:lang="en">Enumerated values for the 'Stakehoder Group' addressed by the term.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+		<cas:enumeratedValue id="SpecIF:StakeholderGroupBusiness">
+			<dcterms:title xml:lang="en">Business</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:StakeholderGroupUser">
+			<dcterms:title xml:lang="en">User</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:StakeholderGroupSystem">
+			<dcterms:title xml:lang="en">System</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Enumeration id="SpecIF:EngineeringDiscipline-Enumeration" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">Engineering Discipline</dcterms:title>
+		<dcterms:title xml:lang="de">Ingenieurdisziplin</dcterms:title>
+		<dcterms:title xml:lang="fr">Discipline d'ingénierie</dcterms:title>
+		<skos:definition xml:lang="en">The engineering discipline involved by a development artefact.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+		<cas:enumeratedValue id="SpecIF:EngineeringDisciplineMechanics">
+			<dcterms:title xml:lang="en">Mechanics</dcterms:title>
+			<dcterms:title xml:lang="de">Mechanik</dcterms:title>
+			<dcterms:title xml:lang="fr">Mecanique</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:EngineeringDisciplineElectronics">
+			<dcterms:title xml:lang="en">Electronics</dcterms:title>
+			<dcterms:title xml:lang="de">Elektronik</dcterms:title>
+			<dcterms:title xml:lang="fr">Électronique</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:EngineeringDisciplineSoftware">
+			<dcterms:title xml:lang="en">Software</dcterms:title>
+			<dcterms:title xml:lang="fr">Logiciel</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="SpecIF:EngineeringDisciplineSafety">
+			<dcterms:title xml:lang="en">Safety</dcterms:title>
+			<dcterms:title xml:lang="de">Sicherheit</dcterms:title>
+			<dcterms:title xml:lang="fr">Sécurité</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Enumeration id="ReqIF-WF:SupplierStatus-Enumeration" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">Supplier Status</dcterms:title>
+		<dcterms:title xml:lang="de">Zustand Lieferant</dcterms:title>
+		<dcterms:title xml:lang="fr">Statut coté Fournisseur</dcterms:title>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+		<cas:enumeratedValue id="SpecIF:NotApplicable">
+			<dcterms:title xml:lang="en">not applicable</dcterms:title>
+			<dcterms:title xml:lang="de">nicht anwendbar</dcterms:title>
+			<dcterms:title xml:lang="fr">sans objet</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="ReqIF-WF:CustomerStatus.ToBeClarified">
+			<dcterms:title xml:lang="en">to be clarified</dcterms:title>
+			<dcterms:title xml:lang="de">zu klären</dcterms:title>
+			<dcterms:title xml:lang="fr">à préciser</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="ReqIF-WF:SupplierStatus.Agreed">
+			<dcterms:title xml:lang="en">agreed</dcterms:title>
+			<dcterms:title xml:lang="de">zugestimmt</dcterms:title>
+			<dcterms:title xml:lang="fr">approuvé</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="ReqIF-WF:SupplierStatus.AgreedWithComment">
+			<dcterms:title xml:lang="en">agreed with comment</dcterms:title>
+			<dcterms:title xml:lang="de">zugestimmt mit Kommentar</dcterms:title>
+			<dcterms:title xml:lang="fr">approuvé avec commentaire</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="ReqIF-WF:SupplierStatus.NotAgreed">
+			<dcterms:title xml:lang="en">not agreed</dcterms:title>
+			<dcterms:title xml:lang="de">nicht zugestimmt</dcterms:title>
+			<dcterms:title xml:lang="fr">non approuvé</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Enumeration id="ReqIF-WF:CustomerStatus-Enumeration" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">Customer Status</dcterms:title>
+		<dcterms:title xml:lang="de">Zustand Kunde</dcterms:title>
+		<dcterms:title xml:lang="fr">Statut coté Client</dcterms:title>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+		<cas:enumeratedValue id="ReqIF-WF:CustomerStatus.NotToEvaluate">
+			<dcterms:title xml:lang="en">not to evaluate</dcterms:title>
+			<dcterms:title xml:lang="de">nicht zu evaluieren</dcterms:title>
+			<dcterms:title xml:lang="fr">ne pas évaluer</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="ReqIF-WF:CustomerStatus.ToEvaluate">
+			<dcterms:title xml:lang="en">to evaluate</dcterms:title>
+			<dcterms:title xml:lang="de">zu evaluieren</dcterms:title>
+			<dcterms:title xml:lang="fr">pour évaluer</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="ReqIF-WF:CustomerStatus.Accepted">
+			<dcterms:title xml:lang="en">accepted</dcterms:title>
+			<dcterms:title xml:lang="de">akzeptiert</dcterms:title>
+			<dcterms:title xml:lang="fr">accepté</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="ReqIF-WF:CustomerStatus.NotAccepted">
+			<dcterms:title xml:lang="en">not accepted</dcterms:title>
+			<dcterms:title xml:lang="de">nicht akzeptiert</dcterms:title>
+			<dcterms:title xml:lang="fr">non accepté</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Enumeration id="o:DT-IssueStatus" rdf:type="owl:Class">
+		<dcterms:title>SpecIF:LifecycleStatusIssue</dcterms:title>
+		<skos:definition>Enumerated values for issue status</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:specializes>cas:Enumeration</cas:specializes>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+		<cas:enumeratedValue id="o:V-Iss-Status-1">
+			<dcterms:title>open</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="o:V-Iss-Status-2">
+			<dcterms:title>assigned</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="oslc_cm:Inprogress">
+			<dcterms:title xml:lang="en">in progress</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="oslc_cm:Closed">
+			<dcterms:title xml:lang="en">closed</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="o:V-Iss-Status-5">
+			<dcterms:title>reopened</dcterms:title>
+		</cas:enumeratedValue>
+		<cas:enumeratedValue id="o:V-Iss-Status-6">
+			<dcterms:title>SpecIF:LifecycleStatusRejected</dcterms:title>
+		</cas:enumeratedValue>
+	</cas:Enumeration>
+	<cas:Link id="SpecIF:Priority" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title xml:lang="en">Priority</dcterms:title>
+		<dcterms:title xml:lang="de">Priorität</dcterms:title>
+		<dcterms:title xml:lang="fr">Priorité</dcterms:title>
+		<skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>SpecIF:Priority-Enumeration</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="SpecIF:LifecycleStatus" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title xml:lang="en">Lifecycle</dcterms:title>
+		<dcterms:title xml:lang="de">Lebenszyklus</dcterms:title>
+		<dcterms:title xml:lang="fr">Cycle de vie</dcterms:title>
+		<skos:definition xml:lang="en">The 'Lifecycle Status' of the resource.</skos:definition>
+		<skos:definition xml:lang="de">Der 'Lebenszyklusstatus' der Ressource.</skos:definition>
+		<skos:definition xml:lang="fr">L'état du cycle de vie de la ressource.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>SpecIF:LifecycleStatus-Enumeration</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="ReqIF-WF:SupplierStatus" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title xml:lang="en">Supplier Status</dcterms:title>
+		<dcterms:title xml:lang="de">Zustand Lieferant</dcterms:title>
+		<dcterms:title xml:lang="fr">Statut coté Fournisseur</dcterms:title>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>ReqIF-WF:SupplierStatus-Enumeration</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Property id="ReqIF-WF:SupplierComment" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title xml:lang="en">Supplier Comment</dcterms:title>
+		<dcterms:title xml:lang="de">Kommentar Lieferant</dcterms:title>
+		<dcterms:title xml:lang="fr">Commentaire du Client</dcterms:title>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Link id="ReqIF-WF:CustomerStatus" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title xml:lang="en">Customer Status</dcterms:title>
+		<dcterms:title xml:lang="de">Zustand Kunde</dcterms:title>
+		<dcterms:title xml:lang="fr">Statut coté Client</dcterms:title>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>ReqIF-WF:CustomerStatus-Enumeration</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Property id="ReqIF-WF:CustomerComment" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title xml:lang="en">Customer Comment</dcterms:title>
+		<dcterms:title xml:lang="de">Kommentar Kunde</dcterms:title>
+		<dcterms:title xml:lang="fr">Commentaire du Client</dcterms:title>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Property id="dcterms:identifier" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title xml:lang="en">Identifier</dcterms:title>
+		<dcterms:title xml:lang="de">Bezeichner</dcterms:title>
+		<dcterms:title xml:lang="fr">Identifiant</dcterms:title>
+		<skos:definition xml:lang="en"><p>A unique reference to the resource within a given context. <small>(<i>source: <a href="http://purl.org/dc/elements/1.1/identifier">DCMI</a></i>)</small></p><p>An identifier for a resource. This identifier may be unique with a scope that is defined by the RM provider. Assigned by the service provider when a resource is created. Not intended for end-user display. <small>(<i>source: <a href="http://open-services.net/">OSLC</a></i>)</small></p></skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="256"/>
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Link id="SpecIF:StakeholderGroup" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title xml:lang="en">Stakeholder Group</dcterms:title>
+		<skos:definition xml:lang="en">Enumerated values for the 'Stakehoder Group' addressed by the term.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>SpecIF:StakeholderGroup-Enumeration</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="SpecIF:EngineeringDiscipline" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title xml:lang="en">Engineering Discipline</dcterms:title>
+		<dcterms:title xml:lang="de">Ingenieurdisziplin</dcterms:title>
+		<dcterms:title xml:lang="fr">Discipline d'ingénierie</dcterms:title>
+		<skos:definition xml:lang="en">The engineering discipline involved by a development artefact.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>SpecIF:EngineeringDiscipline-Enumeration</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="o:PC-IssueStatus" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:Link</cas:specializes>
+		<dcterms:title>SpecIF:LifecycleStatusIssue</dcterms:title>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedEndpoint>
+			<idRef>o:DT-IssueStatus</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Property id="SpecIF:Responsible" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title xml:lang="en">Responsible</dcterms:title>
+		<dcterms:title xml:lang="de">Verantwortliche(r)</dcterms:title>
+		<dcterms:title xml:lang="fr">Responsable</dcterms:title>
+		<skos:definition xml:lang="en">The 'Person' being responsible for the resource.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:maxLength value="256"/>
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Property id="SpecIF:DueDate" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title xml:lang="en">Due Date</dcterms:title>
+		<dcterms:title xml:lang="de">Termin</dcterms:title>
+		<dcterms:title xml:lang="fr">Date limite</dcterms:title>
+		<skos:definition xml:lang="en">A 'Due Date' for the resource.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<xs:simpleType>
+			<xs:restriction base="xs:dateTime">
+				<xs:maxOccurs>1</xs:maxOccurs>
+			</xs:restriction>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Property id="o:PC-Diagram-8240447448" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title>cas:Diagram</dcterms:title>
+		<skos:definition>A diagram illustrating the resource or a link to a diagram.</skos:definition>
+		<dcterms:modified>2026-02-12T22:05:14.551Z</dcterms:modified>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</cas:Property>
+	<cas:Entity id="cas:View" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>View</dcterms:title>
+		<skos:definition>A PIG organizer class representing a diagram with certain model-elements for a given communication purpose.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:icon>▣</cas:icon>
+		<cas:enumeratedProperty>
+			<idRef>cas:Diagram</idRef>
+			<idRef>cas:Notation</idRef>
+			<idRef>ReqIF-WF:SupplierComment</idRef>
+			<idRef>ReqIF-WF:CustomerComment</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+			<idRef>cas:shows</idRef>
+			<idRef>cas:depicts</idRef>
+			<idRef>SpecIF:LifecycleStatus</idRef>
+			<idRef>ReqIF-WF:SupplierStatus</idRef>
+			<idRef>ReqIF-WF:CustomerStatus</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="FMC:Actor" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title xml:lang="en">Actor</dcterms:title>
+		<dcterms:title xml:lang="de">Akteur</dcterms:title>
+		<dcterms:title xml:lang="fr">Acteur</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;An 'Actor' is a fundamental model element type representing an active entity, be it an activity, a process step, a function, a system component or a role.&lt;/p&gt;&lt;p&gt;The particular use or original type is specified with a [[dcterms:type]] property of the 'FMC:Actor'. A value of that property should be an ontology-term, such as [[bpmn:processStep]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Akteur' ist ein fundamentaler Modellelementtyp, der eine aktive Entität darstellt, sei es eine Aktivität, ein Prozessschritt, eine Funktion, eine Systemkomponente oder eine Rolle.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Actor' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[bpmn:timer]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Un 'Acteur' est un type d'élément de modèle fondamental représentant une entité active, qu'il s'agisse d'une activité, d'une étape de processus, d'une fonction, d'un composant de système ou d'un rôle.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Actor'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:timer]].&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:icon>&amp;#x25A1;</cas:icon>
+		<cas:enumeratedProperty>
+			<idRef>cas:Diagram</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="FMC:State" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title xml:lang="en">State</dcterms:title>
+		<dcterms:title xml:lang="de">Zustand</dcterms:title>
+		<dcterms:title xml:lang="fr">État</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'State' is a fundamental model element type representing a passive entity, be it a value, a condition, an information storage or even a physical shape.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:State'. A value of that property should bean ontology-term, such as [[bpmn:dataObject]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Zustand' ist ein fundamentaler Modellelementtyp, der eine passive Entität darstellt, sei es ein Wert, ein Dokument, ein Informationsspeicher, eine Bedingung oder eine physische Beschaffenheit.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:State' spezifiziert. Die Werte dieser Eigenschaft können Ontologiebegriffe sein, wie z.B. [[ArchiMate:DataObject]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Un 'État' est un type d'élément de modèle fondamental représentant une entité passive, qu'il s'agisse d'une valeur, d'une condition, d'un stockage d'informations ou même d'une forme physique.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:State'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[ArchiMate:DataObject]].&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:icon>&amp;#x25CB;</cas:icon>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="FMC:Event" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title xml:lang="en">Event</dcterms:title>
+		<dcterms:title xml:lang="de">Ereignis</dcterms:title>
+		<dcterms:title xml:lang="fr">Évenement</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;An 'Event' is a fundamental model element type representing a time reference, a change in condition/value or more generally a synchronization primitive.&lt;/p&gt;&lt;p&gt;The particular use or the original type is specified with a [[dcterms:type]] property of the 'FMC:Event'. A value of that property should be an ontology-term, such as [[bpmn:startEvent]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Ereignis' ist ein fundamentaler Modellelementtyp, der eine Zeitreferenz, eine Änderung einer Bedingung/eines Wertes oder allgemeiner ein Synchronisationsmittel darstellt.&lt;/p&gt;&lt;p&gt;Die spezielle Verwendung oder der ursprüngliche Typ wird mit einer [[dcterms:type]] Eigenschaft von 'FMC:Event' spezifiziert. Die Werte dieser Eigenschaft sollen Ontologiebegriffe sein, wie z.B. [[bpmn:startEvent]].&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Un 'Événement' est un type d'élément de modèle fondamental représentant une référence temporelle, un changement de condition/valeur ou plus généralement une primitive de synchronisation.&lt;/p&gt;&lt;p&gt;L'utilisation particulière ou le type original est spécifié avec une propriété [[dcterms:type]] de 'FMC:Event'. Les valeurs de cette propriété peuvent être des termes d'ontologie, tels que [[bpmn:startEvent]].&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:icon>&amp;#x2662;</cas:icon>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="IREB:Requirement" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title xml:lang="en">Requirement</dcterms:title>
+		<dcterms:title xml:lang="de">Anforderung</dcterms:title>
+		<dcterms:title xml:lang="fr">Exigence</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A condition or capability needed by a user to solve a problem or achieve an objective.&lt;/li&gt;&lt;li&gt;A condition or capability that must be met or possessed by a system or system component to satisfy a contract, standard, specification, or other formally imposed documents.&lt;/li&gt;&lt;li&gt;A documented representation of a condition or capability as in (1) or (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Note: The definition above is the classic one from IEEE Std 610.12 of 1990. Alternatively, we also give a more modern definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;A need perceived by a stakeholder.&lt;/li&gt;&lt;li&gt;A capability or property that a system shall have.&lt;/li&gt;&lt;li&gt;A documented representation of a need, capability or property.&lt;/li&gt;&lt;/ol&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Definition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein Benutzer benötigt, um ein Problem zu lösen oder ein Ziel zu erreichen.&lt;/li&gt;&lt;li&gt;Eine Bedingung oder Fähigkeit, die ein System oder eine Systemkomponente erfüllen oder besitzen muss, um einen Vertrag, eine Norm, eine Spezifikation oder ein anderes formal vorgeschriebenes Dokument zu erfüllen.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung einer Bedingung oder Fähigkeit wie in (1) oder (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Anmerkung: Die obige Definition ist die klassische Definition aus IEEE Std 610.12 von 1990. Alternativ geben wir auch eine modernere Definition an:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Ein von einem Stakeholder wahrgenommener Bedarf.&lt;/li&gt;&lt;li&gt;Eine Fähigkeit oder Eigenschaft, die ein System haben soll.&lt;/li&gt;&lt;li&gt;Eine dokumentierte Darstellung eines Bedarfs, einer Fähigkeit oder Eigenschaft.&lt;/li&gt;&lt;/ol&gt;</skos:definition>
+		<skos:definition xml:lang="fr">&lt;p&gt;Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. &lt;small&gt;(&lt;i&gt;source: &lt;a href="https://en.wikipedia.org/wiki/Requirement"&gt;Wikipedia&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;Définition:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Condition ou capacité dont un utilisateur a besoin pour résoudre un problème ou atteindre un objectif.&lt;/li&gt;&lt;li&gt;Condition ou capacité qui doit être remplie ou possédée par un système ou un composant de système pour satisfaire à un contrat, à une norme, à une spécification ou à d'autres documents imposés officiellement.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'une condition ou d'une capacité comme dans (1) ou (2).&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Remarque: La définition ci-dessus est la définition classique de la norme IEEE 610.12 de 1990. Nous donnons également une définition plus moderne:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Un besoin perçu par une partie prenante;&lt;/li&gt;&lt;li&gt;Une capacité ou une propriété qu'un système doit avoir.&lt;/li&gt;&lt;li&gt;Une représentation documentée d'un besoin, d'une capacité ou d'une propriété.&lt;/li&gt;&lt;/ol&gt;</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:icon>&amp;#8623;</cas:icon>
+		<cas:enumeratedProperty>
+			<idRef>dcterms:identifier</idRef>
+			<idRef>ReqIF-WF:SupplierComment</idRef>
+			<idRef>ReqIF-WF:CustomerComment</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+			<idRef>SpecIF:LifecycleStatus</idRef>
+			<idRef>SpecIF:Priority</idRef>
+			<idRef>SpecIF:StakeholderGroup</idRef>
+			<idRef>SpecIF:EngineeringDiscipline</idRef>
+			<idRef>ReqIF-WF:SupplierStatus</idRef>
+			<idRef>ReqIF-WF:CustomerStatus</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="SpecIF:Issue" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title xml:lang="en">Open Issue</dcterms:title>
+		<dcterms:title xml:lang="de">Offener Punkt</dcterms:title>
+		<dcterms:title xml:lang="fr">Problème</dcterms:title>
+		<skos:definition xml:lang="en">An 'Issue' is a question to answer or decision to take which is worth tracking.</skos:definition>
+		<skos:definition xml:lang="de">Ein 'Offener Punkt ist eine zu beantwortende Frage oder eine zu treffende Entscheidung.</skos:definition>
+		<skos:definition xml:lang="fr">Un 'problème' est une question à laquelle il faut répondre ou une décision à prendre qui mérite d'être suivie.</skos:definition>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+			<idRef>dcterms:identifier</idRef>
+			<idRef>SpecIF:Responsible</idRef>
+			<idRef>SpecIF:DueDate</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+			<idRef>o:PC-IssueStatus</idRef>
+			<idRef>SpecIF:Priority</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="SpecIF:Paragraph" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title xml:lang="en">Paragraph</dcterms:title>
+		<dcterms:title xml:lang="de">Textabsatz</dcterms:title>
+		<dcterms:title xml:lang="fr">Paragraphe</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2023-07-16T09:30:25.850Z</dcterms:modified>
+		<cas:enumeratedProperty>
+			<idRef>cas:Diagram</idRef>
+			<idRef>cas:Category</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="o:RC-Paragraph-8240447479" rdf:type="owl:Class">
+		<cas:specializes>cas:Entity</cas:specializes>
+		<dcterms:title>SpecIF:Paragraph</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2024-03-02T20:55:23.295Z</dcterms:modified>
+		<cas:enumeratedProperty>
+			<idRef>o:PC-Diagram-8240447448</idRef>
+			<idRef>cas:Category</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Relationship id="SpecIF:contains" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">contains</dcterms:title>
+		<dcterms:title xml:lang="de">enthält</dcterms:title>
+		<dcterms:title xml:lang="fr">contient</dcterms:title>
+		<skos:definition xml:lang="en">General containment, such as:
+- Package-A *contains* Diagram-B
+- Collection-1 *contains* DataObject-1.1
+
+Not to confound with *[[dcterms:hasPart]]*.</skos:definition>
+		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedSourceLink>
+			<idRef>SpecIF:contains-toSource</idRef>
+		</cas:enumeratedSourceLink>
+		<cas:enumeratedTargetLink>
+			<idRef>SpecIF:contains-toTarget</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Relationship>
+	<cas:Link id="SpecIF:contains-toSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksSource</cas:specializes>
+		<dcterms:title>SpecIF:contains to source</dcterms:title>
+		<dcterms:description>Connects the source of SpecIF:contains</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:Actor</idRef>
+			<idRef>FMC:State</idRef>
+			<idRef>FMC:Event</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="SpecIF:contains-toTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>SpecIF:contains to target</dcterms:title>
+		<dcterms:description>Connects the target of SpecIF:contains</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:Actor</idRef>
+			<idRef>FMC:State</idRef>
+			<idRef>FMC:Event</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Relationship id="o:SC-stores" rdf:type="owl:Class">
+		<dcterms:title>SpecIF:modifies</dcterms:title>
+		<skos:definition>Relation: Actor (Role, Function) writes and reads State (Information)</skos:definition>
+		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedSourceLink>
+			<idRef>o:SC-stores-toSource</idRef>
+		</cas:enumeratedSourceLink>
+		<cas:enumeratedTargetLink>
+			<idRef>o:SC-stores-toTarget</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Relationship>
+	<cas:Link id="o:SC-stores-toSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksSource</cas:specializes>
+		<dcterms:title>SC-stores to source</dcterms:title>
+		<dcterms:description>Connects the source of SC-stores</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:Actor</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="o:SC-stores-toTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>SC-stores to target</dcterms:title>
+		<dcterms:description>Connects the target of SC-stores</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:State</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Relationship id="SpecIF:writes" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">writes</dcterms:title>
+		<dcterms:title xml:lang="de">schreibt</dcterms:title>
+		<dcterms:title xml:lang="fr">écrit</dcterms:title>
+		<skos:definition xml:lang="en">A [[FMC:Actor]] 'writes' (changes) a [[FMC:State]].</skos:definition>
+		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedSourceLink>
+			<idRef>SpecIF:writes-toSource</idRef>
+		</cas:enumeratedSourceLink>
+		<cas:enumeratedTargetLink>
+			<idRef>SpecIF:writes-toTarget</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Relationship>
+	<cas:Link id="SpecIF:writes-toSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksSource</cas:specializes>
+		<dcterms:title>SpecIF:writes to source</dcterms:title>
+		<dcterms:description>Connects the source of SpecIF:writes</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:Actor</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="SpecIF:writes-toTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>SpecIF:writes to target</dcterms:title>
+		<dcterms:description>Connects the target of SpecIF:writes</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:State</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Relationship id="SpecIF:reads" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">reads</dcterms:title>
+		<dcterms:title xml:lang="de">liest</dcterms:title>
+		<dcterms:title xml:lang="fr">lit</dcterms:title>
+		<skos:definition xml:lang="en">A [[FMC:Actor]] 'reads' a [[FMC:State]].</skos:definition>
+		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedSourceLink>
+			<idRef>SpecIF:reads-toSource</idRef>
+		</cas:enumeratedSourceLink>
+		<cas:enumeratedTargetLink>
+			<idRef>SpecIF:reads-toTarget</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Relationship>
+	<cas:Link id="SpecIF:reads-toSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksSource</cas:specializes>
+		<dcterms:title>SpecIF:reads to source</dcterms:title>
+		<dcterms:description>Connects the source of SpecIF:reads</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:Actor</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="SpecIF:reads-toTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>SpecIF:reads to target</dcterms:title>
+		<dcterms:description>Connects the target of SpecIF:reads</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:State</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Relationship id="SpecIF:dependsOn" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">depends on</dcterms:title>
+		<dcterms:title xml:lang="de">hängt ab von</dcterms:title>
+		<dcterms:title xml:lang="fr">depend de</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A [[IREB:Requirement]] 'depends on' another [[IREB:Requirement]].&lt;/p&gt;</skos:definition>
+		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedSourceLink>
+			<idRef>SpecIF:dependsOn-toSource</idRef>
+		</cas:enumeratedSourceLink>
+		<cas:enumeratedTargetLink>
+			<idRef>SpecIF:dependsOn-toTarget</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Relationship>
+	<cas:Link id="SpecIF:dependsOn-toSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksSource</cas:specializes>
+		<dcterms:title>SpecIF:dependsOn to source</dcterms:title>
+		<dcterms:description>Connects the source of SpecIF:dependsOn</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>IREB:Requirement</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="SpecIF:dependsOn-toTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>SpecIF:dependsOn to target</dcterms:title>
+		<dcterms:description>Connects the target of SpecIF:dependsOn</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>IREB:Requirement</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Relationship id="oslc_rm:satisfies" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">satisfies</dcterms:title>
+		<dcterms:title xml:lang="de">erfüllt</dcterms:title>
+		<dcterms:title xml:lang="fr">satisfait</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;The object is satisfied by the subject. &lt;small&gt;(&lt;i&gt;source: &lt;a href="http://open-services.net/"&gt;OSLC&lt;/a&gt;&lt;/i&gt;)&lt;/small&gt;&lt;/p&gt;&lt;p&gt;SpecIF suggests that the subject is confined to a model element, e.g, a [[FMC:Actor]] or [[FMC:State]], and the object is confined to a [[IREB:Requirement]]. More concretely, an example for this type of statement is 'Component-X &lt;em&gt;satisfies&lt;/em&gt; 'Requirement-4711'.&lt;/p&gt;</skos:definition>
+		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedSourceLink>
+			<idRef>oslc_rm:satisfies-toSource</idRef>
+		</cas:enumeratedSourceLink>
+		<cas:enumeratedTargetLink>
+			<idRef>oslc_rm:satisfies-toTarget</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Relationship>
+	<cas:Link id="oslc_rm:satisfies-toSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksSource</cas:specializes>
+		<dcterms:title>oslc_rm:satisfies to source</dcterms:title>
+		<dcterms:description>Connects the source of oslc_rm:satisfies</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>FMC:Actor</idRef>
+			<idRef>FMC:State</idRef>
+			<idRef>FMC:Event</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="oslc_rm:satisfies-toTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>oslc_rm:satisfies to target</dcterms:title>
+		<dcterms:description>Connects the target of oslc_rm:satisfies</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>IREB:Requirement</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Relationship id="SpecIF:refersTo" rdf:type="owl:Class">
+		<dcterms:title xml:lang="en">refers to</dcterms:title>
+		<dcterms:title xml:lang="de">bezieht sich auf</dcterms:title>
+		<dcterms:title xml:lang="fr">concerne</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A resource 'refers to' any other resource.&lt;/p&gt;</skos:definition>
+		<cas:specializes>cas:Relationship</cas:specializes>
+		<dcterms:modified>2016-05-26T08:59:00+02:00</dcterms:modified>
+		<cas:enumeratedProperty>
+		</cas:enumeratedProperty>
+		<cas:enumeratedSourceLink>
+			<idRef>SpecIF:refersTo-toSource</idRef>
+		</cas:enumeratedSourceLink>
+		<cas:enumeratedTargetLink>
+			<idRef>SpecIF:refersTo-toTarget</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Relationship>
+	<cas:Link id="SpecIF:refersTo-toSource" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksSource</cas:specializes>
+		<dcterms:title>SpecIF:refersTo to source</dcterms:title>
+		<dcterms:description>Connects the source of SpecIF:refersTo</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>SpecIF:Issue</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:Link id="SpecIF:refersTo-toTarget" rdf:type="owl:ObjectProperty">
+		<cas:specializes>cas:linksTarget</cas:specializes>
+		<dcterms:title>SpecIF:refersTo to target</dcterms:title>
+		<dcterms:description>Connects the target of SpecIF:refersTo</dcterms:description>
+		<cas:enumeratedEndpoint>
+			<idRef>cas:View</idRef>
+			<idRef>FMC:Actor</idRef>
+			<idRef>FMC:State</idRef>
+			<idRef>FMC:Event</idRef>
+			<idRef>IREB:Requirement</idRef>
+		</cas:enumeratedEndpoint>
+	</cas:Link>
+	<cas:anEntity id="d:Pln-27420ffc0000c3a8013ab527ca1b71f5" rdf:type="cas:View">
+		<dcterms:title>Color coding</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:03+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div style="max-width: 480px;" ><object data="files_and_images/27420ffc0000c3a8013ab527ca1b71f5.svg" type="image/svg+xml" >Color Coding</object></div></value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Notation">
+			<value>FMC Block Diagram</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>SpecIF:NotApplicable</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.NotToEvaluate</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Pln-5a4755dd0000bca801375293a62c90a8" rdf:type="cas:View">
+		<dcterms:title>SmartHome System</dcterms:title>
+		<dcterms:description><div><p>The Smart-Home-System consists of sensors on the left side, the controller in the middle and the actuators on the right side. </p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:03+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div style="max-width: 600px;"><object data="files_and_images/5a4755dd0000bca801375293a62c90a8.svg" type="image/svg+xml" >files_and_images\5a4755dd0000bca801375293a62c90a8.svg</object></div></value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Notation">
+			<value>FMC Block Diagram</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusInitial</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:CustomerStatus.ToBeClarified</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.ToEvaluate</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="cas:shows">
+			<idRef>d:MEl-5bd6bd890000bca8013739588a3f43d6</idRef>
+			<idRef>d:MEl-5a4dd77b0000bca8013736c6912ad291</idRef>
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+			<idRef>d:MEl-5bcf35cf0000bca8013776d68023612a</idRef>
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+			<idRef>d:MEl-5bcfb01d0000bca80137f303272a5557</idRef>
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+			<idRef>d:MEl-5a4cfa830000bca801370d837f761f3e</idRef>
+			<idRef>d:MEl-5a4d2bd00000bca80137a3f233cdffeb</idRef>
+			<idRef>d:MEl-5a4d6dee0000bca80137c1caf2f42349</idRef>
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Pln-5a6cdea50000bca80137d6b2d6e8a3a0" rdf:type="cas:View">
+		<dcterms:title>Flush-mounted Dimmer</dcterms:title>
+		<dcterms:description><div><p> .. showing the components of the device with their interfaces. </p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:03+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div style="max-width: 600px;"><object data="files_and_images/5a6cdea50000bca80137d6b2d6e8a3a0.svg" type="image/svg+xml" >files_and_images\5a6cdea50000bca80137d6b2d6e8a3a0.svg</object></div></value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Notation">
+			<value>FMC Block Diagram</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusInitial</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.NotAgreed</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.NotAccepted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="cas:shows">
+			<idRef>d:MEl-5a7776c50000bca8013765ae93af9209</idRef>
+			<idRef>d:MEl-5a76365c0000bca8013776e91afd1e8e</idRef>
+			<idRef>d:MEl-5a9ce0310000bca801378176dc4744e8</idRef>
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+			<idRef>d:MEl-5a4dd77b0000bca8013736c6912ad291</idRef>
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+			<idRef>d:MEl-5a99c89c0000bca801375d44cf9a50ca</idRef>
+			<idRef>d:MEl-5a9929510000bca80137d23c81f1ca54</idRef>
+			<idRef>d:MEl-5c29fb8e0000bca80137eb9734c99bfd</idRef>
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+			<idRef>d:MEl-5a9888810000bca801375410ce1cc142</idRef>
+			<idRef>d:MEl-5a4d6dee0000bca80137c1caf2f42349</idRef>
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+			<idRef>d:MEl-463289cd0000c3a80141be3fc417034a</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Pln-5a7f99af0000bca8013754f2ef12d3e5" rdf:type="cas:View">
+		<dcterms:title>Dimmer Module</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:04+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div style="max-width: 600px;"><object data="files_and_images/5a7f99af0000bca8013754f2ef12d3e5.svg" type="image/svg+xml" >files_and_images\5a7f99af0000bca8013754f2ef12d3e5.svg</object></div></value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Notation">
+			<value>FMC Block Diagram</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusInitial</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.AgreedWithComment</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.ToEvaluate</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="cas:shows">
+			<idRef>d:MEl-5a9ce0310000bca801378176dc4744e8</idRef>
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+			<idRef>d:MEl-5a844d820000bca8013750b9a0410b6b</idRef>
+			<idRef>d:MEl-5a99c89c0000bca801375d44cf9a50ca</idRef>
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+			<idRef>d:MEl-5a87083e0000bca801379bb412523737</idRef>
+			<idRef>d:MEl-5a9929510000bca80137d23c81f1ca54</idRef>
+			<idRef>d:MEl-5c29fb8e0000bca80137eb9734c99bfd</idRef>
+			<idRef>d:MEl-5a82ec6f0000bca801372ef053a71bdf</idRef>
+			<idRef>d:MEl-5a86b8980000bca80137ca6fde1a125e</idRef>
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+			<idRef>d:MEl-5a9888810000bca801375410ce1cc142</idRef>
+			<idRef>d:MEl-5a820a3c0000bca801378c9093fb7d80</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Pln-606e76c70000bca801376ec3133a1181" rdf:type="cas:View">
+		<dcterms:title>User Activity</dcterms:title>
+		<dcterms:description><div><p>This shows the defined sequences of manual operation to activate the device. </p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:04+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div style="max-width: 600px;"><object data="files_and_images/606e76c70000bca801376ec3133a1181.svg" type="image/svg+xml" >files_and_images\606e76c70000bca801376ec3133a1181.svg</object></div></value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Notation">
+			<value>BPMN Process Model</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusDrafted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.Agreed</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.Accepted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="cas:shows">
+			<idRef>d:MEl-608177820000bca801379179ebf3b6aa</idRef>
+			<idRef>d:MEl-611366530000bca80137a97f194e96a3</idRef>
+			<idRef>d:MEl-453862540000c3a801419d91bef48cfd</idRef>
+			<idRef>d:MEl-45387c0b0000c3a801410aa03f6b9be4</idRef>
+			<idRef>d:MEl-4538920b0000c3a801415c67e334b8a1</idRef>
+			<idRef>d:MEl-608239830000bca801373690c7d2af0f</idRef>
+			<idRef>d:MEl-610b07100000bca80137c10f96c46247</idRef>
+			<idRef>d:MEl-610e0b010000bca80137ac40800bb1b8</idRef>
+			<idRef>d:MEl-459b92580000c3a80141cb4acb521ab1</idRef>
+			<idRef>d:MEl-45384cd10000c3a80141c1f85d7c26e6</idRef>
+			<idRef>d:MEl-607f13b50000bca80137ba95f11856ab</idRef>
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Pln-45a1c8930000c3a801414cd1eaa70b5a" rdf:type="cas:View">
+		<dcterms:title>Double-Button Observer Software</dcterms:title>
+		<dcterms:description><div><p>This software module discriminates the user's activity (operation sequence) and submits corresponding events/commands to the actuator. This software is generic with respect to the actuator, it can be used for [[dimmer]]s, [[shading]] devices and others. </p></div></dcterms:description>
+		<dcterms:modified>2018-03-15T15:36:31+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div style="max-width: 600px;"><object type="image/svg+xml" data="files_and_images/45a1c8930000c3a801414cd1eaa70b5a.svg">files_and_images\45a1c8930000c3a801414cd1eaa70b5a.svg</object></div></value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Notation">
+			<value>BPMN Process Model</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusDrafted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.Agreed</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.Accepted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="cas:shows">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+			<idRef>d:MEl-45450be80000c3a801414f280f146c71</idRef>
+			<idRef>d:MEl-4536b0350000c3a801415986f8ea806a</idRef>
+			<idRef>d:MEl-453facbb0000c3a80141c43d2fb4f5e2</idRef>
+			<idRef>d:MEl-4543fe900000c3a80141f5253ff13c35</idRef>
+			<idRef>d:MEl-453d34af0000c3a80141918f84641161</idRef>
+			<idRef>d:MEl-45a236e00000c3a801410f6503287e16</idRef>
+			<idRef>d:MEl-45a3b13c0000c3a801415e97f5bc29d1</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Pln-5af364560000bca80137b84017f4e832" rdf:type="cas:View">
+		<dcterms:title>Dimmer Controller Software</dcterms:title>
+		<dcterms:description><div><p>This software decodes the commands and controls the timely behavior of the actuator. </p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:06+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div style="max-width: 720px;"><object data="files_and_images/5af364560000bca80137b84017f4e832.svg" type="image/svg+xml" >files_and_images\5af364560000bca80137b84017f4e832.svg</object></div></value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="cas:Notation">
+			<value>Petri Net</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusDrafted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.Agreed</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.Accepted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="cas:shows">
+			<idRef>d:MEl-5b2f95ec0000bca8013709bfa81d701f</idRef>
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+			<idRef>d:MEl-45450be80000c3a801414f280f146c71</idRef>
+			<idRef>d:MEl-4536b0350000c3a801415986f8ea806a</idRef>
+			<idRef>d:MEl-5b149eab0000bca80137aad99b6eea7b</idRef>
+			<idRef>d:MEl-5b08ed8d0000bca8013719f554353b0e</idRef>
+			<idRef>d:MEl-453dfb670000c3a8014191107df4565e</idRef>
+			<idRef>d:MEl-5b094f8a0000bca801374c798a6587ad</idRef>
+			<idRef>d:MEl-45428b930000c3a80141e28b7d4b5ae5</idRef>
+			<idRef>d:MEl-5b078fa50000bca80137f36ed05c43cb</idRef>
+			<idRef>d:MEl-453facbb0000c3a80141c43d2fb4f5e2</idRef>
+			<idRef>d:MEl-5b2d29070000bca801378a6c020cf8f5</idRef>
+			<idRef>d:MEl-5b1750f80000bca801373b2d143d7478</idRef>
+			<idRef>d:MEl-5b2ddad80000bca80137c44d62ba97d8</idRef>
+			<idRef>d:MEl-5b2449180000bca8013722c01c9d35a5</idRef>
+			<idRef>d:MEl-5b0839b90000bca801376dcca41ca7d0</idRef>
+			<idRef>d:MEl-5b07e6aa0000bca8013797aad9be69ae</idRef>
+			<idRef>d:MEl-4543fe900000c3a80141f5253ff13c35</idRef>
+			<idRef>d:MEl-453d34af0000c3a80141918f84641161</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-d1c895230000c3a80150f8afd049f738" rdf:type="IREB:Requirement">
+		<dcterms:title>Dim an electric load</dcterms:title>
+		<dcterms:description><div><p> The user can set the intensity level of an electric load such as a light [[bulb]]. Pressing a button 'up' or 'down', the intensity is increased or decreased following a quasi-stepless ramp. <br /></p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:06+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_014</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="ReqIF-WF:SupplierComment">
+			<value>Our solution does this perfectly.</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineMechanics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.Agreed</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-d1d42a6a0000c3a8015091ec8d149b93" rdf:type="IREB:Requirement">
+		<dcterms:title>Switch an electric load</dcterms:title>
+		<dcterms:description><div><p> The user can immediately switch 'on' or 'off' the electric load. The intensity set to the maximum resp. minimum level, as defined by installation parameters.</p></div></dcterms:description>
+		<dcterms:modified>2018-02-13T12:22:44+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_016</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-d1cd7f370000c3a8015095e6ee21aab7" rdf:type="IREB:Requirement">
+		<dcterms:title>Set dimming parameters</dcterms:title>
+		<dcterms:description><div><p> During system setup, the installer can modify the following parameters: </p><ul><li> maximum intensity </li><li> minimum intensity </li><li> dimming speed (intensity ramp when dimming) </li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:07+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_015</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusSubmitted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5ba3512b0000bca801371cc0617eb4c1" rdf:type="IREB:Requirement">
+		<dcterms:title>Minimum button size</dcterms:title>
+		<dcterms:description><div><p>The button size must not be less than 2 cm in diameter.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:08+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_009</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="ReqIF-WF:SupplierComment">
+			<value>We did not find the actual minimum dimensions of the buttons.</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityHigh</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineMechanics</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:CustomerStatus.ToBeClarified</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5b8fbb300000bca80137c73e3ce4c737" rdf:type="IREB:Requirement">
+		<dcterms:title>Electric load is 120 W</dcterms:title>
+		<dcterms:description><div><p>The power stage must allow an electric load of 120 W.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:08+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_001</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="ReqIF-WF:SupplierComment">
+			<value>For which time period?  Permanent load?</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusSubmitted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityHigh</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:CustomerStatus.ToBeClarified</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5b944fc70000bca8013763f44fdc0e03" rdf:type="IREB:Requirement">
+		<dcterms:title>Instant use</dcterms:title>
+		<dcterms:description><div><p>85% of an arbitrarily selected group of test users understands and can use the system without reading a manual.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:09+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_003</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineMechanics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.Agreed</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5ba140d60000bca801372b09f9888eca" rdf:type="IREB:Requirement">
+		<dcterms:title>Instantaneous reaction</dcterms:title>
+		<dcterms:description><div><p> The reaction time of the system to user input is 'instantaneous' (&lt; 0,5 sec).</p></div></dcterms:description>
+		<dcterms:modified>2018-03-08T11:59:42+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_008</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="ReqIF-WF:SupplierComment">
+			<value>Mais bien sûr.</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="ReqIF-WF:CustomerComment">
+			<value>Das ist ganz wichtig für uns.</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusDone</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityHigh</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:SupplierStatus">
+			<idRef>ReqIF-WF:SupplierStatus.Agreed</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.ToEvaluate</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-ee452cf20000c3a8014035290669304d" rdf:type="IREB:Requirement">
+		<dcterms:title>Consistent system behavior</dcterms:title>
+		<dcterms:description><div><p>The system's behavior must be consistent. For example, controlling a dimmer must correspond with controlling a shade.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:10+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_011</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineMechanics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-ee43fc4c0000c3a8014063d42c77767f" rdf:type="IREB:Requirement">
+		<dcterms:title>No dead-locks</dcterms:title>
+		<dcterms:description><div><p>Under no circumstances the system may get stuck in a dead-lock. I.e. every sequence of input stimulation must be supported, even arbitrary sequences. Input stimulation which is not supported in a given system state is either refused with an error message, if a feedback channel is available, or it is simply ignored, otherwise.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:11+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_010</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityHigh</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupSystem</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5b9124bc0000bca80137fa2ce86f5eca" rdf:type="IREB:Requirement">
+		<dcterms:title>Overload protection</dcterms:title>
+		<dcterms:description><div><p>The dimmer unit is protected against resistive overload and against any capacitive or inductive loads.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:11+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_002</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusSubmitted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5b9e68530000bca801371362c49d2d08" rdf:type="IREB:Requirement">
+		<dcterms:title>Auto shut-off</dcterms:title>
+		<dcterms:description><div><p>In case of over-temperature the device is shut-off automatically by an electronic circuit.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:11+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_007</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusSubmitted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupSystem</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-eea1cd500000c3a80140fe00109eb7f4" rdf:type="IREB:Requirement">
+		<dcterms:title>Compliance with industry standards</dcterms:title>
+		<dcterms:description><div><p>The system must comply with industry standards. Besides legal and safety requirements, compatibility with existing electrical installations, tools and commercial components is desired.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:12+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_012</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineMechanics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineSafety</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5b95fae40000bca801372becc933682d" rdf:type="IREB:Requirement">
+		<dcterms:title>Industry-standard mounting</dcterms:title>
+		<dcterms:description><div><p> The product fits into an industry-standard [[housing]] for flush-mounted devices (diameter &#x2300;68 mm). It is fixed with two screw-activated claws.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:12+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_004</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusSubmitted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityHigh</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupSystem</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineMechanics</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5b9ab8a50000bca801377ad0be3bbc89" rdf:type="IREB:Requirement">
+		<dcterms:title>Fire protection</dcterms:title>
+		<dcterms:description><div><p> The product must withstand 650°C (VDE 0606-1).</p></div></dcterms:description>
+		<dcterms:modified>2018-02-16T10:29:48+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_005</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusSubmitted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityHigh</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupUser</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineMechanics</idRef>
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-728c69c80018b1a8014b974542c36edc" rdf:type="IREB:Requirement">
+		<dcterms:title>Galvanic Isolation</dcterms:title>
+		<dcterms:description><div><p>The load circuit with power stage is galvanically isolated from the controller.</p></div></dcterms:description>
+		<dcterms:modified>2018-02-28T13:16:17+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_013</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="ReqIF-WF:SupplierComment">
+			<value>This is standard for all our products: expensive, but effective.</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusSubmitted</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityHigh</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupSystem</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineElectronics</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="ReqIF-WF:CustomerStatus">
+			<idRef>ReqIF-WF:CustomerStatus.ToEvaluate</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Req-5b9c950e0000bca801374f16615247b9" rdf:type="IREB:Requirement">
+		<dcterms:title>Complete state-machine</dcterms:title>
+		<dcterms:description><div><p> The system is controlled by a complete state-machine and must not have any dead-lock state.</p></div></dcterms:description>
+		<dcterms:modified>2017-10-27T11:44:20+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>REQ_006</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="SpecIF:LifecycleStatus">
+			<idRef>SpecIF:LifecycleStatusApproved</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:StakeholderGroup">
+			<idRef>SpecIF:StakeholderGroupSystem</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:EngineeringDiscipline">
+			<idRef>SpecIF:EngineeringDisciplineSoftware</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Iss-ee2abb630000c3a8013987a750219659" rdf:type="SpecIF:Issue">
+		<dcterms:title>An open issue with respect to mechanics</dcterms:title>
+		<dcterms:description><div><p>This is the description of the issue and potential solution.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:15+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>OPM_001</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="SpecIF:DueDate">
+			<value>2012-09-30T12:00:00+02:00</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="o:PC-IssueStatus">
+			<idRef>oslc_cm:Inprogress</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityLow</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Iss-eee2d4e00000c3a801394148dcc58a52" rdf:type="SpecIF:Issue">
+		<dcterms:title>An open issue concerning software</dcterms:title>
+		<dcterms:description><div><p>A description.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:15+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="dcterms:identifier">
+			<value>OPS_001</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="SpecIF:Responsible">
+			<value>Vorname Nachname</value>
+		</cas:aProperty>
+		<cas:aProperty rdf:type="SpecIF:DueDate">
+			<value>2012-09-30T12:00:00+02:00</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="o:PC-IssueStatus">
+			<idRef>o:V-Iss-Status-6</idRef>
+		</cas:aTargetLink>
+		<cas:aTargetLink rdf:type="SpecIF:Priority">
+			<idRef>SpecIF:priorityMedium</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a7776c50000bca8013765ae93af9209" rdf:type="FMC:State">
+		<dcterms:title>Actuator Rods</dcterms:title>
+		<dcterms:description><div><p>Up to four actuator rods connecting the buttons to electrical contacts.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:22+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a76365c0000bca8013776e91afd1e8e" rdf:type="FMC:Actor">
+		<dcterms:title>Assembly Frame</dcterms:title>
+		<dcterms:description><div><p> Mounting frame screwed to or into a wall.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:16+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-608177820000bca801379179ebf3b6aa" rdf:type="FMC:Actor">
+		<dcterms:title>Briefly press Down-button</dcterms:title>
+		<dcterms:description><div><p>Press down-button &lt;400 ms.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:16+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-611366530000bca80137a97f194e96a3" rdf:type="FMC:Actor">
+		<dcterms:title>Briefly press Up-button</dcterms:title>
+		<dcterms:description><div><p>Press up-button &lt;400 ms.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:16+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5bd6bd890000bca8013739588a3f43d6" rdf:type="FMC:Actor">
+		<dcterms:title>Bulb</dcterms:title>
+		<dcterms:description><div><p> Dimmable candescent light-bulb 230V.</p></div></dcterms:description>
+		<dcterms:modified>2017-11-11T16:16:13+01:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a9ce0310000bca801378176dc4744e8" rdf:type="FMC:State">
+		<dcterms:title>Control Signals</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:22+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b2f95ec0000bca8013709bfa81d701f" rdf:type="FMC:Event">
+		<dcterms:title>Decreasing</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:28+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-453862540000c3a801419d91bef48cfd" rdf:type="FMC:Event">
+		<dcterms:title>Dim-down!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:29+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-45387c0b0000c3a801410aa03f6b9be4" rdf:type="FMC:Event">
+		<dcterms:title>Dim-up!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:29+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a85347c0000bca80137ad485c7cd330" rdf:type="FMC:Actor">
+		<dcterms:title>Dimmer Controller Software</dcterms:title>
+		<dcterms:description><div><p> Input commands (events):</p><ul><li> up-long → increase brightness </li><li> down-long → decrease brightness </li><li> release → stop dimming, keep brightness </li><li> up-short → switch to maximum </li><li> down-short → switch to minimum </li><li> inappropriate commands are ignored (e.g. up-long when maximum is set). </li><li> set parameters </li></ul><p> Four parameters influence the behavior of the particular device:</p><ul><li> minimum value (default: 0%) </li><li> maximum value (default: 100%) </li><li> ramp-up speed (default: 10% per sec) </li><li> ramp-down speed (default: 10% per sec) </li></ul></div></dcterms:description>
+		<dcterms:modified>2017-12-09T10:38:29+01:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a808e2a0000bca80137bfd74268a84a" rdf:type="FMC:Actor">
+		<dcterms:title>Dimmer Electronics</dcterms:title>
+		<dcterms:description><div><p>The Dimmer Electronics is a printed circuit board with low-power micro-processor, memory, binary as well as analog I/O signals and a power stage supporting the specified electric load.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:17+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div><p class="inline-label">Diagramm:</p><p><object data="files_and_images/Schaltplan.gif" name="Schaltplan.gif" type="image/gif"/></p> </div></value>
+		</cas:aProperty>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a752ccc0000bca80137479a2e8bab30" rdf:type="FMC:Actor">
+		<dcterms:title>Dimmer Module</dcterms:title>
+		<dcterms:description><div><p>The actuator module with dimmer function for resistive loads.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:17+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-4538920b0000c3a801415c67e334b8a1" rdf:type="FMC:Event">
+		<dcterms:title>Done!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:29+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a71c4800000bca80137f2aaa7b63000" rdf:type="FMC:Actor">
+		<dcterms:title>Double Button</dcterms:title>
+		<dcterms:description><div><p>The Double Button (a sensor unit) is a versatile all-mechanical unit used for multiple purposes. The mechanical position is transferred with a rod per button to the next unit where it is converted to an electrical signal.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:17+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-606f16ac0000bca801373587fda932b3" rdf:type="FMC:Actor">
+		<dcterms:title>Double-Button Observer Software</dcterms:title>
+		<dcterms:description><div><p>This is an observer of the double-button sensor. It distinguishes short and long pressing in the 'up' and 'down' directions. A discriminator may send five events:</p><ul><li>up-short</li><li>down-short</li><li>up-long</li><li>down-long and </li><li>release.</li></ul><p>The events are interpreted and actions are initiated accordingly by the target actuator unit. The double button sensor and the observer have no notion of the underlying function.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:18+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a4dd77b0000bca8013736c6912ad291" rdf:type="FMC:State">
+		<dcterms:title>down</dcterms:title>
+		<dcterms:description><div><p>The button to drive down the dimmer, shading or similar devices.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:22+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-45450be80000c3a801414f280f146c71" rdf:type="FMC:Event">
+		<dcterms:title>down-long!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:29+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-4536b0350000c3a801415986f8ea806a" rdf:type="FMC:Event">
+		<dcterms:title>down-short!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:30+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a844d820000bca8013750b9a0410b6b" rdf:type="FMC:State">
+		<dcterms:title>Electro-Magnetic Resistance</dcterms:title>
+		<dcterms:description><div><p>Electromagnetic characteristics, especially EM-shielding.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:23+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a489c300000bca80137ee1373c16844" rdf:type="FMC:State">
+		<dcterms:title>Flush-mounted Dimmer</dcterms:title>
+		<dcterms:description><p>A dimmer for electric loads in an industry-standard mounting frame which is flush with the wall surface. In other words, the dimmer is sitting in the wall and just the buttons are visible.</p></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:23+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a4c80c20000bca8013753b6999a4da8" rdf:type="FMC:State">
+		<dcterms:title>Flush-mounted Shading Control</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:23+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a99c89c0000bca801375d44cf9a50ca" rdf:type="FMC:State">
+		<dcterms:title>Ground Cable</dcterms:title>
+		<dcterms:description><div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:23+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a8009a00000bca80137ef95bc3f643f" rdf:type="FMC:Actor">
+		<dcterms:title>Housing</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:18+02:00</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Diagram">
+			<value><div> <p class="inline-label">Diagramm:</p><p><object data="files_and_images/UP-Dose.png" name="UP-Dose.png" type="image/png"/></p> </div></value>
+		</cas:aProperty>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a87083e0000bca801379bb412523737" rdf:type="FMC:State">
+		<dcterms:title>I/O Pins</dcterms:title>
+		<dcterms:description><div><p>per input and output signal:</p><ul><li>hardware-address</li><li>number of significant bits</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:23+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b149eab0000bca80137aad99b6eea7b" rdf:type="FMC:Event">
+		<dcterms:title>Increasing</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:30+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a52b50c0000bca801377e3d15255f98" rdf:type="FMC:State">
+		<dcterms:title>Intelligent Shading Drive</dcterms:title>
+		<dcterms:description><div><p>An intelligent shading actuator with 2 drives for up/down straight/tilt motion. The unit comprises the control unit and the motors.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:24+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b08ed8d0000bca8013719f554353b0e" rdf:type="FMC:Event">
+		<dcterms:title>Intermediate</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:30+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a9929510000bca80137d23c81f1ca54" rdf:type="FMC:State">
+		<dcterms:title>Load Cable</dcterms:title>
+		<dcterms:description><div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:24+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5bcf35cf0000bca8013776d68023612a" rdf:type="FMC:State">
+		<dcterms:title>M</dcterms:title>
+		<dcterms:description><div><p>Actuator Motor 230V.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:24+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-453dfb670000c3a8014191107df4565e" rdf:type="FMC:Event">
+		<dcterms:title>max-reached!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:30+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b094f8a0000bca801374c798a6587ad" rdf:type="FMC:Event">
+		<dcterms:title>Maximum</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:30+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-45428b930000c3a80141e28b7d4b5ae5" rdf:type="FMC:Event">
+		<dcterms:title>min-reached!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:30+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b078fa50000bca80137f36ed05c43cb" rdf:type="FMC:Event">
+		<dcterms:title>Minimum</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:31+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5c29fb8e0000bca80137eb9734c99bfd" rdf:type="FMC:State">
+		<dcterms:title>Neutral Cable</dcterms:title>
+		<dcterms:description><div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:24+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a82ec6f0000bca801372ef053a71bdf" rdf:type="FMC:State">
+		<dcterms:title>Physical Space</dcterms:title>
+		<dcterms:description><div><p>Effective 3D interior space and mounting for electronics.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:25+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-608239830000bca801373690c7d2af0f" rdf:type="FMC:Actor">
+		<dcterms:title>Press and hold Down-button</dcterms:title>
+		<dcterms:description><div><p>Press down-button &gt;400 ms.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:18+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-610b07100000bca80137c10f96c46247" rdf:type="FMC:Actor">
+		<dcterms:title>Press and hold Up-button</dcterms:title>
+		<dcterms:description><div><p>Press up-button &gt;400 ms.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:18+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a86b8980000bca80137ca6fde1a125e" rdf:type="FMC:State">
+		<dcterms:title>Processor RAM ROM</dcterms:title>
+		<dcterms:description><div><p>EPROM-Size</p><p>RAM-Size</p><p>Processor type with instruction set and speed (MIPS)</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:25+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-610e0b010000bca80137ac40800bb1b8" rdf:type="FMC:Actor">
+		<dcterms:title>Release button</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:18+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-453facbb0000c3a80141c43d2fb4f5e2" rdf:type="FMC:Event">
+		<dcterms:title>released!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:31+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a51dd920000bca8013770a4395c83fc" rdf:type="FMC:State">
+		<dcterms:title>Remote Control</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:26+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5bcfb01d0000bca80137f303272a5557" rdf:type="FMC:Actor">
+		<dcterms:title>Shading</dcterms:title>
+		<dcterms:description><div><p>Window-shade with 2 degrees of freedom: It can be moved up/down and the elements can be set straight/tilted. Both movements can be made proportionally with an electric drive.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:19+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a50d5b60000bca8013781532547ce93" rdf:type="FMC:Actor">
+		<dcterms:title>SmartHome Controller</dcterms:title>
+		<dcterms:description><div><p>The controller </p><ul><li>interconnects locally distributed sensors and actuators, </li><li>coordinates different actuators where appropriate and </li><li>performes automatic functions, such as switching external lamps dependend on ambient light.</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:19+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-803fd3750000c3a8013cf1fdb3b26d33" rdf:type="FMC:State">
+		<dcterms:title>SmartHome System</dcterms:title>
+		<dcterms:description><div><p>The new system for controlling all major functions of the private home:</p><ul><li>light/illumination</li><li>window shades</li><li>heating</li><li>consumption meters for electricity, heat, gas and water.</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:26+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="FMC:State">
+		<dcterms:title>Spring Clips</dcterms:title>
+		<dcterms:description><div><p>Spring clips for mechanical connection.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:26+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b2d29070000bca801378a6c020cf8f5" rdf:type="FMC:Actor">
+		<dcterms:title>Start-decreasing</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:19+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b1750f80000bca801373b2d143d7478" rdf:type="FMC:Actor">
+		<dcterms:title>Start-increasing</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:19+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-459b92580000c3a80141cb4acb521ab1" rdf:type="FMC:Event">
+		<dcterms:title>Stop dimming!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:31+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b2ddad80000bca80137c44d62ba97d8" rdf:type="FMC:Actor">
+		<dcterms:title>Stop-decreasing</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:20+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b2449180000bca8013722c01c9d35a5" rdf:type="FMC:Actor">
+		<dcterms:title>Stop-increasing</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:20+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a4cfa830000bca801370d837f761f3e" rdf:type="FMC:State">
+		<dcterms:title>straighten</dcterms:title>
+		<dcterms:description><div><p>The button to straighten the shading elements.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:27+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a9888810000bca801375410ce1cc142" rdf:type="FMC:State">
+		<dcterms:title>Supply Cable</dcterms:title>
+		<dcterms:description><div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:27+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b0839b90000bca801376dcca41ca7d0" rdf:type="FMC:Actor">
+		<dcterms:title>Switch-off</dcterms:title>
+		<dcterms:description><div><p>Switch to programmed min-value.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:20+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-45384cd10000c3a80141c1f85d7c26e6" rdf:type="FMC:Event">
+		<dcterms:title>Switch-off!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:32+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5b07e6aa0000bca8013797aad9be69ae" rdf:type="FMC:Actor">
+		<dcterms:title>Switch-on</dcterms:title>
+		<dcterms:description><div><p>Switch to programmed max-value.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:21+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-607f13b50000bca80137ba95f11856ab" rdf:type="FMC:Event">
+		<dcterms:title>Switch-on!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:32+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a820a3c0000bca801378c9093fb7d80" rdf:type="FMC:State">
+		<dcterms:title>Thermal Resistance</dcterms:title>
+		<dcterms:description><div><p> Thermal resistance and thermal capacity of the [[housing]].</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:27+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a4d2bd00000bca80137a3f233cdffeb" rdf:type="FMC:State">
+		<dcterms:title>tilt</dcterms:title>
+		<dcterms:description><div><p>The button to tilt the shading elements.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:28+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a4d6dee0000bca80137c1caf2f42349" rdf:type="FMC:State">
+		<dcterms:title>up</dcterms:title>
+		<dcterms:description><div><p>The button to drive up the dimmer, shading or similar devices.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:28+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-4543fe900000c3a80141f5253ff13c35" rdf:type="FMC:Event">
+		<dcterms:title>up-long!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:32+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-453d34af0000c3a80141918f84641161" rdf:type="FMC:Event">
+		<dcterms:title>up-short!</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:33+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a47935a0000bca801377c17f8cb25b0" rdf:type="FMC:Actor">
+		<dcterms:title>User</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:21+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-45a236e00000c3a801410f6503287e16" rdf:type="FMC:Actor">
+		<dcterms:title>Wait for Activation</dcterms:title>
+		<dcterms:description><div><p>The kind of activation is determined:</p><ul><li>Up- or Down-Button</li><li>Short or long activation: 'Short' is &lt; 0,4 sec.</li><li>Do only wait until the distinction between 'short' or 'long' can be made!</li></ul></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:21+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-45a3b13c0000c3a801415e97f5bc29d1" rdf:type="FMC:Actor">
+		<dcterms:title>Wait for Deactivation</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:21+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-5a9b7a9b0000bca80137d768644696b7" rdf:type="FMC:Actor">
+		<dcterms:title>Wireless Module</dcterms:title>
+		<dcterms:description><div><p>Receives control commands via radio signal or the mechanical position of a mounted sensor unit. Sends electrical control signals to the mounted actuator module.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:22+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:anEntity id="d:MEl-463289cd0000c3a80141be3fc417034a" rdf:type="FMC:State">
+		<dcterms:title>Wireless Network</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:28+02:00</dcterms:modified>
+	</cas:anEntity>
+	<cas:aRelationship id="d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1c895230000c3a80150f8afd049f738" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:49+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-d1c895230000c3a80150f8afd049f738</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-RpgwxaijQtHjsE71uYHiTJyJW79" rdf:type="SpecIF:dependsOn">
+		<dcterms:modified>2017-06-19T20:13:49+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:dependsOn-toSource">
+			<idRef>d:Req-d1c895230000c3a80150f8afd049f738</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:dependsOn-toTarget">
+			<idRef>d:Req-d1cd7f370000c3a8015095e6ee21aab7</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-tA5fx5sgbN3nJReiqqzE6PvBhbt" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:50+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-d1c895230000c3a80150f8afd049f738</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-2hkTtbuV2BjIYernvDaRZXDFV1Q" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:50+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-d1c895230000c3a80150f8afd049f738</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1d42a6a0000c3a8015091ec8d149b93" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:50+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-d1d42a6a0000c3a8015091ec8d149b93</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-Ch6fs9eKiVNhSacQ72yIBhF0Q3W" rdf:type="SpecIF:refersTo">
+		<dcterms:modified>2018-11-15T15:46:00+01:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:refersTo-toSource">
+			<idRef>d:Iss-ee2abb630000c3a8013987a750219659</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:refersTo-toTarget">
+			<idRef>d:Req-d1d42a6a0000c3a8015091ec8d149b93</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1cd7f370000c3a8015095e6ee21aab7" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:51+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-d1cd7f370000c3a8015095e6ee21aab7</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a71c4800000bca80137f2aaa7b63000-Req-5ba3512b0000bca801371cc0617eb4c1" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:51+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5ba3512b0000bca801371cc0617eb4c1</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b8fbb300000bca80137c73e3ce4c737" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:51+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b8fbb300000bca80137c73e3ce4c737</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a47935a0000bca801377c17f8cb25b0-Req-5b944fc70000bca8013763f44fdc0e03" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:51+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b944fc70000bca8013763f44fdc0e03</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCnc-Iss-ee2abb630000c3a8013987a750219659-Req-5b944fc70000bca8013763f44fdc0e03" rdf:type="SpecIF:refersTo">
+		<dcterms:modified>2017-06-19T20:13:51+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:refersTo-toSource">
+			<idRef>d:Iss-ee2abb630000c3a8013987a750219659</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:refersTo-toTarget">
+			<idRef>d:Req-5b944fc70000bca8013763f44fdc0e03</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a752ccc0000bca80137479a2e8bab30-Req-5ba140d60000bca801372b09f9888eca" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:51+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5ba140d60000bca801372b09f9888eca</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a9b7a9b0000bca80137d768644696b7-Req-5ba140d60000bca801372b09f9888eca" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:52+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5ba140d60000bca801372b09f9888eca</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-803fd3750000c3a8013cf1fdb3b26d33-Req-ee452cf20000c3a8014035290669304d" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:52+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-ee452cf20000c3a8014035290669304d</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-UZD4SQ8jYghL2Tsb4tZjoXDSYoM" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:52+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-ee452cf20000c3a8014035290669304d</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-ee43fc4c0000c3a8014063d42c77767f" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:52+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-ee43fc4c0000c3a8014063d42c77767f</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a4c80c20000bca8013753b6999a4da8-Req-ee43fc4c0000c3a8014063d42c77767f" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:52+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-ee43fc4c0000c3a8014063d42c77767f</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-ee43fc4c0000c3a8014063d42c77767f" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:53+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-ee43fc4c0000c3a8014063d42c77767f</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a50d5b60000bca8013781532547ce93-Req-ee43fc4c0000c3a8014063d42c77767f" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:53+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-ee43fc4c0000c3a8014063d42c77767f</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RDep-Req-ee43fc4c0000c3a8014063d42c77767f-Req-5b9c950e0000bca801374f16615247b9" rdf:type="SpecIF:dependsOn">
+		<dcterms:modified>2017-06-19T20:13:53+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:dependsOn-toSource">
+			<idRef>d:Req-ee43fc4c0000c3a8014063d42c77767f</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:dependsOn-toTarget">
+			<idRef>d:Req-5b9c950e0000bca801374f16615247b9</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9124bc0000bca80137fa2ce86f5eca" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:53+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9124bc0000bca80137fa2ce86f5eca</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9124bc0000bca80137fa2ce86f5eca" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:54+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9124bc0000bca80137fa2ce86f5eca</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9e68530000bca801371362c49d2d08" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:54+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9e68530000bca801371362c49d2d08</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9e68530000bca801371362c49d2d08" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:54+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9e68530000bca801371362c49d2d08</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-803fd3750000c3a8013cf1fdb3b26d33-Req-eea1cd500000c3a80140fe00109eb7f4" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:54+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-eea1cd500000c3a80140fe00109eb7f4</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-lELLVnNbbagfomwYyTBgGfXSalj" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:54+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-eea1cd500000c3a80140fe00109eb7f4</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b95fae40000bca801372becc933682d" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:54+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b95fae40000bca801372becc933682d</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a4c80c20000bca8013753b6999a4da8-Req-5b95fae40000bca801372becc933682d" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:55+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b95fae40000bca801372becc933682d</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b9ab8a50000bca801377ad0be3bbc89" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:55+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9ab8a50000bca801377ad0be3bbc89</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9ab8a50000bca801377ad0be3bbc89" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:55+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9ab8a50000bca801377ad0be3bbc89</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-NJ2iOLwt4CEpcf8IidN1z0P4d0m" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:55+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9ab8a50000bca801377ad0be3bbc89</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-728c69c80018b1a8014b974542c36edc" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:55+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-728c69c80018b1a8014b974542c36edc</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-5b9c950e0000bca801374f16615247b9" rdf:type="oslc_rm:satisfies">
+		<dcterms:modified>2017-06-19T20:13:55+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
+			<idRef>d:Req-5b9c950e0000bca801374f16615247b9</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a76365c0000bca8013776e91afd1e8e-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:13:56+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a76365c0000bca8013776e91afd1e8e</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a76365c0000bca8013776e91afd1e8e-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:13:57+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a76365c0000bca8013776e91afd1e8e</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a76365c0000bca8013776e91afd1e8e" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:57+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a76365c0000bca8013776e91afd1e8e</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-608177820000bca801379179ebf3b6aa" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:57+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-608177820000bca801379179ebf3b6aa</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-611366530000bca80137a97f194e96a3" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:57+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-611366530000bca80137a97f194e96a3</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5bd6bd890000bca8013739588a3f43d6-MEl-5a489c300000bca80137ee1373c16844" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:13:57+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5bd6bd890000bca8013739588a3f43d6</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-45450be80000c3a801414f280f146c71" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:57+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-45450be80000c3a801414f280f146c71</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4536b0350000c3a801415986f8ea806a" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:57+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-4536b0350000c3a801415986f8ea806a</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b08ed8d0000bca8013719f554353b0e" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:58+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5b08ed8d0000bca8013719f554353b0e</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453dfb670000c3a8014191107df4565e" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:58+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-453dfb670000c3a8014191107df4565e</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b094f8a0000bca801374c798a6587ad" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:58+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5b094f8a0000bca801374c798a6587ad</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-45428b930000c3a80141e28b7d4b5ae5" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:58+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-45428b930000c3a80141e28b7d4b5ae5</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b078fa50000bca80137f36ed05c43cb" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:58+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5b078fa50000bca80137f36ed05c43cb</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453facbb0000c3a80141c43d2fb4f5e2" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:58+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-453facbb0000c3a80141c43d2fb4f5e2</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b0839b90000bca801376dcca41ca7d0" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:59+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5b0839b90000bca801376dcca41ca7d0</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b07e6aa0000bca8013797aad9be69ae" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:59+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5b07e6aa0000bca8013797aad9be69ae</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4543fe900000c3a80141f5253ff13c35" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:59+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-4543fe900000c3a80141f5253ff13c35</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453d34af0000c3a80141918f84641161" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:13:59+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-453d34af0000c3a80141918f84641161</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5a87083e0000bca801379bb412523737" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:00+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a87083e0000bca801379bb412523737</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5a86b8980000bca80137ca6fde1a125e" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:00+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a86b8980000bca80137ca6fde1a125e</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a85347c0000bca80137ad485c7cd330" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:00+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a99c89c0000bca801375d44cf9a50ca" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:00+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a99c89c0000bca801375d44cf9a50ca</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a99c89c0000bca801375d44cf9a50ca" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:00+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a99c89c0000bca801375d44cf9a50ca</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:01+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a9929510000bca80137d23c81f1ca54</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:01+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a9929510000bca80137d23c81f1ca54</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:01+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5c29fb8e0000bca80137eb9734c99bfd</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:01+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5c29fb8e0000bca80137eb9734c99bfd</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:01+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a9888810000bca801375410ce1cc142</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:02+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a9888810000bca801375410ce1cc142</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a86b8980000bca80137ca6fde1a125e" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:02+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a86b8980000bca80137ca6fde1a125e</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a87083e0000bca801379bb412523737" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:02+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a87083e0000bca801379bb412523737</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9ce0310000bca801378176dc4744e8" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:02+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a9ce0310000bca801378176dc4744e8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a820a3c0000bca801378c9093fb7d80" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:03+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a820a3c0000bca801378c9093fb7d80</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a844d820000bca8013750b9a0410b6b" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:03+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a844d820000bca8013750b9a0410b6b</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a82ec6f0000bca801372ef053a71bdf" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:03+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a82ec6f0000bca801372ef053a71bdf</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a808e2a0000bca80137bfd74268a84a" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:04+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a8009a00000bca80137ef95bc3f643f" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:04+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a844d820000bca8013750b9a0410b6b" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:04+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a844d820000bca8013750b9a0410b6b</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a86b8980000bca80137ca6fde1a125e" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:04+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a86b8980000bca80137ca6fde1a125e</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a87083e0000bca801379bb412523737" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:04+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a87083e0000bca801379bb412523737</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a82ec6f0000bca801372ef053a71bdf" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:04+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a82ec6f0000bca801372ef053a71bdf</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a820a3c0000bca801378c9093fb7d80" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:05+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a820a3c0000bca801378c9093fb7d80</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a9ce0310000bca801378176dc4744e8" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:05+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a9ce0310000bca801378176dc4744e8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a752ccc0000bca80137479a2e8bab30" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:05+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:06+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:06+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a7776c50000bca8013765ae93af9209" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:06+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a7776c50000bca8013765ae93af9209</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4dd77b0000bca8013736c6912ad291" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:06+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a4dd77b0000bca8013736c6912ad291</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4d6dee0000bca80137c1caf2f42349" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:06+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a4d6dee0000bca80137c1caf2f42349</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a71c4800000bca80137f2aaa7b63000" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:07+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45450be80000c3a801414f280f146c71" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:07+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-45450be80000c3a801414f280f146c71</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4536b0350000c3a801415986f8ea806a" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:07+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-4536b0350000c3a801415986f8ea806a</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453facbb0000c3a80141c43d2fb4f5e2" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:07+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-453facbb0000c3a80141c43d2fb4f5e2</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4543fe900000c3a80141f5253ff13c35" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:08+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-4543fe900000c3a80141f5253ff13c35</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453d34af0000c3a80141918f84641161" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:08+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-453d34af0000c3a80141918f84641161</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a236e00000c3a801410f6503287e16" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:08+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-45a236e00000c3a801410f6503287e16</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a3b13c0000c3a801415e97f5bc29d1" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:08+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-45a3b13c0000c3a801415e97f5bc29d1</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCnc-Iss-ee2abb630000c3a8013987a750219659-MEl-5a8009a00000bca80137ef95bc3f643f" rdf:type="SpecIF:refersTo">
+		<dcterms:modified>2017-06-19T20:13:56+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:refersTo-toSource">
+			<idRef>d:Iss-ee2abb630000c3a8013987a750219659</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:refersTo-toTarget">
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:08+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:08+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a844d820000bca8013750b9a0410b6b" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:09+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a844d820000bca8013750b9a0410b6b</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a82ec6f0000bca801372ef053a71bdf" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:09+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a82ec6f0000bca801372ef053a71bdf</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a820a3c0000bca801378c9093fb7d80" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:09+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a820a3c0000bca801378c9093fb7d80</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-608239830000bca801373690c7d2af0f" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:10+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-608239830000bca801373690c7d2af0f</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610b07100000bca80137c10f96c46247" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:10+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-610b07100000bca80137c10f96c46247</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610e0b010000bca80137ac40800bb1b8" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:10+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-610e0b010000bca80137ac40800bb1b8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5bcfb01d0000bca80137f303272a5557-MEl-5a52b50c0000bca801377e3d15255f98" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:10+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5bcfb01d0000bca80137f303272a5557</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a489c300000bca80137ee1373c16844" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:10+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a489c300000bca80137ee1373c16844" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:11+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a52b50c0000bca801377e3d15255f98" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:11+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a4c80c20000bca8013753b6999a4da8" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:11+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a51dd920000bca8013770a4395c83fc" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:11+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a50d5b60000bca8013781532547ce93" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:11+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-453862540000c3a801419d91bef48cfd" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:12+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-453862540000c3a801419d91bef48cfd</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45387c0b0000c3a801410aa03f6b9be4" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:12+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-45387c0b0000c3a801410aa03f6b9be4</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-4538920b0000c3a801415c67e334b8a1" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:12+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-4538920b0000c3a801415c67e334b8a1</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-459b92580000c3a80141cb4acb521ab1" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:13+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-459b92580000c3a80141cb4acb521ab1</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-607f13b50000bca80137ba95f11856ab" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:13+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-607f13b50000bca80137ba95f11856ab</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45384cd10000c3a80141c1f85d7c26e6" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:13+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-45384cd10000c3a80141c1f85d7c26e6</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a51dd920000bca8013770a4395c83fc" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:14+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a4c80c20000bca8013753b6999a4da8" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:14+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a489c300000bca80137ee1373c16844" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:14+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9b7a9b0000bca80137d768644696b7" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:14+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:14+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:15+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:15+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-463289cd0000c3a80141be3fc417034a</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:15+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-463289cd0000c3a80141be3fc417034a</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a9ce0310000bca801378176dc4744e8" rdf:type="SpecIF:writes">
+		<dcterms:modified>2017-06-19T20:14:15+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:writes-toSource">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:writes-toTarget">
+			<idRef>d:MEl-5a9ce0310000bca801378176dc4744e8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a7776c50000bca8013765ae93af9209" rdf:type="SpecIF:reads">
+		<dcterms:modified>2017-06-19T20:14:16+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:reads-toSource">
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:reads-toTarget">
+			<idRef>d:MEl-5a7776c50000bca8013765ae93af9209</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a7776c50000bca8013765ae93af9209" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:16+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a7776c50000bca8013765ae93af9209</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9ce0310000bca801378176dc4744e8" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:16+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a9ce0310000bca801378176dc4744e8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4dd77b0000bca8013736c6912ad291" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:16+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4dd77b0000bca8013736c6912ad291</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4dd77b0000bca8013736c6912ad291" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:16+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4dd77b0000bca8013736c6912ad291</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a51dd920000bca8013770a4395c83fc-MEl-5a4dd77b0000bca8013736c6912ad291" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:16+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4dd77b0000bca8013736c6912ad291</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4d6dee0000bca80137c1caf2f42349" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:17+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4d6dee0000bca80137c1caf2f42349</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a77385f0000bca80137e1c7dc0b1721" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:17+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a489c300000bca80137ee1373c16844" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:17+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d6dee0000bca80137c1caf2f42349" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:18+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4d6dee0000bca80137c1caf2f42349</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4cfa830000bca801370d837f761f3e" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:18+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4cfa830000bca801370d837f761f3e</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d2bd00000bca80137a3f233cdffeb" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:18+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4d2bd00000bca80137a3f233cdffeb</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a4c80c20000bca8013753b6999a4da8" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:19+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a52b50c0000bca801377e3d15255f98-MEl-5bcf35cf0000bca8013776d68023612a" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:19+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5bcf35cf0000bca8013776d68023612a</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a52b50c0000bca801377e3d15255f98" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:19+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:R-vxkoenpgAX6s6PxskSWlYPN8e4y" rdf:type="SpecIF:refersTo">
+		<dcterms:modified>2017-06-19T20:13:56+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:refersTo-toSource">
+			<idRef>d:Iss-eee2d4e00000c3a801394148dcc58a52</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:refersTo-toTarget">
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-5a51dd920000bca8013770a4395c83fc-MEl-5a4d6dee0000bca80137c1caf2f42349" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:19+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a4d6dee0000bca80137c1caf2f42349</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:aRelationship id="d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a51dd920000bca8013770a4395c83fc" rdf:type="SpecIF:contains">
+		<dcterms:modified>2017-06-19T20:14:19+02:00</dcterms:modified>
+		<cas:aSourceLink rdf:type="SpecIF:contains-toSource">
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+		</cas:aSourceLink>
+		<cas:aTargetLink rdf:type="SpecIF:contains-toTarget">
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+		</cas:aTargetLink>
+	</cas:aRelationship>
+	<cas:anEntity id="d:HierarchyRoot-ACP-59c8a7730000bca80137509a49b1218b" rdf:type="cas:Root">
+		<dcterms:title>Hierarchy Root</dcterms:title>
+		<dcterms:description>... anchoring all hierarchies of this graph (package)</dcterms:description>
+		<dcterms:modified>2026-09-30T09:18:13.533Z</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Fld-59c8a7730000bca80137509a49b1218b-info</idRef>
+			<idRef>d:Fld-5a5f54090000bca801375b04a668f1a7</idRef>
+			<idRef>d:Fld-5af3154d0000bca801379748537d7388</idRef>
+			<idRef>d:Fld-5b8e98550000bca801371afb0c7b671b</idRef>
+			<idRef>d:Fld-ef47e6970000c3a80139dc747c5df319</idRef>
+			<idRef>d:R-TrPQLASiCLwOlMOVEGEd1g8r68W</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-5a5f54090000bca801375b04a668f1a7" rdf:type="cas:Outline">
+		<dcterms:title>System Composition</dcterms:title>
+		<dcterms:description><div><p>.. showing the system and its composition of modules (at a higher level) and components (at a lower level). The relevant interfaces between the disciplines mechanical, electrical and software engineering are shown.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:02+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Pln-27420ffc0000c3a8013ab527ca1b71f5</idRef>
+			<idRef>d:Pln-5a4755dd0000bca801375293a62c90a8</idRef>
+			<idRef>d:Pln-5a6cdea50000bca80137d6b2d6e8a3a0</idRef>
+			<idRef>d:Pln-5a7f99af0000bca8013754f2ef12d3e5</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-5b6a99f10000bca80137b78cda65fc07" rdf:type="cas:Outline">
+		<dcterms:title>Dimming</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:04+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Pln-606e76c70000bca801376ec3133a1181</idRef>
+			<idRef>d:Pln-45a1c8930000c3a801414cd1eaa70b5a</idRef>
+			<idRef>d:Pln-5af364560000bca80137b84017f4e832</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-5af3154d0000bca801379748537d7388" rdf:type="cas:Outline">
+		<dcterms:title>Scenarios</dcterms:title>
+		<dcterms:description><div><p>.. showing the behavioral aspects of system design, both from external user perspective ('black box') and from internal perspective ('white box').</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:02+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Fld-5b6a99f10000bca80137b78cda65fc07</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-d1b1698a0000c3a801505b1b5698b7a1" rdf:type="cas:Outline">
+		<dcterms:title>Function</dcterms:title>
+		<dcterms:description><div><p>The requirements related to the product function.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:06+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Req-d1c895230000c3a80150f8afd049f738</idRef>
+			<idRef>d:Req-d1d42a6a0000c3a8015091ec8d149b93</idRef>
+			<idRef>d:Req-d1cd7f370000c3a8015095e6ee21aab7</idRef>
+			<idRef>d:Req-5ba3512b0000bca801371cc0617eb4c1</idRef>
+			<idRef>d:Req-5b8fbb300000bca80137c73e3ce4c737</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-d1b1d6c60000c3a80150fe9ce40e6588" rdf:type="cas:Outline">
+		<dcterms:title>Quality</dcterms:title>
+		<dcterms:description><div><p>The requirements related to quality characteristics of the product.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:08+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Req-5b944fc70000bca8013763f44fdc0e03</idRef>
+			<idRef>d:Req-5ba140d60000bca801372b09f9888eca</idRef>
+			<idRef>d:Req-ee452cf20000c3a8014035290669304d</idRef>
+			<idRef>d:Req-ee43fc4c0000c3a8014063d42c77767f</idRef>
+			<idRef>d:Req-5b9124bc0000bca80137fa2ce86f5eca</idRef>
+			<idRef>d:Req-5b9e68530000bca801371362c49d2d08</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-d1b314890000c3a80150b71a1473d374" rdf:type="cas:Outline">
+		<dcterms:title>Constraints</dcterms:title>
+		<dcterms:description><div><p>The requirements related to constraints for product conception, such as regulations or technical choices made upfront.</p></div></dcterms:description>
+		<dcterms:modified>2017-06-19T20:13:12+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Req-eea1cd500000c3a80140fe00109eb7f4</idRef>
+			<idRef>d:Req-5b95fae40000bca801372becc933682d</idRef>
+			<idRef>d:Req-5b9ab8a50000bca801377ad0be3bbc89</idRef>
+			<idRef>d:Req-728c69c80018b1a8014b974542c36edc</idRef>
+			<idRef>d:Req-5b9c950e0000bca801374f16615247b9</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-5b8e98550000bca801371afb0c7b671b" rdf:type="cas:Outline">
+		<dcterms:title>Requirements</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:02+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Fld-d1b1698a0000c3a801505b1b5698b7a1</idRef>
+			<idRef>d:Fld-d1b1d6c60000c3a80150fe9ce40e6588</idRef>
+			<idRef>d:Fld-d1b314890000c3a80150b71a1473d374</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-ee29463e0000c3a80139627bbced50ae" rdf:type="cas:Outline">
+		<dcterms:title>Mechanical</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:14+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Iss-ee2abb630000c3a8013987a750219659</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-ee2a15040000c3a80139d27de6704f15" rdf:type="cas:Outline">
+		<dcterms:title>Software</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:15+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Iss-eee2d4e00000c3a801394148dcc58a52</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:Fld-ef47e6970000c3a80139dc747c5df319" rdf:type="cas:Outline">
+		<dcterms:title>Open Issues</dcterms:title>
+		<dcterms:modified>2017-06-19T20:13:02+02:00</dcterms:modified>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:Fld-ee29463e0000c3a80139627bbced50ae</idRef>
+			<idRef>d:Fld-ee2a15040000c3a80139d27de6704f15</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	<cas:anEntity id="d:R-TrPQLASiCLwOlMOVEGEd1g8r68W" rdf:type="cas:Outline">
+		<dcterms:title>Model Elements (Glossary)</dcterms:title>
+		<dcterms:modified>2026-09-30T09:17:53.622Z</dcterms:modified>
+		<cas:aProperty rdf:type="cas:Category">
+			<value>SpecIF:Glossary</value>
+		</cas:aProperty>
+		<cas:aTargetLink rdf:type="cas:lists">
+			<idRef>d:MEl-5a7776c50000bca8013765ae93af9209</idRef>
+			<idRef>d:MEl-5a76365c0000bca8013776e91afd1e8e</idRef>
+			<idRef>d:MEl-608177820000bca801379179ebf3b6aa</idRef>
+			<idRef>d:MEl-611366530000bca80137a97f194e96a3</idRef>
+			<idRef>d:MEl-5bd6bd890000bca8013739588a3f43d6</idRef>
+			<idRef>d:MEl-5a9ce0310000bca801378176dc4744e8</idRef>
+			<idRef>d:MEl-5b2f95ec0000bca8013709bfa81d701f</idRef>
+			<idRef>d:MEl-453862540000c3a801419d91bef48cfd</idRef>
+			<idRef>d:MEl-45387c0b0000c3a801410aa03f6b9be4</idRef>
+			<idRef>d:MEl-5a85347c0000bca80137ad485c7cd330</idRef>
+			<idRef>d:MEl-5a808e2a0000bca80137bfd74268a84a</idRef>
+			<idRef>d:MEl-5a752ccc0000bca80137479a2e8bab30</idRef>
+			<idRef>d:MEl-4538920b0000c3a801415c67e334b8a1</idRef>
+			<idRef>d:MEl-5a71c4800000bca80137f2aaa7b63000</idRef>
+			<idRef>d:MEl-606f16ac0000bca801373587fda932b3</idRef>
+			<idRef>d:MEl-5a4dd77b0000bca8013736c6912ad291</idRef>
+			<idRef>d:MEl-45450be80000c3a801414f280f146c71</idRef>
+			<idRef>d:MEl-4536b0350000c3a801415986f8ea806a</idRef>
+			<idRef>d:MEl-5a844d820000bca8013750b9a0410b6b</idRef>
+			<idRef>d:MEl-5a489c300000bca80137ee1373c16844</idRef>
+			<idRef>d:MEl-5a4c80c20000bca8013753b6999a4da8</idRef>
+			<idRef>d:MEl-5a99c89c0000bca801375d44cf9a50ca</idRef>
+			<idRef>d:MEl-5a8009a00000bca80137ef95bc3f643f</idRef>
+			<idRef>d:MEl-5a87083e0000bca801379bb412523737</idRef>
+			<idRef>d:MEl-5b149eab0000bca80137aad99b6eea7b</idRef>
+			<idRef>d:MEl-5a52b50c0000bca801377e3d15255f98</idRef>
+			<idRef>d:MEl-5b08ed8d0000bca8013719f554353b0e</idRef>
+			<idRef>d:MEl-5a9929510000bca80137d23c81f1ca54</idRef>
+			<idRef>d:MEl-5bcf35cf0000bca8013776d68023612a</idRef>
+			<idRef>d:MEl-453dfb670000c3a8014191107df4565e</idRef>
+			<idRef>d:MEl-5b094f8a0000bca801374c798a6587ad</idRef>
+			<idRef>d:MEl-45428b930000c3a80141e28b7d4b5ae5</idRef>
+			<idRef>d:MEl-5b078fa50000bca80137f36ed05c43cb</idRef>
+			<idRef>d:MEl-5c29fb8e0000bca80137eb9734c99bfd</idRef>
+			<idRef>d:MEl-5a82ec6f0000bca801372ef053a71bdf</idRef>
+			<idRef>d:MEl-608239830000bca801373690c7d2af0f</idRef>
+			<idRef>d:MEl-610b07100000bca80137c10f96c46247</idRef>
+			<idRef>d:MEl-5a86b8980000bca80137ca6fde1a125e</idRef>
+			<idRef>d:MEl-610e0b010000bca80137ac40800bb1b8</idRef>
+			<idRef>d:MEl-453facbb0000c3a80141c43d2fb4f5e2</idRef>
+			<idRef>d:MEl-5a51dd920000bca8013770a4395c83fc</idRef>
+			<idRef>d:MEl-5bcfb01d0000bca80137f303272a5557</idRef>
+			<idRef>d:MEl-5a50d5b60000bca8013781532547ce93</idRef>
+			<idRef>d:MEl-803fd3750000c3a8013cf1fdb3b26d33</idRef>
+			<idRef>d:MEl-5a77385f0000bca80137e1c7dc0b1721</idRef>
+			<idRef>d:MEl-5b2d29070000bca801378a6c020cf8f5</idRef>
+			<idRef>d:MEl-5b1750f80000bca801373b2d143d7478</idRef>
+			<idRef>d:MEl-459b92580000c3a80141cb4acb521ab1</idRef>
+			<idRef>d:MEl-5b2ddad80000bca80137c44d62ba97d8</idRef>
+			<idRef>d:MEl-5b2449180000bca8013722c01c9d35a5</idRef>
+			<idRef>d:MEl-5a4cfa830000bca801370d837f761f3e</idRef>
+			<idRef>d:MEl-5a9888810000bca801375410ce1cc142</idRef>
+			<idRef>d:MEl-5b0839b90000bca801376dcca41ca7d0</idRef>
+			<idRef>d:MEl-45384cd10000c3a80141c1f85d7c26e6</idRef>
+			<idRef>d:MEl-5b07e6aa0000bca8013797aad9be69ae</idRef>
+			<idRef>d:MEl-607f13b50000bca80137ba95f11856ab</idRef>
+			<idRef>d:MEl-5a820a3c0000bca801378c9093fb7d80</idRef>
+			<idRef>d:MEl-5a4d2bd00000bca80137a3f233cdffeb</idRef>
+			<idRef>d:MEl-5a4d6dee0000bca80137c1caf2f42349</idRef>
+			<idRef>d:MEl-4543fe900000c3a80141f5253ff13c35</idRef>
+			<idRef>d:MEl-453d34af0000c3a80141918f84641161</idRef>
+			<idRef>d:MEl-5a47935a0000bca801377c17f8cb25b0</idRef>
+			<idRef>d:MEl-45a236e00000c3a801410f6503287e16</idRef>
+			<idRef>d:MEl-45a3b13c0000c3a801415e97f5bc29d1</idRef>
+			<idRef>d:MEl-5a9b7a9b0000bca80137d768644696b7</idRef>
+			<idRef>d:MEl-463289cd0000c3a80141be3fc417034a</idRef>
+		</cas:aTargetLink>
+	</cas:anEntity>
+	</graph>
+</cas:aPackage>

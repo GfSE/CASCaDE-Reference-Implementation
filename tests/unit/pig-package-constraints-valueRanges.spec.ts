@@ -22,28 +22,28 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept string within maxLength', () => {
             const pkg = {
                 'id': 'd:test-string-valid',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'o:propName',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:string',
                         'maxLength': 50
                     },
                     {
                         'id': 'o:component',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'd:component-1',
-                        'hasClass': 'o:component',
+                        'instanceOf': 'o:component',
                         'itemType': PigItemType.anEntity,
                         'hasProperty': [
                             {
-                                'hasClass': 'o:propName',
+                                'instanceOf': 'o:propName',
                                 'value': 'Valid Name'
                             }
                         ]
@@ -63,28 +63,28 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject string exceeding maxLength', () => {
             const pkg = {
                 'id': 'd:test-string-too-long',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:name',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:string',
                         'maxLength': 10
                     },
                     {
                         'id': 'ent:component',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:component-1',
-                        'hasClass': 'ent:component',
+                        'instanceOf': 'ent:component',
                         'itemType': PigItemType.anEntity,
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:name',
+                                'instanceOf': 'prop:name',
                                 'value': 'This is a very long name that exceeds the limit'
                             }
                         ]
@@ -105,28 +105,28 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept language-tagged string within maxLength', () => {
             const pkg = {
                 'id': 'd:test-mlstring-valid',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:description',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:string',
                         'maxLength': 100
                     },
                     {
                         'id': 'ent:component',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:component-1',
-                        'hasClass': 'ent:component',
+                        'instanceOf': 'ent:component',
                         'itemType': PigItemType.anEntity,
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:description',
+                                'instanceOf': 'prop:description',
                                 'value': {
                                     'text': 'A valid description',
                                     'lang': 'en'
@@ -149,28 +149,28 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept string matching pattern', () => {
             const pkg = {
                 'id': 'd:test-pattern-valid',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:email',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:string',
                         'pattern': '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
                     },
                     {
                         'id': 'ent:person',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:person-1',
-                        'hasClass': 'ent:person',
+                        'instanceOf': 'ent:person',
                         'itemType': PigItemType.anEntity,
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:email',
+                                'instanceOf': 'prop:email',
                                 'value': 'test@example.com'
                             }
                         ]
@@ -188,28 +188,28 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject string not matching pattern', () => {
             const pkg = {
                 'id': 'd:test-pattern-invalid',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:email',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:string',
                         'pattern': '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
                     },
                     {
                         'id': 'ent:person',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:person-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:person',
+                        'instanceOf': 'ent:person',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:email',
+                                'instanceOf': 'prop:email',
                                 'value': 'invalid-email'
                             }
                         ]
@@ -229,12 +229,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should handle both maxLength and pattern constraints', () => {
             const pkg = {
                 'id': 'd:test-pattern-and-length',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:code',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:string',
                         'maxLength': 10,
@@ -242,16 +242,16 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         'id': 'ent:product',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:product-1',
-                        'hasClass': 'ent:product',
+                        'instanceOf': 'ent:product',
                         'itemType': PigItemType.anEntity,
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:code',
+                                'instanceOf': 'prop:code',
                                 'value': 'ABC123'
                             }
                         ]
@@ -273,12 +273,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept integer within range', () => {
             const pkg = {
                 'id': 'd:test-int-valid',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
@@ -286,16 +286,16 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         'id': 'ent:inventory',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:inventory-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:inventory',
+                        'instanceOf': 'ent:inventory',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:count',
+                                'instanceOf': 'prop:count',
                                 'value': 50
                             }
                         ]
@@ -313,12 +313,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept integer at minInclusive boundary', () => {
             const pkg = {
                 'id': 'd:test-int-min-boundary',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
@@ -331,10 +331,10 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     {
                         'id': 'inst:inventory-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:inventory',
+                        'instanceOf': 'ent:inventory',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:count',
+                                'instanceOf': 'prop:count',
                                 'value': 0
                             }
                         ]
@@ -352,12 +352,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject integer below minInclusive', () => {
             const pkg = {
                 'id': 'd:test-int-too-small',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
@@ -370,10 +370,10 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     {
                         'id': 'inst:inventory-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:inventory',
+                        'instanceOf': 'ent:inventory',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:count',
+                                'instanceOf': 'prop:count',
                                 'value': -10
                             }
                         ]
@@ -393,12 +393,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject integer above maxInclusive', () => {
             const pkg = {
                 'id': 'd:test-int-too-large',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:count',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
@@ -411,10 +411,10 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     {
                         'id': 'inst:inventory-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:inventory',
+                        'instanceOf': 'ent:inventory',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:count',
+                                'instanceOf': 'prop:count',
                                 'value': 150
                             }
                         ]
@@ -434,7 +434,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject non-numeric value for integer property', () => {
             const pkg = {
                 'id': 'd:test-int-invalid-value',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
@@ -451,10 +451,10 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     {
                         'id': 'inst:inventory-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:inventory',
+                        'instanceOf': 'ent:inventory',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:count',
+                                'instanceOf': 'prop:count',
                                 'value': 'not-a-number'
                             }
                         ]
@@ -478,12 +478,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept double within range', () => {
             const pkg = {
                 'id': 'd:test-double-valid',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:temperature',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:double',
                         'minInclusive': -273.15,
@@ -491,16 +491,16 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         'id': 'ent:sensor',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:sensor-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:sensor',
+                        'instanceOf': 'ent:sensor',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:temperature',
+                                'instanceOf': 'prop:temperature',
                                 'value': 23.5
                             }
                         ]
@@ -518,12 +518,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject double below minInclusive', () => {
             const pkg = {
                 'id': 'd:test-double-too-small',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:temperature',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:double',
                         'minInclusive': -273.15,
@@ -536,10 +536,10 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     {
                         'id': 'inst:sensor-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:sensor',
+                        'instanceOf': 'ent:sensor',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:temperature',
+                                'instanceOf': 'prop:temperature',
                                 'value': -300.0
                             }
                         ]
@@ -559,12 +559,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should reject double above maxInclusive', () => {
             const pkg = {
                 'id': 'd:test-double-too-large',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:temperature',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:double',
                         'minInclusive': -273.15,
@@ -572,16 +572,16 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         'id': 'ent:sensor',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:sensor-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:sensor',
+                        'instanceOf': 'ent:sensor',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:temperature',
+                                'instanceOf': 'prop:temperature',
                                 'value': 1500.0
                             }
                         ]
@@ -601,12 +601,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should accept double with high precision', () => {
             const pkg = {
                 'id': 'd:test-double-precision',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:ratio',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:double',
                         'minInclusive': 0.0,
@@ -614,16 +614,16 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         'id': 'ent:measurement',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                         'itemType': PigItemType.Entity
                     },
                     {
                         'id': 'inst:measurement-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:measurement',
+                        'instanceOf': 'ent:measurement',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:ratio',
+                                'instanceOf': 'prop:ratio',
                                 'value': 0.123456789
                             }
                         ]
@@ -645,19 +645,19 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should validate multiple properties with different datatypes', () => {
             const pkg = {
                 'id': 'd:test-multiple-properties',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:name',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:string',
                         'maxLength': 50
                     },
                     {
                         'id': 'prop:count',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:integer',
                         'minInclusive': 0,
@@ -665,7 +665,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         'id': 'prop:ratio',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:double',
                         'minInclusive': 0.0,
@@ -673,23 +673,23 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     },
                     {
                         'id': 'ent:product',
-                        'hasClass': 'owl:Class',
+                        'instanceOf': 'owl:Class',
                     },
                     {
                         'id': 'inst:product-1',
                         'itemType': PigItemType.anEntity,
-                        'hasClass': 'ent:product',
+                        'instanceOf': 'ent:product',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:name',
+                                'instanceOf': 'prop:name',
                                 'value': 'Valid Product'
                             },
                             {
-                                'hasClass': 'prop:count',
+                                'instanceOf': 'prop:count',
                                 'value': 50
                             },
                             {
-                                'hasClass': 'prop:ratio',
+                                'instanceOf': 'prop:ratio',
                                 'value': 0.75
                             }
                         ]
@@ -707,12 +707,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         it('should validate aRelationship properties', () => {
             const pkg = {
                 'id': 'd:test-relationship-properties',
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 'graph': [
                     {
                         'id': 'prop:weight',
-                        'hasClass': 'owl:DatatypeProperty',
+                        'instanceOf': 'owl:DatatypeProperty',
                         'itemType': PigItemType.Property,
                         'datatype': 'xs:double',
                         'minInclusive': 0.0,
@@ -726,10 +726,10 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     {
                         'id': 'inst:dependency-1',
                         'itemType': PigItemType.aRelationship,
-                        'hasClass': 'rel:dependency',
+                        'instanceOf': 'rel:dependency',
                         'hasProperty': [
                             {
-                                'hasClass': 'prop:weight',
+                                'instanceOf': 'prop:weight',
                                 'value': "0.8"
                             }
                         ]
@@ -751,7 +751,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
         function getStringEnumPackage(testVal: string): APackage {
             return {
                 "id": "d:test-enum-string-valid",
-                'hasClass': PigItemType.Package,
+                'instanceOf': PigItemType.Package,
                 'itemType': PigItemType.aPackage,
                 "modified": "2026-02-16T12:00:00Z",
                 "context": [
@@ -771,7 +771,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                 ],
                 "graph": [{
                     "id": `${DEF.pfxNsSemi}Priority-Values`,
-                    "hasClass": 'owl:Class',
+                    "instanceOf": 'owl:Class',
                     "itemType": PigItemType.Enumeration,
                     "specializes": PigItemType.Enumeration,
                     "title": [
@@ -835,7 +835,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                 }, {
                     "id": `${DEF.pfxNsSemi}hasPriority`,
                     "itemType": PigItemType.Link,
-                    "hasClass": "owl:ObjectProperty",
+                    "instanceOf": "owl:ObjectProperty",
                     "specializes": `${DEF.pfxNsSemi}TargetLink`,
                     "modified": "2020-10-17T10:00:00+01:00",
                     "title": [
@@ -849,7 +849,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                 }, {
                     "id": "d:Req-1a8016e2872e78ecadc50feddc00029b",
                     "itemType": PigItemType.anEntity,
-                    "hasClass": "IREB:Requirement",
+                    "instanceOf": "IREB:Requirement",
                     "modified": "2020-10-17T10:00:00+01:00",
                     "title": [
                         {
@@ -864,7 +864,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     "hasTargetLink": [
                         {
                             "idRef": testVal,
-                            "hasClass": `${DEF.pfxNsSemi}hasPriority`,
+                            "instanceOf": `${DEF.pfxNsSemi}hasPriority`,
                             "itemType": PigItemType.aTargetLink
                         }
                     ]
@@ -877,7 +877,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             // A. Test the constraints directly:
             const result = checkConstraintsForPackage(pkg, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
             if (!result.ok) {
                 console.error(`Package ${pkg.id}:`, result.statusText ?? result.status);
@@ -886,7 +886,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             // B. Test the constraints including setting and getting:
             const rsp = new APackage().set(pkg, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
             const st = rsp.status();
             if (!st.ok) {
@@ -939,7 +939,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             const anEntity = pkgOut.graph[2] as any;
             expect(anEntity.id).toBe('d:Req-1a8016e2872e78ecadc50feddc00029b');
             expect(anEntity.itemType).toBe(PigItemType.anEntity);
-            expect(anEntity.hasClass).toBe('IREB:Requirement');
+            expect(anEntity.instanceOf).toBe('IREB:Requirement');
             expect(anEntity.modified).toBe('2020-10-17T10:00:00+01:00');
 
             // Verify anEntity title and description
@@ -956,7 +956,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             const aLink = anEntity.hasTargetLink[0];
             expect(aLink.itemType).toBe(PigItemType.aTargetLink);
-            expect(aLink.hasClass).toBe(`${DEF.pfxNsSemi}hasPriority`);
+            expect(aLink.instanceOf).toBe(`${DEF.pfxNsSemi}hasPriority`);
             expect(aLink.idRef).toBe('IREB:priorityHigh');
             expect(aLink.value).toBeUndefined(); // enumeration uses idRef, not value
         });
@@ -965,7 +965,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             const pkg = getStringEnumPackage("IREB:unknown");
 
             const result = checkConstraintsForPackage(pkg, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
 
             // console.info(result);
@@ -1093,7 +1093,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             // A. Test with JSON-LD input via setJSONLD
             // console.debug('pkgJsonLD:', pkgJsonLD);
             const rsp = new APackage().setJSONLD(pkgJsonLD, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
 
             const st = rsp.status();
@@ -1136,7 +1136,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             const taskInstance = pkgOut.graph[2] as any;
             expect(taskInstance.id).toBe('d:Task-4711');
             expect(taskInstance.itemType).toBe(`${DEF.pfxNsMeta}anEntity`);
-            expect(taskInstance.hasClass).toBe('o:Estimate');
+            expect(taskInstance.instanceOf).toBe('o:Estimate');
             expect(taskInstance.title[0].value).toBe('Implement User Authentication');
             expect(taskInstance.description[0].value).toContain('OAuth2');
 
@@ -1147,13 +1147,13 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             const taskLink = taskInstance.hasTargetLink[0];
             expect(taskLink.itemType).toBe(`${DEF.pfxNsMeta}aTargetLink`);
-            expect(taskLink.hasClass).toBe(`o:hasEstimate`);
+            expect(taskLink.instanceOf).toBe(`o:hasEstimate`);
             expect(taskLink.idRef).toBe('o:Fibonacci-8'); // Reference to Fibonacci value
             expect(taskLink.value).toBeUndefined(); // Enumeration uses idRef, not value
 
             // B. Verify constraint validation directly
             const directResult = checkConstraintsForPackage(pkgOut, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
             expect(directResult.ok).toBe(true);
         });
@@ -1162,7 +1162,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             const pkgJsonLD = getNumberEnumPackage("o:Fibonacci-4");
 
             const rsp = new APackage().setJSONLD(pkgJsonLD, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
 
             const st = rsp.status();
@@ -1179,7 +1179,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                           xmlns:d="https://product-information-graph.org/examples/fibonacci.zip#"
                           xmlns:dcterms="http://purl.org/dc/terms/"
                           id="d:test-enum-numeric-xml">
-                <${DEF.pfxNsMeta}hasClass>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}hasClass>
+                <${DEF.pfxNsMeta}instanceOf>${DEF.pfxNsMeta}Package</${DEF.pfxNsMeta}instanceOf>
                 <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}aPackage</${DEF.pfxNsMeta}itemType>
                 <${DEF.pfxNsDcmi}modified>2026-02-16T12:00:00Z</${DEF.pfxNsDcmi}modified>
                 <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Estimation Example</${DEF.pfxNsDcmi}title>
@@ -1187,7 +1187,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     <${DEF.pfxNsMeta}Enumeration id="o:Fibonacci-Values" ${DEF.pfxNsMeta}specializes="${DEF.pfxNsMeta}Enumeration">
                         <${DEF.pfxNsDcmi}title xml:lang="en">Fibonacci Numbers</${DEF.pfxNsDcmi}title>
                         <skos:definition xml:lang="en">Enumerated Fibonacci sequence values for estimation</skos:definition>
-                        <${DEF.pfxNsMeta}hasClass>owl:Class</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>owl:Class</${DEF.pfxNsMeta}instanceOf>
                         <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}Enumeration</${DEF.pfxNsMeta}itemType>
                         <datatype>xs:integer</datatype>
                         <cas:enumeratedValue id="o:Fibonacci-1">
@@ -1210,7 +1210,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                         </cas:enumeratedValue>
                     </${DEF.pfxNsMeta}Enumeration>
 
-                    <${DEF.pfxNsMeta}Link id="o:hasEstimate" ${DEF.pfxNsMeta}hasClass="owl:ObjectProperty">
+                    <${DEF.pfxNsMeta}Link id="o:hasEstimate" ${DEF.pfxNsMeta}instanceOf="owl:ObjectProperty">
                         <${DEF.pfxNsDcmi}title xml:lang="en">Estimate</${DEF.pfxNsDcmi}title>
                         <skos:definition xml:lang="en">Assigns a Fibonacci number to an entity.</skos:definition>
                         <!-- <${DEF.pfxNsMeta}enumeratedEndpoint rdf:resource="o:Fibonacci-Values" /> -->
@@ -1218,7 +1218,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
                     </${DEF.pfxNsMeta}Link>
         
                     <${DEF.pfxNsMeta}anEntity id="d:Est-Task-4711" rdf:type="o:Estimate">
-                        <${DEF.pfxNsMeta}hasClass>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}hasClass>
+                        <${DEF.pfxNsMeta}instanceOf>${DEF.pfxNsMeta}Entity</${DEF.pfxNsMeta}instanceOf>
                         <${DEF.pfxNsMeta}itemType>${DEF.pfxNsMeta}anEntity</${DEF.pfxNsMeta}itemType>
                         <${DEF.pfxNsDcmi}modified>2026-01-15T14:30:00Z</${DEF.pfxNsDcmi}modified>
                         <${DEF.pfxNsDcmi}title xml:lang="en">Implement User Authentication</${DEF.pfxNsDcmi}title>
@@ -1232,7 +1232,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             // A. Test with XML input via setXML
             const rsp = new APackage().setXML(pkgXML, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
 
             const st = rsp.status();
@@ -1247,7 +1247,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             expect(pkgOut).toBeDefined();
             expect(pkgOut.id).toBe('d:test-enum-numeric-xml');
             expect(pkgOut.itemType).toBe(PigItemType.aPackage);
-            expect(pkgOut.hasClass).toBe(PigItemType.Package);
+            expect(pkgOut.instanceOf).toBe(PigItemType.Package);
             expect(pkgOut.modified).toBe('2026-02-16T12:00:00Z');
 
             // Verify package title
@@ -1271,7 +1271,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             const en = pkgOut.graph[0] as any;
             expect(en.id).toBe('o:Fibonacci-Values');
             expect(en.itemType).toBe(PigItemType.Enumeration);
-            expect(en.hasClass).toBe('owl:Class');
+            expect(en.instanceOf).toBe('owl:Class');
             expect(en.datatype).toBe('xs:integer');
             expect(en.specializes).toBe(PigItemType.Enumeration);
 
@@ -1298,7 +1298,7 @@ describe('PIG Package Constraints - Value Range Validation', () => {
             const taskInstance = pkgOut.graph[2] as any;
             expect(taskInstance.id).toBe('d:Est-Task-4711');
             expect(taskInstance.itemType).toBe(PigItemType.anEntity);
-            expect(taskInstance.hasClass).toBe(PigItemType.Entity);
+            expect(taskInstance.instanceOf).toBe(PigItemType.Entity);
             expect(taskInstance.modified).toBe('2026-01-15T14:30:00Z');
 
             // Verify task title and description
@@ -1313,12 +1313,12 @@ describe('PIG Package Constraints - Value Range Validation', () => {
 
             const taskLink = taskInstance.hasTargetLink[0];
             expect(taskLink.itemType).toBe(PigItemType.aTargetLink);
-            expect(taskLink.hasClass).toBe(`o:hasEstimate`);
+            expect(taskLink.instanceOf).toBe(`o:hasEstimate`);
             expect(taskLink.idRef).toBe('o:Fibonacci-8'); // Reference to Fibonacci value
             expect(taskLink.value).toBeUndefined(); // Enumeration uses idRef, not value
             // Verify constraint validation directly
             const directResult = checkConstraintsForPackage(pkgOut, {
-                checkConstraints: [ConstraintCheckType.aLinkHasClass, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
+                checkConstraints: [ConstraintCheckType.aLinkInstanceOf, ConstraintCheckType.ValueRanges, ConstraintCheckType.enumeratedValues]
             });
             expect(directResult.ok).toBe(true);
         });

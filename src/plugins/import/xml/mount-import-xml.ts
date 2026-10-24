@@ -12,9 +12,24 @@
  * app.use(xmlImportPlugin);
  */
 
-import type { App, Plugin } from 'vue';
-import XmlImportPlugin from './import-xml.vue';
+import type { App, Plugin, Component } from 'vue';
+import ImportBase from '../import-base.vue';
+import type { ImportConfig } from '../import-config';
+import { XmlImporter } from '@/common/import/xml/import-xml';
 import { LOG } from '@/common/lib/helpers';
+
+/**
+ * Format-specific configuration for the generic ImportBase component
+ */
+const xmlImportConfig: ImportConfig = {
+    buttonLabel: 'CASCaRA XML \uD83E\uDC55',
+    dialogTitle: 'Select XML Files',
+    inputLabel: 'XML Input',
+    accept: '.cas.xml,.cas.xml.zip',
+    hint: 'Select one or more XML files to import',
+    componentName: 'Import-XML',
+    importFn: (file: File) => XmlImporter.import(file, undefined)
+};
 
 /**
  * Plugin configuration options
@@ -45,7 +60,14 @@ export const xmlImportPlugin: Plugin = {
 
         // Mount component globally
         // Don't change the name, it is used to filter the component in main.ts
-        app.component('Import-XML', XmlImportPlugin);
+        app.component(xmlImportConfig.componentName, {
+            extends: ImportBase,
+            props: {
+                config: {
+                    default: () => xmlImportConfig
+                }
+            }
+        } as Component);
 
         // all mounted components are logged in main.ts ...
     }

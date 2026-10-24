@@ -1,19 +1,33 @@
-import { App, Plugin } from 'vue';
-import JsonImportComponent from "./import-jsonld.vue";
+import { App, Plugin, Component } from 'vue';
+import ImportBase from '../import-base.vue';
+import { ImportConfig } from '../import-config';
+import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
+
+/**
+ * Format-specific configuration for the generic ImportBase component
+ */
+const jsonldImportConfig: ImportConfig = {
+    buttonLabel: 'CASCaRA JSON-LD \uD83E\uDC55',
+    dialogTitle: 'Select JSON-LD Files',
+    inputLabel: 'JSON-LD Input',
+    accept: '.cas.jsonld,.cas.jsonld.zip',
+    hint: 'Select one or more JSON-LD files to import',
+    componentName: 'Import-JSONLD',
+    importFn: (file: File) => JsonldImporter.import(file)
+};
 
 const jsonImportPlugin: Plugin = {
     install(app: App) {
-        // global property
-        // app.config.globalProperties.$definedproperty = 'Example Global Property';
-
-        // global method
-        // app.config.globalProperties.$definedMethods = () => {
-        //   LOG.info('Example Method');
-        // };
-
         // Mount component globally
         // Don't change the name, it is used to filter the component in main.ts
-        app.component('Import-JSONLD', JsonImportComponent);
+        app.component(jsonldImportConfig.componentName, {
+            extends: ImportBase,
+            props: {
+                config: {
+                    default: () => jsonldImportConfig
+                }
+            }
+        } as Component);
     }
 }
 

@@ -1,155 +1,119 @@
 <template>
-
-    <v-btn
-        color="secondary"
-        class="text-none"
-        @click="dialog = true">
-
-        Neo4j 🡕
-
-    </v-btn>
-
-
-    <v-dialog
-        v-model="dialog"
-        max-width="600">
-
+    <v-btn color='secondary' variant='elevated' class='text-none import-btn' @click='dialog = true'>Neo4j 🡕</v-btn>
+    <v-dialog v-model='dialog' max-width='600'>
         <v-card>
-
-            <v-card-title>
-                Import CASCaRA from Neo4j
-            </v-card-title>
-
+            <v-card-title>Import CASCaRA from Neo4j</v-card-title>
 
             <v-card-text>
-
-                <v-text-field
-                    v-model="uri"
-                    label="Neo4j URI"
-                    hint="bolt://localhost:7687"
-                    persistent-hint
-                    :disabled="isLoading">
+                <v-text-field v-model='uri'
+                              label='Neo4j URI'
+                              hint='bolt://localhost:7687'
+                              persistent-hint
+                              :disabled='isLoading'>
                 </v-text-field>
 
-
-                <v-text-field
-                    v-model="database"
-                    label="Database"
-                    hint="neo4j"
-                    persistent-hint
-                    :disabled="isLoading">
+                <v-text-field v-model='database'
+                              label='Database'
+                              hint='neo4j'
+                              persistent-hint
+                              :disabled='isLoading'>
                 </v-text-field>
 
-
-                <v-text-field
-                    v-model="username"
-                    label="Username"
-                    hint="neo4j"
-                    persistent-hint
-                    :disabled="isLoading">
+                <v-text-field v-model='username'
+                              label='Username'
+                              hint='neo4j'
+                              persistent-hint
+                              :disabled='isLoading'>
                 </v-text-field>
 
-
-                <v-text-field
-                    v-model="password"
-                    label="Password"
-                    type="password"
-                    hint="Neo4j password"
-                    persistent-hint
-                    :disabled="isLoading">
+                <v-text-field v-model='password'
+                              label='Password'
+                              type='password'
+                              hint='Neo4j password'
+                              persistent-hint
+                              :disabled='isLoading'>
                 </v-text-field>
 
-
-                <v-btn
-                    color="secondary"
-                    variant="outlined"
-                    class="mt-4"
-                    :disabled="!canConnect || isLoading"
-                    :loading="isTestingConnection"
-                    @click="onTestConnection">
-
+                <v-btn color='secondary'
+                       variant='outlined'
+                       class='mt-4'
+                       :disabled='!canConnect || isLoading'
+                       :loading='isTestingConnection'
+                       @click='onTestConnection'>
                     Test Connection
-
                 </v-btn>
 
-
-                <v-alert
-                    v-if="connectionMessage"
-                    type="success"
-                    class="mt-4">
-
+                <!-- Connection Test Result -->
+                <v-alert v-if='connectionMessage'
+                         type='success'
+                         class='mt-4'>
                     {{ connectionMessage }}
-
                 </v-alert>
 
-
-                <v-alert
-                    v-if="errorMessages.length > 0"
-                    type="error"
-                    class="mt-4">
-
-                    <div
-                        v-for="(error, index) in errorMessages"
-                        :key="index">
-
+                <!-- Error Display -->
+                <v-alert v-if="errorMessages.length > 0"
+                         type="error"
+                         dismissible
+                         class="mt-4">
+                    <div v-for="(error, index) in errorMessages"
+                         :key="index"
+                         class="text-caption">
                         {{ error }}
-
                     </div>
-
                 </v-alert>
 
-
-                <v-alert
-                    v-if="successMessage"
-                    type="success"
-                    class="mt-4">
-
+                <!-- Success Display -->
+                <v-alert v-if='successMessage'
+                         type='success'
+                         dismissible
+                         class='mt-4'
+                         @click:close='successMessage = ""'>
                     {{ successMessage }}
-
                 </v-alert>
 
-
-                <v-progress-linear
-                    v-if="isLoading"
-                    indeterminate
-                    color="primary"
-                    class="mt-4">
+                <!-- Progress Indicator -->
+                <v-progress-linear v-if='isLoading'
+                                   indeterminate
+                                   color='primary'
+                                   class='mt-4'>
                 </v-progress-linear>
-
             </v-card-text>
 
-
             <v-card-actions>
-
                 <v-spacer></v-spacer>
-
-
-                <v-btn
-                    color="grey"
-                    :disabled="isLoading"
-                    @click="onCancel">
-
+                <v-btn :color="isLoading ? undefined : 'grey'" variant='elevated' class='import-btn' @click='onCancel' :disabled='isLoading'>
                     Cancel
-
                 </v-btn>
-
-
-                <v-btn
-                    color="primary"
-                    :disabled="!canConnect || isLoading"
-                    :loading="isLoading"
-                    @click="onSubmit">
-
-                    {{ submitLabel }}
-
+                <template v-if='hasCachedData'>
+                    <v-btn :color="isSubmitDisabled ? undefined : 'primary'"
+                           variant='elevated'
+                           class='import-btn'
+                           @click='onSubmit("replace")'
+                           :disabled='isSubmitDisabled'
+                           :loading="isLoading && submitMode === 'replace'">
+                        Replace
+                    </v-btn>
+                    <v-btn :color="isSubmitDisabled ? undefined : 'primary'"
+                           variant='elevated'
+                           class='import-btn'
+                           @click='onSubmit("update")'
+                           :disabled='isSubmitDisabled'
+                           :loading="isLoading && submitMode === 'update'">
+                        Update
+                    </v-btn>
+                </template>
+                <v-btn v-else
+                       :color="isSubmitDisabled ? undefined : 'primary'"
+                       variant='elevated'
+                       class='import-btn'
+                       @click='onSubmit("replace")'
+                       :disabled='isSubmitDisabled'
+                       :loading='isLoading'>
+                    Import
                 </v-btn>
-
             </v-card-actions>
-
         </v-card>
-
     </v-dialog>
-
 </template>
 
 
@@ -183,8 +147,12 @@ import {
 } from '@/common/import/neo4j/import-neo4j';
 
 import {
-    PackageCache
-} from '@/stores/package-cache';
+    ItemCache
+} from '@/stores/item-cache';
+
+import {
+    AssetCache
+} from '@/stores/asset-cache';
 
 
 @Options({
@@ -214,6 +182,9 @@ import {
             isTestingConnection:
                 false,
 
+            submitMode:
+                null as 'replace' | 'update' | null,
+
             errorMessages:
                 [] as string[],
 
@@ -228,12 +199,15 @@ import {
 
     computed: {
 
-        submitLabel():
-            string {
+        /**
+         * Whether the item cache already holds data (in memory or persisted).
+         * Drives which submit button(s) are shown: 'Import' when empty,
+         * 'Replace' and 'Update' when the cache already holds data.
+         */
+        hasCachedData():
+            boolean {
 
-            return PackageCache().hasData
-                ? 'Replace'
-                : 'Import';
+            return ItemCache().hasData;
         },
 
 
@@ -246,6 +220,14 @@ import {
                 this.username &&
                 this.password
             );
+        },
+
+
+        isSubmitDisabled():
+            boolean {
+
+            return !this.canConnect ||
+                this.isLoading;
         }
     },
 
@@ -337,8 +319,15 @@ import {
 
         /**
          * Import every CASCaRA package found in Neo4j.
+         * @param mode 'replace' fully replaces the item cache (used for the 'Import' and
+         *             'Replace' buttons), 'update' merges the imported items into the
+         *             existing cache, preserving object identity of already-cached,
+         *             unchanged items (see ItemCache.update()).
          */
-        async onSubmit() {
+        async onSubmit(
+            mode:
+                'replace' | 'update'
+        ) {
 
             if (
                 !this.canConnect
@@ -355,6 +344,9 @@ import {
             this.isLoading =
                 true;
 
+            this.submitMode =
+                mode;
+
             this.errorMessages =
                 [];
 
@@ -366,6 +358,42 @@ import {
 
 
             try {
+
+                /*
+                 * The item cache is lazily loaded, so it must be loaded from
+                 * storage first if not yet initialized.
+                 */
+                const cache =
+                    ItemCache();
+
+
+                if (
+                    !cache.initialized
+                ) {
+
+                    await cache.loadFromStorage();
+                }
+
+
+                /*
+                 * 'Replace' fully replaces the item cache; the asset cache (images,
+                 * etc. extracted alongside the payload) must be cleared as well,
+                 * otherwise stale/orphaned assets from a previous import would
+                 * linger. This MUST happen before the import itself, since the
+                 * importer persists newly extracted assets to AssetCache as part
+                 * of the import - clearing afterwards would wipe out the very
+                 * assets just imported. Only done for 'replace' (not 'update'),
+                 * so updating with a new/changed package does not wipe out images
+                 * still referenced by previously imported (and still cached)
+                 * packages.
+                 */
+                if (
+                    mode === 'replace'
+                ) {
+
+                    await AssetCache().clear();
+                }
+
 
                 const results =
                     await Neo4jImporter.import(
@@ -404,7 +432,10 @@ import {
                     APackage[] =
                     successful
                         .map(
-                            result => {
+                            (
+                                result:
+                                    IRsp<TPigItem[]>
+                            ) => {
 
                                 const items =
                                     result.response as
@@ -416,15 +447,102 @@ import {
                             }
                         )
                         .filter(
-                            item =>
+                            (
+                                item:
+                                    unknown
+                            ) =>
                                 item instanceof
                                     APackage
                         );
 
 
                 if (
-                    packages.length === 0
+                    packages.length > 0
                 ) {
+
+                    /*
+                     * Store only the successfully imported packages in the item
+                     * cache, same as the other import plugins.
+                     */
+                    const items:
+                        TPigItem[] =
+                        packages.flatMap(
+                            pkg =>
+                                pkg.getItems()
+                        );
+
+
+                    const persisted =
+                        mode === 'update'
+                            ? await cache.update(
+                                items
+                            )
+                            : await cache.replace(
+                                items
+                            );
+
+
+                    const action =
+                        mode === 'update'
+                            ? 'updated'
+                            : 'imported';
+
+                    this.successMessage =
+                        `Successfully ${action} ${packages.length} ` +
+                        `CASCaRA package(s) from Neo4j.`;
+
+
+                    if (
+                        !persisted
+                    ) {
+
+                        this.errorMessages.push(
+                            'Warning: imported data could not be persisted ' +
+                            'to browser storage (IndexedDB).'
+                        );
+                    }
+
+
+                    if (
+                        failed.length > 0
+                    ) {
+
+                        this.errorMessages.push(
+                            ...failed.map(
+                                (
+                                    result:
+                                        IRsp<TPigItem[]>
+                                ) =>
+                                    result.statusText ||
+                                    `Neo4j import error (${result.status})`
+                            )
+                        );
+                    }
+
+
+                    /*
+                     * Same post-import navigation used by the existing
+                     * importer plugins.
+                     */
+                    setTimeout(
+                        async () => {
+
+                            await this.$router.push({
+                                name:
+                                    'Document'
+                            });
+
+
+                            this.dialog =
+                                false;
+
+
+                            this.onCancel();
+                        },
+                        DEF.timeBetweenPages
+                    );
+
+                } else {
 
                     if (
                         failed.length > 0
@@ -432,7 +550,10 @@ import {
 
                         this.errorMessages =
                             failed.map(
-                                result =>
+                                (
+                                    result:
+                                        IRsp<TPigItem[]>
+                                ) =>
                                     result.statusText ||
                                     `Neo4j import error (${result.status})`
                             );
@@ -445,76 +566,18 @@ import {
                     }
 
 
-                    return;
+                    /*
+                     * If all imports failed and the cache was meant to be fully
+                     * replaced, clear it (and the asset cache, already cleared
+                     * above) to avoid leaving stale data behind.
+                     */
+                    if (
+                        mode === 'replace'
+                    ) {
+
+                        await cache.clear();
+                    }
                 }
-
-
-                /*
-                 * Replace the current cache exactly like the other
-                 * import plugins.
-                 */
-                const cache =
-                    PackageCache();
-
-
-                const persisted =
-                    await cache.replace(
-                        packages
-                    );
-
-
-                this.successMessage =
-                    `Imported ${packages.length} ` +
-                    `CASCaRA package(s) from Neo4j.`;
-
-
-                if (
-                    !persisted
-                ) {
-
-                    this.errorMessages.push(
-                        'Warning: imported data could not be persisted ' +
-                        'to browser storage (IndexedDB).'
-                    );
-                }
-
-
-                if (
-                    failed.length > 0
-                ) {
-
-                    this.errorMessages.push(
-                        ...failed.map(
-                            result =>
-                                result.statusText ||
-                                `Neo4j import error (${result.status})`
-                        )
-                    );
-                }
-
-
-                /*
-                 * Same post-import navigation used by the existing
-                 * importer plugins.
-                 */
-                setTimeout(
-                    async () => {
-
-                        await this.$router.push({
-                            name:
-                                'Document'
-                        });
-
-
-                        this.dialog =
-                            false;
-
-
-                        this.onCancel();
-
-                    },
-                    DEF.timeBetweenPages
-                );
 
             } catch (error: any) {
 
@@ -535,6 +598,9 @@ import {
 
                 this.isLoading =
                     false;
+
+                this.submitMode =
+                    null;
             }
         },
 
@@ -546,6 +612,9 @@ import {
 
             this.password =
                 '';
+
+            this.submitMode =
+                null;
 
             this.errorMessages =
                 [];
@@ -576,6 +645,8 @@ export default class Neo4jImportComponent
     isLoading!: boolean;
 
     isTestingConnection!: boolean;
+
+    submitMode!: 'replace' | 'update' | null;
 
     errorMessages!: string[];
 

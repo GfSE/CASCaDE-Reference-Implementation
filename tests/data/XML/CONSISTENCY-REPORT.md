@@ -41,12 +41,12 @@ Diese Inkonsistenzen wurden **bewusst beibehalten**, um unterschiedliche Stile z
 
 ### 2. Typ-Attribut Verwendung (Mittel)
 
-- **Alice.cas.xml (11)**: Verwendet ausschließlich `cas:hasClass`
+- **Alice.cas.xml (11)**: Verwendet ausschließlich `cas:instanceOf`
   ```xml
-  <cas:Entity id="cas:Entity" cas:hasClass="owl:Class">
+  <cas:Entity id="cas:Entity" rdf:type="owl:Class">
   ```
 
-- **Dateien 05 & 21**: Verwenden sowohl `cas:hasClass` als auch `rdf:type`
+- **Dateien 05 & 21**: Verwenden sowohl `cas:instanceOf` als auch `rdf:type`
   ```xml
   <cas:Entity id="cas:Entity" rdf:type="owl:Class">
   <cas:aPackage ... rdf:type="cas:Package">
@@ -108,7 +108,7 @@ Unterschiedliche Darstellung von Constraints:
 
 ### ⚠️ Bewusst Unterschiedlich (Design-Varianten)
 
-⚠️ **Typ-Attribut**: cas:hasClass vs. rdf:type (beide gültig)
+⚠️ **Typ-Attribut**: cas:instanceOf vs. rdf:type (beide gültig)
 ⚠️ **Schema-Syntax**: Verschiedene xs:restriction Stile
 ⚠️ **Constraint-System**: XML Schema vs. SHACL
 
@@ -124,7 +124,7 @@ Ein XML-Schema (XSD) wurde erstellt in: `tests/data/XML/cascara-package.xsd`
 
 **Hinweise zum generierten Schema**:
 - Das Schema deckt die gemeinsame Struktur aller drei Dateien ab
-- Es erlaubt beide Varianten (cas:hasClass und rdf:type) für Flexibilität
+- Es erlaubt beide Varianten (cas:instanceOf und rdf:type) für Flexibilität
 - Es unterstützt sowohl skos:definition als auch dcterms:description
 - Es akzeptiert verschiedene xs:maxLength Syntaxen
 - Es verwendet `xs:any` mit `processContents="lax"` für Erweiterbarkeit

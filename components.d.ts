@@ -18,5 +18,6 @@ declare module 'vue' {
     PageInterfaces: typeof import('./src/components/PageInterfaces.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UrlQueries: typeof import('./src/components/UrlQueries.vue')['default']
   }
 }

@@ -49,7 +49,8 @@ import {
     TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
-    AProperty, ATargetLink, ASourceLink
+    AProperty, ATargetLink, ASourceLink,
+    IAPackageProxy
 } from '../../schema/pig/ts/pig-metaclasses';
 
 export interface IOptionsTTL {
@@ -399,9 +400,12 @@ class GetTTL {
         // Add basic metamodel properties
         ttl += this.xMetadataForClasses(itm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
-        // icon (optional)
+        // icon and color (optional)
         if (itm.icon?.value) {
             ttl += rdf.tab1('cas:icon', itm.icon.value, true); // is literal
+        }
+        if (itm.color?.value) {
+            ttl += rdf.tab1('cas:color', itm.color.value, true); // is literal
         }
 
         ttl += rdf.newLine();
@@ -593,8 +597,31 @@ class GetTTL {
     }
 
     /**
+     * Render a nested/contained package as a minimal proxy resource, carrying
+     * only id, modified, revision and creator - never its full graph.
+     * @param proxy - proxy representation of the contained package
+     * @param rdf - CToTtl instance for building Turtle output
+     * @returns Turtle representation of the package proxy
+     */
+    private static xPackageProxy(proxy: IAPackageProxy, rdf: CToTtl): string {
+        let ttl = rdf.tab0(this.formatTurtleId(proxy.id));
+        ttl += rdf.tab1('a', 'cas:Package', false); // is reference
+        if (proxy.revision) {
+            ttl += rdf.tab1('cas:revision', proxy.revision, true); // is literal
+        }
+        if (proxy.modified) {
+            ttl += rdf.tab1('dcterms:modified', `"${proxy.modified}"^^xs:dateTime`, false); // is reference
+        }
+        if (proxy.creator) {
+            ttl += rdf.tab1('dcterms:creator', proxy.creator, true); // is literal
+        }
+        ttl += rdf.newLine();
+        return ttl;
+    }
+
+    /**
      * Wrapper for instances (APackage, AnEntity, ARelationship)
-     * Adds instance-specific properties like hasClass
+     * Adds instance-specific properties like instanceOf
      * @param itm - Instance item
      * @param rdf - CToTtl instance for building Turtle output
      * @param options - controls whether to add optional triples like cas:itemType
@@ -611,8 +638,8 @@ class GetTTL {
         const subjectId = this.formatTurtleId(itm.id);
         ttl += rdf.tab0(subjectId);
 
-        // hasClass (the item's class/type) - required for instances according to schema
-        ttl += rdf.tab1('a', this.formatTurtleId(itm.hasClass), false); // is reference
+        // instanceOf (the item's class/type) - required for instances according to schema
+        ttl += rdf.tab1('a', this.formatTurtleId(itm.instanceOf), false); // is reference
 
         if (options?.addItemTypes) {
             ttl += rdf.tab1('cas:itemType', itm.itemType, true); // is literal
@@ -625,7 +652,7 @@ class GetTTL {
 
     /**
      * Wrapper for metamodel classes (Property, Link, Entity, Relationship, Enumeration)
-     * Uses common metadata without hasClass (classes don't have hasClass)
+     * Uses common metadata without instanceOf (classes don't have instanceOf)
      * @param itm - Metamodel class item
      * @param rdf - CToTtl instance for building Turtle output
      * @param options - controls whether to add optional triples like cas:itemType
@@ -638,7 +665,7 @@ class GetTTL {
         rdf: CToTtl,
         options?: { addItemTypes?: boolean, addExplicitTypeToAllClasses?: boolean }
     ): string {
-        // For classes, just use the common metadata (no hasClass)
+        // For classes, just use the common metadata (no instanceOf)
         let ttl = '';
 
         if (!rdfSpecialization || !owlClassification) // both are defined or not, but anyways both are checked to satisfy the TS type guard
@@ -692,9 +719,17 @@ class GetTTL {
             ? graph.filter(item => filterTypes.includes(item.itemType))
             : graph;
 
-        // Transform each graph item to Turtle
+        // Transform each graph item to Turtle. Nested/contained packages (not
+        // yet produced by current importers, but exporters must be prepared
+        // for them) are exported only as a proxy - never with their full
+        // graph - to avoid duplicating/interleaving a nested package's
+        // contents with its own top-level export.
         for (const item of items) {
-            ttl += getTTL(item, options);
+            if (PigItem.isAPackage(item)) {
+                ttl += this.xPackageProxy((item as APackage).getProxy(), rdf);
+            } else {
+                ttl += getTTL(item, options);
+            }
         }
 
         // Add metamodel class shapes for Property, Link, Enumeration, Entity, and Relationship classes (once per package)
@@ -743,7 +778,7 @@ class GetTTL {
 
     /**
      * Transform hasProperty array to Turtle format
-     * Properties are configurable instances with hasClass, value, and/or idRef
+     * Properties are configurable instances with instanceOf, value, and/or idRef
      * Properties are always CASCaRA owl:DatatypeProperty terms, so their values are RDF literals -
      * except for a composed property's list of references, which is a raw Turtle list expression.
      * @param properties - Array of AProperty instances
@@ -753,17 +788,17 @@ class GetTTL {
     private static xProperties(properties: AProperty[], rdf: CToTtl): string {
         let ttl = '';
 
-        // Group properties by their hasClass (property type)
+        // Group properties by their instanceOf (property type)
         const grouped = new Map<TPigId, AProperty[]>();
 
         for (const prop of properties) {
-            if (!prop.hasClass) continue;
+            if (!prop.instanceOf) continue;
 
-            if (!grouped.has(prop.hasClass)) {
-                grouped.set(prop.hasClass, []);
+            if (!grouped.has(prop.instanceOf)) {
+                grouped.set(prop.instanceOf, []);
             }
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            grouped.get(prop.hasClass)!.push(prop);
+            grouped.get(prop.instanceOf)!.push(prop);
         }
 
         // Generate Turtle for each property group
@@ -816,17 +851,17 @@ class GetTTL {
     private static xLinks(links: (ASourceLink | ATargetLink)[], rdf: CToTtl): string {
         let ttl = '';
 
-        // Group links by their hasClass (link type)
+        // Group links by their instanceOf (link type)
         const grouped = new Map<TPigId, (ASourceLink | ATargetLink)[]>();
 
         for (const link of links) {
-            if (!link.hasClass) continue;
+            if (!link.instanceOf) continue;
 
-            if (!grouped.has(link.hasClass)) {
-                grouped.set(link.hasClass, []);
+            if (!grouped.has(link.instanceOf)) {
+                grouped.set(link.instanceOf, []);
             }
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            grouped.get(link.hasClass)!.push(link);
+            grouped.get(link.instanceOf)!.push(link);
         }
 
         // Generate Turtle for each link group

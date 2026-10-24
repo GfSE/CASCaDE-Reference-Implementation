@@ -20,13 +20,17 @@
  * - Node:   await XmlImporter.import('C:/path/to/file.xml')
  * - URL:    await XmlImporter.import('https://example/.../doc.xml')
  * - Browser: await XmlImporter.import(fileInput.files[0])
+ *
+ * @todo
+ * - extract multiple XML files from zip archive and call import() recursively for each XML file
+ * - refuse to import if a filetype cannot be discovered (e.g. blob without name.ext and no type)
  */
 
 import { DEF } from '../../lib/definitions';
 import { IRsp, Msg,/* Rsp,*/ rspOK } from '../../lib/messages';
-import { LOG } from '../../lib/helpers';
+// import { LOG } from '../../lib/helpers';
 import { PLI } from '../../lib/platform-independence';
-import { APackage, TPigItem, PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
+import { APackage,/* TPigItem,*/ PigItem, PigItemType, PigItemTypeValue } from '../../schema/pig/ts/pig-metaclasses';
 
 /**
  * XML Importer
@@ -36,37 +40,94 @@ export class XmlImporter {
     private static readonly maxSizeInput = DEF.maxSizeXML;
 
     /**
-     * Import XML document and instantiate PIG items
-     * 
+     * Import XML document(s) and instantiate PIG items.
+     * If the source is a ZIP archive containing several .xml files, each is
+     * transformed/parsed/instantiated separately (inner loop over ZIP entries).
+     *
      * @param source - File path (Node.js), URL, or File/Blob object (Browser)
      * @param options - Optional parameters
      *     - sef: SEF stylesheet for transformation (*.sef.json)
-     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @returns array of IRsp, one per imported package (first item of each is APackage, rest are graph items)
      * 
      * @example
      * // Node.js
-     * const result = await XmlImporter.import('./package.xml');
+     * const results = await XmlImporter.import('./package.xml');
      * 
      * @example
      * // Browser
      * const file = fileInput.files[0];
-     * const result = await XmlImporter.import(file);
+     * const results = await XmlImporter.import(file);
      * 
      * @example
      * // URL
-     * const result = await XmlImporter.import('https://example.org/data.xml');
+     * const results = await XmlImporter.import('https://example.org/data.xml');
      */
-    static async import(source: string | File | Blob, options?: any): Promise<IRsp> {
+    static async import(source: string | File | Blob, options?: any): Promise<IRsp[]> {
         // LOG.debug(`XmlImporter: Source: ${typeof source === 'string' ? source : JSON.stringify(source)}`);
         // LOG.debug(`XmlImporter: Options: ${JSON.stringify(options)}`);
-        // Read file content
-        const rsp = await PLI.readFileAsText(source);
-        if (!rsp.ok) {
-            return rsp;
+
+        // Extract filename for zip detection (Blob without a name is treated as non-zipped)
+        const filename = typeof source === 'string' ? source : (source as File).name ?? '';
+
+        // Normalize filename/URL for extension check:
+        // - Strip query/fragment (for URLs) and make case-insensitive
+        const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
+        const isZipped = normalized.endsWith('.zip');
+
+        // Read file content, unpacking the archive first if the file is zipped
+        let xmlStrings: string[];
+        if (isZipped) {
+            const rspBytes = await PLI.readFileAsBytes(source);
+            if (!rspBytes.ok) {
+                return [rspBytes];
+            }
+            const rspXml = PLI.extractFromZip(
+                rspBytes.response as Uint8Array,
+                (name) => name.toLowerCase().endsWith(options?.sef ? '.xml' : '.cas.xml'),
+                filename
+            );
+            if (!rspXml.ok) {
+                return [rspXml];
+            }
+            xmlStrings = rspXml.response as string[];
+
+            // Extract any other (non-.xml) files bundled in the archive (e.g. images) and
+            // store them in the asset-cache for later use.
+            const rspOther = PLI.extractOtherFromZip(
+                rspBytes.response as Uint8Array,
+                (name) => name.toLowerCase().endsWith('.xml'),
+                filename
+            );
+            if (rspOther.ok) {
+                await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
+            }
+        } else {
+            const rsp = await PLI.readFileAsText(source);
+            if (!rsp.ok) {
+                return [rsp];
+            }
+            xmlStrings = [rsp.response as string];
         }
 
-        let xmlString = rsp.response as string;
+        const results: IRsp[] = [];
+        for (const xmlToTransform of xmlStrings) {
+            results.push(await this.parseOne(xmlToTransform, source, options));
+        }
+        return results;
+    }
 
+    /**
+     * Parse a single XML document (already extracted from a possible ZIP archive),
+     * optionally transform it via XSLT, validate it and instantiate the contained PIG items.
+     *
+     * @param xmlString - XML text content
+     * @param source - original source, used for size-limit error messages
+     * @param options - Optional parameters
+     *     - sef: SEF stylesheet for transformation (*.sef.json)
+     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @private
+     */
+    private static async parseOne(xmlString: string, source: string | File | Blob, options?: any): Promise<IRsp> {
         // Security: Size limit check
         if (xmlString.length > this.maxSizeInput) {
             return Msg.create(
@@ -168,43 +229,43 @@ export class XmlImporter {
                             // LOG.debug('import-xml', `Checking element <${tag}> with id="${elId}"`);
                             // Check for class requirements
                             if (PigItem.isClass(tag)) {
-                                // Must have either 'pig:specializes' or 'pig:hasClass' as attribute or child
+                                // Must have either 'cas:specializes' or 'cas:instanceOf' as attribute or child
                                 // XML import is more tolerant than JSON-LD, as it allows both pig and RDF/OWL terms for specialization and classification
                                 // The MVF must however map both to the same internal keys
-                                // LOG.debug('import-xml 1', elem.getAttribute('pig:specializes'), elem.getAttribute('owl:subClassOf'), elem.getAttribute('pig:hasClass'), elem.getAttribute('rdf:type') );
+                                // LOG.debug('import-xml 1', elem.getAttribute('pig:specializes'), elem.getAttribute('owl:subClassOf'), elem.getAttribute('cas:instanceOf'), elem.getAttribute('rdf:type') );
                                 const specializesAttr = elem.getAttribute(`${DEF.pfxNsMeta}specializes`) || elem.getAttribute('owl:subClassOf');  // don't use '??'
-                                const hasClassAttr = elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('rdf:type');  // don't use '??'
+                                const instanceOfAttr = elem.getAttribute(`${DEF.pfxNsMeta}instanceOf`) || elem.getAttribute('rdf:type');  // don't use '??'
                                 let specializesChild = false;
-                                let hasClassChild = false;
+                                let instanceOfChild = false;
                                 for (let j = 0; j < elem.childNodes.length; j++) {
                                     const child = elem.childNodes[j];
                                     if (child.nodeType === 1) {
                                         const childTag = (child as Element).tagName;
                                         if ([`${DEF.pfxNsMeta}specializes`, 'owl:subClassOf'].includes(childTag)) specializesChild = true;
-                                        if ([`${DEF.pfxNsMeta}hasClass`, 'rdf:type'].includes(childTag)) hasClassChild = true;
+                                        if ([`${DEF.pfxNsMeta}instanceOf`, 'rdf:type'].includes(childTag)) instanceOfChild = true;
                                     }
                                 }
-                                // LOG.debug('import-xml 2', specializesAttr, hasClassAttr, specializesChild, hasClassChild);
-                                if (!(specializesAttr || hasClassAttr || specializesChild || hasClassChild)) {
-                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires either '${DEF.pfxNsMeta}specializes' or '${DEF.pfxNsMeta}hasClass'`);
+                                // LOG.debug('import-xml 2', specializesAttr, instanceOfAttr, specializesChild, instanceOfChild);
+                                if (!(specializesAttr || instanceOfAttr || specializesChild || instanceOfChild)) {
+                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires either '${DEF.pfxNsMeta}specializes' or '${DEF.pfxNsMeta}instanceOf'`);
                                 }
                             }
                             // Check for instance requirements
                             else if (PigItem.isInstance(tag)) {
-                                // Must have 'pig:hasClass' as attribute or child and a child 'dcterms:modified'
-                                const hasClassAttr = elem.getAttribute(`${DEF.pfxNsMeta}hasClass`) || elem.getAttribute('rdf:type');  // don't use '??'
-                                let hasClassChild = false;
+                                // Must have 'cas:instanceOf' as attribute or child and a child 'dcterms:modified'
+                                const instanceOfAttr = elem.getAttribute(`${DEF.pfxNsMeta}instanceOf`) || elem.getAttribute('rdf:type');  // don't use '??'
+                                let instanceOfChild = false;
                                 let modifiedChild = false;
                                 for (let j = 0; j < elem.childNodes.length; j++) {
                                     const child = elem.childNodes[j];
                                     if (child.nodeType === 1) {
                                         const childTag = (child as Element).tagName;
-                                        if ([`${DEF.pfxNsMeta}hasClass`, 'rdf:type'].includes(childTag)) hasClassChild = true;
+                                        if ([`${DEF.pfxNsMeta}instanceOf`, 'rdf:type'].includes(childTag)) instanceOfChild = true;
                                         if (childTag === `${DEF.pfxNsDcmi}modified`) modifiedChild = true;
                                     }
                                 }
-                                if (!(hasClassAttr || hasClassChild)) {
-                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsMeta}hasClass'`);
+                                if (!(instanceOfAttr || instanceOfChild)) {
+                                    missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsMeta}instanceOf'`);
                                 }
                                 if (!modifiedChild) {
                                     missingProperty.push(`${tag} with id ${elId ?? '(missing id)'} requires '${DEF.pfxNsDcmi}modified'`);

@@ -18,9 +18,11 @@
 import { DEF } from '../../src/common/lib/definitions';
 import { XsDataType, PigItemType,
     IProperty, IAProperty, ILink, IEntity, IAnEntity, IRelationship, IARelationship,
-    Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, /* ASourceLink,*/ ATargetLink
+    Property, AProperty, Link, Entity, AnEntity, Relationship, ARelationship, /* ASourceLink,*/ ATargetLink,
+    APackage
 } from '../../src/common/schema/pig/ts/pig-metaclasses';
 import { getJSONLD } from '../../src/common/export/jsonld/getJSONLD';
+import { LOG } from '../../src/common/lib/helpers';
 
 describe("PIG Metaclasses", () => {
     let Property_input: IProperty;
@@ -44,7 +46,7 @@ describe("PIG Metaclasses", () => {
         // Property with class:
         Property_input = {
             id: `${DEF.pfxNsDcmi}type`,
-            hasClass: "owl:DatatypeProperty",
+            instanceOf: "owl:DatatypeProperty",
             itemType: PigItemType.Property,
             title: [{ value: "The type or category", lang: "en" }],
             description: [{ value: `This is a class for a property named ${DEF.pfxNsDcmi}type used by anEntity or aRelationship`, lang: "en" }],
@@ -69,14 +71,14 @@ describe("PIG Metaclasses", () => {
         };
         aProperty_input = {
             itemType: PigItemType.aProperty,
-            hasClass: `${DEF.pfxNsDcmi}type`,
+            instanceOf: `${DEF.pfxNsDcmi}type`,
             value: "A category"   // usually a property belongs to a certain entity or relationship
         };
 
         // Link class:
         Link_shows_input = {
             id: `${DEF.pfxNsMeta}shows`,
-            hasClass: "owl:ObjectProperty",
+            instanceOf: "owl:ObjectProperty",
             itemType: PigItemType.Link,
             specializes: PigItemType.Link,
             title: [{ value: "shows", lang: "en" }],
@@ -98,7 +100,7 @@ describe("PIG Metaclasses", () => {
         // Entity with class:
         entityClass_Diagram_input = {
             id: "o:Entity_Diagram",
-            hasClass: "owl:Class",
+            instanceOf: "owl:Class",
             itemType: PigItemType.Entity,
             specializes: PigItemType.Entity,
             title: [{ value: "Title of o:Entity_Diagram" }],  // if there is just one language, lang can be omitted
@@ -110,7 +112,7 @@ describe("PIG Metaclasses", () => {
         };
         entityClass_Artifact_input = {
             id: "o:Entity_Artifact",
-            hasClass: "owl:Class",
+            instanceOf: "owl:Class",
             itemType: PigItemType.Entity,
             specializes: PigItemType.Entity,
             title: [{ value: "Title of Entity o:Entity_Artifact" }],  // if there is just one language, lang can be omitted
@@ -129,10 +131,10 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "Title of d:anEntity_Actor", lang: "en" }],
             description: [{ value: "Description of d:anEntity_Actor", lang: "en" }],
 
-            hasClass: "o:Entity_Actor",
+            instanceOf: "o:Entity_Actor",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: `${DEF.pfxNsDcmi}type`,
+                instanceOf: `${DEF.pfxNsDcmi}type`,
                 value: "Category of d:anEntity_Actor"
             }]
         };
@@ -145,10 +147,10 @@ describe("PIG Metaclasses", () => {
             title: [{ value: "Title of d:anEntity_State"}],
             description: [{ value: "Description of d:anEntity_State"}],
 
-            hasClass: "o:Entity_State",
+            instanceOf: "o:Entity_State",
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: `${DEF.pfxNsDcmi}type`,
+                instanceOf: `${DEF.pfxNsDcmi}type`,
                 value: "Category of d:anEntity_State"
             }]
         };
@@ -156,7 +158,7 @@ describe("PIG Metaclasses", () => {
         // An entity input with reference (not reusing entity1_input):
         anEntity_with_ref_input = {
             id: "d:anEntity_Diagram",
-            hasClass: "o:Entity_Diagram",
+            instanceOf: "o:Entity_Diagram",
             revision: "v1.0",
             itemType: PigItemType.anEntity,
             modified: '2025-12-20T00:00:00Z',
@@ -165,12 +167,12 @@ describe("PIG Metaclasses", () => {
             description: [{ value: "An Entity instance that has a reference to another Entity instance", lang: "en" }],
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: `${DEF.pfxNsDcmi}type`,
+                instanceOf: `${DEF.pfxNsDcmi}type`,
                 value: "Category (notation) of d:anEntity_Diagram"
             }],
             hasTargetLink: [{
                 itemType: PigItemType.aTargetLink,
-                hasClass: `${DEF.pfxNsMeta}shows`,
+                instanceOf: `${DEF.pfxNsMeta}shows`,
                 idRef: "d:anEntity_Artifact"
             }]
         };
@@ -196,7 +198,7 @@ describe("PIG Metaclasses", () => {
         // Relationship with class:
         Link_mutates_toActor = {
             id: "o:Link_mutates_toActor",
-            hasClass: "owl:ObjectProperty",
+            instanceOf: "owl:ObjectProperty",
             itemType: PigItemType.Link,
             specializes: PigItemType.Link,
             title: [{ value: "to actor", lang: "en" }],
@@ -206,7 +208,7 @@ describe("PIG Metaclasses", () => {
         };
         Link_mutates_toState = {
             id: "o:Link_mutates_toState",
-            hasClass: "owl:ObjectProperty",
+            instanceOf: "owl:ObjectProperty",
             itemType: PigItemType.Link,
             specializes: PigItemType.Link,
             title: [{ value: "to state" }],
@@ -216,7 +218,7 @@ describe("PIG Metaclasses", () => {
         };
         Relationship_mutates_input = {
             id: "o:Relationship_mutates",
-            hasClass: "owl:Class",
+            instanceOf: "owl:Class",
             itemType: PigItemType.Relationship,
             specializes: PigItemType.Relationship,
             title: [{ value: "Title of o:Relationship_mutates", lang: "en" }],
@@ -229,7 +231,7 @@ describe("PIG Metaclasses", () => {
         aRelationship_mutates_input = {
             id: "d:aRelationship_mutates_1",
             itemType: PigItemType.aRelationship,
-            hasClass: "o:Relationship_mutates",
+            instanceOf: "o:Relationship_mutates",
             revision: "v1.0",
             modified: '2025-12-17T00:00:00Z',
             creator: "test_user",
@@ -238,11 +240,11 @@ describe("PIG Metaclasses", () => {
 
             hasProperty: [{
                 itemType: PigItemType.aProperty,
-                hasClass: `${DEF.pfxNsDcmi}type`,
+                instanceOf: `${DEF.pfxNsDcmi}type`,
                 value: "Category of d:aRelationship_mutates_1"
             }],
-            hasSourceLink: [{ "itemType": `${DEF.pfxNsMeta}aSourceLink`, "hasClass": "o:Link_mutates_toActor", "idRef": "d:anEntity_Actor" }],
-            hasTargetLink: [{ "itemType": `${DEF.pfxNsMeta}aTargetLink`, "hasClass": "o:Link_mutates_toState", "idRef": "d:anEntity_State" }]
+            hasSourceLink: [{ "itemType": `${DEF.pfxNsMeta}aSourceLink`, "instanceOf": "o:Link_mutates_toActor", "idRef": "d:anEntity_Actor" }],
+            hasTargetLink: [{ "itemType": `${DEF.pfxNsMeta}aTargetLink`, "instanceOf": "o:Link_mutates_toState", "idRef": "d:anEntity_State" }]
         };
     });
 
@@ -329,7 +331,7 @@ describe("PIG Metaclasses", () => {
 
         // check the attribute values:
     //    expect(inst.itemType).toBe(PigItemType.aProperty);
-        expect(inst.hasClass).toBe(`${DEF.pfxNsDcmi}type`);
+        expect(inst.instanceOf).toBe(`${DEF.pfxNsDcmi}type`);
         expect(inst.value).toBe("A category");  // usually a property belongs to a certain entity or relationship
 
     });
@@ -420,7 +422,7 @@ describe("PIG Metaclasses", () => {
         // check hasProperty:
         expect(inst.hasProperty).toHaveLength(1);
         expect(inst.hasProperty[0]).toBeInstanceOf(AProperty);
-        expect(inst.hasProperty[0].hasClass).toBe(`${DEF.pfxNsDcmi}type`);
+        expect(inst.hasProperty[0].instanceOf).toBe(`${DEF.pfxNsDcmi}type`);
         expect(inst.hasProperty[0].value).toBe("Category (notation) of d:anEntity_Diagram");
      //   expect(inst.hasProperty[0].value).toBe(anEntity_with_ref_input.hasProperty[0].value);
         expect(inst.hasProperty[0].itemType).toBe(PigItemType.aProperty);
@@ -428,7 +430,7 @@ describe("PIG Metaclasses", () => {
         // check hasTarget:
         expect(inst.hasTargetLink).toHaveLength(1);
         expect(inst.hasTargetLink[0]).toBeInstanceOf(ATargetLink);
-        expect(inst.hasTargetLink[0].hasClass).toBe(`${DEF.pfxNsMeta}shows`);
+        expect(inst.hasTargetLink[0].instanceOf).toBe(`${DEF.pfxNsMeta}shows`);
         expect(inst.hasTargetLink[0].idRef).toBe('d:anEntity_Artifact');
         expect(inst.hasTargetLink[0].itemType).toBe(PigItemType.aTargetLink);
 
@@ -478,4 +480,85 @@ describe("PIG Metaclasses", () => {
     });
 
     /* ToDo: ... more tests to come */
+
+    describe('APackage.addItem() / removeItem()', () => {
+        let actor: AnEntity;
+        let state: AnEntity;
+
+        beforeEach(() => {
+            actor = new AnEntity().set(anEntity_actor_input);
+            expect(actor.status().ok).toBe(true);
+            state = new AnEntity().set(anEntity_state_input);
+            expect(state.status().ok).toBe(true);
+        });
+
+        test('addItem() adds already-instantiated items to the graph', () => {
+            const pkg = new APackage();
+            pkg.graph = [];
+
+            pkg.addItem([actor, state]);
+
+            expect(pkg.graph).toHaveLength(2);
+            expect(pkg.graph).toContain(actor);
+            expect(pkg.graph).toContain(state);
+        });
+
+        test('addItem() skips items that are already part of the graph (no duplicates)', () => {
+            const pkg = new APackage();
+            pkg.graph = [actor];
+
+            pkg.addItem([actor, state]);
+
+            expect(pkg.graph).toHaveLength(2);
+            expect(pkg.graph.filter(itm => itm.id === actor.id)).toHaveLength(1);
+        });
+
+        test('addItem() logs a warning for an item without an id', () => {
+            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const pkg = new APackage();
+            pkg.graph = [];
+
+            pkg.addItem([{ /* no id */ } as any]);
+
+            expect(pkg.graph).toHaveLength(0);
+            expect(warnSpy).toHaveBeenCalled();
+            warnSpy.mockRestore();
+        });
+
+        test('removeItem() removes items from the graph by id, without deleting the instances', () => {
+            const pkg = new APackage();
+            pkg.graph = [actor, state];
+
+            pkg.removeItem([actor.id]);
+
+            expect(pkg.graph).toHaveLength(1);
+            expect(pkg.graph).not.toContain(actor);
+            expect(pkg.graph).toContain(state);
+            // the removed instance itself is left untouched (not deleted/cleared):
+            expect(actor.status().ok).toBe(true);
+        });
+
+        test('removeItem() logs a warning for an id that is not part of the graph', () => {
+            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const pkg = new APackage();
+            pkg.graph = [actor];
+
+            pkg.removeItem(['d:does-not-exist']);
+
+            expect(pkg.graph).toHaveLength(1);
+            expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('d:does-not-exist'));
+            warnSpy.mockRestore();
+        });
+
+        test('removeItem() logs a warning when the package has no valid graph array', () => {
+            const warnSpy = jest.spyOn(LOG, 'warn').mockImplementation(() => {});
+            const pkg = new APackage();
+            (pkg as any).graph = undefined;
+
+            pkg.removeItem(['d:anything']);
+
+            expect(warnSpy).toHaveBeenCalled();
+            warnSpy.mockRestore();
+        });
+    });
 });
