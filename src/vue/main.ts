@@ -1,10 +1,10 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
-import ajvPlugin from './plugins/ajv';
-import { LOG } from './common/lib/messages';
+import ajvPlugin from '../common/lib/ajv';
+import { LOG } from '../common/lib/messages';
 import { ItemCache } from './stores/item-cache';
-// import { initModules } from './module-init-browser';
+// import { initModules } from '../module-init-browser';
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -12,7 +12,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
 import router from './router';
-import '@/styles/main.css';
+import '@/vue/styles/main.css';
 
 const vuetify = createVuetify({
     components,

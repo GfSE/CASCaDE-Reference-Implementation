@@ -25,8 +25,8 @@
  *   with the fully qualified URL path. This will make the items unique and allow to update them correctly.
  */
 import { defineStore } from 'pinia'
-import { APackage, TPigItem, PigItem, PigItemType } from '../common/schema/pig/ts/pig-metaclasses'
-import { LOG } from '../common/lib/messages'
+import { APackage, TPigItem, PigItem, PigItemType } from '../../common/schema/pig/ts/pig-metaclasses'
+import { LOG } from '../../common/lib/messages'
 
 // Legacy localStorage key, no longer used for persistence (kept only to remove
 // any leftover data from previous versions). localStorage is limited to ~5-10 MB

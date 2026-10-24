@@ -22,7 +22,7 @@ import { ReqifImporter } from '../../src/common/import/reqif/import-reqif';
 import { FmiImporter } from '../../src/common/import/fmi/import-fmi';
 import { JsonldImporter } from '../../src/common/import/jsonld/import-jsonld';
 import { XmlImporter } from '../../src/common/import/xml/import-xml';
-import { AssetCache } from '../../src/stores/asset-cache';
+import { AssetCache } from '../../src/vue/stores/asset-cache';
 
 describe('PLI.extractFromZip', () => {
     it('extracts the text content of a matching entry', () => {

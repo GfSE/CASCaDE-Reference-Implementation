@@ -145,11 +145,11 @@ import {
 
 import {
     ItemCache
-} from '@/stores/item-cache';
+} from '@/vue/stores/item-cache';
 
 import {
     AssetCache
-} from '@/stores/asset-cache';
+} from '@/vue/stores/asset-cache';
 
 
 @Options({

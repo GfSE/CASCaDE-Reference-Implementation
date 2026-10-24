@@ -27,7 +27,7 @@ import { IRsp, Rsp, Msg, LOG } from './messages';
 import { tagIETF } from './helpers';
 import { unzipSync, strFromU8, zipSync, strToU8 } from 'fflate';
 import SaxonJS from 'saxon-js';
-import { AssetCache, IAsset } from '../../stores/asset-cache';
+import { AssetCache, IAsset } from '../../vue/stores/asset-cache';
 import { Blob as NodeBlob } from 'buffer';
 
 /**

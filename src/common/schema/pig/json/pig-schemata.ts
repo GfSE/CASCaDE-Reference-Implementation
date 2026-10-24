@@ -14,7 +14,7 @@
  */
 
 import { DEF } from '../../../lib/definitions';
-import { ajv } from '../../../../plugins/ajv';
+import { ajv } from '../../../lib/ajv';
 
 class PigSchemaFactory {
     static getIdNamePattern() {

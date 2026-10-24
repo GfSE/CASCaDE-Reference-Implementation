@@ -35,7 +35,7 @@
 
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
-    import { ItemCache } from '@/stores/item-cache'
+    import { ItemCache } from '@/vue/stores/item-cache'
     import { MultiLanguageText } from '@/common/lib/helpers'
     import { PLI } from '@/common/lib/platform-independence'
     import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@/common/export/html/getHTML'

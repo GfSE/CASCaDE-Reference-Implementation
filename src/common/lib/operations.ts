@@ -1,4 +1,4 @@
-import { ItemCache } from '../../stores/item-cache';
+import { ItemCache } from '../../vue/stores/item-cache';
 import { TPigItem, TPigId, APackage } from '../schema/pig/ts/pig-metaclasses';
 import { LOG } from './messages';
 

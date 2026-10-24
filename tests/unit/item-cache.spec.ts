@@ -17,7 +17,7 @@ import { APackage, AnEntity, IAPackage, PigItemType } from '../../src/common/sch
     }
 };
 
-import { ItemCache } from '../../src/stores/item-cache';
+import { ItemCache } from '../../src/vue/stores/item-cache';
 
 describe('ItemCache store - update()', () => {
     beforeEach(() => {

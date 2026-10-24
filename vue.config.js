@@ -2,6 +2,13 @@ const { defineConfig } = require('@vue/cli-service');
 const webpack = require('webpack');
 
 module.exports = {
+    pages: {
+        app: {
+            entry: 'src/vue/main.ts',
+            template: 'public/index.html',
+            filename: 'index.html',
+        },
+    },
     configureWebpack: {
         resolve: {
             alias: {
@@ -25,9 +32,9 @@ module.exports = {
         },
         plugins: [
             require('unplugin-vue-components/webpack')({
-                dirs: ['src/components'],
+                dirs: ['src/vue/components'],
                 extensions: ['vue'],
-                globs: ['src/components/*.vue'],
+                globs: ['src/vue/components/*.vue'],
                 dts: true,
             }),
             // Provide global variables für Node.js compatibility

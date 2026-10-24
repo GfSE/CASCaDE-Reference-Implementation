@@ -45,7 +45,7 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component';
     import { DEF } from '@/common/lib/definitions';
-    import UrlQueries from '@/components/UrlQueries.vue';
+    import UrlQueries from '@/vue/components/UrlQueries.vue';
 
     @Options({
         components: {

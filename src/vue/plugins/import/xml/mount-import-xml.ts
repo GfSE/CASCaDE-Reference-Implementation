@@ -1,5 +1,5 @@
 /*!
- * XML Import Plugin Registration
+ * Import Plugin Registration for CASCaRA XML
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
@@ -7,42 +7,50 @@
  * Mounts the XML import plugin with the Vue application
  * 
  * Usage in main.ts:
- * import { xmlImportPlugin } from './plugins/import/xml/mount-import-xml';
+ * import { xmlImportPlugin } from './vue/plugins/import/xml/mount-import-xml';
  * 
  * app.use(xmlImportPlugin);
  */
 
 import type { App, Plugin, Component } from 'vue';
-import type { XmlImportPluginOptions } from './mount-import-xml';
 import ImportBase from '../import-base.vue';
 import type { ImportConfig } from '../import-config';
 import { XmlImporter } from '@/common/import/xml/import-xml';
 import { LOG } from '@/common/lib/messages';
 
 /**
- * Format-specific configuration for the generic ImportBase component.
- * Uses the optional `auxiliaryFile` field to show a SEF file input used
- * for XSL-Transformation of arbitrary XML documents.
+ * Format-specific configuration for the generic ImportBase component
  */
-const anyXmlImportConfig: ImportConfig = {
-    buttonLabel: 'any XML \uD83E\uDC55',
+const xmlImportConfig: ImportConfig = {
+    buttonLabel: 'CASCaRA XML \uD83E\uDC55',
     dialogTitle: 'Select XML Files',
     inputLabel: 'XML Input',
-    accept: '.xml,.xml.zip',
+    accept: '.cas.xml,.cas.xml.zip',
     hint: 'Select one or more XML files to import',
-    componentName: 'Import-Any-XML',
-    importFn: (file: File, auxiliaryFile?: File | null) => XmlImporter.import(file, { sef: auxiliaryFile }),
-    auxiliaryFile: {
-        label: 'SEF Input',
-        accept: '.sef.json',
-        hint: 'Select a SEF file for XSL-Transformation',
-        icon: 'mdi-file-code',
-        required: true,
-        requiredMessage: 'Please select a SEF file'
-    }
+    componentName: 'Import-XML',
+    importFn: (file: File) => XmlImporter.import(file, undefined)
 };
 
-const anyXmlImportPlugin: Plugin = {
+/**
+ * Plugin configuration options
+ */
+export type XmlImportPluginOptions = {
+    /**
+     * Maximum file size in bytes (default: 6MB)
+     */
+    maxFileSize?: number;
+
+    /**
+     * Custom error handler
+     */
+    onError?: (error: Error) => void;
+}
+
+/**
+ * XML Import Plugin installer
+ * Implements Vue Plugin interface for use with app.use()
+ */
+export const xmlImportPlugin: Plugin = {
     install(app: App, options: XmlImportPluginOptions = {}) {
         // Store options in app.config.globalProperties for component access
         app.config.globalProperties.$xmlImportOptions = {
@@ -52,11 +60,11 @@ const anyXmlImportPlugin: Plugin = {
 
         // Mount component globally
         // Don't change the name, it is used to filter the component in main.ts
-        app.component(anyXmlImportConfig.componentName, {
+        app.component(xmlImportConfig.componentName, {
             extends: ImportBase,
             props: {
                 config: {
-                    default: () => anyXmlImportConfig
+                    default: () => xmlImportConfig
                 }
             }
         } as Component);
@@ -65,4 +73,21 @@ const anyXmlImportPlugin: Plugin = {
     }
 };
 
-export default anyXmlImportPlugin;
+/**
+ * Export business logic for programmatic use
+ */
+// export { XmlImporter } from '../../../common/import/xml/import-xml';
+
+/**
+ * Type declarations for global properties
+ */
+declare module '@vue/runtime-core' {
+    interface ComponentCustomProperties {
+        $xmlImportOptions?: {
+            maxFileSize: number;
+            onError: (error: Error) => void;
+        };
+    }
+}
+
+export default xmlImportPlugin;

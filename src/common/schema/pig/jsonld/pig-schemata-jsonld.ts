@@ -40,7 +40,7 @@
 
 import type { JsonObject } from '../../../lib/helpers';
 import type { ValidateFunction } from 'ajv';
-import { ajv } from '../../../../plugins/ajv';
+import { ajv } from '../../../lib/ajv';
 import { PLI } from '../../../lib/platform-independence';
 
 /**

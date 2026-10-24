@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import PageHome from '@/components/PageHome.vue';
-import PageDashboards from '@/components/PageDashboards.vue';
-import PageInterfaces from '@/components/PageInterfaces.vue';
-import PageDocument from '@/components/PageDocument.vue';
-import PageOntology from '@/components/PageOntology.vue';
+import PageHome from '@/vue/components/PageHome.vue';
+import PageDashboards from '@/vue/components/PageDashboards.vue';
+import PageInterfaces from '@/vue/components/PageInterfaces.vue';
+import PageDocument from '@/vue/components/PageDocument.vue';
+import PageOntology from '@/vue/components/PageOntology.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {

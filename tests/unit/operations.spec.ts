@@ -18,7 +18,7 @@ import { APackage, IAPackage, PigItemType } from '../../src/common/schema/pig/ts
     }
 };
 
-import { ItemCache } from '../../src/stores/item-cache';
+import { ItemCache } from '../../src/vue/stores/item-cache';
 import { Operations } from '../../src/common/lib/operations';
 
 describe('Operations - addItemToAPackage() / removeItemFromAPackage()', () => {

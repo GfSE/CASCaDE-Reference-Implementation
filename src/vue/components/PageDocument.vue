@@ -40,7 +40,7 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import { toRaw } from 'vue'
-    import { ItemCache } from '@/stores/item-cache'
+    import { ItemCache } from '@/vue/stores/item-cache'
     import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@/common/export/html/getHTML'
     import { APackage, AnEntity, PigItemType } from '@/common/schema/pig/ts/pig-metaclasses'
     import { PLI } from '@/common/lib/platform-independence'

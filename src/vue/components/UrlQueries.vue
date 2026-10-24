@@ -49,8 +49,8 @@
     import { Options, Vue } from 'vue-class-component';
     import { DEF } from '@/common/lib/definitions';
     import { TPigItem } from '@/common/schema/pig/ts/pig-metaclasses';
-    import { ItemCache } from '@/stores/item-cache';
-    import { AssetCache } from '@/stores/asset-cache';
+    import { ItemCache } from '@/vue/stores/item-cache';
+    import { AssetCache } from '@/vue/stores/asset-cache';
     import { IRsp, LOG } from '@/common/lib/messages';
     import { JsonldImporter } from '@/common/import/jsonld/import-jsonld';
     import { XmlImporter } from '@/common/import/xml/import-xml';

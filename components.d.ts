@@ -11,15 +11,15 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    NavOutline: typeof import('./src/components/NavOutline.vue')['default']
-    NavOutlineItem: typeof import('./src/components/NavOutlineItem.vue')['default']
-    PageDashboards: typeof import('./src/components/PageDashboards.vue')['default']
-    PageDocument: typeof import('./src/components/PageDocument.vue')['default']
-    PageHome: typeof import('./src/components/PageHome.vue')['default']
-    PageInterfaces: typeof import('./src/components/PageInterfaces.vue')['default']
-    PageOntology: typeof import('./src/components/PageOntology.vue')['default']
+    NavOutline: typeof import('./src/vue/components/NavOutline.vue')['default']
+    NavOutlineItem: typeof import('./src/vue/components/NavOutlineItem.vue')['default']
+    PageDashboards: typeof import('./src/vue/components/PageDashboards.vue')['default']
+    PageDocument: typeof import('./src/vue/components/PageDocument.vue')['default']
+    PageHome: typeof import('./src/vue/components/PageHome.vue')['default']
+    PageInterfaces: typeof import('./src/vue/components/PageInterfaces.vue')['default']
+    PageOntology: typeof import('./src/vue/components/PageOntology.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    UrlQueries: typeof import('./src/components/UrlQueries.vue')['default']
+    UrlQueries: typeof import('./src/vue/components/UrlQueries.vue')['default']
   }
 }
