@@ -48,48 +48,128 @@ export function getCypher(item: TCascaraItem, options?: IOptionsCypher): string 
     return statements.filter(s => s.trim().length > 0).join('\n\n');
 }
 
-function exportPackage(pkg: APackage, options: Required<IOptionsCypher>): string[] {
-    const statements: string[] = [];
-    const rawGraphItems = Array.isArray(pkg.graph) ? pkg.graph : [];
 
-    // Nested/contained packages (not yet produced by current importers, but
-    // exporters must be prepared for them) are exported only as a proxy node -
-    // never with their full graph - to avoid duplicating/interleaving a nested
-    // package's contents with its own top-level export.
-    const graphItems: TCascaraItem[] = rawGraphItems.map(item =>
-        PigItem.isAPackage(item) ? ((item as APackage).getProxy() as unknown as TCascaraItem) : item
+function exportPackage(
+    pkg: APackage,
+    options: Required<IOptionsCypher>
+): string[] {
+    const statements: string[] = [];
+
+    const graphItems: TCascaraItem[] =
+        Array.isArray(pkg.graph) ? pkg.graph : [];
+
+    // Nested packages are references here, not owned graph items.
+    // Their own export maintains their properties and outgoing edges.
+    if (
+        graphItems.some(
+            item =>
+                PigItem.isAPackage(item) &&
+                item.id === pkg.id
+        )
+    ) {
+        throw new Error(
+            `Package ${pkg.id} cannot contain itself`
+        );
+    }
+
+    // Pass 1: Create or match the parent and graph-item nodes.
+    statements.push(
+        createMergeNode(
+            itemLabels(pkg as unknown as TCascaraItem),
+            pkg.id,
+            itemProperties(
+                pkg as unknown as TCascaraItem,
+                options
+            )
+        )
     );
 
-    // Pass 1: create all real nodes first.
-    statements.push(createMergeNode(itemLabels(pkg as unknown as TCascaraItem), pkg.id, itemProperties(pkg as unknown as TCascaraItem, options)));
-
     for (const graphItem of graphItems) {
-        statements.push(createMergeNode(itemLabels(graphItem), graphItem.id, itemProperties(graphItem, options)));
-    }
-
-    // Pass 2: create embedded enum-value nodes before relationships reference them.
-    for (const graphItem of graphItems) {
-        statements.push(...createEnumerationValueNodes(graphItem));
-    }
-
-    // Pass 3: clear relationships previously managed by this exporter. This makes
-    // repeated exports reflect removed or reordered embedded links/properties.
-    statements.push(clearManagedRelations(pkg.id));
-    for (const graphItem of graphItems) {
-        statements.push(clearManagedRelations(graphItem.id));
-    }
-
-    // Pass 4: create relationships.
-    statements.push(...graphItemRelations(pkg as unknown as TCascaraItem));
-    for (let graphIndex = 0; graphIndex < graphItems.length; graphIndex++) {
-        const graphItem = graphItems[graphIndex];
-        if (options.includePackageContains) {
-            statements.push(createRelation(pkg.id, graphItem.id, 'CONTAINS', {}, relationKey('contains', graphIndex)));
+        if (PigItem.isAPackage(graphItem)) {
+            // Only reference the nested package.
+            // Do not overwrite its properties.
+            statements.push(
+                createMergePackageReferenceNode(graphItem.id)
+            );
+        } else {
+            statements.push(
+                createMergeNode(
+                    itemLabels(graphItem),
+                    graphItem.id,
+                    itemProperties(graphItem, options)
+                )
+            );
         }
-        statements.push(...graphItemRelations(graphItem));
+    }
+
+    // Pass 2: Create embedded enumeration values.
+    // Skip nested packages because their data belongs
+    // to their own exports.
+    for (const graphItem of graphItems) {
+        if (!PigItem.isAPackage(graphItem)) {
+            statements.push(
+                ...createEnumerationValueNodes(graphItem)
+            );
+        }
+    }
+
+    // Pass 3: Clear only relationships belonging
+    // to the parent or complete graph items.
+    statements.push(clearManagedRelations(pkg.id));
+
+    for (const graphItem of graphItems) {
+        if (!PigItem.isAPackage(graphItem)) {
+            statements.push(
+                clearManagedRelations(graphItem.id)
+            );
+        }
+    }
+
+    // Pass 4: Create parent containment and
+    // full-item relationships.
+    statements.push(
+        ...graphItemRelations(
+            pkg as unknown as TCascaraItem
+        )
+    );
+
+    for (
+        let graphIndex = 0;
+        graphIndex < graphItems.length;
+        graphIndex++
+    ) {
+        const graphItem = graphItems[graphIndex];
+
+        if (options.includePackageContains) {
+            statements.push(
+                createRelation(
+                    pkg.id,
+                    graphItem.id,
+                    'CONTAINS',
+                    {},
+                    relationKey('contains', graphIndex)
+                )
+            );
+        }
+
+        // Nested packages manage their own outgoing edges.
+        if (!PigItem.isAPackage(graphItem)) {
+            statements.push(
+                ...graphItemRelations(graphItem)
+            );
+        }
     }
 
     return statements;
+}
+function createMergePackageReferenceNode(
+    id: string
+): string {
+    return [
+        `MERGE (n:CascaraItem {id: ${toCypherValue(id)}})`,
+        `ON CREATE SET n.referenceOnly = true, n.title = ${toCypherValue(id)}, n.itemType = 'cas:aPackage'`,
+        'SET n:Package:aPackage;'
+    ].join('\n');
 }
 
 function exportSingleItem(item: TCascaraItem, options: Required<IOptionsCypher>): string[] {

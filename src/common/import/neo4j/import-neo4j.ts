@@ -553,7 +553,7 @@ export class Neo4jImporter {
                                 : 'cas:aTargetLink'
                         ),
 
-                    hasClass:
+                    instanceOf:
                         relation.properties
                             .linkClass,
 
@@ -692,7 +692,7 @@ export class Neo4jImporter {
                                 .itemType ||
                             'cas:aProperty',
 
-                        hasClass:
+                        instanceOf:
                             relation.properties
                                 .propertyClass ||
                             relation.targetId
