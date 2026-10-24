@@ -1,6 +1,11 @@
 .DS_Store
 node_modules
 /dist
+packages/*/dist
+
+# Windows junctions created during workspace migration (duplicate real content elsewhere)
+packages/common/public
+packages/vue/data
 
 /tests/e2e/videos/
 /tests/e2e/screenshots/

@@ -1,0 +1,17 @@
+{
+  "name": "@cascade/server",
+  "version": "0.0.1",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@cascade/common": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.1",
+    "typescript": "4.7"
+  }
+}
