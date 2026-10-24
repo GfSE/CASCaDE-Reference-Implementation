@@ -109,13 +109,15 @@
                 }
                 visit(this.nodes, null)
                 return map
+            },
+            selectedNode(): OutlineNode | null {
+                return this.selectedId === null ? null : this.nodeById.get(this.selectedId) ?? null
             }
         },
         watch: {
-            selectedId: {
+            selectedNode: {
                 immediate: true,
-                handler(id: string | null) {
-                    const node = id === null ? null : (this.nodeById as Map<string, OutlineNode>).get(id) ?? null
+                handler(node: OutlineNode | null) {
                     this.$emit('select', node)
                 }
             }
