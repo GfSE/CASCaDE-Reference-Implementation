@@ -76,7 +76,8 @@
             selectedHtml: {
                 immediate: true,
                 async handler(html: stringHTML | null) {
-                    this.resolvedHtml = html === null ? null : await resolveAssetImagesInHtml(html)
+                    const resolved = html === null ? null : await resolveAssetImagesInHtml(html)
+                    if (html === this.selectedHtml) this.resolvedHtml = resolved
                 }
             }
         },
