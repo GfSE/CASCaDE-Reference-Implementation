@@ -55,7 +55,7 @@
 <script lang="ts">
     import { inject } from 'vue';
     import { Options, Vue } from 'vue-class-component';
-    import { DEF } from '@cascade/common/lib/definitions';
+    import { DEF } from '@cascara/common/lib/definitions';
 
     @Options({
         name: 'PageHome',

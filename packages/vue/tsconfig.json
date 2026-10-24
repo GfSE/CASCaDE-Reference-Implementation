@@ -11,7 +11,7 @@
       "@/*": [
         "src/*"
       ],
-      "@cascade/common/*": [
+      "@cascara/common/*": [
         "../common/src/*"
       ]
     },

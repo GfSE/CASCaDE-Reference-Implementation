@@ -1,4 +1,4 @@
-import { ajv } from '@cascade/common/lib/ajv';
+import { ajv } from '@cascara/common/lib/ajv';
 
 export default {
     install(app: any) {

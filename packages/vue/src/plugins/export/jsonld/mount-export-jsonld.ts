@@ -1,7 +1,7 @@
 import { App, Plugin, Component } from 'vue';
 import ExportBase from '../export-base.vue';
 import { ExportConfig } from '../export-config';
-import { getJSONLD } from '@cascade/common/export/jsonld/getJSONLD';
+import { getJSONLD } from '@cascara/common/export/jsonld/getJSONLD';
 
 /**
  * Format-specific configuration for the generic ExportBase component

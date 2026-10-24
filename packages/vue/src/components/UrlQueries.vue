@@ -47,14 +47,14 @@
 
 <script lang="ts">
     import { Options, Vue } from 'vue-class-component';
-    import { DEF } from '@cascade/common/lib/definitions';
-    import { TPigItem } from '@cascade/common/schema/pig/ts/pig-metaclasses';
+    import { DEF } from '@cascara/common/lib/definitions';
+    import { TPigItem } from '@cascara/common/schema/pig/ts/pig-metaclasses';
     import { ItemCache } from '@/stores/item-cache';
     import { AssetCache } from '@/stores/asset-cache';
-    import { IRsp, LOG } from '@cascade/common/lib/messages';
-    import { JsonldImporter } from '@cascade/common/import/jsonld/import-jsonld';
-    import { XmlImporter } from '@cascade/common/import/xml/import-xml';
-    import { ReqifImporter } from '@cascade/common/import/reqif/import-reqif';
+    import { IRsp, LOG } from '@cascara/common/lib/messages';
+    import { JsonldImporter } from '@cascara/common/import/jsonld/import-jsonld';
+    import { XmlImporter } from '@cascara/common/import/xml/import-xml';
+    import { ReqifImporter } from '@cascara/common/import/reqif/import-reqif';
 
     type UrlImportFn = (url: string) => Promise<IRsp<unknown>[]>;
 

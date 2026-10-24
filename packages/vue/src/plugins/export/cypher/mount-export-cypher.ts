@@ -1,8 +1,8 @@
 import { App, Plugin, Component } from 'vue';
 import ExportBase from '../export-base.vue';
 import { ExportConfig } from '../export-config';
-import { getCypher } from '@cascade/common/export/cypher/getCypher';
-import { APackage } from '@cascade/common/schema/pig/ts/pig-metaclasses';
+import { getCypher } from '@cascara/common/export/cypher/getCypher';
+import { APackage } from '@cascara/common/schema/pig/ts/pig-metaclasses';
 
 /**
  * Format-specific configuration for the generic ExportBase component

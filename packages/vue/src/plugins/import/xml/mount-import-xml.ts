@@ -15,8 +15,8 @@
 import type { App, Plugin, Component } from 'vue';
 import ImportBase from '../import-base.vue';
 import type { ImportConfig } from '../import-config';
-import { XmlImporter } from '@cascade/common/import/xml/import-xml';
-import { LOG } from '@cascade/common/lib/messages';
+import { XmlImporter } from '@cascara/common/import/xml/import-xml';
+import { LOG } from '@cascara/common/lib/messages';
 
 /**
  * Format-specific configuration for the generic ImportBase component

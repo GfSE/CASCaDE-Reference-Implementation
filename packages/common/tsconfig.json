@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@cascade/common/*": [
+      "@cascara/common/*": [
         "src/*"
       ]
     },

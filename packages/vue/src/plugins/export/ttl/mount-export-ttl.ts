@@ -1,7 +1,7 @@
 import { App, Plugin, Component } from 'vue';
 import ExportBase from '../export-base.vue';
 import { ExportConfig } from '../export-config';
-import { getTTL } from '@cascade/common/export/ttl/getTTL';
+import { getTTL } from '@cascara/common/export/ttl/getTTL';
 
 /**
  * Format-specific configuration for the generic ExportBase component

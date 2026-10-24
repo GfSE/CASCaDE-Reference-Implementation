@@ -14,7 +14,7 @@ module.exports = {
         resolve: {
             alias: {
                 'vue$': 'vue/dist/vue.esm-bundler.js',
-                '@cascade/common': path.resolve(__dirname, '../common/src'),
+                '@cascara/common': path.resolve(__dirname, '../common/src'),
             },
             fallback: {
                 // Polyfills für Saxon-JS (Node.js core modules)

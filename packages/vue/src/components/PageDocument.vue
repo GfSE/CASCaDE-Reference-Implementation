@@ -41,16 +41,16 @@
     import { Vue, Options } from 'vue-class-component'
     import { toRaw } from 'vue'
     import { ItemCache } from '@/stores/item-cache'
-    import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@cascade/common/export/html/getHTML'
-    import { APackage, AnEntity, PigItemType } from '@cascade/common/schema/pig/ts/pig-metaclasses'
-    import { PLI } from '@cascade/common/lib/platform-independence'
+    import { getHTML, resolveAssetImagesInHtml, stringHTML } from '@cascara/common/export/html/getHTML'
+    import { APackage, AnEntity, PigItemType } from '@cascara/common/schema/pig/ts/pig-metaclasses'
+    import { PLI } from '@cascara/common/lib/platform-independence'
     import NavOutline from './NavOutline.vue'
     import NavOutlineItem from './NavOutlineItem.vue'
     // OutlineNode is declared and exported from NavOutlineItem.vue; since the '*.vue'
     // module shim only exposes a default export to TypeScript, derive the type from the
     // component's own 'node' prop instead of importing it as a named type:
     type OutlineNode = InstanceType<typeof NavOutlineItem>['node']
-//    import { LOG } from '@cascade/common/lib/helpers'
+//    import { LOG } from '@cascara/common/lib/helpers'
 
     function extractTitle(html: string): string | null {
         const match = html.match(/<[^>]*class=["'][^"']*meta-title[^"']*["'][^>]*>(.*?)<\/[^>]+>/i);

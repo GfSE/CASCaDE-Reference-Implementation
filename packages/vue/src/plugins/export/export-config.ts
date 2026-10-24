@@ -3,7 +3,7 @@
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
-import { IIdentifiable } from '@cascade/common/schema/pig/ts/pig-metaclasses';
+import { IIdentifiable } from '@cascara/common/schema/pig/ts/pig-metaclasses';
 
 /**
  * Describes everything that differs between the format-specific export dialogs

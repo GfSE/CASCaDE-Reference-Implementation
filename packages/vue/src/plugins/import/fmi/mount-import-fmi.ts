@@ -1,7 +1,7 @@
 import { App, Plugin, Component } from 'vue';
 import ImportBase from '../import-base.vue';
 import { ImportConfig } from '../import-config';
-import { FmiImporter } from '@cascade/common/import/fmi/import-fmi';
+import { FmiImporter } from '@cascara/common/import/fmi/import-fmi';
 
 /**
  * Format-specific configuration for the generic ImportBase component

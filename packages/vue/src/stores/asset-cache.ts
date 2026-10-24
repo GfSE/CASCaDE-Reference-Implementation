@@ -17,9 +17,9 @@
  */
 import { defineStore } from 'pinia'
 import { toRaw } from 'vue'
-import { TISODateString } from '@cascade/common/lib/helpers'
-import { LOG } from '@cascade/common/lib/messages'
-import { TRevision } from '@cascade/common/schema/pig/ts/pig-metaclasses'
+import { TISODateString } from '@cascara/common/lib/helpers'
+import { LOG } from '@cascara/common/lib/messages'
+import { TRevision } from '@cascara/common/schema/pig/ts/pig-metaclasses'
 
 /**
  * Descriptor for a single binary asset (e.g. an image referenced by a package),

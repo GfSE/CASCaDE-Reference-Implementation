@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import ajvPlugin from './plugins/ajv';
-import { LOG } from '@cascade/common/lib/messages';
+import { LOG } from '@cascara/common/lib/messages';
 import { ItemCache } from './stores/item-cache';
 // import { initModules } from '../module-init-browser';
 

@@ -96,12 +96,12 @@
 </template>
 
 <script lang="ts">
-    import { DEF } from '@cascade/common/lib/definitions';
+    import { DEF } from '@cascara/common/lib/definitions';
     import { Options, Vue } from 'vue-class-component';
-    import { TPigItem, APackage } from '@cascade/common/schema/pig/ts/pig-metaclasses';
+    import { TPigItem, APackage } from '@cascara/common/schema/pig/ts/pig-metaclasses';
     import { ItemCache } from '@/stores/item-cache';
     import { AssetCache } from '@/stores/asset-cache';
-    import { Msg, IRsp, LOG } from '@cascade/common/lib/messages';
+    import { Msg, IRsp, LOG } from '@cascara/common/lib/messages';
     import { ImportConfig } from '@/plugins/import/import-config';
 
     /**

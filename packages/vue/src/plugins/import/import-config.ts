@@ -3,7 +3,7 @@
  * Copyright 2025 GfSE (https://gfse.org)
  * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
  */
-import { IRsp } from '@cascade/common/lib/messages';
+import { IRsp } from '@cascara/common/lib/messages';
 
 /**
  * Describes everything that differs between the format-specific import dialogs

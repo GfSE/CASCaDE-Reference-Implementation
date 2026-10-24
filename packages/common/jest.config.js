@@ -3,7 +3,7 @@ module.exports = {
     testMatch: ['<rootDir>/tests/**/*.spec.ts'],
     preset: 'ts-jest',
     moduleNameMapper: {
-        '^@cascade/common/(.*)$': '<rootDir>/src/$1'
+        '^@cascara/common/(.*)$': '<rootDir>/src/$1'
     },
     globals: {
         'ts-jest': {

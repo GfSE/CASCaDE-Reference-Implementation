@@ -59,7 +59,7 @@
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component'
     import type { PropType } from 'vue'
-    import type { stringHTML } from '@cascade/common/export/html/getHTML'
+    import type { stringHTML } from '@cascara/common/export/html/getHTML'
 
     // A single node of the document outline tree, built recursively from
     // anEntity instances connected via aTargetLink of class 'cas:lists':

@@ -1,7 +1,7 @@
 import { App, Plugin, Component } from 'vue';
 import ExportBase from '../export-base.vue';
 import { ExportConfig } from '../export-config';
-import { getXML } from '@cascade/common/export/xml/getXML';
+import { getXML } from '@cascara/common/export/xml/getXML';
 
 /**
  * Format-specific configuration for the generic ExportBase component

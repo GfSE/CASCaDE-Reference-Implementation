@@ -1,7 +1,7 @@
 import { App, Plugin, Component } from 'vue';
 import ImportBase from '../import-base.vue';
 import { ImportConfig } from '../import-config';
-import { JsonldImporter } from '@cascade/common/import/jsonld/import-jsonld';
+import { JsonldImporter } from '@cascara/common/import/jsonld/import-jsonld';
 
 /**
  * Format-specific configuration for the generic ImportBase component

@@ -1,6 +1,6 @@
 import { ItemCache } from '../stores/item-cache';
-import { TPigItem, TPigId, APackage } from '@cascade/common/schema/pig/ts/pig-metaclasses';
-import { LOG } from '@cascade/common/lib/messages';
+import { TPigItem, TPigId, APackage } from '@cascara/common/schema/pig/ts/pig-metaclasses';
+import { LOG } from '@cascara/common/lib/messages';
 
 /**
  * Operations working on APackage instances held in the ItemCache.

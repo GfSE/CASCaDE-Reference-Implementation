@@ -1,7 +1,7 @@
 import { App, Plugin, Component } from 'vue';
 import ImportBase from '../import-base.vue';
 import { ImportConfig } from '../import-config';
-import { ReqifImporter } from '@cascade/common/import/reqif/import-reqif';
+import { ReqifImporter } from '@cascara/common/import/reqif/import-reqif';
 
 /**
  * Format-specific configuration for the generic ImportBase component

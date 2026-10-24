@@ -93,9 +93,9 @@
 import { Options, Vue } from 'vue-class-component';
 import { toRaw } from 'vue';
 import { ItemCache } from '../../../stores/item-cache';
-import { getCypher } from '@cascade/common/export/cypher/getCypher';
+import { getCypher } from '@cascara/common/export/cypher/getCypher';
 import { exportToNeo4j } from './neo4j-export';
-import { LOG } from '@cascade/common/lib/messages';
+import { LOG } from '@cascara/common/lib/messages';
 
 @Options({
   data() {

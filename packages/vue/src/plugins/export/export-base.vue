@@ -80,11 +80,11 @@
 import { Options, Vue } from 'vue-class-component';
 import { toRaw } from 'vue';
 import { ItemCache } from '@/stores/item-cache';
-import { PLI } from '@cascade/common/lib/platform-independence';
-import { LIB } from '@cascade/common/lib/helpers';
-import { LOG } from '@cascade/common/lib/messages';
+import { PLI } from '@cascara/common/lib/platform-independence';
+import { LIB } from '@cascara/common/lib/helpers';
+import { LOG } from '@cascara/common/lib/messages';
 import { ExportConfig } from '@/plugins/export/export-config';
-import { PigItemType } from '@cascade/common/schema/pig/ts/pig-metaclasses';
+import { PigItemType } from '@cascara/common/schema/pig/ts/pig-metaclasses';
 
 /**
  * Generic export dialog, driven by a format-specific ExportConfig (see export-config.ts).
