@@ -1,0 +1,166 @@
+{
+  "@context": {
+    "IREB": "https://cpre.ireb.org/en/downloads-and-resources/glossary#",
+    "cas": "https://product-information-graph.org/v0.2/metamodel#",
+    "d": "https://product-information-graph.org/examples/09_Very-Simple-Model-FMC-with-Requirements.specif.zip#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "o": "https://product-information-graph.org/v0.2/ontology#",
+    "oslc_rm": "http://open-services.net/ns/rm#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "skos": "https://www.w3.org/TR/skos-reference/",
+    "xs": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "d:ACP-Very-Simple-Model-FMC-with-Requirements",
+  "@type": "cas:Package",
+  "@graph": [
+    {
+      "@id": "cas:Entity",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Entity"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Entity is a type of model elements, such as a system component or a requirement. An Entity is an owl:Class."
+        }
+      ]
+    },
+    {
+      "@id": "cas:Property",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Property"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Every type 'Entity' and 'Relationship' can have an individual set of configurable properties, each of which is uniquely defined by id (name), datatype and range. A Property is an owl:DatatypeProperty."
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "cas:Category",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "has category"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Specifies a category for an element (entity, relationship or organizer)."
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:maxCount": 1,
+      "sh:maxLength": 32,
+      "sh:minCount": 0
+    },
+    {
+      "@id": "IREB:Requirement",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Requirement",
+          "@language": "en"
+        },
+        {
+          "@value": "Anforderung",
+          "@language": "de"
+        },
+        {
+          "@value": "Exigence",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "<p>A 'Requirement' is a singular documented physical and functional need that a particular design, product or process must be able to perform. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Eine 'Anforderung' ist ein einzelnes dokumentiertes physisches und funktionales Bedürfnis, das ein bestimmter Entwurf, ein Produkt oder ein Prozess erfüllen muss. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p>",
+          "@language": "de"
+        },
+        {
+          "@value": "<p>Une 'Exigence' est un besoin physique et fonctionnel unique et documenté qu'une conception, un produit ou un processus particulier doit pouvoir satisfaire. <small>(<i>source: <a href=\"https://en.wikipedia.org/wiki/Requirement\">Wikipedia</a></i>)</small></p",
+          "@language": "fr"
+        }
+      ],
+      "cas:icon": {
+        "@value": "&#8623;"
+      },
+      "dcterms:modified": "2021-02-22T08:59:00+02:00",
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+	  ],
+      "cas:enumeratedTargetLink": []
+    },
+    {
+      "@id": "d:Req-2b9016e2872e78ecadc50feddc0013Ac",
+      "@type": "IREB:Requirement",
+      "cas:itemType": {
+        "@id": "cas:anEntity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Response Time"
+        }
+      ],
+      "dcterms:description": [
+        {
+          "@value": "<p>The system SHOULD respond on user queries within 300 ms.</p>"
+        }
+      ],
+      "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "cas:Category": [
+        {
+          "@value": "Functional Requirement",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+      ]
+	}
+  ],
+  "cas:itemType": {
+    "@id": "cas:aPackage"
+  },
+  "dcterms:title": [
+    {
+      "@value": "Very Simple Model (FMC) with Requirements"
+    }
+  ],
+  "dcterms:modified": "2026-09-30T10:23:15.010Z"
+}
