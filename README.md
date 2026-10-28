@@ -27,6 +27,43 @@ Major requirements (capabilities and characteristics) must be satisfied:
 - Comply with *web-technology* and avoid propriatory formats.
 - Extend the software using a documented, if possible standardized plug-in mechanism.
 
+## Package structure
+This repository is organized as an npm workspace with the following packages under `packages/`:
+- `packages/common` (`@cascara/common`): Platform-independent core logic shared by all apps, including
+  the data model, import/export transformations, schema validation and platform-independence helpers.
+  It has no dependency on Vue or any particular UI/server framework.
+- `packages/vue` (`@cascara/vue`): The browser-based web application (the CASCaRA Validation Tool UI),
+  built with Vue 3 and Vue CLI. It depends on `@cascara/common` for all domain logic.
+- `packages/server` (`@cascara/server`): A server-side package (work in progress). Build instructions
+  for the server will be added later.
+
+## Building and running the browser (Vue) app
+The project uses npm workspaces, so dependencies for all packages are installed from the repository root:
+```
+npm install
+```
+
+To start the Vue app in development mode (with hot-reload) run from the repository root:
+```
+npm run serve
+```
+
+Other useful root-level scripts (each delegates to the `@cascara/vue` workspace):
+- `npm run build:vue` - creates a production build of the Vue app.
+- `npm run lint` - lints the Vue app sources.
+- `npm run test:unit` - runs the unit tests of `@cascara/common` and `@cascara/vue`.
+
+To create a full production build run from the repository root:
+```
+npm run build
+```
+
+This runs `npm run build:xslt` (transforms the XSLT stylesheets used for FMI/ReqIF and other
+into SEF/JSON via Saxon-JS, see `scripts/compile-xslt.js`) followed by `npm run build:vue`
+(the production build of the Vue app, see `packages/vue`). As part of the total build, a
+`prebuild`/`predev` hook (see `scripts/generate-build-info.js`) auto-generates
+`packages/common/src/build-info.ts` with version/commit/timestamp information that is embedded in the app.
+
 ## Collaboration rules:
 - This repository has two protected branches, namely 'main' and 'dev', where 'dev' is the default.
 - The 'main' branch keeps just the released versions. In particular, it has a 'docs' folder which is published by GitHub pages.

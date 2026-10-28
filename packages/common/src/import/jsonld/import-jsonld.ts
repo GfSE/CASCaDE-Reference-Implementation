@@ -1,0 +1,229 @@
+/*!
+ * Cross-environment JSON-LD importer.
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ */
+/**
+ * JSON-LD Importer - Static class for importing PIG JSON-LD documents
+ * 
+ * Cross-environment JSON-LD importer:
+ * - Accepts a Node file path, an http(s) URL string or a browser File/Blob.
+ * - Extracts elements from '@graph' (or 'graph'), converts JSON-LD keys to internal keys
+ *   and instantiates matching PIG class instances where possible.
+ *
+ * Authors: oskar.dungern@gfse.org
+ * 
+ * Design Decisions:
+ * - Static class design for consistency with ReqIFImporter and XmlImporter
+ * - Direct JSON-LD processing without transformation
+ * - Validation through APackage.setJSONLD() method
+ * 
+ * Usage:
+ * - Node:   await JsonldImporter.import('C:/path/to/file.jsonld')
+ * - URL:    await JsonldImporter.import('https://example/.../doc.jsonld')
+ * - Browser: await JsonldImporter.import(fileInput.files[0])
+ */
+
+import { IRsp, rspOK, Rsp, Msg, LOG } from '../../lib/messages';
+import { JsonObject, JsonArray } from '../../lib/helpers';
+import { PLI } from '../../lib/platform-independence';
+import { APackage, TPigItem } from '../../schema/pig/ts/pig-metaclasses';
+import { SCH_LD } from '../../schema/pig/jsonld/pig-schemata-jsonld';
+
+/**
+ * JSON-LD Importer
+ * Static class for importing and parsing PIG JSON-LD documents
+ */
+export class JsonldImporter {
+    /**
+     * Import JSON-LD document(s) and instantiate PIG items.
+     * If the source is a ZIP archive containing several .jsonld files, each is
+     * parsed and instantiated separately; the inner loop over ZIP entries happens here.
+     *
+     * @param source - File path (Node.js), URL, or File/Blob object (Browser)
+     * @returns array of IRsp, one per imported package (first item of each is APackage, rest are graph items)
+     * 
+     * @example
+     * // Node.js
+     * const results = await JsonldImporter.import('./package.jsonld');
+     * 
+     * @example
+     * // Browser
+     * const file = fileInput.files[0];
+     * const results = await JsonldImporter.import(file);
+     * 
+     * @example
+     * // URL
+     * const results = await JsonldImporter.import('https://example.org/data.cas.jsonld');
+     */
+    static async import(source: string | File | Blob): Promise<IRsp[]> {
+        // Extract filename for zip detection (Blob without a name is treated as non-zipped)
+        const filename = typeof source === 'string' ? source : (source as File).name ?? '';
+        const normalized = filename.split(/[?#]/, 1)[0].toLowerCase();
+        const isZipped = normalized.endsWith('.zip');
+
+        // Read file content, unpacking the archive first if the file is zipped.
+        // A ZIP may contain several .jsonld files; each is parsed and instantiated separately.
+        let jsonTexts: string[];
+        if (isZipped) {
+            const rspJson = await this.extractJsonLd(source, filename);
+            if (!rspJson.ok) {
+                return [rspJson];
+            }
+            jsonTexts = rspJson.response as string[];
+        } else {
+            const rsp = await PLI.readFileAsText(source);
+            if (!rsp.ok) {
+                return [rsp];
+            }
+            jsonTexts = [rsp.response as string];
+        }
+
+        return Promise.all(jsonTexts.map((jsonText) => this.parseOne(jsonText)));
+    }
+
+    /**
+     * Parse a single JSON-LD document (already extracted from a possible ZIP archive),
+     * validate it and instantiate the contained PIG items.
+     *
+     * @param jsonToParse - JSON-LD text content
+     * @returns IRsp containing array of TPigItem (first item is APackage, rest are graph items)
+     * @private
+     */
+    private static async parseOne(jsonToParse: string): Promise<IRsp> {
+        // Parse JSON document
+        let doc: JsonObject;
+        try {
+            doc = JSON.parse(jsonToParse) as JsonObject;
+        } catch (err: unknown) {
+            const errorMessage = err instanceof Error ? err.message : String(err);
+            return Msg.create(690, 'JSON-LD', errorMessage);
+        }
+
+        // Check JSON-LD document structure
+        const validationResult = await this.checkJsonLdDocument(doc);
+        if (!validationResult.ok) {
+            // LOG.debug('JsonldImporter.import: JSON-LD document validation failed',validationResult);
+            return validationResult;
+        }
+        // LOG.debug('JsonldImporter.import: JSON-LD document validation succeeded', validationResult);
+
+        // Instantiate APackage and load the document
+        const aPackage = new APackage().setJSONLD(doc);
+
+        return { ...aPackage.status(), response: aPackage.getItems(), responseType: 'json' };
+
+    /*  Alternatively, if you want to return a more detailed IRsp with counts and messages, you can do the following:
+        ... however, an error message form setJSONLD() is not forwarded to the caller - needs some rework.
+        // Get all items (package + graph items)
+        const allItems = aPackage.getItems();
+
+        // Calculate import statistics
+        const expectedCount = (doc['@graph'] as JsonArray)?.length || 0;
+        const actualCount = allItems.length - 1; // -1 for package itself
+
+        // Build result response
+        let result: IRsp;
+        if (actualCount === expectedCount) {
+            LOG.info(
+                `JsonldImporter: successfully imported package with all ${actualCount} items`
+            );
+            result = Rsp.create(0, allItems, 'json', 'JSON-LD', actualCount, expectedCount);
+        } else {
+            // Log details about erroneous items
+            const errorDetails = this.buildErrorReport(allItems);
+            LOG.warn(
+                `JsonldImporter: imported ${actualCount} of ${expectedCount} items${errorDetails}`
+            );
+
+            result = Rsp.create(603, allItems, 'json', 'Import JSON-LD', actualCount, expectedCount);
+        }
+
+        return result as IRsp<TPigItem[]>;  */
+    }
+
+    /**
+     * Read a .cas.jsonld.zip archive and return the text content of all contained .jsonld files.
+     *
+     * @param source - File path (Node.js), URL, or File/Blob (Browser)
+     * @param filename - original filename for error messages
+     * @returns IRsp whose response is an array of JSON-LD texts (one per matching entry)
+     * @private
+     */
+    private static async extractJsonLd(
+        source: string | File | Blob,
+        filename: string
+    ): Promise<IRsp> {
+        const rspBytes = await PLI.readFileAsBytes(source);
+        if (!rspBytes.ok) {
+            return rspBytes;
+        }
+
+        const rsp = PLI.extractFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name.toLowerCase().endsWith('.cas.jsonld'),
+            filename
+        );
+        if (!rsp.ok) {
+            return rsp;
+        }
+
+        // Extract any other (non-.cas.jsonld) files bundled in the archive (e.g. images) and
+        // store them in the asset-cache for later use.
+        const rspOther = PLI.extractOtherFromZip(
+            rspBytes.response as Uint8Array,
+            (name) => name.toLowerCase().endsWith('.jsonld'), // not .cas.jsonld on purpose
+            filename
+        );
+        if (rspOther.ok) {
+            await PLI.setAssets(PLI.toAssets(rspOther.response as { name: string; data: Uint8Array }[]));
+        }
+
+        return rsp;
+    }
+
+    /**
+     * Validate JSON-LD document structure
+     * 
+     * Checks for:
+     * - Valid @context
+     * - Valid @graph structure
+     * - Schema compliance
+     * 
+     * @param doc - Parsed JSON-LD document
+     * @returns IRsp indicating success or error
+     * @private
+     */
+    private static async checkJsonLdDocument(doc: JsonObject): Promise<IRsp> {
+        // Validate entire JSON-LD document structure using schema
+        const isValidPackage = await SCH_LD.validateAPackageLD(doc);
+
+        if (!isValidPackage) {
+            const errors = await SCH_LD.getValidateAPackageLDErrors();
+            LOG.error('JSON-LD package validation failed:', errors);
+            return Msg.create(683, 'JSON-LD', errors);
+        }
+
+        return rspOK;
+    }
+
+    /**
+     * Build detailed error report for failed items
+     * 
+     * @param allItems - All items including package
+     * @returns Formatted error report string
+     * @private
+     */
+    private static buildErrorReport(allItems: TPigItem[]): string {
+        let errorReport = '\nErroneous items:';
+
+        for (let i = 1; i < allItems.length; i++) {
+            const status = allItems[i].status();
+            if (!status.ok) {
+                errorReport += `\n- graph[${i}]: (${status.status}) ${status.statusText}`;
+            }
+        }
+
+        return errorReport;
+    }
+}

@@ -101,6 +101,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -150,6 +152,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
     delete:
       tags: [Repository]
       summary: Delete a repository, including its content
@@ -161,6 +165,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
 
   #############################
   # Item (any metamodel item type)
@@ -183,6 +189,8 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
         - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/query'
+        - $ref: '#/components/parameters/queryLanguage'
         - $ref: '#/components/parameters/format'
         - $ref: '#/components/parameters/Accept'
       responses:
@@ -205,6 +213,8 @@ paths:
                 description: RDF Turtle serialization of the array of items.
         '400':
           $ref: '#/components/responses/BadRequest'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     post:
       tags: [Item]
       summary: Create one or more new items of any CASCaRA item type
@@ -236,6 +246,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/items/{itemId}:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -292,6 +304,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
     delete:
       tags: [Item]
       summary: Delete an item of any CASCaRA item type
@@ -303,6 +317,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/items/{itemId}/revisions:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -403,6 +419,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/apackages/{itemId}:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -453,6 +471,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
     delete:
       tags: [aPackage]
       summary: Delete an aPackage instance, including its graph
@@ -464,6 +484,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/apackages/{itemId}/revisions:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -534,6 +556,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
     delete:
       tags: [aPackage]
       summary: Remove items from an aPackage's graph
@@ -562,6 +586,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
 
 components:
   parameters:
@@ -628,6 +654,32 @@ components:
       description: Filter instances of the given class URI.
       schema:
         type: string
+    query:
+      name: query
+      in: query
+      required: false
+      description: >
+        Optional SPARQL (e.g. a `SELECT`/`ASK`/`CONSTRUCT` query body) or
+        GraphQL query string used to filter the returned list of items
+        beyond what `itemType`, `specializes` and `type` already express.
+        The query language is auto-detected from the syntax; alternatively
+        it can be made explicit via the `queryLanguage` parameter. If both
+        `query` and other filter parameters are given, `query` is applied
+        in addition to (not instead of) the other filters.
+      schema:
+        type: string
+    queryLanguage:
+      name: queryLanguage
+      in: query
+      required: false
+      description: >
+        Explicitly selects the query language used to interpret the
+        `query` parameter. If omitted, the language is auto-detected.
+      schema:
+        type: string
+        enum:
+          - sparql
+          - graphql
     itemType:
       name: itemType
       in: query
@@ -718,3 +770,26 @@ components:
         application/json:
           schema:
             type: object
+    PreconditionFailed:
+      description: Rejected because of an intermittent change by another user (optimistic lock).
+      content:
+        application/json:
+          schema:
+            type: object
+          example:
+            message: 'Rejected because of an intermittent change by an other user (optimistic lock)'
+    NotImplemented:
+      description: The requested feature is recognized but not (yet) implemented by this server.
+      content:
+        application/json:
+          schema:
+            type: object
+          examples:
+            queryLanguageNotImplemented:
+              summary: Unsupported queryLanguage
+              value:
+                message: 'queryLanguage not implemented'
+            formatNotImplemented:
+              summary: Unsupported format
+              value:
+                message: 'format not implemented'
