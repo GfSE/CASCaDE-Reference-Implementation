@@ -765,19 +765,19 @@ components:
           schema:
             type: object
     Conflict:
-      description: The operation conflicts with the current state (e.g. duplicate id, or item still referenced).
-      content:
-        application/json:
-          schema:
-            type: object
-    PreconditionFailed:
-      description: Rejected because of an intermittent change by another user (optimistic lock).
+      description: Rejected because the item was meanwhile changed by another user (optimistic lock).
       content:
         application/json:
           schema:
             type: object
           example:
-            message: 'Rejected because of an intermittent change by an other user (optimistic lock)'
+            message: 'Rejected because the item was meanwhile changed by another user (optimistic lock)'
+    PreconditionFailed:
+      description: The operation conflicts with the current state (e.g. duplicate id or item still referenced).
+      content:
+        application/json:
+          schema:
+            type: object
     NotImplemented:
       description: The requested feature is recognized but not (yet) implemented by this server.
       content:

@@ -1516,6 +1516,7 @@ export class APackage extends AnElement implements IAPackage {
         // ... only at the lowest subclass level:
         // LOG.debug('APackage.validate: ', pkg);
         try {
+            //LOG.debug('APackage.validate: schema validation failed', pkg);
             const ok = SCH.validateAPackageSchema(pkg);
             if (!ok) {
                 const msg = SCH.getValidateAPackageErrors();
@@ -2081,13 +2082,25 @@ export class APackage extends AnElement implements IAPackage {
      */
     private xContextXML(xmlString: stringXML, docId:string): INamespace[] {
         const namespaces: INamespace[] = [];
+        // LOG.debug(`APackage: extracting namespaces from ${JSON.stringify(xmlString,null,2)}`);
 
-        // Global regex to find all xmlns declarations
+        // Restrict the search to the opening 'aPackage' tag, where the namespaces are declared.
+        // Searching the full document can produce stray matches from unrelated xmlns-like
+        // attributes/content further down in the XML. If the opening tag isn't found, skip
+        // the matching altogether and return an empty namespaces list.
+        const openingTagMatch = xmlString.match(/<[^>]*\baPackage\b[^>]*>/);
+        if (!openingTagMatch) {
+            LOG.warn(`XML Package ${docId || 'unknown'}: opening 'aPackage' tag not found, skipping namespace extraction`);
+            return [];
+        }
+        const searchScope = openingTagMatch[0];
+
+        // Global regex to find all xmlns declarations in the opening tag
         // Matches both xmlns:prefix="uri" and xmlns="uri"
         const xmlnsRegex = /xmlns(?::([a-zA-Z0-9_-]+))?=["']([^"']+)["']/g;
 
         let match;
-        while ((match = xmlnsRegex.exec(xmlString)) !== null) {
+        while ((match = xmlnsRegex.exec(searchScope)) !== null) {
             const prefix = match[1]; // undefined for default namespace
             const uri = match[2];
 
@@ -2105,6 +2118,8 @@ export class APackage extends AnElement implements IAPackage {
                     uri: uri
                 });
             }
+
+            // LOG.debug(`APackage: extracted namespace - prefix: "${prefix}", uri: "${uri}"`);
         }
 
         if (namespaces.length < 1) {
