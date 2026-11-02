@@ -10,8 +10,9 @@ info:
     resources because they have no identifier of their own and only exist as
     embedded parts of anEntity, aRelationship or aPackage.
     For all read (GET) operations, the desired representation format
-    (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`, or
-    `cas.ttl` / `text/turtle`) can be requested either via the `format` query
+    (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`,
+    `cas.ttl` / `text/turtle`, or `cas.xhtml` / `application/xhtml+xml`) can be
+    requested either via the `format` query
     parameter or via the standard HTTP `Accept` header; if both are given,
     `format` takes precedence.
     Note
@@ -211,6 +212,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of items.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of items.
         '400':
           $ref: '#/components/responses/BadRequest'
         '501':
@@ -276,6 +281,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the item.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -355,6 +364,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of revisions.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of revisions.
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -392,6 +405,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of aPackage proxies.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of aPackage proxies.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -446,6 +463,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the aPackage instance, including its graph.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the aPackage instance, including its graph.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -521,6 +542,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of revisions.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of revisions.
         '404':
           $ref: '#/components/responses/NotFound'
   /repositories/{repositoryId}/apackages/{itemId}/items:
@@ -725,13 +750,15 @@ components:
         throughout this API and in the request bodies of write operations.
         `cas.xml` returns the equivalent CASCaRA XML representation.
         `cas.ttl` returns the equivalent representation as RDF Turtle.
+        `cas.xhtml` returns an XHTML rendering of the representation, intended
+        for direct display in a browser.
         This query parameter is a convenience override for simple browser-based
         testing; the standards-based alternative is HTTP content negotiation
         via the `Accept` header (see the `Accept` parameter below). If both are
         given, the `format` query parameter takes precedence over `Accept`.
       schema:
         type: string
-        enum: [cas.jsonld, cas.xml, cas.ttl]
+        enum: [cas.jsonld, cas.xml, cas.ttl, cas.xhtml]
         default: cas.jsonld
     Accept:
       name: Accept
@@ -744,11 +771,12 @@ components:
         `application/ld+json` (default) requests CASCaRA JSON-LD.
         `application/xml` requests the equivalent CASCaRA XML representation.
         `text/turtle` requests the equivalent representation as RDF Turtle.
+        `application/xhtml+xml` requests an XHTML rendering of the representation.
         If the `format` query parameter is also present, it takes precedence
         over this header.
       schema:
         type: string
-        enum: [application/ld+json, application/xml, text/turtle]
+        enum: [application/ld+json, application/xml, text/turtle, application/xhtml+xml]
         default: application/ld+json
 
   responses:
