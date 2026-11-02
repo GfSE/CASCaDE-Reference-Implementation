@@ -12,19 +12,18 @@ info:
     For all read (GET) operations, the desired representation format
     (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`,
     `cas.ttl` / `text/turtle`, or `cas.xhtml` / `application/xhtml+xml`) can be
-    requested either via the `format` query
-    parameter or via the standard HTTP `Accept` header; if both are given,
-    `format` takes precedence.
+    requested either via the `format` query parameter or via the standard
+    HTTP `Accept` header; if both are given, `format` takes precedence.
     Note
     - the API definition omits schemata, because they are implemented in the
       CASCaRA core software and shall not be duplicated here.
-  version: 1.0.0
+  version: 0.4.0
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0
   contact:
-    name: GfSE
-    url: https://gfse.org
+    name: Dr. Oskar von Dungern (GfSE)
+    url: mailto:oskar.dungern@gfse.org
 
 servers:
   - url: /api/v1
@@ -684,9 +683,10 @@ components:
       in: query
       required: false
       description: >
-        Optional SPARQL (e.g. a `SELECT`/`ASK`/`CONSTRUCT` query body) or
-        GraphQL query string used to filter the returned list of items
-        beyond what `itemType`, `specializes` and `type` already express.
+        Optional SPARQL (e.g. a `SELECT`/`ASK`/`CONSTRUCT` query body),
+        GraphQL, or XPath query string used to filter the returned list of
+        items beyond what `itemType`, `specializes` and `type` already
+        express.
         The query language is auto-detected from the syntax; alternatively
         it can be made explicit via the `queryLanguage` parameter. If both
         `query` and other filter parameters are given, `query` is applied
@@ -705,6 +705,7 @@ components:
         enum:
           - sparql
           - graphql
+          - xpath
     itemType:
       name: itemType
       in: query
@@ -771,7 +772,7 @@ components:
         `application/ld+json` (default) requests CASCaRA JSON-LD.
         `application/xml` requests the equivalent CASCaRA XML representation.
         `text/turtle` requests the equivalent representation as RDF Turtle.
-        `application/xhtml+xml` requests an XHTML rendering of the representation.
+        `application/xhtml+xml` requests an XHTML rendering of the item(s).
         If the `format` query parameter is also present, it takes precedence
         over this header.
       schema:
