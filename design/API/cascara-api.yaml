@@ -152,8 +152,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '412':
           $ref: '#/components/responses/PreconditionFailed'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     delete:
       tags: [Repository]
       summary: Delete a repository, including its content
@@ -312,8 +316,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '412':
           $ref: '#/components/responses/PreconditionFailed'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     delete:
       tags: [Item]
       summary: Delete an item of any CASCaRA item type
@@ -416,8 +424,6 @@ paths:
         Create (import) a new aPackage, including its embedded graph.
         Use the provided id; otherwise the server will generate a new id.
       operationId: createAPackage
-      parameters:
-        - $ref: '#/components/parameters/mode'
       requestBody:
         required: true
         content:
@@ -491,8 +497,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '412':
           $ref: '#/components/responses/PreconditionFailed'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     delete:
       tags: [aPackage]
       summary: Delete an aPackage instance, including its graph
@@ -730,16 +740,26 @@ components:
       in: query
       required: false
       description: >
-        Write strategy for POST (create) and PUT (update) operations.
+        Write strategy for PUT (update) operations.
         'replace' (default) always overwrites the stored item with the request body,
-        regardless of its age. 'update' only overwrites the stored item if the 
-        request body is younger than the currently stored item, as determined by
-        comparing their 'modified' attribute; otherwise the stored item is
-        left unchanged.
+        regardless of its age.
+        'update' only overwrites the stored item if the request body is younger
+        than the currently stored item, as determined by comparing their 'modified'
+        attribute; otherwise the stored item is left unchanged.
         The prevailing item is returned in all cases.
+        'merge' overwrites the stored item with the request body, if the priorRevision
+        attribute of the request body matches the current revision of the stored item.
+        If the priorRevision does not match, the stored item is left unchanged and a
+        409 Conflict response is returned, including the prevailing item(s). The
+        conflict resolution strategy is left to the client, which may choose to
+        automatically or manually merge the changes and retry the PUT operation,
+        or to abort the transaction.
+        Note: the presence and validity of the priorRevision attribute is verified
+        by the server's schema/application logic, not by this API specification,
+        to avoid redundancy.
       schema:
         type: string
-        enum: [replace, update]
+        enum: [replace, update, merge]
         default: replace
     format:
       name: format
@@ -822,3 +842,7 @@ components:
               summary: Unsupported format
               value:
                 message: 'format not implemented'
+            modeNotImplemented:
+              summary: Unsupported mode
+              value:
+                message: 'mode not implemented'
