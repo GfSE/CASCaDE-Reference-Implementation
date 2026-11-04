@@ -24,12 +24,13 @@
                 <h2 id="cascara-schema-server-content">Content</h2>
                 <ul class="resources-list">
                     <li>
-                        <p><strong>Documentation:</strong> The latest revision as agreed by the CASCaRA Submission Team:<br/>
-							• <a href="./doc/metamodel/latest/">Metamodel</a><br/>
-							• <a href="./doc/semantic_infrastructure_and_examples/latest/">Semantic Infrastructure and Examples</a><br/>
-							• Ontology <i>(in preparation)</i>
-						</p>
-						<!-- Don't forget to update .htaccess in ./doc/semantic_infrastructure_and_examples/latest/ and ./doc/metamodel/latest/ -->
+                        <p>
+                            <strong>Documentation:</strong> The latest revision as agreed by the CASCaRA Submission Team:<br />
+                            • <a href="./doc/metamodel/latest/">Metamodel</a><br />
+                            • <a href="./doc/semantic_infrastructure_and_examples/latest/">Semantic Infrastructure and Examples</a><br />
+                            • Ontology <i>(in preparation)</i>
+                        </p>
+                        <!-- Don't forget to update .htaccess in ./doc/semantic_infrastructure_and_examples/latest/ and ./doc/metamodel/latest/ -->
                     </li>
                     <li>
                         <p>
@@ -40,26 +41,59 @@
                             • <a href="./schema/2026-02-18/jsonld/">2026-02-18</a><br />
                             • <a href="./schema/2026-01-12/jsonld/">2026-01-12</a>
                         </p>
-						<!-- Don't forget to update .htaccess in ./schema/latest/ -->
+                        <!-- Don't forget to update .htaccess in ./schema/latest/ -->
+                    </li>
+                    <li>
+                        <p>
+                            <strong>Ontology:</strong> The versions as developed by the CASCaRA Submission Team:<br />
+                            <!-- ToDo: Make a page introducing the ontology and listing all links per format -->
+                        </p>
+                        <!-- Don't forget to update .htaccess in ./ontology/latest/ -->
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Format</th>
+                                    <th scope="col">Ontology</th>
+                                    <th scope="col">Shapes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Turtle</th>
+                                    <td><a href="./ontology/latest/ttl/CASCaRA-Ontology.ttl">CASCaRA-Ontology.ttl</a></td>
+                                    <td><a href="./ontology/latest/ttl/CASCaRA-Ontology-Shapes.ttl">CASCaRA-Ontology-Shapes.ttl</a></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">CASCaRA XML</th>
+                                    <td><a href="./ontology/latest/cas-xml/CASCaRA-Ontology.cas.xml">CASCaRA-Ontology.cas.xml</a></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </li>
                     <li>
                         <p>
                             <strong>Transformations:</strong> The transformations from source formats to the CASCaRA Graph:<br />
+                            <!-- ToDo: Make a page introducing the transformations and listing all links per format -->
                         </p>
                         <table>
                             <thead>
                                 <tr>
+                                    <th scope="col">Source Format</th>
                                     <th scope="col">XML Stylesheet (XSL)</th>
                                     <th scope="col">Stylesheet Export File (SEF)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <th scope="row"><a href="./transformation/latest/ReqIF-to-CAS.xsl">ReqIF-to-CAS.xsl</a></th>
+
+                                    <th scope="row">ReqIF</th>
+                                    <td><a href="./transformation/latest/ReqIF-to-CAS.xsl">ReqIF-to-CAS.xsl</a></td>
                                     <td><a href="./transformation/latest/ReqIF-to-CAS.sef.json">ReqIF-to-CAS.sef.json</a></td>
                                 </tr>
                                 <tr>
-                                    <th scope="row"><a href="./transformation/latest/FMI-to-CAS.xsl">FMI-to-CAS.xsl</a></th>
+                                    <th scope="row">FMI</th>
+                                    <td><a href="./transformation/latest/FMI-to-CAS.xsl">FMI-to-CAS.xsl</a></td>
                                     <td><a href="./transformation/latest/FMI-to-CAS.sef.json">FMI-to-CAS.sef.json</a></td>
                                 </tr>
                             </tbody>

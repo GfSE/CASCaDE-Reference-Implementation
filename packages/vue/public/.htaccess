@@ -3,6 +3,10 @@
   RewriteEngine On
   RewriteBase /
 
+  # Respond to OPTIONS preflight requests with 200 OK
+  RewriteCond %{REQUEST_METHOD} OPTIONS
+  RewriteRule ^(.*)$ $1 [R=200,L]
+
   # Don't rewrite files or directories
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
@@ -22,13 +26,60 @@
 # Cache-Control for all file types
 # Cache expires in 1 day (86400 Sec)
 # Applies recursively to all subfolders
+#
+# CORS configuration (schemas and other assets are public)
 <IfModule mod_headers.c>
 	# Cache-Control for 1 day
 	Header set Cache-Control "public, max-age=86400"
+
+	# Enable CORS for all origins
+	Header set Access-Control-Allow-Origin "*"
+
+	# Allow common methods
+	Header set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+
+	# Allow request headers
+	Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
+
+	# Cache preflight for 24 hours
+	Header set Access-Control-Max-Age "86400"
+
+	# Add Vary header for proper caching
+	Header set Vary "Origin"
 </IfModule>
+
+# Content-Type for schema files
+<IfModule mod_mime.c>
+	AddType application/xml .xsd
+	AddType application/json .json
+	AddType application/ld+json .jsonld
+	AddType application/xml .xml
+	AddType application/xml .cas.xml
+	AddType text/turtle .cas.ttl
+</IfModule>
+
+# CORS for CASCaRA ontology files (.cas.xml, .cas.ttl), served with their own Content-Type above
+<FilesMatch "\.cas\.(xml|ttl)$">
+	<IfModule mod_headers.c>
+		Header set Access-Control-Allow-Origin "*"
+		Header set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+		Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
+		Header set Access-Control-Max-Age "86400"
+		Header set Vary "Origin"
+	</IfModule>
+</FilesMatch>
+
+# Enable compression for schema files
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE application/xml application/json application/ld+json text/turtle
+</IfModule>
+
+# Expires-Header: 1 day by default, 1 week for schema files (they rarely change)
 <IfModule mod_expires.c>
-	# Activates Expires-Header
 	ExpiresActive On
-	# Expires: day
 	ExpiresDefault "access plus 1 day"
+	ExpiresByType application/xml "access plus 1 week"
+	ExpiresByType application/json "access plus 1 week"
+	ExpiresByType application/ld+json "access plus 1 week"
+	ExpiresByType text/turtle "access plus 1 week"
 </IfModule>

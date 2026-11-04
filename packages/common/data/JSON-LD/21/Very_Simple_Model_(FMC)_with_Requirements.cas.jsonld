@@ -129,6 +129,87 @@
       ]
     },
     {
+      "@id": "cas:Paragraph",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Outline"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Paragraph",
+          "@language": "en"
+        },
+        {
+          "@value": "Textabsatz",
+          "@language": "de"
+        },
+        {
+          "@value": "Paragraphe",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
+          "@language": "de"
+        }
+      ],
+      "dcterms:modified": "2023-07-16T09:30:25.850Z",
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Diagram"
+        }
+      ],
+      "cas:enumeratedTargetLink": []
+    },
+    {
+      "@id": "cas:View",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "View"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A PIG organizer class representing a diagram with certain model-elements for a given communication purpose."
+        }
+      ],
+      "cas:icon": {
+        "@value": "▣"
+      },
+      "dcterms:modified": "2018-05-10T11:54:00+01:00",
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Diagram"
+        },
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:shows"
+        },
+        {
+          "@id": "cas:depicts"
+        }
+      ]
+    },
+    {
       "@id": "cas:Table",
       "@type": "owl:Class",
       "cas:itemType": {
@@ -491,88 +572,33 @@
       ]
     },
     {
-      "@id": "SpecIF:Paragraph",
-      "@type": "owl:Class",
+      "@id": "SpecIF:Stakeholder",
+      "@type": "owl:DatatypeProperty",
       "cas:itemType": {
-        "@id": "cas:Entity"
+        "@id": "cas:Property"
       },
       "cas:specializes": {
-        "@id": "cas:Entity"
+        "@id": "cas:Property"
       },
       "dcterms:title": [
         {
-          "@value": "Paragraph",
+          "@value": "Stakeholder",
           "@language": "en"
         },
         {
-          "@value": "Textabsatz",
+          "@value": "Interessenvertreter",
           "@language": "de"
-        },
-        {
-          "@value": "Paragraphe",
-          "@language": "fr"
         }
       ],
       "skos:definition": [
         {
-          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
+          "@value": "Enumerated values for the 'Priority' of the resource.",
           "@language": "en"
-        },
-        {
-          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
-          "@language": "de"
         }
       ],
-      "dcterms:modified": "2023-07-16T09:30:25.850Z",
-      "cas:enumeratedProperty": [
-        {
-          "@id": "cas:Diagram"
-        },
-        {
-          "@id": "cas:Category"
-        }
-      ],
-      "cas:enumeratedTargetLink": []
-    },
-    {
-      "@id": "cas:View",
-      "@type": "owl:Class",
-      "cas:itemType": {
-        "@id": "cas:Entity"
-      },
-      "cas:specializes": {
-        "@id": "cas:Organizer"
-      },
-      "dcterms:title": [
-        {
-          "@value": "View"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A PIG organizer class representing a diagram with certain model-elements for a given communication purpose."
-        }
-      ],
-      "cas:icon": {
-        "@value": "▣"
-      },
-      "dcterms:modified": "2018-05-10T11:54:00+01:00",
-      "cas:enumeratedProperty": [
-        {
-          "@id": "cas:Diagram"
-        },
-        {
-          "@id": "cas:Category"
-        }
-      ],
-      "cas:enumeratedTargetLink": [
-        {
-          "@id": "cas:shows"
-        },
-        {
-          "@id": "cas:depicts"
-        }
-      ]
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
     },
     {
       "@id": "FMC:Actor",
@@ -759,7 +785,11 @@
         "@value": "&#8623;"
       },
       "dcterms:modified": "2021-02-22T08:59:00+02:00",
-      "cas:enumeratedProperty": [],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "SpecIF:Stakeholder"
+        }
+	  ],
       "cas:enumeratedTargetLink": [
         {
           "@id": "SpecIF:Priority"
@@ -1062,7 +1092,15 @@
         }
       ],
       "dcterms:modified": "2020-10-17T10:00:00+01:00",
-      "SpecIF:Priority": [
+      "SpecIF:Stakeholder": [
+        {
+          "@value": "Customer",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+	  ],
+	  "SpecIF:Priority": [
         {
           "@id": "SpecIF:priorityHigh",
           "cas:itemType": {
@@ -1088,6 +1126,14 @@
         }
       ],
       "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "SpecIF:Stakeholder": [
+        {
+          "@value": "Customer",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+	  ],
       "SpecIF:Priority": [
         {
           "@id": "SpecIF:priorityHigh",
@@ -1114,6 +1160,14 @@
         }
       ],
       "dcterms:modified": "2020-10-17T10:00:00+01:00",
+      "SpecIF:Stakeholder": [
+        {
+          "@value": "Customer",
+          "cas:itemType": {
+            "@id": "cas:aProperty"
+          }
+        }
+	  ],
       "SpecIF:Priority": [
         {
           "@id": "SpecIF:priorityMedium",

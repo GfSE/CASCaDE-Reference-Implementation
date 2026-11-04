@@ -3,13 +3,13 @@ info:
   title: CASCaRA API
   description: >
     REST API providing CRUD (Create, Read, Update, Delete) operations for every
-    concrete metamodel item type of the CASCaRA Graph, namespace prefix `cas:`.
+    concrete metamodel item type of the CASCaRA Graph.
     Concrete CASCaRA types - Enumeration, Property, Link, Entity, Relationship.
     Concrete CASCaRA instances - anEntity, aRelationship, aPackage.
     `aProperty`, `aSourceLink` and `aTargetLink` are not exposed as standalone
     resources because they have no identifier of their own and only exist as
     embedded parts of anEntity, aRelationship or aPackage.
-    For all read (GET) operations, the desired representation format
+    For all Read (GET) operations, the desired representation format
     (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`,
     `cas.ttl` / `text/turtle`, or `cas.xhtml` / `application/xhtml+xml`) can be
     requested either via the `format` query parameter or via the standard
@@ -26,7 +26,7 @@ info:
     url: mailto:oskar.dungern@gfse.org
 
 servers:
-  - url: /api/v1
+  - url: /api/v0.4.0
     description: CASCaRA API base path
 
 tags:
