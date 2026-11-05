@@ -1,0 +1,1641 @@
+/*!
+ * Package-level constraint validation for CASCaRA Graph (cas:)
+ * Copyright 2025 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * We appreciate any correction, comment or contribution as Github issue (https://github.com/GfSE/CASCaDE-Reference-Implementation/issues)
+ */
+/**
+ * Package-level constraint validation for CASCaRA Graph (cas:)
+ * ------------------------------------------------------------
+ * Authors: oskar.dungern@gfse.org
+ * Copyright 2026 GfSE (https://gfse.org)
+ * License and terms of use: Apache 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+ * 
+ * This module validates cross-item constraints that cannot be checked at the level of individual items:
+ * - Uniqueness of primary IDs across all items in a package
+ * - Validity of instanceOf references in aProperty instances
+ * - Validity of instanceOf references in aLink instances (aSourceLink, aTargetLink)
+ * - Property occurrence validation (minCount, maxCount)
+ * - enumerated properties and links validation
+ * - enumeratedEndpoint consistency (Link classes)
+ * - enumeratedTargetLink and enumeratedSourceLink reference validation
+ * 
+ * The constraints are documented in
+ * - https://github.com/GfSE/CASCaDE-Metamodel/tree/main/Metamodel%20%5BCameo%5D/1_Source
+ * - https://product-information-graph.org/doc/metamodel/latest/
+ * 
+ * List of constraint checks:
+ * Phase 1 (critical):
+ * ✅ Unique IDs
+ * ✅ aProperty.instanceOf → Property
+ * ✅ aLink.instanceOf → Link
+ * ✅ anEntity and aRelationship class references
+ * ✅ Entity and Relationship specializes references                                               
+ * ✅ Instances are consistent with their classes:
+ * ✅ - properties and links are enumerated
+ * ✅ - occurrence (minCount, maxCount) with language-aware validation for xs:string
+ * ✅ - value range
+ * ✅ - reference to enumerated values (enumerations)
+ * ✅ - enumeratedEndpoint in Link classes (all or none point to Enumerations)
+ * ✅ - enumeratedTargetLink and enumeratedSourceLink → Link
+ * Phase 2 (important):
+ * ✅ namespace prefixes are defined in the context
+ * ✅ check all classes wrt instanceOf (owl:Class, owl:DatatypeProperty, owl:ObjectProperty) --> done via schema validation
+ *    check aPackage.instanceOf references and consistency with classes (similarly to anEntity)
+ *    No cyclic specialization
+ *    subProperty is consistent with specialization hierarchy (following the restrictions of OWL2)
+ *    - the range of a subProperty must be included in the range of its superProperty
+ *    subClass is consistent with specialization hierarchy (following the restrictions of OWL2)
+ *    - a subClass has all properties and links of its superClass
+ *    enumeratedProperty references
+ *    Link endpoint compliance
+ *    aLink must specify identifier and revision of the endpoints, if its class has revisionAware set to true
+ * Phase 3 (useful):
+ *    No cyclic composition of properties
+ *    Check if defaultValue is consistent with the datatype of the property
+ *    Relationship structure
+ *    Referenced Enumerations have a datatype
+ *    enumerations at the lowest specialization level must have datatype and enumerated values
+ *    enumerated values as defined comply with the datatype of the enumeration class
+ *    Entity and Relationship classes should not have configurable properties
+ *         with the same name as a native property (e.g. skos:definition, dcterms:modified, ..)
+ * Phase 4 (optional):
+ *    Orphaned items
+ *    - nodes without reference by an organizer AND
+ *    - nodes without reference by a relationship
+ *    Language tag consistency
+ * ✅ Namespace usage --> covered by normalizeId()
+ * ✅ Modification date validation --> covered by normalizeDateTime()
+ *
+ * To be discussed:
+ * - Handling (error responses vs log messages)
+ * - Old thinking: The whole package is rejected if any constraint fails (current approach).
+ * - New thinking --> 'Permissive Computing': Report all issues but return the package with a valid subgraph;
+ *   sometimes there may be 2 or more choices of valid subgraphs when constraints fail.
+ *   Partial data is better than no data.
+ * - Consider using JSON-Rules-Engine, JSONata or REGO for rules checking ..
+ */
+
+import { DEF, RE } from '../../../lib/definitions';
+import { IRsp, rspOK, Msg, LOG } from '../../../lib/messages';
+import { LIB } from "../../../lib/helpers";
+import { IAPackage, PigItem, PigItemType, PigItemTypeValue, TPigAnElement, TPigId, Enumeration, XsDataType, ASourceLink, ATargetLink } from './pig-metaclasses';
+
+/**
+ * Available constraint check types
+ */
+export enum ConstraintCheckType {
+    UniqueIds = 'uniqueIds',
+    aPropertyInstanceOf = 'aPropertyInstanceOf',
+    aLinkInstanceOf = 'aLinkInstanceOf',
+    anEntityInstanceOf = 'anEntityInstanceOf',
+    aRelationshipInstanceOf = 'aRelationshipInstanceOf',
+    EntitySpecializes = 'entitySpecializes',
+    RelationshipSpecializes = 'relationshipSpecializes',
+    PropertySpecializes = 'propertySpecializes',
+    LinkSpecializes = 'linkSpecializes',
+    enumeratedProperties = 'enumeratedProperties',
+    enumeratedLinks = 'enumeratedLinks',
+    enumeratedEndpoints = 'enumeratedEndpoints',
+    enumeratedLinkClasses = 'enumeratedLinkClasses',
+    ValueRanges = 'valueRanges',
+    enumeratedValues = 'enumeratedValues',
+    NamespacePrefixes = 'namespacePrefixes'
+}
+
+/**
+ * All available constraint checks as a list
+ */
+const allConstraintChecks: ConstraintCheckType[] = [
+    ConstraintCheckType.UniqueIds,
+    ConstraintCheckType.aPropertyInstanceOf,
+    ConstraintCheckType.aLinkInstanceOf,
+    ConstraintCheckType.anEntityInstanceOf,
+    ConstraintCheckType.aRelationshipInstanceOf,
+    ConstraintCheckType.EntitySpecializes,
+    ConstraintCheckType.RelationshipSpecializes,
+    ConstraintCheckType.PropertySpecializes,
+    ConstraintCheckType.LinkSpecializes,
+    ConstraintCheckType.enumeratedProperties,
+    ConstraintCheckType.enumeratedLinks,
+    ConstraintCheckType.enumeratedEndpoints,
+    ConstraintCheckType.enumeratedLinkClasses,
+    ConstraintCheckType.ValueRanges,
+    ConstraintCheckType.enumeratedValues,
+    ConstraintCheckType.NamespacePrefixes
+];
+
+/**
+ * Check cross-item constraints for a package
+ * @param pkg - Package to validate
+ * @param checksToPerform - Optional list of checks to perform (default: all checks)
+ * @returns IRsp (rspOK on success, error IRsp on failure)
+ */
+export function checkConstraintsForPackage(
+    pkg: IAPackage,
+    options?: {
+        /**
+         * List constraints to check; if not provided, all constraints are checked.
+         */
+        checkConstraints?: ConstraintCheckType[];
+        /**
+         * Fallback lookup for the itemType of a referenced id that is not part of
+         * this package's own graph (e.g. a shared/global item, such as a CASCaRA
+         * base type like 'cas:Tree', that is cached but belongs to another package).
+         * Used by specializes/instanceOf reference checks so that cross-package
+         * references to already-known items are not flagged as missing.
+         * 
+         * resolveExternalItem is not needed when a package is self-contained,
+         * that is, all referenced items are present in its own graph.
+         */
+        resolveExternalItem?: (id: TPigId) => PigItemTypeValue | undefined;
+    }
+): IRsp {
+    const checksSet = new Set(options?.checkConstraints ?? allConstraintChecks);
+    const resolveExternalItem = options?.resolveExternalItem;
+
+    // 1. Check that all primary IDs are unique
+    if (checksSet.has(ConstraintCheckType.UniqueIds)) {
+        const rsp = checkUniqueIds(pkg);
+        if (!rsp.ok) return rsp;
+    }
+
+    // Build a map of itemTypes by ID for quick lookup
+    const itemTypeById = buildItemTypeMap(pkg);
+
+    // 2. Check aProperty.instanceOf references and minCount/maxCount
+    if (checksSet.has(ConstraintCheckType.aPropertyInstanceOf)) {
+        const rsp = checkPropertyReferences(pkg, itemTypeById);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 3. Check aLink.instanceOf references (aSourceLink and aTargetLink)
+    if (checksSet.has(ConstraintCheckType.aLinkInstanceOf)) {
+        const rsp = checkLinkReferences(pkg, itemTypeById);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 4a. Check anEntity.instanceOf references
+    if (checksSet.has(ConstraintCheckType.anEntityInstanceOf)) {
+        const rsp = checkReferences(pkg, PigItemType.anEntity, itemTypeById, 'instanceOf', resolveExternalItem);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 4b. Check aRelationship.instanceOf references
+    if (checksSet.has(ConstraintCheckType.aRelationshipInstanceOf)) {
+        const rsp = checkReferences(pkg, PigItemType.aRelationship, itemTypeById, 'instanceOf', resolveExternalItem);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 5a. Check Entity.specializes references
+    if (checksSet.has(ConstraintCheckType.EntitySpecializes)) {
+        const rsp = checkReferences(pkg, PigItemType.Entity, itemTypeById, 'specializes', resolveExternalItem);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 5b. Check Relationship.specializes references
+    if (checksSet.has(ConstraintCheckType.RelationshipSpecializes)) {
+        const rsp = checkReferences(pkg, PigItemType.Relationship, itemTypeById, 'specializes', resolveExternalItem);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 5c. Check Property.specializes
+    if (checksSet.has(ConstraintCheckType.PropertySpecializes)) {
+        const rsp = checkPropertyOrLinkReferences(pkg, PigItemType.Property, itemTypeById, 'specializes', resolveExternalItem);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 5d. Check Link.specializes
+    if (checksSet.has(ConstraintCheckType.LinkSpecializes)) {
+        const rsp = checkPropertyOrLinkReferences(pkg, PigItemType.Link, itemTypeById, 'specializes', resolveExternalItem);
+        if (!rsp.ok) return rsp;
+    }
+
+    // Build class maps for eligibility checks
+    const elementById = buildClassMap(pkg);
+    // LOG.debug(`Built class map for eligibility checks: `, elementById);
+
+    // 6a. Check enumerated properties in aPackage, anEntity and aRelationship instances
+    if (checksSet.has(ConstraintCheckType.enumeratedProperties)) {
+        const rsp = checkEnumeratedProperties(pkg, elementById);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 6b. Check enumerated links in aPackage, anEntity and aRelationship instances
+    if (checksSet.has(ConstraintCheckType.enumeratedLinks)) {
+        const rsp = checkEnumeratedLinks(pkg, elementById);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 6c. Check enumerated endpoints in Link classes
+    if (checksSet.has(ConstraintCheckType.enumeratedEndpoints)) {
+        const rsp = checkLinkEnumeratedEndpoints(pkg, itemTypeById);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 6d. Check that enumeratedTargetLink and enumeratedSourceLink references point to Link classes
+    if (checksSet.has(ConstraintCheckType.enumeratedLinkClasses)) {
+        const rsp = checkEnumeratedLinkClassReferences(pkg, itemTypeById);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 7a. Check value ranges for property values
+    if (checksSet.has(ConstraintCheckType.ValueRanges)) {
+        const propertyMap = buildPropertyMap(pkg);
+        const rsp = checkValueRanges(pkg, propertyMap);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 7b. Check enumerated values
+    if (checksSet.has(ConstraintCheckType.enumeratedValues)) {
+        const enumerationMap = buildEnumerationMap(pkg);
+        const targetLinkMap = buildTargetLinkMap(pkg, enumerationMap);
+        // LOG.debug(`Built enumeration map: `, enumerationMap);
+        // LOG.debug(`Built target link map: `, targetLinkMap);
+        const rsp = checkEnumeratedValues(pkg, enumerationMap, targetLinkMap);
+        if (!rsp.ok) return rsp;
+    }
+
+    // 8. Check namespace prefixes
+    if (checksSet.has(ConstraintCheckType.NamespacePrefixes)) {
+        const rsp = checkNamespacePrefixes(pkg);
+        if (!rsp.ok) return rsp;
+    }
+
+    // LOG.debug(`Package ${pkg.id || 'unnamed'}: all constraints validated successfully`);
+    return rspOK;
+}
+
+/**
+ * Check that all primary IDs in the package are unique;
+ * validates both '@id' and 'id' fields.
+ * @param pkg - Package to validate
+ * @returns IRsp (rspOK on success, error with duplicate info on failure)
+ */
+
+function checkUniqueIds(pkg: IAPackage): IRsp {
+    const idMap = new Map<TPigId, number>();
+
+    // First, add the package ID itself to the map (index -1 indicates the package)
+    idMap.set(pkg.id, -1);
+
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        if (!itemId) {
+            return Msg.create(670, pkg.id, i);
+        }
+
+        const existingIndex = idMap.get(itemId);
+        if (existingIndex !== undefined) {  // ✅ Type Guard statt !
+            if (existingIndex === -1) {
+                // Item uses the same ID as the package
+                return Msg.create(671, pkg.id, itemId, 'package', i);
+            }
+            return Msg.create(671, pkg.id, itemId, existingIndex, i);
+        }
+
+        idMap.set(itemId, i);
+    }
+
+    return rspOK;
+}
+
+/**
+ * Build a map of item types by ID for quick reference validation
+ * @param pkg - Package to process
+ * @returns Map from ID to itemType
+ */
+function buildItemTypeMap(pkg: IAPackage): Map<TPigId, PigItemTypeValue> {
+    const itemTypeMap = new Map<TPigId, PigItemTypeValue>();
+
+    for (const item of pkg.graph) {
+        const itemId = item.id;
+        const itemType = (item as any).itemType;
+        // if (pkg.id == 'd:test-invalid-prop')
+        //     LOG.debug(`buildItemTypeMap (3): `, item, itemId, itemType);
+        if (itemId && itemType) {
+            itemTypeMap.set(itemId, itemType);
+        }
+    }
+
+    // if (pkg.id == 'd:test-invalid-prop')
+    // LOG.debug(`buildItemTypeMap (9): `, pkg, itemTypeMap);
+    return itemTypeMap;
+}
+
+/**
+ * Build a map of Property definitions with their minCount and maxCount values
+ * @param pkg - Package to process
+ * @returns Map from Property ID to Property definition
+ */
+function buildPropertyMap(pkg: IAPackage): Map<TPigId, any> {
+    const propertyMap = new Map<TPigId, any>();
+
+    for (const item of pkg.graph) {
+        const itemId = item.id;
+        const itemType = (item as any).itemType;
+
+        if (itemType === PigItemType.Property) {
+            propertyMap.set(itemId, item);
+        }
+    }
+
+    return propertyMap;
+}
+
+/**
+ * Build a map of enumeration Entity class definitions (Entity classes with datatype)
+ * Enumerations are now Entity classes (PigItemType.Entity) that have a datatype property
+ * @param pkg - Package to process
+ * @returns Map from enumeration class ID to class definition
+ */
+function buildEnumerationMap(pkg: IAPackage): Map<TPigId, any> {
+    // LOG.debug('buildEnumerationMap', pkg);
+    const enumerationMap = new Map<TPigId, any>();
+
+    for (const item of pkg.graph) {
+        const itemId = item.id;
+        const itemType = (item as any).itemType;
+
+        // Store enumerated values per enumeration class definition;
+        // Enumerations at higher generalization levels without enumerated values will be omitted from the map
+        if (itemType === PigItemType.Enumeration) {
+            //    LOG.debug(`buildEnumerationMap: Found enumeration: `,item);
+            if (LIB.isArrayWithContent((item as Enumeration).enumeratedValue)) {
+                // Simplify the enumerated values so that only the ids are listed:
+                enumerationMap.set(itemId, (item as Enumeration).enumeratedValue.map(el => el.id));
+            }
+        }
+    }
+
+    return enumerationMap;
+}
+
+/**
+ * Build a map of Link class definitions to their enumeration endpoints
+ * Maps Link class ID to Enumeration class ID if the Link's enumeratedEndpoint contains an enumeration
+ * @param pkg - Package to process
+ * @param enumerationMap - Map of enumeration class definitions
+ * @returns Map from Link class ID to Enumeration class ID
+ */
+function buildTargetLinkMap(pkg: IAPackage, enumerationMap: Map<TPigId, any>): Map<TPigId, TPigId> {
+    const targetLinkMap = new Map<TPigId, TPigId>();
+
+    for (const item of pkg.graph) {
+        // Process Link class definitions
+        if (item.itemType === PigItemType.Link) {
+            const link = item as any;
+            const enumeratedEndpoints = link.enumeratedEndpoint;
+            // LOG.debug(`buildTargetLinkMap: Link ${item.id} has enumeratedEndpoint = ${JSON.stringify(enumeratedEndpoints)}`);
+
+            if (Array.isArray(enumeratedEndpoints)) {
+                // Check if any endpoint is an enumeration
+                for (const endpointId of enumeratedEndpoints) {
+                    // LOG.debug(`buildTargetLinkMap: Link ${itemId} endpoint ${endpointId}`, enumerationMap.has(endpointId));
+                    if (enumerationMap.has(endpointId)) {
+                        // This Link class points to an enumeration
+                        targetLinkMap.set(item.id, endpointId);
+                        break; // One enumeration per link is enough
+                    }
+                }
+            }
+        }
+    }
+
+    return targetLinkMap;
+}
+
+/**
+ * Build a map of class definitions with their enumeratedProperty and enumeratedTargetLink arrays
+ * @param pkg - Package to process
+ * @returns Map from class ID to class definition
+ */
+function buildClassMap(pkg: IAPackage): Map<TPigId, any> {
+    const classMap = new Map<TPigId, any>();
+
+    for (const item of pkg.graph) {
+        const itemType = item.itemType;
+
+        // Store Entity and Relationship class definitions
+        if (itemType == PigItemType.Entity || itemType == PigItemType.Relationship) {
+            classMap.set(item.id, item);
+        }
+    }
+
+    return classMap;
+}
+
+/**
+ * List the full list of enumerated properties for a class, including inherited ones
+ * @param classId - ID of the class to resolve
+ * @param classMap - Map of all class definitions
+ * @param visited - Set to track visited classes (prevents infinite loops)
+ * @returns Array of enumerated property IDs (empty array if enumeratedProperty is undefined)
+ */
+function listEnumeratedProperties(
+    classId: TPigId,
+    classMap: Map<TPigId, any>,
+    visited: Set<TPigId> = new Set()
+): TPigId[] {
+    // Prevent infinite loops in case of circular specialization (even though it should not happen in a valid package)
+    if (visited.has(classId)) {
+        return [];
+    }
+    visited.add(classId);
+
+    const classDef = classMap.get(classId);
+    if (!classDef) {
+        return [];
+    }
+
+    // Start with this class's enumeratedProperty (undefined means all properties allowed)
+    const directEnum = classDef.enumeratedProperty;
+
+    // If enumeratedProperty is undefined, all properties are allowed (return special marker)
+    if (directEnum === undefined) {
+        return ['*']; // Special marker for "all properties allowed"
+    }
+
+    // Initialize with direct enumerated properties
+    let allEnum: TPigId[] = [...directEnum];
+
+    // Resolve parent class if specializes is present
+    if (classDef.specializes) {
+        const parentEnum = listEnumeratedProperties(classDef.specializes, classMap, visited);
+
+        if (parentEnum.includes('*')) {
+            // Parent allows all properties, it overrides any restrictions of the child class
+            return ['*']; // Special marker for "all properties allowed"
+        } else {
+            // Merge parent's enumerated properties
+            allEnum = [...new Set([...allEnum, ...parentEnum])];  // 'new Set' avoids duplicates
+        }
+    }
+
+    return allEnum;
+}
+
+/**
+ * List the full list of enumerated target links for a class, including inherited ones
+ * @param classId - ID of the class to resolve
+ * @param classMap - Map of all class definitions
+ * @param visited - Set to track visited classes (prevents infinite loops)
+ * @returns Array of enumerated link IDs (empty array if enumeratedTargetLink is undefined)
+ */
+function listEnumeratedTargetLinks(
+    classId: TPigId,
+    classMap: Map<TPigId, any>,
+    visited: Set<TPigId> = new Set()
+): TPigId[] {
+    // Prevent infinite loops in case of circular specialization (even though it should not happen in a valid package)
+    if (visited.has(classId)) {
+        return [];
+    }
+    visited.add(classId);
+
+    const classDef = classMap.get(classId);
+    if (!classDef) {
+        return [];
+    }
+
+    // Get direct enumerated target links (undefined means all links allowed)
+    const directEnum = classDef.enumeratedTargetLink;
+    // LOG.debug(`listEnumeratedTargetLinks: class ${classId} has direct enumeratedTargetLink = ${JSON.stringify(directEnum)}`);
+
+    // If enumeratedTargetLink is undefined, all links are allowed
+    if (directEnum === undefined) {
+        return ['*'];
+    }
+
+    // Initialize with direct enumerated links;
+    // is an array with exactly one value in case of aRelationship
+    // and an array with 0..n items in case of anEntity and aPackage:
+    let allEnum: TPigId[] = [...directEnum];
+    /*// .. is an array in case of anEntity and a single value in case of aRelationship, normalize to array
+    let allEnum: TPigId[] = Array.isArray(directEnum) ?
+        [...directEnum]
+        : (typeof directEnum === 'string' ? [directEnum] : []);*/
+
+    // Resolve parent class if specializes is present
+    if (classDef.specializes) {
+        const parentEnum = listEnumeratedTargetLinks(classDef.specializes, classMap, visited);
+
+        if (parentEnum.includes('*')) {
+            // Parent allows all links, it overrides any restrictions of the child class
+            return ['*']; // Special marker for "all links allowed"
+        } else {
+            // Merge parent's enumerated links
+            allEnum = [...new Set([...allEnum, ...parentEnum])];  // 'new Set' avoids duplicates
+        }
+    }
+
+    return allEnum;
+}
+
+/**
+ * List enumerated source links for Relationship classes
+ */
+function listEnumeratedSourceLinks(
+    classId: TPigId,
+    classMap: Map<TPigId, any>,
+    visited: Set<TPigId> = new Set()
+): TPigId[] {
+    // Prevent infinite loops in case of circular specialization (even though it should not happen in a valid package)
+    if (visited.has(classId)) {
+        return [];
+    }
+    visited.add(classId);
+
+    const classDef = classMap.get(classId);
+    if (!classDef || classDef.itemType !== PigItemType.Relationship) {
+        return [];
+    }
+
+    const directEnum = classDef.enumeratedSourceLink;
+    if (directEnum === undefined) {
+        return ['*'];
+    }
+    // LOG.debug(`listEnumeratedSourceLinks: class ${classId} has direct enumeratedSourceLink = ${JSON.stringify(directEnum)}`);
+
+    // Initialize with direct enumerated links;
+    // is an array with exactly one value in case of aRelationship:
+    let allEnum: TPigId[] = [...directEnum];
+
+    if (classDef.specializes) {
+        const parentEnum = listEnumeratedSourceLinks(classDef.specializes, classMap, visited);
+        if (parentEnum.includes('*')) {
+            // Parent allows all links, it overrides any restrictions of the child class
+            return ['*']; // Special marker for "all links allowed"
+        } else {
+            allEnum = [...new Set([...allEnum, ...parentEnum])];  // 'new Set' avoids duplicates
+        }
+    }
+
+    return allEnum;
+}
+
+/**
+ * Check that all properties in aPackage, anEntity and aRelationship instances are declared as enumerated in their classes
+ * @param pkg - Package to validate
+ * @param classMap - Map of class definitions
+ * @returns IRsp (rspOK on success, error on invalid property)
+ */
+function checkEnumeratedProperties(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
+    // Check properties for a single instance
+    function checkInstanceProperties(instance: any): IRsp {
+        const classId = instance.instanceOf; // existence of instanceOf has been checked by the schema
+
+        if (LIB.isArrayWithContent(instance.hasProperty)) {
+            // List enumerated properties for this class
+            const enumeratedProperties = listEnumeratedProperties(classId, classMap);
+            // LOG.debug(`Enumerated properties for class ${classId}: ${JSON.stringify(enumeratedProperties)}`);
+            // LOG.debug(`Enumerated properties of instance ${instance.id}: ${JSON.stringify(instance.hasProperty)}`);
+
+            // Check each property against enumerated properties
+            for (let j = 0; j < instance.hasProperty.length; j++) {
+                const prop = instance.hasProperty[j];
+                const propClassId = prop.instanceOf; // existence of instanceOf has been checked by the schema
+
+                if (enumeratedProperties.includes('*')) // all properties are allowed
+                    continue;
+
+                // Check if this property class is in the enumerated list
+                if (!enumeratedProperties.includes(propClassId))
+                    return Msg.create(676, instance.id, instance.itemType, 'hasProperty', j, propClassId, classId);
+            }
+        }
+
+        return rspOK;
+    }
+
+    // Check the package itself
+    const pkgResult = checkInstanceProperties(pkg);
+    if (!pkgResult.ok) {
+        return pkgResult;
+    }
+
+    // Check anEntity and aRelationship instances in the graph
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = item.itemType;
+
+        // Check anEntity and aRelationship instances
+        if (itemType == PigItemType.anEntity || itemType == PigItemType.aRelationship) {
+            const result = checkInstanceProperties(item);
+            if (!result.ok)
+                return result;
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that all links in aPackage, anEntity and aRelationship instances are declared as enumerated in their classes
+ * @param pkg - Package to validate
+ * @param classMap - Map of class definitions
+ * @returns IRsp (rspOK on success, error on invalid link)
+ */
+function checkEnumeratedLinks(pkg: IAPackage, classMap: Map<TPigId, any>): IRsp {
+    // Check source or target links for a single instance
+    function checkLinks(instance: any, hasThisLink: 'hasTargetLink' | 'hasSourceLink'): IRsp {
+        // const classId = instance.instanceOf; // existence of instanceOf has been checked by the schema
+        const enumeratedLinks = hasThisLink === 'hasTargetLink' ? listEnumeratedTargetLinks(instance.instanceOf, classMap) : listEnumeratedSourceLinks(instance.instanceOf, classMap);
+        const hasLinkArray = instance[hasThisLink];
+
+        if (LIB.isArrayWithContent(hasLinkArray)) {
+            // LOG.debug(`Enumerated ${hasThisLink === 'hasTargetLink' ? 'targetLinks' : 'sourceLinks'} for class ${classId}: ${JSON.stringify(enumeratedLinks)}`);
+            // LOG.debug(`Enumerated ${hasThisLink === 'hasTargetLink' ? 'targetLinks' : 'sourceLinks'} of instance ${instance.id}: ${JSON.stringify(hasLinkArray)}`);
+            for (let j = 0; j < hasLinkArray.length; j++) {
+                const link = hasLinkArray[j] as ASourceLink | ATargetLink;
+                const linkClassId = link.instanceOf as string;
+
+                if (enumeratedLinks.includes('*'))  // all links allowed
+                    continue;
+
+                if (!enumeratedLinks.includes(linkClassId)) {
+                    return Msg.create(676, instance.id, instance.itemType, hasThisLink, j, linkClassId, instance.instanceOf);
+                }
+            }
+        }
+
+        return rspOK;
+    }
+
+    // Check the package itself (hasTargetLink only)
+    if (pkg.instanceOf) {
+        const result = checkLinks(pkg, 'hasTargetLink');
+        if (!result.ok) {
+            return result;
+        }
+    }
+
+    // Check instances in the graph
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = item.itemType;
+
+        // Check anEntity and aRelationship instances (hasTargetLink)
+        if (itemType == PigItemType.anEntity || itemType == PigItemType.aRelationship) {
+            const result = checkLinks(item, 'hasTargetLink');
+            if (!result.ok) {
+                return result;
+            }
+        }
+
+        // Check aRelationship instances (hasSourceLink)
+        if (itemType == PigItemType.aRelationship) {
+            const result = checkLinks(item, 'hasSourceLink');
+            if (!result.ok) {
+                return result;
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that enumeratedEndpoints of Link classes point exclusively to Enumerations or none of them points to an Enumeration
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @returns IRsp (rspOK on success, error on mixed endpoint types)
+ */
+function checkLinkEnumeratedEndpoints(
+    pkg: IAPackage,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Check only Link class definitions
+        if (itemType !== PigItemType.Link) {
+            continue;
+        }
+
+        const link = item as any;
+        const enumeratedEndpoints = link.enumeratedEndpoint;
+
+        // Skip if no enumeratedEndpoint is defined
+        if (!Array.isArray(enumeratedEndpoints) || enumeratedEndpoints.length === 0) {
+            continue;
+        }
+
+        // Count how many endpoints point to Enumerations
+        let enumerationCount = 0;
+        let nonEnumerationCount = 0;
+
+        for (const endpointId of enumeratedEndpoints) {
+        /*    // Skip validation for known ontology references
+            if (referencesKnownOntology(endpointId)) {
+                nonEnumerationCount++;
+                continue;
+            } */
+
+            const endpointType = itemTypeMap.get(endpointId);
+
+            // If endpoint not found, skip (this will be caught by other checks)
+            if (!endpointType) {
+                continue;
+            }
+
+            if (endpointType === PigItemType.Enumeration) {
+                enumerationCount++;
+            } else {
+                nonEnumerationCount++;
+            }
+        }
+
+        // Check: either all endpoints point to Enumerations or none of them does
+        if (enumerationCount > 0 && nonEnumerationCount > 0) {
+            return Msg.create(684, itemId, enumerationCount, nonEnumerationCount);
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that enumeratedTargetLink and enumeratedSourceLink in Entity and Relationship classes point to Link items
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkEnumeratedLinkClassReferences(
+    pkg: IAPackage,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Check Entity and Relationship class definitions
+        if (itemType !== PigItemType.Entity && itemType !== PigItemType.Relationship) {
+            continue;
+        }
+
+        const classDef = item as any;
+
+        // Check enumeratedTargetLink
+        if (Array.isArray(classDef.enumeratedTargetLink)) {
+            for (let j = 0; j < classDef.enumeratedTargetLink.length; j++) {
+                const linkId = classDef.enumeratedTargetLink[j];
+
+            /*    // Skip validation for known ontology references
+                if (referencesKnownOntology(linkId)) {
+                    continue;
+                } */
+
+                const targetType = itemTypeMap.get(linkId);
+                if (!targetType) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedTargetLink', j, linkId, 'not found in package');
+                }
+
+                if (targetType !== PigItemType.Link) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedTargetLink', j, linkId, `expected ${PigItemType.Link}, found ${targetType}`);
+                }
+            }
+        }
+
+        // Check enumeratedSourceLink (only for Relationship)
+        if (Array.isArray(classDef.enumeratedSourceLink)) {
+            for (let j = 0; j < classDef.enumeratedSourceLink.length; j++) {
+                const linkId = classDef.enumeratedSourceLink[j];
+
+            /*    // Skip validation for known ontology references
+                if (referencesKnownOntology(linkId)) {
+                    continue;
+                } */
+
+                const targetType = itemTypeMap.get(linkId);
+                if (!targetType) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedSourceLink', j, linkId, 'not found in package');
+                }
+
+                if (targetType !== PigItemType.Link) {
+                    return Msg.create(685, itemId, itemType, 'enumeratedSourceLink', j, linkId, `expected ${PigItemType.Link}, found ${targetType}`);
+                }
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that all aProperty.instanceOf references point to pig:Property items
+ * AND validate minCount/maxCount constraints
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkPropertyReferences(
+    pkg: IAPackage,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    // Build property map for minCount/maxCount validation
+    const propertyMap = buildPropertyMap(pkg);
+
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+        // if (pkg.id == 'd:test-invalid-prop')
+        // LOG.debug(`checkPropertyReferences (1): `, pkg, itemType, itemId);
+
+        // Check AnEntity and aRelationship items
+        if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itemType)) {
+            // LOG.debug(`Checking properties for AnEntity `, item);
+            if (Array.isArray((item as TPigAnElement).hasProperty)) {
+                // 1. Check instanceOf references
+                for (let j = 0; j < (item as TPigAnElement).hasProperty.length; j++) {
+                    const prop = (item as TPigAnElement).hasProperty[j];
+                    const checkResult = checkPropertyInstanceOf(prop, itemId, j, itemTypeMap);
+                    if (!checkResult.ok) {
+                        return checkResult;
+                    }
+                }
+
+                // 2. Check minCount/maxCount constraints
+                const occurrenceResult = checkPropertyOccurrence(
+                    itemId,
+                    (item as TPigAnElement).hasProperty,
+                    propertyMap
+                );
+                if (!occurrenceResult.ok) {
+                    return occurrenceResult;
+                }
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that property occurrences conform to minCount and maxCount constraints
+ * 
+ * For string properties (datatype xs:string):
+ * - maxCount: applies PER LANGUAGE (each language can have up to maxCount values)
+ * - minCount: applies PER LANGUAGE for all languages that ARE present
+ *   * At least one language must be present if minCount > 0
+ *   * Each present language must have at least minCount values
+ * 
+ * For all other properties (all datatypes except xs:string):
+ * - minCount/maxCount: apply to total occurrences
+ * 
+ * @param instanceId - ID of the instance (anEntity or aRelationship)
+ * @param properties - Array of properties to validate
+ * @param propertyMap - Map of Property definitions
+ * @returns IRsp (rspOK on success, error on constraint violation)
+ */
+function checkPropertyOccurrence(
+    instanceId: TPigId,
+    properties: any[],
+    propertyMap: Map<TPigId, any>
+): IRsp {
+    // For string properties: Map<propClassId, Map<language, count>>
+    // For other properties: Map<propClassId, totalCount>
+    const stringPropertyOccurrences = new Map<TPigId, Map<string, number>>();
+    const otherPropertyOccurrences = new Map<TPigId, number>();
+
+    // Group properties by class and count occurrences
+    for (const prop of properties) {
+        const propClassId = prop.instanceOf;
+        if (!propClassId) {
+            continue; // validated elsewhere
+        }
+
+        const propDef = propertyMap.get(propClassId);
+        if (!propDef) {
+            continue; // property not found - validated elsewhere
+        }
+
+        // Check if this is a string property (multi-language)
+        const isStringProperty = propDef.datatype === 'xs:string' || propDef.datatype === 'xsd:string';
+
+        if (isStringProperty) {
+            // For string properties, count per language
+            if (!stringPropertyOccurrences.has(propClassId)) {
+                stringPropertyOccurrences.set(propClassId, new Map<string, number>());
+            }
+
+            // Extract language from the property value
+            let lang = 'default';
+            if (prop.value) {
+                if (typeof prop.value === 'object' && prop.value.lang) {
+                    lang = prop.value.lang;
+                }
+            }
+
+            const langMap = stringPropertyOccurrences.get(propClassId);
+            if (langMap)
+                langMap.set(lang, (langMap.get(lang) || 0) + 1);
+        }
+        else {
+            // For non-string properties, count total occurrences
+            otherPropertyOccurrences.set(
+                propClassId,
+                (otherPropertyOccurrences.get(propClassId) || 0) + 1
+            );
+        }
+    }
+
+    // Validate ALL properties in propertyMap, not just those that occur
+    for (const [propClassId, propDef] of propertyMap) {
+        const minCount = propDef.minCount ?? 0;
+        const maxCount = propDef.maxCount ?? 1;
+
+        // Skip validation if minCount and maxCount are both 0 (property not required and not allowed)
+        if (minCount === 0 && maxCount === 0) {
+            continue;
+        }
+
+        const isStringProperty = propDef.datatype === 'xs:string' || propDef.datatype === 'xsd:string';
+
+        if (isStringProperty) {
+            // String property validation
+            const langMap = stringPropertyOccurrences.get(propClassId);
+
+            if (!langMap || langMap.size === 0) {
+                // Property doesn't occur at all
+                if (minCount > 0) {
+                    return Msg.create(
+                        678,
+                        instanceId,
+                        propClassId,
+                        0,
+                        minCount,
+                        `no values present (need at least one language with ${minCount} value(s))`
+                    );
+                }
+            } else {
+                // Property occurs - check each language
+                for (const [lang, count] of langMap) {
+                    // minCount: each present language must have at least minCount values
+                    if (count < minCount) {
+                        return Msg.create(
+                            678,
+                            instanceId,
+                            propClassId,
+                            count,
+                            minCount,
+                            `too few values for language '${lang}'`
+                        );
+                    }
+
+                    // maxCount: each present language must not exceed maxCount values
+                    if (count > maxCount) {
+                        return Msg.create(
+                            678,
+                            instanceId,
+                            propClassId,
+                            count,
+                            maxCount,
+                            `too many values for language '${lang}'`
+                        );
+                    }
+                }
+            }
+        } else {
+            // Non-string property validation
+            const count = otherPropertyOccurrences.get(propClassId) || 0;
+
+            if (count < minCount) {
+                return Msg.create(678, instanceId, propClassId, count, minCount, 'too few occurrences');
+            }
+
+            if (count > maxCount) {
+                return Msg.create(678, instanceId, propClassId, count, maxCount, 'too many occurrences');
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Validate a single aProperty's instanceOf reference
+ * @param prop - Property to validate
+ * @param parentId - ID of parent item (for error messages)
+ * @param propIndex - Index of property in parent's hasProperty array
+ * @param itemTypeMap - Map for reference lookup
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkPropertyInstanceOf(
+    prop: any,
+    parentId: string,
+    propIndex: number,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    if (!prop.instanceOf) {
+        return Msg.create(672, parentId, propIndex, 'missing instanceOf');
+    }
+
+/*    // Skip validation for known ontology references (e.g., cas:, dcterms:)
+    if (referencesKnownOntology(prop.instanceOf)) {
+        return rspOK;
+    } */
+
+    // LOG.debug(`checkPropertyInstanceOf: checking instanceOf ${JSON.stringify(prop, null, 2)} for property at index ${propIndex} of parent ${parentId}`);
+    // LOG.debug(`checkPropertyInstanceOf: itemTypeMap = ${JSON.stringify(Array.from(itemTypeMap.entries()), null, 2)}`);
+
+    const targetType = itemTypeMap.get(prop.instanceOf);
+    if (!targetType) {
+        return Msg.create(673, parentId, `hasProperty[${propIndex}]`, prop.instanceOf, 'not found in package');
+    }
+
+    if (targetType !== PigItemType.Property) {
+        return Msg.create(673, parentId, `hasProperty[${propIndex}]`, `expected ${DEF.pfxNsMeta}Property, found ${targetType}`);
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that all aLink.instanceOf references point to pig:Link items
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkLinkReferences(
+    pkg: IAPackage,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Check AnEntity and aRelationship items (hasTargetLink)
+        if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itemType)) {
+            if (Array.isArray((item as TPigAnElement).hasTargetLink)) {
+                for (let j = 0; j < (item as TPigAnElement).hasTargetLink.length; j++) {
+                    const link = (item as TPigAnElement).hasTargetLink[j];
+                    const checkResult = checkLinkInstanceOf(link, itemId, j, 'hasTargetLink', itemTypeMap);
+                    if (!checkResult.ok) {
+                        return checkResult;
+                    }
+                }
+            }
+        }
+
+        // Check ARelationship items (hasSourceLink)
+        if (itemType === PigItemType.aRelationship) {
+            const rel = item as any;
+
+            // Check source links
+            if (Array.isArray(rel.hasSourceLink)) {
+                for (let j = 0; j < rel.hasSourceLink.length; j++) {
+                    const link = rel.hasSourceLink[j];
+                    const checkResult = checkLinkInstanceOf(link, itemId, j, 'hasSourceLink', itemTypeMap);
+                    if (!checkResult.ok) {
+                        return checkResult;
+                    }
+                }
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Validate a single aLink's instanceOf reference
+ * @param link - Link to validate
+ * @param parentId - ID of parent item (for error messages)
+ * @param linkIndex - Index of link in parent's link array
+ * @param linkArrayName - Name of the link array (for error messages)
+ * @param itemTypeMap - Map for reference lookup
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkLinkInstanceOf(
+    link: any, // PigItemType.aSourceLink | PigItemType.aTargetLink,
+    parentId: string,
+    linkIndex: number,
+    linkArrayName: string,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>
+): IRsp {
+    if (!link.instanceOf) {
+        return Msg.create(674, parentId, linkIndex, linkArrayName, 'missing instanceOf');
+    }
+
+/*    // Skip validation for known ontology references (e.g., cas:, dcterms:)
+    if (referencesKnownOntology(link.instanceOf)) {
+        return rspOK;
+    } */
+
+    const targetType = itemTypeMap.get(link.instanceOf);
+    if (!targetType) {
+        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.instanceOf, 'not found in package');
+    }
+
+    if (targetType !== PigItemType.Link) {
+        return Msg.create(673, parentId, `hasLink[${linkIndex}]`, link.instanceOf, `expected ${DEF.pfxNsMeta}Link, found ${targetType}`);
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that Entity/Relationship references (instanceOf for instances or specializes for classes) point to valid items
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @param refType - Type of reference to check: 'instanceOf' or 'specializes'
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkReferences(
+    pkg: IAPackage,
+    itemType: PigItemTypeValue, // PigItemType.anEntity | PigItemType.aRelationship,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>,
+    refType: 'instanceOf' | 'specializes',
+    resolveExternalItem?: (id: TPigId) => PigItemTypeValue | undefined
+): IRsp {
+    const chkInstanceOf = refType === 'instanceOf';
+
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const iType = item.itemType;
+        const iId = item.id;
+
+        if (iType == itemType) {
+            if ((chkInstanceOf && PigItem.isInstance(iType)) || (!chkInstanceOf && PigItem.isClass(iType))) {
+                // In case of a class, check that specializes points to a valid class of the same type (Entity or Relationship),
+                // in case of an instance, check that instanceOf points to a valid class (Entity or Relationship)
+                const refValue = item[refType];
+
+                if (!refValue) {
+                    // specializes is optional (can inherit from pig:Entity directly)
+                    if (!chkInstanceOf)
+                        continue;
+                    return Msg.create(674, iId, i, refType, `missing ${refType}`);
+                }
+
+                // Skip validation for PigItemType values or hosted/context ontology references
+                if (Object.values(PigItemType).includes(refValue as PigItemTypeValue) || LIB.isHostedOntologyId(refValue) || LIB.isContextId(refValue))
+                    continue;
+
+                // Expected type depends on whether we're checking instanceOf or specializes:
+                // - instanceOf: anEntity -> Entity, aRelationship -> Relationship
+                // - specializes: Entity -> Entity, Relationship -> Relationship
+                const expectedType = (itemType == PigItemType.Entity || itemType == PigItemType.anEntity) ? PigItemType.Entity : PigItemType.Relationship;
+                const targetType = itemTypeMap.get(refValue) ?? resolveExternalItem?.(refValue);
+                if (!targetType)
+                    return Msg.create(675, iId, i, refType, refValue, 'not found in package');
+                if (targetType !== expectedType)
+                    return Msg.create(675, iId, i, refType, refValue, `expected ${expectedType}, found ${targetType}`);
+            }
+            else
+                // The data has been validated by the schema, so this should not happen. It is assumed to be a programming error if it does:
+                throw new Error(`checkReferences: Unexpected itemType ${iType} for refType ${refType}`);
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that Property/Link specializes references point to valid items
+ * @param pkg - Package to validate
+ * @param itemTypeMap - Map from ID to itemType for reference lookup
+ * @param refType - Type of reference to check: currently only 'specializes'
+ * @returns IRsp (rspOK on success, error on invalid reference)
+ */
+function checkPropertyOrLinkReferences(
+    pkg: IAPackage,
+    itemType: PigItemTypeValue,
+    itemTypeMap: Map<TPigId, PigItemTypeValue>,
+    refType: 'specializes',
+    resolveExternalItem?: (id: TPigId) => PigItemTypeValue | undefined
+): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const iType = item.itemType;
+        const iId = item.id;
+
+        if (iType === itemType) {
+            const property = item;
+            const refValue = property[refType];
+
+            if (!refValue)
+                // specializes is optional (can inherit from pig:Property directly)
+                continue;
+
+            // Skip validation for PigItemType values or hosted/context ontology references
+            if (Object.values(PigItemType).includes(refValue as PigItemTypeValue) || LIB.isHostedOntologyId(refValue) || LIB.isContextId(refValue))
+                continue;
+
+            // Expected type depends on whether we're checking Property or Link:
+            // - Property.specializes -> Property
+            // - Link.specializes -> Link
+            const expectedType = (itemType == PigItemType.Property) ? PigItemType.Property : PigItemType.Link;
+            const targetType = itemTypeMap.get(refValue) ?? resolveExternalItem?.(refValue);
+            if (!targetType)
+                return Msg.create(675, iId, i, refType, refValue, 'not found in package');
+            if (targetType !== expectedType)
+                return Msg.create(675, iId, i, refType, refValue, `expected ${expectedType}, found ${targetType}`);
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+* Check that all property values conform to their defined value ranges
+* - For xs:string: validates maxLength and pattern
+* - For numeric types: validates minInclusive and maxInclusive
+* - For all types: validates that values are in enumeratedValue list if defined
+* @param pkg - Package to validate
+* @param propertyMap - Map of Property definitions
+* @returns IRsp (rspOK on success, error on constraint violation)
+*/
+function checkValueRanges(pkg: IAPackage, propertyMap: Map<TPigId, any>): IRsp {
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        // @ToDo: Should always be id
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Check anEntity and aRelationship instances
+        if (itemType === PigItemType.anEntity || itemType === PigItemType.aRelationship) {
+            const instance = item as TPigAnElement;
+
+            if (!instance.hasProperty || !Array.isArray(instance.hasProperty)) {
+                continue;
+            }
+
+        /*    let str = 'checkValueRanges - prop list: ';
+            instance.hasProperty.forEach(
+                (p) => str += `\n-${JSON.stringify(p,null,2)}`
+            );
+            LOG.debug(str); 
+            LOG.debug('checkValueRanges - prop list: ',instance.hasProperty.length); */
+
+            // Check each property value
+            for (let j = 0; j < instance.hasProperty.length; j++) {
+                const prop = instance.hasProperty[j];
+                const propClassId = prop.instanceOf;
+
+                // LOG.debug(`checkValueRanges - prop[${j}]:`, JSON.stringify(prop, null, 2));
+
+                if (!propClassId) {
+                    continue; // validated by schema
+                }
+
+                const propDef = propertyMap.get(propClassId);
+                if (!propDef) {
+                    continue; // property definition not found, has been checked before
+                }
+
+                // Validate based on datatype
+                const datatype = propDef.datatype;
+                if (!datatype) {
+                    continue; // no datatype defined - validated by schema
+                }
+
+                // Get the value resp. idRef to validate
+                let pVal = prop.value as string | undefined;
+                if ((pVal === undefined || pVal === null)) {
+                    LOG.warn(`checkValueRanges: Property[${j}] of item ${instance.id} has no value`);
+                    continue; // neither value nor id - validated by schema
+                }
+
+                // aProperty instances must have a literal value potentially with restrictions:
+                pVal = pVal ?? ''; // satisfy the TypeScript compiler - actually the schema-check assures there is a value.
+
+                // String validation
+                // Here (native item.hasProperty), all elements of a multi-language text are listed flat with all other properties.
+                if (PigItem.isSupportedStringDatatype(datatype)) {
+                    // Perform validation for each language-tagged value
+                    // Check maxLength
+                    if (propDef.maxLength !== undefined && pVal.length > propDef.maxLength) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `string length ${pVal.length} exceeds maxLength ${propDef.maxLength}`
+                        );
+                    }
+
+                    // Check pattern
+                    if (propDef.pattern) {
+                        try {
+                            const regex = new RegExp(propDef.pattern);
+                            if (!regex.test(pVal)) {
+                                return Msg.create(
+                                    679,
+                                    itemId,
+                                    j,
+                                    propClassId,
+                                    `value '${pVal}' does not match pattern '${propDef.pattern}'`
+                                );
+                            }
+                        } catch (e) {
+                            LOG.warn(`Invalid regex pattern in property ${propClassId}: ${propDef.pattern}`);
+                        }
+                    }
+                }
+
+                // Number validation
+                else if (PigItem.isSupportedNumericDatatype(datatype)) {
+                    const numValue = Number(pVal);
+
+                    if (isNaN(numValue)) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `value '${pVal}' is not a valid number for datatype ${datatype}`
+                        );
+                    }
+
+                    // Check minInclusive
+                    if (propDef.minInclusive !== undefined && numValue < propDef.minInclusive) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `value ${numValue} is less than minInclusive ${propDef.minInclusive}`
+                        );
+                    }
+
+                    // Check maxInclusive
+                    if (propDef.maxInclusive !== undefined && numValue > propDef.maxInclusive) {
+                        return Msg.create(
+                            679,
+                            itemId,
+                            j,
+                            propClassId,
+                            `value ${numValue} exceeds maxInclusive ${propDef.maxInclusive}`
+                        );
+                    }
+                }
+
+                // Other datatypes:
+                else if (PigItem.isSupportedDatatype(datatype)) {
+                    switch (datatype) {
+                        case XsDataType.AnyURI:
+                            break;
+                        case XsDataType.Date:
+                        case XsDataType.DateTime:
+                            if (pVal && !RE.isoDateTime.test(pVal))
+                                return Msg.create(
+                                    679,
+                                    itemId,
+                                    j,
+                                    propClassId,
+                                    `value '${pVal}' is not a valid ISO-8601 date/time for datatype ${datatype}`
+                                );
+                    }
+                }
+                else {
+                    return Msg.create(
+                        679,
+                        itemId,
+                        j,
+                        propClassId,
+                        `Unsupported datatype ${datatype}`
+                    );
+                }
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that all targetLinks pointing to enumeration entities can be resolved
+ * - Validates that when a Link class points to an Enumeration,
+ *   all instances using that Link class reference valid enumeration values
+ * - Enumerations are Entity classes with a datatype property
+ * - targetLinks must reference anEntity instances whose instanceOf matches the enumeration
+ * 
+ * @param pkg - Package to validate
+ * @param enumerationMap - Map of enumeration Entity class definitions (Entity classes with datatype)
+ * @param targetLinkMap - Map from Link class ID to Enumeration class ID
+ * @returns IRsp (rspOK on success, error on unresolvable reference)
+ */
+function checkEnumeratedValues(
+    pkg: IAPackage,
+    enumerationMap: Map<TPigId, any>,
+    targetLinkMap: Map<TPigId, TPigId>
+): IRsp {
+
+    // Check targetLinks for a given element
+    function checkTargetLinks(
+        hasTargetLink: any,
+        elementId: TPigId
+        // elementLabel: string
+    ): IRsp {
+        if (Array.isArray(hasTargetLink)) {
+            for (let j = 0; j < hasTargetLink.length; j++) {
+                const link = hasTargetLink[j];
+                const linkClassId = link.instanceOf as TPigId;
+                const targetId = link.idRef as TPigId;
+
+                if (!linkClassId || !targetId) {
+                    continue; // Validated elsewhere
+                }
+
+                // Check if this Link class points to an enumeration
+                const enumerationClassId = targetLinkMap.get(linkClassId);
+                if (!enumerationClassId) {
+                    continue; // This link doesn't point to an enumeration
+                }
+
+                // Validate that the targetId references a valid enumeration value
+                const targetEnumList = enumerationMap.get(enumerationClassId);
+                if (!targetEnumList) {
+                    return Msg.create(
+                        677,
+                        elementId,
+                        j,
+                        linkClassId,
+                        `target enumeration not found in package`
+                    );
+                }
+
+                // Check whether the targetId is listed in targetEnumList
+                if (!targetEnumList.includes(targetId)) {
+                    return Msg.create(
+                        677,
+                        elementId,
+                        j,
+                        linkClassId,
+                        `target enumeration has no enumerated value '${targetId}'`
+                    );
+                }
+            }
+        }
+        return rspOK;
+    }
+
+    // Check the aPackage itself
+    if (pkg.hasTargetLink) {
+        const rsp = checkTargetLinks(pkg.hasTargetLink, pkg.id ?? 'aPackage'/*, 'aPackage'*/);
+        if (!rsp.ok) {
+            return rsp;
+        }
+    }
+
+    // Check all anEntity and aRelationship instances in the graph
+    for (let i = 0; i < pkg.graph.length; i++) {
+        const item = pkg.graph[i];
+        const itemType = (item as any).itemType;
+        const itemId = (item as any)['@id'] ?? (item as any).id;
+
+        // Process anEntity and aRelationship instances
+        if ([PigItemType.anEntity, PigItemType.aRelationship].includes(itemType)) {
+            const instance = item as TPigAnElement;
+
+            // Check hasTargetLink array
+            if (instance.hasTargetLink) {
+                const rsp = checkTargetLinks(instance.hasTargetLink, itemId/*, itemType*/);
+                if (!rsp.ok) {
+                    return rsp;
+                }
+            }
+        }
+    }
+
+    return rspOK;
+}
+
+/**
+ * Check that all namespace prefixes used in the package are defined in its context
+ * @param pkg - Package to validate
+ * @returns IRsp (rspOK on success, error with prefix/item info on failure)
+ */
+function checkNamespacePrefixes(pkg: IAPackage): IRsp {
+    // Build a set of defined namespace prefixes from the package context
+    const definedPrefixes = new Set<string>();
+
+    // Parse the context to extract namespace prefixes
+    if (pkg.context && Array.isArray(pkg.context)) {
+        for (const ns of pkg.context) {
+            if (ns && typeof ns === 'object' && 'tag' in ns && typeof ns.tag === 'string') {
+                const tag = ns.tag;
+                // Remove trailing colon if present to normalize
+                const prefix = tag.endsWith(':') ? tag.slice(0, -1) : tag;
+                definedPrefixes.add(prefix);
+            }
+        }
+    } else if (pkg.context && typeof pkg.context === 'object' && !Array.isArray(pkg.context)) {
+        // Context might be in JSON-LD format: { "cas": "uri", "dcterms": "uri", ... }
+        for (const prefix of Object.keys(pkg.context)) {
+            definedPrefixes.add(prefix);
+        }
+    }
+
+    // Check prefixes for a single ID
+    function extractPrefix(id: TPigId | undefined): string | null {
+        if (!id || typeof id !== 'string') return null;
+        // Ignore full IRIs (e.g., https://example.org/...) which don't rely on context prefixes
+        if (id.includes('://')) return null;
+
+        const colonIndex = id.indexOf(':');
+        return colonIndex > 0 ? id.substring(0, colonIndex) : null;
+    }
+
+    // Check all IDs from an item
+    function collectIdsFromItem(item: any): TPigId[] {
+        const ids: TPigId[] = [];
+
+        // Primary ID
+        const primaryId = item['@id'] ?? item.id;
+        if (primaryId) ids.push(primaryId);
+
+        // instanceOf reference
+        if (item.instanceOf) ids.push(item.instanceOf);
+
+        // specializes reference(s)
+        if (item.specializes) {
+            if (Array.isArray(item.specializes)) {
+                ids.push(...item.specializes);
+            } else {
+                ids.push(item.specializes);
+            }
+        }
+
+        // hasProperty references
+        if (Array.isArray(item.hasProperty)) {
+            for (const prop of item.hasProperty) {
+                if (prop.instanceOf) ids.push(prop.instanceOf);
+            }
+        }
+
+        // hasTargetLink references
+        if (Array.isArray(item.hasTargetLink)) {
+            for (const link of item.hasTargetLink) {
+                if (link.instanceOf) ids.push(link.instanceOf);
+                if (link.idRef) ids.push(link.idRef);
+            }
+        }
+
+        // hasSourceLink references
+        if (Array.isArray(item.hasSourceLink)) {
+            for (const link of item.hasSourceLink) {
+                if (link.instanceOf) ids.push(link.instanceOf);
+                if (link.idRef) ids.push(link.idRef);
+            }
+        }
+
+        // enumeratedProperty references
+        if (Array.isArray(item.enumeratedProperty)) {
+            ids.push(...item.enumeratedProperty);
+        }
+
+        // enumeratedTargetLink references
+        if (Array.isArray(item.enumeratedTargetLink)) {
+            ids.push(...item.enumeratedTargetLink);
+        }
+
+        // enumeratedSourceLink references
+        if (Array.isArray(item.enumeratedSourceLink)) {
+            ids.push(...item.enumeratedSourceLink);
+        }
+
+        // enumeratedEndpoint references
+        if (Array.isArray(item.enumeratedEndpoint)) {
+            ids.push(...item.enumeratedEndpoint);
+        }
+
+        // datatype reference
+        if (item.datatype) ids.push(item.datatype);
+
+        return ids;
+    }
+
+    // Check the package itself
+    const packageIds = collectIdsFromItem(pkg);
+    for (const id of packageIds) {
+        const prefix = extractPrefix(id);
+        if (prefix && !definedPrefixes.has(prefix)) {
+            return Msg.create(686, prefix, pkg.id ?? 'aPackage');
+        }
+    }
+
+    // Check all graph items
+    for (const item of pkg.graph) {
+        const itemId = (item as any)['@id'] ?? (item as any).id ?? 'unknown';
+        const ids = collectIdsFromItem(item);
+
+        for (const id of ids) {
+            const prefix = extractPrefix(id);
+            if (prefix && !definedPrefixes.has(prefix)) {
+                return Msg.create(686, prefix, itemId);
+            }
+        }
+    }
+
+    return rspOK;
+}

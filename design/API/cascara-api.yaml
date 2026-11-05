@@ -3,30 +3,30 @@ info:
   title: CASCaRA API
   description: >
     REST API providing CRUD (Create, Read, Update, Delete) operations for every
-    concrete metamodel item type of the CASCaRA Graph, namespace prefix `cas:`.
+    concrete metamodel item type of the CASCaRA Graph.
     Concrete CASCaRA types - Enumeration, Property, Link, Entity, Relationship.
     Concrete CASCaRA instances - anEntity, aRelationship, aPackage.
     `aProperty`, `aSourceLink` and `aTargetLink` are not exposed as standalone
     resources because they have no identifier of their own and only exist as
     embedded parts of anEntity, aRelationship or aPackage.
-    For all read (GET) operations, the desired representation format
-    (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`, or
-    `cas.ttl` / `text/turtle`) can be requested either via the `format` query
-    parameter or via the standard HTTP `Accept` header; if both are given,
-    `format` takes precedence.
+    For all Read (GET) operations, the desired representation format
+    (`cas.jsonld` / `application/ld+json`, `cas.xml` / `application/xml`,
+    `cas.ttl` / `text/turtle`, or `cas.xhtml` / `application/xhtml+xml`) can be
+    requested either via the `format` query parameter or via the standard
+    HTTP `Accept` header; if both are given, `format` takes precedence.
     Note
     - the API definition omits schemata, because they are implemented in the
       CASCaRA core software and shall not be duplicated here.
-  version: 1.0.0
+  version: 0.4.0
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0
   contact:
-    name: GfSE
-    url: https://gfse.org
+    name: Dr. Oskar von Dungern (GfSE)
+    url: mailto:oskar.dungern@gfse.org
 
 servers:
-  - url: /api/v1
+  - url: /api/v0.4.0
     description: CASCaRA API base path
 
 tags:
@@ -101,6 +101,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -150,6 +152,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     delete:
       tags: [Repository]
       summary: Delete a repository, including its content
@@ -161,6 +169,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
 
   #############################
   # Item (any metamodel item type)
@@ -183,6 +193,8 @@ paths:
         - $ref: '#/components/parameters/offset'
         - $ref: '#/components/parameters/specializes'
         - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/query'
+        - $ref: '#/components/parameters/queryLanguage'
         - $ref: '#/components/parameters/format'
         - $ref: '#/components/parameters/Accept'
       responses:
@@ -203,8 +215,14 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of items.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of items.
         '400':
           $ref: '#/components/responses/BadRequest'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     post:
       tags: [Item]
       summary: Create one or more new items of any CASCaRA item type
@@ -236,6 +254,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/items/{itemId}:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -264,6 +284,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the item.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the item.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -292,6 +316,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     delete:
       tags: [Item]
       summary: Delete an item of any CASCaRA item type
@@ -303,6 +333,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/items/{itemId}/revisions:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -339,6 +371,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of revisions.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of revisions.
         '404':
           $ref: '#/components/responses/NotFound'
 
@@ -376,6 +412,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of aPackage proxies.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of aPackage proxies.
         '400':
           $ref: '#/components/responses/BadRequest'
     post:
@@ -384,8 +424,6 @@ paths:
         Create (import) a new aPackage, including its embedded graph.
         Use the provided id; otherwise the server will generate a new id.
       operationId: createAPackage
-      parameters:
-        - $ref: '#/components/parameters/mode'
       requestBody:
         required: true
         content:
@@ -403,6 +441,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/apackages/{itemId}:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -428,6 +468,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the aPackage instance, including its graph.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the aPackage instance, including its graph.
         '404':
           $ref: '#/components/responses/NotFound'
     put:
@@ -453,6 +497,12 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
+        '501':
+          $ref: '#/components/responses/NotImplemented'
     delete:
       tags: [aPackage]
       summary: Delete an aPackage instance, including its graph
@@ -464,6 +514,8 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
   /repositories/{repositoryId}/apackages/{itemId}/revisions:
     parameters:
       - $ref: '#/components/parameters/repositoryId'
@@ -499,6 +551,10 @@ paths:
               schema:
                 type: string
                 description: RDF Turtle serialization of the array of revisions.
+            application/xhtml+xml:
+              schema:
+                type: string
+                description: XHTML rendering of the array of revisions.
         '404':
           $ref: '#/components/responses/NotFound'
   /repositories/{repositoryId}/apackages/{itemId}/items:
@@ -534,6 +590,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
     delete:
       tags: [aPackage]
       summary: Remove items from an aPackage's graph
@@ -562,6 +620,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '412':
+          $ref: '#/components/responses/PreconditionFailed'
 
 components:
   parameters:
@@ -628,6 +688,34 @@ components:
       description: Filter instances of the given class URI.
       schema:
         type: string
+    query:
+      name: query
+      in: query
+      required: false
+      description: >
+        Optional SPARQL (e.g. a `SELECT`/`ASK`/`CONSTRUCT` query body),
+        GraphQL, or XPath query string used to filter the returned list of
+        items beyond what `itemType`, `specializes` and `type` already
+        express.
+        The query language is auto-detected from the syntax; alternatively
+        it can be made explicit via the `queryLanguage` parameter. If both
+        `query` and other filter parameters are given, `query` is applied
+        in addition to (not instead of) the other filters.
+      schema:
+        type: string
+    queryLanguage:
+      name: queryLanguage
+      in: query
+      required: false
+      description: >
+        Explicitly selects the query language used to interpret the
+        `query` parameter. If omitted, the language is auto-detected.
+      schema:
+        type: string
+        enum:
+          - sparql
+          - graphql
+          - xpath
     itemType:
       name: itemType
       in: query
@@ -652,16 +740,26 @@ components:
       in: query
       required: false
       description: >
-        Write strategy for POST (create) and PUT (update) operations.
+        Write strategy for PUT (update) operations.
         'replace' (default) always overwrites the stored item with the request body,
-        regardless of its age. 'update' only overwrites the stored item if the 
-        request body is younger than the currently stored item, as determined by
-        comparing their 'modified' attribute; otherwise the stored item is
-        left unchanged.
+        regardless of its age.
+        'update' only overwrites the stored item if the request body is younger
+        than the currently stored item, as determined by comparing their 'modified'
+        attribute; otherwise the stored item is left unchanged.
         The prevailing item is returned in all cases.
+        'merge' overwrites the stored item with the request body, if the priorRevision
+        attribute of the request body matches the current revision of the stored item.
+        If the priorRevision does not match, the stored item is left unchanged and a
+        409 Conflict response is returned, including the prevailing item(s). The
+        conflict resolution strategy is left to the client, which may choose to
+        automatically or manually merge the changes and retry the PUT operation,
+        or to abort the transaction.
+        Note: the presence and validity of the priorRevision attribute is verified
+        by the server's schema/application logic, not by this API specification,
+        to avoid redundancy.
       schema:
         type: string
-        enum: [replace, update]
+        enum: [replace, update, merge]
         default: replace
     format:
       name: format
@@ -673,13 +771,15 @@ components:
         throughout this API and in the request bodies of write operations.
         `cas.xml` returns the equivalent CASCaRA XML representation.
         `cas.ttl` returns the equivalent representation as RDF Turtle.
+        `cas.xhtml` returns an XHTML rendering of the representation, intended
+        for direct display in a browser.
         This query parameter is a convenience override for simple browser-based
         testing; the standards-based alternative is HTTP content negotiation
         via the `Accept` header (see the `Accept` parameter below). If both are
         given, the `format` query parameter takes precedence over `Accept`.
       schema:
         type: string
-        enum: [cas.jsonld, cas.xml, cas.ttl]
+        enum: [cas.jsonld, cas.xml, cas.ttl, cas.xhtml]
         default: cas.jsonld
     Accept:
       name: Accept
@@ -692,11 +792,12 @@ components:
         `application/ld+json` (default) requests CASCaRA JSON-LD.
         `application/xml` requests the equivalent CASCaRA XML representation.
         `text/turtle` requests the equivalent representation as RDF Turtle.
+        `application/xhtml+xml` requests an XHTML rendering of the item(s).
         If the `format` query parameter is also present, it takes precedence
         over this header.
       schema:
         type: string
-        enum: [application/ld+json, application/xml, text/turtle]
+        enum: [application/ld+json, application/xml, text/turtle, application/xhtml+xml]
         default: application/ld+json
 
   responses:
@@ -713,8 +814,35 @@ components:
           schema:
             type: object
     Conflict:
-      description: The operation conflicts with the current state (e.g. duplicate id, or item still referenced).
+      description: Rejected because the item was meanwhile changed by another user (optimistic lock).
       content:
         application/json:
           schema:
             type: object
+          example:
+            message: 'Rejected because the item was meanwhile changed by another user (optimistic lock)'
+    PreconditionFailed:
+      description: The operation conflicts with the current state (e.g. duplicate id or item still referenced).
+      content:
+        application/json:
+          schema:
+            type: object
+    NotImplemented:
+      description: The requested feature is recognized but not (yet) implemented by this server.
+      content:
+        application/json:
+          schema:
+            type: object
+          examples:
+            queryLanguageNotImplemented:
+              summary: Unsupported queryLanguage
+              value:
+                message: 'queryLanguage not implemented'
+            formatNotImplemented:
+              summary: Unsupported format
+              value:
+                message: 'format not implemented'
+            modeNotImplemented:
+              summary: Unsupported mode
+              value:
+                message: 'mode not implemented'
