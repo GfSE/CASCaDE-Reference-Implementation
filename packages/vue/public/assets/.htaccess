@@ -1,13 +1,40 @@
-# Cache-Control for all file types
-# Cache expires in 1 day (86400 Sec)
-# Applies recursively to all subfolders
+# CORS configuration (transformations, schemata and ontology files are public)
 <IfModule mod_headers.c>
-	# Cache-Control for 1 day
-	Header set Cache-Control "public, max-age=86400"
+	Header set Access-Control-Allow-Origin "*"
+	Header set Access-Control-Allow-Methods "GET, HEAD, OPTIONS"
+	Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept"
+	Header set Access-Control-Max-Age "86400"
+	Header set Vary "Origin"
 </IfModule>
+
+# Handle OPTIONS preflight requests with 200 OK
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteCond %{REQUEST_METHOD} OPTIONS
+	RewriteRule ^(.*)$ $1 [R=200,L]
+</IfModule>
+
+# Content-Type for schema/ontology files
+<IfModule mod_mime.c>
+	AddType application/xml .xsd
+	AddType application/json .json
+	AddType application/ld+json .jsonld
+	AddType application/xml .xml
+	AddType application/xml .cas.xml
+	AddType text/turtle .cas.ttl
+</IfModule>
+
+# Enable compression for schema/ontology files
+<IfModule mod_deflate.c>
+	AddOutputFilterByType DEFLATE application/xml application/json application/ld+json text/turtle
+</IfModule>
+
+# Cache-Control by type (schema/ontology files rarely change)
 <IfModule mod_expires.c>
-	# Activates Expires-Header
 	ExpiresActive On
-	# Expires: day
 	ExpiresDefault "access plus 1 day"
+	ExpiresByType application/xml "access plus 1 week"
+	ExpiresByType application/json "access plus 1 week"
+	ExpiresByType application/ld+json "access plus 1 week"
+	ExpiresByType text/turtle "access plus 1 week"
 </IfModule>
