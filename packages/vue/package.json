@@ -9,6 +9,7 @@
     "serve": "vite",
     "preview": "vite preview",
     "lint": "eslint . --ext .js,.ts,.vue",
+    "typecheck": "vue-tsc --noEmit",
     "test": "jest"
   },
   "dependencies": {
@@ -46,7 +47,8 @@
     "unplugin-vue-components": "^29.0.0",
     "url": "^0.11.4",
     "util": "^0.12.5",
-    "vite": "^5.4.21"
+    "vite": "^5.4.21",
+    "vue-tsc": "^3.3.14"
   }
 }
 
