@@ -14,8 +14,8 @@
     "lint": "npm run lint -w @cascara/vue",
     "test:logic": "npm run test -w @cascara/common",
     "test:unit": "node scripts/link-common-public.js && npm run test -w @cascara/common && npm run test -w @cascara/vue",
-    "test:xslt": "playwright test",
-    "test:all": "npm run test:unit"
+    "test:browser": "playwright test",
+    "test:all": "npm run test:unit && npm run test:browser"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",

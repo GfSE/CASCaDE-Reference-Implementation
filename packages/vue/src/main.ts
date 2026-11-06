@@ -55,14 +55,14 @@ const pinia = createPinia();
 app.use(vuetify).use(router).use(ajvPlugin).use(pinia);
 
 // parameters: root, recursive, file to match
-const pluginFiles = require.context('./plugins', true, /\.ts$/);
+const pluginFiles = import.meta.glob('./plugins/**/*.ts', { eager: true });
 
-pluginFiles.keys().forEach((filePath: string) => {
-  const plugin = pluginFiles(filePath).default; // Get the default export of the plugin
+Object.entries(pluginFiles).forEach(([filePath, mod]) => {
+  const plugin = (mod as { default?: unknown }).default; // Get the default export of the plugin
   if (typeof plugin === 'function') {
-    app.use(plugin);
-  } else if (plugin && typeof plugin.install === 'function') {
-    app.use(plugin);
+    app.use(plugin as never);
+  } else if (plugin && typeof (plugin as { install?: unknown }).install === 'function') {
+    app.use(plugin as never);
   }
 });
 
