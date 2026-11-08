@@ -152,6 +152,7 @@ export const DEF = {
 
 export const RE = {
 //    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    mailto: /^mailto:\S+@\S+$/i,
     uri: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
     // URI: /(^|\s|>)((https?:\/\/|www\.)([^\s\/.$?#=]+\.)*([^\s\/.$?#=]+\.[\w]{2,4})((?:\/[^\s#?\/]*?){0,9})(\?[^\s#?]+?)?(#[^\s#]*?)?)(\s|,|:|<|\.\s|\.?$)/gm;
     //             $1: Begins with start of text or space or tag end

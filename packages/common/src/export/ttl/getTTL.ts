@@ -43,7 +43,7 @@
  * - Add TTL output for enumerations with datatypes other than string.
  */
 
-import { DEF } from '../../lib/definitions';
+import { DEF, RE } from '../../lib/definitions';
 import { LIB, ILanguageText, MultiLanguageText } from '../../lib/helpers';
 import { LOG } from '../../lib/messages';
 import {
@@ -806,18 +806,36 @@ class GetTTL {
         for (const [propertyClass, propInstances] of grouped) {
             const predicate = this.formatTurtleId(propertyClass);
 
-            // Add first property value
-            const firstProp = this.formatPropertyValue(propInstances[0]);
-            ttl += rdf.tab1(predicate, firstProp.value, firstProp.literal);
+            // LOG.debug(`Processing property group for predicate ${predicate} with ${propInstances.length} instances`);
+            // LOG.debug(`Property instances: ${JSON.stringify(propInstances)}`);
 
-            // Add additional values for the same property (if any)
-            for (let i = 1; i < propInstances.length; i++) {
-                const nextProp = this.formatPropertyValue(propInstances[i]);
-                ttl += rdf.tab2(nextProp.value, nextProp.literal);
+            if (propInstances.length > 1) {
+                // More than one object for the same predicate -> render as a single RDF list (round brackets)
+                const members = propInstances
+                    .map((prop) => {
+                        const formatted = this.formatPropertyValue(prop);
+                        return rdf.formatTerm(formatted.value, formatted.literal);
+                    })
+                    .join(' ');
+                ttl += rdf.tab1(predicate, `( ${members} )`, false); // is reference/raw expression
+            } else {
+                // Single value for the predicate
+                const firstProp = this.formatPropertyValue(propInstances[0]);
+                ttl += rdf.tab1(predicate, firstProp.value, firstProp.literal);
             }
         }
 
         return ttl;
+    }
+
+    /**
+     * Check whether a string value is a URL/URI (e.g. http://, https://, ftp://, urn:) or a mailto: address,
+     * so it can be rendered as <...> instead of a quoted literal.
+     * @param str - String value to check
+     * @returns true if the value should be rendered as a Turtle IRI reference
+     */
+    private static isUriOrMailto(str: string): boolean {
+        return RE.uri.test(str) || RE.mailto.test(str);
     }
 
     /**
@@ -831,6 +849,11 @@ class GetTTL {
         // multi-language text (ILanguageText[]), which tab1()/tab2() render
         // directly as one language-tagged literal per entry.
         if (prop.value !== undefined) {
+            // A plain string value that is a URL/URI or mailto: address is rendered as an IRI reference (<...>)
+            // instead of a quoted literal.
+            if (typeof prop.value === 'string' && this.isUriOrMailto(prop.value)) {
+                return { value: `<${prop.value}>`, literal: false };
+            }
             return { value: prop.value, literal: true };
         }
 
@@ -1666,6 +1689,17 @@ export class CToTtl {
             return this.makeLines(ending + `\n${this.indent}${this.indent}`, object, literal);
         }
         return "";
+    }
+
+    /**
+     * Format a single value as a standalone Turtle term, without any predicate prefix or line breaks.
+     * Used e.g. to render the individual members of an RDF list (round brackets) expression.
+     * @param object - Object value (scalar or ILanguageText array)
+     * @param literal - Whether to render the value as a quoted literal (also for numbers/booleans) or as an unquoted reference/raw expression
+     * @returns Formatted Turtle term
+     */
+    formatTerm(object: undefined | number | boolean | string | ILanguageText[], literal: boolean): string {
+        return this.makeLines('', object, literal);
     }
 
     /**

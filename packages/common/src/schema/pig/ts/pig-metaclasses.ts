@@ -2521,7 +2521,7 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
 
             // Special handling for configurable properties and links of instances (anEntity, aRelationship, aPackage)
             if (childTagName === PigItemType.aProperty) {
-                configurableProperties.push(configurablePropertyToJson(childElement));
+                configurableProperties.push(...configurablePropertyToJson(childElement));
                 continue;
             }
             if (childTagName === PigItemType.aSourceLink) {
@@ -2716,10 +2716,10 @@ function xmlElementToJson(xmlElement: ElementXML): JsonObject {
  * Process cas:aProperty element
  * Extracts:
  * - rdf:type → instanceOf
- * - <value> → value
+ * - <value> → value (one aProperty JSON object per <value> child, if there are several)
  * - itemType → cas:aProperty
  */
-function configurablePropertyToJson(elem: ElementXML): JsonObject {
+function configurablePropertyToJson(elem: ElementXML): JsonObject[] {
     const prop: JsonObject = {
         itemType: PigItemType.aProperty
     };
@@ -2731,6 +2731,9 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
         prop.instanceOf = PigItem.normalizeId(rdfType);  // references always point to a class
     }
 
+    // Array to collect multiple values
+    const values: (string | ILanguageText[])[] = [];
+
     // Extract child elements
     for (const child of Array.from(elem.childNodes)) {
         if (child.nodeType === NodeType.ELEMENT_NODE) {
@@ -2738,7 +2741,9 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
             const childTagName = childElement.tagName;
 
             if (childTagName === 'value') {
-                prop.value = getXmlElementText(childElement);
+                const text = getXmlElementText(childElement);
+                const langAttr = childElement.getAttribute('xml:lang') || childElement.getAttribute('lang');
+                values.push(langAttr ? [{ value: text, lang: langAttr }] : text);
             } else if (childTagName === 'idRef') {
                 prop.idRef = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if ( childTagName === 'rdf:type'  || childTagName.endsWith('instanceOf')) {
@@ -2752,7 +2757,12 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject {
         }
     }
 
-    return prop;
+    if (values.length === 0) {
+        return [prop];
+    }
+
+    // Create one aProperty object per value, all sharing instanceOf/idRef/composes
+    return values.map(value => ({ ...prop, value } as unknown as JsonObject));
 }
 
 /**
