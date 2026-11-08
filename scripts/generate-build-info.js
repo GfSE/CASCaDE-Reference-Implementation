@@ -80,7 +80,7 @@ export const BUILD_INFO = {
 };
 `;
 
-    const outputPath = path.join(__dirname, '../src/build-info.ts');
+    const outputPath = path.join(__dirname, '../packages/common/src/build-info.ts');
     fs.writeFileSync(outputPath, content, 'utf8');
     console.log(`✓ Build info generated: ${outputPath}\n  App: ${pkg.name} v${pkg.version}\n  Branch: ${git.branch}\n  Commit: ${git.commit}${git.isDirty ? ' (dirty)' : ''}\n  Time: ${buildTime}\n`);
 }
