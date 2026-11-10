@@ -13,7 +13,12 @@
  * 
  * Dependencies
  * - @xmldom/xmldom (Node.js only, dynamically loaded)
- * - saxon-js (for XSLT transformations, works in both environments)
+ * - saxon-js (for XSLT transformations)
+ *   - Node.js: the npm package 'saxon-js' is required directly.
+ *   - Browser: the official npm package only ships a Node.js build (SaxonJS2N.js)
+ *     which cannot run as a strict-mode ES module. Instead, the browser runtime
+ *     'SaxonJS2.rt.js' (downloaded from saxonica.com) is loaded via a <script> tag
+ *     in index.html and exposed as a global `SaxonJS`.
  *
  * Design Decisions
  * - Instead of shims, specific functions are implemented such as PLI.innerHTML(),
@@ -26,9 +31,12 @@
 import { IRsp, Rsp, Msg, LOG } from './messages';
 import { tagIETF } from './helpers';
 import { unzipSync, strFromU8, zipSync, strToU8 } from 'fflate';
-import SaxonJS from 'saxon-js';
+import type SaxonJSModule from 'saxon-js';
 import { AssetCache, IAsset } from '../../../vue/src/stores/asset-cache';
 import { Blob as NodeBlob } from 'buffer';
+
+// Cache for the resolved Saxon-JS API (browser global or Node module)
+let cachedSaxonJS: typeof SaxonJSModule | null = null;
 
 /**
  * Platform-independent DOM Node Type constants
@@ -89,6 +97,36 @@ export const PLI = {
     },
 
     /**
+     * Get the Saxon-JS API for the current environment.
+     * - In the browser: the official npm package cannot be bundled (its Node build
+     *   `SaxonJS2N.js` performs implicit global assignments that are illegal in
+     *   strict-mode ES modules). Instead, the browser runtime `SaxonJS2.rt.js`
+     *   (downloaded from saxonica.com) is loaded via a classic <script> tag in
+     *   index.html, which exposes a `SaxonJS` global.
+     * - In Node.js: the npm package 'saxon-js' is required directly.
+     */
+    getSaxonJS(): typeof SaxonJSModule {
+        if (cachedSaxonJS) {
+            return cachedSaxonJS;
+        }
+
+        if (this.isBrowserEnv()) {
+            const globalSaxonJS = (globalThis as Record<string, unknown>).SaxonJS as typeof SaxonJSModule | undefined;
+            if (!globalSaxonJS) {
+                throw new Error(
+                    'SaxonJS is not available as a global. Ensure SaxonJS2.rt.js is loaded via a <script> tag in index.html.'
+                );
+            }
+            cachedSaxonJS = globalSaxonJS;
+            return cachedSaxonJS;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        cachedSaxonJS = require('saxon-js') as typeof SaxonJSModule;
+        return cachedSaxonJS;
+    },
+
+    /**
      * Transform XML using XSLT with Saxon-JS
      * Works in both Node.js and browser environments
      * 
@@ -108,7 +146,7 @@ export const PLI = {
                 return sefResult;
             // LOG.debug(`PLI.transformXSL: loaded SEF stylesheet from ${sefPath}`,sefResult);
 
-            const output = await SaxonJS.transform(
+            const output = await PLI.getSaxonJS().transform(
                 {
                     stylesheetText: sefResult.response as string,
                     sourceText: xmlContent,
@@ -130,7 +168,7 @@ export const PLI = {
      */
     getSaxonInfo(): IRsp<unknown> {
         try {
-            const info = SaxonJS.getProcessorInfo();
+            const info = PLI.getSaxonJS().getProcessorInfo();
             return {
                 status: 0,
                 statusText: 'Saxon-JS information retrieved',

@@ -87,6 +87,11 @@ export interface IOptionsHTML {
     widthMain?: string;
     itemType?: PigItemTypeValue[];
     lang?: tagIETF;
+    // Optional resolver used to render cross-references to other CASCaRA Types
+    // (e.g. Entity.enumeratedProperty) as a clickable link with the referenced
+    // item's preferred title instead of its bare id; falls back to the id itself
+    // when no resolver is given or it cannot resolve the id:
+    resolveItemTitle?: (id: string) => string | undefined;
 }
 
 /**
@@ -231,6 +236,19 @@ class GetHTML {
 
         const EMPTY = '—';
         const idList = (ids?: string[]): string => (ids && ids.length > 0) ? ids.map(e => passify(e)).join(', ') : EMPTY;
+        // Like idList, but renders each id as a clickable link to the referenced
+        // CASCaRA Type item (showing its preferred title) when a resolver is given
+        // in options; falls back to the plain id otherwise (e.g. no resolver, or
+        // the id could not be resolved):
+        const idLinkList = (ids?: string[]): string => {
+            if (!ids || ids.length === 0) return EMPTY;
+            return ids.map(id => {
+                const title = options?.resolveItemTitle?.(id);
+                return title
+                    ? `<a href="#" class="cascara-type-ref" data-item-id="${passify(id)}">${passify(title)}</a>`
+                    : passify(id);
+            }).join(', ');
+        };
 
         let propertiesHTML = '';
         propertiesHTML += `<dt>Item Type</dt><dd>${cls.itemType}</dd>`;
@@ -241,11 +259,13 @@ class GetHTML {
         propertiesHTML += `<dt>Title</dt><dd>${clsTitleText || EMPTY}</dd>`;
         propertiesHTML += `<dt>Description</dt><dd>${clsDescText || EMPTY}</dd>`;
         propertiesHTML += `<dt>Definition</dt><dd>${clsDefText || EMPTY}</dd>`;
-        propertiesHTML += `<dt>Specializes</dt><dd>${cls.specializes ? passify(cls.specializes) : EMPTY}</dd>`;
+        // Rendered as a clickable link (idLinkList), since the id references another
+        // CASCaRA Type item of the same metaclass which can be navigated to in PageOntology:
+        propertiesHTML += `<dt>Specializes</dt><dd>${cls.specializes ? idLinkList([cls.specializes]) : EMPTY}</dd>`;
         // Enumerated Property, Icon and Color are only defined on classes derived from Element (Enumeration, Entity, Relationship):
         if ('enumeratedProperty' in cls) {
             const element = cls as unknown as { enumeratedProperty?: string[], icon?: { value: string }, color?: { value: string } };
-            propertiesHTML += `<dt>Enumerated Property</dt><dd>${idList(element.enumeratedProperty)}</dd>`;
+            propertiesHTML += `<dt>Enumerated Property</dt><dd>${idLinkList(element.enumeratedProperty)}</dd>`;
             propertiesHTML += `<dt>Icon</dt><dd>${element.icon ? passify(element.icon.value) : EMPTY}</dd>`;
             propertiesHTML += `<dt>Color</dt><dd>${element.color ? passify(element.color.value) : EMPTY}</dd>`;
         }
@@ -275,7 +295,9 @@ class GetHTML {
             }
             case PigItemType.Link: {
                 const link = cls as Link;
-                propertiesHTML += `<dt>Enumerated Endpoints</dt><dd>${idList(link.enumeratedEndpoint)}</dd>`;
+                // Rendered as clickable links (idLinkList), since each id references
+                // an Entity/Relationship class item which can be navigated to in PageOntology:
+                propertiesHTML += `<dt>Enumerated Endpoints</dt><dd>${idLinkList(link.enumeratedEndpoint)}</dd>`;
                 propertiesHTML += `<dt>Read Only</dt><dd>${!!link.readOnly}</dd>`;
                 propertiesHTML += `<dt>Revision Aware</dt><dd>${!!link.revisionAware}</dd>`;
                 propertiesHTML += `<dt>Min Count</dt><dd>${link.minCount ?? EMPTY}</dd>`;
@@ -285,13 +307,16 @@ class GetHTML {
             }
             case PigItemType.Entity: {
                 const entity = cls as Entity;
-                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idList(entity.enumeratedTargetLink)}</dd>`;
+                // Rendered as clickable links (idLinkList), since each id references
+                // a Link class item which can be navigated to in PageOntology:
+                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idLinkList(entity.enumeratedTargetLink)}</dd>`;
                 break;
             }
             case PigItemType.Relationship: {
                 const rel = cls as Relationship;
-                propertiesHTML += `<dt>Enumerated Source Links</dt><dd>${idList(rel.enumeratedSourceLink)}</dd>`;
-                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idList(rel.enumeratedTargetLink)}</dd>`;
+                // Same rationale as Entity.enumeratedTargetLink above:
+                propertiesHTML += `<dt>Enumerated Source Links</dt><dd>${idLinkList(rel.enumeratedSourceLink)}</dd>`;
+                propertiesHTML += `<dt>Enumerated Target Links</dt><dd>${idLinkList(rel.enumeratedTargetLink)}</dd>`;
                 break;
             }
         }
