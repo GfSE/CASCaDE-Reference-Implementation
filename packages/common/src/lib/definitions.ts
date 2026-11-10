@@ -34,7 +34,7 @@ export const DEF = {
     pigPath: CAS_DOMAIN,
     jsonldSchemaPath: CAS_DOMAIN + 'schema/' + CAS_VERSION + '/jsonld/',
     xslPath: 'assets/xslt/',
-    prefixShape: `${CAS_NS.slice(0, -1)}Shapes_`,  // for shapes of remotely defined ontologies, such as dcterms: and schema:
+ //   prefixShape: `${CAS_NS.slice(0, -1)}Shapes_`,  // for shapes of remotely defined ontologies, such as dcterms: and schema:
     suffixShape: '_shape',  // for CASCaRA (and local) shapes
     // Default for local terms (names) without an explicit namespace
     defaultDataNamespace: 'd:',  // for data instances

@@ -71,5 +71,16 @@ export default defineConfig({
     },
     build: {
         outDir: 'dist',
+        rollupOptions: {
+            output: {
+                assetFileNames: (assetInfo) => {
+                    const name = assetInfo.name ?? '';
+                    if (/\.(woff2?|ttf|eot|otf)$/i.test(name)) {
+                        return 'assets/fonts/[name]-[hash][extname]';
+                    }
+                    return 'assets/[name]-[hash][extname]';
+                },
+            },
+        },
     },
 });
