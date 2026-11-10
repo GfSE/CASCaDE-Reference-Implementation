@@ -2742,8 +2742,12 @@ function configurablePropertyToJson(elem: ElementXML): JsonObject[] {
 
             if (childTagName === 'value') {
                 const text = getXmlElementText(childElement);
+                /* Use as soon as multi-language text is supported for configured property values:
+                // If the <value> element has an xml:lang or lang attribute, we treat it as a multi-language text entry.
                 const langAttr = childElement.getAttribute('xml:lang') || childElement.getAttribute('lang');
-                values.push(langAttr ? [{ value: text, lang: langAttr }] : text);
+                values.push(langAttr ? [{ value: text, lang: langAttr }] : text); */
+                // But so far, we treat all <value> elements as plain text (string) so that it conforms to the (currently incomplete) schema:
+                values.push(text);
             } else if (childTagName === 'idRef') {
                 prop.idRef = PigItem.normalizeId(childElement.textContent?.trim() as string);
             } else if ( childTagName === 'rdf:type'  || childTagName.endsWith('instanceOf')) {

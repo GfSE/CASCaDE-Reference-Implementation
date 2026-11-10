@@ -47,12 +47,36 @@ import { DEF, RE } from '../../lib/definitions';
 import { LIB, ILanguageText, MultiLanguageText } from '../../lib/helpers';
 import { LOG } from '../../lib/messages';
 import {
-    TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, 
+    TPigId, TPigItem, PigItem, PigItemType, PigItemTypeValue, XsDataType,
     AnEntity, APackage, ARelationship,
     Entity, Relationship, Property, Link, Enumeration,
     AProperty, ATargetLink, ASourceLink,
     IAPackageProxy
 } from '../../schema/pig/ts/pig-metaclasses';
+
+/**
+ * Abstract CASCaRA metamodel classes that must never be targeted/referenced in the generated
+ * OWL/SHACL output, because they only define the metamodel itself and are never meant to be
+ * instantiated or specialized as a 'normal' configurable property/link:
+ * - Enumeration, Property, Link, Entity, Relationship: the root metamodel classes (where
+ *   itemType === id for the metamodel class instance itself).
+ * - cas:linksSource / cas:linksTarget: abstract root Links used only to be specialized by
+ *   concrete (configurable) Link classes; they are not meant to be used as enumeratedSourceLink/
+ *   enumeratedTargetLink entries themselves.
+ * Consequently:
+ * - No SHACL shape is generated for these classes.
+ * - They are never referenced from another class's SHACL shape (sh:property).
+ * - They are never referenced from an owl:Restriction (owl:onProperty).
+ */
+const ABSTRACT_CASCARA_CLASS_IDS = new Set<TPigId>([
+    PigItemType.Enumeration,
+    PigItemType.Property,
+    PigItemType.Link,
+    PigItemType.Entity,
+    PigItemType.Relationship,
+    `${DEF.pfxNsMeta}linksSource`,
+    `${DEF.pfxNsMeta}linksTarget`
+]);
 
 export interface IOptionsTTL {
     /** Indentation string (default: '\t' for tab) */
@@ -75,6 +99,33 @@ export interface IOptionsTTL {
      */
     addExplicitTypeToAllClasses?: boolean;
     addItemTypes?: boolean;
+    /**
+     * @internal Populated by GetTTL.aPackage() from the package's graph (Property classes, keyed
+     * by id), then threaded through to nested getTTL() calls so that xProperties()/
+     * formatPropertyValue() can render an aProperty's value according to its Property's declared
+     * datatype (e.g. xs:anyURI -> typed literal), and xPropertyRestrictions() can add the
+     * Property's minCount/maxCount as owl:Restriction cardinalities, instead of guessing from the
+     * value's spelling or omitting cardinalities altogether.
+     * Not meant to be set by callers.
+     */
+    _propertyClasses?: Map<TPigId, Property>;
+    /**
+     * @internal Populated by GetTTL.aPackage() from the package's graph (Link classes, keyed by
+     * id), then threaded through to nested getTTL() calls so that xLinkRestrictions() can add the
+     * Link's minCount/maxCount as owl:Restriction cardinalities for enumeratedSourceLink/
+     * enumeratedTargetLink entries.
+     * Not meant to be set by callers.
+     */
+    _linkClasses?: Map<TPigId, Link>;
+
+    /**
+     * @internal Populated by GetTTL.aPackage() from the package's graph (Entity/Relationship
+     * classes, keyed by id), then threaded through to nested getTTL() calls so that
+     * xInheritedEnumeratedIds() can walk the 'specializes' chain to collect
+     * enumeratedProperty/enumeratedSourceLink/enumeratedTargetLink inherited from superclasses.
+     * Not meant to be set by callers.
+     */
+    _elementClasses?: Map<TPigId, Entity | Relationship>;
 }
 
 /**
@@ -143,13 +194,39 @@ class GetTTL {
         const indent = options?.indent ?? '\t';
         const rdf = new CToTtl(indent);
 
+        // Build a lookup of Property classes, keyed by their id, so aProperty values can be
+        // rendered according to the Property's declared datatype (e.g. xs:anyURI) instead of
+        // guessing from the value's spelling, and so owl:Restriction cardinalities can be derived
+        // from the Property's minCount/maxCount. Threaded through nested getTTL() calls.
+        const propertyClasses = new Map<TPigId, Property>();
+        // Build a lookup of Link classes, keyed by their id, so owl:Restriction cardinalities for
+        // enumeratedSourceLink/enumeratedTargetLink can be derived from the Link's minCount/maxCount.
+        const linkClasses = new Map<TPigId, Link>();
+        // Build a lookup of Entity/Relationship classes, keyed by their id, so the 'specializes'
+        // chain can be walked to collect enumeratedProperty/enumeratedSourceLink/enumeratedTargetLink
+        // inherited from superclasses (see xInheritedEnumeratedIds() for the rationale).
+        const elementClasses = new Map<TPigId, Entity | Relationship>();
+        if (Array.isArray(pkg.graph)) {
+            for (const item of pkg.graph) {
+                if (item.itemType === PigItemType.Property) {
+                    propertyClasses.set(item.id, item as Property);
+                } else if (item.itemType === PigItemType.Link) {
+                    linkClasses.set(item.id, item as Link);
+                } else if (item.itemType === PigItemType.Entity || item.itemType === PigItemType.Relationship) {
+                    elementClasses.set(item.id, item as Entity | Relationship);
+                }
+            }
+        }
+        options = { ...options, _propertyClasses: propertyClasses, _linkClasses: linkClasses, _elementClasses: elementClasses };
+
+
         let ttl = '';
 
         // Add prefix definitions
         ttl += this.xContext(pkg, rdf, options);
 
         // Add ontology definition
-        ttl += this.makeOntologyDefinition(pkg, rdf);
+        ttl += this.makeOntologyDefinition(pkg, rdf, options);
 
         // Add package metadata
         ttl += this.xMetadataForInstances(pkg, rdf, options);
@@ -181,7 +258,7 @@ class GetTTL {
 
         // hasProperty - transform configurable properties
         if (LIB.isArrayWithContent(itm.hasProperty)) {
-            ttl += this.xProperties(itm.hasProperty, rdf);
+            ttl += this.xProperties(itm.hasProperty, rdf, options);
         }
 
         // hasTargetLink - transform configurable target links
@@ -210,7 +287,7 @@ class GetTTL {
 
         // hasProperty - transform configurable properties
         if (LIB.isArrayWithContent(rel.hasProperty)) {
-            ttl += this.xProperties(rel.hasProperty, rdf);
+            ttl += this.xProperties(rel.hasProperty, rdf, options);
         }
 
         // hasSourceLink - transform configurable source links
@@ -401,6 +478,13 @@ class GetTTL {
         // Add basic metamodel properties
         ttl += this.xMetadataForClasses(itm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
+        // Add owl:Restriction blank nodes for enumeratedProperty as additional rdfs:subClassOf objects
+        let subClassOfStarted = !!itm.specializes;
+        ttl += this.xPropertyRestrictions(itm, rdf, options, subClassOfStarted);
+        subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(itm, 'enumeratedProperty', options?._elementClasses));
+        // Add owl:Restriction blank nodes for enumeratedTargetLink (Entity can only target-link, not source-link)
+        ttl += this.xLinkRestrictions(itm, 'enumeratedTargetLink', rdf, options, subClassOfStarted);
+
         // icon and color (optional)
         if (itm.icon?.value) {
             ttl += rdf.tab1('cas:icon', itm.icon.value, true); // is literal
@@ -413,7 +497,7 @@ class GetTTL {
 
         // Add SHACL shape if requested
         if (options?.addShapes) {
-            ttl += this.makeElementShape(itm, rdf);
+            ttl += this.makeElementShape(itm, rdf, options);
         }
 
         return ttl;
@@ -434,6 +518,15 @@ class GetTTL {
         // Add basic metamodel properties
         ttl += this.xMetadataForClasses(rel, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
+        // Add owl:Restriction blank nodes for enumeratedProperty as additional rdfs:subClassOf objects
+        let subClassOfStarted = !!rel.specializes;
+        ttl += this.xPropertyRestrictions(rel, rdf, options, subClassOfStarted);
+        subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(rel, 'enumeratedProperty', options?._elementClasses));
+        // Add owl:Restriction blank nodes for enumeratedSourceLink and enumeratedTargetLink
+        ttl += this.xLinkRestrictions(rel, 'enumeratedSourceLink', rdf, options, subClassOfStarted);
+        subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(rel, 'enumeratedSourceLink', options?._elementClasses));
+        ttl += this.xLinkRestrictions(rel, 'enumeratedTargetLink', rdf, options, subClassOfStarted);
+
         // icon (optional)
         if (rel.icon?.value) {
             ttl += rdf.tab1('cas:icon', rel.icon.value, true); // is literal
@@ -443,7 +536,199 @@ class GetTTL {
 
         // Add SHACL shape if requested
         if (options?.addShapes) {
-            ttl += this.makeElementShape(rel, rdf);
+            ttl += this.makeElementShape(rel, rdf, options);
+        }
+
+        return ttl;
+    }
+
+    /**
+     * Collect the ids listed under the given property (e.g. 'enumeratedProperty',
+     * 'enumeratedSourceLink', 'enumeratedTargetLink') of an Entity/Relationship class, plus those
+     * of all its superclasses (walking the 'specializes' chain).
+     *
+     * IMPORTANT: Unlike CASCaRA, where Entity/Relationship classes inherit their configured
+     * properties/links from superclasses (a subclass's instances are allowed to use its own
+     * enumeratedProperty/enumeratedSourceLink/enumeratedTargetLink PLUS everything inherited from
+     * its superclasses), OWL's rdfs:subClassOf and SHACL's sh:node/sh:property do NOT automatically
+     * propagate owl:Restriction / sh:property constraints from a superclass down to subclasses in
+     * most reasoner/validator implementations (SHACL in particular has no built-in inheritance of
+     * shape constraints). Therefore, to make the generated owl:Restriction blank nodes and SHACL
+     * NodeShapes self-contained and correctly validate CASCaRA instances of a subclass, the
+     * superclasses' enumerated ids must be explicitly included here rather than relying on
+     * rdfs:subClassOf / sh:node alone.
+     * @param elem - Entity or Relationship instance to start from
+     * @param key - which enumerated array to collect ('enumeratedProperty', 'enumeratedSourceLink', or 'enumeratedTargetLink')
+     * @param elementClasses - lookup of Entity/Relationship classes by id, to walk 'specializes'
+     * @returns De-duplicated array of ids, own ids first, then inherited ones (closest superclass first)
+     */
+    private static xInheritedEnumeratedIds(
+        elem: Entity | Relationship,
+        key: 'enumeratedProperty' | 'enumeratedSourceLink' | 'enumeratedTargetLink',
+        elementClasses: Map<TPigId, Entity | Relationship> | undefined
+    ): TPigId[] {
+        const result: TPigId[] = [];
+        const seenIds = new Set<TPigId>();
+        const visitedClasses = new Set<TPigId>(); // guards against cyclic 'specializes' chains
+
+        let current: Entity | Relationship | undefined = elem;
+        while (current) {
+            const ids = (current as any)[key] as TPigId[] | undefined;
+            if (LIB.isArrayWithContent(ids)) {
+                for (const id of ids) {
+                    // Skip abstract CASCaRA metamodel classes (e.g. cas:linksSource/cas:linksTarget):
+                    // they must never be referenced in owl:Restriction/sh:property, as they are not
+                    // meant to be used directly as a configurable property/link.
+                    if (ABSTRACT_CASCARA_CLASS_IDS.has(id)) continue;
+                    if (!seenIds.has(id)) {
+                        seenIds.add(id);
+                        result.push(id);
+                    }
+                }
+            }
+
+            if (!current.specializes || visitedClasses.has(current.specializes)) break;
+            visitedClasses.add(current.specializes);
+            current = elementClasses?.get(current.specializes);
+        }
+
+        return result;
+    }
+
+    /**
+     * Add an owl:Restriction blank node (owl:onProperty + owl:someValuesFrom, plus cardinality
+     * constraints when the Property defines minCount/maxCount) for each of the Entity/Relationship
+     * class's enumeratedProperty - including those inherited from superclasses, since OWL/SHACL
+     * don't propagate these restrictions down the rdfs:subClassOf chain the way CASCaRA does
+     * (see xInheritedEnumeratedIds() for details) - as additional objects of rdfs:subClassOf.
+     * This surfaces the class's configurable properties directly on the OWL class definition, in
+     * addition to the SHACL shapes generated when addShapes is set.
+     * @param elem - Entity or Relationship instance
+     * @param rdf - CToTtl instance for building Turtle output
+     * @param options - Export options; carries the package-wide Property class lookup
+     * @param subClassOfAlreadyStarted - true if rdfs:subClassOf was already emitted via tab1() (i.e. 'specializes' is set),
+     *                                   so restrictions must be appended via tab2(); otherwise the first restriction starts it via tab1()
+     * @returns Turtle representation of the restriction(s)
+     */
+    private static xPropertyRestrictions(
+        elem: Entity | Relationship,
+        rdf: CToTtl,
+        options: IOptionsTTL | undefined,
+        subClassOfAlreadyStarted: boolean
+    ): string {
+        let ttl = '';
+        const enumeratedPropertyIds = this.xInheritedEnumeratedIds(elem, 'enumeratedProperty', options?._elementClasses);
+        if (!LIB.isArrayWithContent(enumeratedPropertyIds)) return ttl;
+
+        const propertyClasses = options?._propertyClasses;
+        let started = subClassOfAlreadyStarted;
+
+        for (const propertyId of enumeratedPropertyIds) {
+
+            const prp = propertyClasses?.get(propertyId);
+            // Without a resolvable Property class (e.g. not part of the exported package's graph),
+            // fall back to xs:string rather than omitting the restriction altogether; cardinality
+            // constraints are simply omitted in that case, as minCount/maxCount are unknown.
+            const datatype = prp?.datatype ?? XsDataType.String;
+            const onProperty = this.formatTurtleId(propertyId);
+
+            const restrictions: string[] = [
+                `[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:someValuesFrom ${datatype} ]`
+            ];
+
+            if (prp?.minCount !== undefined && prp.minCount === prp.maxCount) {
+                // exact cardinality
+                restrictions.push(`[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:cardinality "${prp.minCount}"^^xs:nonNegativeInteger ]`);
+            } else {
+                if (prp?.minCount !== undefined) {
+                    restrictions.push(`[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:minCardinality "${prp.minCount}"^^xs:nonNegativeInteger ]`);
+                }
+                if (prp?.maxCount !== undefined) {
+                    restrictions.push(`[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:maxCardinality "${prp.maxCount}"^^xs:nonNegativeInteger ]`);
+                }
+            }
+
+            for (const restriction of restrictions) {
+                if (!started) {
+                    ttl += rdf.tab1('rdfs:subClassOf', restriction, false); // is reference
+                    started = true;
+                } else {
+                    ttl += rdf.tab2(restriction, false); // is reference
+                }
+            }
+        }
+
+        return ttl;
+    }
+
+    /**
+     * Add an owl:Restriction blank node (owl:onProperty + owl:someValuesFrom, plus cardinality
+     * constraints when the Link defines minCount/maxCount) for each of the Entity/Relationship
+     * class's enumeratedSourceLink/enumeratedTargetLink - including those inherited from
+     * superclasses (see xInheritedEnumeratedIds() for the rationale) - as additional objects of
+     * rdfs:subClassOf.
+     * These are the owl:ObjectProperty subProperties of cas:Link (i.e. subProperties of
+     * cas:linksSource/cas:linksTarget), which are themselves excluded via
+     * ABSTRACT_CASCARA_CLASS_IDS since they are abstract and must never be used directly.
+     * @param elem - Entity or Relationship instance
+     * @param key - 'enumeratedSourceLink' or 'enumeratedTargetLink'
+     * @param rdf - CToTtl instance for building Turtle output
+     * @param options - Export options; carries the package-wide Link class lookup
+     * @param subClassOfAlreadyStarted - true if rdfs:subClassOf was already emitted via tab1(),
+     *                                   so restrictions must be appended via tab2(); otherwise the first restriction starts it via tab1()
+     * @returns Turtle representation of the restriction(s)
+     */
+    private static xLinkRestrictions(
+        elem: Entity | Relationship,
+        key: 'enumeratedSourceLink' | 'enumeratedTargetLink',
+        rdf: CToTtl,
+        options: IOptionsTTL | undefined,
+        subClassOfAlreadyStarted: boolean
+    ): string {
+        let ttl = '';
+        const enumeratedLinkIds = this.xInheritedEnumeratedIds(elem, key, options?._elementClasses);
+        if (!LIB.isArrayWithContent(enumeratedLinkIds)) return ttl;
+
+        const linkClasses = options?._linkClasses;
+        let started = subClassOfAlreadyStarted;
+
+        for (const linkId of enumeratedLinkIds) {
+            const lnk = linkClasses?.get(linkId);
+            const onProperty = this.formatTurtleId(linkId);
+
+            // someValuesFrom is the union of the Link's enumeratedEndpoint classes (Entity/Relationship),
+            // falling back to owl:Thing when the Link class cannot be resolved.
+            const endpoints = lnk?.enumeratedEndpoint as TPigId[] | undefined;
+            let someValuesFrom = 'owl:Thing';
+            if (LIB.isArrayWithContent(endpoints)) {
+                someValuesFrom = endpoints!.length === 1
+                    ? this.formatTurtleId(endpoints![0])
+                    : `[ owl:unionOf ( ${endpoints!.map(ep => this.formatTurtleId(ep)).join(' ')} ) ]`;
+            }
+
+            const restrictions: string[] = [
+                `[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:someValuesFrom ${someValuesFrom} ]`
+            ];
+
+            if (lnk?.minCount !== undefined && lnk.minCount === lnk.maxCount) {
+                restrictions.push(`[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:cardinality "${lnk.minCount}"^^xs:nonNegativeInteger ]`);
+            } else {
+                if (lnk?.minCount !== undefined) {
+                    restrictions.push(`[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:minCardinality "${lnk.minCount}"^^xs:nonNegativeInteger ]`);
+                }
+                if (lnk?.maxCount !== undefined) {
+                    restrictions.push(`[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:maxCardinality "${lnk.maxCount}"^^xs:nonNegativeInteger ]`);
+                }
+            }
+
+            for (const restriction of restrictions) {
+                if (!started) {
+                    ttl += rdf.tab1('rdfs:subClassOf', restriction, false); // is reference
+                    started = true;
+                } else {
+                    ttl += rdf.tab2(restriction, false); // is reference
+                }
+            }
         }
 
         return ttl;
@@ -496,7 +781,8 @@ class GetTTL {
         const requiredPrefixes = [
             { tag: 'rdf', uri: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#' },
             { tag: 'rdfs', uri: 'http://www.w3.org/2000/01/rdf-schema#' },
-            { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' }
+            { tag: 'owl', uri: 'http://www.w3.org/2002/07/owl#' },
+            { tag: 'xs', uri: 'http://www.w3.org/2001/XMLSchema#' }
         ];
         if (options?.addShapes) {
             requiredPrefixes.push(
@@ -518,8 +804,8 @@ class GetTTL {
 
     private static makeOntologyDefinition(
         pkg: APackage,
-        rdf: CToTtl
-        // options?: IOptionsTTL
+        rdf: CToTtl,
+        options?: IOptionsTTL
     ): string {
         let ttl = '';
 
@@ -530,7 +816,7 @@ class GetTTL {
 
         // Add configured properties from the package (e.g., dcterms:contributor, dcterms:license)
         if (LIB.isArrayWithContent(pkg.hasProperty)) {
-            ttl += this.xProperties(pkg.hasProperty, rdf);
+            ttl += this.xProperties(pkg.hasProperty, rdf, options);
         }
 
         // Imports (optional) - if the package has contained packages, add them as owl:imports
@@ -782,12 +1068,18 @@ class GetTTL {
      * Properties are configurable instances with instanceOf, value, and/or idRef
      * Properties are always CASCaRA owl:DatatypeProperty terms, so their values are RDF literals -
      * except for a composed property's list of references, which is a raw Turtle list expression.
+     * Multiple instances of the same predicate are rendered as an object list (comma-separated),
+     * not as an RDF collection - a collection would make the predicate point to a list node instead
+     * of directly to each value, and multilingual values could introduce commas that are invalid
+     * inside a Turtle collection. Collections are reserved for explicitly composed properties.
      * @param properties - Array of AProperty instances
      * @param rdf - CToTtl instance for building Turtle output
+     * @param options - Export options; carries the package-wide Property datatype lookup
      * @returns Turtle representation of properties
      */
-    private static xProperties(properties: AProperty[], rdf: CToTtl): string {
+    private static xProperties(properties: AProperty[], rdf: CToTtl, options?: IOptionsTTL): string {
         let ttl = '';
+        const propertyClasses = options?._propertyClasses;
 
         // Group properties by their instanceOf (property type)
         const grouped = new Map<TPigId, AProperty[]>();
@@ -805,34 +1097,30 @@ class GetTTL {
         // Generate Turtle for each property group
         for (const [propertyClass, propInstances] of grouped) {
             const predicate = this.formatTurtleId(propertyClass);
+            const datatype = propertyClasses?.get(propertyClass)?.datatype;
 
             // LOG.debug(`Processing property group for predicate ${predicate} with ${propInstances.length} instances`);
             // LOG.debug(`Property instances: ${JSON.stringify(propInstances)}`);
 
-            if (propInstances.length > 1) {
-                // More than one object for the same predicate -> render as a single RDF list (round brackets)
-                const members = propInstances
-                    .map((prop) => {
-                        const formatted = this.formatPropertyValue(prop);
-                        return rdf.formatTerm(formatted.value, formatted.literal);
-                    })
-                    .join(' ');
-                ttl += rdf.tab1(predicate, `( ${members} )`, false); // is reference/raw expression
-            } else {
-                // Single value for the predicate
-                const firstProp = this.formatPropertyValue(propInstances[0]);
-                ttl += rdf.tab1(predicate, firstProp.value, firstProp.literal);
+            // First value via tab1() (starts the predicate), any further values via tab2() (object list, comma-separated)
+            const firstProp = this.formatPropertyValue(propInstances[0], datatype);
+            ttl += rdf.tab1(predicate, firstProp.value, firstProp.literal);
+            for (let i = 1; i < propInstances.length; i++) {
+                const nextProp = this.formatPropertyValue(propInstances[i], datatype);
+                ttl += rdf.tab2(nextProp.value, nextProp.literal);
             }
         }
 
         return ttl;
     }
 
+
     /**
-     * Check whether a string value is a URL/URI (e.g. http://, https://, ftp://, urn:) or a mailto: address,
-     * so it can be rendered as <...> instead of a quoted literal.
+     * Check whether a string value is a URL/URI (e.g. http://, https://, ftp://, urn:) or a mailto: address.
+     * Used only as a fallback heuristic when the owning Property's datatype is not known (e.g. the
+     * Property class is not part of the exported package's graph), to still type the literal as xs:anyURI.
      * @param str - String value to check
-     * @returns true if the value should be rendered as a Turtle IRI reference
+     * @returns true if the value should be rendered as a typed xs:anyURI literal
      */
     private static isUriOrMailto(str: string): boolean {
         return RE.uri.test(str) || RE.mailto.test(str);
@@ -841,18 +1129,27 @@ class GetTTL {
     /**
      * Format a single property value for Turtle output
      * @param prop - AProperty instance
+     * @param datatype - The owning Property class's declared datatype (e.g. 'xs:anyURI', 'xs:integer', 'xs:dateTime'),
+     *                    if resolvable from the package's graph; undefined if not known.
      * @returns Formatted value string together with whether it is an RDF literal (quoted) or a raw reference/list expression (unquoted)
      */
-    private static formatPropertyValue(prop: AProperty): { value: string | ILanguageText[], literal: boolean } {
+    private static formatPropertyValue(prop: AProperty, datatype?: string): { value: string | ILanguageText[], literal: boolean } {
         // If it has a value, it's a plain DatatypeProperty literal.
         // A configurable property with datatype 'string' always carries a
         // multi-language text (ILanguageText[]), which tab1()/tab2() render
         // directly as one language-tagged literal per entry.
         if (prop.value !== undefined) {
-            // A plain string value that is a URL/URI or mailto: address is rendered as an IRI reference (<...>)
-            // instead of a quoted literal.
-            if (typeof prop.value === 'string' && this.isUriOrMailto(prop.value)) {
-                return { value: `<${prop.value}>`, literal: false };
+            // In PIG, aProperty.value is always a string (or ILanguageText[] for datatype 'string'),
+            // regardless of the owning Property's declared datatype. For any datatype other than
+            // xs:string, render it as a typed literal ("value"^^datatype) so consumers see the
+            // intended XSD type (e.g. xs:integer, xs:boolean, xs:dateTime, xs:anyURI) instead of a
+            // plain untyped string. xs:string itself keeps the existing (possibly language-tagged)
+            // literal handling. If the datatype cannot be resolved, fall back to the URI/mailto
+            // heuristic so at least xs:anyURI-shaped values are still typed correctly.
+            const effectiveDatatype = datatype
+                ?? (typeof prop.value === 'string' && this.isUriOrMailto(prop.value) ? XsDataType.AnyURI : undefined);
+            if (typeof prop.value === 'string' && effectiveDatatype && effectiveDatatype !== XsDataType.String) {
+                return { value: `"${CToTtl.escapeTtlStatic(prop.value)}"^^${effectiveDatatype}`, literal: false };
             }
             return { value: prop.value, literal: true };
         }
@@ -924,7 +1221,7 @@ class GetTTL {
         // LOG.debug(`Generating SHACL PropertyShape for property ${JSON.stringify(prp)}`);
 
         // No shapes for metamodel items, as they should not be instanciated:
-        if (prp.itemType == prp.id)
+        if (prp.itemType == prp.id || ABSTRACT_CASCARA_CLASS_IDS.has(prp.id))
             return '';
 
         let ttl = '';
@@ -1062,7 +1359,7 @@ class GetTTL {
         // LOG.debug(`Generating SHACL PropertyShape for link ${JSON.stringify(lnk)}`);
 
         // No shapes for metamodel items, as they should not be instantiated:
-        if (lnk.itemType == lnk.id)
+        if (lnk.itemType == lnk.id || ABSTRACT_CASCARA_CLASS_IDS.has(lnk.id))
             return '';
 
         let ttl = '';
@@ -1186,11 +1483,11 @@ class GetTTL {
      * @param rdf - CToTtl instance for building Turtle output
      * @returns Turtle representation of SHACL NodeShape
      */
-    private static makeElementShape(elem: Entity | Relationship, rdf: CToTtl): string {
+    private static makeElementShape(elem: Entity | Relationship, rdf: CToTtl, options?: IOptionsTTL): string {
         // LOG.debug(`Generating SHACL NodeShape for element ${JSON.stringify(elem)}`);
 
         // No shapes for metamodel items, as they should not be instantiated:
-        if (elem.itemType == elem.id)
+        if (elem.itemType == elem.id || ABSTRACT_CASCARA_CLASS_IDS.has(elem.id))
             return '';
 
         // Determine if this is a Relationship by checking for enumeratedSourceLink
@@ -1227,21 +1524,29 @@ class GetTTL {
             ttl += rdf.tab1('sh:or', '( [ sh:path rdfs:label ; sh:minCount 1 ] [ sh:path rdfs:comment ; sh:minCount 1 ] )', false); // is reference
         }
 
-        // List enumerated properties
+        // List enumerated properties - including those inherited from superclasses, since SHACL
+        // has no built-in inheritance of shape constraints across rdfs:subClassOf/sh:node (see
+        // xInheritedEnumeratedIds() for the rationale).
         // In case of a package class, we skip enumeratedProperty constraints, as configurable properties will be appended to the ontology
-        if (LIB.isArrayWithContent(elem.enumeratedProperty) && elemId != 'cas:Package') {
-            addPropertyConstraints(elem.enumeratedProperty as TPigId[]);
+        const enumeratedPropertyIds = this.xInheritedEnumeratedIds(elem, 'enumeratedProperty', options?._elementClasses);
+        if (LIB.isArrayWithContent(enumeratedPropertyIds) && elemId != 'cas:Package') {
+            addPropertyConstraints(enumeratedPropertyIds);
         }
 
-        // List enumerated source links - only for Relationship
-        if (isRelationship && LIB.isArrayWithContent(elem.enumeratedSourceLink)) {
-            addPropertyConstraints(elem.enumeratedSourceLink as TPigId[]);
+        // List enumerated source links - only for Relationship - including inherited ones
+        if (isRelationship) {
+            const enumeratedSourceLinkIds = this.xInheritedEnumeratedIds(elem, 'enumeratedSourceLink', options?._elementClasses);
+            if (LIB.isArrayWithContent(enumeratedSourceLinkIds)) {
+                addPropertyConstraints(enumeratedSourceLinkIds);
+            }
         }
 
-        // List enumerated target links - both Entity and Relationship can have these
-        if (LIB.isArrayWithContent(elem.enumeratedTargetLink)) {
-            addPropertyConstraints(elem.enumeratedTargetLink as TPigId[]);
+        // List enumerated target links - both Entity and Relationship can have these - including inherited ones
+        const enumeratedTargetLinkIds = this.xInheritedEnumeratedIds(elem, 'enumeratedTargetLink', options?._elementClasses);
+        if (LIB.isArrayWithContent(enumeratedTargetLinkIds)) {
+            addPropertyConstraints(enumeratedTargetLinkIds);
         }
+
 
         return ttl + rdf.newLine();
     }
@@ -1692,17 +1997,6 @@ export class CToTtl {
     }
 
     /**
-     * Format a single value as a standalone Turtle term, without any predicate prefix or line breaks.
-     * Used e.g. to render the individual members of an RDF list (round brackets) expression.
-     * @param object - Object value (scalar or ILanguageText array)
-     * @param literal - Whether to render the value as a quoted literal (also for numbers/booleans) or as an unquoted reference/raw expression
-     * @returns Formatted Turtle term
-     */
-    formatTerm(object: undefined | number | boolean | string | ILanguageText[], literal: boolean): string {
-        return this.makeLines('', object, literal);
-    }
-
-    /**
      * Format object value(s) with proper quoting and language tags
      * @param pred - Prefix string (includes predicate for first value, or just indentation)
      * @param object - Object value(s) to format
@@ -1823,6 +2117,16 @@ export class CToTtl {
      * @returns Escaped string
      */
     private escapeTtl(str: string): string {
+        return CToTtl.escapeTtlStatic(str);
+    }
+
+    /**
+     * Static variant of escapeTtl(), usable without a CToTtl instance (e.g. when pre-formatting
+     * a typed literal such as "..."^^xs:anyURI before handing it to tab1()/tab2() as a raw expression).
+     * @param str - String to escape
+     * @returns Escaped string
+     */
+    static escapeTtlStatic(str: string): string {
         if (!str) return '';
 
         return str

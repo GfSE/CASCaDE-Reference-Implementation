@@ -53,6 +53,7 @@ test.describe('ItemCache Pinia store (real browser import)', () => {
         // is called during app bootstrap), proving the persisted data is actually usable.
         await page.reload();
         await page.goto('/document');
-        await expect(page.locator('.pane-card', { hasText: 'Outline' })).toBeVisible();
+        // await expect(page.locator('.pane-card', { hasText: 'Outline' })).toBeVisible();
+        await expect(page.locator('[data-outline-id]').first()).toBeVisible();
     });
 });

@@ -150,10 +150,20 @@ export const DEF = {
     */
 };
 
+// In both pattern strings below, the following characters are not allowed in the local part of a term (after the colon):
+// colon, whitespace, double quote, single quote, less than, greater than, ampersand.
+// Reason: Avoid injection of event handlers or HTML tags in the local part of a term,
+// which could lead to XSS vulnerabilities when rendering content in a web application.
+//
+// Pattern string (without anchors) for a term with namespace, e.g. 'cas:foo' — shared by RE.termWithNamespace and idPattern
+const termWithNamespacePattern = '([a-zA-Z_][a-zA-Z0-9_-]*):([^:\\s"\'<>&]+)';
+// Pattern string (without anchors) for a URI, e.g. 'https://example.org/foo' or 'ftp://example.org/foo' — shared by RE.uri and idPattern
+const uriPattern = '(https?|ftps?|s?ftp):\\/\\/[^\\s"\'<>&/$.?#].[^\\s"\'<>&]*';
+
 export const RE = {
 //    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-    mailto: /^mailto:\S+@\S+$/i,
-    uri: /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i,
+    mailto: /^mailto:[^\s"'<>&]+@[^\s"'<>&]+$/i,
+    uri: new RegExp(`^${uriPattern}$`, 'i'),
     // URI: /(^|\s|>)((https?:\/\/|www\.)([^\s\/.$?#=]+\.)*([^\s\/.$?#=]+\.[\w]{2,4})((?:\/[^\s#?\/]*?){0,9})(\?[^\s#?]+?)?(#[^\s#]*?)?)(\s|,|:|<|\.\s|\.?$)/gm;
     //             $1: Begins with start of text or space or tag end
     //                     $2: complete link
@@ -166,7 +176,7 @@ export const RE = {
     //                                                                                                                                       $9: ends with certain characters or eol
     // Namespace: /^([\w-]+)[.:]([\w\.-]*)$/
     Namespace: /^([\w-]+):([\w.-]*)$/, // only ':' as separator
-    termWithNamespace: /^([a-zA-Z_][a-zA-Z0-9_-]*):([^:\s]+)$/,
+    termWithNamespace: new RegExp(`^${termWithNamespacePattern}$`),
     isoDateTime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}(:\d{2})?)?$/,
     hasTimezone: /(Z|[+-]\d{2}(:\d{2})?)$/,
     contentInQuotes: /"(\S[^"]+?\S)"|'(\S[^']+?\S)'/i,  // empty space in the middle allowed, but not as first and last character
@@ -180,3 +190,10 @@ export const RE = {
     // Markdown link/image: [label](link) or ![label](link); link may optionally be followed by a quoted title, e.g. [label](link "title")
     markdownLink: /!?\[[^\]]*\]\(\s*([^\s)]+)(?:\s+"[^"]*")?\s*\)/g
 }
+
+/**
+ * JSON Schema 'pattern' string for a TPigId (term with namespace, e.g. 'cas:foo', or a URI).
+ * Built from the same pattern strings as RE.termWithNamespace, so both the runtime check
+ * (PigItem.isValidIdString) and the JSON Schema validation (PigSchemaFactory) stay in sync.
+ */
+export const idPattern = `^(?:${termWithNamespacePattern}|${uriPattern})$`;

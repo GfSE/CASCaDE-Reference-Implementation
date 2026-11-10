@@ -13,13 +13,10 @@
  *
  */
 
-import { DEF } from '../../../lib/definitions';
+import { DEF, idPattern } from '../../../lib/definitions';
 import { ajv } from '../../../lib/ajv';
 
 class PigSchemaFactory {
-    static getIdNamePattern() {
-        return '^(?:[a-zA-Z_][A-Za-z0-9_-]*:[^:\\s]+|https?://[^\\s]+)$';
-    }
     static getSchemaSchema() {
         return 'http://json-schema.org/draft-07/schema#';
     }
@@ -31,7 +28,7 @@ class PigSchemaFactory {
             idString: {
                 type: 'string',
                 description: 'TPigId — term with namespace (prefix:local) oder eine URI',
-                pattern: this.getIdNamePattern()
+                pattern: idPattern
             },
             LanguageText: {
                 type: 'object',
