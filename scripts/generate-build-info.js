@@ -17,15 +17,14 @@ const path = require('path');
 
 function getPackageInfo() {
     try {
-        const packageJsonPath = path.join(__dirname, '../package.json');
+        const packageJsonPath = path.join(__dirname, '../packages/vue/package.json');
         const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
         return {
-            name: packageJson.name || 'unknown',
             version: packageJson.version || '0.0.0'
         };
     } catch (error) {
         console.warn('⚠ Could not read package.json:', error.message);
-        return { name: 'unknown', version: '0.0.0' };
+        return { version: '0.0.0' };
     }
 }
 
@@ -70,7 +69,6 @@ function generateBuildInfo() {
 
 export const BUILD_INFO = {
     // from package.json:
-    appName: '${pkg.name}',
     appVersion: '${pkg.version}',
     // from Git:
     buildTime: '${buildTime}',
@@ -80,9 +78,9 @@ export const BUILD_INFO = {
 };
 `;
 
-    const outputPath = path.join(__dirname, '../packages/common/src/build-info.ts');
+    const outputPath = path.join(__dirname, '../packages/vue/src/build-info.ts');
     fs.writeFileSync(outputPath, content, 'utf8');
-    console.log(`✓ Build info generated: ${outputPath}\n  App: ${pkg.name} v${pkg.version}\n  Branch: ${git.branch}\n  Commit: ${git.commit}${git.isDirty ? ' (dirty)' : ''}\n  Time: ${buildTime}\n`);
+    console.log(`✓ Build info generated: ${outputPath}\n  Version: ${pkg.version}\n  Branch: ${git.branch}\n  Commit: ${git.commit}${git.isDirty ? ' (dirty)' : ''}\n  Time: ${buildTime}\n`);
 }
 
 generateBuildInfo();

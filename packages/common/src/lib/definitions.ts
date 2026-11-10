@@ -13,8 +13,6 @@
  *
  */
 
-import { BUILD_INFO } from '../build-info';
-
 /**
  * Interface for hosted ontology definitions
  */
@@ -43,7 +41,6 @@ export const DEF = {
     defaultOntologyNamespace: 'o:',  // for (application or project) ontology
  //   defaultDataURL: CAS_DOMAIN + 'default/data#',  // URL for data instances
  //   defaultOntologyURL: CAS_DOMAIN + 'default/ontology#',  // URL for (application or project) ontology
-    ...BUILD_INFO,
     minLengthId: 2,
     maxSizeXML: 6 * 1024 * 1024, // 6MB
     timeBetweenPages: 400,

@@ -55,7 +55,10 @@
 <script lang="ts">
     import { inject } from 'vue';
     import { Options, Vue } from 'vue-class-component';
-    import { DEF } from '@cascara/common/lib/definitions';
+    import { DEF as COMMON_DEF } from '@cascara/common/lib/definitions';
+    import { BUILD_INFO } from '@/build-info';
+
+    const DEF = { ...COMMON_DEF, ...BUILD_INFO };
 
     @Options({
         name: 'PageHome',

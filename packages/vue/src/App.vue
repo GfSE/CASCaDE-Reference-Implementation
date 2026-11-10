@@ -3,7 +3,7 @@
         <!-- App Bar / Banner -->
         <v-app-bar app color="primary" dark>
             <v-app-bar-nav-icon @click="drawer = !drawer" />
-            <v-toolbar-title>{{ DEF.appName }}</v-toolbar-title>
+            <v-toolbar-title>{{ APP_NAME }}</v-toolbar-title>
         </v-app-bar>
 
         <!-- Navigation Drawer -->
@@ -44,8 +44,12 @@
 
 <script lang="ts">
     import { Vue, Options } from 'vue-class-component';
-    import { DEF } from '@cascara/common/lib/definitions';
+    import { DEF as COMMON_DEF } from '@cascara/common/lib/definitions';
+    import { BUILD_INFO } from '@/build-info';
     import UrlQueries from '@/components/UrlQueries.vue';
+
+    const DEF = { ...COMMON_DEF, ...BUILD_INFO };
+    const APP_NAME = 'CASCaRA Validation-Tool';
 
     @Options({
         components: {
@@ -59,6 +63,9 @@
         computed: {
             DEF() {
                 return DEF;
+            },
+            APP_NAME() {
+                return APP_NAME;
             }
         },
         created() {

@@ -62,7 +62,7 @@ This runs `npm run build:xslt` (transforms the XSLT stylesheets used for FMI/Req
 into SEF/JSON via Saxon-JS, see `scripts/compile-xslt.js`) followed by `npm run build:vue`
 (the production build of the Vue app, see `packages/vue`). As part of the total build, a
 `prebuild`/`predev` hook (see `scripts/generate-build-info.js`) auto-generates
-`packages/common/src/build-info.ts` with version/commit/timestamp information that is embedded in the app.
+`packages/vue/src/build-info.ts` with version/commit/timestamp information that is embedded in the app.
 
 ## Collaboration rules:
 - This repository has two protected branches, namely 'main' and 'dev', where 'dev' is the default.
