@@ -1,0 +1,44 @@
+Index,Element,Cardinality,Data type / allowed values,Notes & examples
+1,Identity & Intent, , ,Conceptual group
+1.1,Asset ID,1,object,Canonical key
+1.1.1,ID value,1,URI | UUID | DOI,e.g. urn:uuid:…
+1.1.2,ID scheme,1,enum {UUID, URI, DOI, ARK…},Parsing hint
+1.2,Name,1,object,Human-readable naming bundle
+1.2.1,Title,1,string,Primary label
+1.2.2,Short name / alias,0..*,array<string>,Acronym, code-name…
+1.2.3,Language,0..1,IETF BCP-47,en, fr-CA …
+1.3,Description / Purpose,1,object,Context for reuse decision
+1.3.1,Summary,1,string ≤ 140 chars,Elevator pitch
+1.3.2,Details,0..1,markdown,Longer notes
+1.3.3,Intended use,0..1,string,"Design analysis"…
+2,Stewardship & Access, , ,Who owns it & how to get it
+2.1,Maintainer organisation,1,object,Steward of record
+2.1.1,Org name,1,string,Legal name
+2.1.2,Org ID,0..1,URI | DUNS | CAGE,Machine-linkable
+2.2,Contact,1,object,Reachable endpoint
+2.2.1,Contact name,0..1,string,Person or team
+2.2.2,Contact URI,1,mailto: | https://,Email, ticket queue…
+2.3,License,1,object,Usage rights
+2.3.1,SPDX identifier,1,SPDX ID,Apache-2.0
+2.3.2,License URL,0..1,URI,Full text or LicenseRef-…
+2.4,Access location,1,object,Where to fetch
+2.4.1,Primary URI,1,URI,Canonical repo link
+2.4.2,Mirror URI(s),0..*,array<URI>,Optional replicas
+3,Versioning & Lifecycle, , ,Readiness & change control
+3.1,Version,1,object,Release identity
+3.1.1,Version label,1,string (semver),2.3.1, 2025-07-RC1
+3.1.2,Release date,0..1,ISO-8601 date,When this version went live
+3.2,Lifecycle status,1,object,Readiness flag
+3.2.1,State,1,enum {draft, released, deprecated, archived},
+3.2.2,Status date,0..1,ISO-8601 date,Effective timestamp
+3.3,Created date,1,ISO-8601 date,First publication
+3.4,Last modified date,1,ISO-8601 datetime,Most recent change
+4,Governance & Provenance, , ,Lineage & traceability
+4.1,Parent asset link,0..1,object,Root assets omit
+4.1.1,Parent ID,1,URI,Direct ancestor
+4.1.2,Relationship note,0..1,string,Free-text qualifier
+4.2,Lineage relationship,0..1,enum {derivesFrom, variantOf, supersedes, composes},Interprets 4.1
+4.3,Version history,0..*,array<object>,Trace of prior releases
+4.3.1,Prior version URI,1,URI,Link to earlier card
+4.3.2,Change summary,0..1,string,"Bug fixes", …
+4.3.3,Change date,0..1,ISO-8601 date,Timestamp of that release 

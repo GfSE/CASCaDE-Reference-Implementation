@@ -1,0 +1,1295 @@
+{
+  "@context": {
+    "cas": "https://product-information-graph.org/semantic-infrastructure/2026-11-03/cas-jsonld#",
+    "ras30": "https://product-information-graph.org/examples/ras30#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "dash": "http://datashapes.org/dash#",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "xs": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "ras30:RAS30-CASCaRA-Types",
+  "@type": "cas:Manifest-RAS30",
+  "cas:itemType": {
+    "@id": "cas:aPackage"
+  },
+  "dcterms:title": [
+    {
+      "@value": "RAS 3.0 CASCaRA Type Definitions"
+    }
+  ],
+  "dcterms:description": [
+    {
+      "@value": "CASCaRA Entity, Property and Link type definitions transformed from the RAS 3.0 UML class model."
+    }
+  ],
+  "dcterms:modified": "2026-11-11T14:28:26.744Z",
+  "@graph": [
+    {
+      "@id": "ras30:AccessLocation",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "AccessLocation"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:AccessLocation.primaryUri"
+        },
+        {
+          "@id": "ras30:AccessLocation.mirrorUris"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:AccessLocation.primaryUri",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "primaryUri"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyURI"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Canonical repo link"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:AccessLocation.mirrorUris",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "mirrorUris"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyURI"
+      },
+      "sh:minCount": 0,
+      "skos:definition": [
+        {
+          "@value": "Optional replicas"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:AssetId",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "AssetId"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:AssetId.idValue"
+        },
+        {
+          "@id": "ras30:AssetId.idScheme"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:AssetId.idValue",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "idValue"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Canonical key (URI, UUID, DOI)"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:AssetId.idScheme",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "idScheme"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Parsing hint — Allowed values: UUID, URI, DOI, ARK"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Contact",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Contact"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:Contact.contactName"
+        },
+        {
+          "@id": "ras30:Contact.contactUri"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Contact.contactName",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "contactName"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Person or team"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Contact.contactUri",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "contactUri"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyURI"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Email, ticket queue…"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:DescriptionPurpose",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "DescriptionPurpose"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:DescriptionPurpose.summary"
+        },
+        {
+          "@id": "ras30:DescriptionPurpose.details"
+        },
+        {
+          "@id": "ras30:DescriptionPurpose.intendedUse"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:DescriptionPurpose.summary",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "summary"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Elevator pitch"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:DescriptionPurpose.details",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "details"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Longer notes (markdown)"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:DescriptionPurpose.intendedUse",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "intendedUse"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Intended use"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:GovernanceAndProvenance",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "GovernanceAndProvenance"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:GovernanceAndProvenance.lineageRelationship"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "ras30:GovernanceAndProvenance_parentAssetLink"
+        },
+        {
+          "@id": "ras30:GovernanceAndProvenance_versionHistory"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:GovernanceAndProvenance.lineageRelationship",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "lineageRelationship"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Interprets parent asset link — Allowed values: derivesFrom, variantOf, supersedes, composes"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:GovernanceAndProvenance_parentAssetLink",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "parentAssetLink"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:ParentAssetLink"
+        }
+      ],
+      "sh:minCount": 0,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:GovernanceAndProvenance_versionHistory",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "versionHistory"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:VersionHistory"
+        }
+      ],
+      "sh:minCount": 0,
+      "skos:definition": [
+        {
+          "@value": "Trace of prior releases"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:IdentityAndIntent",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "IdentityAndIntent"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "ras30:IdentityAndIntent_assetId"
+        },
+        {
+          "@id": "ras30:IdentityAndIntent_name"
+        },
+        {
+          "@id": "ras30:IdentityAndIntent_descriptionPurpose"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:IdentityAndIntent_assetId",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "assetId"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:AssetId"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:IdentityAndIntent_name",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "name"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:Name"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:IdentityAndIntent_descriptionPurpose",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "descriptionPurpose"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:DescriptionPurpose"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:License",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "License"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:License.spdxIdentifier"
+        },
+        {
+          "@id": "ras30:License.licenseUrl"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:License.spdxIdentifier",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "spdxIdentifier"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "SPDX ID"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:License.licenseUrl",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "licenseUrl"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyURI"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Full text or LicenseRef-…"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:LifecycleStatus",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "LifecycleStatus"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:LifecycleStatus.state"
+        },
+        {
+          "@id": "ras30:LifecycleStatus.statusDate"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:LifecycleStatus.state",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "state"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Readiness flag — Allowed values: draft, released, deprecated, archived"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:LifecycleStatus.statusDate",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "statusDate"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:date"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Effective timestamp"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:MaintainerOrganisation",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "MaintainerOrganisation"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:MaintainerOrganisation.orgName"
+        },
+        {
+          "@id": "ras30:MaintainerOrganisation.orgId"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:MaintainerOrganisation.orgName",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "orgName"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Legal name"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:MaintainerOrganisation.orgId",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "orgId"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "URI, DUNS, or CAGE"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Name",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Name"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:Name.title"
+        },
+        {
+          "@id": "ras30:Name.shortName"
+        },
+        {
+          "@id": "ras30:Name.language"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Name.title",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "title"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Primary label"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Name.shortName",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "shortName"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "skos:definition": [
+        {
+          "@value": "Acronym, code-name…"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Name.language",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "language"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "IETF BCP-47 language code"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:ParentAssetLink",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "ParentAssetLink"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:ParentAssetLink.parentId"
+        },
+        {
+          "@id": "ras30:ParentAssetLink.relationshipNote"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:ParentAssetLink.parentId",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "parentId"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyURI"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Direct ancestor"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:ParentAssetLink.relationshipNote",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "relationshipNote"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Free-text qualifier"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Ras30core",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Ras30core"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "JSON schema for the Reusable Asset Specification 3.0 core metadata fields (nested version)"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "ras30:Ras30core_identityAndIntent"
+        },
+        {
+          "@id": "ras30:Ras30core_stewardshipAndAccess"
+        },
+        {
+          "@id": "ras30:Ras30core_versioningAndLifecycle"
+        },
+        {
+          "@id": "ras30:Ras30core_governanceAndProvenance"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Ras30core_identityAndIntent",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "identityAndIntent"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:IdentityAndIntent"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:Ras30core_stewardshipAndAccess",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "stewardshipAndAccess"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:StewardshipAndAccess"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:Ras30core_versioningAndLifecycle",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "versioningAndLifecycle"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:VersioningAndLifecycle"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:Ras30core_governanceAndProvenance",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "governanceAndProvenance"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:GovernanceAndProvenance"
+        }
+      ],
+      "sh:minCount": 0,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:StewardshipAndAccess",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "StewardshipAndAccess"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "ras30:StewardshipAndAccess_maintainerOrganisation"
+        },
+        {
+          "@id": "ras30:StewardshipAndAccess_contact"
+        },
+        {
+          "@id": "ras30:StewardshipAndAccess_license"
+        },
+        {
+          "@id": "ras30:StewardshipAndAccess_accessLocation"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:StewardshipAndAccess_maintainerOrganisation",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "maintainerOrganisation"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:MaintainerOrganisation"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:StewardshipAndAccess_contact",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "contact"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:Contact"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:StewardshipAndAccess_license",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "license"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:License"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:StewardshipAndAccess_accessLocation",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "accessLocation"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:AccessLocation"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:Version",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Version"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:Version.versionLabel"
+        },
+        {
+          "@id": "ras30:Version.releaseDate"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Version.versionLabel",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "versionLabel"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Release identity (semver)"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:Version.releaseDate",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "releaseDate"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:date"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "When this version went live"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersionHistory",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "VersionHistory"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:VersionHistory.priorVersionUri"
+        },
+        {
+          "@id": "ras30:VersionHistory.changeSummary"
+        },
+        {
+          "@id": "ras30:VersionHistory.changeDate"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersionHistory.priorVersionUri",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "priorVersionUri"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyURI"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Link to earlier card"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersionHistory.changeSummary",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "changeSummary"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Bug fixes, etc."
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersionHistory.changeDate",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "changeDate"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:date"
+      },
+      "sh:minCount": 0,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Timestamp of that release"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersioningAndLifecycle",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "VersioningAndLifecycle"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "ras30:VersioningAndLifecycle.createdDate"
+        },
+        {
+          "@id": "ras30:VersioningAndLifecycle.lastModifiedDate"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "ras30:VersioningAndLifecycle_version"
+        },
+        {
+          "@id": "ras30:VersioningAndLifecycle_lifecycleStatus"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersioningAndLifecycle.createdDate",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "createdDate"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:date"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "First publication"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersioningAndLifecycle.lastModifiedDate",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "lastModifiedDate"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:dateTime"
+      },
+      "sh:minCount": 1,
+      "sh:maxCount": 1,
+      "skos:definition": [
+        {
+          "@value": "Most recent change"
+        }
+      ]
+    },
+    {
+      "@id": "ras30:VersioningAndLifecycle_version",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "version"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:Version"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    },
+    {
+      "@id": "ras30:VersioningAndLifecycle_lifecycleStatus",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "lifecycleStatus"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "ras30:LifecycleStatus"
+        }
+      ],
+      "sh:minCount": 1,
+      "sh:maxCount": 1
+    }
+  ]
+}

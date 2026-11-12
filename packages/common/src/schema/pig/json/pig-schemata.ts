@@ -519,10 +519,7 @@ class PigSchemaFactory {
                     }
                 },
                 id: { $ref: '#/$defs/idString' },
-                instanceOf: {
-                    type: 'string',
-                    enum: [`${DEF.pfxNsMeta}Package`],
-                },
+                instanceOf: { $ref: '#/$defs/idString' }, // the referenced class must be cas:Package or a subtype thereof (checked at the constraint level, not restricted to a fixed enum, to allow subtypes)
                 itemType: {
                     type: 'string',
                     enum: [`${DEF.pfxNsMeta}aPackage`],

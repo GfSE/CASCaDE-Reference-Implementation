@@ -1,0 +1,723 @@
+{
+  "@context": {
+    "cas": "https://product-information-graph.org/semantic-infrastructure/2026-11-03/cas-jsonld#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "owl": "http://www.w3.org/2002/07/owl#",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "skos": "https://www.w3.org/TR/skos-reference/",
+    "xs": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@id": "cas:CASCaRA-Semantic-Infrastructure",
+  "@type": "cas:Package",
+  "@graph": [
+    {
+      "@id": "cas:Enumeration",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Enumeration"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Enumeration",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for enumerations; is the top-level type of optional enumeration subtypes.",
+          "@language": "en"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyType"
+	  }
+    },
+    {
+      "@id": "cas:Entity",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Entity",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for entities (aka resources or artifacts); is abstract and the top-level type of all entity subtypes.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Property"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:linksTarget"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Relationship",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Relationship"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Relationship",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for relationships; is abstract and the top-level type of all relationship subtypes.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Property"
+        }
+      ],
+      "cas:enumeratedSourceLink": [
+        {
+          "@id": "cas:linksSource"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:linksTarget"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Property",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Property",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for properties; is abstract and the top-level type of all property subtypes.",
+          "@language": "en"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:anyType"
+      }
+    },
+    {
+      "@id": "cas:Link",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Link",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item connecting a reified relationship with its source or target. Also connects an organizer to a model element",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Collection",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Collection",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+		{
+          "@value": "<p>A CASCaRA type for elements collecting entities and relationships, for example a list of requirements or diagrams using a certain notation. It corresponds to a <a href=\"https://camunda.com/bpmn/reference/\">'Group'</a> in BPMN Diagrams.</p><p>BPMN: An arbitrary set of objects can be defined as a Group to show that they logically belong together. <small>(<i>source: <a href=\"http://www.bpmn-tool.com/en/tutorial/\">BPMN Tutorial</a></i>)</small></p>",
+          "@language": "en"
+		},
+		{
+          "@value": "<p>Ein CASCaRA-Typ für Elemente, die Entitäten und Beziehungen zusammenfassen, beispielsweise eine Liste von Anforderungen oder Diagramme einer bestimmten Notation. Sie entspricht einer <a href=\"https://camunda.com/bpmn/reference/\">'Gruppe'</a> in BPMN Diagrammen. <small>(<i>source: <a href=\"http://www.bpmn-tool.com/en/tutorial/\">BPMN Tutorial</a></i>)</small></p>",
+          "@language": "de"
+		},
+		{
+          "@value": "<p>Un type CASCaRA permettant de regrouper des entités et des relations, par exemple une liste d'exigences ou des diagrammes utilisant une notation donnée. Elle correspond à un <a href=\"https://camunda.com/bpmn/reference/\">'groupe'</a> dans les diagrammes BPMN. <small>(<i>source: <a href=\"http://www.bpmn-tool.com/en/tutorial/\">BPMN Tutoriel</a></i>)</small></p>",
+          "@language": "fr"
+		}
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:enumeratedTargetLink": []
+    },
+    {
+      "@id": "cas:Organizer",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Organizer",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA type for elements organizing entities and relationships; is abstract. An example is a list of requirements or a diagram using a certain notation.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:enumeratedTargetLink": []
+    },
+    {
+      "@id": "cas:Package",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Package",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A CASCaRA meta-model item used for packages comprising entities, relationships and potentially nested packages, both classes and instances."
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "dcterms:contributor"
+        },
+        {
+          "@id": "dcterms:license"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Manifest-RAS30",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Package"
+      },
+      "dcterms:title": [
+        {
+          "@value": "RAS 3.0 Manifest",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A package holding the Reusable Asset Specification 3.0 (RAS 3.0) core metadata fields describing an asset's identity, stewardship, versioning, lifecycle and governance.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedProperty": [],
+      "cas:enumeratedTargetLink": []
+    },
+    {
+      "@id": "cas:PackageRoot",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Package Root",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subtype of CASCaRA organizer serving as a root for trees and tables.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Tree",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Tree",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subtype of cas:Organizer for strictly hierarchical data structures referencing entities and relationships.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:View",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "View",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A PIG organizer class representing a diagram with certain model-elements for a given communication purpose.",
+          "@language": "en"
+        }
+      ],
+      "cas:icon": {
+        "@value": "▣"
+      },
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Diagram"
+        },
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:shows"
+        },
+        {
+          "@id": "cas:depicts"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Table",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Table",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subtype of cas:Organizer representing a table showing selected model elements.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Outline",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Organizer"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Outline",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A subtype of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:enumeratedTargetLink": [
+        {
+          "@id": "cas:lists"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Paragraph",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Outline"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Paragraph",
+          "@language": "en"
+        },
+        {
+          "@value": "Textabsatz",
+          "@language": "de"
+        },
+        {
+          "@value": "Paragraphe",
+          "@language": "fr"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
+          "@language": "de"
+        }
+      ],
+      "cas:enumeratedProperty": [
+        {
+          "@id": "cas:Diagram"
+        }
+      ],
+      "cas:enumeratedTargetLink": []
+    },
+    {
+      "@id": "cas:linksSource",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "to source",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the source of a reified relationship.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:linksTarget",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "to target",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the target of a reified relationship or an organizer.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:linksEnumeration",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:Link"
+      },
+      "dcterms:title": [
+        {
+          "@value": "to enumeration",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Connects the enumeration of values.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Enumeration"
+        }
+      ]
+    },
+    {
+      "@id": "cas:lists",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "lists",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Lists an entity, a relationship or a subordinated organizer.",
+          "@language": "en"
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        },
+        {
+          "@id": "cas:Organizer"
+        }
+      ]
+    },
+    {
+      "@id": "cas:shows",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "shows"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Shows an entity or a relationship."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        },
+        {
+          "@id": "cas:Relationship"
+        }
+      ]
+    },
+    {
+      "@id": "cas:depicts",
+      "@type": "owl:ObjectProperty",
+      "cas:itemType": {
+        "@id": "cas:Link"
+      },
+      "cas:specializes": {
+        "@id": "cas:linksTarget"
+      },
+      "dcterms:title": [
+        {
+          "@value": "depicts"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Depicts an entity; inverse of uml:ownedDiagram."
+        }
+      ],
+      "cas:enumeratedEndpoint": [
+        {
+          "@id": "cas:Entity"
+        }
+      ]
+    },
+    {
+      "@id": "cas:Diagram",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Diagram",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A diagram illustrating the resource or a link to a diagram.",
+          "@language": "en"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
+    },
+    {
+      "@id": "cas:Category",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "Category",
+          "@language": "en"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Specifies a category for an entity or relationship.",
+          "@language": "en"
+        }
+      ],
+      "sh:datatype": {
+        "@id": "xs:string"
+      },
+      "sh:maxCount": 1,
+      "sh:maxLength": 32,
+      "sh:minCount": 0
+    }
+  ],
+  "cas:itemType": {
+    "@id": "cas:aPackage"
+  },
+  "dcterms:title": [
+    {
+      "@value": "CASCaRA Semantic Infrastructure",
+      "@language": "en"
+    }
+  ],
+  "dcterms:description": [
+	{
+	  "@value": "Defines reserved types to more easily interpret a CASCaRA Graph.",
+	  "@language": "en"
+	}
+  ],
+  "dcterms:modified": "2026-02-10T00:00:00.000Z",
+  "dcterms:contributor": [
+    {
+      "@value": "mailto:Oskar.Dungern@gfse.org",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    },
+    {
+      "@value": "mailto:Michael.Kirsch@prostep.com",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ],
+  "dcterms:license": [
+    {
+      "@value": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "cas:itemType": {
+        "@id": "cas:aProperty"
+      }
+    }
+  ]
+}

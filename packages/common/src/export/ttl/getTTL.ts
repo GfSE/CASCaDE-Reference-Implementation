@@ -55,25 +55,29 @@ import {
 } from '../../schema/pig/ts/pig-metaclasses';
 
 /**
- * Abstract CASCaRA metamodel classes that must never be targeted/referenced in the generated
- * OWL/SHACL output, because they only define the metamodel itself and are never meant to be
- * instantiated or specialized as a 'normal' configurable property/link:
- * - Enumeration, Property, Link, Entity, Relationship: the root metamodel classes (where
- *   itemType === id for the metamodel class instance itself).
- * - cas:linksSource / cas:linksTarget: abstract root Links used only to be specialized by
- *   concrete (configurable) Link classes; they are not meant to be used as enumeratedSourceLink/
- *   enumeratedTargetLink entries themselves.
- * Consequently:
- * - No SHACL shape is generated for these classes.
- * - They are never referenced from another class's SHACL shape (sh:property).
- * - They are never referenced from an owl:Restriction (owl:onProperty).
+ * Proxies for the CASCaRA metamodel classes themselves (where itemType === id for the metamodel
+ * class instance itself) that must never be targeted/referenced in the generated OWL/SHACL
+ * output, because they only define the metamodel itself and are never meant to be instantiated
+ * or specialized as a 'normal' configurable property/link.
  */
-const ABSTRACT_CASCARA_CLASS_IDS = new Set<TPigId>([
+const PROXIES_FOR_CASCARA_TYPES = new Set<TPigId>([
     PigItemType.Enumeration,
     PigItemType.Property,
     PigItemType.Link,
     PigItemType.Entity,
-    PigItemType.Relationship,
+    PigItemType.Relationship
+]);
+
+/**
+ * Types for which no SHACL shape is generated and which must never be referenced from another
+ * class's SHACL shape (sh:property) or from an owl:Restriction (owl:onProperty):
+ * - PROXIES_FOR_CASCARA_TYPES: the root metamodel classes themselves.
+ * - cas:linksSource / cas:linksTarget: abstract root Links used only to be specialized by
+ *   concrete (configurable) Link classes; they are not meant to be used as enumeratedSourceLink/
+ *   enumeratedTargetLink entries themselves.
+ */
+const TYPES_WITHOUT_SHAPES = new Set<TPigId>([
+    ...PROXIES_FOR_CASCARA_TYPES,
     `${DEF.pfxNsMeta}linksSource`,
     `${DEF.pfxNsMeta}linksTarget`
 ]);
@@ -125,7 +129,7 @@ export interface IOptionsTTL {
      * enumeratedProperty/enumeratedSourceLink/enumeratedTargetLink inherited from superclasses.
      * Not meant to be set by callers.
      */
-    _elementClasses?: Map<TPigId, Entity | Relationship>;
+    _elementClasses?: Map<TPigId, Entity | Relationship | Enumeration>;
 }
 
 /**
@@ -202,18 +206,18 @@ class GetTTL {
         // Build a lookup of Link classes, keyed by their id, so owl:Restriction cardinalities for
         // enumeratedSourceLink/enumeratedTargetLink can be derived from the Link's minCount/maxCount.
         const linkClasses = new Map<TPigId, Link>();
-        // Build a lookup of Entity/Relationship classes, keyed by their id, so the 'specializes'
+        // Build a lookup of Entity/Relationship/Enumeration classes, keyed by their id, so the 'specializes'
         // chain can be walked to collect enumeratedProperty/enumeratedSourceLink/enumeratedTargetLink
         // inherited from superclasses (see xInheritedEnumeratedIds() for the rationale).
-        const elementClasses = new Map<TPigId, Entity | Relationship>();
+        const elementClasses = new Map<TPigId, Entity | Relationship | Enumeration>();
         if (Array.isArray(pkg.graph)) {
             for (const item of pkg.graph) {
                 if (item.itemType === PigItemType.Property) {
                     propertyClasses.set(item.id, item as Property);
                 } else if (item.itemType === PigItemType.Link) {
                     linkClasses.set(item.id, item as Link);
-                } else if (item.itemType === PigItemType.Entity || item.itemType === PigItemType.Relationship) {
-                    elementClasses.set(item.id, item as Entity | Relationship);
+                } else if (item.itemType === PigItemType.Entity || item.itemType === PigItemType.Relationship || item.itemType === PigItemType.Enumeration) {
+                    elementClasses.set(item.id, item as Entity | Relationship | Enumeration);
                 }
             }
         }
@@ -317,7 +321,7 @@ class GetTTL {
         let ttl = '';
 
         // Add basic metamodel properties
-        ttl += this.xMetadataForClasses(enm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
+        ttl += this.xMetadataForClasses(enm, rdf, options);
 
         // datatype
         if (enm.datatype) {
@@ -373,7 +377,7 @@ class GetTTL {
         let ttl = '';
 
         // Add basic metamodel properties
-        ttl += this.xMetadataForClasses(prp, 'owl:DatatypeProperty', 'rdfs:subPropertyOf', rdf, options);
+        ttl += this.xMetadataForClasses(prp, rdf, options);
 
         // defaultValue
         if (prp.defaultValue !== undefined) {
@@ -423,7 +427,7 @@ class GetTTL {
         let ttl = '';
 
         // Add basic metamodel properties
-        ttl += this.xMetadataForClasses(lnk, 'owl:ObjectProperty', 'rdfs:subPropertyOf', rdf, options);
+        ttl += this.xMetadataForClasses(lnk, rdf, options);
 
     /*  // We would need to look for relationships using this link to determine the domain,
         // but that requires scanning the entire graph.
@@ -475,15 +479,8 @@ class GetTTL {
 
         let ttl = '';
 
-        // Add basic metamodel properties
-        ttl += this.xMetadataForClasses(itm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
-
-        // Add owl:Restriction blank nodes for enumeratedProperty as additional rdfs:subClassOf objects
-        let subClassOfStarted = !!itm.specializes;
-        ttl += this.xPropertyRestrictions(itm, rdf, options, subClassOfStarted);
-        subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(itm, 'enumeratedProperty', options?._elementClasses));
-        // Add owl:Restriction blank nodes for enumeratedTargetLink (Entity can only target-link, not source-link)
-        ttl += this.xLinkRestrictions(itm, 'enumeratedTargetLink', rdf, options, subClassOfStarted);
+        // Add basic metamodel properties (incl. owl:Restriction blank nodes for enumeratedProperty/enumeratedTargetLink)
+        ttl += this.xMetadataForClasses(itm, rdf, options);
 
         // icon and color (optional)
         if (itm.icon?.value) {
@@ -515,17 +512,8 @@ class GetTTL {
 
         let ttl = '';
 
-        // Add basic metamodel properties
-        ttl += this.xMetadataForClasses(rel, 'owl:Class', 'rdfs:subClassOf', rdf, options);
-
-        // Add owl:Restriction blank nodes for enumeratedProperty as additional rdfs:subClassOf objects
-        let subClassOfStarted = !!rel.specializes;
-        ttl += this.xPropertyRestrictions(rel, rdf, options, subClassOfStarted);
-        subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(rel, 'enumeratedProperty', options?._elementClasses));
-        // Add owl:Restriction blank nodes for enumeratedSourceLink and enumeratedTargetLink
-        ttl += this.xLinkRestrictions(rel, 'enumeratedSourceLink', rdf, options, subClassOfStarted);
-        subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(rel, 'enumeratedSourceLink', options?._elementClasses));
-        ttl += this.xLinkRestrictions(rel, 'enumeratedTargetLink', rdf, options, subClassOfStarted);
+        // Add basic metamodel properties (incl. owl:Restriction blank nodes for enumeratedProperty/enumeratedSourceLink/enumeratedTargetLink)
+        ttl += this.xMetadataForClasses(rel, rdf, options);
 
         // icon (optional)
         if (rel.icon?.value) {
@@ -557,21 +545,21 @@ class GetTTL {
      * NodeShapes self-contained and correctly validate CASCaRA instances of a subclass, the
      * superclasses' enumerated ids must be explicitly included here rather than relying on
      * rdfs:subClassOf / sh:node alone.
-     * @param elem - Entity or Relationship instance to start from
+     * @param elem - Entity, Relationship or Enumeration instance to start from
      * @param key - which enumerated array to collect ('enumeratedProperty', 'enumeratedSourceLink', or 'enumeratedTargetLink')
-     * @param elementClasses - lookup of Entity/Relationship classes by id, to walk 'specializes'
+     * @param elementClasses - lookup of Entity/Relationship/Enumeration classes by id, to walk 'specializes'
      * @returns De-duplicated array of ids, own ids first, then inherited ones (closest superclass first)
      */
     private static xInheritedEnumeratedIds(
-        elem: Entity | Relationship,
+        elem: Entity | Relationship | Enumeration,
         key: 'enumeratedProperty' | 'enumeratedSourceLink' | 'enumeratedTargetLink',
-        elementClasses: Map<TPigId, Entity | Relationship> | undefined
+        elementClasses: Map<TPigId, Entity | Relationship | Enumeration> | undefined
     ): TPigId[] {
         const result: TPigId[] = [];
         const seenIds = new Set<TPigId>();
         const visitedClasses = new Set<TPigId>(); // guards against cyclic 'specializes' chains
 
-        let current: Entity | Relationship | undefined = elem;
+        let current: Entity | Relationship | Enumeration | undefined = elem;
         while (current) {
             const ids = (current as any)[key] as TPigId[] | undefined;
             if (LIB.isArrayWithContent(ids)) {
@@ -579,7 +567,7 @@ class GetTTL {
                     // Skip abstract CASCaRA metamodel classes (e.g. cas:linksSource/cas:linksTarget):
                     // they must never be referenced in owl:Restriction/sh:property, as they are not
                     // meant to be used directly as a configurable property/link.
-                    if (ABSTRACT_CASCARA_CLASS_IDS.has(id)) continue;
+                    if (TYPES_WITHOUT_SHAPES.has(id)) continue;
                     if (!seenIds.has(id)) {
                         seenIds.add(id);
                         result.push(id);
@@ -603,7 +591,7 @@ class GetTTL {
      * (see xInheritedEnumeratedIds() for details) - as additional objects of rdfs:subClassOf.
      * This surfaces the class's configurable properties directly on the OWL class definition, in
      * addition to the SHACL shapes generated when addShapes is set.
-     * @param elem - Entity or Relationship instance
+     * @param elem - Entity, Relationship or Enumeration instance
      * @param rdf - CToTtl instance for building Turtle output
      * @param options - Export options; carries the package-wide Property class lookup
      * @param subClassOfAlreadyStarted - true if rdfs:subClassOf was already emitted via tab1() (i.e. 'specializes' is set),
@@ -611,7 +599,7 @@ class GetTTL {
      * @returns Turtle representation of the restriction(s)
      */
     private static xPropertyRestrictions(
-        elem: Entity | Relationship,
+        elem: Entity | Relationship | Enumeration,
         rdf: CToTtl,
         options: IOptionsTTL | undefined,
         subClassOfAlreadyStarted: boolean
@@ -669,7 +657,7 @@ class GetTTL {
      * rdfs:subClassOf.
      * These are the owl:ObjectProperty subProperties of cas:Link (i.e. subProperties of
      * cas:linksSource/cas:linksTarget), which are themselves excluded via
-     * ABSTRACT_CASCARA_CLASS_IDS since they are abstract and must never be used directly.
+     * TYPES_WITHOUT_SHAPES since they are abstract and must never be used directly.
      * @param elem - Entity or Relationship instance
      * @param key - 'enumeratedSourceLink' or 'enumeratedTargetLink'
      * @param rdf - CToTtl instance for building Turtle output
@@ -947,16 +935,32 @@ class GetTTL {
      */
     private static xMetadataForClasses(
         itm: Property | Link | Entity | Relationship | Enumeration,
-        owlClassification: string,
-        rdfSpecialization: string,
         rdf: CToTtl,
-        options?: { addItemTypes?: boolean, addExplicitTypeToAllClasses?: boolean }
+        options?: IOptionsTTL
     ): string {
         // For classes, just use the common metadata (no instanceOf)
         let ttl = '';
 
-        if (!rdfSpecialization || !owlClassification) // both are defined or not, but anyways both are checked to satisfy the TS type guard
-            throw Error(`xMetadataForClasses: Missing parameter(s) when creating metadata for ${itm.id}`);
+        let owlClassification: string;
+        let rdfSpecialization: string;
+        switch (itm.itemType) {
+            case PigItemType.Entity:
+            case PigItemType.Relationship:
+            case PigItemType.Enumeration:
+                owlClassification = 'owl:Class';
+                rdfSpecialization = 'rdfs:subClassOf';
+                break;
+            case PigItemType.Property:
+                owlClassification = 'owl:DatatypeProperty';
+                rdfSpecialization = 'rdfs:subPropertyOf';
+                break;
+            case PigItemType.Link:
+                owlClassification = 'owl:ObjectProperty';
+                rdfSpecialization = 'rdfs:subPropertyOf';
+                break;
+            default:
+                throw Error(`xMetadataForClasses: ${itm.id} with itemType '${itm.itemType}' is not a CASCaRA type`);
+        }
 
         // Item ID as subject
         const subjectId = this.formatTurtleId(itm.id);
@@ -967,13 +971,39 @@ class GetTTL {
             ttl += rdf.tab1('a', owlClassification, false); // is reference
         }
 
-        // specializes
+        // specializes - and, directly following it (as additional objects of the same predicate),
+        // the owl:Restriction blank nodes for enumeratedProperty/enumeratedSourceLink/enumeratedTargetLink,
+        // if any. If specializes is defined, the predicate was already started above via tab1(), so the
+        // restrictions are appended via tab2(). Otherwise, if there are restrictions, the first one starts
+        // the rdfSpecialization predicate itself via tab1().
+        let subClassOfStarted = !!itm.specializes;
         if (itm.specializes) {
             const specializesId = this.formatTurtleId(itm.specializes);
             ttl += rdf.tab1(rdfSpecialization, specializesId, false); // is reference
         }
 
-        if (options?.addItemTypes && itm.itemType != itm.id) {
+        if (itm.itemType === PigItemType.Entity || itm.itemType === PigItemType.Relationship || itm.itemType === PigItemType.Enumeration) {
+            const elem = itm as Entity | Relationship | Enumeration;
+            // subClassOfStarted tracks whether the rdfs:subClassOf/rdfs:subPropertyOf predicate is
+            // already open (via tab1()), so each restriction call knows whether to open the predicate
+            // itself or append to it (via tab2()); updated after each call that may have emitted one.
+            ttl += this.xPropertyRestrictions(elem, rdf, options, subClassOfStarted);
+            subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(elem, 'enumeratedProperty', options?._elementClasses));
+
+            // Only Relationship can have source links:
+            if (itm.itemType === PigItemType.Relationship) {
+                ttl += this.xLinkRestrictions(itm as Relationship, 'enumeratedSourceLink', rdf, options, subClassOfStarted);
+                subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(itm as Relationship, 'enumeratedSourceLink', options?._elementClasses));
+            }
+
+            // Only Entity/Relationship can have target links; no need to update subClassOfStarted
+            // afterwards, as this is the last restriction-emitting call in this method:
+            if (itm.itemType === PigItemType.Entity || itm.itemType === PigItemType.Relationship) {
+                ttl += this.xLinkRestrictions(itm as Entity | Relationship, 'enumeratedTargetLink', rdf, options, subClassOfStarted);
+            }
+        }
+
+        if (options?.addItemTypes) {
             ttl += rdf.tab1('cas:itemType', itm.itemType, true); // is literal
         }
 
@@ -1221,7 +1251,7 @@ class GetTTL {
         // LOG.debug(`Generating SHACL PropertyShape for property ${JSON.stringify(prp)}`);
 
         // No shapes for metamodel items, as they should not be instanciated:
-        if (prp.itemType == prp.id || ABSTRACT_CASCARA_CLASS_IDS.has(prp.id))
+        if (prp.itemType == prp.id || TYPES_WITHOUT_SHAPES.has(prp.id))
             return '';
 
         let ttl = '';
@@ -1359,7 +1389,7 @@ class GetTTL {
         // LOG.debug(`Generating SHACL PropertyShape for link ${JSON.stringify(lnk)}`);
 
         // No shapes for metamodel items, as they should not be instantiated:
-        if (lnk.itemType == lnk.id || ABSTRACT_CASCARA_CLASS_IDS.has(lnk.id))
+        if (lnk.itemType == lnk.id || TYPES_WITHOUT_SHAPES.has(lnk.id))
             return '';
 
         let ttl = '';
@@ -1487,7 +1517,7 @@ class GetTTL {
         // LOG.debug(`Generating SHACL NodeShape for element ${JSON.stringify(elem)}`);
 
         // No shapes for metamodel items, as they should not be instantiated:
-        if (elem.itemType == elem.id || ABSTRACT_CASCARA_CLASS_IDS.has(elem.id))
+        if (elem.itemType == elem.id || TYPES_WITHOUT_SHAPES.has(elem.id))
             return '';
 
         // Determine if this is a Relationship by checking for enumeratedSourceLink

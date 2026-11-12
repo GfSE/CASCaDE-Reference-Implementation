@@ -1,0 +1,146 @@
+@startuml RAS30CoreSchemaDetailed
+
+title RAS 3.0 Core Metadata Schema - Detailed UML Class Diagram
+skinparam classAttributeIconSize 0
+
+class AccessLocation {
+  + primaryUri : string (uri) <<required>>
+  .. Canonical repo link ..
+  + mirrorUris : List«string» <<optional>>
+  .. Optional replicas ..
+}
+
+class AssetId {
+  + idValue : string <<required>>
+  .. Canonical key (URI, UUID, DOI) ..
+  + idScheme : enum: UUID, URI, DOI, ARK <<required>>
+  .. Parsing hint ..
+}
+
+class Contact {
+  + contactName : string <<optional>>
+  .. Person or team ..
+  + contactUri : string <<required>>
+  .. Email, ticket queue… ..
+}
+
+class DescriptionPurpose {
+  + summary : string <<required>>
+  .. Elevator pitch ..
+  + details : string <<optional>>
+  .. Longer notes (markdown) ..
+  + intendedUse : string <<optional>>
+  .. Intended use ..
+}
+
+class GovernanceAndProvenance {
+  + parentAssetLink : ParentAssetLink <<optional>>
+  + lineageRelationship : enum: derivesFrom, variantOf, supersedes, composes <<optional>>
+  .. Interprets parent asset link ..
+  + versionHistory : List«VersionHistory» <<optional>>
+  .. Trace of prior releases ..
+}
+
+class IdentityAndIntent {
+  + assetId : AssetId <<required>>
+  + name : Name <<required>>
+  + descriptionPurpose : DescriptionPurpose <<required>>
+}
+
+class License {
+  + spdxIdentifier : string <<required>>
+  .. SPDX ID ..
+  + licenseUrl : string <<optional>>
+  .. Full text or LicenseRef-… ..
+}
+
+class LifecycleStatus {
+  + state : enum: draft, released, deprecated, archived <<required>>
+  .. Readiness flag ..
+  + statusDate : string (date) <<optional>>
+  .. Effective timestamp ..
+}
+
+class MaintainerOrganisation {
+  + orgName : string <<required>>
+  .. Legal name ..
+  + orgId : string <<optional>>
+  .. URI, DUNS, or CAGE ..
+}
+
+class Name {
+  + title : string <<required>>
+  .. Primary label ..
+  + shortName : List«string» <<optional>>
+  .. Acronym, code-name… ..
+  + language : string <<optional>>
+  .. IETF BCP-47 language code ..
+}
+
+class ParentAssetLink {
+  + parentId : string (uri) <<required>>
+  .. Direct ancestor ..
+  + relationshipNote : string <<optional>>
+  .. Free-text qualifier ..
+}
+
+class Ras30core {
+  .. JSON schema for the Reusable Asset Specification 3.0 core metadata fields (nested version) ..
+  --
+  + identityAndIntent : IdentityAndIntent <<required>>
+  + stewardshipAndAccess : StewardshipAndAccess <<required>>
+  + versioningAndLifecycle : VersioningAndLifecycle <<required>>
+  + governanceAndProvenance : GovernanceAndProvenance <<optional>>
+}
+
+class StewardshipAndAccess {
+  + maintainerOrganisation : MaintainerOrganisation <<required>>
+  + contact : Contact <<required>>
+  + license : License <<required>>
+  + accessLocation : AccessLocation <<required>>
+}
+
+class Version {
+  + versionLabel : string <<required>>
+  .. Release identity (semver) ..
+  + releaseDate : string (date) <<optional>>
+  .. When this version went live ..
+}
+
+class VersionHistory {
+  + priorVersionUri : string (uri) <<required>>
+  .. Link to earlier card ..
+  + changeSummary : string <<optional>>
+  .. Bug fixes, etc. ..
+  + changeDate : string (date) <<optional>>
+  .. Timestamp of that release ..
+}
+
+class VersioningAndLifecycle {
+  + version : Version <<required>>
+  + lifecycleStatus : LifecycleStatus <<required>>
+  + createdDate : string (date) <<required>>
+  .. First publication ..
+  + lastModifiedDate : string (date-time) <<required>>
+  .. Most recent change ..
+}
+
+
+ ' Relationships 
+Ras30core *-- IdentityAndIntent : contains
+IdentityAndIntent *-- AssetId : contains
+IdentityAndIntent *-- Name : contains
+IdentityAndIntent *-- DescriptionPurpose : contains
+Ras30core *-- StewardshipAndAccess : contains
+StewardshipAndAccess *-- MaintainerOrganisation : contains
+StewardshipAndAccess *-- Contact : contains
+StewardshipAndAccess *-- License : contains
+StewardshipAndAccess *-- AccessLocation : contains
+Ras30core *-- VersioningAndLifecycle : contains
+VersioningAndLifecycle *-- Version : contains
+VersioningAndLifecycle *-- LifecycleStatus : contains
+Ras30core *-- GovernanceAndProvenance : contains
+GovernanceAndProvenance *-- ParentAssetLink : contains
+GovernanceAndProvenance *-- VersionHistory : contains
+
+@enduml

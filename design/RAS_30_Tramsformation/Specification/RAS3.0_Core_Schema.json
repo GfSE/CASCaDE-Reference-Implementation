@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RAS 3.0 Core Metadata Schema",
+  "description": "JSON schema for the Reusable Asset Specification 3.0 core metadata fields (nested version)",
+  "type": "object",
+  "properties": {
+    "identityAndIntent": {
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "type": "object",
+          "properties": {
+            "idValue": { "type": "string", "description": "Canonical key (URI, UUID, DOI)", "examples": ["urn:uuid:123e4567-e89b-12d3-a456-426614174000"] },
+            "idScheme": { "type": "string", "enum": ["UUID", "URI", "DOI", "ARK"], "description": "Parsing hint" }
+          },
+          "required": ["idValue", "idScheme"]
+        },
+        "name": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string", "description": "Primary label" },
+            "shortName": { "type": "array", "items": { "type": "string" }, "description": "Acronym, code-name…" },
+            "language": { "type": "string", "description": "IETF BCP-47 language code", "examples": ["en", "fr-CA"] }
+          },
+          "required": ["title"]
+        },
+        "descriptionPurpose": {
+          "type": "object",
+          "properties": {
+            "summary": { "type": "string", "maxLength": 140, "description": "Elevator pitch" },
+            "details": { "type": "string", "description": "Longer notes (markdown)" },
+            "intendedUse": { "type": "string", "description": "Intended use" }
+          },
+          "required": ["summary"]
+        }
+      },
+      "required": ["assetId", "name", "descriptionPurpose"]
+    },
+    "stewardshipAndAccess": {
+      "type": "object",
+      "properties": {
+        "maintainerOrganisation": {
+          "type": "object",
+          "properties": {
+            "orgName": { "type": "string", "description": "Legal name" },
+            "orgId": { "type": "string", "description": "URI, DUNS, or CAGE" }
+          },
+          "required": ["orgName"]
+        },
+        "contact": {
+          "type": "object",
+          "properties": {
+            "contactName": { "type": "string", "description": "Person or team" },
+            "contactUri": { "type": "string", "description": "Email, ticket queue…", "pattern": "^(mailto:|https://)" }
+          },
+          "required": ["contactUri"]
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "spdxIdentifier": { "type": "string", "description": "SPDX ID" },
+            "licenseUrl": { "type": "string", "description": "Full text or LicenseRef-…" }
+          },
+          "required": ["spdxIdentifier"]
+        },
+        "accessLocation": {
+          "type": "object",
+          "properties": {
+            "primaryUri": { "type": "string", "format": "uri", "description": "Canonical repo link" },
+            "mirrorUris": { "type": "array", "items": { "type": "string", "format": "uri" }, "description": "Optional replicas" }
+          },
+          "required": ["primaryUri"]
+        }
+      },
+      "required": ["maintainerOrganisation", "contact", "license", "accessLocation"]
+    },
+    "versioningAndLifecycle": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "object",
+          "properties": {
+            "versionLabel": { "type": "string", "description": "Release identity (semver)", "examples": ["2.3.1", "2025-07-RC1"] },
+            "releaseDate": { "type": "string", "format": "date", "description": "When this version went live" }
+          },
+          "required": ["versionLabel"]
+        },
+        "lifecycleStatus": {
+          "type": "object",
+          "properties": {
+            "state": { "type": "string", "enum": ["draft", "released", "deprecated", "archived"], "description": "Readiness flag" },
+            "statusDate": { "type": "string", "format": "date", "description": "Effective timestamp" }
+          },
+          "required": ["state"]
+        },
+        "createdDate": { "type": "string", "format": "date", "description": "First publication" },
+        "lastModifiedDate": { "type": "string", "format": "date-time", "description": "Most recent change" }
+      },
+      "required": ["version", "lifecycleStatus", "createdDate", "lastModifiedDate"]
+    },
+    "governanceAndProvenance": {
+      "type": "object",
+      "properties": {
+        "parentAssetLink": {
+          "type": "object",
+          "properties": {
+            "parentId": { "type": "string", "format": "uri", "description": "Direct ancestor" },
+            "relationshipNote": { "type": "string", "description": "Free-text qualifier" }
+          },
+          "required": ["parentId"]
+        },
+        "lineageRelationship": { "type": "string", "enum": ["derivesFrom", "variantOf", "supersedes", "composes"], "description": "Interprets parent asset link" },
+        "versionHistory": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "priorVersionUri": { "type": "string", "format": "uri", "description": "Link to earlier card" },
+              "changeSummary": { "type": "string", "description": "Bug fixes, etc." },
+              "changeDate": { "type": "string", "format": "date", "description": "Timestamp of that release" }
+            },
+            "required": ["priorVersionUri"]
+          },
+          "description": "Trace of prior releases"
+        }
+      }
+    }
+  },
+  "required": ["identityAndIntent", "stewardshipAndAccess", "versioningAndLifecycle"],
+  "additionalProperties": false
+} 
