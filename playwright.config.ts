@@ -26,7 +26,8 @@ export default defineConfig({
         command: `npm run build -w @cascara/vue && npm run preview -w @cascara/vue -- --host 127.0.0.1 --port ${PREVIEW_PORT} --strictPort`,
         url: PREVIEW_BASE_URL,
         reuseExistingServer: !process.env.CI,
-        timeout: 180000,
+        // The build takes its time, in particular since Mermaid is bundled for the Graph page:
+        timeout: 600000,
     },
 
     projects: [
