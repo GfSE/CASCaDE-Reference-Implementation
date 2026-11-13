@@ -11,7 +11,7 @@
                     <ul>
                         <li v-for="partner in partners" :key="partner.name">
                             <a :href="partner.url" target="_blank" rel="noopener noreferrer">
-                                <img :src="partner.logo" :alt="partner.name" width="200" />
+                                <img :src="partner.logo" :alt="partner.name" :width="partner.w" />
                             </a>
                         </li>
                     </ul>
@@ -66,9 +66,9 @@
         data() {
             return {
                 partners: [
-                    { name: 'enso managers', url: 'https://enso-managers.de/', logo: '/assets/logos/enso-m logo 200x50 transparent.png' },
-                    { name: 'PSG', url: 'https://psg-inc.net/', logo: '/assets/logos/logo-psg.jpg' },
-                    { name: 'inomic solutions', url: 'https://inomic-solutions.com/', logo: '/assets/logos/INOMIC-Logo-dark.png' }
+                    { name: 'enso managers', url: 'https://enso-managers.de/', logo: '/assets/logos/enso-m logo 200x50 transparent.png', w: 200 },
+                    { name: 'PSG', url: 'https://psg-inc.net/', logo: '/assets/logos/logo-psg.jpg', w: 180 },
+                    { name: 'inomic solutions', url: 'https://inomic-solutions.com/', logo: '/assets/logos/INOMIC-Logo-dark.png', w: 180 }
                 ],
                 softwareUsed: [
                     { name: 'Vue.js', url: 'https://vuejs.org/', purpose: 'UI framework', license: 'MIT', licenseUrl: 'https://opensource.org/licenses/MIT' },
