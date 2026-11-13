@@ -28,10 +28,11 @@ tests under `/tests/e2e` already live), rather than under a single package.
   rehydrated correctly after a page reload (`loadFromStorage()` on app bootstrap).
 - `page-graph.spec.ts` - validates the Graph page (`/graph`) end-to-end: imports real
   `.cas.jsonld` fixtures through the import UI and checks what Mermaid finally draws for the item
-  selected in the outline (round and hexagonal nodes, the colours of types and instances, solid,
-  dashed and dotted arrows, labels which are not cut off), the popup shown while hovering a node,
-  the navigation by clicking a node or by keyboard, the choice of the radius and the limitation
-  of a large graph. Mermaid needs the layout engine of a real browser, so none of this can be
+  selected in the outline (rectangles with rounded corners and hexagons, the colours of types and
+  instances, solid, dashed, dotted and double arrows pointing to the left, labels which are not cut
+  off), the popup shown while hovering a node, the navigation by clicking a node or by keyboard,
+  the choice of the radius and of the expanded graph showing each relationship as a node, and the
+  limitation of a large graph. Mermaid needs the layout engine of a real browser, so none of this can be
   covered by the Jest suites; these only cover the composition of the graph definition
   (`packages/common/tests/pig-package-getmermaid.spec.ts`) and the handling of failures
   (`packages/vue/tests/mermaid-render.spec.ts`).

@@ -8,9 +8,9 @@
  * Playwright suite tests/browser/page-graph.spec.ts.
  */
 
-import { renderMermaid, graphNodeKey, MERMAID_CONFIG, IMermaidLike } from '../src/lib/mermaid-render';
+import { renderMermaid, graphNodeKey, drawDoubleLinks, DOUBLE_LINK_GAP_CLASS, MERMAID_CONFIG, IMermaidLike } from '../src/lib/mermaid-render';
 
-const definition = 'flowchart LR\n    n0(("Alice"))';
+const definition = 'flowchart RL\n    n0("Alice")';
 const svgOf = (id: string) => `<svg id="${id}"><g class="node" id="${id}-flowchart-n0-0"></g></svg>`;
 
 function fakeMermaid(render?: IMermaidLike['render']): { mermaid: IMermaidLike, ids: string[] } {
@@ -128,6 +128,88 @@ describe('MERMAID_CONFIG', () => {
         expect(MERMAID_CONFIG.startOnLoad).toBe(false);
         expect(MERMAID_CONFIG.suppressErrorRendering).toBe(true);
     });
+
+    test('widens the thick link by a rule which follows the one for all links', () => {
+        // Mermaid assigns the class of a normal link to a thick one as well, so that the later rule decides:
+        const css = MERMAID_CONFIG.themeCSS ?? '';
+        const general = css.indexOf('.flowchart-link {');
+        const thick = css.indexOf('.flowchart-link.edge-thickness-thick {');
+
+        expect(general).toBeGreaterThanOrEqual(0);
+        expect(thick).toBeGreaterThan(general);
+        const width = (from: number) => parseFloat(/stroke-width: ([\d.]+)px/.exec(css.slice(from))?.[1] ?? '0');
+        // a double line is two lines and a gap, each as wide as a link:
+        expect(width(thick)).toBe(3 * width(general));
+    });
+});
+
+describe('drawDoubleLinks()', () => {
+    // The structure Mermaid renders for the links of a graph: a thick one between two normal ones
+    function renderedLinks(): HTMLElement {
+        const link = (id: string, thickness: string) =>
+            `<path d="M10,10L90,10" id="cascara-graph-7-L_${id}_0" class="edge-thickness-${thickness} edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link"`
+            + ` style=";" data-edge="true" data-id="L_${id}_0" marker-end="url(#cascara-graph-7_flowchart-v2-pointEnd)"></path>`;
+        const host = document.createElement('div');
+        host.innerHTML = `<svg id="cascara-graph-7"><g class="root"><g class="edges edgePaths">`
+            + link('n0_n1', 'normal') + link('n0_n2', 'thick') + link('n3_n0', 'normal')
+            + `</g></g></svg>`;
+        return host;
+    }
+    const classes = (host: Element) => Array.from(host.querySelectorAll('path'), path => path.getAttribute('class')?.split(' ')[0]);
+
+    test('lays a gap on every thick link, which follows the same path without being a link itself', () => {
+        const host = renderedLinks();
+
+        expect(drawDoubleLinks(host)).toBe(1);
+        expect(classes(host)).toEqual(['edge-thickness-normal', 'edge-thickness-thick', DOUBLE_LINK_GAP_CLASS, 'edge-thickness-normal']);
+        const gap = host.querySelector(`path.${DOUBLE_LINK_GAP_CLASS}`) as Element;
+        expect(gap.namespaceURI).toBe('http://www.w3.org/2000/svg');
+        expect(gap.getAttribute('d')).toBe('M10,10L90,10');
+        // neither an id, nor the classes of a link, nor an arrow head:
+        expect(Array.from(gap.attributes, attribute => attribute.name).sort()).toEqual(['class', 'd', 'fill', 'stroke', 'stroke-width']);
+        expect(gap.getAttribute('class')).toBe(DOUBLE_LINK_GAP_CLASS);
+        // not filled and as wide as a link, in white unless the page sets another colour:
+        expect(gap.getAttribute('fill')).toBe('none');
+        expect(gap.getAttribute('stroke')).toBe('#ffffff');
+        expect(gap.getAttribute('stroke-width')).toBe('1.5');
+        // the link itself is unchanged:
+        expect(host.querySelectorAll('path.flowchart-link').length).toBe(3);
+        expect(host.querySelector('path.edge-thickness-thick')?.getAttribute('marker-end')).toBe('url(#cascara-graph-7_flowchart-v2-pointEnd)');
+    });
+
+    test('ends the gap where the arrow head begins', () => {
+        const host = renderedLinks();
+        // jsdom does not measure a path; a browser does:
+        (host.querySelector('path.edge-thickness-thick') as SVGPathElement).getTotalLength = () => 80;
+        drawDoubleLinks(host);
+
+        expect(host.querySelector(`path.${DOUBLE_LINK_GAP_CLASS}`)?.getAttribute('stroke-dasharray')).toBe('76 80');
+
+        // a link shorter than its arrow head has a gap all along:
+        const short = renderedLinks();
+        (short.querySelector('path.edge-thickness-thick') as SVGPathElement).getTotalLength = () => 3;
+        drawDoubleLinks(short);
+        expect(short.querySelector(`path.${DOUBLE_LINK_GAP_CLASS}`)?.hasAttribute('stroke-dasharray')).toBe(false);
+    });
+
+    test('does not lay a second gap on a link which has one', () => {
+        const host = renderedLinks();
+        drawDoubleLinks(host);
+
+        expect(drawDoubleLinks(host)).toBe(0);
+        expect(host.querySelectorAll(`path.${DOUBLE_LINK_GAP_CLASS}`).length).toBe(1);
+    });
+
+    test('leaves a graph without a thick link as it is', () => {
+        const host = renderedLinks();
+        host.querySelector('path.edge-thickness-thick')?.remove();
+        const before = host.innerHTML;
+
+        expect(drawDoubleLinks(host)).toBe(0);
+        expect(host.innerHTML).toBe(before);
+        expect(drawDoubleLinks(null)).toBe(0);
+        expect(drawDoubleLinks(undefined)).toBe(0);
+    });
 });
 
 describe('graphNodeKey()', () => {
@@ -136,7 +218,7 @@ describe('graphNodeKey()', () => {
         const host = document.createElement('div');
         host.innerHTML = `<svg id="cascara-graph-7"><g class="root">`
             + `<g class="edgeLabels"><g class="edgeLabel"><g class="label"><foreignObject><div><span class="edgeLabel"><p>employee</p></span></div></foreignObject></g></g></g>`
-            + `<g class="nodes"><g class="node default casInstance" id="${nodeId}"><circle class="basic label-container"></circle>`
+            + `<g class="nodes"><g class="node default casInstance" id="${nodeId}"><rect class="basic label-container" rx="5" ry="5"></rect>`
             + `<g class="label"><foreignObject><div><span class="nodeLabel"><p>Alice</p></span></div></foreignObject></g></g></g>`
             + `</g></svg>`;
         return host;
@@ -146,7 +228,7 @@ describe('graphNodeKey()', () => {
         const host = renderedGraph('cascara-graph-7-flowchart-n12-25');
 
         expect(graphNodeKey(host.querySelector('g.node'))).toBe('n12');
-        expect(graphNodeKey(host.querySelector('circle'))).toBe('n12');
+        expect(graphNodeKey(host.querySelector('rect'))).toBe('n12');
         expect(graphNodeKey(host.querySelector('.nodeLabel p'))).toBe('n12');
     });
 
@@ -168,7 +250,7 @@ describe('graphNodeKey()', () => {
 
     test('returns undefined for a node which was not named by getMermaid()', () => {
         for (const id of ['cascara-graph-7-flowchart-end-0', 'cascara-graph-7-flowchart-n1', 'n1', 'cascara-graph-7-subgraph-n1-0', '']) {
-            expect(graphNodeKey(renderedGraph(id).querySelector('circle'))).toBeUndefined();
+            expect(graphNodeKey(renderedGraph(id).querySelector('rect'))).toBeUndefined();
         }
     });
 });

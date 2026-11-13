@@ -1,8 +1,8 @@
 // Real-browser test for the Graph page (/graph). Mermaid needs the layout engine of a real browser,
-// so what is finally drawn (shapes, colours, line styles, labels) and the interaction with it (popup,
-// navigation by click, radius) can only be validated here: against the production build, served
+// so what is finally drawn (shapes, colours, line styles, direction, labels) and the interaction with it (popup,
+// navigation by click, radius, expanded graph) can only be validated here: against the production build, served
 // with the Content-Security-Policy of the app, and with packages imported through the actual import UI.
-import { test, expect, Page } from '@playwright/test';
+import { test, expect, Page, Locator } from '@playwright/test';
 import * as path from 'path';
 
 const dataDir = path.resolve(__dirname, '../../packages/common/data/JSON-LD');
@@ -26,8 +26,9 @@ interface RenderedEdge {
     from: string;
     label: string;
     to: string;
-    line: 'solid' | 'dashed' | 'dotted';
+    line: 'solid' | 'dashed' | 'dotted' | 'double';
     arrow: boolean;
+    toLeft: boolean;    // the edge ends left of where it begins, at a node which is left of the one it begins at
 }
 interface RenderedGraph {
     nodes: RenderedNode[];
@@ -53,36 +54,65 @@ async function openGraphPage(page: Page) {
 const outlineItem = (page: Page, id: string) => page.locator(`[data-outline-id="${id}"]`);
 const graphNode = (page: Page, name: string) => page.locator(`.graph-canvas g.node[aria-label="${name}"]`);
 const caption = (page: Page) => page.locator('.graph-caption');
+// The switch between a relationship drawn as arrow and the expanded graph with a relationship as node:
+const expandedSwitch = (page: Page) => page.getByRole('checkbox', { name: 'Expanded' });
+// How a text is set: size, weight and spacing of its font
+const typography = (text: Locator) => text.evaluate((element) => {
+    const style = getComputedStyle(element);
+    return `${style.fontSize} / ${style.fontWeight} / ${style.letterSpacing}`;
+});
 
 // Read what is drawn from the rendered SVG, so that a test states what a user sees
 // instead of the graph definition which Mermaid was given:
 async function readGraph(page: Page): Promise<RenderedGraph> {
     return page.locator('.graph-canvas svg').evaluate((svg) => {
         const nameByKey = new Map<string, string>();
+        const centreByKey = new Map<string, number>();
         const nodes = Array.from(svg.querySelectorAll('g.node')).map((g) => {
             const shape = g.querySelector('circle, polygon, rect, path');
             const points = (shape?.getAttribute('points') ?? '').trim().split(/\s+/).filter(Boolean).length;
             const name = g.getAttribute('aria-label') ?? '';
-            nameByKey.set(/-flowchart-(n\d+)-\d+$/.exec(g.id)?.[1] ?? '', name);
+            const key = /-flowchart-(n\d+)-\d+$/.exec(g.id)?.[1] ?? '';
+            const box = g.getBoundingClientRect();
+            nameByKey.set(key, name);
+            centreByKey.set(key, box.left + box.width / 2);
+            let kind = shape?.tagName ?? 'none';
+            if (kind === 'polygon') kind = points === 6 ? 'hexagon' : `polygon of ${points}`;
+            if (kind === 'rect') kind = parseFloat(shape?.getAttribute('rx') ?? '0') > 0 ? 'rounded rectangle' : 'rectangle';
             return {
                 name,
                 text: (g.textContent ?? '').trim(),
-                shape: shape?.tagName === 'polygon' ? (points === 6 ? 'hexagon' : `polygon of ${points}`) : (shape?.tagName ?? 'none'),
+                shape: kind,
                 fill: shape ? getComputedStyle(shape).fill : '',
                 selected: g.classList.contains('casSelected'),
                 link: g.getAttribute('role') === 'button'
             };
         });
-        const edges = Array.from(svg.querySelectorAll('path.flowchart-link')).map((line) => {
+        const background = getComputedStyle(svg.closest('.v-card') ?? svg).backgroundColor;
+        const edges = Array.from(svg.querySelectorAll<SVGPathElement>('path.flowchart-link')).map((line) => {
             const [, id, from, to] = /(L_(n\d+)_(n\d+)_\d+)$/.exec(line.id) ?? [];
-            const dashes = getComputedStyle(line).strokeDasharray;
+            const style = getComputedStyle(line);
+            const dashes = style.strokeDasharray;
             const dash = parseFloat(dashes);
+            // A double line is a wide line with a gap along its middle: a line of a third of its width,
+            // which follows the same path on top of it in the colour of the background
+            const gap = line.nextElementSibling;
+            const gapStyle = gap ? getComputedStyle(gap) : undefined;
+            const isDouble = !!gap && !!gapStyle
+                && gap.tagName === 'path' && !gap.classList.contains('flowchart-link')
+                && gap.getAttribute('d') === line.getAttribute('d')
+                && gapStyle.stroke === background && gapStyle.fill === 'none'
+                && parseFloat(gapStyle.strokeWidth) * 3 === parseFloat(style.strokeWidth);
+            const pattern = dashes === 'none' || !(dash > 0) ? 'solid' : (dash <= 2 ? 'dotted' : 'dashed');
+            const length = line.getTotalLength();
             return {
                 from: nameByKey.get(from) ?? '?',
                 label: (svg.querySelector(`g.label[data-id="${id}"]`)?.textContent ?? '').trim(),
                 to: nameByKey.get(to) ?? '?',
-                line: (dashes === 'none' || !(dash > 0) ? 'solid' : (dash <= 2 ? 'dotted' : 'dashed')) as 'solid' | 'dashed' | 'dotted',
-                arrow: (line.getAttribute('marker-end') ?? '') !== ''
+                line: (pattern === 'solid' && isDouble ? 'double' : pattern) as 'solid' | 'dashed' | 'dotted' | 'double',
+                arrow: (line.getAttribute('marker-end') ?? '') !== '',
+                toLeft: line.getPointAtLength(length).x < line.getPointAtLength(0).x
+                    && (centreByKey.get(to) ?? 0) < (centreByKey.get(from) ?? 0)
             };
         });
         // the graph may be scaled to fit the pane; compare in the coordinates of the graph:
@@ -101,6 +131,11 @@ async function readGraph(page: Page): Promise<RenderedGraph> {
 
 const byName = (a: { name: string }, b: { name: string }) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
 const edgeText = (edge: RenderedEdge) => `${edge.from} --${edge.label}--> ${edge.to} [${edge.line}${edge.arrow ? ' arrow' : ''}]`;
+// The edges which are not drawn with the line of their kind: dashed to the class, dotted to the specialized
+// type (the graph labels these edges as such) and solid or double for all others, the links and relationships
+const misdrawn = (graph: RenderedGraph) => graph.edges
+    .filter(edge => !(edge.label === 'instanceOf' ? ['dashed'] : edge.label === 'specializes' ? ['dotted'] : ['solid', 'double']).includes(edge.line))
+    .map(edgeText);
 
 test.describe('Graph page (Mermaid rendering in a real browser)', () => {
     let problems: string[];
@@ -137,61 +172,111 @@ test.describe('Graph page (Mermaid rendering in a real browser)', () => {
         // Select 'Alice' within the package:
         await outlineItem(page, 'd:Alice_works_for_ACME').click();
         await outlineItem(page, 'd:Alice').click();
-        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 5 nodes, 5 edges$/);
-        await expect(page.locator('.graph-canvas g.node')).toHaveCount(5);
+        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 4 nodes, 4 edges$/);
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(4);
+        await expect(expandedSwitch(page)).not.toBeChecked();
+        // The labels of the two controls beside each other are set alike:
+        expect(await typography(page.locator('.graph-expanded').getByText('Expanded', { exact: true })))
+            .toBe(await typography(page.locator('#graph-radius-label')));
 
-        // radius 1: the next neighbours, where the relationship 'works for' is shown with both of its ends
+        // radius 1: the next neighbours, where the relationship 'works for' is an arrow to the entity it relates to
         let graph = await readGraph(page);
         expect(graph.nodes.sort(byName)).toEqual([
-            // anEntity as round node in light yellow:
-            { name: 'ACME Corp. (Organization)', text: 'ACME Corp.', shape: 'circle', fill: LIGHT_YELLOW, selected: false, link: true },
-            { name: 'Alice (Person)', text: 'Alice', shape: 'circle', fill: LIGHT_YELLOW, selected: true, link: false },
-            { name: 'Package Root', text: 'Package Root', shape: 'circle', fill: LIGHT_YELLOW, selected: false, link: true },
-            // Entity as round node in light orange:
-            { name: 'Person (Entity)', text: 'Person', shape: 'circle', fill: LIGHT_ORANGE, selected: false, link: true },
-            // aRelationship as hexagonal node in light yellow, named by its class:
-            { name: 'works for', text: 'works for', shape: 'hexagon', fill: LIGHT_YELLOW, selected: false, link: true }
+            // anEntity as rectangle with rounded corners in light yellow:
+            { name: 'ACME Corp. (Organization)', text: 'ACME Corp.', shape: 'rounded rectangle', fill: LIGHT_YELLOW, selected: false, link: true },
+            { name: 'Alice (Person)', text: 'Alice', shape: 'rounded rectangle', fill: LIGHT_YELLOW, selected: true, link: false },
+            { name: 'Package Root', text: 'Package Root', shape: 'rounded rectangle', fill: LIGHT_YELLOW, selected: false, link: true },
+            // Entity as rectangle with rounded corners in light orange:
+            { name: 'Person (Entity)', text: 'Person', shape: 'rounded rectangle', fill: LIGHT_ORANGE, selected: false, link: true }
         ]);
         expect(graph.edges.map(edgeText).sort()).toEqual([
             // instanceOf as arrow with dashed line:
             'Alice (Person) --instanceOf--> Person (Entity) [dashed arrow]',
+            // aRelationship as arrow with double line from its source to its target, labelled with its title:
+            'Alice (Person) --works for--> ACME Corp. (Organization) [double arrow]',
             // aLink as arrow with solid line, labelled with the title of its Link class:
             'Package Root --lists--> ACME Corp. (Organization) [solid arrow]',
-            'Package Root --lists--> Alice (Person) [solid arrow]',
-            'works for --employee--> Alice (Person) [solid arrow]',
-            'works for --employer--> ACME Corp. (Organization) [solid arrow]'
+            'Package Root --lists--> Alice (Person) [solid arrow]'
         ]);
+        // the types are at the left of their instances, so that all arrows point to the left:
+        expect(graph.edges.filter(edge => !edge.toLeft).map(edgeText)).toEqual([]);
         expect(graph.clipped).toEqual([]);
+        // the gap of the double line carries no arrow head of its own and ends where the arrow head begins:
+        const gap = await page.locator('.graph-canvas path.graph-link-gap').evaluate((path) => ({
+            marker: path.getAttribute('marker-end'),
+            short: (path.previousElementSibling as SVGPathElement).getTotalLength() - parseFloat(getComputedStyle(path).strokeDasharray)
+        }));
+        expect(gap.marker).toBeNull();
+        expect(gap.short).toBeCloseTo(4, 1);
 
         // radius 2: the neighbours of the neighbours as well
         await page.getByRole('button', { name: 'Radius 2' }).click();
-        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 9 nodes, 11 edges$/);
-        await expect(page.locator('.graph-canvas g.node')).toHaveCount(9);
+        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 7 nodes, 7 edges$/);
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(7);
 
         graph = await readGraph(page);
-        expect(graph.nodes.sort(byName).slice(3)).toEqual([
-            { name: 'Package Root', text: 'Package Root', shape: 'circle', fill: LIGHT_YELLOW, selected: false, link: true },
-            { name: 'Package Root (Entity)', text: 'Package Root', shape: 'circle', fill: LIGHT_ORANGE, selected: false, link: true },
-            { name: 'Person (Entity)', text: 'Person', shape: 'circle', fill: LIGHT_ORANGE, selected: false, link: true },
+        expect(graph.nodes.sort(byName).slice(2)).toEqual([
+            { name: 'Organization (Entity)', text: 'Organization', shape: 'rounded rectangle', fill: LIGHT_ORANGE, selected: false, link: true },
+            { name: 'Package Root', text: 'Package Root', shape: 'rounded rectangle', fill: LIGHT_YELLOW, selected: false, link: true },
+            { name: 'Package Root (Entity)', text: 'Package Root', shape: 'rounded rectangle', fill: LIGHT_ORANGE, selected: false, link: true },
+            { name: 'Person (Entity)', text: 'Person', shape: 'rounded rectangle', fill: LIGHT_ORANGE, selected: false, link: true },
             // a class which is referenced, but not part of the package; its label shows the colon of the id:
-            { name: 'schema:Person', text: 'schema:Person', shape: 'circle', fill: LIGHT_GREY, selected: false, link: false },
-            { name: 'works for', text: 'works for', shape: 'hexagon', fill: LIGHT_YELLOW, selected: false, link: true },
-            // Relationship as hexagonal node in light orange:
-            { name: 'works for (Relationship)', text: 'works for', shape: 'hexagon', fill: LIGHT_ORANGE, selected: false, link: true }
+            { name: 'schema:Person', text: 'schema:Person', shape: 'rounded rectangle', fill: LIGHT_GREY, selected: false, link: false }
         ]);
-        const edges = graph.edges.map(edgeText);
+        let edges = graph.edges.map(edgeText);
         // specializes as arrow with dotted line, told apart from the dashed line of instanceOf:
         expect(edges).toContain('Person (Entity) --specializes--> schema:Person [dotted arrow]');
-        expect(edges).toContain('works for --instanceOf--> works for (Relationship) [dashed arrow]');
-        // Link as arrow with solid line:
-        expect(edges).toContain('works for (Relationship) --employee--> Person (Entity) [solid arrow]');
-        expect(edges).toContain('works for (Relationship) --employer--> Organization (Entity) [solid arrow]');
-        expect(edges.filter(edge => edge.includes('[dashed arrow]')).length).toBe(4);
+        expect(edges).toContain('ACME Corp. (Organization) --instanceOf--> Organization (Entity) [dashed arrow]');
+        expect(edges.filter(edge => edge.includes('[dashed arrow]')).length).toBe(3);
+        expect(edges.filter(edge => edge.includes('[double arrow]'))).toEqual(['Alice (Person) --works for--> ACME Corp. (Organization) [double arrow]']);
+        expect(graph.edges.filter(edge => !edge.toLeft).map(edgeText)).toEqual([]);
         expect(graph.clipped).toEqual([]);
 
-        // ... and back to radius 1
+        // expanded: the relationships are nodes with their links, each of which counts as a step of the radius;
+        // the class of ACME Corp. is thus three steps away and no more shown
+        await expandedSwitch(page).check();
+        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 8 nodes, 9 edges$/);
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(8);
+
+        graph = await readGraph(page);
+        expect(graph.nodes.sort(byName).map(node => node.name)).toEqual([
+            'ACME Corp. (Organization)', 'Alice (Person)', 'Package Root', 'Package Root (Entity)', 'Person (Entity)', 'schema:Person', 'works for', 'works for (Relationship)'
+        ]);
+        // aRelationship as hexagonal node in light yellow, named by its class:
+        expect(graph.nodes.find(node => node.name === 'works for'))
+            .toEqual({ name: 'works for', text: 'works for', shape: 'hexagon', fill: LIGHT_YELLOW, selected: false, link: true });
+        // Relationship as hexagonal node in light orange:
+        expect(graph.nodes.find(node => node.name === 'works for (Relationship)'))
+            .toEqual({ name: 'works for (Relationship)', text: 'works for', shape: 'hexagon', fill: LIGHT_ORANGE, selected: false, link: true });
+        edges = graph.edges.map(edgeText);
+        expect(edges).toContain('works for --instanceOf--> works for (Relationship) [dashed arrow]');
+        // aLink and Link as arrow with solid line:
+        expect(edges).toContain('works for --employee--> Alice (Person) [solid arrow]');
+        expect(edges).toContain('works for --employer--> ACME Corp. (Organization) [solid arrow]');
+        expect(edges).toContain('works for (Relationship) --employee--> Person (Entity) [solid arrow]');
+        // no relationship is drawn as arrow:
+        expect(edges.filter(edge => edge.includes('[double arrow]'))).toEqual([]);
+        await expect(page.locator('.graph-canvas path.graph-link-gap')).toHaveCount(0);
+        expect(graph.edges.filter(edge => !edge.toLeft).map(edgeText)).toEqual([]);
+        expect(graph.clipped).toEqual([]);
+
+        // ... and with radius 1, the relationship is shown without the entity at its other end
         await page.getByRole('button', { name: 'Radius 1' }).click();
-        await expect(page.locator('.graph-canvas g.node')).toHaveCount(5);
+        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 4 nodes, 3 edges$/);
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(4);
+        graph = await readGraph(page);
+        expect(graph.nodes.sort(byName).map(node => node.name)).toEqual(['Alice (Person)', 'Package Root', 'Person (Entity)', 'works for']);
+        expect(graph.edges.map(edgeText).sort()).toEqual([
+            'Alice (Person) --instanceOf--> Person (Entity) [dashed arrow]',
+            'Package Root --lists--> Alice (Person) [solid arrow]',
+            'works for --employee--> Alice (Person) [solid arrow]'
+        ]);
+
+        // ... and back to the relationship as arrow
+        await expandedSwitch(page).uncheck();
+        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 4 nodes, 4 edges$/);
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(4);
+        await expect(page.locator('.graph-canvas path.graph-link-gap')).toHaveCount(1);
 
         // Nothing of Mermaid is left over in the document and the graph carries no script:
         expect(await page.locator('.graph-measure').evaluate(element => element.childElementCount)).toBe(0);
@@ -251,13 +336,16 @@ test.describe('Graph page (Mermaid rendering in a real browser)', () => {
 
         // Click the class of Alice: it becomes the selected item, in the graph as well as in the outline
         await graphNode(page, 'Person (Entity)').click();
-        await expect(caption(page)).toHaveText(/^Person \(Entity\) . 5 nodes, 4 edges$/);
+        await expect(caption(page)).toHaveText(/^Person \(Entity\) . 3 nodes, 2 edges$/);
         await expect(outlineItem(page, 'cas:Person')).toBeFocused();
         await expect(outlineItem(page, 'cas:Person')).toBeVisible();
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(3);
         let graph = await readGraph(page);
         expect(graph.nodes.filter(node => node.selected).map(node => node.name)).toEqual(['Person (Entity)']);
-        expect(graph.edges.map(edgeText)).toContain('Alice (Person) --instanceOf--> Person (Entity) [dashed arrow]');
-        expect(graph.edges.map(edgeText)).toContain('works for (Relationship) --employee--> Person (Entity) [solid arrow]');
+        expect(graph.edges.map(edgeText).sort()).toEqual([
+            'Alice (Person) --instanceOf--> Person (Entity) [dashed arrow]',
+            'Person (Entity) --specializes--> schema:Person [dotted arrow]'
+        ]);
         // an item which is not available cannot be navigated to:
         expect(graph.nodes.find(node => node.name === 'schema:Person')).toMatchObject({ link: false, fill: LIGHT_GREY });
         await graphNode(page, 'schema:Person').click();
@@ -269,17 +357,44 @@ test.describe('Graph page (Mermaid rendering in a real browser)', () => {
         await expect(caption(page)).toContainText('Alice (Person)');
         await expect(outlineItem(page, 'd:Alice')).toBeFocused();
 
-        // A relationship is not listed in the outline; it is shown with the elements it relates and with
-        // its class, which in turn is shown with the classes it relates
+        // A relationship is a node of the expanded graph only and not listed in the outline; when selected,
+        // it is shown with the elements it relates and with its class
+        await expect(graphNode(page, 'works for')).toHaveCount(0);
+        await expandedSwitch(page).check();
         await graphNode(page, 'works for').click();
-        await expect(caption(page)).toHaveText(/^works for . 6 nodes, 7 edges$/);
+        await expect(caption(page)).toHaveText(/^works for . 4 nodes, 3 edges$/);
+        await expect(page.locator('.graph-canvas g.node.casSelected[aria-label="works for"]')).toHaveCount(1);
         graph = await readGraph(page);
         expect(graph.nodes.sort(byName).map(node => `${node.name}${node.selected ? ' [selected]' : ''}`)).toEqual([
-            'ACME Corp. (Organization)', 'Alice (Person)', 'Organization (Entity)', 'Person (Entity)', 'works for [selected]', 'works for (Relationship)'
+            'ACME Corp. (Organization)', 'Alice (Person)', 'works for [selected]', 'works for (Relationship)'
         ]);
+        expect(graph.edges.map(edgeText).sort()).toEqual([
+            'works for --employee--> Alice (Person) [solid arrow]',
+            'works for --employer--> ACME Corp. (Organization) [solid arrow]',
+            'works for --instanceOf--> works for (Relationship) [dashed arrow]'
+        ]);
+        // There is no graph for it, once the switch is turned off, which is told to the user:
+        await expandedSwitch(page).uncheck();
+        await expect(page.locator('.graph-hint')).toHaveText('A relationship is shown as a node in the expanded graph only. Switch on "Expanded" to see it.');
+        await expect(page.locator('.graph-canvas svg')).toHaveCount(0);
         // ... and the item which is still selected in the outline leads back when clicked:
         await outlineItem(page, 'd:Alice').click();
-        await expect(caption(page)).toContainText('Alice (Person)');
+        await expect(caption(page)).toHaveText(/^Alice \(Person\) . 4 nodes, 4 edges$/);
+
+        // The same applies to a Relationship selected in the outline:
+        await outlineItem(page, 'folder:cas:Relationship').click();
+        await outlineItem(page, 'cas:WorksFor').click();
+        await expect(page.locator('.graph-hint')).toContainText('Switch on "Expanded" to see it.');
+        await expandedSwitch(page).check();
+        await expect(caption(page)).toHaveText(/^works for \(Relationship\) . 5 nodes, 4 edges$/);
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(5);
+        graph = await readGraph(page);
+        expect(graph.edges.map(edgeText).sort()).toEqual([
+            'works for (Relationship) --employee--> Person (Entity) [solid arrow]',
+            'works for (Relationship) --employer--> Organization (Entity) [solid arrow]',
+            'works for (Relationship) --specializes--> schema:WorksFor [dotted arrow]',
+            'works for --instanceOf--> works for (Relationship) [dashed arrow]'
+        ]);
     });
 
     test('limits a large graph and fits it to the pane', async ({ page }) => {
@@ -294,10 +409,34 @@ test.describe('Graph page (Mermaid rendering in a real browser)', () => {
         await page.getByRole('button', { name: 'Radius 2' }).click();
 
         // Not all of the nodes within the radius are shown, which is told to the user:
-        await expect(page.locator('.graph-pane .v-alert')).toHaveText(/60 of \d{3} nodes within the radius are shown/, { timeout: 30000 });
+        const notice = page.locator('.graph-pane .v-alert');
+        await expect(notice).toHaveText(/60 of \d+ nodes within the radius are shown/, { timeout: 30000 });
         await expect(page.locator('.graph-canvas g.node')).toHaveCount(60);
-        const graph = await readGraph(page);
+        const within = async () => Number(/60 of (\d+) nodes/.exec(await notice.innerText())?.[1]);
+        const withinRadius = await within();
+        expect(withinRadius).toBeGreaterThan(60);
+        let graph = await readGraph(page);
         expect(graph.nodes.filter(node => node.selected).map(node => node.name)).toEqual(['Actor (Entity)']);
+        // the many relationships between the instances are arrows with double line:
+        expect(graph.nodes.filter(node => node.shape !== 'rounded rectangle')).toEqual([]);
+        expect(graph.edges.filter(edge => edge.line === 'double').length).toBeGreaterThan(10);
+        // ... and each of the many edges to a class or to a specialized type keeps its dashed or dotted line:
+        expect(graph.edges.filter(edge => edge.label === 'instanceOf').length).toBeGreaterThan(10);
+        expect(graph.edges.filter(edge => edge.label === 'specializes').length).toBeGreaterThan(0);
+        expect(misdrawn(graph)).toEqual([]);
+        expect(graph.clipped).toEqual([]);
+
+        // In the expanded graph, the relationships are nodes of their own and count as steps, so that
+        // more nodes are within the same radius; the limit applies all the same:
+        await expandedSwitch(page).check();
+        await expect(page.locator('.graph-canvas g.node polygon').first()).toBeVisible({ timeout: 30000 });
+        await expect(page.locator('.graph-canvas g.node')).toHaveCount(60);
+        expect(await within()).toBeGreaterThan(withinRadius);
+        graph = await readGraph(page);
+        expect(graph.nodes.filter(node => node.selected).map(node => node.name)).toEqual(['Actor (Entity)']);
+        expect(graph.nodes.filter(node => node.shape === 'hexagon').length).toBeGreaterThan(0);
+        expect(graph.edges.filter(edge => edge.line === 'double')).toEqual([]);
+        expect(misdrawn(graph)).toEqual([]);
         expect(graph.clipped).toEqual([]);
 
         // The graph is scaled down to the width of the pane ...

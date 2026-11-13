@@ -6,11 +6,14 @@
       anEntity instances (as on the Document page), followed by a folder for the Entity and one for
       the Relationship types (as on the Ontology page).
     - The Graph pane shows the selected item with its neighbours up to the chosen radius (1 or 2),
-      composed by getMermaid() and rendered by Mermaid.
+      composed by getMermaid() and rendered by Mermaid: the types at the left, the instances at the right.
+    - A reified relationship is drawn as an arrow with a double line from its source to its target.
+      With 'Expanded' switched on, it is shown as a node with its links instead, and so are the
+      Relationship types; a relationship can then be selected as well.
     - Hovering (or focusing) a node shows a popup with its title, description and properties.
     - Clicking a node (or pressing Enter while it has the focus) makes it the selected item.
       The Outline follows, if it lists the item; an aRelationship for example is not listed there
-      and is thus reached by its node in the graph only.
+      and is thus reached by its node in the expanded graph only.
 
     See NavOutline.vue for the selection and navigation behavior of the Outline pane and
     getMermaid.ts for what is shown in the graph.
@@ -35,6 +38,15 @@
                     <div class="d-flex align-center">
                         <v-card-title tag="h2">Graph</v-card-title>
                         <v-spacer />
+                        <v-switch v-model="expanded"
+                                  class="graph-expanded mr-6"
+                                  color="primary"
+                                  density="compact"
+                                  hide-details
+                                  title="Show each relationship as a node with its links, instead of an arrow from its source to its target">
+                            <!-- set like the label of the radius beside it: -->
+                            <template #label><span class="text-body-2">Expanded</span></template>
+                        </v-switch>
                         <span id="graph-radius-label" class="text-body-2 mr-2">Radius</span>
                         <v-btn-toggle v-model="radius" mandatory divided density="compact" variant="outlined" aria-labelledby="graph-radius-label">
                             <v-btn :value="1" aria-label="Radius 1" title="Show the next neighbours">1</v-btn>
@@ -52,7 +64,7 @@
                     </div>
                     <v-divider />
                     <v-card-text class="pane-scroll graph-pane" ref="paneEl" @scroll.passive="updatePopup()">
-                        <div v-if="!graph">Select an item from the left</div>
+                        <div v-if="!graph" class="graph-hint">{{ hint }}</div>
                         <template v-else>
                             <p class="graph-caption">
                                 <strong>{{ graph.nodes[0].title }}</strong>
@@ -112,7 +124,7 @@
 <script lang="ts">
     import { defineComponent, toRaw } from 'vue'
     import { ItemCache } from '@/stores/item-cache'
-    import { renderMermaid, graphNodeKey } from '@/lib/mermaid-render'
+    import { renderMermaid, graphNodeKey, drawDoubleLinks } from '@/lib/mermaid-render'
     import { getMermaidGraph, IGraphNode, IMermaidGraph } from '@cascara/common/export/mermaid/getMermaid'
     import { MultiLanguageText } from '@cascara/common/lib/helpers'
     import { PLI } from '@cascara/common/lib/platform-independence'
@@ -228,8 +240,10 @@
             return {
                 // The id of the item the graph is shown for; set by the Outline and by clicking a node:
                 selectedId: null as string | null,
-                // Number of links to traverse from the selected item:
+                // Number of edges to traverse from the selected item:
                 radius: 1,
+                // Whether a reified relationship is shown as a node with its links, instead of an arrow:
+                expanded: false,
                 // Whether a graph wider than the pane is scaled down to fit:
                 fit: true,
                 // The rendered graph; kept as an explicitly-set data property (rather than a computed),
@@ -265,12 +279,20 @@
                 return buildOutline(this.items, this.lang)
             },
             // The graph of the selected item, or null if nothing is selected which a graph can be shown for
-            // (for example a folder of the Outline):
+            // (for example a folder of the Outline, or a relationship unless the graph is expanded):
             graph(): IMermaidGraph | null {
                 const item = this.selectedId === null ? undefined : this.itemById.get(this.selectedId)
                 if (!item) return null
-                const graph = getMermaidGraph(item, this.radius, { items: this.items, lang: this.lang })
+                const graph = getMermaidGraph(item, this.radius, { items: this.items, lang: this.lang, expanded: this.expanded })
                 return graph.nodes.length > 0 ? graph : null
+            },
+            // What to tell the user, as long as there is no graph:
+            hint(): string {
+                const itemType = this.selectedId === null ? undefined : this.itemById.get(this.selectedId)?.itemType
+                const isRelationship = itemType === PigItemType.Relationship || itemType === PigItemType.aRelationship
+                return isRelationship && !this.expanded
+                    ? 'A relationship is shown as a node in the expanded graph only. Switch on "Expanded" to see it.'
+                    : 'Select an item from the left'
             },
             definition(): string | null {
                 return this.graph?.definition ?? null
@@ -330,12 +352,14 @@
                 this.svg = rendering.svg ?? ''
                 this.renderError = rendering.error ?? null
                 await this.$nextTick()
-                if (ticket === this.renderTicket) this.prepareNodes()
+                if (ticket === this.renderTicket) this.prepareGraph()
             },
             // Mermaid renders the nodes as plain graphics; make them accessible by keyboard and name them
-            // for assistive technology, and mark those which lead to another item when chosen:
-            prepareNodes() {
+            // for assistive technology, and mark those which lead to another item when chosen.
+            // A relationship drawn as arrow gets its double line:
+            prepareGraph() {
                 const canvas = this.$refs.canvasEl as HTMLElement | undefined
+                drawDoubleLinks(canvas)
                 for (const element of Array.from(canvas?.querySelectorAll('g.node') ?? [])) {
                     const node = this.nodeByKey.get(graphNodeKey(element) ?? '')
                     if (!node) continue
@@ -443,6 +467,16 @@
 
     .graph-canvas :deep(svg) {
         display: block;
+    }
+
+    /* The gap of a double line shows the background of the pane: */
+    .graph-canvas :deep(path.graph-link-gap) {
+        stroke: rgb(var(--v-theme-surface));
+    }
+
+    /* The switch takes the space of its label only, instead of the whole row: */
+    .graph-expanded {
+        flex: 0 0 auto;
     }
 
     /* Takes part in the layout, as needed for measuring, but is neither seen nor does it take any space

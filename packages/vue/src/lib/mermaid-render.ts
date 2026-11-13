@@ -27,6 +27,10 @@
  *   document. Where the graph is shown, other inherited styles may apply (Vuetify for example sets a
  *   letter-spacing for the text of a card), so that a label gets wider than measured and is cut off.
  *   Therefore the caller passes an element next to the place where the graph is shown, to measure in.
+ * - Mermaid has no double line, which a reified relationship drawn as edge is to be shown with (see
+ *   getMermaid.ts). Such an edge is a thick link in the graph definition and still told apart from the
+ *   others where the definition is rendered elsewhere. Here the thick link gets a gap along its middle
+ *   after rendering, see drawDoubleLinks().
  */
 
 import type { MermaidConfig } from 'mermaid';
@@ -41,6 +45,14 @@ export interface IMermaidRendering {
     svg?: string;       // the rendered graph, if successful
     error?: string;     // the reason, if not
 }
+
+// The widths of the lines in px: a double line consists of two lines with a gap, each as wide as a link
+const LINK_WIDTH = 1.5;
+const DOUBLE_LINK_WIDTH = 3 * LINK_WIDTH;
+// The length of the arrow head in px which Mermaid draws at the end of a link, towards its begin:
+const ARROW_HEAD_LENGTH = 4;
+// The class of the gap of a double line, for the page to give it the colour of its background:
+export const DOUBLE_LINK_GAP_CLASS = 'graph-link-gap';
 
 export const MERMAID_CONFIG: MermaidConfig = {
     startOnLoad: false,
@@ -58,7 +70,8 @@ export const MERMAID_CONFIG: MermaidConfig = {
         nodeSpacing: 30,
         rankSpacing: 60
     },
-    themeCSS: '.flowchart-link { stroke-width: 1.5px; } .edgeLabel { font-size: 12px; }'
+    // the rule for the thick link follows the general one, as Mermaid assigns the class of a normal link to it as well:
+    themeCSS: `.flowchart-link { stroke-width: ${LINK_WIDTH}px; } .flowchart-link.edge-thickness-thick { stroke-width: ${DOUBLE_LINK_WIDTH}px; } .edgeLabel { font-size: 12px; }`
 };
 
 let mermaidLoading: Promise<IMermaidLike> | undefined;
@@ -123,6 +136,36 @@ export async function renderMermaid(definition: string, container?: Element, loa
 export function graphNodeKey(element: Element | null | undefined): string | undefined {
     const node = element?.closest?.('g.node');
     return node ? /(?:^|-)flowchart-(n\d+)-\d+$/.exec(node.id)?.[1] : undefined;
+}
+
+/**
+ * Draw the thick links of a rendered graph as double lines: each gets a narrow twin on top, which
+ * shows as a gap along its middle once the page gives it the colour of its background (by the class
+ * DOUBLE_LINK_GAP_CLASS; it is white otherwise).
+ * @param graph - An element holding a rendered graph
+ * @returns The number of links which were made a double line
+ */
+export function drawDoubleLinks(graph: Element | null | undefined): number {
+    let count = 0;
+    for (const link of Array.from(graph?.querySelectorAll<SVGPathElement>('path.flowchart-link.edge-thickness-thick') ?? [])) {
+        // a link which has its gap already is left alone:
+        if (link.nextElementSibling?.classList.contains(DOUBLE_LINK_GAP_CLASS)) continue;
+        // The twin follows the same path, but is neither a link of its own nor does it carry an arrow head:
+        const gap = link.ownerDocument.createElementNS('http://www.w3.org/2000/svg', 'path');
+        gap.setAttribute('d', link.getAttribute('d') ?? '');
+        gap.setAttribute('class', DOUBLE_LINK_GAP_CLASS);
+        gap.setAttribute('fill', 'none');
+        gap.setAttribute('stroke', '#ffffff');
+        gap.setAttribute('stroke-width', String(LINK_WIDTH));
+        // ... and it ends where the arrow head begins, which it would split otherwise:
+        const length = typeof link.getTotalLength === 'function' ? link.getTotalLength() : 0;
+        if (length > ARROW_HEAD_LENGTH) {
+            gap.setAttribute('stroke-dasharray', `${length - ARROW_HEAD_LENGTH} ${length}`);
+        }
+        link.after(gap);
+        count++;
+    }
+    return count;
 }
 
 function messageOf(error: unknown): string {
