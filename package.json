@@ -1,12 +1,13 @@
 {
-  "name": "CASCaRA-Validation-Tool",
-  "version": "0.3.4",
+  "name": "CASCaRA-Reference-Implementation",
+  "version": "0.3.7",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
     "postinstall": "node scripts/link-common-public.js",
+    "prebuild": "node scripts/generate-build-info.js",
     "build:xslt": "node scripts/compile-xslt.js",
     "build:vue": "npm run build -w @cascara/vue",
     "build": "npm run build:xslt && npm run build:vue",
@@ -14,8 +15,8 @@
     "lint": "npm run lint -w @cascara/vue",
     "test:logic": "npm run test -w @cascara/common",
     "test:unit": "node scripts/link-common-public.js && npm run test -w @cascara/common && npm run test -w @cascara/vue",
-    "test:xslt": "playwright test",
-    "test:all": "npm run test:unit"
+    "test:browser": "playwright test",
+    "test:all": "npm run test:unit && npm run test:browser"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",
@@ -23,7 +24,7 @@
     "@typescript-eslint/parser": "^5.4.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
-    "typescript": "4.7"
+    "typescript": "5.9.3"
   },
   "overrides": {
     "cross-spawn": ">=6.0.6"

@@ -4,6 +4,8 @@ import PageDashboards from '@/components/PageDashboards.vue';
 import PageInterfaces from '@/components/PageInterfaces.vue';
 import PageDocument from '@/components/PageDocument.vue';
 import PageOntology from '@/components/PageOntology.vue';
+import PageGraph from '@/components/PageGraph.vue';
+import PageCredits from '@/components/PageCredits.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -30,6 +32,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/ontology',
     name: 'Ontology',
     component: PageOntology,
+  },
+  {
+    path: '/graph',
+    name: 'Graph',
+    component: PageGraph,
+  },
+  {
+    path: '/credits',
+    name: 'Credits',
+    component: PageCredits,
   }
 ];
 

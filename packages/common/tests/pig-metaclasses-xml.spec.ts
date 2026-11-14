@@ -612,6 +612,34 @@ describe('PIG Metaclasses XML Import', () => {
                 console.error('status:', anEntity.status());
             expect(anEntity.status().ok).toBe(true);
         });
+
+        it('should import an aProperty with multiple <value> children as separate aProperty instances', () => {
+            const xmlInput = `
+                <${DEF.pfxNsMeta}anEntity id="d:MEl-50fbfe8f0029b1a8016ea86245a9d83b" rdf:type="${DEF.pfxNsMeta}Actor">
+                    <${DEF.pfxNsDcmi}modified>2026-01-20T09:38:26.464Z</${DEF.pfxNsDcmi}modified>
+                    <${DEF.pfxNsDcmi}title>FiCo-Data</${DEF.pfxNsDcmi}title>
+                    <${DEF.pfxNsMeta}aProperty rdf:type="${DEF.pfxNsDcmi}contributor">
+                        <value>mailto:Oskar.Dungern@gfse.org</value>
+                        <value>mailto:Michael.Kirsch@prostep.com</value>
+                    </${DEF.pfxNsMeta}aProperty>
+                </${DEF.pfxNsMeta}anEntity>
+            `;
+
+            const anEntity = new AnEntity().setXML(xmlInput);
+
+            // check the attribute values upon creation:
+            if (!anEntity.status().ok)
+                console.error('status:', anEntity.status());
+            expect(anEntity.status().ok).toBe(true);
+
+            // Both <value> children must be ingested as two separate aProperty instances,
+            // both sharing the same instanceOf, instead of only the last one surviving.
+            expect(anEntity.hasProperty?.length).toBe(2);
+            expect(anEntity.hasProperty[0].instanceOf).toBe(`${DEF.pfxNsDcmi}contributor`);
+            expect(anEntity.hasProperty[1].instanceOf).toBe(`${DEF.pfxNsDcmi}contributor`);
+            expect(anEntity.hasProperty[0].value).toBe('mailto:Oskar.Dungern@gfse.org');
+            expect(anEntity.hasProperty[1].value).toBe('mailto:Michael.Kirsch@prostep.com');
+        });
     });
 
     describe('ARelationship.setXML()', () => {

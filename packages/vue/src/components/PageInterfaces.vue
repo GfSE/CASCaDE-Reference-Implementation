@@ -3,7 +3,7 @@
         <v-row>
             <!-- Import Column -->
             <v-col cols="4">
-                <v-sheet border="dashed md"
+                <v-sheet border="md"
                          color="surface-light"
                          height="400"
                          rounded="lg">
@@ -18,7 +18,7 @@
 
             <!-- Load Column -->
             <v-col cols="4">
-                <v-sheet border="dashed md"
+                <v-sheet border="md"
                          color="surface-light"
                          height="400"
                          rounded="lg">
@@ -29,7 +29,7 @@
 
             <!-- Export Column -->
             <v-col cols="4">
-                <v-sheet border="dashed md"
+                <v-sheet border="md"
                          color="surface-light"
                          height="400"
                          rounded="lg">

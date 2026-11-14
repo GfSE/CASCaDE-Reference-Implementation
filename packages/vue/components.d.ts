@@ -13,8 +13,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     NavOutline: typeof import('./src/components/NavOutline.vue')['default']
     NavOutlineItem: typeof import('./src/components/NavOutlineItem.vue')['default']
+    PageCredits: typeof import('./src/components/PageCredits.vue')['default']
     PageDashboards: typeof import('./src/components/PageDashboards.vue')['default']
     PageDocument: typeof import('./src/components/PageDocument.vue')['default']
+    PageGraph: typeof import('./src/components/PageGraph.vue')['default']
     PageHome: typeof import('./src/components/PageHome.vue')['default']
     PageInterfaces: typeof import('./src/components/PageInterfaces.vue')['default']
     PageOntology: typeof import('./src/components/PageOntology.vue')['default']

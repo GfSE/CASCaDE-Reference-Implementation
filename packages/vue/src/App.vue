@@ -24,6 +24,12 @@
                 <v-list-item border="md" to="/ontology">
                     <h3>Ontology</h3>
                 </v-list-item>
+                <v-list-item border="md" to="/graph">
+                    <h3>Graph</h3>
+                </v-list-item>
+                <v-list-item border="md" to="/credits">
+                    <h3>Credits</h3>
+                </v-list-item>
                 <v-list-item border="md" @click="openGithubIssue">
                     <h3><v-icon start>mdi-github</v-icon>Report an Issue</h3>
                 </v-list-item>
