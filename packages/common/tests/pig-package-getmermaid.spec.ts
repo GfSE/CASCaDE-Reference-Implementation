@@ -231,18 +231,17 @@ describe('getMermaid() with the package "Alice works for ACME"', () => {
             expect(getMermaidGraph(itemById(cache, id), 1, { items: cache, lang: 'en', expanded: true }).nodes[0].id).toBe(id);
         }
         // ... and none is shown, however large the radius:
-        const graph = getMermaidGraph(itemById(cache, 'd:Alice'), 5, { items: cache, lang: 'en' });
+        const graph = getMermaidGraph(itemById(cache, 'd:Alice'), 2, { items: cache, lang: 'en' });
         expect(graph.nodes.filter(n => n.shape !== 'rounded')).toEqual([]);
         const entities = new Set<string>([PigItemType.Entity, PigItemType.anEntity, PigItemType.aPackage]);
         for (const n of graph.nodes.filter(n => n.resolved)) {
             expect(entities.has(n.itemType as string)).toBe(true);
         }
-        // 'cas:Root' enumerates links to the metaclasses of all entities and of all relationships, which are
-        // no items of the package: the first is shown as it is referenced, the latter in an expanded graph only
-        expect(nodeIds(graph)).toContain('cas:Entity');
+        // the package 'cas:Root' is reached within the radius, but no relationship is shown as node:
+        expect(nodeIds(graph)).toContain('cas:Root');
         expect(nodeIds(graph)).not.toContain('cas:Relationship');
-        const expanded = getMermaidGraph(itemById(cache, 'd:Alice'), 5, { items: cache, lang: 'en', expanded: true });
-        expect(node(expanded, 'cas:Relationship')).toMatchObject({ resolved: false, category: 'type', shape: 'hexagon' });
+        const expanded = getMermaidGraph(itemById(cache, 'd:Alice'), 2, { items: cache, lang: 'en', expanded: true });
+        expect(node(expanded, 'cas:WorksFor')).toMatchObject({ resolved: true, category: 'type', shape: 'hexagon' });
     });
 
     test('aPackage is shown as instance of its class', () => {

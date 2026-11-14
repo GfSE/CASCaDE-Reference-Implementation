@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "prebuild": "node ../../scripts/generate-build-info.js",
-    "predev": "node ../../scripts/generate-build-info.js",
     "build": "vite build",
     "serve": "vite",
     "preview": "vite preview",

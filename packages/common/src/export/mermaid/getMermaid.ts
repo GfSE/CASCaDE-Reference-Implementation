@@ -54,7 +54,7 @@
  * - The radius counts the edges of the graph as it is shown, from the selected item to a node. In an
  *   expanded graph, a reified relationship is a node like any other and thus a step of its own: the
  *   element at its other end is two steps away, and a relationship at the rim of the neighbourhood
- *   is shown without it. Otherwise the relationship is an edge and its other end one step away.
+ *   is shown without it. Otherwise (normal mode) the relationship is an edge and its other end one step away.
  * - An aRelationship drawn as edge needs a node at either end. It is drawn from each of its sources
  *   to each of its targets and left out, where an end is a relationship itself.
  * - A reference to an item which is not available (for example the class 'schema:Person' of an ontology
@@ -250,8 +250,9 @@ interface IGraphIndex {
     enumeratedValues: Map<TPigId, ILooseEnumeratedValue>;
     // the edges by their source, each list in the order of the data:
     outgoing: Map<TPigId, IRawEdge[]>;
-    // the neighbours of a node, regardless of the direction of the edges:
-    neighbours: Map<TPigId, Set<TPigId>>;
+    // the same edges by their target, so that the neighbours of a node can be found regardless of
+    // the direction of the edge (see findNeighbours() below):
+    incoming: Map<TPigId, IRawEdge[]>;
     // the style of the referenced items which are not available, derived from the kind of reference;
     // 'certain' tells whether the reference determines the style or whether it is assumed:
     unresolved: Map<TPigId, { style: INodeStyle, certain: boolean }>;
@@ -306,9 +307,8 @@ export function getMermaidGraph(item: TPigItem, radius = 1, options?: IOptionsMe
 
     // 1. The nodes: the selected item and its neighbours up to the given radius, as far as allowed;
     //    they are in the order of their precedence, so that every node shown is connected to the selected item
-    const distances = collectNeighbourhood(index, selected.id, steps);
-    const shown = Array.from(distances.keys()).slice(0, maxNodes);
-    graph.omitted = distances.size - shown.length;
+    const { shown, distances, edges: rawEdges, omitted } = collectNeighbourhood(index, selected.id, steps, maxNodes);
+    graph.omitted = omitted;
     const keys = new Map<TPigId, string>();
     for (const id of shown) {
         const key = `n${graph.nodes.length}`;
@@ -320,18 +320,15 @@ export function getMermaidGraph(item: TPigItem, radius = 1, options?: IOptionsMe
     //    the same direction are drawn as a single edge listing all titles, for example the links
     //    of different classes or several relationships
     const merged = new Map<string, { edge: IGraphEdge, titles: string[] }>();
-    for (const node of graph.nodes) {
-        for (const raw of index.outgoing.get(node.id) ?? []) {
-            if (!keys.has(raw.target)) continue;
-            const title = edgeTitle(index, raw, lang);
-            const mergeKey = [raw.source, raw.target, raw.kind].join('\u0000');
-            const known = merged.get(mergeKey);
-            if (!known) {
-                merged.set(mergeKey, { edge: { source: raw.source, target: raw.target, kind: raw.kind, title }, titles: [title] });
-            } else if (!known.titles.includes(title)) {
-                known.titles.push(title);
-                known.edge.title = known.titles.join(', ');
-            }
+    for (const raw of rawEdges) {
+        const title = edgeTitle(index, raw, lang);
+        const mergeKey = [raw.source, raw.target, raw.kind].join('\u0000');
+        const known = merged.get(mergeKey);
+        if (!known) {
+            merged.set(mergeKey, { edge: { source: raw.source, target: raw.target, kind: raw.kind, title }, titles: [title] });
+        } else if (!known.titles.includes(title)) {
+            known.titles.push(title);
+            known.edge.title = known.titles.join(', ');
         }
     }
     graph.edges = Array.from(merged.values(), entry => entry.edge);
@@ -413,7 +410,7 @@ function buildIndex(items: ILooseItem[], expanded: boolean): IGraphIndex {
         byId: new Map(),
         enumeratedValues: new Map(),
         outgoing: new Map(),
-        neighbours: new Map(),
+        incoming: new Map(),
         unresolved: new Map()
     };
     for (const item of items) {
@@ -426,11 +423,6 @@ function buildIndex(items: ILooseItem[], expanded: boolean): IGraphIndex {
         }
     }
 
-    const relate = (from: TPigId, to: TPigId) => {
-        const known = index.neighbours.get(from);
-        if (known) known.add(to);
-        else index.neighbours.set(from, new Set([to]));
-    };
     // Whether a referenced item is shown as node; 'style' is its style in case it is not available:
     const isNode = (id: TPigId, style: INodeStyle): boolean => {
         const item = index.byId.get(id);
@@ -448,11 +440,12 @@ function buildIndex(items: ILooseItem[], expanded: boolean): IGraphIndex {
             const known = index.unresolved.get(edge.target);
             if (!known || (certain && !known.certain)) index.unresolved.set(edge.target, { style, certain });
         }
-        const edges = index.outgoing.get(edge.source);
-        if (edges) edges.push(edge);
+        const outgoing = index.outgoing.get(edge.source);
+        if (outgoing) outgoing.push(edge);
         else index.outgoing.set(edge.source, [edge]);
-        relate(edge.source, edge.target);
-        relate(edge.target, edge.source);
+        const incoming = index.incoming.get(edge.target);
+        if (incoming) incoming.push(edge);
+        else index.incoming.set(edge.target, [edge]);
     };
 
     for (const item of index.byId.values()) {
@@ -509,48 +502,92 @@ function buildIndex(items: ILooseItem[], expanded: boolean): IGraphIndex {
 }
 
 /**
- * Collect the identifiers of the selected item and its neighbours up to the given radius and return
- * them with their distance, in the order of their precedence in case the number of nodes is limited:
- * - a nearer node precedes a farther one,
- * - the nodes of equal distance take turns by the node they are reached from, so that a node with
- *   many neighbours (for example a type with all its instances) does not crowd out the others.
+ * The edges of a node, regardless of whether it is their source or their target. An item which
+ * is not available is not explored further, so that two items referencing the same unavailable
+ * item (e.g. the same class) do not become neighbours of each other:
  */
-function collectNeighbourhood(index: IGraphIndex, selectedId: TPigId, radius: number): Map<TPigId, number> {
-    const distances = new Map<TPigId, number>([[selectedId, 0]]);
-    const ordered: TPigId[] = [selectedId];
-    let ring: TPigId[] = [selectedId];
-    for (let distance = 1; distance <= radius && ring.length > 0; distance++) {
-        // the neighbours found from each node of the previous ring:
-        const found: TPigId[][] = [];
-        for (const id of ring) {
-            // the neighbourhood of an item which is not available is not explored:
-            if (!index.byId.has(id)) continue;
-            const group: TPigId[] = [];
-            for (const neighbour of index.neighbours.get(id) ?? []) {
-                if (distances.has(neighbour)) continue;
-                distances.set(neighbour, distance);
-                group.push(neighbour);
-            }
-            if (group.length > 0) found.push(group);
-        }
-        ring = takeTurns(found);
-        ordered.push(...ring);
-    }
-    return new Map(ordered.map(id => [id, distances.get(id) ?? 0]));
+function findNeighbours(index: IGraphIndex, id: TPigId): IRawEdge[] {
+    if (!index.byId.has(id)) return [];
+    return [...(index.outgoing.get(id) ?? []), ...(index.incoming.get(id) ?? [])];
 }
 
 /**
- * Merge lists by taking the first element of each list, then the second of each, and so forth.
+ * The id at the other end of an edge, as seen from the given node.
  */
-function takeTurns<T>(lists: T[][]): T[] {
-    const merged: T[] = [];
-    const longest = lists.reduce((max, list) => Math.max(max, list.length), 0);
-    for (let position = 0; position < longest; position++) {
-        for (const list of lists) {
-            if (position < list.length) merged.push(list[position]);
+function otherEnd(edge: IRawEdge, id: TPigId): TPigId {
+    return edge.source === id ? edge.target : edge.source;
+}
+
+/**
+ * Collect the selected item and its neighbours up to the given radius, along with the edges
+ * connecting them:
+ * - radius 1: the edges of the selected item (findNeighbours()) give its neighbours.
+ * - radius 2 and beyond: the same is done for each node of the previous ring, in the order they
+ *   were found; an edge back to a node already collected is left out, since the shortest path to
+ *   it was found already.
+ * If the number of nodes must be limited (maxNodes), the nodes of each ring beyond the first are
+ * trimmed by taking turns from the groups they were found from (the neighbours found from one
+ * particular node of the previous ring), so that a small group is not crowded out by a large one.
+ */
+function collectNeighbourhood(
+    index: IGraphIndex, selectedId: TPigId, radius: number, maxNodes: number
+): { shown: TPigId[], distances: Map<TPigId, number>, edges: IRawEdge[], omitted: number } {
+    const distances = new Map<TPigId, number>([[selectedId, 0]]);
+    const order: TPigId[] = [selectedId];
+    let ring = [selectedId];
+
+    // explore the full neighbourhood up to the given radius, regardless of maxNodes, so that the
+    // nodes nearest to the selected item always take precedence over farther ones:
+    for (let step = 1; step <= radius && ring.length > 0; step++) {
+        // the neighbours of each node of the previous ring, grouped by the node they were found from:
+        const groups: TPigId[][] = [];
+        for (const parent of ring) {
+            const group: TPigId[] = [];
+            for (const edge of findNeighbours(index, parent)) {
+                const id = otherEnd(edge, parent);
+                // an edge back to a node already collected is already accounted for:
+                if (!distances.has(id)) {
+                    distances.set(id, step);
+                    group.push(id);
+                }
+            }
+            if (group.length > 0) groups.push(group);
+        }
+        // the nodes of this ring take turns by the node they were found from, so that the nodes of
+        // a small group are not crowded out by those of a large one if the number is limited:
+        ring = takeTurns(groups, Infinity);
+        order.push(...ring);
+    }
+
+    const shown = order.slice(0, Math.max(1, maxNodes));
+    const shownIds = new Set(shown);
+    // all edges between the nodes shown, deduplicated since an edge is found from both its ends:
+    const edges = new Set<IRawEdge>();
+    for (const id of shown) {
+        for (const edge of index.outgoing.get(id) ?? []) {
+            if (shownIds.has(edge.target)) edges.add(edge);
         }
     }
-    return merged;
+    return { shown, distances, edges: Array.from(edges), omitted: order.length - shown.length };
+}
+
+/**
+ * Pick up to maxCount ids from the groups, one from each group in turn, so that the groups are
+ * represented as evenly as possible instead of favouring those found first.
+ */
+function takeTurns(groups: TPigId[][], maxCount: number): TPigId[] {
+    const result: TPigId[] = [];
+    for (let round = 0; result.length < maxCount; round++) {
+        let addedAny = false;
+        for (const group of groups) {
+            if (round < group.length && result.length < maxCount) {
+                result.push(group[round]);
+                addedAny = true;
+            }
+        }
+        if (!addedAny) break;
+    }
+    return result;
 }
 
 function nodeStyle(index: IGraphIndex, id: TPigId): INodeStyle {

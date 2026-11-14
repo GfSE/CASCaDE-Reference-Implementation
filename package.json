@@ -7,6 +7,7 @@
   ],
   "scripts": {
     "postinstall": "node scripts/link-common-public.js",
+    "prebuild": "node scripts/generate-build-info.js",
     "build:xslt": "node scripts/compile-xslt.js",
     "build:vue": "npm run build -w @cascara/vue",
     "build": "npm run build:xslt && npm run build:vue",
