@@ -171,7 +171,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "A diagram illustrating the resource or a link to a diagram."
+          "@value": "A diagram illustrating the resource."
         }
       ],
       "sh:datatype": {
@@ -190,7 +190,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "has category"
+          "@value": "Category"
         }
       ],
       "skos:definition": [
@@ -381,15 +381,15 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle",
+          "@value": "Lifecycle Status Values",
           "@language": "en"
         },
         {
-          "@value": "Lebenszyklus",
+          "@value": "Lebenszyklus Statuswerte",
           "@language": "de"
         },
         {
-          "@value": "Cycle de vie",
+          "@value": "Valeurs d'état du cycle de vie",
           "@language": "fr"
         }
       ],
@@ -1010,12 +1010,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:LifecycleStatusIssue"
+          "@value": "Lifecycle Status Values of Issues"
         }
       ],
       "skos:definition": [
         {
-          "@value": "Enumerated values for issue status"
+          "@value": "Enumerated values for issue lifecycle status"
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
@@ -1124,15 +1124,15 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle",
+          "@value": "Lifecycle Status",
           "@language": "en"
         },
         {
-          "@value": "Lebenszyklus",
+          "@value": "Lebenszyklus Status",
           "@language": "de"
         },
         {
-          "@value": "Cycle de vie",
+          "@value": "État du cycle de vie",
           "@language": "fr"
         }
       ],
@@ -1394,7 +1394,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:LifecycleStatusIssue"
+          "@value": "Lifecycle Status of Issues"
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
@@ -1477,31 +1477,6 @@
         "@id": "xs:dateTime"
       },
       "sh:maxCount": 1
-    },
-    {
-      "@id": "o:PC-Diagram-8240447448",
-      "@type": "owl:DatatypeProperty",
-      "cas:itemType": {
-        "@id": "cas:Property"
-      },
-      "cas:specializes": {
-        "@id": "cas:Property"
-      },
-      "dcterms:title": [
-        {
-          "@value": "cas:Diagram"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A diagram illustrating the resource or a link to a diagram."
-        }
-      ],
-      "dcterms:modified": "2026-02-12T22:05:14.551Z",
-      "cas:revision": "1.1",
-      "sh:datatype": {
-        "@id": "xs:string"
-      }
     },
     {
       "@id": "cas:View",
@@ -1877,42 +1852,6 @@
       "cas:enumeratedTargetLink": []
     },
     {
-      "@id": "o:RC-Paragraph-8240447479",
-      "@type": "owl:Class",
-      "cas:itemType": {
-        "@id": "cas:Entity"
-      },
-      "cas:specializes": {
-        "@id": "cas:Entity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "SpecIF:Paragraph"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
-          "@language": "en"
-        },
-        {
-          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
-          "@language": "de"
-        }
-      ],
-      "dcterms:modified": "2024-03-02T20:55:23.295Z",
-      "cas:revision": "1.1",
-      "cas:enumeratedProperty": [
-        {
-          "@id": "o:PC-Diagram-8240447448"
-        },
-        {
-          "@id": "cas:Category"
-        }
-      ],
-      "cas:enumeratedTargetLink": []
-    },
-    {
       "@id": "SpecIF:contains",
       "@type": "owl:Class",
       "cas:itemType": {
@@ -1966,7 +1905,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:contains to source"
+          "@value": "contains to source"
         }
       ],
       "dcterms:description": [
@@ -1997,7 +1936,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:contains to target"
+          "@value": "contains to target"
         }
       ],
       "dcterms:description": [
@@ -2028,7 +1967,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:modifies"
+          "@value": "modifies"
         }
       ],
       "skos:definition": [
@@ -2061,12 +2000,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "SC-stores to source"
+          "@value": "stores to source"
         }
       ],
       "dcterms:description": [
         {
-          "@value": "Connects the source of SC-stores"
+          "@value": "Connects the source of o:SC-stores"
         }
       ],
       "cas:enumeratedEndpoint": [
@@ -2086,12 +2025,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "SC-stores to target"
+          "@value": "stores to target"
         }
       ],
       "dcterms:description": [
         {
-          "@value": "Connects the target of SC-stores"
+          "@value": "Connects the target of o:SC-stores"
         }
       ],
       "cas:enumeratedEndpoint": [
@@ -2154,7 +2093,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:writes to source"
+          "@value": "writes to source"
         }
       ],
       "dcterms:description": [
@@ -2179,7 +2118,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:writes to target"
+          "@value": "writes to target"
         }
       ],
       "dcterms:description": [
@@ -2247,7 +2186,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:reads to source"
+          "@value": "reads to source"
         }
       ],
       "dcterms:description": [
@@ -2272,7 +2211,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:reads to target"
+          "@value": "reads to target"
         }
       ],
       "dcterms:description": [
@@ -2340,7 +2279,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:dependsOn to source"
+          "@value": "dependsOn to source"
         }
       ],
       "dcterms:description": [
@@ -2365,7 +2304,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:dependsOn to target"
+          "@value": "dependsOn to target"
         }
       ],
       "dcterms:description": [
@@ -2433,7 +2372,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "oslc_rm:satisfies to source"
+          "@value": "satisfies to source"
         }
       ],
       "dcterms:description": [
@@ -2464,7 +2403,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "oslc_rm:satisfies to target"
+          "@value": "satisfies to target"
         }
       ],
       "dcterms:description": [
@@ -2532,7 +2471,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:refersTo to source"
+          "@value": "refersTo to source"
         }
       ],
       "dcterms:description": [
@@ -2557,7 +2496,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:refersTo to target"
+          "@value": "refersTo to target"
         }
       ],
       "dcterms:description": [
@@ -8443,6 +8382,6 @@
       "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
     }
   ],
-  "dcterms:modified": "2026-09-30T09:18:13.144Z",
+  "dcterms:modified": "2026-11-15T09:18:13.144Z",
   "dcterms:creator": "od@enso-managers.de"
 }

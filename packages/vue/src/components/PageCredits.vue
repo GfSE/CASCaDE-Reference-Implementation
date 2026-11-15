@@ -67,7 +67,7 @@
             return {
                 partners: [
                     { name: 'enso managers', url: 'https://enso-managers.de/', logo: '/assets/logos/enso-m logo 200x50 transparent.png', w: 200 },
-                    { name: 'PSG', url: 'https://psg-inc.net/', logo: '/assets/logos/logo-psg.jpg', w: 180 },
+                    { name: 'PSG', url: 'https://psg-inc.net/', logo: '/assets/logos/PSG_hires_logo_2020.png', w: 180 },
                     { name: 'inomic solutions', url: 'https://inomic-solutions.com/', logo: '/assets/logos/INOMIC-Logo-dark.png', w: 180 }
                 ],
                 softwareUsed: [
