@@ -24,7 +24,7 @@
                     <v-card-title tag="h2">Content</v-card-title>
                     <v-divider />
                     <v-card-text class="pane-scroll">
-                        <div v-if="resolvedHtml" v-html="resolvedHtml"></div>
+                        <div v-if="resolvedHtml" ref="contentEl" v-html="resolvedHtml" @click="onContentClick"></div>
                         <div v-else>Select an item from the left</div>
                     </v-card-text>
                 </v-card>
@@ -96,13 +96,29 @@
                 // One top-level folder per CASCaRA Type, listing the matching items found
                 // across all loaded packages, in the fixed order given by CASCARA_TYPES:
                 const lang = PLI.getBrowserLanguage()
+
+                // Map of id -> preferred title for all CASCaRA Type items, so that
+                // cross-references (e.g. Entity.enumeratedProperty, enumeratedTargetLink,
+                // Relationship.enumeratedSourceLink/enumeratedTargetLink) can be rendered
+                // as a link showing the referenced item's title instead of its bare id.
+                // Covers all CASCARA_TYPES (Enumeration, Property, Link, Entity,
+                // Relationship), since e.g. enumeratedTargetLink/enumeratedSourceLink
+                // reference Link class items, not just Entity/Relationship items:
+                const titleById = new Map<string, string>()
+                for (const item of items) {
+                    if (!CASCARA_TYPES.some(t => t.itemType === item.itemType)) continue
+                    const typedItem = item as TPigClass
+                    if (!typedItem.id) continue
+                    titleById.set(typedItem.id, new MultiLanguageText(typedItem.title).get(lang) || typedItem.id)
+                }
+
                 return CASCARA_TYPES.map(({ itemType, title }) => {
                     const children: OutlineNode[] = []
                     for (const item of items) {
                         if (item.itemType !== itemType) continue
                         const typedItem = item as TPigClass
                         const itemTitle = new MultiLanguageText(typedItem.title).get(lang) || typedItem.id || '(untitled)'
-                        const itemHtml = getHTML(typedItem, { lang })[0]
+                        const itemHtml = getHTML(typedItem, { lang, resolveItemTitle: (id: string) => titleById.get(id) })[0]
                         children.push({ id: typedItem.id ?? itemTitle, title: itemTitle, html: itemHtml, children: [] })
                     }
                     // Prefix the folder id to avoid collisions with item ids: an item with
@@ -120,6 +136,18 @@
             // NavOutline's internal selection/expansion state:
             onOutlineSelect(node: OutlineNode | null) {
                 this.selectedHtml = node?.html ?? null
+            },
+            // Handles clicks on cross-reference links (e.g. Entity/Relationship's
+            // enumeratedProperty, enumeratedTargetLink, enumeratedSourceLink) rendered
+            // by getHTML()'s cascaraType(); navigates the Outline pane to the
+            // referenced CASCaRA Type item instead of following the '#' href:
+            onContentClick(event: MouseEvent) {
+                const target = event.target as HTMLElement | null
+                const link = target?.closest('a.cascara-type-ref') as HTMLElement | null
+                if (!link) return
+                event.preventDefault()
+                const id = link.dataset.itemId
+                if (id) (this.$refs.outlineRef as any)?.selectNode(id)
             }
         }
     })
@@ -130,5 +158,11 @@
     .page-ontology-container {
         height: 100%;
         padding: 0;
+    }
+
+    /* Cross-reference links rendered by getHTML()'s cascaraType() for fields
+       like Entity.enumeratedProperty (see onContentClick()): */
+    .pane-scroll :deep(a.cascara-type-ref) {
+        cursor: pointer;
     }
 </style>

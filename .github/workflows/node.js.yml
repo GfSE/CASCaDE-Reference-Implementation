@@ -32,8 +32,9 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
-    - run: npm run test:unit
-    # - run: npm run test:e2e --if-present
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+    - run: npm run test:all
 
     - name: Set Up Pages
       id: pages
