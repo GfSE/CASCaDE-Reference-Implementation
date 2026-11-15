@@ -17,7 +17,7 @@ tests under `/tests/e2e` already live), rather than under a single package.
 ## What is covered
 
 - `saxon-js-reqif.spec.ts` - validates the Saxon-JS **browser** runtime
-  (`packages/vue/public/SaxonJS2.rt.js`, loaded as a classic script and exposed as the
+  (`packages/vue/public/assets/SaxonJS2.rt.js`, loaded as a classic script and exposed as the
   global `SaxonJS`). Confirms `SaxonJS.getProcessorInfo()` works and that a real ReqIF
   document is transformed to CAS/PIG XML via the production `ReqIF-to-CAS.sef.json`
   stylesheet, served from `/assets/xslt/`.
