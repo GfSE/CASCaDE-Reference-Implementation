@@ -38,15 +38,22 @@
                     <div class="d-flex align-center">
                         <v-card-title tag="h2">Graph</v-card-title>
                         <v-spacer />
-                        <v-switch v-model="expanded"
-                                  class="graph-expanded mr-6"
-                                  color="primary"
-                                  density="compact"
-                                  hide-details
-                                  title="Show each relationship as a node with its links, instead of an arrow from its source to its target">
-                            <!-- set like the label of the radius beside it: -->
-                            <template #label><span class="text-body-2">Expanded</span></template>
-                        </v-switch>
+                        <v-tooltip location="bottom" open-delay="300">
+                            <template v-slot:activator="{ props: tooltipProps }">
+                                <span v-bind="tooltipProps" class="d-inline-block mr-6">
+                                    <v-switch v-model="expanded"
+                                              class="graph-expanded"
+                                              color="primary"
+                                              density="compact"
+                                              hide-details>
+                                        <!-- set like the label of the radius beside it: -->
+                                        <template #label><span class="text-body-2">Expanded</span></template>
+                                    </v-switch>
+                                </span>
+                            </template>
+                            Normal: a relationship is shown as a double-stroke arrow from its source to its target.<br>
+                            Expanded: a relationship is shown as a node with its own links instead, and so are the relationship types.
+                        </v-tooltip>
                         <span id="graph-radius-label" class="text-body-2 mr-2">Radius</span>
                         <v-btn-toggle v-model="radius" mandatory divided density="compact" variant="outlined" aria-labelledby="graph-radius-label">
                             <v-btn :value="1" aria-label="Radius 1" title="Show the next neighbours">1</v-btn>
@@ -102,7 +109,7 @@
 
         <!-- The popup is attached to the document body, so that it is not clipped by the scrolling pane: -->
         <teleport to="body">
-            <div v-if="popup" class="graph-popup" role="tooltip" :style="popup.style">
+            <div v-if="popup" :id="popupId" class="graph-popup" role="tooltip" :style="popup.style">
                 <div class="graph-popup-title">{{ popup.node.title }}</div>
                 <div v-if="kindOf(popup.node)" class="graph-popup-kind">{{ kindOf(popup.node) }}</div>
                 <p v-if="!popup.node.resolved" class="graph-popup-text">This item is referenced, but not available in the loaded packages.</p>
@@ -152,6 +159,7 @@
     const ROOT = 'cas:Root'
     const POPUP_WIDTH = 360     // in px, as set for .graph-popup below
     const POPUP_DELAY = 300     // in ms, before the popup is shown while hovering a node
+    const POPUP_ID = 'graph-popup-tooltip'     // stable id, referenced by the active node's aria-describedby
 
     function titleOf(item: TPigItem, lang: string): string {
         return new MultiLanguageText(item.title).get(lang) || item.id || '(untitled)'
@@ -254,6 +262,7 @@
                 // Counts the renderings started, to tell whether a finished one is still wanted:
                 renderTicket: 0,
                 popup: null as IPopup | null,
+                popupId: POPUP_ID,
                 popupTimer: undefined as number | undefined,
                 // in ms, before the popup is shown for a node which the mouse pointer has come to rest on:
                 popupDelay: POPUP_DELAY,
@@ -344,6 +353,12 @@
                     this.rendering = false
                     return
                 }
+
+                // The graph is rendered asynchronously, since it may take a while; meanwhile the user may have
+                // selected another item, so that the result is no more wanted. 
+                this.svg = ''
+                this.renderError = null
+
                 this.rendering = true
                 const rendering = await renderMermaid(definition, this.$refs.measureEl as Element | undefined)
                 // Rendering takes a while; drop the result, if another item was selected meanwhile:
@@ -422,6 +437,7 @@
                 if (element && element === this.popup?.element) {
                     this.showPopup(element)
                 } else {
+                    this.popup?.element.removeAttribute('aria-describedby')
                     this.popup = null
                     // show the popup only, if the node is still the one pointed at when the delay is over:
                     if (element) this.popupTimer = window.setTimeout(() => { if (this.popupElement() === element) this.showPopup(element) }, delay)
@@ -441,9 +457,11 @@
                     style.top = `${box.bottom + 8}px`
                 }
                 this.popup = { node, element, style }
+                element.setAttribute('aria-describedby', this.popupId)
             },
             hidePopup() {
                 window.clearTimeout(this.popupTimer)
+                this.popup?.element.removeAttribute('aria-describedby')
                 this.popup = null
             }
         }

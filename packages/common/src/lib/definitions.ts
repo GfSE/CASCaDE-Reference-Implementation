@@ -158,7 +158,7 @@ export const DEF = {
 // Pattern string (without anchors) for a term with namespace, e.g. 'cas:foo' — shared by RE.termWithNamespace and idPattern
 const termWithNamespacePattern = '([a-zA-Z_][a-zA-Z0-9_-]*):([^:\\s"\'<>&]+)';
 // Pattern string (without anchors) for a URI, e.g. 'https://example.org/foo' or 'ftp://example.org/foo' — shared by RE.uri and idPattern
-const uriPattern = '(https?|ftps?|s?ftp):\\/\\/[^\\s"\'<>&/$.?#].[^\\s"\'<>&]*';
+const uriPattern = '(https?|ftps?|s?ftp):\\/\\/[^\\s"\'<>&/$.?#][^\\s"\'<>&]*';
 
 export const RE = {
 //    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,

@@ -1,5 +1,5 @@
 {
-  "name": "CASCaRA-Reference-Implementation",
+  "name": "CASCaRA-Validation-Tool",
   "version": "0.3.7",
   "private": true,
   "workspaces": [

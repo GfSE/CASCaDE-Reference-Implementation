@@ -1010,7 +1010,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "LifecycleStatus for Issues"
+          "@value": "SpecIF:LifecycleStatusIssue"
         }
       ],
       "skos:definition": [
@@ -1067,7 +1067,7 @@
           "@id": "o:V-Iss-Status-6",
           "dcterms:title": [
             {
-              "@value": "rejected"
+              "@value": "SpecIF:LifecycleStatusRejected"
             }
           ]
         }
@@ -1394,7 +1394,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle Status"
+          "@value": "SpecIF:LifecycleStatusIssue"
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
@@ -1887,7 +1887,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "Paragraph"
+          "@value": "SpecIF:Paragraph"
         }
       ],
       "skos:definition": [
@@ -1966,7 +1966,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "contains to source"
+          "@value": "SpecIF:contains to source"
         }
       ],
       "dcterms:description": [
@@ -1997,7 +1997,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "contains to target"
+          "@value": "SpecIF:contains to target"
         }
       ],
       "dcterms:description": [
@@ -2028,7 +2028,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "modifies"
+          "@value": "SpecIF:modifies"
         }
       ],
       "skos:definition": [
@@ -2154,7 +2154,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "writes to source"
+          "@value": "SpecIF:writes to source"
         }
       ],
       "dcterms:description": [
@@ -2179,7 +2179,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "writes to target"
+          "@value": "SpecIF:writes to target"
         }
       ],
       "dcterms:description": [
@@ -2247,7 +2247,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "reads to source"
+          "@value": "SpecIF:reads to source"
         }
       ],
       "dcterms:description": [
@@ -2272,7 +2272,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "reads to target"
+          "@value": "SpecIF:reads to target"
         }
       ],
       "dcterms:description": [
@@ -2340,7 +2340,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "dependsOn to source"
+          "@value": "SpecIF:dependsOn to source"
         }
       ],
       "dcterms:description": [
@@ -2365,7 +2365,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "dependsOn to target"
+          "@value": "SpecIF:dependsOn to target"
         }
       ],
       "dcterms:description": [
@@ -2532,7 +2532,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "refersTo to source"
+          "@value": "SpecIF:refersTo to source"
         }
       ],
       "dcterms:description": [
@@ -2557,7 +2557,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "refersTo to target"
+          "@value": "SpecIF:refersTo to target"
         }
       ],
       "dcterms:description": [

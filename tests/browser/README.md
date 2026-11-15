@@ -74,8 +74,8 @@ npx playwright install --with-deps chromium
 
 The root `package.json` wires this suite into the overall test entry points:
 
-- `npm run test:xslt` -> `playwright test` (runs everything in this directory).
-- `npm run test:all` -> `npm run test:unit && npm run test:xslt`, i.e. Jest unit tests for
+- `npm run test:browser` -> `playwright test` (runs everything in this directory).
+- `npm run test:all` -> `npm run test:unit && npm run test:browser`, i.e. Jest unit tests for
   `@cascara/common` and `@cascara/vue` first, then these Playwright browser suites.
 
 The GitHub Actions workflow (`.github/workflows/node.js.yml`) runs `npm run build`, installs
