@@ -77,6 +77,7 @@
                     { name: 'TypeScript', url: 'https://www.typescriptlang.org/', purpose: 'Typed JavaScript', license: 'Apache-2.0', licenseUrl: 'https://opensource.org/licenses/Apache-2.0' },
                     { name: 'Vite', url: 'https://vitejs.dev/', purpose: 'Build tool / dev server', license: 'MIT', licenseUrl: 'https://opensource.org/licenses/MIT' },
                     { name: 'Ajv', url: 'https://ajv.js.org/', purpose: 'JSON Schema validation', license: 'MIT', licenseUrl: 'https://opensource.org/licenses/MIT' },
+                    { name: 'Mermaid', url: 'https://mermaid.js.org/', purpose: 'Diagram and chart rendering', license: 'MIT', licenseUrl: 'https://opensource.org/licenses/MIT' },
                     { name: 'Saxon-JS', url: 'https://www.saxonica.com/saxon-js/', purpose: 'XSLT/XPath processing', license: 'MPL-2.0', licenseUrl: 'https://opensource.org/licenses/MPL-2.0' },
                     { name: 'Jest', url: 'https://jestjs.io/', purpose: 'Unit testing framework', license: 'MIT', licenseUrl: 'https://opensource.org/licenses/MIT' },
                     { name: 'Playwright', url: 'https://playwright.dev/', purpose: 'End-to-end testing', license: 'Apache-2.0', licenseUrl: 'https://opensource.org/licenses/Apache-2.0' },
