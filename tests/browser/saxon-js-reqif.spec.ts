@@ -17,7 +17,7 @@ test.describe('Saxon-JS browser runtime (ReqIF transformation)', () => {
         });
     });
 
-    test('loads the global SaxonJS runtime from /SaxonJS2.rt.js', async ({ page }) => {
+    test('loads the global SaxonJS runtime from /assets/SaxonJS2.rt.js', async ({ page }) => {
         await page.goto('/');
 
         const info = await page.evaluate(async () => {

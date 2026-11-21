@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "prebuild": "node ../../scripts/generate-build-info.js",
-    "predev": "node ../../scripts/generate-build-info.js",
     "build": "vite build",
     "serve": "vite",
     "preview": "vite preview",
@@ -16,6 +15,7 @@
     "@cascara/common": "*",
     "@mdi/font": "^7.4.47",
     "core-js": "^3.8.3",
+    "mermaid": "^12.3.0",
     "pinia": "^3.0.4",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
