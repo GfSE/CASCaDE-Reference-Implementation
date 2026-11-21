@@ -30,8 +30,8 @@ Runs on every push/pull request (see the workflow's `on:` triggers). Steps:
 
 Integration points:
 
-- The file is stored as a static asset at `packages/vue/public/SaxonJS2.rt.js` and loaded in
-  `packages/vue/index.html` via `<script src="/SaxonJS2.rt.js"></script>`, **before** the
+- The file is stored as a static asset at `packages/vue/public/assets/SaxonJS2.rt.js` and loaded in
+  `packages/vue/index.html` via `<script src="/assets/SaxonJS2.rt.js"></script>`, **before** the
   module script that boots the Vue app, so `window.SaxonJS` is guaranteed to exist by the
   time the app (and the CI browser tests) run.
 - `packages/common/src/lib/platform-independence.ts` (`PLI.getSaxonJS()`) resolves the
@@ -53,8 +53,8 @@ Integration points:
 
 1. Download the latest browser runtime from Saxonica:
    `https://www.saxonica.com/saxon-js/documentation2/SaxonJS/SaxonJS2.rt.js`
-2. Overwrite `packages/vue/public/SaxonJS2.rt.js` with the downloaded file (same filename,
-   no build changes needed - it is served as-is from `public/`).
+2. Overwrite `packages/vue/public/assets/SaxonJS2.rt.js` with the downloaded file (same filename,
+   no build changes needed - it is served as-is from `public/assets/`).
 3. Re-check the Saxonica license terms for browser-runtime redistribution still apply (see
    the license header inside the downloaded file).
 4. Run `npx playwright test tests/browser/saxon-js-reqif.spec.ts` to confirm the new runtime

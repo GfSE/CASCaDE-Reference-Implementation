@@ -17,7 +17,7 @@ tests under `/tests/e2e` already live), rather than under a single package.
 ## What is covered
 
 - `saxon-js-reqif.spec.ts` - validates the Saxon-JS **browser** runtime
-  (`packages/vue/public/SaxonJS2.rt.js`, loaded as a classic script and exposed as the
+  (`packages/vue/public/assets/SaxonJS2.rt.js`, loaded as a classic script and exposed as the
   global `SaxonJS`). Confirms `SaxonJS.getProcessorInfo()` works and that a real ReqIF
   document is transformed to CAS/PIG XML via the production `ReqIF-to-CAS.sef.json`
   stylesheet, served from `/assets/xslt/`.
@@ -26,6 +26,16 @@ tests under `/tests/e2e` already live), rather than under a single package.
   navigation to the Document page (in-memory store state), verifies the imported data was
   actually persisted to IndexedDB (`cascara-db` / `itemCache` store), and confirms it is
   rehydrated correctly after a page reload (`loadFromStorage()` on app bootstrap).
+- `page-graph.spec.ts` - validates the Graph page (`/graph`) end-to-end: imports real
+  `.cas.jsonld` fixtures through the import UI and checks what Mermaid finally draws for the item
+  selected in the outline (rectangles with rounded corners and hexagons, the colours of types and
+  instances, solid, dashed, dotted and double arrows pointing to the left, labels which are not cut
+  off), the popup shown while hovering a node, the navigation by clicking a node or by keyboard,
+  the choice of the radius and of the expanded graph showing each relationship as a node, and the
+  limitation of a large graph. Mermaid needs the layout engine of a real browser, so none of this can be
+  covered by the Jest suites; these only cover the composition of the graph definition
+  (`packages/common/tests/pig-package-getmermaid.spec.ts`) and the handling of failures
+  (`packages/vue/tests/mermaid-render.spec.ts`).
 
 ## How the app is launched
 
@@ -47,6 +57,7 @@ npx playwright test
 # A single suite
 npx playwright test tests/browser/saxon-js-reqif.spec.ts
 npx playwright test tests/browser/item-cache-pinia-store.spec.ts
+npx playwright test tests/browser/page-graph.spec.ts
 ```
 
 The first run (or any run without a cached build) will build and start the preview server
@@ -63,8 +74,8 @@ npx playwright install --with-deps chromium
 
 The root `package.json` wires this suite into the overall test entry points:
 
-- `npm run test:xslt` -> `playwright test` (runs everything in this directory).
-- `npm run test:all` -> `npm run test:unit && npm run test:xslt`, i.e. Jest unit tests for
+- `npm run test:browser` -> `playwright test` (runs everything in this directory).
+- `npm run test:all` -> `npm run test:unit && npm run test:browser`, i.e. Jest unit tests for
   `@cascara/common` and `@cascara/vue` first, then these Playwright browser suites.
 
 The GitHub Actions workflow (`.github/workflows/node.js.yml`) runs `npm run build`, installs

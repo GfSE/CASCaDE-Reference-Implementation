@@ -245,7 +245,8 @@ class GetHTML {
             return ids.map(id => {
                 const title = options?.resolveItemTitle?.(id);
                 return title
-                    ? `<a href="#" class="cascara-type-ref" data-item-id="${passify(id)}">${passify(title)}</a>`
+                 // ? `<a href="#" class="cascara-type-ref" data-item-id="${passify(id)}">${passify(title)}</a>`
+                    ? `<a href="#" class="cascara-type-ref" data-item-id="${escapeAttr(id)}">${passify(title)}</a>`
                     : passify(id);
             }).join(', ');
         };

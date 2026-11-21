@@ -479,7 +479,7 @@ class GetTTL {
         ttl += this.xMetadataForClasses(itm, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
         // Add owl:Restriction blank nodes for enumeratedProperty as additional rdfs:subClassOf objects
-        let subClassOfStarted = !!itm.specializes;
+        let subClassOfStarted = false;
         ttl += this.xPropertyRestrictions(itm, rdf, options, subClassOfStarted);
         subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(itm, 'enumeratedProperty', options?._elementClasses));
         // Add owl:Restriction blank nodes for enumeratedTargetLink (Entity can only target-link, not source-link)
@@ -519,7 +519,7 @@ class GetTTL {
         ttl += this.xMetadataForClasses(rel, 'owl:Class', 'rdfs:subClassOf', rdf, options);
 
         // Add owl:Restriction blank nodes for enumeratedProperty as additional rdfs:subClassOf objects
-        let subClassOfStarted = !!rel.specializes;
+        let subClassOfStarted = false;
         ttl += this.xPropertyRestrictions(rel, rdf, options, subClassOfStarted);
         subClassOfStarted ||= LIB.isArrayWithContent(this.xInheritedEnumeratedIds(rel, 'enumeratedProperty', options?._elementClasses));
         // Add owl:Restriction blank nodes for enumeratedSourceLink and enumeratedTargetLink
@@ -596,7 +596,7 @@ class GetTTL {
     }
 
     /**
-     * Add an owl:Restriction blank node (owl:onProperty + owl:someValuesFrom, plus cardinality
+     * Add an owl:Restriction blank node (owl:onProperty + owl:allValuesFrom, plus cardinality
      * constraints when the Property defines minCount/maxCount) for each of the Entity/Relationship
      * class's enumeratedProperty - including those inherited from superclasses, since OWL/SHACL
      * don't propagate these restrictions down the rdfs:subClassOf chain the way CASCaRA does
@@ -632,8 +632,20 @@ class GetTTL {
             const datatype = prp?.datatype ?? XsDataType.String;
             const onProperty = this.formatTurtleId(propertyId);
 
+            // Use a universal (owl:allValuesFrom) restriction rather than an existential
+            // (owl:someValuesFrom) one: someValuesFrom requires at least one value of the given
+            // type to exist, which would make the property mandatory even when minCount is 0 or
+            // undefined - conflicting with the cardinality restrictions added below, which are the
+            // sole means of expressing whether the property is required. allValuesFrom merely
+            // constrains the type of any value that *is* present, without requiring one to exist.
+            // For xs:string properties, this exporter renders values as language-tagged literals
+            // (ILanguageText[], typed rdf:langString in RDF), so the range must admit those too.
+            const range = datatype === XsDataType.String
+                ? '[ owl:unionOf ( xs:string rdf:langString ) ]'
+                : datatype;
+
             const restrictions: string[] = [
-                `[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:someValuesFrom ${datatype} ]`
+                `[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:allValuesFrom ${range} ]`
             ];
 
             if (prp?.minCount !== undefined && prp.minCount === prp.maxCount) {
@@ -662,7 +674,7 @@ class GetTTL {
     }
 
     /**
-     * Add an owl:Restriction blank node (owl:onProperty + owl:someValuesFrom, plus cardinality
+     * Add an owl:Restriction blank node (owl:onProperty + owl:allValuesFrom, plus cardinality
      * constraints when the Link defines minCount/maxCount) for each of the Entity/Relationship
      * class's enumeratedSourceLink/enumeratedTargetLink - including those inherited from
      * superclasses (see xInheritedEnumeratedIds() for the rationale) - as additional objects of
@@ -696,18 +708,18 @@ class GetTTL {
             const lnk = linkClasses?.get(linkId);
             const onProperty = this.formatTurtleId(linkId);
 
-            // someValuesFrom is the union of the Link's enumeratedEndpoint classes (Entity/Relationship),
-            // falling back to owl:Thing when the Link class cannot be resolved.
+            // The permitted range is the union of the Link's enumeratedEndpoint classes
+            // (Entity/Relationship), falling back to owl:Thing when the Link class cannot be resolved.
             const endpoints = lnk?.enumeratedEndpoint as TPigId[] | undefined;
-            let someValuesFrom = 'owl:Thing';
+            let rangeClass = 'owl:Thing';
             if (LIB.isArrayWithContent(endpoints)) {
-                someValuesFrom = endpoints!.length === 1
+                rangeClass = endpoints!.length === 1
                     ? this.formatTurtleId(endpoints![0])
                     : `[ owl:unionOf ( ${endpoints!.map(ep => this.formatTurtleId(ep)).join(' ')} ) ]`;
             }
 
             const restrictions: string[] = [
-                `[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:someValuesFrom ${someValuesFrom} ]`
+                `[ a owl:Restriction ; owl:onProperty ${onProperty} ; owl:allValuesFrom ${rangeClass} ]`
             ];
 
             if (lnk?.minCount !== undefined && lnk.minCount === lnk.maxCount) {
@@ -1490,8 +1502,8 @@ class GetTTL {
         if (elem.itemType == elem.id || ABSTRACT_CASCARA_CLASS_IDS.has(elem.id))
             return '';
 
-        // Determine if this is a Relationship by checking for enumeratedSourceLink
-        const isRelationship = 'enumeratedSourceLink' in elem && elem.enumeratedSourceLink !== undefined;
+        // Determine if this is a Relationship
+        const isRelationship = elem.itemType === PigItemType.Relationship;
 
         let ttl = '';
 

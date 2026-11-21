@@ -1,6 +1,6 @@
 # CASCaRA Application Programming Interface (API)
 
-This document defines the CASCaRA API as a **Platform Independent Model (PIM)** in OMG terms: a set of abstract operations, parameters and behaviors that any concrete binding (e.g. REST/OpenAPI, Java RFC, OData, or others) must realize. It deliberately avoids committing to a specific protocol, wire format, or transport-level mechanism (such as HTTP methods, status codes or headers). A concrete **Platform Specific Model (PSM)**, such as the OpenAPI specification in `cascara-api.yaml`, defines how each abstract operation and parameter is mapped onto the facilities of the chosen platform.
+This document defines the CASCaRA API as a **Platform Independent Model (PIM)** in OMG terms: a set of abstract operations, parameters and behaviors that any concrete binding (e.g. REST/OpenAPI, Java RFC, JAX-RS, OData, or others) must realize. It deliberately avoids committing to a specific protocol, wire format, or transport-level mechanism (such as HTTP methods, status codes or headers). A concrete **Platform Specific Model (PSM)**, such as the OpenAPI specification in `cascara-api.yaml`, defines how each abstract operation and parameter is mapped onto the facilities of the chosen platform.
 
 A CASCaRA knowledge graph is intended to be queried and mutated via APIs in software systems. The designed operations, options and formats generally encompass all capabilities, while implementations may choose to support only a subset according to chosen conformance criteria.
 
@@ -14,7 +14,7 @@ At this point in time, the following aspects are out-of-scope:
 - Visibility of a package’s item from outside (‘public’ or ‘private’).
 
 ## Concise Description
-The API provides CRUD-style (Create, Read, Update, Delete) operations, plus list/query, branch/merge and lifecycle operations, for every concrete metamodel item type of the CASCaRA Graph, namespace prefix ‘cas:’.
+The API provides CRUD-style (Create, Read, Update, Delete) operations, plus list/query, branch/merge and lifecycle operations, for every concrete metamodel item type of the CASCaRA Graph.
 Concrete CASCaRA types: Enumeration, Property, Link, Entity and Relationship. Concrete CASCaRA instances: anEntity and aRelationship, aPackage. ‘aProperty’, ‘aSourceLink’ and ‘aTargetLink’ are not exposed as standalone resources because they have no identifier of their own and only exist as embedded parts of anEntity, aRelationship or aPackage.
 For all read operations, the desired representation format (CASCaRA JSON-LD, CASCaRA XML, RDF Turtle, or XHTML) can be requested via the ‘format’ option. A concrete binding may offer this as an explicit parameter and/or via a platform-native content negotiation mechanism (e.g. the HTTP ‘Accept’ header); if both are offered and given, the explicit ‘format’ option takes precedence.
 
