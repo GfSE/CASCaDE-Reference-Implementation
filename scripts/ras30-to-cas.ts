@@ -30,10 +30,13 @@
  * - Every UML generalization        -> cas:specializes (not present in RAS 3.0 v1, supported for future use)
  *
  * Run with: npm run generate:ras30-types
+ * The generated document is validated against the JSON-LD schemas after writing.
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
+import Ajv from 'ajv';
+import addFormats from 'ajv-formats';
 
 // ---------------------------------------------------------------------------
 // Source model: RAS 3.0 UML classes, attributes and compositions
@@ -338,7 +341,63 @@ function transformRas30TypesToCascara(classes: IUmlClass[]): Record<string, unkn
 }
 
 // ---------------------------------------------------------------------------
-// Main: generate the file
+// Validation: package and generated graph items
+// ---------------------------------------------------------------------------
+
+function validateGeneratedFile(docPath: string): boolean {
+    const ajv = new Ajv({ strict: false, allowUnionTypes: true });
+    addFormats(ajv);
+    const jsonldDir = path.resolve(__dirname, '..', 'packages', 'vue', 'public', 'assets', 'jsonld');
+    const readSchema = (name: string) => JSON.parse(fs.readFileSync(path.join(jsonldDir, `${name}.json`), 'utf-8'));
+    const entitySchema = readSchema('Entity');
+    const propertySchema = readSchema('Property');
+    const linkSchema = readSchema('Link');
+    const packageSchema = readSchema('aPackage');
+
+    for (const schema of [entitySchema, propertySchema, linkSchema, readSchema('Relationship'),
+        readSchema('Enumeration'), readSchema('anEntity'), readSchema('aRelationship')]) {
+        ajv.addSchema(schema);
+    }
+
+    const validateEntity = ajv.getSchema(entitySchema.$id)!;
+    const validateProperty = ajv.getSchema(propertySchema.$id)!;
+    const validateLink = ajv.getSchema(linkSchema.$id)!;
+    const validatePackage = ajv.compile(packageSchema);
+    const doc = JSON.parse(fs.readFileSync(docPath, 'utf-8'));
+    let errors = 0;
+
+    if (!validatePackage(doc)) {
+        errors++;
+        console.error('INVALID package-level document:', validatePackage.errors);
+    }
+
+    for (const item of doc['@graph']) {
+        const itemType = item['cas:itemType']?.['@id'];
+        let validate;
+        if (itemType === 'cas:Entity') validate = validateEntity;
+        else if (itemType === 'cas:Property') validate = validateProperty;
+        else if (itemType === 'cas:Link') validate = validateLink;
+        else {
+            console.error('Unknown itemType for', item['@id'], itemType);
+            errors++;
+            continue;
+        }
+        if (!validate(item)) {
+            errors++;
+            console.error(`INVALID ${item['@id']} (${itemType}):`, validate.errors);
+        }
+    }
+
+    if (errors > 0) {
+        console.error(`Validation failed: ${errors} errors in ${doc['@graph'].length} items and the package document.`);
+        return false;
+    }
+    console.log(`Validation succeeded: package document and ${doc['@graph'].length} items are valid.`);
+    return true;
+}
+
+// ---------------------------------------------------------------------------
+// Main: generate and validate the file
 // ---------------------------------------------------------------------------
 
 function main() {
@@ -353,6 +412,13 @@ function main() {
     console.log(`  Entities:   ${RAS30_CLASSES.length}`);
     console.log(`  Properties: ${RAS30_CLASSES.reduce((n, c) => n + c.attributes.length, 0)}`);
     console.log(`  Links:      ${RAS30_CLASSES.reduce((n, c) => n + c.compositions.length, 0)}`);
+
+    if (!validateGeneratedFile(outputFile)) process.exitCode = 1;
 }
 
-main();
+try {
+    main();
+} catch (error) {
+    console.error('RAS 3.0 type generation or validation failed:', error);
+    process.exitCode = 1;
+}

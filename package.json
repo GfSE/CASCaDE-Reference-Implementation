@@ -1,6 +1,6 @@
 {
   "name": "CASCaRA-Reference-Implementation",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -23,6 +23,8 @@
     "@playwright/test": "^1.58.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "tsx": "^4.23.15",

@@ -60,8 +60,8 @@ and `cas:Link` meta-types referenced (not copied) by ras30.cas.jsonld
 `cas:itemType: { @id: cas:aPackage }` and `dcterms:modified`, following the aPackage.json schema and the CASCaRA-Semantic-Infrastructure.cas.jsonld pattern.
 6. Add npm script generate:ras30-types to package.json — **completed**.
 7. Run the script and inspect the generated ras30.cas.jsonld file — **completed**: 16 entities, 28 properties, 15 links generated.
-8. Spot-validate the generated file against the Entity.json/Property.json/Link.json schemata, and the top-level document against aPackage.json — **completed**: 
-59 graph items plus the package-level document, 0 errors (ad-hoc validation script permanently stored as `scripts/validate-ras30-types.ts`).
+8. Validate the generated file against the Entity.json/Property.json/Link.json schemata, and the top-level document against aPackage.json — **completed**:
+`npm run generate:ras30-types` now validates immediately after generation and reports success or failure with a nonzero exit code on failure.
 
 ## Status
 Plan fully implemented. Next step (not part of this plan): transformation of RAS 3.0 data instances into CASCaRA graph instances (`cas:anEntity`/`cas:aRelationship`) 
