@@ -16,7 +16,7 @@
  * transformation will convert RAS 3.0 data instances into a CASCaRA graph
  * (cas:anEntity / cas:aRelationship instances) using the types produced here.
  *
- * This document references (but does not copy) the meta-model types cas:manifest-RAS30
+ * This document references (but does not copy) the meta-model types cas:Manifest-RAS30
  * (a subtype of cas:Package), cas:Entity, cas:Property and cas:Link defined in
  * packages/common/ontology/Semantic-Infrastructure/CASCaRA-Semantic-Infrastructure.cas.jsonld.
  * To operate correctly, that semantic infrastructure package must be loaded first,
@@ -328,10 +328,10 @@ function transformRas30TypesToCascara(classes: IUmlClass[]): Record<string, unkn
             'xs': 'http://www.w3.org/2001/XMLSchema#'
         },
         '@id': 'ras30:RAS30-CASCaRA-Types',
-        // References the cas:manifest-RAS30 type (a subtype of cas:Package) defined in
+        // References the cas:Manifest-RAS30 type (a subtype of cas:Package) defined in
         // CASCaRA-Semantic-Infrastructure.cas.jsonld. That package must be loaded first;
         // this document is then applied with 'update' semantics.
-        '@type': 'cas:manifest-RAS30',
+        '@type': 'cas:Manifest-RAS30',
         'cas:itemType': { '@id': 'cas:aPackage' },
         'dcterms:title': titleValue('RAS 3.0 CASCaRA Type Definitions'),
         'dcterms:description': titleValue('CASCaRA Entity, Property and Link type definitions transformed from the RAS 3.0 UML class model.'),

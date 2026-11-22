@@ -7,7 +7,7 @@
                          color="surface-light"
                          height="400"
                          rounded="lg">
-                    <h2 class="column-title">Import</h2>
+                    <h2 class="column-title">Import Package</h2>
                     <ul>
                         <li v-for="(component, name) in importComponents" :key="name">
                             <component :is="component" />
@@ -22,8 +22,8 @@
                          color="surface-light"
                          height="400"
                          rounded="lg">
-                    <h2 class="column-title">Load from database</h2>
-                    <div style="text-align: center;"><p><i>List of packages available in a database<br/>(in preparation)</i></p></div>
+                    <h2 class="column-title">Load from Database</h2>
+                    <div style="text-align: center;"><p><i>List of repositories available in a database<br/>(in preparation)</i></p></div>
                 </v-sheet>
             </v-col>
 
@@ -33,7 +33,7 @@
                          color="surface-light"
                          height="400"
                          rounded="lg">
-                    <h2 class="column-title">Export</h2>
+                    <h2 class="column-title">Export Package</h2>
                     <ul>
                         <li v-for="(component, name) in exportComponents" :key="name">
                             <component :is="component" />

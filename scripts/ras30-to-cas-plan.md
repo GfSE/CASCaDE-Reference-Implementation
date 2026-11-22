@@ -3,7 +3,7 @@
 ## Understanding
 CASCaRA type definitions: every UML class → `cas:Entity`, every attribute → `cas:Property`, every composition (`*--`) → `cas:Link`. 
 The result is a JSON-LD file `packages/common/ontology/ras30/ras30.cas.jsonld` with `@context` and `@graph`. 
-Only the type level (no instance data) is produced in this step. The top-level package document uses `cas:manifest-RAS30` (a subtype of `cas:Package`) 
+Only the type level (no instance data) is produced in this step. The top-level package document uses `cas:Manifest-RAS30` (a subtype of `cas:Package`) 
 as its `@type`; this subtype and the meta-types it specializes are defined in `packages/common/ontology/Semantic-Infrastructure/CASCaRA-Semantic-Infrastructure.cas.jsonld`, 
 which is referenced (not copied) and must be loaded first, with this document applied afterwards using 'update' semantics.
 

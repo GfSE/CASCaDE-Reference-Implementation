@@ -24,7 +24,7 @@
       "@value": "CASCaRA Entity, Property and Link type definitions transformed from the RAS 3.0 UML class model."
     }
   ],
-  "dcterms:modified": "2026-11-11T14:28:26.744Z",
+  "dcterms:modified": "2026-11-21T22:54:59.738Z",
   "@graph": [
     {
       "@id": "ras30:AccessLocation",
