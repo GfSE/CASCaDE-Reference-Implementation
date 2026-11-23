@@ -116,7 +116,7 @@ export class MultiLanguageText {
     }
 
     /** Sets (or adds, if not yet present) the text value for the given language. */
-    set(lang: tagIETF, value: string): void {
+    set(value: string, lang: tagIETF): void {
         const existing = this.texts.find(t => t.lang === lang);
         if (existing) {
             existing.value = value;
