@@ -5,6 +5,7 @@
     "dcterms": "http://purl.org/dc/terms/",
     "o": "https://alice.org/ontology#",
     "owl": "http://www.w3.org/2002/07/owl#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
     "schema": "http://schema.org/",
     "sh": "http://www.w3.org/ns/shacl#",
     "skos": "https://www.w3.org/TR/skos-reference/",
@@ -575,18 +576,12 @@
       "dcterms:modified": "2026-01-20T09:38:26.464Z",
       "cas:legalName": [
         {
-          "@value": "ACME Corp.",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "ACME Corp."
         }
       ],
       "cas:taxID": [
         {
-          "@value": "DE_123456789",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "DE_123456789"
         }
       ]
     },
@@ -605,18 +600,12 @@
       "dcterms:modified": "2026-01-20T09:38:26.464Z",
       "cas:familyName": [
         {
-          "@value": "Carpenter",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "Carpenter"
         }
       ],
       "cas:givenName": [
         {
-          "@value": "Alice",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "Alice"
         }
       ]
     },
@@ -691,18 +680,12 @@
   "dcterms:modified": "2026-01-20T09:38:26.464Z",
   "dcterms:contributor": [
     {
-      "@value": "mailto:oskar.dungern@gfse.org",
-      "cas:itemType": {
-        "@id": "cas:aProperty"
-      }
+      "@value": "mailto:oskar.dungern@gfse.org"
     }
   ],
   "dcterms:license": [
     {
-      "@value": "https://creativecommons.org/licenses/by-sa/4.0/",
-      "cas:itemType": {
-        "@id": "cas:aProperty"
-      }
+      "@value": "https://creativecommons.org/licenses/by-sa/4.0/"
     }
   ]
 }

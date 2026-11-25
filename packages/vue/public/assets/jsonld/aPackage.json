@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://product-information-graph.org/schema/2026-07-20/jsonld/aPackage.json",
+  "$id": "http://product-information-graph.org/schema/2026-11-25/jsonld/aPackage.json",
   "title": "CASCaRA aPackage Schema for JSON-LD",
   "description": "Validates a complete JSON-LD document (CASCaRA aPackage) with @context (namespace and vocabulary definitions) as well as @graph (array of PIG items). The graph contains a mix of item classes (Property, Link, Entity, Relationship) and instances (anEntity, aRelationship). Package-level metadata includes optional dcterms:modified, dcterms:creator, dcterms:title, and dcterms:description. Validates each item against its corresponding schema based on cas:itemType.",
   "type": "object",
@@ -127,7 +127,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-07-20/jsonld/anEntity.json"
+              "$ref": "http://product-information-graph.org/schema/2026-11-25/jsonld/anEntity.json"
             }
           },
           {
@@ -143,7 +143,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-07-20/jsonld/aRelationship.json"
+              "$ref": "http://product-information-graph.org/schema/2026-11-25/jsonld/aRelationship.json"
             }
           },
           {
@@ -159,7 +159,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-07-20/jsonld/Property.json"
+              "$ref": "http://product-information-graph.org/schema/2026-11-25/jsonld/Property.json"
             }
           },
           {
@@ -175,7 +175,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-07-20/jsonld/Link.json"
+              "$ref": "http://product-information-graph.org/schema/2026-11-25/jsonld/Link.json"
             }
           },
           {
@@ -191,7 +191,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-07-20/jsonld/Entity.json"
+              "$ref": "http://product-information-graph.org/schema/2026-11-25/jsonld/Entity.json"
             }
           },
           {
@@ -207,7 +207,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-07-20/jsonld/Relationship.json"
+              "$ref": "http://product-information-graph.org/schema/2026-11-25/jsonld/Relationship.json"
             }
           },
           {
@@ -223,7 +223,7 @@
               }
             },
             "then": {
-              "$ref": "http://product-information-graph.org/schema/2026-07-20/jsonld/Enumeration.json"
+              "$ref": "http://product-information-graph.org/schema/2026-11-25/jsonld/Enumeration.json"
             }
           }
         ]
@@ -235,69 +235,42 @@
       "type": "array",
       "description": "Configurable properties and links with namespaced keys",
       "items": {
-        "type": "object",
-        "properties": {
-          "cas:itemType": {
-            "type": "object",
-            "required": [ "@id" ],
-            "properties": {
-              "@id": {
-                "type": "string",
-                "enum": [ "cas:aProperty", "cas:aTargetLink" ],
-                "description": "Type of configurable item: property value or target link"
-              }
-            },
-            "additionalProperties": false
-          },
-          "@value": {
-            "type": "string",
-            "description": "Direct property value (for aProperty)"
-          },
-          "@id": {
-            "$ref": "#/$defs/idString",
-            "description": "Reference to enumeration value or linked entity/relationship"
-          }
-        },
-        "required": [ "cas:itemType" ],
         "oneOf": [
           {
             "type": "object",
-            "description": "aProperty with direct value",
+            "description": "aProperty with literal value",
             "properties": {
-              "cas:itemType": {
-                "type": "object",
-                "properties": {
-                  "@id": {
-                    "const": "cas:aProperty"
-                  }
-                }
+              "@value": {
+                "type": "string",
+                "description": "Literal property value"
               }
             },
             "required": [ "@value" ],
-            "not": {
-              "required": [ "@id" ]
-            }
+            "additionalProperties": false
           },
           {
             "type": "object",
             "description": "aTargetLink to an enumeration, entity or relationship",
             "properties": {
+              "@id": {
+                "$ref": "#/$defs/idString",
+                "description": "Reference to enumeration value or linked entity/relationship"
+              },
               "cas:itemType": {
                 "type": "object",
+                "required": [ "@id" ],
                 "properties": {
                   "@id": {
                     "const": "cas:aTargetLink"
                   }
-                }
+                },
+                "additionalProperties": false
               }
             },
-            "required": [ "@id" ],
-            "not": {
-              "required": [ "@value" ]
-            }
+            "required": [ "@id", "cas:itemType" ],
+            "additionalProperties": false
           }
-        ],
-        "additionalProperties": false
+        ]
       }
     }
   },

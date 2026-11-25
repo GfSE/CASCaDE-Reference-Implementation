@@ -7,7 +7,7 @@ import * as path from 'path';
 
 const dataDir = path.resolve(__dirname, '../../packages/common/data/JSON-LD');
 const ALICE = path.join(dataDir, '11/Alice_works_for_ACME.cas.jsonld');
-const VEHICLE = path.join(dataDir, '22/Small Autonomous Vehicle.cas.jsonld');
+const VEHICLE = path.join(dataDir, '22/Small_Autonomous_Vehicle.cas.jsonld');
 
 // The colours required for instances, types and (not required, but shown) items which are not available:
 const LIGHT_YELLOW = 'rgb(255, 255, 153)';

@@ -171,7 +171,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "A diagram illustrating the resource or a link to a diagram."
+          "@value": "A diagram illustrating the resource."
         }
       ],
       "sh:datatype": {
@@ -190,7 +190,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "has category"
+          "@value": "Category"
         }
       ],
       "skos:definition": [
@@ -381,15 +381,15 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle",
+          "@value": "Lifecycle Status Values",
           "@language": "en"
         },
         {
-          "@value": "Lebenszyklus",
+          "@value": "Lebenszyklus Statuswerte",
           "@language": "de"
         },
         {
-          "@value": "Cycle de vie",
+          "@value": "Valeurs d'état du cycle de vie",
           "@language": "fr"
         }
       ],
@@ -408,7 +408,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedValue": [
         {
           "@id": "SpecIF:LifecycleStatusDeprecated",
@@ -569,7 +568,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedValue": [
         {
           "@id": "SpecIF:priorityHigh",
@@ -649,7 +647,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedValue": [
         {
           "@id": "SpecIF:StakeholderGroupBusiness",
@@ -713,7 +710,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedValue": [
         {
           "@id": "SpecIF:EngineeringDisciplineMechanics",
@@ -808,7 +804,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedValue": [
         {
           "@id": "SpecIF:NotApplicable",
@@ -924,7 +919,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedValue": [
         {
           "@id": "ReqIF-WF:CustomerStatus.NotToEvaluate",
@@ -1010,16 +1004,15 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:LifecycleStatusIssue"
+          "@value": "Lifecycle Status Values of Issues"
         }
       ],
       "skos:definition": [
         {
-          "@value": "Enumerated values for issue status"
+          "@value": "Enumerated values for issue lifecycle status"
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedValue": [
         {
           "@id": "o:V-Iss-Status-1",
@@ -1106,7 +1099,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedEndpoint": [
         {
           "@id": "SpecIF:Priority-Enumeration"
@@ -1124,15 +1116,15 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle",
+          "@value": "Lifecycle Status",
           "@language": "en"
         },
         {
-          "@value": "Lebenszyklus",
+          "@value": "Lebenszyklus Status",
           "@language": "de"
         },
         {
-          "@value": "Cycle de vie",
+          "@value": "État du cycle de vie",
           "@language": "fr"
         }
       ],
@@ -1151,7 +1143,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedEndpoint": [
         {
           "@id": "SpecIF:LifecycleStatus-Enumeration"
@@ -1182,7 +1173,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedEndpoint": [
         {
           "@id": "ReqIF-WF:SupplierStatus-Enumeration"
@@ -1213,7 +1203,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "sh:datatype": {
         "@id": "xs:string"
       },
@@ -1243,7 +1232,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedEndpoint": [
         {
           "@id": "ReqIF-WF:CustomerStatus-Enumeration"
@@ -1274,7 +1262,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "sh:datatype": {
         "@id": "xs:string"
       },
@@ -1310,7 +1297,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "sh:datatype": {
         "@id": "xs:string"
       },
@@ -1339,7 +1325,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedEndpoint": [
         {
           "@id": "SpecIF:StakeholderGroup-Enumeration"
@@ -1376,7 +1361,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedEndpoint": [
         {
           "@id": "SpecIF:EngineeringDiscipline-Enumeration"
@@ -1394,11 +1378,10 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:LifecycleStatusIssue"
+          "@value": "Lifecycle Status of Issues"
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedEndpoint": [
         {
           "@id": "o:DT-IssueStatus"
@@ -1435,7 +1418,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "sh:datatype": {
         "@id": "xs:string"
       },
@@ -1472,36 +1454,10 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "sh:datatype": {
         "@id": "xs:dateTime"
       },
       "sh:maxCount": 1
-    },
-    {
-      "@id": "o:PC-Diagram-8240447448",
-      "@type": "owl:DatatypeProperty",
-      "cas:itemType": {
-        "@id": "cas:Property"
-      },
-      "cas:specializes": {
-        "@id": "cas:Property"
-      },
-      "dcterms:title": [
-        {
-          "@value": "cas:Diagram"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "A diagram illustrating the resource or a link to a diagram."
-        }
-      ],
-      "dcterms:modified": "2026-02-12T22:05:14.551Z",
-      "cas:revision": "1.1",
-      "sh:datatype": {
-        "@id": "xs:string"
-      }
     },
     {
       "@id": "cas:View",
@@ -1526,7 +1482,6 @@
         "@value": "▣"
       },
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [
         {
           "@id": "cas:Diagram"
@@ -1600,7 +1555,6 @@
         "@value": "&#x25A1;"
       },
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [
         {
           "@id": "cas:Diagram"
@@ -1649,7 +1603,6 @@
         "@value": "&#x25CB;"
       },
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedTargetLink": []
     },
@@ -1694,7 +1647,6 @@
         "@value": "&#x2662;"
       },
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedTargetLink": []
     },
@@ -1739,7 +1691,6 @@
         "@value": "&#8623;"
       },
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [
         {
           "@id": "dcterms:identifier"
@@ -1810,7 +1761,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [
         {
           "@id": "dcterms:identifier"
@@ -1865,46 +1815,9 @@
         }
       ],
       "dcterms:modified": "2023-07-16T09:30:25.850Z",
-      "cas:revision": "1.1",
       "cas:enumeratedProperty": [
         {
           "@id": "cas:Diagram"
-        },
-        {
-          "@id": "cas:Category"
-        }
-      ],
-      "cas:enumeratedTargetLink": []
-    },
-    {
-      "@id": "o:RC-Paragraph-8240447479",
-      "@type": "owl:Class",
-      "cas:itemType": {
-        "@id": "cas:Entity"
-      },
-      "cas:specializes": {
-        "@id": "cas:Entity"
-      },
-      "dcterms:title": [
-        {
-          "@value": "SpecIF:Paragraph"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
-          "@language": "en"
-        },
-        {
-          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
-          "@language": "de"
-        }
-      ],
-      "dcterms:modified": "2024-03-02T20:55:23.295Z",
-      "cas:revision": "1.1",
-      "cas:enumeratedProperty": [
-        {
-          "@id": "o:PC-Diagram-8240447448"
         },
         {
           "@id": "cas:Category"
@@ -1942,7 +1855,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedSourceLink": [
         {
@@ -1966,7 +1878,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:contains to source"
+          "@value": "contains to source"
         }
       ],
       "dcterms:description": [
@@ -1997,7 +1909,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:contains to target"
+          "@value": "contains to target"
         }
       ],
       "dcterms:description": [
@@ -2028,7 +1940,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:modifies"
+          "@value": "modifies"
         }
       ],
       "skos:definition": [
@@ -2037,7 +1949,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedSourceLink": [
         {
@@ -2061,12 +1972,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "SC-stores to source"
+          "@value": "stores to source"
         }
       ],
       "dcterms:description": [
         {
-          "@value": "Connects the source of SC-stores"
+          "@value": "Connects the source of o:SC-stores"
         }
       ],
       "cas:enumeratedEndpoint": [
@@ -2086,12 +1997,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "SC-stores to target"
+          "@value": "stores to target"
         }
       ],
       "dcterms:description": [
         {
-          "@value": "Connects the target of SC-stores"
+          "@value": "Connects the target of o:SC-stores"
         }
       ],
       "cas:enumeratedEndpoint": [
@@ -2130,7 +2041,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedSourceLink": [
         {
@@ -2154,7 +2064,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:writes to source"
+          "@value": "writes to source"
         }
       ],
       "dcterms:description": [
@@ -2179,7 +2089,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:writes to target"
+          "@value": "writes to target"
         }
       ],
       "dcterms:description": [
@@ -2223,7 +2133,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedSourceLink": [
         {
@@ -2247,7 +2156,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:reads to source"
+          "@value": "reads to source"
         }
       ],
       "dcterms:description": [
@@ -2272,7 +2181,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:reads to target"
+          "@value": "reads to target"
         }
       ],
       "dcterms:description": [
@@ -2316,7 +2225,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedSourceLink": [
         {
@@ -2340,7 +2248,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:dependsOn to source"
+          "@value": "dependsOn to source"
         }
       ],
       "dcterms:description": [
@@ -2365,7 +2273,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:dependsOn to target"
+          "@value": "dependsOn to target"
         }
       ],
       "dcterms:description": [
@@ -2409,7 +2317,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedSourceLink": [
         {
@@ -2433,7 +2340,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "oslc_rm:satisfies to source"
+          "@value": "satisfies to source"
         }
       ],
       "dcterms:description": [
@@ -2464,7 +2371,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "oslc_rm:satisfies to target"
+          "@value": "satisfies to target"
         }
       ],
       "dcterms:description": [
@@ -2508,7 +2415,6 @@
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
-      "cas:revision": "1",
       "cas:enumeratedProperty": [],
       "cas:enumeratedSourceLink": [
         {
@@ -2532,7 +2438,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:refersTo to source"
+          "@value": "refersTo to source"
         }
       ],
       "dcterms:description": [
@@ -2557,7 +2463,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "SpecIF:refersTo to target"
+          "@value": "refersTo to target"
         }
       ],
       "dcterms:description": [
@@ -2595,8 +2501,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:03+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "18",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.NotToEvaluate",
@@ -2623,18 +2527,12 @@
       ],
       "cas:Diagram": [
         {
-          "@value": "<div style=\"max-width: 480px;\" ><object data=\"files_and_images/27420ffc0000c3a8013ab527ca1b71f5.svg\" type=\"image/svg+xml\" >Color Coding</object></div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div style=\"max-width: 480px;\"><object data=\"files_and_images/27420ffc0000c3a8013ab527ca1b71f5.svg\" type=\"image/svg+xml\">Color Coding</object></div>"
         }
       ],
       "cas:Notation": [
         {
-          "@value": "FMC Block Diagram",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "FMC Block Diagram"
         }
       ]
     },
@@ -2655,8 +2553,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:03+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "19",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.ToEvaluate",
@@ -2683,18 +2579,12 @@
       ],
       "cas:Diagram": [
         {
-          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a4755dd0000bca801375293a62c90a8.svg\" type=\"image/svg+xml\" >files_and_images\\5a4755dd0000bca801375293a62c90a8.svg</object></div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a4755dd0000bca801375293a62c90a8.svg\" type=\"image/svg+xml\">files_and_images\\5a4755dd0000bca801375293a62c90a8.svg</object></div>"
         }
       ],
       "cas:Notation": [
         {
-          "@value": "FMC Block Diagram",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "FMC Block Diagram"
         }
       ],
       "cas:shows": [
@@ -2801,8 +2691,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:03+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "19",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.NotAccepted",
@@ -2829,18 +2717,12 @@
       ],
       "cas:Diagram": [
         {
-          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a6cdea50000bca80137d6b2d6e8a3a0.svg\" type=\"image/svg+xml\" >files_and_images\\5a6cdea50000bca80137d6b2d6e8a3a0.svg</object></div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a6cdea50000bca80137d6b2d6e8a3a0.svg\" type=\"image/svg+xml\">files_and_images\\5a6cdea50000bca80137d6b2d6e8a3a0.svg</object></div>"
         }
       ],
       "cas:Notation": [
         {
-          "@value": "FMC Block Diagram",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "FMC Block Diagram"
         }
       ],
       "cas:shows": [
@@ -2948,8 +2830,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "20",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.ToEvaluate",
@@ -2976,18 +2856,12 @@
       ],
       "cas:Diagram": [
         {
-          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a7f99af0000bca8013754f2ef12d3e5.svg\" type=\"image/svg+xml\" >files_and_images\\5a7f99af0000bca8013754f2ef12d3e5.svg</object></div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/5a7f99af0000bca8013754f2ef12d3e5.svg\" type=\"image/svg+xml\">files_and_images\\5a7f99af0000bca8013754f2ef12d3e5.svg</object></div>"
         }
       ],
       "cas:Notation": [
         {
-          "@value": "FMC Block Diagram",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "FMC Block Diagram"
         }
       ],
       "cas:shows": [
@@ -3100,8 +2974,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "20",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.Accepted",
@@ -3128,18 +3000,12 @@
       ],
       "cas:Diagram": [
         {
-          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/606e76c70000bca801376ec3133a1181.svg\" type=\"image/svg+xml\" >files_and_images\\606e76c70000bca801376ec3133a1181.svg</object></div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div style=\"max-width: 600px;\"><object data=\"files_and_images/606e76c70000bca801376ec3133a1181.svg\" type=\"image/svg+xml\">files_and_images\\606e76c70000bca801376ec3133a1181.svg</object></div>"
         }
       ],
       "cas:Notation": [
         {
-          "@value": "BPMN Process Model",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "BPMN Process Model"
         }
       ],
       "cas:shows": [
@@ -3234,8 +3100,6 @@
         }
       ],
       "dcterms:modified": "2018-03-15T15:36:31+01:00",
-      "dcterms:creator": "od",
-      "cas:revision": "253",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.Accepted",
@@ -3262,18 +3126,12 @@
       ],
       "cas:Diagram": [
         {
-          "@value": "<div style=\"max-width: 600px;\"><object type=\"image/svg+xml\" data=\"files_and_images/45a1c8930000c3a801414cd1eaa70b5a.svg\">files_and_images\\45a1c8930000c3a801414cd1eaa70b5a.svg</object></div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div style=\"max-width: 600px;\"><object type=\"image/svg+xml\" data=\"files_and_images/45a1c8930000c3a801414cd1eaa70b5a.svg\">files_and_images\\45a1c8930000c3a801414cd1eaa70b5a.svg</object></div>"
         }
       ],
       "cas:Notation": [
         {
-          "@value": "BPMN Process Model",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "BPMN Process Model"
         }
       ],
       "cas:shows": [
@@ -3344,8 +3202,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "22",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.Accepted",
@@ -3372,18 +3228,12 @@
       ],
       "cas:Diagram": [
         {
-          "@value": "<div style=\"max-width: 720px;\"><object data=\"files_and_images/5af364560000bca80137b84017f4e832.svg\" type=\"image/svg+xml\" >files_and_images\\5af364560000bca80137b84017f4e832.svg</object></div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div style=\"max-width: 720px;\"><object data=\"files_and_images/5af364560000bca80137b84017f4e832.svg\" type=\"image/svg+xml\">files_and_images\\5af364560000bca80137b84017f4e832.svg</object></div>"
         }
       ],
       "cas:Notation": [
         {
-          "@value": "Petri Net",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "Petri Net"
         }
       ],
       "cas:shows": [
@@ -3516,18 +3366,13 @@
       ],
       "dcterms:description": [
         {
-          "@value": "<div><p> The user can set the intensity level of an electric load such as a light [[bulb]]. Pressing a button 'up' or 'down', the intensity is increased or decreased following a quasi-stepless ramp. <br /></p></div>"
+          "@value": "<div><p> The user can set the intensity level of an electric load such as a light [[bulb]]. Pressing a button 'up' or 'down', the intensity is increased or decreased following a quasi-stepless ramp. <br/></p></div>"
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "23",
       "ReqIF-WF:SupplierComment": [
         {
-          "@value": "Our solution does this perfectly.",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "Our solution does this perfectly."
         }
       ],
       "ReqIF-WF:SupplierStatus": [
@@ -3584,10 +3429,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_014",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_014"
         }
       ]
     },
@@ -3608,8 +3450,6 @@
         }
       ],
       "dcterms:modified": "2018-02-13T12:22:44+01:00",
-      "dcterms:creator": "od",
-      "cas:revision": "243",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineElectronics",
@@ -3650,10 +3490,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_016",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_016"
         }
       ]
     },
@@ -3674,8 +3511,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:07+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "24",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineSoftware",
@@ -3710,10 +3545,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_015",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_015"
         }
       ]
     },
@@ -3734,14 +3566,9 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "25",
       "ReqIF-WF:SupplierComment": [
         {
-          "@value": "We did not find the actual minimum dimensions of the buttons.",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "We did not find the actual minimum dimensions of the buttons."
         }
       ],
       "ReqIF-WF:SupplierStatus": [
@@ -3786,10 +3613,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_009",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_009"
         }
       ]
     },
@@ -3810,14 +3634,9 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "25",
       "ReqIF-WF:SupplierComment": [
         {
-          "@value": "For which time period?  Permanent load?",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "For which time period?  Permanent load?"
         }
       ],
       "ReqIF-WF:SupplierStatus": [
@@ -3862,10 +3681,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_001",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_001"
         }
       ]
     },
@@ -3886,8 +3702,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:09+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "26",
       "ReqIF-WF:SupplierStatus": [
         {
           "@id": "ReqIF-WF:SupplierStatus.Agreed",
@@ -3936,10 +3750,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_003",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_003"
         }
       ]
     },
@@ -3960,14 +3771,9 @@
         }
       ],
       "dcterms:modified": "2018-03-08T11:59:42+01:00",
-      "dcterms:creator": "supplier",
-      "cas:revision": "252",
       "ReqIF-WF:CustomerComment": [
         {
-          "@value": "Das ist ganz wichtig für uns.",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "Das ist ganz wichtig für uns."
         }
       ],
       "ReqIF-WF:CustomerStatus": [
@@ -3980,10 +3786,7 @@
       ],
       "ReqIF-WF:SupplierComment": [
         {
-          "@value": "Mais bien sûr.",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "Mais bien sûr."
         }
       ],
       "ReqIF-WF:SupplierStatus": [
@@ -4028,10 +3831,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_008",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_008"
         }
       ]
     },
@@ -4052,8 +3852,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:10+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "27",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineMechanics",
@@ -4094,10 +3892,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_011",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_011"
         }
       ]
     },
@@ -4118,8 +3913,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "28",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineElectronics",
@@ -4160,10 +3953,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_010",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_010"
         }
       ]
     },
@@ -4184,8 +3974,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "29",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineElectronics",
@@ -4220,10 +4008,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_002",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_002"
         }
       ]
     },
@@ -4244,8 +4029,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "29",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineElectronics",
@@ -4280,10 +4063,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_007",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_007"
         }
       ]
     },
@@ -4304,8 +4084,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:12+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "31",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineMechanics",
@@ -4352,10 +4130,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_012",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_012"
         }
       ]
     },
@@ -4372,12 +4147,10 @@
       ],
       "dcterms:description": [
         {
-          "@value": "<div><p> The product fits into an industry-standard [[housing]] for flush-mounted devices (diameter &#x2300;68 mm). It is fixed with two screw-activated claws.</p></div>"
+          "@value": "<div><p> The product fits into an industry-standard [[housing]] for flush-mounted devices (diameter ⌀68 mm). It is fixed with two screw-activated claws.</p></div>"
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:12+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "32",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineMechanics",
@@ -4412,10 +4185,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_004",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_004"
         }
       ]
     },
@@ -4436,8 +4206,6 @@
         }
       ],
       "dcterms:modified": "2018-02-16T10:29:48+01:00",
-      "dcterms:creator": "od",
-      "cas:revision": "244",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineMechanics",
@@ -4478,10 +4246,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_005",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_005"
         }
       ]
     },
@@ -4502,8 +4267,6 @@
         }
       ],
       "dcterms:modified": "2018-02-28T13:16:17+01:00",
-      "dcterms:creator": "supplier",
-      "cas:revision": "247",
       "ReqIF-WF:CustomerStatus": [
         {
           "@id": "ReqIF-WF:CustomerStatus.ToEvaluate",
@@ -4514,10 +4277,7 @@
       ],
       "ReqIF-WF:SupplierComment": [
         {
-          "@value": "This is standard for all our products: expensive, but effective.",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "This is standard for all our products: expensive, but effective."
         }
       ],
       "SpecIF:EngineeringDiscipline": [
@@ -4554,10 +4314,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_013",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_013"
         }
       ]
     },
@@ -4578,8 +4335,6 @@
         }
       ],
       "dcterms:modified": "2017-10-27T11:44:20+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "233",
       "SpecIF:EngineeringDiscipline": [
         {
           "@id": "SpecIF:EngineeringDisciplineSoftware",
@@ -4614,10 +4369,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "REQ_006",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "REQ_006"
         }
       ]
     },
@@ -4638,14 +4390,9 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:15+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "35",
       "SpecIF:DueDate": [
         {
-          "@value": "2012-09-30T12:00:00+02:00",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "2012-09-30T12:00:00+02:00"
         }
       ],
       "SpecIF:Priority": [
@@ -4658,10 +4405,7 @@
       ],
       "dcterms:identifier": [
         {
-          "@value": "OPM_001",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "OPM_001"
         }
       ],
       "o:PC-IssueStatus": [
@@ -4690,14 +4434,9 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:15+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "37",
       "SpecIF:DueDate": [
         {
-          "@value": "2012-09-30T12:00:00+02:00",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "2012-09-30T12:00:00+02:00"
         }
       ],
       "SpecIF:Priority": [
@@ -4710,18 +4449,12 @@
       ],
       "SpecIF:Responsible": [
         {
-          "@value": "Vorname Nachname",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "Vorname Nachname"
         }
       ],
       "dcterms:identifier": [
         {
-          "@value": "OPS_001",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "OPS_001"
         }
       ],
       "o:PC-IssueStatus": [
@@ -4749,9 +4482,7 @@
           "@value": "<div><p>Up to four actuator rods connecting the buttons to electrical contacts.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:22+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "59"
+      "dcterms:modified": "2017-06-19T20:13:22+02:00"
     },
     {
       "@id": "d:MEl-5a76365c0000bca8013776e91afd1e8e",
@@ -4769,9 +4500,7 @@
           "@value": "<div><p> Mounting frame screwed to or into a wall.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "39"
+      "dcterms:modified": "2017-06-19T20:13:16+02:00"
     },
     {
       "@id": "d:MEl-608177820000bca801379179ebf3b6aa",
@@ -4789,9 +4518,7 @@
           "@value": "<div><p>Press down-button &lt;400 ms.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "40"
+      "dcterms:modified": "2017-06-19T20:13:16+02:00"
     },
     {
       "@id": "d:MEl-611366530000bca80137a97f194e96a3",
@@ -4809,9 +4536,7 @@
           "@value": "<div><p>Press up-button &lt;400 ms.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "41"
+      "dcterms:modified": "2017-06-19T20:13:16+02:00"
     },
     {
       "@id": "d:MEl-5bd6bd890000bca8013739588a3f43d6",
@@ -4829,9 +4554,7 @@
           "@value": "<div><p> Dimmable candescent light-bulb 230V.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-11-11T16:16:13+01:00",
-      "dcterms:creator": "od",
-      "cas:revision": "239"
+      "dcterms:modified": "2017-11-11T16:16:13+01:00"
     },
     {
       "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
@@ -4844,9 +4567,7 @@
           "@value": "Control Signals"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:22+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "60"
+      "dcterms:modified": "2017-06-19T20:13:22+02:00"
     },
     {
       "@id": "d:MEl-5b2f95ec0000bca8013709bfa81d701f",
@@ -4859,9 +4580,7 @@
           "@value": "Decreasing"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:28+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "81"
+      "dcterms:modified": "2017-06-19T20:13:28+02:00"
     },
     {
       "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
@@ -4874,9 +4593,7 @@
           "@value": "Dim-down!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:29+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "82"
+      "dcterms:modified": "2017-06-19T20:13:29+02:00"
     },
     {
       "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
@@ -4889,9 +4606,7 @@
           "@value": "Dim-up!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:29+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "83"
+      "dcterms:modified": "2017-06-19T20:13:29+02:00"
     },
     {
       "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
@@ -4909,9 +4624,7 @@
           "@value": "<div><p> Input commands (events):</p><ul><li> up-long → increase brightness </li><li> down-long → decrease brightness </li><li> release → stop dimming, keep brightness </li><li> up-short → switch to maximum </li><li> down-short → switch to minimum </li><li> inappropriate commands are ignored (e.g. up-long when maximum is set). </li><li> set parameters </li></ul><p> Four parameters influence the behavior of the particular device:</p><ul><li> minimum value (default: 0%) </li><li> maximum value (default: 100%) </li><li> ramp-up speed (default: 10% per sec) </li><li> ramp-down speed (default: 10% per sec) </li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-12-09T10:38:29+01:00",
-      "dcterms:creator": "od",
-      "cas:revision": "242"
+      "dcterms:modified": "2017-12-09T10:38:29+01:00"
     },
     {
       "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
@@ -4930,14 +4643,9 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:17+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "44",
       "cas:Diagram": [
         {
-          "@value": "<div><p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/Schaltplan.gif\" name=\"Schaltplan.gif\" type=\"image/gif\"/></p> </div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div><p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/Schaltplan.gif\" name=\"Schaltplan.gif\" type=\"image/gif\"/></p> </div>"
         }
       ]
     },
@@ -4957,9 +4665,7 @@
           "@value": "<div><p>The actuator module with dimmer function for resistive loads.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:17+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "45"
+      "dcterms:modified": "2017-06-19T20:13:17+02:00"
     },
     {
       "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
@@ -4972,9 +4678,7 @@
           "@value": "Done!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:29+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "83"
+      "dcterms:modified": "2017-06-19T20:13:29+02:00"
     },
     {
       "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
@@ -4992,9 +4696,7 @@
           "@value": "<div><p>The Double Button (a sensor unit) is a versatile all-mechanical unit used for multiple purposes. The mechanical position is transferred with a rod per button to the next unit where it is converted to an electrical signal.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:17+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "46"
+      "dcterms:modified": "2017-06-19T20:13:17+02:00"
     },
     {
       "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
@@ -5012,9 +4714,7 @@
           "@value": "<div><p>This is an observer of the double-button sensor. It distinguishes short and long pressing in the 'up' and 'down' directions. A discriminator may send five events:</p><ul><li>up-short</li><li>down-short</li><li>up-long</li><li>down-long and </li><li>release.</li></ul><p>The events are interpreted and actions are initiated accordingly by the target actuator unit. The double button sensor and the observer have no notion of the underlying function.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "47"
+      "dcterms:modified": "2017-06-19T20:13:18+02:00"
     },
     {
       "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
@@ -5032,9 +4732,7 @@
           "@value": "<div><p>The button to drive down the dimmer, shading or similar devices.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:22+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "61"
+      "dcterms:modified": "2017-06-19T20:13:22+02:00"
     },
     {
       "@id": "d:MEl-45450be80000c3a801414f280f146c71",
@@ -5047,9 +4745,7 @@
           "@value": "down-long!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:29+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "84"
+      "dcterms:modified": "2017-06-19T20:13:29+02:00"
     },
     {
       "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
@@ -5062,9 +4758,7 @@
           "@value": "down-short!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:30+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "85"
+      "dcterms:modified": "2017-06-19T20:13:30+02:00"
     },
     {
       "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
@@ -5082,9 +4776,7 @@
           "@value": "<div><p>Electromagnetic characteristics, especially EM-shielding.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:23+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "62"
+      "dcterms:modified": "2017-06-19T20:13:23+02:00"
     },
     {
       "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
@@ -5102,9 +4794,7 @@
           "@value": "<p>A dimmer for electric loads in an industry-standard mounting frame which is flush with the wall surface. In other words, the dimmer is sitting in the wall and just the buttons are visible.</p>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:23+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "63"
+      "dcterms:modified": "2017-06-19T20:13:23+02:00"
     },
     {
       "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
@@ -5117,9 +4807,7 @@
           "@value": "Flush-mounted Shading Control"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:23+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "63"
+      "dcterms:modified": "2017-06-19T20:13:23+02:00"
     },
     {
       "@id": "d:MEl-5a99c89c0000bca801375d44cf9a50ca",
@@ -5137,9 +4825,7 @@
           "@value": "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:23+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "64"
+      "dcterms:modified": "2017-06-19T20:13:23+02:00"
     },
     {
       "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
@@ -5153,14 +4839,9 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "47",
       "cas:Diagram": [
         {
-          "@value": "<div> <p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/UP-Dose.png\" name=\"UP-Dose.png\" type=\"image/png\"/></p> </div>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<div> <p class=\"inline-label\">Diagramm:</p><p><object data=\"files_and_images/UP-Dose.png\" name=\"UP-Dose.png\" type=\"image/png\"/></p> </div>"
         }
       ]
     },
@@ -5180,9 +4861,7 @@
           "@value": "<div><p>per input and output signal:</p><ul><li>hardware-address</li><li>number of significant bits</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:23+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "65"
+      "dcterms:modified": "2017-06-19T20:13:23+02:00"
     },
     {
       "@id": "d:MEl-5b149eab0000bca80137aad99b6eea7b",
@@ -5195,9 +4874,7 @@
           "@value": "Increasing"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:30+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "85"
+      "dcterms:modified": "2017-06-19T20:13:30+02:00"
     },
     {
       "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
@@ -5215,9 +4892,7 @@
           "@value": "<div><p>An intelligent shading actuator with 2 drives for up/down straight/tilt motion. The unit comprises the control unit and the motors.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:24+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "66"
+      "dcterms:modified": "2017-06-19T20:13:24+02:00"
     },
     {
       "@id": "d:MEl-5b08ed8d0000bca8013719f554353b0e",
@@ -5230,9 +4905,7 @@
           "@value": "Intermediate"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:30+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "86"
+      "dcterms:modified": "2017-06-19T20:13:30+02:00"
     },
     {
       "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
@@ -5250,9 +4923,7 @@
           "@value": "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:24+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "67"
+      "dcterms:modified": "2017-06-19T20:13:24+02:00"
     },
     {
       "@id": "d:MEl-5bcf35cf0000bca8013776d68023612a",
@@ -5270,9 +4941,7 @@
           "@value": "<div><p>Actuator Motor 230V.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:24+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "68"
+      "dcterms:modified": "2017-06-19T20:13:24+02:00"
     },
     {
       "@id": "d:MEl-453dfb670000c3a8014191107df4565e",
@@ -5285,9 +4954,7 @@
           "@value": "max-reached!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:30+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "87"
+      "dcterms:modified": "2017-06-19T20:13:30+02:00"
     },
     {
       "@id": "d:MEl-5b094f8a0000bca801374c798a6587ad",
@@ -5300,9 +4967,7 @@
           "@value": "Maximum"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:30+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "87"
+      "dcterms:modified": "2017-06-19T20:13:30+02:00"
     },
     {
       "@id": "d:MEl-45428b930000c3a80141e28b7d4b5ae5",
@@ -5315,9 +4980,7 @@
           "@value": "min-reached!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:30+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "88"
+      "dcterms:modified": "2017-06-19T20:13:30+02:00"
     },
     {
       "@id": "d:MEl-5b078fa50000bca80137f36ed05c43cb",
@@ -5330,9 +4993,7 @@
           "@value": "Minimum"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:31+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "89"
+      "dcterms:modified": "2017-06-19T20:13:31+02:00"
     },
     {
       "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
@@ -5350,9 +5011,7 @@
           "@value": "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:24+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "69"
+      "dcterms:modified": "2017-06-19T20:13:24+02:00"
     },
     {
       "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
@@ -5370,9 +5029,7 @@
           "@value": "<div><p>Effective 3D interior space and mounting for electronics.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:25+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "70"
+      "dcterms:modified": "2017-06-19T20:13:25+02:00"
     },
     {
       "@id": "d:MEl-608239830000bca801373690c7d2af0f",
@@ -5390,9 +5047,7 @@
           "@value": "<div><p>Press down-button &gt;400 ms.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "48"
+      "dcterms:modified": "2017-06-19T20:13:18+02:00"
     },
     {
       "@id": "d:MEl-610b07100000bca80137c10f96c46247",
@@ -5410,9 +5065,7 @@
           "@value": "<div><p>Press up-button &gt;400 ms.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "49"
+      "dcterms:modified": "2017-06-19T20:13:18+02:00"
     },
     {
       "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
@@ -5430,9 +5083,7 @@
           "@value": "<div><p>EPROM-Size</p><p>RAM-Size</p><p>Processor type with instruction set and speed (MIPS)</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:25+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "71"
+      "dcterms:modified": "2017-06-19T20:13:25+02:00"
     },
     {
       "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
@@ -5445,9 +5096,7 @@
           "@value": "Release button"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "49"
+      "dcterms:modified": "2017-06-19T20:13:18+02:00"
     },
     {
       "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
@@ -5460,9 +5109,7 @@
           "@value": "released!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:31+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "89"
+      "dcterms:modified": "2017-06-19T20:13:31+02:00"
     },
     {
       "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
@@ -5475,9 +5122,7 @@
           "@value": "Remote Control"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:26+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "72"
+      "dcterms:modified": "2017-06-19T20:13:26+02:00"
     },
     {
       "@id": "d:MEl-5bcfb01d0000bca80137f303272a5557",
@@ -5495,9 +5140,7 @@
           "@value": "<div><p>Window-shade with 2 degrees of freedom: It can be moved up/down and the elements can be set straight/tilted. Both movements can be made proportionally with an electric drive.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "50"
+      "dcterms:modified": "2017-06-19T20:13:19+02:00"
     },
     {
       "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
@@ -5515,9 +5158,7 @@
           "@value": "<div><p>The controller </p><ul><li>interconnects locally distributed sensors and actuators, </li><li>coordinates different actuators where appropriate and </li><li>performes automatic functions, such as switching external lamps dependend on ambient light.</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "51"
+      "dcterms:modified": "2017-06-19T20:13:19+02:00"
     },
     {
       "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
@@ -5535,9 +5176,7 @@
           "@value": "<div><p>The new system for controlling all major functions of the private home:</p><ul><li>light/illumination</li><li>window shades</li><li>heating</li><li>consumption meters for electricity, heat, gas and water.</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:26+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "73"
+      "dcterms:modified": "2017-06-19T20:13:26+02:00"
     },
     {
       "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
@@ -5555,9 +5194,7 @@
           "@value": "<div><p>Spring clips for mechanical connection.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:26+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "74"
+      "dcterms:modified": "2017-06-19T20:13:26+02:00"
     },
     {
       "@id": "d:MEl-5b2d29070000bca801378a6c020cf8f5",
@@ -5570,9 +5207,7 @@
           "@value": "Start-decreasing"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "51"
+      "dcterms:modified": "2017-06-19T20:13:19+02:00"
     },
     {
       "@id": "d:MEl-5b1750f80000bca801373b2d143d7478",
@@ -5585,9 +5220,7 @@
           "@value": "Start-increasing"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "51"
+      "dcterms:modified": "2017-06-19T20:13:19+02:00"
     },
     {
       "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
@@ -5600,9 +5233,7 @@
           "@value": "Stop dimming!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:31+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "90"
+      "dcterms:modified": "2017-06-19T20:13:31+02:00"
     },
     {
       "@id": "d:MEl-5b2ddad80000bca80137c44d62ba97d8",
@@ -5615,9 +5246,7 @@
           "@value": "Stop-decreasing"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:20+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "52"
+      "dcterms:modified": "2017-06-19T20:13:20+02:00"
     },
     {
       "@id": "d:MEl-5b2449180000bca8013722c01c9d35a5",
@@ -5630,9 +5259,7 @@
           "@value": "Stop-increasing"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:20+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "52"
+      "dcterms:modified": "2017-06-19T20:13:20+02:00"
     },
     {
       "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
@@ -5650,9 +5277,7 @@
           "@value": "<div><p>The button to straighten the shading elements.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:27+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "75"
+      "dcterms:modified": "2017-06-19T20:13:27+02:00"
     },
     {
       "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
@@ -5670,9 +5295,7 @@
           "@value": "<div><ul><li>Cable-diameter</li><li>Wire-diameter</li><li>Max-current</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:27+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "76"
+      "dcterms:modified": "2017-06-19T20:13:27+02:00"
     },
     {
       "@id": "d:MEl-5b0839b90000bca801376dcca41ca7d0",
@@ -5690,9 +5313,7 @@
           "@value": "<div><p>Switch to programmed min-value.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:20+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "53"
+      "dcterms:modified": "2017-06-19T20:13:20+02:00"
     },
     {
       "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
@@ -5705,9 +5326,7 @@
           "@value": "Switch-off!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:32+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "91"
+      "dcterms:modified": "2017-06-19T20:13:32+02:00"
     },
     {
       "@id": "d:MEl-5b07e6aa0000bca8013797aad9be69ae",
@@ -5725,9 +5344,7 @@
           "@value": "<div><p>Switch to programmed max-value.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:21+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "54"
+      "dcterms:modified": "2017-06-19T20:13:21+02:00"
     },
     {
       "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
@@ -5740,9 +5357,7 @@
           "@value": "Switch-on!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:32+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "91"
+      "dcterms:modified": "2017-06-19T20:13:32+02:00"
     },
     {
       "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
@@ -5760,9 +5375,7 @@
           "@value": "<div><p> Thermal resistance and thermal capacity of the [[housing]].</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:27+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "77"
+      "dcterms:modified": "2017-06-19T20:13:27+02:00"
     },
     {
       "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
@@ -5780,9 +5393,7 @@
           "@value": "<div><p>The button to tilt the shading elements.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:28+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "78"
+      "dcterms:modified": "2017-06-19T20:13:28+02:00"
     },
     {
       "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
@@ -5800,9 +5411,7 @@
           "@value": "<div><p>The button to drive up the dimmer, shading or similar devices.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:28+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "79"
+      "dcterms:modified": "2017-06-19T20:13:28+02:00"
     },
     {
       "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
@@ -5815,9 +5424,7 @@
           "@value": "up-long!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:32+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "91"
+      "dcterms:modified": "2017-06-19T20:13:32+02:00"
     },
     {
       "@id": "d:MEl-453d34af0000c3a80141918f84641161",
@@ -5830,9 +5437,7 @@
           "@value": "up-short!"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:33+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "92"
+      "dcterms:modified": "2017-06-19T20:13:33+02:00"
     },
     {
       "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
@@ -5845,9 +5450,7 @@
           "@value": "User"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:21+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "55"
+      "dcterms:modified": "2017-06-19T20:13:21+02:00"
     },
     {
       "@id": "d:MEl-45a236e00000c3a801410f6503287e16",
@@ -5865,9 +5468,7 @@
           "@value": "<div><p>The kind of activation is determined:</p><ul><li>Up- or Down-Button</li><li>Short or long activation: 'Short' is &lt; 0,4 sec.</li><li>Do only wait until the distinction between 'short' or 'long' can be made!</li></ul></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:21+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "56"
+      "dcterms:modified": "2017-06-19T20:13:21+02:00"
     },
     {
       "@id": "d:MEl-45a3b13c0000c3a801415e97f5bc29d1",
@@ -5880,9 +5481,7 @@
           "@value": "Wait for Deactivation"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:21+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "57"
+      "dcterms:modified": "2017-06-19T20:13:21+02:00"
     },
     {
       "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
@@ -5900,9 +5499,7 @@
           "@value": "<div><p>Receives control commands via radio signal or the mechanical position of a mounted sensor unit. Sends electrical control signals to the mounted actuator module.</p></div>"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:22+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "58"
+      "dcterms:modified": "2017-06-19T20:13:22+02:00"
     },
     {
       "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
@@ -5915,9 +5512,7 @@
           "@value": "Wireless Network"
         }
       ],
-      "dcterms:modified": "2017-06-19T20:13:28+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "80"
+      "dcterms:modified": "2017-06-19T20:13:28+02:00"
     },
     {
       "@id": "d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1c895230000c3a80150f8afd049f738",
@@ -5926,8 +5521,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:49+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "150",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
@@ -5942,6 +5535,24 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:Req-d1d42a6a0000c3a8015091ec8d149b93",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-d1cd7f370000c3a8015095e6ee21aab7",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-5b9c950e0000bca801374f16615247b9",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -5952,8 +5563,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:49+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "150",
       "SpecIF:dependsOn-toSource": [
         {
           "@id": "d:Req-d1c895230000c3a80150f8afd049f738",
@@ -5978,8 +5587,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:50+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "151",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
@@ -5994,6 +5601,30 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:Req-5ba140d60000bca801372b09f9888eca",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-ee452cf20000c3a8014035290669304d",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -6004,8 +5635,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:50+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "151",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
@@ -6020,29 +5649,27 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1d42a6a0000c3a8015091ec8d149b93",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:50+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "151",
-      "oslc_rm:satisfies-toSource": [
+        },
         {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "@id": "d:Req-5b8fbb300000bca80137c73e3ce4c737",
           "cas:itemType": {
-            "@id": "cas:aSourceLink"
+            "@id": "cas:aTargetLink"
           }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
+        },
         {
-          "@id": "d:Req-d1d42a6a0000c3a8015091ec8d149b93",
+          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-728c69c80018b1a8014b974542c36edc",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6056,8 +5683,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2018-11-15T15:46:00+01:00",
-      "dcterms:creator": "od",
-      "cas:revision": "260",
       "SpecIF:refersTo-toSource": [
         {
           "@id": "d:Iss-ee2abb630000c3a8013987a750219659",
@@ -6072,29 +5697,15 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1cd7f370000c3a8015095e6ee21aab7",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:51+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "152",
-      "oslc_rm:satisfies-toSource": [
+        },
         {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "@id": "d:Req-5b944fc70000bca8013763f44fdc0e03",
           "cas:itemType": {
-            "@id": "cas:aSourceLink"
+            "@id": "cas:aTargetLink"
           }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
+        },
         {
-          "@id": "d:Req-d1cd7f370000c3a8015095e6ee21aab7",
+          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6108,8 +5719,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:51+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "152",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
@@ -6128,40 +5737,12 @@
       ]
     },
     {
-      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b8fbb300000bca80137c73e3ce4c737",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:51+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "153",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b8fbb300000bca80137c73e3ce4c737",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
       "@id": "d:RSat-MEl-5a47935a0000bca801377c17f8cb25b0-Req-5b944fc70000bca8013763f44fdc0e03",
       "@type": "oslc_rm:satisfies",
       "cas:itemType": {
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:51+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "154",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
@@ -6180,66 +5761,12 @@
       ]
     },
     {
-      "@id": "d:RCnc-Iss-ee2abb630000c3a8013987a750219659-Req-5b944fc70000bca8013763f44fdc0e03",
-      "@type": "SpecIF:refersTo",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:51+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "155",
-      "SpecIF:refersTo-toSource": [
-        {
-          "@id": "d:Iss-ee2abb630000c3a8013987a750219659",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:refersTo-toTarget": [
-        {
-          "@id": "d:Req-5b944fc70000bca8013763f44fdc0e03",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a752ccc0000bca80137479a2e8bab30-Req-5ba140d60000bca801372b09f9888eca",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:51+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "155",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5ba140d60000bca801372b09f9888eca",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
       "@id": "d:RSat-MEl-5a9b7a9b0000bca80137d768644696b7-Req-5ba140d60000bca801372b09f9888eca",
       "@type": "oslc_rm:satisfies",
       "cas:itemType": {
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:52+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "156",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
@@ -6264,8 +5791,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:52+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "157",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
@@ -6280,29 +5805,9 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:R-UZD4SQ8jYghL2Tsb4tZjoXDSYoM",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:52+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "158",
-      "oslc_rm:satisfies-toSource": [
+        },
         {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-ee452cf20000c3a8014035290669304d",
+          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6316,8 +5821,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:52+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "158",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
@@ -6332,6 +5835,18 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:Req-5b95fae40000bca801372becc933682d",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -6342,8 +5857,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:52+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "159",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
@@ -6358,6 +5871,12 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:Req-5b95fae40000bca801372becc933682d",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -6368,8 +5887,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:53+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "160",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
@@ -6384,6 +5901,24 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -6394,8 +5929,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:53+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "160",
       "oslc_rm:satisfies-toSource": [
         {
           "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
@@ -6420,8 +5953,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:53+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "161",
       "SpecIF:dependsOn-toSource": [
         {
           "@id": "d:Req-ee43fc4c0000c3a8014063d42c77767f",
@@ -6440,352 +5971,12 @@
       ]
     },
     {
-      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9124bc0000bca80137fa2ce86f5eca",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:53+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "162",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9124bc0000bca80137fa2ce86f5eca",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:54+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "163",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9e68530000bca801371362c49d2d08",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:54+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "163",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9e68530000bca801371362c49d2d08",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:54+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "164",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-803fd3750000c3a8013cf1fdb3b26d33-Req-eea1cd500000c3a80140fe00109eb7f4",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:54+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "165",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:R-lELLVnNbbagfomwYyTBgGfXSalj",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:54+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "165",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b95fae40000bca801372becc933682d",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:54+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "166",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b95fae40000bca801372becc933682d",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a4c80c20000bca8013753b6999a4da8-Req-5b95fae40000bca801372becc933682d",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:55+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "167",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b95fae40000bca801372becc933682d",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b9ab8a50000bca801377ad0be3bbc89",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:55+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "167",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9ab8a50000bca801377ad0be3bbc89",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:55+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "168",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:R-NJ2iOLwt4CEpcf8IidN1z0P4d0m",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:55+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "169",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-728c69c80018b1a8014b974542c36edc",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:55+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "169",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-728c69c80018b1a8014b974542c36edc",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-5b9c950e0000bca801374f16615247b9",
-      "@type": "oslc_rm:satisfies",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:55+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "169",
-      "oslc_rm:satisfies-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "oslc_rm:satisfies-toTarget": [
-        {
-          "@id": "d:Req-5b9c950e0000bca801374f16615247b9",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
       "@id": "d:RWri-MEl-5a76365c0000bca8013776e91afd1e8e-MEl-5a77385f0000bca80137e1c7dc0b1721",
       "@type": "SpecIF:writes",
       "cas:itemType": {
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:56+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "171",
       "SpecIF:writes-toSource": [
         {
           "@id": "d:MEl-5a76365c0000bca8013776e91afd1e8e",
@@ -6810,8 +6001,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:57+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "172",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a76365c0000bca8013776e91afd1e8e",
@@ -6836,8 +6025,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:57+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "172",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
@@ -6852,6 +6039,54 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -6862,8 +6097,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:57+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "173",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
@@ -6878,29 +6111,63 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-611366530000bca80137a97f194e96a3",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:57+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "174",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-611366530000bca80137a97f194e96a3",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-608239830000bca801373690c7d2af0f",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-610b07100000bca80137c10f96c46247",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6914,8 +6181,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:57+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "175",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5bd6bd890000bca8013739588a3f43d6",
@@ -6940,8 +6205,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:57+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "175",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
@@ -6956,287 +6219,67 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4536b0350000c3a801415986f8ea806a",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:57+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "176",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b08ed8d0000bca8013719f554353b0e",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:58+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "177",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-5b08ed8d0000bca8013719f554353b0e",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453dfb670000c3a8014191107df4565e",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:58+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "177",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-453dfb670000c3a8014191107df4565e",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b094f8a0000bca801374c798a6587ad",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:58+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "178",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-5b094f8a0000bca801374c798a6587ad",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-45428b930000c3a80141e28b7d4b5ae5",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:58+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "179",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-45428b930000c3a80141e28b7d4b5ae5",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b078fa50000bca80137f36ed05c43cb",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:58+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "179",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-5b078fa50000bca80137f36ed05c43cb",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453facbb0000c3a80141c43d2fb4f5e2",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:58+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "180",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b0839b90000bca801376dcca41ca7d0",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:59+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "181",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-5b0839b90000bca801376dcca41ca7d0",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b07e6aa0000bca8013797aad9be69ae",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:59+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "181",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-5b07e6aa0000bca8013797aad9be69ae",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4543fe900000c3a80141f5253ff13c35",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:59+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "182",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453d34af0000c3a80141918f84641161",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:59+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "183",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-453d34af0000c3a80141918f84641161",
           "cas:itemType": {
@@ -7252,8 +6295,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:00+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "184",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
@@ -7268,27 +6309,7 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5a86b8980000bca80137ca6fde1a125e",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:00+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "184",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
           "cas:itemType": {
@@ -7304,8 +6325,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:00+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "185",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
@@ -7320,6 +6339,48 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -7330,8 +6391,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:00+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "186",
       "SpecIF:writes-toSource": [
         {
           "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
@@ -7343,6 +6402,36 @@
       "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a99c89c0000bca801375d44cf9a50ca",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7356,8 +6445,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:00+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "187",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
@@ -7372,497 +6459,45 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:01+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "188",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
+        },
         {
           "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:01+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "188",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
-        {
-          "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:01+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "189",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
+        },
         {
           "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:01+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "190",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
-        {
-          "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:01+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "190",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
+        },
         {
           "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "191",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
-        {
-          "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a86b8980000bca80137ca6fde1a125e",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "192",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a87083e0000bca801379bb412523737",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "192",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9ce0310000bca801378176dc4744e8",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "193",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a820a3c0000bca801378c9093fb7d80",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:03+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "194",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a844d820000bca8013750b9a0410b6b",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:03+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "194",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a82ec6f0000bca801372ef053a71bdf",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:03+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "194",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a808e2a0000bca80137bfd74268a84a",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "195",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a8009a00000bca80137ef95bc3f643f",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "195",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a844d820000bca8013750b9a0410b6b",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "195",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a86b8980000bca80137ca6fde1a125e",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "196",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a87083e0000bca801379bb412523737",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "196",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a82ec6f0000bca801372ef053a71bdf",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "196",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a820a3c0000bca801378c9093fb7d80",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:05+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "197",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7876,8 +6511,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:05+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "197",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
@@ -7896,40 +6529,12 @@
       ]
     },
     {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a752ccc0000bca80137479a2e8bab30",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:05+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "198",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
       "@id": "d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a77385f0000bca80137e1c7dc0b1721",
       "@type": "SpecIF:writes",
       "cas:itemType": {
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "199",
       "SpecIF:writes-toSource": [
         {
           "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
@@ -7941,6 +6546,12 @@
       "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7954,8 +6565,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "200",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
@@ -7970,107 +6579,15 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a7776c50000bca8013765ae93af9209",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "200",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4dd77b0000bca8013736c6912ad291",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "201",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4d6dee0000bca80137c1caf2f42349",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "202",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a71c4800000bca80137f2aaa7b63000",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:07+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "202",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -8084,8 +6601,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:07+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "203",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
@@ -8100,185 +6615,39 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4536b0350000c3a801415986f8ea806a",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:07+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "204",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453facbb0000c3a80141c43d2fb4f5e2",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:07+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "204",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4543fe900000c3a80141f5253ff13c35",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "205",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453d34af0000c3a80141918f84641161",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "206",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-453d34af0000c3a80141918f84641161",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a236e00000c3a801410f6503287e16",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "206",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-45a236e00000c3a801410f6503287e16",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a3b13c0000c3a801415e97f5bc29d1",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "207",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-45a3b13c0000c3a801415e97f5bc29d1",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCnc-Iss-ee2abb630000c3a8013987a750219659-MEl-5a8009a00000bca80137ef95bc3f643f",
-      "@type": "SpecIF:refersTo",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:13:56+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "170",
-      "SpecIF:refersTo-toSource": [
-        {
-          "@id": "d:Iss-ee2abb630000c3a8013987a750219659",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:refersTo-toTarget": [
-        {
-          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -8292,8 +6661,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "208",
       "SpecIF:writes-toSource": [
         {
           "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
@@ -8308,6 +6675,24 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -8318,8 +6703,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "208",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
@@ -8338,170 +6721,12 @@
       ]
     },
     {
-      "@id": "d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a844d820000bca8013750b9a0410b6b",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:09+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "209",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a82ec6f0000bca801372ef053a71bdf",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:09+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "210",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a820a3c0000bca801378c9093fb7d80",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:09+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "210",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-608239830000bca801373690c7d2af0f",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:10+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "211",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-608239830000bca801373690c7d2af0f",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610b07100000bca80137c10f96c46247",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:10+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "212",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-610b07100000bca80137c10f96c46247",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610e0b010000bca80137ac40800bb1b8",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:10+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "212",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
       "@id": "d:RRea-MEl-5bcfb01d0000bca80137f303272a5557-MEl-5a52b50c0000bca801377e3d15255f98",
       "@type": "SpecIF:reads",
       "cas:itemType": {
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:10+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "213",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5bcfb01d0000bca80137f303272a5557",
@@ -8526,8 +6751,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:10+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "214",
       "SpecIF:writes-toSource": [
         {
           "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
@@ -8539,6 +6762,12 @@
       "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -8552,8 +6781,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "214",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
@@ -8568,79 +6795,13 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a52b50c0000bca801377e3d15255f98",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "215",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a4c80c20000bca8013753b6999a4da8",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "216",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a51dd920000bca8013770a4395c83fc",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "216",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
           "cas:itemType": {
@@ -8656,8 +6817,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:11+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "216",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
@@ -8672,159 +6831,27 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-453862540000c3a801419d91bef48cfd",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:12+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "217",
-      "SpecIF:contains-toSource": [
+        },
         {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45387c0b0000c3a801410aa03f6b9be4",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:12+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "217",
-      "SpecIF:contains-toSource": [
+        },
         {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
+          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-4538920b0000c3a801415c67e334b8a1",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:12+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "217",
-      "SpecIF:contains-toSource": [
+        },
         {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
+          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-459b92580000c3a80141cb4acb521ab1",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:13+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "218",
-      "SpecIF:contains-toSource": [
+        },
         {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-607f13b50000bca80137ba95f11856ab",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:13+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "218",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45384cd10000c3a80141c1f85d7c26e6",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:13+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "218",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
+          "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -8838,8 +6865,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:14+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "219",
       "SpecIF:writes-toSource": [
         {
           "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
@@ -8854,81 +6879,15 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a4c80c20000bca8013753b6999a4da8",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:14+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "219",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
+        },
         {
           "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a489c300000bca80137ee1373c16844",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:14+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "219",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
+        },
         {
           "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9b7a9b0000bca80137d768644696b7",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:14+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "220",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -8942,8 +6901,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:14+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "220",
       "SpecIF:writes-toSource": [
         {
           "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
@@ -8955,6 +6912,18 @@
       "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -8968,8 +6937,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:15+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "221",
       "SpecIF:reads-toSource": [
         {
           "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
@@ -8984,185 +6951,15 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:15+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "222",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
+        },
         {
           "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:15+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "222",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
-        {
-          "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a9ce0310000bca801378176dc4744e8",
-      "@type": "SpecIF:writes",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:15+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "223",
-      "SpecIF:writes-toSource": [
-        {
-          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:writes-toTarget": [
-        {
-          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a7776c50000bca8013765ae93af9209",
-      "@type": "SpecIF:reads",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "224",
-      "SpecIF:reads-toSource": [
-        {
-          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:reads-toTarget": [
+        },
         {
           "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a7776c50000bca8013765ae93af9209",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "225",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9ce0310000bca801378176dc4744e8",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "224",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4dd77b0000bca8013736c6912ad291",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "226",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -9176,8 +6973,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "226",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
@@ -9192,6 +6987,24 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        },
+        {
+          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        },
+        {
+          "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
         }
       ]
     },
@@ -9202,8 +7015,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:16+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "226",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
@@ -9218,185 +7029,9 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4d6dee0000bca80137c1caf2f42349",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:17+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "227",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
+        },
         {
           "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a77385f0000bca80137e1c7dc0b1721",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:17+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "227",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a489c300000bca80137ee1373c16844",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:17+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "227",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d6dee0000bca80137c1caf2f42349",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "228",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4cfa830000bca801370d837f761f3e",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "228",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d2bd00000bca80137a3f233cdffeb",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:18+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "228",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a4c80c20000bca8013753b6999a4da8",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "229",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -9410,8 +7045,6 @@
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:14:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "229",
       "SpecIF:contains-toSource": [
         {
           "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
@@ -9430,40 +7063,12 @@
       ]
     },
     {
-      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a52b50c0000bca801377e3d15255f98",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "230",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
       "@id": "d:R-vxkoenpgAX6s6PxskSWlYPN8e4y",
       "@type": "SpecIF:refersTo",
       "cas:itemType": {
         "@id": "cas:aRelationship"
       },
       "dcterms:modified": "2017-06-19T20:13:56+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "170",
       "SpecIF:refersTo-toSource": [
         {
           "@id": "d:Iss-eee2d4e00000c3a801394148dcc58a52",
@@ -9473,58 +7078,6 @@
         }
       ],
       "SpecIF:refersTo-toTarget": [
-        {
-          "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-5a51dd920000bca8013770a4395c83fc-MEl-5a4d6dee0000bca80137c1caf2f42349",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "231",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
-        {
-          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        }
-      ]
-    },
-    {
-      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a51dd920000bca8013770a4395c83fc",
-      "@type": "SpecIF:contains",
-      "cas:itemType": {
-        "@id": "cas:aRelationship"
-      },
-      "dcterms:modified": "2017-06-19T20:14:19+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "231",
-      "SpecIF:contains-toSource": [
-        {
-          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
-          "cas:itemType": {
-            "@id": "cas:aSourceLink"
-          }
-        }
-      ],
-      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
           "cas:itemType": {
@@ -9606,8 +7159,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "13",
       "cas:lists": [
         {
           "@id": "d:Pln-27420ffc0000c3a8013ab527ca1b71f5",
@@ -9647,8 +7198,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:04+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "20",
       "cas:lists": [
         {
           "@id": "d:Pln-606e76c70000bca801376ec3133a1181",
@@ -9687,8 +7236,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "13",
       "cas:lists": [
         {
           "@id": "d:Fld-5b6a99f10000bca80137b78cda65fc07",
@@ -9715,8 +7262,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:06+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "22",
       "cas:lists": [
         {
           "@id": "d:Req-d1c895230000c3a80150f8afd049f738",
@@ -9767,8 +7312,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:08+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "25",
       "cas:lists": [
         {
           "@id": "d:Req-5b944fc70000bca8013763f44fdc0e03",
@@ -9825,8 +7368,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:12+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "30",
       "cas:lists": [
         {
           "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
@@ -9872,8 +7413,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "14",
       "cas:lists": [
         {
           "@id": "d:Fld-d1b1698a0000c3a801505b1b5698b7a1",
@@ -9907,8 +7446,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:14+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "34",
       "cas:lists": [
         {
           "@id": "d:Iss-ee2abb630000c3a8013987a750219659",
@@ -9930,8 +7467,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:15+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "36",
       "cas:lists": [
         {
           "@id": "d:Iss-eee2d4e00000c3a801394148dcc58a52",
@@ -9953,8 +7488,6 @@
         }
       ],
       "dcterms:modified": "2017-06-19T20:13:02+02:00",
-      "dcterms:creator": "od",
-      "cas:revision": "15",
       "cas:lists": [
         {
           "@id": "d:Fld-ee29463e0000c3a80139627bbced50ae",
@@ -9984,10 +7517,7 @@
       "dcterms:modified": "2026-09-30T09:17:53.622Z",
       "cas:Category": [
         {
-          "@value": "SpecIF:Glossary",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "SpecIF:Glossary"
         }
       ],
       "cas:lists": [
@@ -10403,6 +7933,5 @@
       "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
     }
   ],
-  "dcterms:modified": "2026-09-30T09:18:13.144Z",
-  "dcterms:creator": "od@enso-managers.de"
+  "dcterms:modified": "2026-11-15T09:18:13.144Z"
 }

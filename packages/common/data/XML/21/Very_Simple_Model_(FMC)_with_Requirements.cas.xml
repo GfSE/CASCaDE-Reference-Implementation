@@ -52,6 +52,35 @@
 		<dcterms:title>Outline</dcterms:title>
 		<skos:definition>A subclass of cas:Tree comprising all information items of a human-readable document. As usual, the outline is hierarchically organized.</skos:definition>
 	</cas:Entity>
+	<cas:Entity id="cas:Paragraph" rdf:type="owl:Class">
+		<cas:specializes>cas:Outline</cas:specializes>
+		<dcterms:title xml:lang="en">Paragraph</dcterms:title>
+		<dcterms:title xml:lang="de">Textabsatz</dcterms:title>
+		<dcterms:title xml:lang="fr">Paragraphe</dcterms:title>
+		<skos:definition xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</skos:definition>
+		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</skos:definition>
+		<dcterms:modified>2023-07-16T09:30:25.850Z</dcterms:modified>
+		<cas:enumeratedProperty>
+			<idRef>cas:Diagram</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
+	<cas:Entity id="cas:View" rdf:type="owl:Class">
+		<cas:specializes>cas:Organizer</cas:specializes>
+		<dcterms:title>View</dcterms:title>
+		<skos:definition>A PIG organizer class representing a diagram with certain model-elements for a given communication purpose.</skos:definition>
+		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
+		<cas:icon>▣</cas:icon>
+		<cas:enumeratedProperty>
+			<idRef>cas:Diagram</idRef>
+			<idRef>cas:Category</idRef>
+		</cas:enumeratedProperty>
+		<cas:enumeratedTargetLink>
+			<idRef>cas:shows</idRef>
+			<idRef>cas:depicts</idRef>
+		</cas:enumeratedTargetLink>
+	</cas:Entity>
 	<cas:Entity id="cas:Table" rdf:type="owl:Class">
 		<cas:specializes>cas:Organizer</cas:specializes>
 		<dcterms:title>Table</dcterms:title>
@@ -70,7 +99,7 @@
 	</cas:Property>
 	<cas:Property id="cas:Category" rdf:type="owl:DatatypeProperty">
 		<cas:specializes>cas:Property</cas:specializes>
-		<dcterms:title>has category</dcterms:title>
+		<dcterms:title>Category</dcterms:title>
 		<skos:definition>Specifies a category for an element (entity, relationship or organizer).</skos:definition>
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
@@ -173,36 +202,15 @@
 			<idRef>SpecIF:Priority-Enumeration</idRef>
 		</cas:enumeratedEndpoint>
 	</cas:Link>
-	<cas:Entity id="SpecIF:Paragraph" rdf:type="owl:Class">
-		<cas:specializes>cas:Entity</cas:specializes>
-		<dcterms:title xml:lang="en">Paragraph</dcterms:title>
-		<dcterms:title xml:lang="de">Textabsatz</dcterms:title>
-		<dcterms:title xml:lang="fr">Paragraphe</dcterms:title>
-		<skos:definition xml:lang="en">&lt;p&gt;A 'Paragraph' is an unspecified information in a document at any level.&lt;/p&gt;</skos:definition>
-		<skos:definition xml:lang="de">&lt;p&gt;Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.&lt;/p&gt;</skos:definition>
-		<dcterms:modified>2023-07-16T09:30:25.850Z</dcterms:modified>
-		<cas:enumeratedProperty>
-			<idRef>cas:Diagram</idRef>
-			<idRef>cas:Category</idRef>
-		</cas:enumeratedProperty>
-		<cas:enumeratedTargetLink>
-		</cas:enumeratedTargetLink>
-	</cas:Entity>
-	<cas:Entity id="cas:View" rdf:type="owl:Class">
-		<cas:specializes>cas:Organizer</cas:specializes>
-		<dcterms:title>View</dcterms:title>
-		<skos:definition>A PIG organizer class representing a diagram with certain model-elements for a given communication purpose.</skos:definition>
-		<dcterms:modified>2018-05-10T11:54:00+01:00</dcterms:modified>
-		<cas:icon>▣</cas:icon>
-		<cas:enumeratedProperty>
-			<idRef>cas:Diagram</idRef>
-			<idRef>cas:Category</idRef>
-		</cas:enumeratedProperty>
-		<cas:enumeratedTargetLink>
-			<idRef>cas:shows</idRef>
-			<idRef>cas:depicts</idRef>
-		</cas:enumeratedTargetLink>
-	</cas:Entity>
+	<cas:Property id="SpecIF:Stakeholder" rdf:type="owl:DatatypeProperty">
+		<cas:specializes>cas:Property</cas:specializes>
+		<dcterms:title xml:lang="en">Stakeholder</dcterms:title>
+		<dcterms:title xml:lang="de">Interessenvertreter</dcterms:title>
+		<skos:definition xml:lang="en">Enumerated values for the 'Priority' of the resource.</skos:definition>
+		<xs:simpleType>
+			<xs:restriction base="xs:string"/>
+		</xs:simpleType>
+	</cas:Property>
 	<cas:Entity id="FMC:Actor" rdf:type="owl:Class">
 		<cas:specializes>cas:Entity</cas:specializes>
 		<dcterms:title xml:lang="en">Actor</dcterms:title>
@@ -262,6 +270,7 @@
 		<dcterms:modified>2021-02-22T08:59:00+02:00</dcterms:modified>
 		<cas:icon>&amp;#8623;</cas:icon>
 		<cas:enumeratedProperty>
+			<idRef>SpecIF:Stakeholder</idRef>
 		</cas:enumeratedProperty>
 		<cas:enumeratedTargetLink>
 			<idRef>SpecIF:Priority</idRef>
@@ -368,6 +377,9 @@
 		<dcterms:title>Data Volume</dcterms:title>
 		<dcterms:description><p>The data store MUST support a total volume up to 850 GB.</p></dcterms:description>
 		<dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="SpecIF:Stakeholder">
+			<value>Customer</value>
+		</cas:aProperty>
 		<cas:aTargetLink rdf:type="SpecIF:Priority">
 			<idRef>SpecIF:priorityHigh</idRef>
 		</cas:aTargetLink>
@@ -376,6 +388,9 @@
 		<dcterms:title>Consistency</dcterms:title>
 		<dcterms:description><p>The data store MUST be consistent at all times.</p></dcterms:description>
 		<dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="SpecIF:Stakeholder">
+			<value>Customer</value>
+		</cas:aProperty>
 		<cas:aTargetLink rdf:type="SpecIF:Priority">
 			<idRef>SpecIF:priorityHigh</idRef>
 		</cas:aTargetLink>
@@ -384,6 +399,9 @@
 		<dcterms:title>Response Time</dcterms:title>
 		<dcterms:description><p>The system SHOULD respond on user queries within 300 ms.</p></dcterms:description>
 		<dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
+		<cas:aProperty rdf:type="SpecIF:Stakeholder">
+			<value>Customer</value>
+		</cas:aProperty>
 		<cas:aTargetLink rdf:type="SpecIF:Priority">
 			<idRef>SpecIF:priorityMedium</idRef>
 		</cas:aTargetLink>
@@ -435,22 +453,12 @@
 		</cas:aTargetLink>
 	</cas:aRelationship>
 	<cas:aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b" rdf:type="oslc_rm:satisfies">
-		<dcterms:description>'FiCo-Data' satisfies 'Data Volume'</dcterms:description>
 		<dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
 		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
 			<idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
 		</cas:aSourceLink>
 		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
 			<idRef>d:Req-1a8016e2872e78ecadc50feddc00029b</idRef>
-		</cas:aTargetLink>
-	</cas:aRelationship>
-	<cas:aRelationship id="d:Ssat-50feddc00029b1a8016e2872e78ecadc-0Z7916e2872e78ecadc50feddc00918a" rdf:type="oslc_rm:satisfies">
-		<dcterms:description>'FiCo-Data' satisfies 'Consistency'</dcterms:description>
-		<dcterms:modified>2020-10-17T10:00:00+01:00</dcterms:modified>
-		<cas:aSourceLink rdf:type="oslc_rm:satisfies-toSource">
-			<idRef>d:MEl-50feddc00029b1a8016e2872e78ecadc</idRef>
-		</cas:aSourceLink>
-		<cas:aTargetLink rdf:type="oslc_rm:satisfies-toTarget">
 			<idRef>d:Req-0Z7916e2872e78ecadc50feddc00918a</idRef>
 		</cas:aTargetLink>
 	</cas:aRelationship>

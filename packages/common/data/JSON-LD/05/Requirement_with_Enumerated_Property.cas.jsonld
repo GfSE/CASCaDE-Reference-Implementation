@@ -561,14 +561,14 @@
           "@language": "fr"
         }
       ],
+      "cas:icon": {
+        "@value": "↯"
+      },
       "cas:enumeratedTargetLink": [
         {
           "@id": "SpecIF:Priority"
         }
-      ],
-      "cas:icon": {
-        "@value": "↯"
-      }
+      ]
     },
     {
       "@id": "d:Req-35100bca2b005ba",
@@ -638,10 +638,7 @@
       "dcterms:modified": "2026-04-08T08:14:32.065Z",
       "cas:Category": [
         {
-          "@value": "ReqIF:HierarchyRoot",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "ReqIF:HierarchyRoot"
         }
       ],
       "cas:lists": [
@@ -665,18 +662,12 @@
   "dcterms:modified": "2026-04-08T08:14:32.015Z",
   "dcterms:contributor": [
     {
-      "@value": "mailto:oskar.dungern@gfse.org",
-      "cas:itemType": {
-        "@id": "cas:aProperty"
-      }
+      "@value": "mailto:oskar.dungern@gfse.org"
     }
   ],
   "dcterms:license": [
     {
-      "@value": "https://creativecommons.org/licenses/by-sa/4.0/",
-      "cas:itemType": {
-        "@id": "cas:aProperty"
-      }
+      "@value": "https://creativecommons.org/licenses/by-sa/4.0/"
     }
   ]
 }

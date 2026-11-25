@@ -171,7 +171,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "A diagram illustrating the resource."
+          "@value": "A diagram illustrating the resource or a link to a diagram."
         }
       ],
       "sh:datatype": {
@@ -190,7 +190,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "Category"
+          "@value": "has category"
         }
       ],
       "skos:definition": [
@@ -381,15 +381,15 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle Status Values",
+          "@value": "Lifecycle",
           "@language": "en"
         },
         {
-          "@value": "Lebenszyklus Statuswerte",
+          "@value": "Lebenszyklus",
           "@language": "de"
         },
         {
-          "@value": "Valeurs d'état du cycle de vie",
+          "@value": "Cycle de vie",
           "@language": "fr"
         }
       ],
@@ -1010,12 +1010,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle Status Values of Issues"
+          "@value": "SpecIF:LifecycleStatusIssue"
         }
       ],
       "skos:definition": [
         {
-          "@value": "Enumerated values for issue lifecycle status"
+          "@value": "Enumerated values for issue status"
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
@@ -1124,15 +1124,15 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle Status",
+          "@value": "Lifecycle",
           "@language": "en"
         },
         {
-          "@value": "Lebenszyklus Status",
+          "@value": "Lebenszyklus",
           "@language": "de"
         },
         {
-          "@value": "État du cycle de vie",
+          "@value": "Cycle de vie",
           "@language": "fr"
         }
       ],
@@ -1394,7 +1394,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "Lifecycle Status of Issues"
+          "@value": "SpecIF:LifecycleStatusIssue"
         }
       ],
       "dcterms:modified": "2016-05-26T08:59:00+02:00",
@@ -1477,6 +1477,31 @@
         "@id": "xs:dateTime"
       },
       "sh:maxCount": 1
+    },
+    {
+      "@id": "o:PC-Diagram-8240447448",
+      "@type": "owl:DatatypeProperty",
+      "cas:itemType": {
+        "@id": "cas:Property"
+      },
+      "cas:specializes": {
+        "@id": "cas:Property"
+      },
+      "dcterms:title": [
+        {
+          "@value": "cas:Diagram"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "A diagram illustrating the resource or a link to a diagram."
+        }
+      ],
+      "dcterms:modified": "2026-02-12T22:05:14.551Z",
+      "cas:revision": "1.1",
+      "sh:datatype": {
+        "@id": "xs:string"
+      }
     },
     {
       "@id": "cas:View",
@@ -1852,6 +1877,42 @@
       "cas:enumeratedTargetLink": []
     },
     {
+      "@id": "o:RC-Paragraph-8240447479",
+      "@type": "owl:Class",
+      "cas:itemType": {
+        "@id": "cas:Entity"
+      },
+      "cas:specializes": {
+        "@id": "cas:Entity"
+      },
+      "dcterms:title": [
+        {
+          "@value": "SpecIF:Paragraph"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "<p>A 'Paragraph' is an unspecified information in a document at any level.</p>",
+          "@language": "en"
+        },
+        {
+          "@value": "<p>Ein 'Textabschnitt' in einem Dokument auf beliebiger Ebene.</p>",
+          "@language": "de"
+        }
+      ],
+      "dcterms:modified": "2024-03-02T20:55:23.295Z",
+      "cas:revision": "1.1",
+      "cas:enumeratedProperty": [
+        {
+          "@id": "o:PC-Diagram-8240447448"
+        },
+        {
+          "@id": "cas:Category"
+        }
+      ],
+      "cas:enumeratedTargetLink": []
+    },
+    {
       "@id": "SpecIF:contains",
       "@type": "owl:Class",
       "cas:itemType": {
@@ -1905,7 +1966,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "contains to source"
+          "@value": "SpecIF:contains to source"
         }
       ],
       "dcterms:description": [
@@ -1936,7 +1997,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "contains to target"
+          "@value": "SpecIF:contains to target"
         }
       ],
       "dcterms:description": [
@@ -1967,7 +2028,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "modifies"
+          "@value": "SpecIF:modifies"
         }
       ],
       "skos:definition": [
@@ -2000,12 +2061,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "stores to source"
+          "@value": "SC-stores to source"
         }
       ],
       "dcterms:description": [
         {
-          "@value": "Connects the source of o:SC-stores"
+          "@value": "Connects the source of SC-stores"
         }
       ],
       "cas:enumeratedEndpoint": [
@@ -2025,12 +2086,12 @@
       },
       "dcterms:title": [
         {
-          "@value": "stores to target"
+          "@value": "SC-stores to target"
         }
       ],
       "dcterms:description": [
         {
-          "@value": "Connects the target of o:SC-stores"
+          "@value": "Connects the target of SC-stores"
         }
       ],
       "cas:enumeratedEndpoint": [
@@ -2093,7 +2154,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "writes to source"
+          "@value": "SpecIF:writes to source"
         }
       ],
       "dcterms:description": [
@@ -2118,7 +2179,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "writes to target"
+          "@value": "SpecIF:writes to target"
         }
       ],
       "dcterms:description": [
@@ -2186,7 +2247,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "reads to source"
+          "@value": "SpecIF:reads to source"
         }
       ],
       "dcterms:description": [
@@ -2211,7 +2272,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "reads to target"
+          "@value": "SpecIF:reads to target"
         }
       ],
       "dcterms:description": [
@@ -2279,7 +2340,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "dependsOn to source"
+          "@value": "SpecIF:dependsOn to source"
         }
       ],
       "dcterms:description": [
@@ -2304,7 +2365,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "dependsOn to target"
+          "@value": "SpecIF:dependsOn to target"
         }
       ],
       "dcterms:description": [
@@ -2372,7 +2433,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "satisfies to source"
+          "@value": "oslc_rm:satisfies to source"
         }
       ],
       "dcterms:description": [
@@ -2403,7 +2464,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "satisfies to target"
+          "@value": "oslc_rm:satisfies to target"
         }
       ],
       "dcterms:description": [
@@ -2471,7 +2532,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "refersTo to source"
+          "@value": "SpecIF:refersTo to source"
         }
       ],
       "dcterms:description": [
@@ -2496,7 +2557,7 @@
       },
       "dcterms:title": [
         {
-          "@value": "refersTo to target"
+          "@value": "SpecIF:refersTo to target"
         }
       ],
       "dcterms:description": [
@@ -5881,24 +5942,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:Req-d1d42a6a0000c3a8015091ec8d149b93",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-d1cd7f370000c3a8015095e6ee21aab7",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-5b9c950e0000bca801374f16615247b9",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -5951,30 +5994,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:Req-5ba140d60000bca801372b09f9888eca",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-ee452cf20000c3a8014035290669304d",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -6001,27 +6020,29 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1d42a6a0000c3a8015091ec8d149b93",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:50+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "151",
+      "oslc_rm:satisfies-toSource": [
         {
-          "@id": "d:Req-5b8fbb300000bca80137c73e3ce4c737",
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
           "cas:itemType": {
-            "@id": "cas:aTargetLink"
+            "@id": "cas:aSourceLink"
           }
-        },
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
         {
-          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-728c69c80018b1a8014b974542c36edc",
+          "@id": "d:Req-d1d42a6a0000c3a8015091ec8d149b93",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6051,15 +6072,29 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-d1cd7f370000c3a8015095e6ee21aab7",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:51+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "152",
+      "oslc_rm:satisfies-toSource": [
         {
-          "@id": "d:Req-5b944fc70000bca8013763f44fdc0e03",
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
           "cas:itemType": {
-            "@id": "cas:aTargetLink"
+            "@id": "cas:aSourceLink"
           }
-        },
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
         {
-          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+          "@id": "d:Req-d1cd7f370000c3a8015095e6ee21aab7",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6093,6 +6128,32 @@
       ]
     },
     {
+      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b8fbb300000bca80137c73e3ce4c737",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:51+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "153",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b8fbb300000bca80137c73e3ce4c737",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
       "@id": "d:RSat-MEl-5a47935a0000bca801377c17f8cb25b0-Req-5b944fc70000bca8013763f44fdc0e03",
       "@type": "oslc_rm:satisfies",
       "cas:itemType": {
@@ -6112,6 +6173,58 @@
       "oslc_rm:satisfies-toTarget": [
         {
           "@id": "d:Req-5b944fc70000bca8013763f44fdc0e03",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCnc-Iss-ee2abb630000c3a8013987a750219659-Req-5b944fc70000bca8013763f44fdc0e03",
+      "@type": "SpecIF:refersTo",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:51+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "155",
+      "SpecIF:refersTo-toSource": [
+        {
+          "@id": "d:Iss-ee2abb630000c3a8013987a750219659",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:refersTo-toTarget": [
+        {
+          "@id": "d:Req-5b944fc70000bca8013763f44fdc0e03",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a752ccc0000bca80137479a2e8bab30-Req-5ba140d60000bca801372b09f9888eca",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:51+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "155",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5ba140d60000bca801372b09f9888eca",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6167,9 +6280,29 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:R-UZD4SQ8jYghL2Tsb4tZjoXDSYoM",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:52+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "158",
+      "oslc_rm:satisfies-toSource": [
         {
-          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-ee452cf20000c3a8014035290669304d",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6199,18 +6332,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:Req-5b95fae40000bca801372becc933682d",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -6237,12 +6358,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:Req-5b95fae40000bca801372becc933682d",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -6266,24 +6381,6 @@
       "oslc_rm:satisfies-toTarget": [
         {
           "@id": "d:Req-ee43fc4c0000c3a8014063d42c77767f",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6334,6 +6431,344 @@
         }
       ],
       "SpecIF:dependsOn-toTarget": [
+        {
+          "@id": "d:Req-5b9c950e0000bca801374f16615247b9",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9124bc0000bca80137fa2ce86f5eca",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:53+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "162",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9124bc0000bca80137fa2ce86f5eca",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:54+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "163",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b9124bc0000bca80137fa2ce86f5eca",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-5b9e68530000bca801371362c49d2d08",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:54+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "163",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9e68530000bca801371362c49d2d08",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:54+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "164",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b9e68530000bca801371362c49d2d08",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-803fd3750000c3a8013cf1fdb3b26d33-Req-eea1cd500000c3a80140fe00109eb7f4",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:54+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "165",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:R-lELLVnNbbagfomwYyTBgGfXSalj",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:54+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "165",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-eea1cd500000c3a80140fe00109eb7f4",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b95fae40000bca801372becc933682d",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:54+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "166",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b95fae40000bca801372becc933682d",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a4c80c20000bca8013753b6999a4da8-Req-5b95fae40000bca801372becc933682d",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:55+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "167",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b95fae40000bca801372becc933682d",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a489c300000bca80137ee1373c16844-Req-5b9ab8a50000bca801377ad0be3bbc89",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:55+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "167",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a52b50c0000bca801377e3d15255f98-Req-5b9ab8a50000bca801377ad0be3bbc89",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:55+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "168",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:R-NJ2iOLwt4CEpcf8IidN1z0P4d0m",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:55+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "169",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-5b9ab8a50000bca801377ad0be3bbc89",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a808e2a0000bca80137bfd74268a84a-Req-728c69c80018b1a8014b974542c36edc",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:55+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "169",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
+        {
+          "@id": "d:Req-728c69c80018b1a8014b974542c36edc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RSat-MEl-5a85347c0000bca80137ad485c7cd330-Req-5b9c950e0000bca801374f16615247b9",
+      "@type": "oslc_rm:satisfies",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:55+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "169",
+      "oslc_rm:satisfies-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "oslc_rm:satisfies-toTarget": [
         {
           "@id": "d:Req-5b9c950e0000bca801374f16615247b9",
           "cas:itemType": {
@@ -6417,54 +6852,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -6491,63 +6878,29 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-611366530000bca80137a97f194e96a3",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:57+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "174",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-611366530000bca80137a97f194e96a3",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-608239830000bca801373690c7d2af0f",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-610b07100000bca80137c10f96c46247",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6603,67 +6956,287 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4536b0350000c3a801415986f8ea806a",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:57+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "176",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b08ed8d0000bca8013719f554353b0e",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:58+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "177",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5b08ed8d0000bca8013719f554353b0e",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453dfb670000c3a8014191107df4565e",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:58+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "177",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-453dfb670000c3a8014191107df4565e",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b094f8a0000bca801374c798a6587ad",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:58+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "178",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5b094f8a0000bca801374c798a6587ad",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-45428b930000c3a80141e28b7d4b5ae5",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:58+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "179",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-45428b930000c3a80141e28b7d4b5ae5",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b078fa50000bca80137f36ed05c43cb",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:58+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "179",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5b078fa50000bca80137f36ed05c43cb",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453facbb0000c3a80141c43d2fb4f5e2",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:58+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "180",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b0839b90000bca801376dcca41ca7d0",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:59+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "181",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5b0839b90000bca801376dcca41ca7d0",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5b07e6aa0000bca8013797aad9be69ae",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:59+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "181",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5b07e6aa0000bca8013797aad9be69ae",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-4543fe900000c3a80141f5253ff13c35",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:59+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "182",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a85347c0000bca80137ad485c7cd330-MEl-453d34af0000c3a80141918f84641161",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:59+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "183",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-453d34af0000c3a80141918f84641161",
           "cas:itemType": {
@@ -6695,7 +7268,27 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a85347c0000bca80137ad485c7cd330-MEl-5a86b8980000bca80137ca6fde1a125e",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:00+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "184",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a85347c0000bca80137ad485c7cd330",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
           "cas:itemType": {
@@ -6727,48 +7320,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -6792,36 +7343,6 @@
       "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a99c89c0000bca801375d44cf9a50ca",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6851,45 +7372,497 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:01+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "188",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9929510000bca80137d23c81f1ca54",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:01+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "188",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
+        {
+          "@id": "d:MEl-5a9929510000bca80137d23c81f1ca54",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:01+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "189",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5c29fb8e0000bca80137eb9734c99bfd",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:01+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "190",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
+        {
+          "@id": "d:MEl-5c29fb8e0000bca80137eb9734c99bfd",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:01+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "190",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9888810000bca801375410ce1cc142",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:02+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "191",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
+        {
+          "@id": "d:MEl-5a9888810000bca801375410ce1cc142",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a86b8980000bca80137ca6fde1a125e",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:02+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "192",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a87083e0000bca801379bb412523737",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:02+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "192",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a9ce0310000bca801378176dc4744e8",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:02+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "193",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a820a3c0000bca801378c9093fb7d80",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:03+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "194",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a844d820000bca8013750b9a0410b6b",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:03+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "194",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a808e2a0000bca80137bfd74268a84a-MEl-5a82ec6f0000bca801372ef053a71bdf",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:03+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "194",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a808e2a0000bca80137bfd74268a84a",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:04+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "195",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a808e2a0000bca80137bfd74268a84a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a8009a00000bca80137ef95bc3f643f",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:04+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "195",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a844d820000bca8013750b9a0410b6b",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:04+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "195",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a86b8980000bca80137ca6fde1a125e",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:04+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "196",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a86b8980000bca80137ca6fde1a125e",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a87083e0000bca801379bb412523737",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:04+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "196",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a87083e0000bca801379bb412523737",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a82ec6f0000bca801372ef053a71bdf",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:04+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "196",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a752ccc0000bca80137479a2e8bab30-MEl-5a820a3c0000bca801378c9093fb7d80",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:05+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "197",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6923,6 +7896,32 @@
       ]
     },
     {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a752ccc0000bca80137479a2e8bab30",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:05+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "198",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a752ccc0000bca80137479a2e8bab30",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
       "@id": "d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a77385f0000bca80137e1c7dc0b1721",
       "@type": "SpecIF:writes",
       "cas:itemType": {
@@ -6942,12 +7941,6 @@
       "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -6977,15 +7970,107 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a7776c50000bca8013765ae93af9209",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:06+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "200",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4dd77b0000bca8013736c6912ad291",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:06+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "201",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a71c4800000bca80137f2aaa7b63000-MEl-5a4d6dee0000bca80137c1caf2f42349",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:06+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "202",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a71c4800000bca80137f2aaa7b63000",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:07+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "202",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a71c4800000bca80137f2aaa7b63000",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7015,39 +8100,185 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4536b0350000c3a801415986f8ea806a",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:07+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "204",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-4536b0350000c3a801415986f8ea806a",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453facbb0000c3a80141c43d2fb4f5e2",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:07+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "204",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-453facbb0000c3a80141c43d2fb4f5e2",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-4543fe900000c3a80141f5253ff13c35",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:08+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "205",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-4543fe900000c3a80141f5253ff13c35",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-453d34af0000c3a80141918f84641161",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:08+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "206",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-453d34af0000c3a80141918f84641161",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a236e00000c3a801410f6503287e16",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:08+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "206",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-45a236e00000c3a801410f6503287e16",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-606f16ac0000bca801373587fda932b3-MEl-45a3b13c0000c3a801415e97f5bc29d1",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:08+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "207",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-606f16ac0000bca801373587fda932b3",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-45a3b13c0000c3a801415e97f5bc29d1",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCnc-Iss-ee2abb630000c3a8013987a750219659-MEl-5a8009a00000bca80137ef95bc3f643f",
+      "@type": "SpecIF:refersTo",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:13:56+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "170",
+      "SpecIF:refersTo-toSource": [
+        {
+          "@id": "d:Iss-ee2abb630000c3a8013987a750219659",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:refersTo-toTarget": [
+        {
+          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7077,24 +8308,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -7118,6 +8331,162 @@
       "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a844d820000bca8013750b9a0410b6b",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:09+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "209",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a844d820000bca8013750b9a0410b6b",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a82ec6f0000bca801372ef053a71bdf",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:09+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "210",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a82ec6f0000bca801372ef053a71bdf",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a8009a00000bca80137ef95bc3f643f-MEl-5a820a3c0000bca801378c9093fb7d80",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:09+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "210",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a8009a00000bca80137ef95bc3f643f",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a820a3c0000bca801378c9093fb7d80",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-608239830000bca801373690c7d2af0f",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:10+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "211",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-608239830000bca801373690c7d2af0f",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610b07100000bca80137c10f96c46247",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:10+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "212",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-610b07100000bca80137c10f96c46247",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-610e0b010000bca80137ac40800bb1b8",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:10+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "212",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-610e0b010000bca80137ac40800bb1b8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7173,12 +8542,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -7205,13 +8568,79 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a52b50c0000bca801377e3d15255f98",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:11+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "215",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a4c80c20000bca8013753b6999a4da8",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:11+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "216",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a50d5b60000bca8013781532547ce93-MEl-5a51dd920000bca8013770a4395c83fc",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:11+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "216",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a50d5b60000bca8013781532547ce93",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
           "cas:itemType": {
@@ -7243,27 +8672,159 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-453862540000c3a801419d91bef48cfd",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:12+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "217",
+      "SpecIF:contains-toSource": [
         {
-          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-453862540000c3a801419d91bef48cfd",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45387c0b0000c3a801410aa03f6b9be4",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:12+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "217",
+      "SpecIF:contains-toSource": [
         {
-          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-45387c0b0000c3a801410aa03f6b9be4",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-4538920b0000c3a801415c67e334b8a1",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:12+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "217",
+      "SpecIF:contains-toSource": [
         {
-          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-4538920b0000c3a801415c67e334b8a1",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-459b92580000c3a80141cb4acb521ab1",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:13+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "218",
+      "SpecIF:contains-toSource": [
         {
-          "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-459b92580000c3a80141cb4acb521ab1",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-607f13b50000bca80137ba95f11856ab",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:13+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "218",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-607f13b50000bca80137ba95f11856ab",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-45384cd10000c3a80141c1f85d7c26e6",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:13+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "218",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-45384cd10000c3a80141c1f85d7c26e6",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7293,15 +8854,81 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a4c80c20000bca8013753b6999a4da8",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:14+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "219",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a47935a0000bca801377c17f8cb25b0-MEl-5a489c300000bca80137ee1373c16844",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:14+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "219",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a47935a0000bca801377c17f8cb25b0",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9b7a9b0000bca80137d768644696b7",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:14+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "220",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7331,18 +8958,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -7369,15 +8984,185 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:15+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "222",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
         {
           "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-463289cd0000c3a80141be3fc417034a",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:15+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "222",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
+        {
+          "@id": "d:MEl-463289cd0000c3a80141be3fc417034a",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RWri-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a9ce0310000bca801378176dc4744e8",
+      "@type": "SpecIF:writes",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:15+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "223",
+      "SpecIF:writes-toSource": [
+        {
+          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:writes-toTarget": [
+        {
+          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RRea-MEl-5a9b7a9b0000bca80137d768644696b7-MEl-5a7776c50000bca8013765ae93af9209",
+      "@type": "SpecIF:reads",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:16+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "224",
+      "SpecIF:reads-toSource": [
+        {
+          "@id": "d:MEl-5a9b7a9b0000bca80137d768644696b7",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:reads-toTarget": [
         {
           "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a7776c50000bca8013765ae93af9209",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:16+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "225",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a7776c50000bca8013765ae93af9209",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a9ce0310000bca801378176dc4744e8",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:16+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "224",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a9ce0310000bca801378176dc4744e8",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4dd77b0000bca8013736c6912ad291",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:16+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "226",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a4dd77b0000bca8013736c6912ad291",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7407,24 +9192,6 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
-        {
-          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
-        },
-        {
-          "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
-          "cas:itemType": {
-            "@id": "cas:aTargetLink"
-          }
         }
       ]
     },
@@ -7451,9 +9218,185 @@
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
-        },
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a4d6dee0000bca80137c1caf2f42349",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:17+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "227",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a489c300000bca80137ee1373c16844-MEl-5a77385f0000bca80137e1c7dc0b1721",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:17+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "227",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a77385f0000bca80137e1c7dc0b1721",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a489c300000bca80137ee1373c16844",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:17+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "227",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a489c300000bca80137ee1373c16844",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d6dee0000bca80137c1caf2f42349",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:18+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "228",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4cfa830000bca801370d837f761f3e",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:18+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "228",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a4cfa830000bca801370d837f761f3e",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a4c80c20000bca8013753b6999a4da8-MEl-5a4d2bd00000bca80137a3f233cdffeb",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:18+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "228",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a4d2bd00000bca80137a3f233cdffeb",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a4c80c20000bca8013753b6999a4da8",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:19+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "229",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a4c80c20000bca8013753b6999a4da8",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
@@ -7487,6 +9430,32 @@
       ]
     },
     {
+      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a52b50c0000bca801377e3d15255f98",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:19+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "230",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a52b50c0000bca801377e3d15255f98",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
       "@id": "d:R-vxkoenpgAX6s6PxskSWlYPN8e4y",
       "@type": "SpecIF:refersTo",
       "cas:itemType": {
@@ -7504,6 +9473,58 @@
         }
       ],
       "SpecIF:refersTo-toTarget": [
+        {
+          "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-5a51dd920000bca8013770a4395c83fc-MEl-5a4d6dee0000bca80137c1caf2f42349",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:19+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "231",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
+        {
+          "@id": "d:MEl-5a4d6dee0000bca80137c1caf2f42349",
+          "cas:itemType": {
+            "@id": "cas:aTargetLink"
+          }
+        }
+      ]
+    },
+    {
+      "@id": "d:RCtn-MEl-803fd3750000c3a8013cf1fdb3b26d33-MEl-5a51dd920000bca8013770a4395c83fc",
+      "@type": "SpecIF:contains",
+      "cas:itemType": {
+        "@id": "cas:aRelationship"
+      },
+      "dcterms:modified": "2017-06-19T20:14:19+02:00",
+      "dcterms:creator": "od",
+      "cas:revision": "231",
+      "SpecIF:contains-toSource": [
+        {
+          "@id": "d:MEl-803fd3750000c3a8013cf1fdb3b26d33",
+          "cas:itemType": {
+            "@id": "cas:aSourceLink"
+          }
+        }
+      ],
+      "SpecIF:contains-toTarget": [
         {
           "@id": "d:MEl-5a51dd920000bca8013770a4395c83fc",
           "cas:itemType": {
@@ -8382,6 +10403,6 @@
       "@value": "This specification method integrates and represents:\n- processes, system composition and requirements (dynamic, static and detail views)\n- mechanic, electric and software components with their interfaces.\n\nIt is important to understand, that all plans (diagrams) are views of a common system engineering model, sometimes called 'system repository'. Thus, consistency is always maintained.\n\nThe model elements are connected with relations, most of which are defined by positioning graph elements. For example, if a system component is drawn within another, a relationship 'contains' is created in the logic representation of the engineering model. Other relations, such as a system component 'satisfies' a requirement are created manually.  \n\nAlso, the documents are generated from the system engineering model. The ordering is in most projects (it can be rearranged, however, if appropriate):\n- All plans\n- A glossary with descriptions of all model elements appearing on one or more plans\n- A hierarchically ordered list of requirements\n- A list of open issues.\nPlease note that plans list related model elements and model elements list related requirements .. and vice versa. Active hyper-links are used, so that it is easy to jump between related model elements.\n\nFurther information is given in Appendix 'Method'."
     }
   ],
-  "dcterms:modified": "2026-11-15T09:18:13.144Z",
+  "dcterms:modified": "2026-09-30T09:18:13.144Z",
   "dcterms:creator": "od@enso-managers.de"
 }

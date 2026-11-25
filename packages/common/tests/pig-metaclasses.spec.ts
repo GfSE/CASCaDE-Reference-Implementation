@@ -185,7 +185,7 @@ describe("PIG Metaclasses", () => {
             [`${DEF.pfxNsDcmi}title`]: [{ ['@value']: "a Diagram", ['@language']: "en" }],
             [`${DEF.pfxNsDcmi}description`]: [{ ['@value']: "An Entity instance that has a reference to another Entity instance", ['@language']: "en" }],
             [`${DEF.pfxNsDcmi}type`]: [{
-                [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.aProperty },
+                // [`${DEF.pfxNsMeta}itemType`]: { ['@id']: PigItemType.aProperty },
                 ['@value']: "Category (notation) of d:anEntity_Diagram"
             }],
             [`${DEF.pfxNsMeta}shows`]: [{

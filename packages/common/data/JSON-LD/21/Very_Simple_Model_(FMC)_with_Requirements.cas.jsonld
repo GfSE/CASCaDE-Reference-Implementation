@@ -1092,20 +1092,17 @@
         }
       ],
       "dcterms:modified": "2020-10-17T10:00:00+01:00",
-      "SpecIF:Stakeholder": [
-        {
-          "@value": "Customer",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
-        }
-      ],
       "SpecIF:Priority": [
         {
           "@id": "SpecIF:priorityHigh",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        }
+      ],
+      "SpecIF:Stakeholder": [
+        {
+          "@value": "Customer"
         }
       ]
     },
@@ -1126,20 +1123,17 @@
         }
       ],
       "dcterms:modified": "2020-10-17T10:00:00+01:00",
-      "SpecIF:Stakeholder": [
-        {
-          "@value": "Customer",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
-        }
-      ],
       "SpecIF:Priority": [
         {
           "@id": "SpecIF:priorityHigh",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        }
+      ],
+      "SpecIF:Stakeholder": [
+        {
+          "@value": "Customer"
         }
       ]
     },
@@ -1160,20 +1154,17 @@
         }
       ],
       "dcterms:modified": "2020-10-17T10:00:00+01:00",
-      "SpecIF:Stakeholder": [
-        {
-          "@value": "Customer",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
-        }
-      ],
       "SpecIF:Priority": [
         {
           "@id": "SpecIF:priorityMedium",
           "cas:itemType": {
             "@id": "cas:aTargetLink"
           }
+        }
+      ],
+      "SpecIF:Stakeholder": [
+        {
+          "@value": "Customer"
         }
       ]
     },
@@ -1191,18 +1182,12 @@
       "dcterms:modified": "2020-03-06T08:32:00+01:00",
       "cas:Category": [
         {
-          "@value": "FMC Block Diagram",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "FMC Block Diagram"
         }
       ],
       "cas:Diagram": [
         {
-          "@value": "<p class=\"inline-label\">Model Diagram:</p><p><object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object></p>",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "<p class=\"inline-label\">Model Diagram:</p><p><object type=\"image/svg+xml\" data=\"files_and_images/Very-Simple-Model-FMC.svg\">Notation: FMC Block Diagram</object></p>"
         }
       ],
       "cas:shows": [
@@ -1497,10 +1482,7 @@
       "dcterms:modified": "2026-09-30T10:20:33.440Z",
       "cas:Category": [
         {
-          "@value": "SpecIF:Glossary",
-          "cas:itemType": {
-            "@id": "cas:aProperty"
-          }
+          "@value": "SpecIF:Glossary"
         }
       ],
       "cas:lists": [

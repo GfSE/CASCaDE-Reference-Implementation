@@ -777,15 +777,13 @@ abstract class AnElement extends Identifiable implements IAnElement {
                         const itemTypeValue = aProp.itemType /* || (item[nameItemType] && extractId(item[nameItemType])) */;
 
                         // Add the property with the key as its instanceOf reference
-                        if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue*/) {
-                            if (aProp.value !== undefined || aProp.composes) {
-                                configurables.push({
-                                    itemType: PigItemType.aProperty,
-                                    instanceOf: key,
-                                    value: aProp.value /*|| item['@value'] */,
-                                    composes: aProp.composes
-                                });
-                            }
+                        if (aProp.value !== undefined /*|| aProp.composes*/) {
+                            configurables.push({
+                                itemType: PigItemType.aProperty,
+                                instanceOf: key,
+                                value: aProp.value /*|| item['@value'] */
+                            //    composes: aProp.composes
+                            });
                             delete obj[key]; // remove processed property
                         }
                     }
@@ -797,15 +795,13 @@ abstract class AnElement extends Identifiable implements IAnElement {
                 // const nameItemType = `${DEF.pfxNsMeta}itemType`;
                 const itemTypeValue = aProp.itemType /* || (val[nameItemType] && extractId(val[nameItemType])) */;
 
-                if (itemTypeValue === PigItemType.aProperty /* || !itemTypeValue */) {
-                    if (aProp.value !== undefined || aProp.composes) {
-                        configurables.push({
-                            itemType: PigItemType.aProperty,
-                            instanceOf: key,
-                            value: aProp.value /*|| item['@value'] */,
-                            composes: aProp.composes
-                        });
-                    }
+                if (aProp.value !== undefined /*|| aProp.composes*/) {
+                    configurables.push({
+                        itemType: PigItemType.aProperty,
+                        instanceOf: key,
+                        value: aProp.value /*|| item['@value'] */,
+                    //    composes: aProp.composes
+                    });
                     delete obj[key]; // remove processed property
                 }
             }
@@ -1984,6 +1980,7 @@ export class APackage extends AnElement implements IAPackage {
         let json = { ...itemLD };
 
         // 1. Rename JSON-LD tags to internal format (@id → id, etc.)
+        //    This MUST include all native attributes according to the metamodel.
         json = MVF.renameJsonTags(json as JsonValue, MVF.fromJSONLD, { mutate: false });
 
         // 2. Replace id-objects with id-strings

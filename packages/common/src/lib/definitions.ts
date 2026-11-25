@@ -27,7 +27,23 @@ const CAS_VERSION = '2026-07-20';
 const CAS_NS = 'cas:';
 const DCMI_NS = 'dcterms:';
 
+// In both pattern strings below, the following characters are not allowed in the local part of a term (after the colon):
+// colon, whitespace, double quote, single quote, less than, greater than, ampersand.
+// Reason: Avoid injection of event handlers or HTML tags in the local part of a term,
+// which could lead to XSS vulnerabilities when rendering content in a web application.
+//
+// Pattern string (without anchors) for a term with namespace, e.g. 'cas:foo' — shared by RE.termWithNamespace and idPattern
+const termWithNamespacePattern = '([a-zA-Z_][a-zA-Z0-9_-]*):([^:\\s"\'<>&]+)';
+// Pattern string (without anchors) for a URI, e.g. 'https://example.org/foo' or 'ftp://example.org/foo' — shared by RE.uri and idPattern
+const uriPattern = '(https?|s?ftp|ftps):\\/\\/[^\\s"\'<>&/$.?#][^\\s"\'<>&]*';
+
 export const DEF = {
+    /**
+     * JSON Schema 'pattern' string for a TPigId (term with namespace, e.g. 'cas:foo', or a URI).
+     * Built from the same pattern strings as RE.termWithNamespace, so both the runtime check
+     * (PigItem.isValidIdString) and the JSON Schema validation (PigSchemaFactory) stay in sync.
+     */
+    idPattern: `^(?:${termWithNamespacePattern}|${uriPattern})$`,
     pigVersion: CAS_VERSION,
     defaultTime: 'T12:00:00',
     defaultTimezone: 'Z',
@@ -147,16 +163,6 @@ export const DEF = {
     */
 };
 
-// In both pattern strings below, the following characters are not allowed in the local part of a term (after the colon):
-// colon, whitespace, double quote, single quote, less than, greater than, ampersand.
-// Reason: Avoid injection of event handlers or HTML tags in the local part of a term,
-// which could lead to XSS vulnerabilities when rendering content in a web application.
-//
-// Pattern string (without anchors) for a term with namespace, e.g. 'cas:foo' — shared by RE.termWithNamespace and idPattern
-const termWithNamespacePattern = '([a-zA-Z_][a-zA-Z0-9_-]*):([^:\\s"\'<>&]+)';
-// Pattern string (without anchors) for a URI, e.g. 'https://example.org/foo' or 'ftp://example.org/foo' — shared by RE.uri and idPattern
-const uriPattern = '(https?|ftps?|s?ftp):\\/\\/[^\\s"\'<>&/$.?#][^\\s"\'<>&]*';
-
 export const RE = {
 //    email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     mailto: /^mailto:[^\s"'<>&]+@[^\s"'<>&]+$/i,
@@ -171,7 +177,6 @@ export const RE = {
     //                                                                                                            $7: 0..1 query string
     //                                                                                                                          $8: 0..1 fragment=page anchor (hash)
     //                                                                                                                                       $9: ends with certain characters or eol
-    // Namespace: /^([\w-]+)[.:]([\w\.-]*)$/
     Namespace: /^([\w-]+):([\w.-]*)$/, // only ':' as separator
     termWithNamespace: new RegExp(`^${termWithNamespacePattern}$`),
     isoDateTime: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(Z|[+-]\d{2}(:\d{2})?)?$/,
@@ -187,10 +192,3 @@ export const RE = {
     // Markdown link/image: [label](link) or ![label](link); link may optionally be followed by a quoted title, e.g. [label](link "title")
     markdownLink: /!?\[[^\]]*\]\(\s*([^\s)]+)(?:\s+"[^"]*")?\s*\)/g
 }
-
-/**
- * JSON Schema 'pattern' string for a TPigId (term with namespace, e.g. 'cas:foo', or a URI).
- * Built from the same pattern strings as RE.termWithNamespace, so both the runtime check
- * (PigItem.isValidIdString) and the JSON Schema validation (PigSchemaFactory) stay in sync.
- */
-export const idPattern = `^(?:${termWithNamespacePattern}|${uriPattern})$`;

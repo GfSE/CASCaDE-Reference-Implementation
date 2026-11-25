@@ -234,7 +234,6 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': 'A diagram illustrating the resource or a link to a diagram.', '@language': 'en' }
                 ],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Property` },
                 'sh:datatype': { '@id': 'xs:string' }
             };
 
@@ -428,6 +427,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'FMC:Actor',
                 '@type': 'owl:Class',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Actor', '@language': 'en' },
                     { '@value': 'Akteur', '@language': 'de' },
@@ -452,8 +452,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
                     { '@id': `${DEF.pfxNsMeta}Category` }
                 ],
-                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` }
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: []
             };
 
             const entity = new Entity().setJSONLD(jsonldInput);
@@ -478,6 +477,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'IREB:Requirement',
                 '@type': 'owl:Class',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` },
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Requirement', '@language': 'en' },
                     { '@value': 'Anforderung', '@language': 'de' },
@@ -494,8 +494,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 [`${DEF.pfxNsMeta}enumeratedProperty`]: [
                     { '@id': 'SpecIF:Priority' }
                 ],
-                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: [],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}Entity` }
+                [`${DEF.pfxNsMeta}enumeratedTargetLink`]: []
             };
 
             const entity = new Entity().setJSONLD(jsonldInput);
@@ -598,6 +597,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:Req-1a8016e2872e78ecadc50feddc00029b',
                 '@type': 'IREB:Requirement',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                 [`${DEF.pfxNsDcmi}modified`]: '2020-10-17T10:00:00+01:00',
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'Data Volume' }
@@ -607,11 +607,10 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ],
                 'SpecIF:Priority': [
                     {
-                        '@id': 'SpecIF:priorityHigh',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                        '@id': 'SpecIF:priorityHigh'
                     }
-                ],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` }
+                ]
             };
 
             const anEntity = new AnEntity().setJSONLD(jsonldInput);
@@ -642,33 +641,33 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                 ],
                 'SpecIF:Diagram': [
                     {
-                        '@value': '<p class="inline-label">Model Diagram:</p><p><object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object></p>',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` }
+                        //    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                        '@value': '<p class="inline-label">Model Diagram:</p><p><object type="image/svg+xml" data="files_and_images/Very-Simple-Model-FMC.svg">Notation: FMC Block Diagram</object></p>'
                     }
                 ],
                 [`${DEF.pfxNsMeta}Category`]: [
                     {
-                        '@value': 'FMC Block Diagram',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` }
+                        //    [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                        '@value': 'FMC Block Diagram'
                     }
                 ],
                 [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                 [`${DEF.pfxNsMeta}shows`]: [
                     {
-                        '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                        '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a'
                     },
                     {
-                        '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                        '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc'
                     },
                     {
-                        '@id': 'd:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                        '@id': 'd:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc'
                     },
                     {
-                        '@id': 'd:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                        '@id': 'd:SRea-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc'
                     }
                 ]
             };
@@ -696,14 +695,14 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
                 '@type': 'FMC:Actor',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` },
                 [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T09:04:00+01:00',
                 [`${DEF.pfxNsDcmi}title`]: [
                     { '@value': 'FiCo-Application' }
                 ],
                 [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': '<p>IT-Application for Finance and Controlling.</p>' }
-                ],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}anEntity` }
+                ]
             };
 
             const anEntity = new AnEntity().setJSONLD(jsonldInput);
@@ -730,21 +729,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:SWri-50fbfe8f0029b1a8016ea86245a9d83a-50feddc00029b1a8016e2872e78ecadc',
                 '@type': 'SpecIF:writes',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                 [`${DEF.pfxNsDcmi}modified`]: '2020-03-06T09:05:00+01:00',
                 [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "'FiCo-Application' writes 'FiCo-Data'" }
                 ],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                 'SpecIF:writes-toSource': [
                     {
-                        '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` },
+                        '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a'
                     }
                 ],
                 'SpecIF:writes-toTarget': [
                     {
-                        '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                        '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc'
                     }
                 ]
             };
@@ -771,21 +770,21 @@ describe('PIG Metaclasses JSON-LD Import', () => {
             const jsonldInput = {
                 '@id': 'd:Ssat-50feddc00029b1a8016e2872e78ecadc-1a8016e2872e78ecadc50feddc00029b',
                 '@type': 'oslc_rm:satisfies',
+                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                 [`${DEF.pfxNsDcmi}modified`]: '2020-10-17T10:00:00+01:00',
                 [`${DEF.pfxNsDcmi}description`]: [
                     { '@value': "'FiCo-Data' satisfies 'Data Volume'" }
                 ],
-                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aRelationship` },
                 'oslc_rm:satisfies-toSource': [
                     {
-                        '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` },
+                        '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc'
                     }
                 ],
                 'oslc_rm:satisfies-toTarget': [
                     {
-                        '@id': 'd:Req-1a8016e2872e78ecadc50feddc00029b',
-                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                        [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                        '@id': 'd:Req-1a8016e2872e78ecadc50feddc00029b'
                     }
                 ]
             };
@@ -958,7 +957,7 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         ],
                         'o:Volume': [
                             {
-                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
+                                // [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aProperty` },
                                 '@value': '600'
                             }
                         ]
@@ -974,14 +973,14 @@ describe('PIG Metaclasses JSON-LD Import', () => {
                         ],
                         'SpecIF:writes-toSource': [
                             {
-                                '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a',
-                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` }
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aSourceLink` },
+                                '@id': 'd:MEl-50fbfe8f0029b1a8016ea86245a9d83a'
                             }
                         ],
                         'SpecIF:writes-toTarget': [
                             {
-                                '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc',
-                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` }
+                                [`${DEF.pfxNsMeta}itemType`]: { '@id': `${DEF.pfxNsMeta}aTargetLink` },
+                                '@id': 'd:MEl-50feddc00029b1a8016e2872e78ecadc'
                             }
                         ]
                     }

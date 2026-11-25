@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://product-information-graph.org/schema/2026-07-20/jsonld/aRelationship.json",
+  "$id": "http://product-information-graph.org/schema/2026-11-25/jsonld/aRelationship.json",
   "title": "CASCaRA ARelationship Schema for JSON-LD",
-  "description": "Validates <strong>relationship instances</strong> representing directed, reified connections between items (i.e. entity or relationship instances). Similar metadata to entities, but additionally requires both source links (cas:aSourceLink) and target links (cas:aTargetLink) conforming to the class definition. Source and target links reference entity or relationship instances. Properties can carry contextual information about the relationship (e.g., traceability status, rationale, coverage analysis). Reification enables relationships to be first-class items with their own lifecycle and properties. Must have a dcterms:title and optionally a dcterms:description to convey meaning.",
+  "description": "Validates <strong>relationship instances</strong> representing directed, reified connections between items (i.e. entity or relationship instances). Similar metadata as entities, but additionally requires both source links (cas:aSourceLink) and target links (cas:aTargetLink) conforming to the class definition. Source and target links reference entity or relationship instances. Properties can carry contextual information about the relationship (e.g., traceability status, rationale, coverage analysis). Reification enables relationships to be first-class items with their own lifecycle and properties.",
   "type": "object",
   "properties": {
     "@id": {
@@ -67,69 +67,42 @@
       "type": "array",
       "description": "Configurable properties and links with namespaced keys",
       "items": {
-        "type": "object",
-        "properties": {
-          "cas:itemType": {
-            "type": "object",
-            "required": [ "@id" ],
-            "properties": {
-              "@id": {
-                "type": "string",
-                "enum": [ "cas:aProperty", "cas:aSourceLink", "cas:aTargetLink" ],
-                "description": "Type of configurable item: property value, source link, or target link"
-              }
-            },
-            "additionalProperties": false
-          },
-          "@value": {
-            "type": "string",
-            "description": "Direct property value (for aProperty)"
-          },
-          "@id": {
-            "$ref": "#/$defs/idString",
-            "description": "Reference to enumeration value or linked entity/relationship"
-          }
-        },
-        "required": [ "cas:itemType" ],
         "oneOf": [
           {
             "type": "object",
-            "description": "aProperty with direct value",
+            "description": "aProperty with literal value",
             "properties": {
-              "cas:itemType": {
-                "type": "object",
-                "properties": {
-                  "@id": {
-                    "const": "cas:aProperty"
-                  }
-                }
+              "@value": {
+                "type": "string",
+                "description": "Literal property value"
               }
             },
             "required": [ "@value" ],
-            "not": {
-              "required": [ "@id" ]
-            }
+            "additionalProperties": false
           },
           {
             "type": "object",
             "description": "aSourceLink to another entity or relationship, resp. aTargetLink to an enumeration, entity or relationship",
             "properties": {
+              "@id": {
+                "$ref": "#/$defs/idString",
+                "description": "Reference to enumeration value or linked entity/relationship"
+              },
               "cas:itemType": {
                 "type": "object",
+                "required": [ "@id" ],
                 "properties": {
                   "@id": {
                     "enum": [ "cas:aSourceLink", "cas:aTargetLink" ]
                   }
-                }
+                },
+                "additionalProperties": false
               }
             },
-            "required": [ "@id" ],
-            "not": {
-              "required": [ "@value" ]
-            }
+            "required": [ "@id", "cas:itemType" ],
+            "additionalProperties": false
           }
-        ],
-        "additionalProperties": false
+        ]
       }
     }
   },

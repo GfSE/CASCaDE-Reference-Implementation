@@ -328,19 +328,22 @@ class GetJSONLD {
         const grouped = new Map<TPigId, JsonObject[]>();
 
         for (const cfg of cfgs) {
-            const propValue: Record<string, JsonValue> = {
-                [`${DEF.pfxNsMeta}itemType`]: { ['@id']: cfg.itemType } as JsonObject
-            };
+            // LOG.debug('xConfigurables: processing cfg', cfg.itemType, cfg.value, cfg.idRef);
+            const propValue: Record<string, JsonValue> =
+                [PigItemType.aSourceLink, PigItemType.aTargetLink].includes(cfg.itemType) ?
+                    {[`${DEF.pfxNsMeta}itemType`] : { ['@id']: cfg.itemType } as JsonObject}
+                    // additional properties cannot be added to @value ...
+                    // so on import we will indirectly derive the itemType from the presence of @value
+                  : { };
 
-            // Add value if present (only for AProperty)
-            if ('value' in cfg && cfg.value !== undefined) {
+            // Add value if present (for aProperty)
+            if (cfg.value !== undefined)
                 propValue['@value'] = cfg.value;
-            }
-
-            // Add idRef if present
-            if (cfg.idRef !== undefined) {
+            // Add idRef if present (for aSourceLink or aTargetLink)
+            else if (cfg.idRef !== undefined)
                 propValue['@id'] = cfg.idRef;
-            }
+            else
+                throw new Error(`Invalid configurable: ${cfg.id} has neither value nor idRef`);
 
             const key = cfg.instanceOf as TPigId;
             if (!grouped.has(key)) {

@@ -13,7 +13,7 @@
  *
  */
 
-import { DEF, idPattern } from '../../../lib/definitions';
+import { DEF } from '../../../lib/definitions';
 import { ajv } from '../../../lib/ajv';
 
 class PigSchemaFactory {
@@ -28,7 +28,7 @@ class PigSchemaFactory {
             idString: {
                 type: 'string',
                 description: 'TPigId — term with namespace (prefix:local) oder eine URI',
-                pattern: idPattern
+                pattern: DEF.idPattern
             },
             LanguageText: {
                 type: 'object',

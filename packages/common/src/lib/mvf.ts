@@ -40,8 +40,12 @@ const FROM_JSONLD = new Map<string, string>([
     [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
     [`${DEF.pfxNsMeta}Icon`, 'icon'],
     [`${DEF.pfxNsMeta}icon`, 'icon'],
-    [`${DEF.pfxNsMeta}Unit`, 'unit'],
-    [`${DEF.pfxNsMeta}unit`, 'unit'],
+    [`${DEF.pfxNsDcmi}title`, 'title'],
+    [`${DEF.pfxNsDcmi}description`, 'description'],
+    [`${DEF.pfxNsDcmi}created`, 'created'],
+    [`${DEF.pfxNsDcmi}modified`, 'modified'],
+    [`${DEF.pfxNsDcmi}creator`, 'creator'],
+    ['skos:definition', 'definition'],
 //    ['xs:simpleType', 'datatype'], ... doesn't make sense as long as rejected by the schema
     ['sh:datatype', 'datatype'],
 //    ['xs:minOccurs', 'minCount'],
@@ -56,13 +60,7 @@ const FROM_JSONLD = new Map<string, string>([
     ['sh:pattern', 'pattern'],
     ['sh:minInclusive', 'minInclusive'],
     ['sh:maxInclusive', 'maxInclusive'],
-    ['dash:readOnly', 'readOnly'],
-    [`${DEF.pfxNsDcmi}title`, 'title'],
-    [`${DEF.pfxNsDcmi}description`, 'description'],
-    [`${DEF.pfxNsDcmi}created`, 'created'],
-    [`${DEF.pfxNsDcmi}modified`, 'modified'],
-    [`${DEF.pfxNsDcmi}creator`, 'creator'],
-    ['skos:definition', 'definition']
+    ['dash:readOnly', 'readOnly']
 ]);
 
 // Create Reverse-Map once
@@ -83,8 +81,18 @@ const FROM_XML = new Map<string, string>([
     [`${DEF.pfxNsMeta}specializes`, 'specializes'],
     [`${DEF.pfxNsMeta}Icon`, 'icon'],
     [`${DEF.pfxNsMeta}icon`, 'icon'],
-    [`${DEF.pfxNsMeta}Unit`, 'unit'],
-    [`${DEF.pfxNsMeta}unit`, 'unit'],
+    [`${DEF.pfxNsMeta}itemType`, 'itemType'],
+    [`${DEF.pfxNsMeta}enumeratedProperty`, 'enumeratedProperty'],
+    [`${DEF.pfxNsMeta}enumeratedSourceLink`, 'enumeratedSourceLink'],
+    [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
+    [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
+    [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
+    [`${DEF.pfxNsDcmi}title`, 'title'],
+    [`${DEF.pfxNsDcmi}description`, 'description'],
+    [`${DEF.pfxNsDcmi}created`, 'created'],
+    [`${DEF.pfxNsDcmi}modified`, 'modified'],
+    [`${DEF.pfxNsDcmi}creator`, 'creator'],
+    ['skos:definition', 'definition'],
     ['sh:datatype', 'datatype'],
     ['xs:simpleType', 'datatype'],
     ['sh:minCount', 'minCount'],
@@ -101,19 +109,7 @@ const FROM_XML = new Map<string, string>([
     ['xs:minInclusive', 'minInclusive'],
     ['sh:maxInclusive', 'maxInclusive'],
     ['xs:maxInclusive', 'maxInclusive'],
-    ['dash:readOnly', 'readOnly'],
-    [`${DEF.pfxNsMeta}itemType`, 'itemType'],
-    [`${DEF.pfxNsMeta}enumeratedProperty`, 'enumeratedProperty'],
-    [`${DEF.pfxNsMeta}enumeratedSourceLink`, 'enumeratedSourceLink'],
-    [`${DEF.pfxNsMeta}enumeratedTargetLink`, 'enumeratedTargetLink'],
-    [`${DEF.pfxNsMeta}enumeratedEndpoint`, 'enumeratedEndpoint'],
-    [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
-    [`${DEF.pfxNsDcmi}title`, 'title'],
-    [`${DEF.pfxNsDcmi}description`, 'description'],
-    [`${DEF.pfxNsDcmi}created`, 'created'],
-    [`${DEF.pfxNsDcmi}modified`, 'modified'],
-    [`${DEF.pfxNsDcmi}creator`, 'creator'],
-    ['skos:definition', 'definition']
+    ['dash:readOnly', 'readOnly']
 ]);
 const TO_XML = new Map<string, string>(
     Array.from(FROM_XML.entries()).map(([a, b]) => [b, a])
@@ -141,8 +137,6 @@ const FROM_RDF = new Map<string, string>([
     [`${DEF.pfxNsMeta}enumeratedValue`, 'enumeratedValue'],
     [`${DEF.pfxNsMeta}Icon`, 'icon'],
     [`${DEF.pfxNsMeta}icon`, 'icon'],
-    [`${DEF.pfxNsMeta}Unit`, 'unit'],
-    [`${DEF.pfxNsMeta}unit`, 'unit'],
     ['sh:datatype', 'datatype'],
     ['sh:minCount', 'minCount'],
     ['sh:maxCount', 'maxCount'],
